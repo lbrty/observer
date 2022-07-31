@@ -350,6 +350,14 @@ tomli = ">=1.0.0"
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "xmlschema"]
 
 [[package]]
+name = "pytoolz"
+version = "0.1.7"
+description = ""
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
@@ -423,7 +431,7 @@ testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "0d79d33c591165e34cc126e69543134fbff6d3aa2d68ab82149db193d98ab3bb"
+content-hash = "6d3870c234553cf9bbe4c30e429c20161a63a512885f7dcc4b1dc7a49e090ea2"
 
 [metadata.files]
 anyio = [
@@ -619,6 +627,9 @@ pyparsing = [
 pytest = [
     {file = "pytest-7.1.2-py3-none-any.whl", hash = "sha256:13d0e3ccfc2b6e26be000cb6568c832ba67ba32e719443bfe725814d3c42433c"},
     {file = "pytest-7.1.2.tar.gz", hash = "sha256:a06a0425453864a270bc45e71f783330a7428defb4230fb5e6a731fde06ecd45"},
+]
+pytoolz = [
+    {file = "pytoolz-0.1.7.tar.gz", hash = "sha256:77f14937adc2f45df27d30e0d707e8b3013abda32566cdae8e336cebbb169899"},
 ]
 pyyaml = [
     {file = "PyYAML-6.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d4db7c7aef085872ef65a8fd7d6d09a14ae91f691dec3e87ee5ee0539d516f53"},
