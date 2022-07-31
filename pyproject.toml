@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "observer"
+version = "0.1.0"
+description = "Collection of useful types to use with mypy or for typehints"
+authors = ["Sultan Iman <sultan.imanhodjaev[at]gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+quart = "^0.18.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1"
+black = "^22.6.0"
+flake8 = "^4.0.1"
+isort = "^5.10.1"
+mypy = "^0.961"
+pre-commit = "^2.20.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ["py310"]
+include = "\\.pyi?$"
+extend-exclude = """
+/(
+  # The following are specific to Black, you probably don't want those.
+  | \\.venv
+  | \\.git
+  | \\.idea
+)/
+"""
+preview = true
+
+[tool.mypy]
+exclude = [".venv", ".git", ".idea"]
+ignore_missing_imports = true
