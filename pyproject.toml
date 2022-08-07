@@ -9,9 +9,11 @@ python = "^3.10"
 fastapi = "^0.79.0"
 pytoolz = "^0.1.7"
 alembic = "^1.8.1"
-SQLAlchemy = {extras = ["asyncpg"], version = "^1.4.39"}
-pydantic = "^1.9.1"
+SQLAlchemy = {extras = ["asyncio"], version = "^1.4.39"}
+pydantic = {extras = ["dotenv"], version = "^1.9.1"}
 typer = "^0.6.1"
+asyncpg = "^0.26.0"
+greenlet = "^1.1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"
