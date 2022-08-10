@@ -26,8 +26,6 @@ def upgrade():
         sa.Column("is_active", sa.Boolean(), nullable=True, server_default="1"),
         sa.Column("is_confirmed", sa.Boolean(), nullable=True, server_default="0"),
         sa.Column("mfa_enabled", sa.Boolean(), nullable=True, server_default="0"),
-        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
-        sa.Column("updated_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.CheckConstraint("role IN ('admin', 'consultant', 'guest', 'staff')", name="users_role_type_check"),
     )
