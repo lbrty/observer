@@ -8,9 +8,9 @@ db = Typer()
 
 
 def load_config(uri) -> Config:
-    config = Config(settings.base_path / "alembic.ini")
+    config = Config(str(settings.base_path / "alembic.ini"))
     config.set_main_option("sqlalchemy.url", uri)
-    config.set_main_option("script_location", settings.base_path / "migrations")
+    config.set_main_option("script_location", str(settings.base_path / "migrations"))
     return config
 
 

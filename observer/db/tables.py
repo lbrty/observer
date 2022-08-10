@@ -30,6 +30,7 @@ users = Table(
     Column("password_hash", String(512), nullable=False),
     Column("is_active", Boolean, nullable=True, default=True),
     Column("is_confirmed", Boolean, nullable=True, default=False),
+    Column("mfa_enabled", Boolean, nullable=True, default=False),
     Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
     Column("updated_at", TIMESTAMP(timezone=True), default=utcnow, onupdate=utcnow),
     Index("ix_users_full_name", text("lower(full_name)")),

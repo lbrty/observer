@@ -22,15 +22,17 @@ def upgrade():
         sa.Column("email", sa.String(length=255), nullable=False),
         sa.Column("full_name", sa.String(length=128), nullable=True),
         sa.Column("password_hash", sa.String(length=512), nullable=False),
-        sa.Column("is_active", sa.Boolean(), nullable=True),
-        sa.Column("is_confirmed", sa.Boolean(), nullable=True),
+        sa.Column("is_active", sa.Boolean(), nullable=True, server_default="1"),
+        sa.Column("is_confirmed", sa.Boolean(), nullable=True, server_default="0"),
+        sa.Column("mfa_enabled", sa.Boolean(), nullable=True, server_default="0"),
         sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
         sa.Column("updated_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index("ix_users_is_active", "users", ["is_active"], unique=False)
+    op.create_index("ix_users_full_name", "users", [sa.text("lower(full_name)")])
+    op.create_index("ix_users_is_active", "users", ["is_active"])
+    op.create_index("ix_users_email", "users", [sa.text("lower(email)")], unique=True)
 
 
 def downgrade():
-    op.drop_index("ix_users_is_active", table_name="users")
     op.drop_table("users")

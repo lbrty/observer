@@ -67,7 +67,7 @@ async def run_migrations_online():
     """
     engine = create_async_engine(
         settings.db_uri,
-        echo=True,
+        echo=(settings.debug is True),
         poolclass=pool.NullPool,
     )
 
