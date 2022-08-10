@@ -47,7 +47,7 @@ projects = Table(
     Column("id", UUID, primary_key=True),
     Column("name", String(128), nullable=False, unique=True),
     Column("description", Text(), nullable=True),
-    Index("ix_projects_name", text("lower(name)"), unique=True),
+    Index("ux_projects_name", text("lower(name)"), unique=True),
 )
 
 permissions = Table(
@@ -64,69 +64,72 @@ permissions = Table(
     Column("project_id", UUID, ForeignKey("projects.id"), nullable=False),
 )
 
-# displaced_persons = Table(
-#     "displaced_persons",
-#     metadata,
-#     Column("id", UUID, primary_key=True),
-#     Column("status", String(20)),
-#     Column("external_id", String(128)),
-#     Column("reference_id", String(128)),
-#     Column("email", String(255), nullable=False),
-#     Column("full_name", String(128), nullable=True),
-#     Column("birth_date", DATE, nullable=True),
-#     Column("notes", Text(), nullable=True),
-#     Column("phone_number", String(20), nullable=True),
-#     Column("phone_number_additional", String(20), nullable=True),
-#     Column("migration_date", DATE, nullable=True),
-#
-#     # Location info
-#     Column("from_city_id", UUID, nullable=True),
-#     Column("from_state_id", UUID, nullable=True),
-#     Column("current_city_id", UUID, nullable=True),
-#     Column("current_state_id", UUID, nullable=True),
-#
-#     Column("project_id", UUID, nullable=True),
-#     Column("category_id", UUID, nullable=True),
-#
-#     # User's id who registered
-#     Column("creator_id", UUID, nullable=True),
-#
-#     Column("tags", ARRAY(String(20)), nullable=True),
-#     Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
-#     Column("updated_at", TIMESTAMP(timezone=True), default=utcnow, onupdate=utcnow),
-# )
+categories = Table(
+    "categories",
+    metadata,
+    Column("id", UUID, primary_key=True),
+    Column("name", String(64), nullable=False),
+    Index("ux_categories_name", text("lower(name)"), unique=True),
+)
+
+
+displaced_persons = Table(
+    "displaced_persons",
+    metadata,
+    Column("id", UUID, primary_key=True),
+    Column("status", String(20)),
+    Column("encryption_key", Text()),
+    Column("external_id", String(128)),
+    Column("reference_id", String(128)),
+    Column("email", Text(), nullable=True),
+    Column("full_name", Text(), nullable=False),
+    Column("birth_date", DATE, nullable=True),
+    Column("notes", Text(), nullable=True),
+    Column("phone_number", Text(), nullable=True),
+    Column("phone_number_additional", Text(), nullable=True),
+    Column("migration_date", DATE, nullable=True),
+    # Location info
+    Column("from_city_id", UUID, ForeignKey("cities.id"), nullable=True),
+    Column("from_state_id", UUID, ForeignKey("states.id"), nullable=True),
+    Column("current_city_id", UUID, ForeignKey("cities.id"), nullable=True),
+    Column("current_state_id", UUID, ForeignKey("states.id"), nullable=True),
+    Column("project_id", UUID, ForeignKey("projects.id"), nullable=True),
+    Column("category_id", UUID, ForeignKey("categories.id"), nullable=True),
+    # User's id who registered
+    Column("creator_id", UUID, ForeignKey("users.id"), nullable=True),
+    Column("tags", ARRAY(String(20)), nullable=True),
+    Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
+    Column("updated_at", TIMESTAMP(timezone=True), default=utcnow, onupdate=utcnow),
+)
 
 countries = Table(
     "countries",
     metadata,
     Column("id", UUID, primary_key=True),
-    Column("name", String(255), nullable=False),
+    Column("name", String(100), nullable=False),
     Column("code", String(4), nullable=False),
-    Index("ix_countries_name", text("lower(name)")),
+    Index("ux_countries_name", text("lower(name)"), unique=True),
     Index("ix_countries_code", text("lower(code)")),
-    UniqueConstraint("name"),
 )
 
 states = Table(
     "states",
     metadata,
     Column("id", UUID, primary_key=True),
-    Column("name", String(255), nullable=False),
+    Column("name", String(100), nullable=False),
     Column("code", String(10), nullable=False),
     Column("country_id", UUID, ForeignKey("users.id"), nullable=False),
-    Index("ix_states_name", text("lower(name)")),
+    Index("ux_states_name", text("lower(name)"), unique=True),
     Index("ix_states_code", text("lower(code)")),
-    UniqueConstraint("name"),
 )
 
 cities = Table(
     "cities",
     metadata,
     Column("id", UUID, primary_key=True),
-    Column("name", String(255), nullable=False),
+    Column("name", String(100), nullable=False),
     Column("code", String(10), nullable=False),
     Column("state_id", UUID, ForeignKey("users.id"), nullable=False),
-    Index("ix_cities_name", text("lower(name)")),
+    Index("ux_cities_name", text("lower(name)"), unique=True),
     Index("ix_cities_code", text("lower(code)")),
-    UniqueConstraint("name"),
 )
