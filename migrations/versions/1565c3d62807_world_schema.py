@@ -19,7 +19,7 @@ def upgrade():
     op.create_table(
         "countries",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("name", sa.String(length=255), nullable=False),
+        sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("code", sa.String(length=4), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -29,7 +29,7 @@ def upgrade():
     op.create_table(
         "states",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("name", sa.String(length=255), nullable=False),
+        sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("code", sa.String(length=10), nullable=False),
         sa.Column("country_id", postgresql.UUID(), nullable=False),
         sa.ForeignKeyConstraint(
@@ -45,7 +45,7 @@ def upgrade():
     op.create_table(
         "cities",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("name", sa.String(length=255), nullable=False),
+        sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("code", sa.String(length=10), nullable=False),
         sa.Column("state_id", postgresql.UUID(), nullable=False),
         sa.ForeignKeyConstraint(
