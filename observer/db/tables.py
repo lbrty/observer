@@ -3,6 +3,7 @@ from sqlalchemy import (
     CheckConstraint,
     Column,
     Index,
+    UniqueConstraint,
     ForeignKey,
     MetaData,
     String,
@@ -94,30 +95,38 @@ permissions = Table(
 #     Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
 #     Column("updated_at", TIMESTAMP(timezone=True), default=utcnow, onupdate=utcnow),
 # )
-#
-#
-# countries = Table(
-#     "countries",
-#     metadata,
-#     Column("id", UUID, primary_key=True),
-#     Column("name", String(255), nullable=False),
-#     Column("code", String(4), nullable=True),
-# )
-#
-# states = Table(
-#     "states",
-#     metadata,
-#     Column("id", UUID, primary_key=True),
-#     Column("name", String(255), nullable=False),
-#     Column("code", String(10), nullable=False),
-#     Column("country_id", UUID, nullable=False),
-# )
-#
-# cities = Table(
-#     "cities",
-#     metadata,
-#     Column("id", UUID, primary_key=True),
-#     Column("name", String(255), nullable=False),
-#     Column("code", String(10), nullable=False),
-#     Column("state_id", UUID, nullable=False),
-# )
+
+countries = Table(
+    "countries",
+    metadata,
+    Column("id", UUID, primary_key=True),
+    Column("name", String(255), nullable=False),
+    Column("code", String(4), nullable=False),
+    Index("ix_countries_name", text("lower(name)")),
+    Index("ix_countries_code", text("lower(code)")),
+    UniqueConstraint("name"),
+)
+
+states = Table(
+    "states",
+    metadata,
+    Column("id", UUID, primary_key=True),
+    Column("name", String(255), nullable=False),
+    Column("code", String(10), nullable=False),
+    Column("country_id", UUID, ForeignKey("users.id"), nullable=False),
+    Index("ix_states_name", text("lower(name)")),
+    Index("ix_states_code", text("lower(code)")),
+    UniqueConstraint("name"),
+)
+
+cities = Table(
+    "cities",
+    metadata,
+    Column("id", UUID, primary_key=True),
+    Column("name", String(255), nullable=False),
+    Column("code", String(10), nullable=False),
+    Column("state_id", UUID, ForeignKey("users.id"), nullable=False),
+    Index("ix_cities_name", text("lower(name)")),
+    Index("ix_cities_code", text("lower(code)")),
+    UniqueConstraint("name"),
+)
