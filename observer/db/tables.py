@@ -3,6 +3,7 @@ from sqlalchemy import (
     CheckConstraint,
     Column,
     Index,
+    ForeignKey,
     MetaData,
     String,
     Table,
@@ -48,20 +49,20 @@ projects = Table(
     Index("ix_projects_name", text("lower(name)"), unique=True),
 )
 
-# permissions = Table(
-#     "permissions",
-#     metadata,
-#     Column("id", UUID, primary_key=True),
-#     Column("can_create", Boolean, default=False, nullable=False),
-#     Column("can_read", Boolean, default=False, nullable=False),
-#     Column("can_update", Boolean, default=False, nullable=False),
-#     Column("can_delete", Boolean, default=False, nullable=False),
-#     Column("can_read_documents", Boolean, default=False, nullable=False),
-#     Column("can_read_personal_info", Boolean, default=False, nullable=False),
-#     Column("user_id", UUID, nullable=False),
-#     Column("project_id", UUID, nullable=False),
-# )
-#
+permissions = Table(
+    "permissions",
+    metadata,
+    Column("id", UUID, primary_key=True),
+    Column("can_create", Boolean, default=False, nullable=False),
+    Column("can_read", Boolean, default=False, nullable=False),
+    Column("can_update", Boolean, default=False, nullable=False),
+    Column("can_delete", Boolean, default=False, nullable=False),
+    Column("can_read_documents", Boolean, default=False, nullable=False),
+    Column("can_read_personal_info", Boolean, default=False, nullable=False),
+    Column("user_id", UUID, ForeignKey("users.id"), nullable=False),
+    Column("project_id", UUID, ForeignKey("projects.id"), nullable=False),
+)
+
 # displaced_persons = Table(
 #     "displaced_persons",
 #     metadata,
