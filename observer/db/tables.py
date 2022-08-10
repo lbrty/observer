@@ -10,7 +10,7 @@ from sqlalchemy import (
     Text,
     text,
 )
-from sqlalchemy.dialects.postgresql import ARRAY, DATE, UUID, TIMESTAMP
+from sqlalchemy.dialects.postgresql import ARRAY, DATE, JSONB, UUID, TIMESTAMP
 
 from observer.db.util import utcnow
 
@@ -144,4 +144,9 @@ cities = Table(
 audit_logs = Table(
     "audit_logs",
     metadata,
+    Column("id", UUID, primary_key=True),
+    Column("ref", Text(), nullable=False),  # format - origin=<user_id...>;source=services:users;action=create:user;
+    Column("data", JSONB(), nullable=True, default={}),
+    Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
+    Column("expires_at", TIMESTAMP(timezone=True), default=utcnow, nullable=True),
 )
