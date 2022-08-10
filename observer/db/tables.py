@@ -71,15 +71,14 @@ displaced_persons = Table(
     metadata,
     Column("id", UUID, primary_key=True),
     Column("status", String(20)),
-    Column("encryption_key", Text()),
     Column("external_id", String(128)),
     Column("reference_id", String(128)),
-    Column("email", Text(), nullable=True),
-    Column("full_name", Text(), nullable=False),
+    Column("email", String(255), nullable=True),
+    Column("full_name", String(128), nullable=False),
     Column("birth_date", DATE, nullable=True),
     Column("notes", Text(), nullable=True),
-    Column("phone_number", Text(), nullable=True),
-    Column("phone_number_additional", Text(), nullable=True),
+    Column("phone_number", String(20), nullable=True),
+    Column("phone_number_additional", String(20), nullable=True),
     Column("migration_date", DATE, nullable=True),
     # Location info
     Column("from_city_id", UUID, ForeignKey("cities.id"), nullable=True),
@@ -108,7 +107,7 @@ documents = Table(
     Index("ux_documents_name", text("lower(name)")),
 )
 
-
+# World
 countries = Table(
     "countries",
     metadata,
@@ -139,4 +138,10 @@ cities = Table(
     Column("state_id", UUID, ForeignKey("users.id"), nullable=False),
     Index("ux_cities_name", text("lower(name)"), unique=True),
     Index("ix_cities_code", text("lower(code)")),
+)
+
+# Audit logs
+audit_logs = Table(
+    "audit_logs",
+    metadata,
 )
