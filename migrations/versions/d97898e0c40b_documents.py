@@ -31,7 +31,7 @@ def upgrade():
         ),
     )
 
-    op.create_index(op.f("ix_documents_name"), "categories", [sa.text("lower(name)")])
+    op.create_index(op.f("ix_documents_name"), "documents", [sa.text("lower(name)")])
 
 
 def downgrade():
