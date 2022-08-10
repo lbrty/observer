@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     op.create_table(
         "categories",
-        sa.Column("id", postgresql.UUID(), nullable=False),
+        sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("name", sa.String(length=64), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )

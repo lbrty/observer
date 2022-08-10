@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     op.create_table(
         "permissions",
-        sa.Column("id", postgresql.UUID(), nullable=False),
+        sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("can_create", sa.Boolean(), nullable=False),
         sa.Column("can_read", sa.Boolean(), nullable=False),
         sa.Column("can_update", sa.Boolean(), nullable=False),

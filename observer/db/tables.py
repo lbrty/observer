@@ -3,7 +3,6 @@ from sqlalchemy import (
     CheckConstraint,
     Column,
     Index,
-    UniqueConstraint,
     ForeignKey,
     MetaData,
     String,
@@ -12,17 +11,11 @@ from sqlalchemy import (
     text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY, DATE, UUID, TIMESTAMP
+
 from observer.db.util import utcnow
 
-metadata = MetaData(
-    {
-        "ix": "ix_%(column_0_label)s",
-        "ux": "ux_%(table_name)s_%(column_0_name)s",
-        "ck": "ck_%(table_name)s_%(constraint_name)s",
-        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-        "pk": "pk_%(table_name)s",
-    }
-)
+
+metadata = MetaData()
 
 users = Table(
     "users",
@@ -101,6 +94,20 @@ displaced_persons = Table(
     Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
     Column("updated_at", TIMESTAMP(timezone=True), default=utcnow, onupdate=utcnow),
 )
+
+
+documents = Table(
+    "documents",
+    metadata,
+    Column("id", UUID, primary_key=True),
+    Column("encryption_key", Text()),
+    Column("name", String(100), nullable=False),
+    Column("path", String(4), nullable=False),
+    Column("person_id", UUID, ForeignKey("displaced_persons.id"), nullable=False),
+    Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
+    Index("ux_documents_name", text("lower(name)")),
+)
+
 
 countries = Table(
     "countries",
