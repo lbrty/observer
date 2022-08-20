@@ -11,7 +11,8 @@ class Settings(BaseSettings):
     base_path: Path = here
     db_uri: PostgresDsn
 
-    # RSA key settings
+    # Keystore and RSA key settings
+    key_store_path: Path = here / "keys"
     key_size: int = 2048
     public_exponent: int = 65537
 
