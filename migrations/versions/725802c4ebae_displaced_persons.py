@@ -20,15 +20,15 @@ def upgrade():
         "displaced_persons",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("encryption_key", sa.Text(), nullable=True),
-        sa.Column("status", sa.String(length=20), nullable=True),
-        sa.Column("external_id", sa.String(length=128), nullable=True),
-        sa.Column("reference_id", sa.String(length=128), nullable=True),
-        sa.Column("email", sa.String(length=255), nullable=True),
-        sa.Column("full_name", sa.String(length=128), nullable=True),
+        sa.Column("status", sa.Text(), nullable=True),
+        sa.Column("external_id", sa.Text(), nullable=True),
+        sa.Column("reference_id", sa.Text(), nullable=True),
+        sa.Column("email", sa.Text(), nullable=True),
+        sa.Column("full_name", sa.Text(), nullable=False),
         sa.Column("birth_date", sa.DATE(), nullable=True),
         sa.Column("notes", sa.Text(), nullable=True),
-        sa.Column("phone_number", sa.String(length=20), nullable=True),
-        sa.Column("phone_number_additional", sa.String(length=20), nullable=True),
+        sa.Column("phone_number", sa.Text(), nullable=True),
+        sa.Column("phone_number_additional", sa.Text(), nullable=True),
         sa.Column("migration_date", sa.DATE(), nullable=True),
         sa.Column("from_city_id", postgresql.UUID(), nullable=True),
         sa.Column("from_state_id", postgresql.UUID(), nullable=True),
@@ -37,7 +37,7 @@ def upgrade():
         sa.Column("project_id", postgresql.UUID(), nullable=True),
         sa.Column("category_id", postgresql.UUID(), nullable=True),
         sa.Column("creator_id", postgresql.UUID(), nullable=True),
-        sa.Column("tags", postgresql.ARRAY(sa.String(length=20)), nullable=True),
+        sa.Column("tags", postgresql.ARRAY(sa.Text()), nullable=True),
         sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
         sa.Column("updated_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
         sa.ForeignKeyConstraint(
@@ -82,10 +82,6 @@ def upgrade():
     op.create_index(op.f("ix_displaced_persons_status"), "displaced_persons", ["status"])
     op.create_index(op.f("ix_displaced_persons_email"), "displaced_persons", [sa.text("lower(email)")])
     op.create_index(op.f("ix_displaced_persons_birth_date"), "displaced_persons", ["birth_date"])
-    op.create_index(op.f("ix_displaced_persons_phone_number"), "displaced_persons", ["phone_number"])
-    op.create_index(
-        op.f("ix_displaced_persons_phone_number_additional"), "displaced_persons", ["phone_number_additional"]
-    )
     op.create_index(op.f("ix_displaced_persons_tags"), "displaced_persons", ["tags"])
 
 

@@ -19,6 +19,7 @@ vulnerability_categories = Table(
     Index("ux_categories_name", text("lower(name)"), unique=True),
 )
 
+# Phone numbers are encrypted if provided
 displaced_persons = Table(
     "displaced_persons",
     metadata,
@@ -46,6 +47,12 @@ displaced_persons = Table(
     Column("tags", ARRAY(Text()), nullable=True),
     Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
     Column("updated_at", TIMESTAMP(timezone=True), default=utcnow, onupdate=utcnow),
+    # Indexes
+    Index("ix_displaced_persons_full_name", text("lower(name)")),
+    Index("ix_displaced_persons_status", "status"),
+    Index("ix_displaced_persons_email", text("lower(email)")),
+    Index("ix_displaced_persons_birth_date", "birth_date"),
+    Index("ix_displaced_persons_tags", "tags"),
 )
 
 documents = Table(
