@@ -23,6 +23,7 @@ displaced_persons = Table(
     "displaced_persons",
     metadata,
     Column("id", UUID, primary_key=True),
+    Column("encryption_key", Text(), nullable=True),
     Column("status", Text()),
     Column("external_id", Text()),
     Column("reference_id", Text()),

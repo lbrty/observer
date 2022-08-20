@@ -19,6 +19,7 @@ def upgrade():
     op.create_table(
         "displaced_persons",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
+        sa.Column("encryption_key", sa.Text(), nullable=True),
         sa.Column("status", sa.String(length=20), nullable=True),
         sa.Column("external_id", sa.String(length=128), nullable=True),
         sa.Column("reference_id", sa.String(length=128), nullable=True),
