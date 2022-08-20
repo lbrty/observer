@@ -16,6 +16,7 @@ asyncpg = "^0.26.0"
 greenlet = "^1.1.2"
 shortuuid = "^1.0.9"
 types-SQLAlchemy = "^1.4.50"
+cryptography = "^37.0.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"
