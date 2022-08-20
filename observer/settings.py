@@ -11,6 +11,10 @@ class Settings(BaseSettings):
     base_path: Path = here
     db_uri: PostgresDsn
 
+    # RSA key settings
+    key_size: int = 2048
+    public_exponent: int = 65537
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
