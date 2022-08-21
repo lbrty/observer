@@ -23,6 +23,7 @@ def generate(
     filename: str = Option(..., "--output", "-o", help="Output file (should be filename i.e. key.pem)"),
     key_size: int = Option(settings.key_size, "--size", "-s", help="Size of RSA key"),
 ):
+    """Generate RSA key"""
     print(f"Generating key {filename}")
 
     priv_key = generate_private_key(
@@ -44,6 +45,7 @@ def generate(
 
 @keys.command()
 def list_keys():
+    """List all keys from key store"""
     key_list = glob(f"{str(settings.key_store_path)}/*.pem")
     tree = Tree(f"Key store: {settings.key_store_path}")
     if key_list:

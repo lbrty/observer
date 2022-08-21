@@ -9,6 +9,7 @@ here = Path(__file__).parent.parent
 
 class Settings(BaseSettings):
     debug: bool = False
+    port: int = 3000
     base_path: Path = here
     db_uri: PostgresDsn
 
