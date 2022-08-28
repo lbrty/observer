@@ -17,10 +17,6 @@ class Environment:
     app: FastAPI
 
 
-def init_events(env: Environment) -> Environment:
-    return env
-
-
 def init_integrations(env: Environment) -> Environment:
     """Integrations can be for example Sentry, Datadog etc."""
     return env
@@ -57,7 +53,6 @@ def create_app(settings: Settings) -> FastAPI:
             init_integrations,
             init_routes,
             init_integrations,
-            init_events,
             init_exception_handlers,
         ],
         Environment(
