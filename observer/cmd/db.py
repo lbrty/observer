@@ -2,7 +2,7 @@ from alembic import command
 from alembic.config import Config
 from typer import Typer, Option
 
-from observer.settings import settings
+from observer.settings import db_settings, settings
 
 db = Typer()
 
@@ -16,7 +16,7 @@ def load_config(uri) -> Config:
 
 @db.command()
 def upgrade(
-    uri: str = Option(settings.db_uri, help="Database URI DSN"),
+    uri: str = Option(db_settings.db_uri, help="Database URI DSN"),
     rev: str = Option("head", help="Revision to upgrade"),
 ):
     config = load_config(uri)
@@ -25,7 +25,7 @@ def upgrade(
 
 @db.command()
 def downgrade(
-    uri: str = Option(settings.db_uri, help="Database URI DSN"),
+    uri: str = Option(db_settings.db_uri, help="Database URI DSN"),
     rev: str = Option("head", help="Revision to downgrade"),
 ):
     config = load_config(uri)
@@ -34,7 +34,7 @@ def downgrade(
 
 @db.command()
 def revision(
-    uri: str = Option(settings.db_uri, help="Database URI DSN"),
+    uri: str = Option(db_settings.db_uri, help="Database URI DSN"),
     message: str = Option(..., "--message", "-m", help="Migration message"),
     auto: bool = Option(False, "--auto", "-a", is_flag=True, help="Auto generate migration"),
 ):
@@ -44,7 +44,7 @@ def revision(
 
 @db.command()
 def current(
-    uri: str = Option(settings.db_uri, help="Database URI DSN"),
+    uri: str = Option(db_settings.db_uri, help="Database URI DSN"),
     verbose: bool = Option(False, is_flag=True, help="Verbose logs"),
 ):
     config = load_config(uri)
@@ -53,7 +53,7 @@ def current(
 
 @db.command()
 def history(
-    uri: str = Option(settings.db_uri, help="Database URI DSN"),
+    uri: str = Option(db_settings.db_uri, help="Database URI DSN"),
     verbose: bool = Option(False, is_flag=True, help="Verbose logs"),
 ):
     config = load_config(uri)
