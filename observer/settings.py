@@ -4,7 +4,7 @@ from typing import Optional, List
 from pydantic.env_settings import BaseSettings
 from pydantic.networks import PostgresDsn
 
-from observer.services.crypto import KeyLoaderTypes
+from observer.schemas.crypto import KeyLoaderTypes
 
 here = Path(__file__).parent.parent
 
@@ -13,7 +13,6 @@ class Settings(BaseSettings):
     debug: bool = False
     port: int = 3000
     base_path: Path = here
-    db_uri: PostgresDsn
 
     # OpenAPI
     title: str = "Observer API"
@@ -21,7 +20,7 @@ class Settings(BaseSettings):
 
     # Keystore and RSA key settings
     key_loader: KeyLoaderTypes = KeyLoaderTypes.fs
-    key_store_path: Path = here / "keys"
+    keystore_path: Path = here / "keys"
     key_size: int = 2048
     key_passwords: Optional[str] = None
     public_exponent: int = 65537
@@ -39,4 +38,18 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
 
 
+class DatabaseSettings(BaseSettings):
+    db_uri: PostgresDsn
+    pool_size: int = 5
+    max_overflow: int = 10
+    pool_timeout: int = 30
+    echo: bool = False
+    echo_pool: bool = False
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+
+
+db_settings = DatabaseSettings()
 settings = Settings()
