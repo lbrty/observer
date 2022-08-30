@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from typing import Any
 
+from sqlalchemy import MetaData
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import AsyncAdaptedQueuePool
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
-from sqlalchemy import MetaData
 
 metadata = MetaData()
 

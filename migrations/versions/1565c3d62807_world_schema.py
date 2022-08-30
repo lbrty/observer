@@ -4,8 +4,8 @@ Revision ID: 1565c3d62807
 Revises: 7109afee0217
 Create Date: 2022-08-10 19:42:15.777905
 """
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.

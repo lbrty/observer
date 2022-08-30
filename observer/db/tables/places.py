@@ -1,14 +1,6 @@
 from importlib.metadata import metadata
 
-from sqlalchemy import (
-    Column,
-    Index,
-    ForeignKey,
-    Text,
-    Table,
-    text,
-)
-
+from sqlalchemy import Column, ForeignKey, Index, Table, Text, text
 from sqlalchemy.dialects.postgresql import UUID
 
 countries = Table(

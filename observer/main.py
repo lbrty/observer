@@ -1,6 +1,6 @@
 from observer.app import create_app
 from observer.context import ctx
-from observer.db import connect, PoolOptions, disconnect
+from observer.db import PoolOptions, connect, disconnect
 from observer.services.crypto import get_key_loader
 from observer.settings import db_settings, settings
 

@@ -1,6 +1,6 @@
 from alembic import command
 from alembic.config import Config
-from typer import Typer, Option
+from typer import Option, Typer
 
 from observer.settings import db_settings, settings
 

@@ -1,12 +1,5 @@
-from sqlalchemy import (
-    Column,
-    Index,
-    ForeignKey,
-    Table,
-    Text,
-    text,
-)
-from sqlalchemy.dialects.postgresql import ARRAY, DATE, UUID, TIMESTAMP
+from sqlalchemy import Column, ForeignKey, Index, Table, Text, text
+from sqlalchemy.dialects.postgresql import ARRAY, DATE, TIMESTAMP, UUID
 
 from observer.db.tables import metadata
 from observer.db.util import utcnow

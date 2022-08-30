@@ -4,7 +4,7 @@ from typing import List, Protocol
 
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
-from observer.schemas.crypto import PrivateKey, KeyLoaderTypes
+from observer.schemas.crypto import KeyLoaderTypes, PrivateKey
 
 
 class KeychainLoader(Protocol):

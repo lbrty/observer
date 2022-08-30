@@ -2,17 +2,16 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     Column,
-    Index,
     ForeignKey,
+    Index,
     Table,
     Text,
     text,
 )
-from sqlalchemy.dialects.postgresql import ARRAY, DATE, JSONB, UUID, TIMESTAMP
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP, UUID
 
 from observer.db.tables import metadata
 from observer.db.util import utcnow
-
 
 users = Table(
     "users",

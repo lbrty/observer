@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, List
+from typing import List, Optional
 
 from pydantic.env_settings import BaseSettings
 from pydantic.networks import PostgresDsn

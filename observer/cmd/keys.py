@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.serialization import (
 )
 from rich.console import Console
 from rich.tree import Tree
-from typer import Typer, Option
+from typer import Option, Typer
 
 from observer.settings import settings
 
