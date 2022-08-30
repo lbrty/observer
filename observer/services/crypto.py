@@ -1,25 +1,10 @@
 import hashlib
-from dataclasses import dataclass
-from enum import Enum
 from glob import glob
 from typing import List, Protocol
 
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
-from observer.settings import settings
-
-
-@dataclass
-class PrivateKey:
-    hash: str
-    key: RSAPrivateKey
-
-
-class KeyLoaderTypes(str, Enum):
-    not_set = "not-set"
-    fs = "fs"
-    s3 = "s3"
+from observer.schemas.crypto import PrivateKey, KeyLoaderTypes
 
 
 class KeychainLoader(Protocol):
@@ -34,7 +19,7 @@ class FSLoader(KeychainLoader):
     name = KeyLoaderTypes.fs
 
     async def load(self, path: str):
-        if key_list := glob(f"{str(settings.key_store_path)}/**/*.pem"):
+        if key_list := glob(f"{path}/*.pem"):
             for key in key_list:
                 with open(key, "rb") as fp:
                     file_bytes = fp.read()
@@ -55,3 +40,17 @@ class S3Loader(KeychainLoader):
 
     async def load(self, path: str):
         pass
+
+
+class UnknownKeyLoaderError(ValueError):
+    pass
+
+
+def get_key_loader(loader_type: KeyLoaderTypes) -> KeychainLoader:
+    match loader_type:
+        case KeyLoaderTypes.fs:
+            return FSLoader()
+        case KeyLoaderTypes.s3:
+            return S3Loader()
+        case _:
+            raise UnknownKeyLoaderError

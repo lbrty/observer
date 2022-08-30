@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     description: str = "Observer API server"
 
     # Keystore and RSA key settings
-    key_loader: KeyLoaderTypes = KeyLoaderTypes.fs
+    key_loader_type: KeyLoaderTypes = KeyLoaderTypes.fs
     keystore_path: Path = here / "keys"
     key_size: int = 2048
     key_passwords: Optional[str] = None
