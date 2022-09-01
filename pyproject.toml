@@ -28,11 +28,13 @@ mypy = "^0.961"
 pre-commit = "^2.20.0"
 rich = "^12.5.1"
 autoflake = "^1.5.2"
+pytest-cov = "^3.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+# Tool configurations
 [tool.black]
 line-length = 120
 target-version = ["py310"]
@@ -60,4 +62,16 @@ remove-all-unused-imports = true
 remove-unused-variables = true
 recursive = true
 in-place = true
-exclude = "./.venv"
+exclude = ".venv,.git,.idea"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+addopts = "--cov=observer --cov-report=term-missing --cov-report=xml:reports/coverage.xml --junit-xml=reports/tests.xml"
+
+[tool.coverage.run]
+branch = true
+relative_files = false
+source = ["observer"]
+
+[tool.coverage.report]
+show_missing = true
