@@ -1,7 +1,7 @@
-from importlib.metadata import metadata
-
 from sqlalchemy import Column, ForeignKey, Index, Table, Text, text
 from sqlalchemy.dialects.postgresql import UUID
+
+from observer.db import metadata
 
 countries = Table(
     "countries",

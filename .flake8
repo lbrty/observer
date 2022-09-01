@@ -1,0 +1,14 @@
+[flake8]
+# More options are here: https://flake8.pycqa.org/en/latest/user/options.html
+ignore =
+    H301,
+    H401
+
+exclude =
+    .venv,
+    .git,
+    .idea,
+    __pycache__
+
+max_complexity = 10
+max-line-length = 120
