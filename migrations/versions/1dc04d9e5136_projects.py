@@ -1,4 +1,4 @@
-"""projects_table
+"""projects
 
 Revision ID: 1dc04d9e5136
 Revises: 178781a799d5

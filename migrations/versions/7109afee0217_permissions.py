@@ -1,4 +1,4 @@
-"""permissions_table
+"""permissions
 
 Revision ID: 7109afee0217
 Revises: 1dc04d9e5136

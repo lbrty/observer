@@ -1,4 +1,4 @@
-"""world schema
+"""places
 
 Revision ID: 1565c3d62807
 Revises: 7109afee0217
