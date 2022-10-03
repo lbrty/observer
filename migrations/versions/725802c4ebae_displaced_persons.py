@@ -38,8 +38,8 @@ def upgrade():
         sa.Column("category_id", postgresql.UUID(), nullable=True),
         sa.Column("creator_id", postgresql.UUID(), nullable=True),
         sa.Column("tags", postgresql.ARRAY(sa.Text()), nullable=True),
-        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
-        sa.Column("updated_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True)),
+        sa.Column("updated_at", postgresql.TIMESTAMP(timezone=True)),
         sa.ForeignKeyConstraint(
             ("category_id",),
             ["categories.id"],

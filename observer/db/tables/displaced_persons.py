@@ -18,9 +18,9 @@ displaced_persons = Table(
     metadata,
     Column("id", UUID, primary_key=True),
     Column("encryption_key", Text(), nullable=True),
-    Column("status", Text()),
-    Column("external_id", Text()),
-    Column("reference_id", Text()),
+    Column("status", Text(), nullable=True),
+    Column("external_id", Text(), nullable=True),
+    Column("reference_id", Text(), nullable=True),
     Column("email", Text(), nullable=True),
     Column("full_name", Text(), nullable=False),
     Column("birth_date", DATE, nullable=True),
@@ -41,21 +41,9 @@ displaced_persons = Table(
     Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
     Column("updated_at", TIMESTAMP(timezone=True), default=utcnow, onupdate=utcnow),
     # Indexes
-    Index("ix_displaced_persons_full_name", text("lower(name)")),
+    Index("ix_displaced_persons_full_name", text("lower(full_name)")),
     Index("ix_displaced_persons_status", "status"),
     Index("ix_displaced_persons_email", text("lower(email)")),
     Index("ix_displaced_persons_birth_date", "birth_date"),
     Index("ix_displaced_persons_tags", "tags"),
-)
-
-documents = Table(
-    "documents",
-    metadata,
-    Column("id", UUID, primary_key=True),
-    Column("encryption_key", Text()),
-    Column("name", Text(), nullable=False),
-    Column("path", Text(), nullable=False),
-    Column("person_id", UUID, ForeignKey("displaced_persons.id"), nullable=False),
-    Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
-    Index("ux_documents_name", text("lower(name)")),
 )
