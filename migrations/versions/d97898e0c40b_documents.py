@@ -20,15 +20,11 @@ def upgrade():
         "documents",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("encryption_key", sa.Text(), nullable=True),
-        sa.Column("name", sa.String(length=100), nullable=False),
-        sa.Column("path", sa.String(length=4), nullable=False),
-        sa.Column("person_id", postgresql.UUID(), nullable=False),
+        sa.Column("name", sa.Text(), nullable=False),
+        sa.Column("path", sa.Text(), nullable=False),
+        sa.Column("owner_id", postgresql.UUID(), nullable=False),
         sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
-        sa.ForeignKeyConstraint(
-            ("person_id",),
-            ["displaced_persons.id"],
-        ),
     )
 
     op.create_index(op.f("ix_documents_name"), "documents", [sa.text("lower(name)")])
