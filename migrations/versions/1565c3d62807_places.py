@@ -19,44 +19,53 @@ def upgrade():
     op.create_table(
         "countries",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("name", sa.String(length=100), nullable=False),
-        sa.Column("code", sa.String(length=4), nullable=False),
+        sa.Column("name", sa.Text(), nullable=False),
+        sa.Column("code", sa.Text(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
 
     op.create_index(op.f("ux_countries_name"), "countries", [sa.text("lower(name)")], unique=True)
+    op.create_index(op.f("ux_countries_code"), "countries", [sa.text("lower(code)")], unique=True)
 
     op.create_table(
         "states",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("name", sa.String(length=100), nullable=False),
-        sa.Column("code", sa.String(length=10), nullable=False),
+        sa.Column("name", sa.Text(), nullable=False),
+        sa.Column("code", sa.Text(), nullable=False),
         sa.Column("country_id", postgresql.UUID(), nullable=False),
         sa.ForeignKeyConstraint(
             ("country_id",),
-            ["users.id"],
+            ["countries.id"],
             ondelete="cascade",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
 
     op.create_index(op.f("ux_states_name"), "states", [sa.text("lower(name)")], unique=True)
+    op.create_index(op.f("ux_states_code"), "states", [sa.text("lower(code)")], unique=True)
 
     op.create_table(
         "cities",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("name", sa.String(length=100), nullable=False),
-        sa.Column("code", sa.String(length=10), nullable=False),
+        sa.Column("name", sa.Text(), nullable=False),
+        sa.Column("code", sa.Text(), nullable=False),
         sa.Column("state_id", postgresql.UUID(), nullable=False),
+        sa.Column("country_id", postgresql.UUID(), nullable=False),
         sa.ForeignKeyConstraint(
             ("state_id",),
-            ["users.id"],
+            ["states.id"],
+            ondelete="cascade",
+        ),
+        sa.ForeignKeyConstraint(
+            ("country_id",),
+            ["countries.id"],
             ondelete="cascade",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
 
     op.create_index(op.f("ux_cities_name"), "cities", [sa.text("lower(name)")], unique=True)
+    op.create_index(op.f("ux_cities_code"), "cities", [sa.text("lower(code)")], unique=True)
 
 
 def downgrade():
