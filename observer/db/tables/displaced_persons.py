@@ -9,7 +9,7 @@ vulnerability_categories = Table(
     metadata,
     Column("id", UUID, primary_key=True),
     Column("name", Text(), nullable=False),
-    Index("ux_categories_name", text("lower(name)"), unique=True),
+    Index("ux_vulnerability_categories_name", text("lower(name)"), unique=True),
 )
 
 # Phone numbers are encrypted if provided
