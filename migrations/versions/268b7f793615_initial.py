@@ -1,22 +1,22 @@
-"""initial extensions
+"""initial
 
-Revision ID: 65bd3ba22521
-Revises:
-Create Date: 2022-08-07 22:21:29.485044
+Revision ID: 268b7f793615
+Revises: 
+Create Date: 2022-10-08 21:10:12.331589
 """
 import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = "65bd3ba22521"
+revision = "268b7f793615"
 down_revision = None
 branch_labels = None
 depends_on = None
 
 
-def upgrade() -> None:
+def upgrade():
     op.execute(sa.text("CREATE EXTENSION IF NOT EXISTS pgcrypto"))
 
 
-def downgrade() -> None:
+def downgrade():
     op.execute(sa.text("DROP EXTENSION IF EXISTS pgcrypto"))

@@ -1,16 +1,18 @@
 """documents
 
-Revision ID: d97898e0c40b
-Revises: 725802c4ebae
-Create Date: 2022-08-10 20:29:55.767876
+Revision ID: b9a0f0c6205d
+Revises: 5f7d3d6098ed
+Create Date: 2022-10-08 22:14:59.997090
 """
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
+from observer.db.util import utcnow
+
 # revision identifiers, used by Alembic.
-revision = "d97898e0c40b"
-down_revision = "725802c4ebae"
+revision = "b9a0f0c6205d"
+down_revision = "5f7d3d6098ed"
 branch_labels = None
 depends_on = None
 
@@ -23,7 +25,7 @@ def upgrade():
         sa.Column("name", sa.Text(), nullable=False),
         sa.Column("path", sa.Text(), nullable=False),
         sa.Column("owner_id", postgresql.UUID(), nullable=False),
-        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), nullable=True),
+        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), default=utcnow, nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
 

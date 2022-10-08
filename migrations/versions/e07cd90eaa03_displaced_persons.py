@@ -1,16 +1,16 @@
-"""displaced persons
+"""displaced_persons
 
-Revision ID: 725802c4ebae
-Revises: b4849b0f8d04
-Create Date: 2022-08-10 19:59:40.736187
+Revision ID: e07cd90eaa03
+Revises: 193c427c31b7
+Create Date: 2022-10-08 22:16:24.340875
 """
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = "725802c4ebae"
-down_revision = "b4849b0f8d04"
+revision = "e07cd90eaa03"
+down_revision = "193c427c31b7"
 branch_labels = None
 depends_on = None
 
@@ -42,7 +42,7 @@ def upgrade():
         sa.Column("updated_at", postgresql.TIMESTAMP(timezone=True)),
         sa.ForeignKeyConstraint(
             ("category_id",),
-            ["categories.id"],
+            ["vulnerability_categories.id"],
             ondelete="SET NULL",
         ),
         sa.ForeignKeyConstraint(

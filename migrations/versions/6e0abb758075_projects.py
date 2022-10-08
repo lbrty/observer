@@ -1,16 +1,16 @@
 """projects
 
-Revision ID: 1dc04d9e5136
-Revises: 178781a799d5
-Create Date: 2022-08-10 19:06:42.550128
+Revision ID: 6e0abb758075
+Revises: 47cc3e1dfb71
+Create Date: 2022-10-08 22:09:43.300945
 """
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = "1dc04d9e5136"
-down_revision = "178781a799d5"
+revision = "6e0abb758075"
+down_revision = "47cc3e1dfb71"
 branch_labels = None
 depends_on = None
 
@@ -19,12 +19,12 @@ def upgrade():
     op.create_table(
         "projects",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("name", sa.String(length=128), nullable=False),
-        sa.Column("description", sa.Text(), nullable=True),
+        sa.Column("name", sa.Text(), nullable=False),
+        sa.Column("description", sa.Text(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
 
-    op.create_index(op.f("ux_projects_name"), "projects", [sa.text("lower(name)")], unique=True)
+    op.create_index(op.f("ix_projects_name"), "projects", [sa.text("lower(name)")])
 
 
 def downgrade():

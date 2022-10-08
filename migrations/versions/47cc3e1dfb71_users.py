@@ -1,16 +1,16 @@
-"""initial
+"""users
 
-Revision ID: 178781a799d5
-Revises:
-Create Date: 2022-08-10 17:24:11.324462
+Revision ID: 47cc3e1dfb71
+Revises: 268b7f793615
+Create Date: 2022-10-08 21:13:19.224300
 """
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = "178781a799d5"
-down_revision = "65bd3ba22521"
+revision = "47cc3e1dfb71"
+down_revision = "268b7f793615"
 branch_labels = None
 depends_on = None
 
@@ -19,13 +19,15 @@ def upgrade():
     op.create_table(
         "users",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("email", sa.String(length=255), nullable=False),
-        sa.Column("full_name", sa.String(length=128), nullable=True),
-        sa.Column("password_hash", sa.String(length=512), nullable=False),
-        sa.Column("role", sa.String(length=20), nullable=True),
+        sa.Column("email", sa.Text(), nullable=False),
+        sa.Column("full_name", sa.Text(), nullable=True),
+        sa.Column("password_hash", sa.Text(), nullable=False),
+        sa.Column("role", sa.Text(), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=True, server_default="1"),
         sa.Column("is_confirmed", sa.Boolean(), nullable=True, server_default="0"),
         sa.Column("mfa_enabled", sa.Boolean(), nullable=True, server_default="0"),
+        sa.Column("mfa_encrypted_secret", sa.Text(), nullable=True),
+        sa.Column("mfa_encrypted_backup_codes", sa.Text(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.CheckConstraint("role IN ('admin', 'consultant', 'guest', 'staff')", name="users_role_type_check"),
     )

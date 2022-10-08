@@ -1,16 +1,16 @@
 """permissions
 
-Revision ID: 7109afee0217
-Revises: 1dc04d9e5136
-Create Date: 2022-08-10 19:21:58.225226
+Revision ID: 5f7d3d6098ed
+Revises: d75cff45a8cd
+Create Date: 2022-10-08 22:14:29.378657
 """
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = "7109afee0217"
-down_revision = "1dc04d9e5136"
+revision = "5f7d3d6098ed"
+down_revision = "d75cff45a8cd"
 branch_labels = None
 depends_on = None
 

@@ -1,16 +1,16 @@
 """places
 
-Revision ID: 1565c3d62807
-Revises: 7109afee0217
-Create Date: 2022-08-10 19:42:15.777905
+Revision ID: 193c427c31b7
+Revises: 7e2a6f5627ca
+Create Date: 2022-10-08 22:15:48.379912
 """
 import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = "1565c3d62807"
-down_revision = "7109afee0217"
+revision = "193c427c31b7"
+down_revision = "7e2a6f5627ca"
 branch_labels = None
 depends_on = None
 

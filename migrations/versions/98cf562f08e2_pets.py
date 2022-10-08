@@ -1,8 +1,8 @@
 """pets
 
-Revision ID: d40f33bfada4
-Revises: d97898e0c40b
-Create Date: 2022-10-03 23:41:00.829837
+Revision ID: 98cf562f08e2
+Revises: e07cd90eaa03
+Create Date: 2022-10-08 22:16:41.157524
 """
 import sqlalchemy as sa
 from alembic import op
@@ -11,8 +11,8 @@ from sqlalchemy.dialects import postgresql
 from observer.db.util import utcnow
 
 # revision identifiers, used by Alembic.
-revision = "d40f33bfada4"
-down_revision = "d97898e0c40b"
+revision = "98cf562f08e2"
+down_revision = "e07cd90eaa03"
 branch_labels = None
 depends_on = None
 
@@ -20,13 +20,14 @@ depends_on = None
 def upgrade():
     op.create_table(
         "pets",
-        sa.Column("id", postgresql.UUID, primary_key=True),
+        sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("name", sa.Text(), nullable=False),
         sa.Column("notes", sa.Text(), nullable=True),
         sa.Column("status", sa.Text(), nullable=False),
         sa.Column("registration_id", sa.Text(), nullable=True),  # registration document id
         sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), default=utcnow),
-        sa.Column("owner_id", postgresql.UUID, nullable=True),
+        sa.Column("owner_id", postgresql.UUID(), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(
             ("owner_id",),
             ["users.id"],
