@@ -25,8 +25,8 @@ def upgrade():
         sa.Column("notes", sa.Text(), nullable=True),
         sa.Column("status", sa.Text(), nullable=False),
         sa.Column("registration_id", sa.Text(), nullable=True),  # registration document id
-        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), default=utcnow),
         sa.Column("owner_id", postgresql.UUID(), nullable=True),
+        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), default=utcnow),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(
             ("owner_id",),

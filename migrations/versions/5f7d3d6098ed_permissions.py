@@ -23,6 +23,7 @@ def upgrade():
         sa.Column("can_read", sa.Boolean(), nullable=False),
         sa.Column("can_update", sa.Boolean(), nullable=False),
         sa.Column("can_delete", sa.Boolean(), nullable=False),
+        sa.Column("can_create_projects", sa.Boolean(), default=False, nullable=False),
         sa.Column("can_read_documents", sa.Boolean(), nullable=False),
         sa.Column("can_read_personal_info", sa.Boolean(), nullable=False),
         sa.Column("user_id", postgresql.UUID(), nullable=False),
