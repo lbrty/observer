@@ -7,7 +7,7 @@ projects = Table(
     "projects",
     metadata,
     Column("id", UUID, primary_key=True),
-    Column("name", Text(), nullable=False, unique=True),
+    Column("name", Text(), nullable=False),
     Column("description", Text(), nullable=True),
     Index("ix_projects_name", text("lower(name)")),
 )
