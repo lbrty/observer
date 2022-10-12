@@ -11,6 +11,7 @@ projects = Table(
     Column("description", Text(), nullable=False),
     Column("type", Text(), nullable=False),
     Column("consultant_id", UUID(), nullable=False),
+    Column("beneficiary_age", Text(), nullable=True),
     Column("created_at", TIMESTAMP(timezone=True), default=utcnow, nullable=True),
     CheckConstraint("role IN ('humanitarian', 'legal', 'general')", name="support_records_types"),
 )
