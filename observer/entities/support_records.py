@@ -11,4 +11,5 @@ class SupportRecord(ModelBase):
     type: SupportType
     consultant_id: Identifier
     beneficiary_age: Optional[BeneficiaryAge]
+    owner_id: Identifier
     created_at: datetime
