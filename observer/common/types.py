@@ -13,11 +13,31 @@ class Role(str, Enum):
 
 
 class DisplacedPersonStatus(str, Enum):
-    pass
+    consulted = "consulted"
+    needs_call_back = "needs_call_back"
+    needs_legal_support = "needs_legal_support"
+    needs_social_support = "needs_social_support"
+    needs_monitoring = "needs_monitoring"
+    unknown = "unknown"
 
 
 class PetStatus(str, Enum):
     registered = "registered"
     adopted = "adopted"
     owner_found = "owner_found"
-    need_shelter = "need_shelter"
+    needs_shelter = "needs_shelter"
+    unknown = "unknown"
+
+
+class BeneficiaryAge(str, Enum):
+    infant = "0-1"
+    toddler = "1-3"
+    pre_school = "4-5"
+    middle_childhood = "6-11"
+    young_teen = "12-14"
+    teenager = "15-17"
+
+
+class 		SupportType(str, Enum):
+    humanitarian = "humanitarian"
+    legal = "legal"
