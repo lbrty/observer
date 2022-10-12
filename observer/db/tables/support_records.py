@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Table, Text
+from sqlalchemy import CheckConstraint, Column, Table, Text
 from sqlalchemy.dialects.postgresql import TIMESTAMP, UUID
 
 from observer.db.tables import metadata
@@ -12,4 +12,5 @@ projects = Table(
     Column("type", Text(), nullable=False),
     Column("consultant_id", UUID(), nullable=False),
     Column("created_at", TIMESTAMP(timezone=True), default=utcnow, nullable=True),
+    CheckConstraint("role IN ('humanitarian', 'legal', 'general')", name="support_records_types"),
 )

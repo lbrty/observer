@@ -36,6 +36,10 @@ class BeneficiaryAge(str, Enum):
     middle_childhood = "6-11"
     young_teen = "12-14"
     teenager = "15-17"
+    young_adult = "18-25"
+    early_adult = "26-34"
+    middle_aged_adult = "35-59"
+    old_adult = "60-100+"
 
 
 class SupportType(str, Enum):
