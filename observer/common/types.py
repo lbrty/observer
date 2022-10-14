@@ -45,4 +45,5 @@ class BeneficiaryAge(str, Enum):
 class SupportType(str, Enum):
     humanitarian = "humanitarian"
     legal = "legal"
+    medical = "medical"
     general = "general"
