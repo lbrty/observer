@@ -25,7 +25,7 @@ def upgrade():
         sa.Column("type", sa.Text(), nullable=False),
         sa.Column("consultant_id", postgresql.UUID(), nullable=False),
         sa.Column("beneficiary_age", sa.Text(), nullable=True),
-        sa.Column("owner_id", postgresql.UUID(), nullable=False),
+        sa.Column("displaced_person_id", postgresql.UUID(), nullable=False),
         sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), default=utcnow, nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.CheckConstraint("type IN ('humanitarian', 'legal', 'medical', 'general')", name="support_records_types"),
@@ -38,7 +38,7 @@ def upgrade():
     op.create_index(op.f("ix_support_records_type"), "support_records", ["type"])
     op.create_index(op.f("ix_support_records_description"), "support_records", [sa.text("lower(description)")])
     op.create_index(op.f("ix_support_records_consultant_id"), "support_records", ["consultant_id"])
-    op.create_index(op.f("ix_support_records_owner_id"), "support_records", ["owner_id"])
+    op.create_index(op.f("ix_support_records_displaced_person_id"), "support_records", ["displaced_person_id"])
 
 
 def downgrade():
