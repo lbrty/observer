@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from observer.common.types import Identifier
 
 
-class Document(BaseModel):
+class Permission(BaseModel):
     id: Identifier
     can_create: bool
     can_read: bool

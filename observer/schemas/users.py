@@ -21,7 +21,7 @@ class UpdateUser(BaseUser):
 
 class UserPasswordUpdate(BaseUser):
     old_password: SecretStr = Field(..., description="Valid old password")
-    new_password: SecretStr = Field(..., description="Valid old password")
+    new_password: SecretStr = Field(..., description="New password")
 
 
 class UserMFAUpdate(SchemaBase):
