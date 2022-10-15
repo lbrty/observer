@@ -38,7 +38,7 @@ def upgrade():
     op.create_index(op.f("ix_support_records_type"), "support_records", ["type"])
     op.create_index(op.f("ix_support_records_description"), "support_records", [sa.text("lower(description)")])
     op.create_index(op.f("ix_support_records_consultant_id"), "support_records", ["consultant_id"])
-    op.create_index(op.f("ix_support_records_displaced_person_id"), "support_records", ["displaced_person_id"])
+    op.create_index(op.f("ix_support_records_owner_id"), "support_records", ["owner_id"])
 
 
 def downgrade():
