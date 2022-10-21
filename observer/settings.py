@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     gzip_level: int = 8
     gzip_after_bytes: int = 1024
 
+    # swagger settings
+    swagger_output_file: Path = here / "docs/openapi.yml"
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
