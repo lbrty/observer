@@ -8,7 +8,7 @@ projects = Table(
     "projects",
     metadata,
     Column("id", UUID(), primary_key=True),
-    Column("description", Text(), nullable=False),
+    Column("description", Text(), nullable=True),
     Column("type", Text(), nullable=False),
     Column("consultant_id", UUID(), nullable=False),
     Column("beneficiary_age", Text(), nullable=True),

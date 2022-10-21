@@ -21,7 +21,7 @@ def upgrade():
     op.create_table(
         "support_records",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("description", sa.Text(), nullable=False),
+        sa.Column("description", sa.Text(), nullable=True),
         sa.Column("type", sa.Text(), nullable=False),
         sa.Column("consultant_id", postgresql.UUID(), nullable=False),
         sa.Column("beneficiary_age", sa.Text(), nullable=True),
