@@ -9,7 +9,13 @@ from observer.schemas.crypto import KeyLoaderTypes
 here = Path(__file__).parent.parent
 
 
-class Settings(BaseSettings):
+class SettingsBase(BaseSettings):
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+
+
+class Settings(SettingsBase):
     debug: bool = False
     port: int = 3000
     base_path: Path = here
@@ -36,22 +42,14 @@ class Settings(BaseSettings):
     # swagger settings
     swagger_output_file: Path = here / "docs/openapi.yml"
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
 
-
-class DatabaseSettings(BaseSettings):
+class DatabaseSettings(SettingsBase):
     db_uri: PostgresDsn
     pool_size: int = 5
     max_overflow: int = 10
     pool_timeout: int = 30
     echo: bool = False
     echo_pool: bool = False
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
 
 
 db_settings = DatabaseSettings()

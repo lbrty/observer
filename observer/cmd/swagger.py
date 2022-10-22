@@ -14,11 +14,12 @@ swagger = Typer()
 def generate(
     output_file: Path = Option(settings.swagger_output_file, help="Output file to save OpenAPI spec"),
 ):
+    """Generate OpenAPI spec"""
     app = FastAPI(
         debug=settings.debug,
         title=settings.title,
         description=settings.description,
-        redoc_url="/docs",
+        version="0.1.0",
     )
     app.include_router(health)
 
