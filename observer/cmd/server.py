@@ -16,6 +16,5 @@ def start(
         "observer.main:app",
         host=host,
         port=port,
-        debug=settings.debug,
         reload=settings.debug,
     )

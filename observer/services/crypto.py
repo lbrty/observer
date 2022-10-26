@@ -3,8 +3,11 @@ from glob import glob
 from typing import List, Protocol
 
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from structlog import get_logger
 
 from observer.schemas.crypto import KeyLoaderTypes, PrivateKey
+
+logger = get_logger(service="crypto")
 
 
 class KeychainLoader(Protocol):
@@ -24,15 +27,16 @@ class FSLoader(KeychainLoader):
                 with open(key, "rb") as fp:
                     file_bytes = fp.read()
                     h = hashlib.new("sha256", file_bytes)
-                    self.keys.append(
-                        PrivateKey(
-                            hash=str(h.hexdigest())[:16].upper(),
-                            key=load_pem_private_key(
-                                file_bytes,
-                                password=None,
-                            ),
-                        )
+                    private_key = PrivateKey(
+                        hash=str(h.hexdigest())[:16].upper(),
+                        key=load_pem_private_key(
+                            file_bytes,
+                            password=None,
+                        ),
                     )
+                    self.keys.append(private_key)
+
+                    logger.info("Loaded RSAPrivateKey", SHA256=h)
 
 
 class S3Loader(KeychainLoader):

@@ -1,7 +1,10 @@
+import sys
+
 from observer.app import create_app
 from observer.context import ctx
 from observer.db import PoolOptions, connect, disconnect
 from observer.services.crypto import get_key_loader
+from observer.services.jwt import JWTHandler
 from observer.settings import db_settings, settings
 
 app = create_app(settings)
@@ -22,10 +25,14 @@ async def on_startup():
 
     ctx.key_loader_type = get_key_loader(settings.key_loader_type)
     await ctx.key_loader_type.load(settings.keystore_path)
-    print(
-        f"Key loader: {settings.key_loader_type}, Keystore: {settings.keystore_path}, Keys loaded:"
-        f" {len(ctx.key_loader_type.keys)}"
-    )
+    num_keys = len(ctx.key_loader_type.keys)
+    if num_keys == 0:
+        print(f"No keys found, please generate new keys and move to {settings.keystore_path}")
+        sys.exit(1)
+
+    print(f"Key loader: {settings.key_loader_type}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
+
+    ctx.jwt_handler = JWTHandler(ctx.key_loader.keys[0])
 
 
 @app.on_event("shutdown")
