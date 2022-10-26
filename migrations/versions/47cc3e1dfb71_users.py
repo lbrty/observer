@@ -19,6 +19,7 @@ def upgrade():
     op.create_table(
         "users",
         sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
+        sa.Column("ref_id", sa.Text(), nullable=False),
         sa.Column("email", sa.Text(), nullable=False),
         sa.Column("full_name", sa.Text(), nullable=True),
         sa.Column("password_hash", sa.Text(), nullable=False),

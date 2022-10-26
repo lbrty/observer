@@ -32,6 +32,7 @@ class UserMFAUpdate(SchemaBase):
 
 class User(BaseUser):
     id: Identifier = Field(..., description="ID of user")
+    ref_id: str = Field(..., description="Reference ID which is used to hide real user ID")
     is_active: bool = Field(True, description="Is user active?")
     is_confirmed: bool = Field(False, description="Is user confirmed?")
     mfa_enabled: bool = Field(False, description="Is MFA enabled for user?")

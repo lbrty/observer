@@ -7,6 +7,7 @@ users = Table(
     "users",
     metadata,
     Column("id", UUID(), primary_key=True),
+    Column("ref_id", Text(), primary_key=True),
     Column("email", Text(), nullable=False),
     Column("full_name", Text(), nullable=True),
     Column("password_hash", Text(), nullable=False),
