@@ -5,7 +5,7 @@ from observer.common.types import Identifier, Role
 
 class User(BaseModel):
     id: Identifier
-    ref_id: str
+    ref_id: Identifier
     email: EmailStr
     full_name: str | None
     password_hash: str

@@ -32,7 +32,7 @@ async def on_startup():
 
     print(f"Key loader: {settings.key_loader_type}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
 
-    ctx.jwt_handler = JWTHandler(ctx.key_loader.keys[0])
+    ctx.jwt_handler = JWTHandler(ctx.key_loader_type.keys[0])
 
 
 @app.on_event("shutdown")
