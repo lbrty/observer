@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Table
+from sqlalchemy import Boolean, Column, ForeignKey, Table, text
 from sqlalchemy.dialects.postgresql import UUID
 
 from observer.db.tables import metadata
@@ -6,7 +6,7 @@ from observer.db.tables import metadata
 permissions = Table(
     "permissions",
     metadata,
-    Column("id", UUID(), primary_key=True),
+    Column("id", UUID(), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("can_create", Boolean(), default=False, nullable=False),
     Column("can_read", Boolean(), default=False, nullable=False),
     Column("can_update", Boolean(), default=False, nullable=False),

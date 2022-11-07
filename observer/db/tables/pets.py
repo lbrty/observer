@@ -7,7 +7,7 @@ from observer.db.util import utcnow
 pets = Table(
     "pets",
     metadata,
-    Column("id", UUID(), primary_key=True),
+    Column("id", UUID(), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("name", Text(), nullable=False),
     Column("notes", Text(), nullable=True),
     Column("status", Text(), nullable=False),

@@ -7,7 +7,7 @@ from observer.db.util import utcnow
 documents = Table(
     "documents",
     metadata,
-    Column("id", UUID(), primary_key=True),
+    Column("id", UUID(), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("encryption_key", Text(), nullable=True),
     Column("name", Text(), nullable=False),
     Column("path", Text(), nullable=False),

@@ -7,7 +7,7 @@ from observer.db.util import utcnow
 vulnerability_categories = Table(
     "vulnerability_categories",
     metadata,
-    Column("id", UUID(), primary_key=True),
+    Column("id", UUID(), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("name", Text(), nullable=False),
     Index("ux_vulnerability_categories_name", text("lower(name)"), unique=True),
 )
@@ -16,7 +16,7 @@ vulnerability_categories = Table(
 displaced_persons = Table(
     "displaced_persons",
     metadata,
-    Column("id", UUID(), primary_key=True),
+    Column("id", UUID(), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("encryption_key", Text(), nullable=True),
     Column("status", Text(), nullable=True),
     Column("external_id", Text(), nullable=True),

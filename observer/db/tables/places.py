@@ -6,7 +6,7 @@ from observer.db import metadata
 countries = Table(
     "countries",
     metadata,
-    Column("id", UUID(), primary_key=True),
+    Column("id", UUID(), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("name", Text(), nullable=False),
     Column("code", Text(), nullable=False),
     Index("ux_countries_name", text("lower(name)"), unique=True),
@@ -16,7 +16,7 @@ countries = Table(
 states = Table(
     "states",
     metadata,
-    Column("id", UUID(), primary_key=True),
+    Column("id", UUID(), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("name", Text(), nullable=False),
     Column("code", Text(), nullable=False),
     Column("country_id", UUID(), ForeignKey("countries.id"), nullable=False),
@@ -27,7 +27,7 @@ states = Table(
 cities = Table(
     "cities",
     metadata,
-    Column("id", UUID(), primary_key=True),
+    Column("id", UUID(), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("name", Text(), nullable=False),
     Column("code", Text(), nullable=False),
     Column("state_id", UUID(), ForeignKey("states.id"), nullable=False),

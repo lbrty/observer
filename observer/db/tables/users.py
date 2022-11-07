@@ -6,7 +6,7 @@ from observer.db.tables import metadata
 users = Table(
     "users",
     metadata,
-    Column("id", UUID(), primary_key=True),
+    Column("id", UUID(), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("ref_id", Text(), primary_key=True),
     Column("email", Text(), nullable=False),
     Column("full_name", Text(), nullable=True),
