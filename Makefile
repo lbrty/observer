@@ -6,9 +6,9 @@ fmt:
 
 .PHONY: lint
 lint:
-	#TODO: bug in github poetry run autoflake . -c --quiet -j 10
-	poetry run black . --check --quiet
-	poetry run isort . -c --quiet
+	poetry run ruff . -q
+	poetry run black . --check -q
+	poetry run isort . -c -q
 
 .PHONY: serve
 serve:

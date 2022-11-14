@@ -35,6 +35,10 @@ rich = "^12.6.0"
 autoflake = "^1.7.6"
 pytest-cov = "^4.0.0"
 
+[tool.poetry.group.dev.dependencies]
+python-dotenv = "^0.21.0"
+ruff = "^0.0.118"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
@@ -61,6 +65,10 @@ ignore_missing_imports = true
 [tool.isort]
 profile = "black"
 src_paths = ["migrations", "observer", "tests"]
+
+[tool.ruff]
+line-length = 120
+ignore = ["E999"]
 
 [tool.autoflake]
 remove-all-unused-imports = true
