@@ -1,8 +1,13 @@
+from datetime import datetime
 from enum import Enum
-from typing import TypeAlias
+from typing import List, TypeAlias
 from uuid import UUID
 
 Identifier: TypeAlias = UUID | str
+SomeStr: TypeAlias = str | None
+SomeDatetime: TypeAlias = datetime | None
+SomeIdentifier: TypeAlias = Identifier | None
+SomeList: TypeAlias = List | None
 
 
 class Role(str, Enum):
@@ -18,6 +23,7 @@ class DisplacedPersonStatus(str, Enum):
     needs_legal_support = "needs_legal_support"
     needs_social_support = "needs_social_support"
     needs_monitoring = "needs_monitoring"
+    registered = "registered"
     unknown = "unknown"
 
 
