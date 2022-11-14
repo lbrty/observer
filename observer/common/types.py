@@ -1,10 +1,11 @@
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 from typing import List, TypeAlias
 from uuid import UUID
 
 Identifier: TypeAlias = UUID | str
 SomeStr: TypeAlias = str | None
+SomeDate: TypeAlias = date | None
 SomeDatetime: TypeAlias = datetime | None
 SomeIdentifier: TypeAlias = Identifier | None
 SomeList: TypeAlias = List | None

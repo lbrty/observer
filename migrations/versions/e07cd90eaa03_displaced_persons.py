@@ -76,6 +76,18 @@ def upgrade():
             ondelete="SET NULL",
         ),
         sa.PrimaryKeyConstraint("id"),
+        sa.CheckConstraint(
+            """status IN (
+                'consulted',
+                'needs_call_back',
+                'needs_legal_support',
+                'needs_social_support',
+                'needs_monitoring',
+                'registered',
+                'unknown'
+            )""",
+            name="displaced_persons_status",
+        ),
     )
 
     op.create_index(op.f("ix_displaced_persons_full_name"), "displaced_persons", [sa.text("lower(full_name)")])

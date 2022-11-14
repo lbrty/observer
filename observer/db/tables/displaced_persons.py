@@ -1,4 +1,14 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Index, Table, Text, func, text
+from sqlalchemy import (
+    CheckConstraint,
+    Column,
+    DateTime,
+    ForeignKey,
+    Index,
+    Table,
+    Text,
+    func,
+    text,
+)
 from sqlalchemy.dialects.postgresql import ARRAY, DATE, UUID
 
 from observer.db.tables import metadata
@@ -39,6 +49,19 @@ displaced_persons = Table(
     Column("tags", ARRAY(Text()), nullable=True),
     Column("created_at", DateTime(timezone=True), server_default=func.now()),
     Column("updated_at", DateTime(timezone=True), server_default=func.now(), onupdate=func.now()),
+    # Constraints
+    CheckConstraint(
+        """status IN (
+            'consulted',
+            'needs_call_back',
+            'needs_legal_support',
+            'needs_social_support',
+            'needs_monitoring',
+            'registered',
+            'unknown'
+        )""",
+        name="displaced_persons_status",
+    ),
     # Indexes
     Index("ix_displaced_persons_full_name", text("lower(full_name)")),
     Index("ix_displaced_persons_reference_id", "reference_id"),
