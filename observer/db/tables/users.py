@@ -19,6 +19,7 @@ users = Table(
     Column("mfa_encrypted_backup_codes", Text(), nullable=True),
     Index("ix_users_full_name", text("lower(full_name)")),
     Index("ux_users_email", text("lower(email)"), unique=True),
+    Index("ux_users_ref_id", "ref_id", unique=True),
     Index("ix_users_is_active", "is_active"),
     CheckConstraint("role IN ('admin', 'consultant', 'guest', 'staff')", name="users_role_type_check"),
 )

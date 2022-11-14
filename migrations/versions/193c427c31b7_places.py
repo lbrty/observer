@@ -43,6 +43,7 @@ def upgrade():
 
     op.create_index(op.f("ux_states_name"), "states", [sa.text("lower(name)")], unique=True)
     op.create_index(op.f("ux_states_code"), "states", [sa.text("lower(code)")], unique=True)
+    op.create_index(op.f("ix_states_country_id"), "states", ["country_id"])
 
     op.create_table(
         "cities",
@@ -66,6 +67,8 @@ def upgrade():
 
     op.create_index(op.f("ux_cities_name"), "cities", [sa.text("lower(name)")], unique=True)
     op.create_index(op.f("ux_cities_code"), "cities", [sa.text("lower(code)")], unique=True)
+    op.create_index(op.f("ix_cities_state_id"), "cities", ["state_id"])
+    op.create_index(op.f("ix_cities_country_id"), "cities", ["country_id"])
 
 
 def downgrade():

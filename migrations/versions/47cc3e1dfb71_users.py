@@ -35,6 +35,7 @@ def upgrade():
 
     op.create_index(op.f("ix_users_full_name"), "users", [sa.text("lower(full_name)")])
     op.create_index(op.f("ix_users_is_active"), "users", ["is_active"])
+    op.create_index(op.f("ux_users_ref_id"), "users", ["ref_id"], unique=True)
     op.create_index(op.f("ux_users_email"), "users", [sa.text("lower(email)")], unique=True)
 
 

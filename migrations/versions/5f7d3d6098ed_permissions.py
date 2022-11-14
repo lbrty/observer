@@ -39,6 +39,9 @@ def upgrade():
         ),
     )
 
+    op.create_index(op.f("ix_permissions_user_id"), "permissions", ["user_id"])
+    op.create_index(op.f("ix_permissions_project_id"), "permissions", ["project_id"])
+
 
 def downgrade():
     op.drop_table("permissions")

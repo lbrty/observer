@@ -36,17 +36,17 @@ def upgrade():
         sa.Column("current_state_id", postgresql.UUID(), nullable=True),
         sa.Column("project_id", postgresql.UUID(), nullable=True),
         sa.Column("category_id", postgresql.UUID(), nullable=True),
-        sa.Column("creator_id", postgresql.UUID(), nullable=True),
+        sa.Column("consultant_id", postgresql.UUID(), nullable=True),
         sa.Column("tags", postgresql.ARRAY(sa.Text()), nullable=True),
-        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True)),
-        sa.Column("updated_at", postgresql.TIMESTAMP(timezone=True)),
+        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=True),
+        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=True),
         sa.ForeignKeyConstraint(
             ("category_id",),
             ["vulnerability_categories.id"],
             ondelete="SET NULL",
         ),
         sa.ForeignKeyConstraint(
-            ("creator_id",),
+            ("consultant_id",),
             ["users.id"],
             ondelete="SET NULL",
         ),
@@ -79,9 +79,17 @@ def upgrade():
     )
 
     op.create_index(op.f("ix_displaced_persons_full_name"), "displaced_persons", [sa.text("lower(full_name)")])
+    op.create_index(op.f("ix_displaced_persons_reference_id"), "displaced_persons", ["reference_id"])
     op.create_index(op.f("ix_displaced_persons_status"), "displaced_persons", ["status"])
     op.create_index(op.f("ix_displaced_persons_email"), "displaced_persons", [sa.text("lower(email)")])
     op.create_index(op.f("ix_displaced_persons_birth_date"), "displaced_persons", ["birth_date"])
+    op.create_index(op.f("ix_displaced_persons_category_id"), "displaced_persons", ["category_id"])
+    op.create_index(op.f("ix_displaced_persons_consultant_id"), "displaced_persons", ["consultant_id"])
+    op.create_index(op.f("is_displaced_persons_current_state_id"), "displaced_persons", ["current_state_id"])
+    op.create_index(op.f("is_displaced_persons_current_city_id"), "displaced_persons", ["current_city_id"])
+    op.create_index(op.f("ix_displaced_persons_from_state_id"), "displaced_persons", ["from_state_id"])
+    op.create_index(op.f("ix_displaced_persons_from_city_id"), "displaced_persons", ["from_city_id"])
+    op.create_index(op.f("ix_displaced_persons_project_id"), "displaced_persons", ["project_id"])
     op.create_index(op.f("ix_displaced_persons_tags"), "displaced_persons", ["tags"])
 
 

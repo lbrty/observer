@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Table, text
+from sqlalchemy import Boolean, Column, ForeignKey, Index, Table, text
 from sqlalchemy.dialects.postgresql import UUID
 
 from observer.db.tables import metadata
@@ -16,4 +16,6 @@ permissions = Table(
     Column("can_read_personal_info", Boolean(), default=False, nullable=False),
     Column("user_id", UUID(), ForeignKey("users.id"), nullable=False),
     Column("project_id", UUID(), ForeignKey("projects.id"), nullable=False),
+    Index("ix_permissions_user_id", "user_id"),
+    Index("ix_permissions_project_id", "project_id"),
 )

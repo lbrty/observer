@@ -1,8 +1,7 @@
-from sqlalchemy import Column, ForeignKey, Index, Table, Text, text
-from sqlalchemy.dialects.postgresql import TIMESTAMP, UUID
+from sqlalchemy import Column, DateTime, ForeignKey, Index, Table, Text, func, text
+from sqlalchemy.dialects.postgresql import UUID
 
 from observer.db import metadata
-from observer.db.util import utcnow
 
 pets = Table(
     "pets",
@@ -12,7 +11,7 @@ pets = Table(
     Column("notes", Text(), nullable=True),
     Column("status", Text(), nullable=False),
     Column("registration_id", Text(), nullable=True),  # registration document id
-    Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
+    Column("created_at", DateTime(timezone=True), server_default=func.now(), nullable=True),
     Column("owner_id", UUID(), ForeignKey("displaced_persons.id"), nullable=True),
     Index("ix_pets_name", text("lower(name)")),
     Index("ix_pets_status", text("status")),

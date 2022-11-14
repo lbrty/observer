@@ -22,6 +22,7 @@ states = Table(
     Column("country_id", UUID(), ForeignKey("countries.id"), nullable=False),
     Index("ux_states_name", text("lower(name)"), unique=True),
     Index("ux_states_code", text("lower(code)"), unique=True),
+    Index("ix_states_country_id", "country_id"),
 )
 
 cities = Table(
@@ -34,4 +35,6 @@ cities = Table(
     Column("country_id", UUID(), ForeignKey("countries.id"), nullable=False),
     Index("ux_cities_name", text("lower(name)"), unique=True),
     Index("ux_cities_code", text("lower(code)"), unique=True),
+    Index("ix_states_country_id", "country_id"),
+    Index("ix_states_state_id", "state_id"),
 )

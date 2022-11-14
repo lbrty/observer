@@ -1,8 +1,7 @@
-from sqlalchemy import Column, ForeignKey, Index, Table, Text, text
-from sqlalchemy.dialects.postgresql import ARRAY, DATE, TIMESTAMP, UUID
+from sqlalchemy import Column, DateTime, ForeignKey, Index, Table, Text, func, text
+from sqlalchemy.dialects.postgresql import ARRAY, DATE, UUID
 
 from observer.db.tables import metadata
-from observer.db.util import utcnow
 
 vulnerability_categories = Table(
     "vulnerability_categories",
@@ -36,14 +35,22 @@ displaced_persons = Table(
     Column("project_id", UUID(), ForeignKey("projects.id"), nullable=True),
     Column("category_id", UUID(), ForeignKey("vulnerability_categories.id"), nullable=True),
     # User's id who registered
-    Column("creator_id", UUID(), ForeignKey("users.id"), nullable=True),
+    Column("consultant_id", UUID(), ForeignKey("users.id"), nullable=True),
     Column("tags", ARRAY(Text()), nullable=True),
-    Column("created_at", TIMESTAMP(timezone=True), default=utcnow),
-    Column("updated_at", TIMESTAMP(timezone=True), default=utcnow, onupdate=utcnow),
+    Column("created_at", DateTime(timezone=True), server_default=func.now()),
+    Column("updated_at", DateTime(timezone=True), server_default=func.now(), onupdate=func.now()),
     # Indexes
     Index("ix_displaced_persons_full_name", text("lower(full_name)")),
+    Index("ix_displaced_persons_reference_id", "reference_id"),
     Index("ix_displaced_persons_status", "status"),
     Index("ix_displaced_persons_email", text("lower(email)")),
     Index("ix_displaced_persons_birth_date", "birth_date"),
+    Index("ix_displaced_persons_category_id", "category_id"),
+    Index("ix_displaced_persons_consultant_id", "consultant_id"),
+    Index("ix_displaced_persons_current_state_id", "current_state_id"),
+    Index("ix_displaced_persons_current_city_id", "current_city_id"),
+    Index("ix_displaced_persons_from_state_id", "from_state_id"),
+    Index("ix_displaced_persons_from_city_id", "from_city_id"),
+    Index("ix_displaced_persons_project_id", "project_id"),
     Index("ix_displaced_persons_tags", "tags"),
 )

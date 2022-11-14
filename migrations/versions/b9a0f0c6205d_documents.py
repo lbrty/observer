@@ -8,8 +8,6 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-from observer.db.util import utcnow
-
 # revision identifiers, used by Alembic.
 revision = "b9a0f0c6205d"
 down_revision = "5f7d3d6098ed"
@@ -25,11 +23,12 @@ def upgrade():
         sa.Column("name", sa.Text(), nullable=False),
         sa.Column("path", sa.Text(), nullable=False),
         sa.Column("owner_id", postgresql.UUID(), nullable=False),
-        sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), default=utcnow, nullable=True),
+        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
 
     op.create_index(op.f("ix_documents_name"), "documents", [sa.text("lower(name)")])
+    op.create_index(op.f("ix_documents_owner_id"), "documents", ["owner_id"])
 
 
 def downgrade():
