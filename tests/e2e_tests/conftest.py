@@ -22,11 +22,11 @@ def event_loop():
 
 
 @pytest.fixture(scope="session")
-async def env_settings():
+def env_settings():
     load_dotenv(".env.test")
     settings.debug = True
     db_settings.db_uri = PostgresDsn(os.getenv("DB_URI"), scheme="postgresql+asyncpg")
-    yield settings
+    return settings
 
 
 @pytest.fixture(scope="session")
@@ -42,11 +42,11 @@ async def db(env_settings):
 
 
 @pytest.fixture(scope="session")
-async def test_app(env_settings, db) -> FastAPI:
-    yield create_app(env_settings)
+def test_app(env_settings, db) -> FastAPI:
+    return create_app(env_settings)
 
 
 @pytest.fixture(scope="function")
 async def client(test_app):
-    app_client = httpx.AsyncClient(app=test_app, base_url="http://localhost")
+    app_client = httpx.AsyncClient(app=test_app, base_url="http://test")
     yield app_client
