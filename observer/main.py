@@ -23,16 +23,16 @@ async def on_startup():
         ),
     )
 
-    ctx.key_loader_type = get_key_loader(settings.key_loader_type)
-    await ctx.key_loader_type.load(settings.keystore_path)
-    num_keys = len(ctx.key_loader_type.keys)
+    ctx.key_loader = get_key_loader(settings.key_loader_type)
+    await ctx.key_loader.load(settings.keystore_path)
+    num_keys = len(ctx.key_loader.keys)
     if num_keys == 0:
         print(f"No keys found, please generate new keys and move to {settings.keystore_path}")
         sys.exit(1)
 
-    print(f"Key loader: {settings.key_loader_type}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
+    print(f"Key loader: {settings.key_loader}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
 
-    ctx.jwt_handler = JWTHandler(ctx.key_loader_type.keys[0])
+    ctx.jwt_handler = JWTHandler(ctx.key_loader.keys[0])
 
 
 @app.on_event("shutdown")

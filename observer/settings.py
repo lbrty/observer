@@ -5,6 +5,7 @@ from pydantic.env_settings import BaseSettings
 from pydantic.networks import PostgresDsn
 
 from observer.schemas.crypto import KeyLoaderTypes
+from observer.services.crypto import FSLoader, KeychainLoader
 
 here = Path(__file__).parent.parent
 
@@ -25,6 +26,7 @@ class Settings(SettingsBase):
     description: str = "Observer API server"
 
     # Keystore and RSA key settings
+    key_loader: KeychainLoader = FSLoader
     key_loader_type: KeyLoaderTypes = KeyLoaderTypes.fs
     keystore_path: Path = here / "keys"
     key_size: int = 2048
