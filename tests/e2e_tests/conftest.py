@@ -48,5 +48,5 @@ async def test_app(env_settings, db) -> FastAPI:
 
 @pytest.fixture(scope="function")
 async def client(test_app):
-    app_client = httpx.AsyncClient(app=test_app)
+    app_client = httpx.AsyncClient(app=test_app, base_url="http://localhost")
     yield app_client
