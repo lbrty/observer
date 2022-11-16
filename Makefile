@@ -10,6 +10,10 @@ lint:
 	poetry run black . --check -q
 	poetry run isort . -c -q
 
+.PHONY: test
+test:
+	poetry run pytest tests
+
 .PHONY: serve
 serve:
 	python -m observer server start
