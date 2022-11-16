@@ -1,15 +1,15 @@
 import asyncio
 import os
 
+import httpx
 import pytest
-import pytest_asyncio
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic.networks import PostgresDsn
 
 from observer.app import create_app
 from observer.context import ctx
-from observer.db import connect, PoolOptions
+from observer.db import PoolOptions, connect, disconnect, metadata
 from observer.settings import db_settings, settings
 
 
@@ -22,25 +22,31 @@ def event_loop():
 
 
 @pytest.fixture(scope="session")
-def env_settings():
+async def env_settings():
     load_dotenv(".env.test")
     settings.debug = True
     db_settings.db_uri = PostgresDsn(os.getenv("DB_URI"), scheme="postgresql+asyncpg")
+    yield settings
 
 
-@pytest_asyncio.fixture(scope="session")
-async def app(env_settings) -> FastAPI:
-    return create_app(env_settings)
-
-
-@pytest_asyncio.fixture(scope="session")
+@pytest.fixture(scope="session")
 async def db(env_settings):
-    ctx.db = await connect(
-        db_settings.db_uri,
-        PoolOptions()
-    )
+    ctx.db = await connect(db_settings.db_uri, PoolOptions())
+    async with ctx.db.engine.begin() as conn:
+        try:
+            await conn.run_sync(metadata.create_all)
+            yield ctx
+        finally:
+            await conn.run_sync(metadata.drop_all)
+            await disconnect(ctx.db.engine)
 
 
-@pytest_asyncio.fixture(scope="session")
-async def client(event_loop, env_settings, db, app):
-    pass
+@pytest.fixture(scope="session")
+async def test_app(env_settings, db) -> FastAPI:
+    yield create_app(env_settings)
+
+
+@pytest.fixture(scope="function")
+async def client(test_app):
+    app_client = httpx.AsyncClient(app=test_app)
+    yield app_client
