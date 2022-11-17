@@ -35,6 +35,7 @@ def event_loop():
 def env_settings():
     load_dotenv(".env.test")
     settings.debug = True
+    print(os.getenv("DB_URI"))
     db_settings.db_uri = PostgresDsn(os.getenv("DB_URI"), scheme="postgresql+asyncpg")
     return settings
 
