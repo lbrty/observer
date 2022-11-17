@@ -15,6 +15,9 @@ class UsersRepositoryInterface(Protocol):
     async def get_by_ref_id(self, ref_id: Identifier) -> User | None:
         raise NotImplementedError
 
+    async def get_by_email(self, email: str) -> User | None:
+        raise NotImplementedError
+
 
 class UsersRepository(UsersRepositoryInterface):
     def __init__(self, db: Database):
@@ -29,6 +32,13 @@ class UsersRepository(UsersRepositoryInterface):
 
     async def get_by_ref_id(self, ref_id: Identifier) -> User | None:
         query = select(users).where(users.c.ref_id == ref_id)
+        if result := await self.db.fetchone(query):
+            return User(**result)
+
+        return None
+
+    async def get_by_email(self, email: str) -> User | None:
+        query = select(users).where(users.c.email == email)
         if result := await self.db.fetchone(query):
             return User(**result)
 

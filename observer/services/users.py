@@ -15,6 +15,9 @@ class UsersServiceInterface(Protocol):
     async def get_by_ref_id(self, ref_id: Identifier) -> User | None:
         raise NotImplementedError
 
+    async def get_by_email(self, email: str) -> User | None:
+        raise NotImplementedError
+
     @staticmethod
     async def to_response(user: User) -> users.User:
         raise NotImplementedError
@@ -33,6 +36,9 @@ class UsersService(Protocol):
 
     async def get_by_ref_id(self, ref_id: Identifier) -> User | None:
         return await self.repo.get_by_ref_id(ref_id)
+
+    async def get_by_email(self, email: str) -> User | None:
+        return await self.repo.get_by_email(email)
 
     @staticmethod
     async def to_response(user: User) -> users.User:

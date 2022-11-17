@@ -25,7 +25,8 @@ class AuthService(AuthServiceInterface):
         self.users_service = users_service
 
     async def token_login(self, login_payload: LoginPayload) -> TokenResponse:
-        ...
+        await self.users_service.get_by_id(login_payload.email)
+        # TODO: verify payload.password hash against user.password_hash using bcrypt
 
     async def refresh_token(self, refresh_token: str) -> TokenResponse:
         ...
