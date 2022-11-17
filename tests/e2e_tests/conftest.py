@@ -36,7 +36,12 @@ def env_settings():
     load_dotenv(".env.test")
     settings.debug = True
     db_settings.db_uri = PostgresDsn(os.getenv("DB_URI"), scheme="postgresql+asyncpg")
-    settings.key_loader = FSLoader()
+    return settings
+
+
+@pytest.fixture(scope="session")
+async def encryption_keys(env_settings):
+    ctx.key_loader = FSLoader()
     priv_key = generate_private_key(
         public_exponent=settings.public_exponent,
         key_size=2048,
@@ -49,7 +54,7 @@ def env_settings():
     )
 
     h = hashlib.new("sha256", priv_key_bytes)
-    settings.key_loader.keys = [
+    ctx.key_loader.keys = [
         PrivateKey(
             hash=str(h.hexdigest())[:16].upper(),
             key=load_pem_private_key(
@@ -58,8 +63,7 @@ def env_settings():
             ),
         )
     ]
-
-    return settings
+    return ctx.key_loader
 
 
 @pytest.fixture(scope="session")
@@ -75,7 +79,7 @@ async def db(env_settings):
 
 
 @pytest.fixture(scope="session")
-def test_app(env_settings, db) -> FastAPI:
+def test_app(env_settings, db, encryption_keys) -> FastAPI:
     return create_app(env_settings)
 
 
