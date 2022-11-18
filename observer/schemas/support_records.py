@@ -10,8 +10,8 @@ class SupportRecord(SchemaBase):
     id: Identifier = Field(..., description="Support record ID")
     description: str | None = Field(None, description="Description of support record")
     type: SupportType = Field(..., description="Type of support")
-    consultant_id: Identifier = Field(..., description="Consultan ID")
-    beneficiary_age: BeneficiaryAge | None = Field(..., description="Benefiary age")
+    consultant_id: Identifier = Field(..., description="Consultant ID")
+    beneficiary_age: BeneficiaryAge | None = Field(..., description="Beneficiary age")
     owner_id: Identifier = Field(..., description="Owner of support humans or pets")
     created_at: datetime = Field(..., description="Creation date")
 
