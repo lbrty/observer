@@ -45,12 +45,20 @@ class JWTHandler:
 
     async def decode(self, token: str) -> tuple[TokenData, dict]:
         """Decode JWT token
+        We decode and verify token at the same time so errors listed
+        below have to be handled by callers.
+
+        1. `DecodeError`,
+        2. `InvalidAlgorithmError`,
+        3. `InvalidSignatureError`.
+
+        NOTE: we don't give leeway to any token
 
         Args:
             token(str): encoded JWT token
 
         Returns:
-            tuple[TokenData, dict]: pair of `TokenData` and jwt token headers dictionary
+            tuple[TokenData, dict]: a pair of `TokenData` and jwt token headers dictionary
         """
         decoded = jwt.decode(token, self.private_key.key.public_key(), algorithms=["RS256"])
         return TokenData(**decoded), jwt.get_unverified_header(token)
