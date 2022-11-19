@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import Enum
 from typing import Any
 
 from starlette import status
@@ -6,6 +6,7 @@ from starlette import status
 
 class ErrorCode(str, Enum):
     unauthorized = "unauthorized"
+    forbidden = "forbidden"
     internal_error = "internal_error"
 
 
@@ -30,3 +31,8 @@ class BaseAPIException(BaseException):
 class UnauthorizedError(BaseAPIException):
     default_code = ErrorCode.unauthorized
     default_status = status.HTTP_401_UNAUTHORIZED
+
+
+class ForbiddenError(BaseAPIException):
+    default_code = ErrorCode.unauthorized
+    default_status = status.HTTP_403_FORBIDDEN
