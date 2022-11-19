@@ -5,8 +5,8 @@ from starlette import status
 
 
 class ErrorCode(str, Enum):
-    unauthorized = auto()
-    internal_error = auto()
+    unauthorized = "unauthorized"
+    internal_error = "internal_error"
 
 
 class BaseAPIException(BaseException):
