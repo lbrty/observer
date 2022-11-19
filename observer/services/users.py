@@ -4,6 +4,7 @@ from observer.common.types import Identifier
 from observer.entities.users import User
 from observer.repositories.users import UsersRepositoryInterface
 from observer.schemas import users
+from observer.schemas.users import NewUser
 
 
 class UsersServiceInterface(Protocol):
@@ -16,6 +17,9 @@ class UsersServiceInterface(Protocol):
         raise NotImplementedError
 
     async def get_by_email(self, email: str) -> User | None:
+        raise NotImplementedError
+
+    async def create_user(self, new_user: NewUser) -> User:
         raise NotImplementedError
 
     @staticmethod
