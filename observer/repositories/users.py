@@ -1,11 +1,11 @@
 from typing import Protocol
 
-from sqlalchemy import select
+from sqlalchemy import insert, select
 
 from observer.common.types import Identifier
 from observer.db import Database
 from observer.db.tables.users import users
-from observer.entities.users import User
+from observer.entities.users import NewUser, User
 
 
 class UsersRepositoryInterface(Protocol):
@@ -16,6 +16,9 @@ class UsersRepositoryInterface(Protocol):
         raise NotImplementedError
 
     async def get_by_email(self, email: str) -> User | None:
+        raise NotImplementedError
+
+    async def create_user(self, new_user: NewUser) -> User:
         raise NotImplementedError
 
 
@@ -43,3 +46,14 @@ class UsersRepository(UsersRepositoryInterface):
             return User(**result)
 
         return None
+
+    async def create_user(self, new_user: NewUser) -> User:
+        values = {}
+        if new_user.full_name:
+            values["full_name"] = new_user.full_name
+        if new_user.role:
+            values["role"] = new_user.role
+
+        query = insert(users).values(**values).returning("*")
+        if result := await self.db.fetchone(query):
+            return User(**result)

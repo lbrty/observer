@@ -15,3 +15,13 @@ class User(BaseModel):
     mfa_enabled: bool
     mfa_encrypted_secret: str | None
     mfa_encrypted_backup_codes: str | None
+
+
+class NewUser(BaseModel):
+    ref_id: Identifier
+    email: EmailStr
+    full_name: str | None
+    password_hash: str
+    role: Role
+    is_active: bool
+    is_confirmed: bool
