@@ -31,7 +31,7 @@ class UsersServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class UsersService(Protocol):
+class UsersService(UsersServiceInterface):
     def __init__(self, users_repository: UsersRepositoryInterface):
         self.repo = users_repository
 
@@ -43,6 +43,9 @@ class UsersService(Protocol):
 
     async def get_by_email(self, email: str) -> User | None:
         return await self.repo.get_by_email(email)
+
+    async def create_user(self, new_user: NewUser) -> User:
+        return await self.repo.create_user(users.NewUser(**new_user.dict()))
 
     @staticmethod
     async def to_response(user: User) -> users.User:
