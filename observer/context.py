@@ -10,7 +10,7 @@ from observer.services.users import UsersServiceInterface
 class Context:
     db: Database = None
     key_loader: KeychainLoader = None
-    jwt_handler: JWTService = None
+    jwt_service: JWTService = None
     users_service: UsersServiceInterface = None
 
 

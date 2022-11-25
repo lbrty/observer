@@ -3,4 +3,4 @@ from observer.services.jwt import JWTService
 
 
 async def jwt_handler() -> JWTService:
-    return ctx.jwt_handler
+    return ctx.jwt_service

@@ -16,10 +16,16 @@ from fastapi import FastAPI
 from pydantic.networks import PostgresDsn
 
 from observer.app import create_app
+from observer.common.bcrypt import hash_password
+from observer.common.types import Role
 from observer.context import ctx
 from observer.db import PoolOptions, connect, disconnect, metadata
+from observer.entities.users import NewUser
+from observer.repositories.users import UsersRepository
 from observer.schemas.crypto import PrivateKey
 from observer.services.crypto import FSLoader
+from observer.services.jwt import JWTService
+from observer.services.users import UsersService
 from observer.settings import db_settings, settings
 
 
@@ -81,6 +87,9 @@ async def db(env_settings):
 
 @pytest.fixture(scope="session")
 def test_app(env_settings, db, encryption_keys) -> FastAPI:
+    ctx.jwt_service = JWTService(ctx.key_loader.keys[0])
+    users_repo = UsersRepository(ctx.db)
+    ctx.users_service = UsersService(users_repo)
     return create_app(env_settings)
 
 
@@ -88,3 +97,19 @@ def test_app(env_settings, db, encryption_keys) -> FastAPI:
 async def client(test_app):
     app_client = httpx.AsyncClient(app=test_app, base_url="http://test")
     yield app_client
+
+
+@pytest.fixture(scope="function")
+async def consultant_user(db):
+    user = await ctx.users_service.repo.create_user(
+        NewUser(
+            ref_id="ref-consultant-1",
+            email="consultant-1@example.com",
+            full_name="full name",
+            password_hash=hash_password("secret"),
+            role=Role.consultant,
+            is_active=True,
+            is_confirmed=True,
+        )
+    )
+    return user
