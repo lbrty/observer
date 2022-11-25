@@ -88,8 +88,8 @@ async def db(env_settings):
 @pytest.fixture(scope="session")
 def test_app(env_settings, db, encryption_keys) -> FastAPI:
     ctx.jwt_service = JWTService(ctx.key_loader.keys[0])
-    users_repo = UsersRepository(ctx.db)
-    ctx.users_service = UsersService(users_repo)
+    ctx.users_repo = UsersRepository(ctx.db)
+    ctx.users_service = UsersService(ctx.users_repo)
     return create_app(env_settings)
 
 

@@ -34,8 +34,8 @@ async def on_startup():
 
     print(f"Key loader: {settings.key_loader}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
     ctx.jwt_service = JWTService(ctx.key_loader.keys[0])
-    users_repo = UsersRepository(ctx.db)
-    ctx.users_service = UsersService(users_repo)
+    ctx.users_repo = UsersRepository(ctx.db)
+    ctx.users_service = UsersService(ctx.users_repo)
 
 
 @app.on_event("shutdown")
