@@ -12,7 +12,7 @@ class TokenData:
     ref_id: Identifier
 
 
-class JWTHandler:
+class JWTService:
     def __init__(self, private_key: PrivateKey):
         self.private_key = private_key
 

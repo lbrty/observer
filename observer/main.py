@@ -4,7 +4,7 @@ from observer.app import create_app
 from observer.context import ctx
 from observer.db import PoolOptions, connect, disconnect
 from observer.services.crypto import get_key_loader
-from observer.services.jwt import JWTHandler
+from observer.services.jwt import JWTService
 from observer.settings import db_settings, settings
 
 app = create_app(settings)
@@ -32,7 +32,7 @@ async def on_startup():
 
     print(f"Key loader: {settings.key_loader}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
 
-    ctx.jwt_handler = JWTHandler(ctx.key_loader.keys[0])
+    ctx.jwt_handler = JWTService(ctx.key_loader.keys[0])
 
 
 @app.on_event("shutdown")

@@ -7,7 +7,7 @@ from observer.api.exceptions import ForbiddenError, UnauthorizedError
 from observer.common import bcrypt
 from observer.common.types import Identifier
 from observer.schemas.auth import LoginPayload, TokenResponse
-from observer.services.jwt import JWTHandler, TokenData
+from observer.services.jwt import JWTService, TokenData
 from observer.services.users import UsersServiceInterface
 
 AccessTokenExpirationMinutes = 15
@@ -17,7 +17,7 @@ RefreshTokenExpirationDelta = timedelta(minutes=RefreshTokenExpirationMinutes)
 
 
 class AuthServiceInterface(Protocol):
-    jwt_handler: JWTHandler
+    jwt_handler: JWTService
     users_service: UsersServiceInterface
 
     async def token_login(self, login_payload: LoginPayload) -> TokenResponse:
@@ -34,7 +34,7 @@ class AuthServiceInterface(Protocol):
 
 
 class AuthService(AuthServiceInterface):
-    def __init__(self, jwt_handler: JWTHandler, users_service: UsersServiceInterface):
+    def __init__(self, jwt_handler: JWTService, users_service: UsersServiceInterface):
         self.jwt_handler = jwt_handler
         self.users_service = users_service
 
