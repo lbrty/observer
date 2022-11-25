@@ -3,8 +3,10 @@ import sys
 from observer.app import create_app
 from observer.context import ctx
 from observer.db import PoolOptions, connect, disconnect
+from observer.repositories.users import UsersRepository
 from observer.services.crypto import get_key_loader
 from observer.services.jwt import JWTService
+from observer.services.users import UsersService
 from observer.settings import db_settings, settings
 
 app = create_app(settings)
@@ -31,8 +33,9 @@ async def on_startup():
         sys.exit(1)
 
     print(f"Key loader: {settings.key_loader}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
-
-    ctx.jwt_handler = JWTService(ctx.key_loader.keys[0])
+    ctx.jwt_service = JWTService(ctx.key_loader.keys[0])
+    users_repo = UsersRepository(ctx.db)
+    ctx.users_service = UsersService(users_repo)
 
 
 @app.on_event("shutdown")
