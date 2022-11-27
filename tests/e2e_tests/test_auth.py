@@ -1,7 +1,7 @@
 from starlette import status
 
 
-async def test_token_login(client, ensure_db, consultant_user):
+async def test_token_login(client, ensure_db, app_context, consultant_user):
     resp = await client.post(
         "/auth/token",
         json=dict(
@@ -9,11 +9,11 @@ async def test_token_login(client, ensure_db, consultant_user):
             password="secret",
         ),
     )
-    resp_json = resp.json()
-    assert len(resp_json) == 2
-    assert "access_token" in resp_json
-    assert "refresh_token" in resp_json
     assert resp.status_code == status.HTTP_200_OK
+
+    resp_json = resp.json()
+    token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])
+    assert token_data.ref_id == consultant_user.ref_id
 
 
 async def test_token_refresh(client, ensure_db, consultant_user):
