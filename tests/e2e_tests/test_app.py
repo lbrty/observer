@@ -9,5 +9,5 @@ async def test_app(client):
     assert response.json() == {"status": "ok"}
 
 
-async def test_app_keys_loaded(client):
+async def test_app_keys_loaded(app_context):
     assert len(ctx.key_loader.keys) == 1

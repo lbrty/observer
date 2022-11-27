@@ -1,8 +1,8 @@
-async def test_token_login(client):
-    pass
+async def test_token_login(ensure_db, consultant_user):
+    assert 1
 
 
-async def test_token_refresh(client):
+async def test_token_refresh(ensure_db, consultant_user):
     pass
 
 

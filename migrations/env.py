@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
-from observer.db.tables import metadata
+from observer.db import metadata
 from observer.settings import db_settings, settings
 
 config = context.config
