@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from pytoolz.functional import pipe
 
-from observer.api.health import router as health_router
+from observer.api import auth, health
 from observer.settings import Settings
 
 __all__ = ("create_app",)
@@ -23,7 +23,8 @@ def init_integrations(env: Environment) -> Environment:
 
 
 def init_routes(env: Environment) -> Environment:
-    env.app.include_router(health_router)
+    env.app.include_router(auth.router)
+    env.app.include_router(health.router)
     return env
 
 
@@ -37,7 +38,9 @@ def init_middlewares(env: Environment) -> Environment:
     )
 
     env.app.add_middleware(
-        GZipMiddleware, minimum_size=env.settings.gzip_after_bytes, compresslevel=env.settings.gzip_level
+        GZipMiddleware,
+        minimum_size=env.settings.gzip_after_bytes,
+        compresslevel=env.settings.gzip_level,
     )
 
     return env
