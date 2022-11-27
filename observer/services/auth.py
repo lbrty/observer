@@ -21,16 +21,16 @@ class AuthServiceInterface(Protocol):
     users_service: UsersServiceInterface
 
     async def token_login(self, login_payload: LoginPayload) -> TokenResponse:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     async def refresh_token(self, refresh_token: str) -> TokenResponse:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     async def reset_password(self, email: str):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class AuthService(AuthServiceInterface):
@@ -58,7 +58,11 @@ class AuthService(AuthServiceInterface):
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
         payload = TokenData(ref_id=ref_id)
         now = datetime.now(tz=timezone.utc)
-        return TokenResponse(
-            access_token=self.jwt_service.encode(payload, now + AccessTokenExpirationDelta),
-            refresh_token=self.jwt_service.encode(payload, now + RefreshTokenExpirationDelta),
+        access_token = await self.jwt_service.encode(payload, now + AccessTokenExpirationDelta)
+        refresh_token = await self.jwt_service.encode(payload, now + RefreshTokenExpirationDelta)
+        token = TokenResponse(
+            access_token=access_token,
+            refresh_token=refresh_token,
         )
+
+        return token
