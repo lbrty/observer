@@ -17,7 +17,7 @@ RefreshTokenExpirationDelta = timedelta(minutes=RefreshTokenExpirationMinutes)
 
 
 class AuthServiceInterface(Protocol):
-    jwt_handler: JWTService
+    jwt_service: JWTService
     users_service: UsersServiceInterface
 
     async def token_login(self, login_payload: LoginPayload) -> TokenResponse:
@@ -34,8 +34,8 @@ class AuthServiceInterface(Protocol):
 
 
 class AuthService(AuthServiceInterface):
-    def __init__(self, jwt_handler: JWTService, users_service: UsersServiceInterface):
-        self.jwt_handler = jwt_handler
+    def __init__(self, jwt_service: JWTService, users_service: UsersServiceInterface):
+        self.jwt_service = jwt_service
         self.users_service = users_service
 
     async def token_login(self, login_payload: LoginPayload) -> TokenResponse:
@@ -47,7 +47,7 @@ class AuthService(AuthServiceInterface):
 
     async def refresh_token(self, refresh_token: str) -> TokenResponse:
         try:
-            token_data, _ = await self.jwt_handler.decode(refresh_token)
+            token_data, _ = await self.jwt_service.decode(refresh_token)
             return await self.create_token(token_data.ref_id)
         except (DecodeError, InvalidAlgorithmError, InvalidSignatureError):
             raise ForbiddenError(message="Invalid refresh token")
@@ -59,6 +59,6 @@ class AuthService(AuthServiceInterface):
         payload = TokenData(ref_id=ref_id)
         now = datetime.now(tz=timezone.utc)
         return TokenResponse(
-            access_token=self.jwt_handler.encode(payload, now + AccessTokenExpirationDelta),
-            refresh_token=self.jwt_handler.encode(payload, now + RefreshTokenExpirationDelta),
+            access_token=self.jwt_service.encode(payload, now + AccessTokenExpirationDelta),
+            refresh_token=self.jwt_service.encode(payload, now + RefreshTokenExpirationDelta),
         )
