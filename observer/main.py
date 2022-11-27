@@ -4,6 +4,7 @@ from observer.app import create_app
 from observer.context import ctx
 from observer.db import PoolOptions, connect, disconnect
 from observer.repositories.users import UsersRepository
+from observer.services.auth import AuthService
 from observer.services.crypto import get_key_loader
 from observer.services.jwt import JWTService
 from observer.services.users import UsersService
@@ -36,6 +37,7 @@ async def on_startup():
     ctx.jwt_service = JWTService(ctx.key_loader.keys[0])
     ctx.users_repo = UsersRepository(ctx.db)
     ctx.users_service = UsersService(ctx.users_repo)
+    ctx.auth_service = AuthService(ctx.jwt_service, ctx.users_service)
 
 
 @app.on_event("shutdown")

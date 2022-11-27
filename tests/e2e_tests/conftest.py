@@ -26,6 +26,7 @@ from observer.db import Database, metadata
 from observer.entities.users import NewUser, User
 from observer.repositories.users import UsersRepository
 from observer.schemas.crypto import PrivateKey
+from observer.services.auth import AuthService
 from observer.services.crypto import FSLoader
 from observer.services.jwt import JWTService
 from observer.services.users import UsersService
@@ -93,6 +94,7 @@ async def app_context(db_engine):
     ctx.jwt_service = JWTService(ctx.key_loader.keys[0])
     ctx.users_repo = UsersRepository(ctx.db)
     ctx.users_service = UsersService(ctx.users_repo)
+    ctx.auth_service = AuthService(ctx.jwt_service, ctx.users_service)
 
     yield ctx
 
