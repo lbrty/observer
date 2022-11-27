@@ -23,4 +23,4 @@ def check_password(password: str, password_hash: str) -> bool:
 
 
 def hash_password(password: str) -> str:
-    return str(bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=HashingRounds)))
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=HashingRounds)).decode()
