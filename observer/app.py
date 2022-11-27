@@ -6,6 +6,8 @@ from fastapi.middleware.gzip import GZipMiddleware
 from pytoolz.functional import pipe
 
 from observer.api import auth, health
+from observer.api.exceptions import BaseAPIException
+from observer.common.exceptions import handle_api_exception
 from observer.settings import Settings
 
 __all__ = ("create_app",)
@@ -47,6 +49,7 @@ def init_middlewares(env: Environment) -> Environment:
 
 
 def init_exception_handlers(env: Environment) -> Environment:
+    env.app.add_exception_handler(BaseAPIException, handle_api_exception)
     return env
 
 
