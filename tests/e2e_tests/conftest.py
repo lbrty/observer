@@ -23,7 +23,7 @@ from observer.common.bcrypt import hash_password
 from observer.common.types import Role
 from observer.context import ctx
 from observer.db import Database, metadata
-from observer.entities.users import NewUser
+from observer.entities.users import NewUser, User
 from observer.repositories.users import UsersRepository
 from observer.schemas.crypto import PrivateKey
 from observer.services.crypto import FSLoader
@@ -116,7 +116,7 @@ async def client(test_app):
 
 
 @pytest.fixture(scope="function")
-async def consultant_user(ensure_db, app_context):
+async def consultant_user(ensure_db, app_context) -> User:
     user = await app_context.users_service.repo.create_user(
         NewUser(
             ref_id="ref-consultant-1",
@@ -129,4 +129,4 @@ async def consultant_user(ensure_db, app_context):
         )
     )
 
-    return user
+    yield user
