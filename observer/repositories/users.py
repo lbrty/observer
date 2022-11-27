@@ -48,12 +48,6 @@ class UsersRepository(UsersRepositoryInterface):
         return None
 
     async def create_user(self, new_user: NewUser) -> User:
-        values = {}
-        if new_user.full_name:
-            values["full_name"] = new_user.full_name
-        if new_user.role:
-            values["role"] = new_user.role
-
-        query = insert(users).values(**values).returning("*")
+        query = insert(users).values(**new_user.dict()).returning("*")
         if result := await self.db.fetchone(query):
             return User(**result)
