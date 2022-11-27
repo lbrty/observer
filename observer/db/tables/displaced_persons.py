@@ -11,7 +11,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import ARRAY, DATE, UUID
 
-from observer.db.tables import metadata
+from observer.db import metadata
 
 vulnerability_categories = Table(
     "vulnerability_categories",

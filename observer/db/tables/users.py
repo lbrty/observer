@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, CheckConstraint, Column, Index, Table, Text, text
 from sqlalchemy.dialects.postgresql import UUID
 
-from observer.db.tables import metadata
+from observer.db import metadata
 
 users = Table(
     "users",

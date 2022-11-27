@@ -1,7 +1,7 @@
 from sqlalchemy import Column, DateTime, Index, Table, Text, func, text
 from sqlalchemy.dialects.postgresql import UUID
 
-from observer.db.tables import metadata
+from observer.db import metadata
 
 documents = Table(
     "documents",

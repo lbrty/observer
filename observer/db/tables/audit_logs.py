@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Index, Table, Text, text
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP, UUID
 
-from observer.db.tables import metadata
+from observer.db import metadata
 from observer.db.util import utcnow
 
 audit_logs = Table(

@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Index, Table, text
 from sqlalchemy.dialects.postgresql import UUID
 
-from observer.db.tables import metadata
+from observer.db import metadata
 
 permissions = Table(
     "permissions",
