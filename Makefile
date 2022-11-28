@@ -16,8 +16,8 @@ test:
 
 .PHONY: serve
 serve:
-	python -m observer server start
+	poetry run python -m observer server start
 
 .PHONY: swagger
 swagger:
-	python -m observer swagger generate
+	poetry run python -m observer swagger generate
