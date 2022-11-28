@@ -37,7 +37,6 @@ class Settings(SettingsBase):
         length=8,
         uppercase=1,
         numbers=1,
-        special=1,
         nonletters=1,
         strength=0.68,
     )

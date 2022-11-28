@@ -46,7 +46,7 @@ async def test_registration_works_as_expected(client, ensure_db, app_context):
         "/auth/register",
         json=dict(
             email="email@example.com",
-            password="!@.?StronKPassw0rd#",
+            password="!@1StronKPassw0rd#",
         ),
     )
     assert resp.status_code == status.HTTP_201_CREATED
