@@ -17,3 +17,7 @@ test:
 .PHONY: serve
 serve:
 	python -m observer server start
+
+.PHONY: swagger
+swagger:
+	python -m observer swagger generate
