@@ -13,6 +13,6 @@ class LoginPayload(SchemaBase):
     password: SecretStr = Field(..., description="Password to login")
 
 
-class RegisterPayload(SchemaBase):
+class RegistrationPayload(SchemaBase):
     email: EmailStr = Field(..., description="E-mail address of a user")
     password: SecretStr = Field(..., description="Password which user has provided")

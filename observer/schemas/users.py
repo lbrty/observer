@@ -10,11 +10,11 @@ class BaseUser(SchemaBase):
     role: Role = Field(..., description="Role of a user")
 
 
-class NewUser(BaseUser):
+class NewUserRequest(BaseUser):
     password: SecretStr = Field(..., description="Password which user has provided")
 
 
-class UpdateUser(BaseUser):
+class UpdateUserRequest(BaseUser):
     is_active: bool = Field(True, description="Is user active?")
     is_confirmed: bool = Field(False, description="Is user confirmed?")
 
@@ -24,13 +24,13 @@ class UserPasswordUpdate(BaseUser):
     new_password: SecretStr = Field(..., description="New password")
 
 
-class UserMFAUpdate(SchemaBase):
+class UserMFAUpdateRequest(SchemaBase):
     mfa_enabled: bool = Field(False, description="Is MFA enabled for user?")
     mfa_encrypted_secret: SecretStr | None = Field(None, description="Secret value for MFA")
     mfa_encrypted_backup_codes: SecretStr | None = Field(None, description="Backup codes for MFA")
 
 
-class User(BaseUser):
+class UserResponse(BaseUser):
     id: Identifier = Field(..., description="ID of user")
     ref_id: Identifier = Field(..., description="Reference ID generated using short uuid format")
     is_active: bool = Field(True, description="Is user active?")
@@ -42,4 +42,4 @@ class User(BaseUser):
 
 class UsersResponse(SchemaBase):
     total: int = Field(..., description="Total count of users")
-    items: list[User] = Field(..., description="List of users")
+    items: list[UserResponse] = Field(..., description="List of users")
