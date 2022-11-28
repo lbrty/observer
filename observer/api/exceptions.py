@@ -7,6 +7,8 @@ from starlette import status
 class ErrorCode(str, Enum):
     unauthorized = "unauthorized"
     forbidden = "forbidden"
+    registration_error = "registration_error"
+    weak_password_error = "weak_password_error"
     internal_error = "internal_error"
 
 
@@ -39,3 +41,13 @@ class UnauthorizedError(BaseAPIException):
 class ForbiddenError(BaseAPIException):
     default_code = ErrorCode.unauthorized
     default_status = status.HTTP_403_FORBIDDEN
+
+
+class RegistrationError(BaseAPIException):
+    default_code = ErrorCode.registration_error
+    default_status = status.HTTP_409_CONFLICT
+
+
+class WeakPasswordError(BaseAPIException):
+    default_code = ErrorCode.weak_password_error
+    default_status = status.HTTP_400_BAD_REQUEST
