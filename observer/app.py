@@ -67,6 +67,7 @@ def create_app(settings: Settings) -> FastAPI:
                 debug=settings.debug,
                 title=settings.title,
                 description=settings.description,
+                version=settings.version,
                 redoc_url="/docs",
             ),
         ),

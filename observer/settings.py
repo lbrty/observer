@@ -24,6 +24,7 @@ class Settings(SettingsBase):
     # OpenAPI
     title: str = "Observer API"
     description: str = "Observer API server"
+    version: str = "0.1.0"
 
     # Keystore and RSA key settings
     key_loader_type: KeyLoaderTypes = KeyLoaderTypes.fs
