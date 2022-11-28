@@ -4,7 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from typer import Option, Typer
 
-from observer.api.health import router as health
+from observer.api import auth, health
 from observer.settings import settings
 
 swagger = Typer()
@@ -21,7 +21,8 @@ def generate(
         description=settings.description,
         version="0.1.0",
     )
-    app.include_router(health)
+    app.include_router(auth.router)
+    app.include_router(health.router)
 
     if not output_file.parent.exists():
         output_file.parent.mkdir(exist_ok=True)
