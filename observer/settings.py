@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import List, Optional
 
+from password_strength import PasswordPolicy
 from pydantic.env_settings import BaseSettings
 from pydantic.networks import PostgresDsn
 
@@ -30,6 +31,16 @@ class Settings(SettingsBase):
     key_size: int = 2048
     key_passwords: Optional[str] = None
     public_exponent: int = 65537
+
+    # Password strength constraints
+    password_policy: PasswordPolicy = PasswordPolicy.from_names(
+        length=8,
+        uppercase=1,
+        numbers=1,
+        special=1,
+        nonletters=1,
+        strength=0.68,
+    )
 
     # CORS settings
     cors_origins: List[str] = ["*"]

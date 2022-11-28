@@ -1,4 +1,5 @@
 import bcrypt
+from password_strength import PasswordPolicy
 
 """
 +------+-------------------+
@@ -24,3 +25,7 @@ def check_password(password: str, password_hash: str) -> bool:
 
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=HashingRounds)).decode()
+
+
+def is_strong_password(password: str, policy: PasswordPolicy) -> bool:
+    return len(policy.test(password)) == 0
