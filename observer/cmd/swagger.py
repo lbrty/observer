@@ -15,7 +15,6 @@ def generate(
 ):
     """Generate OpenAPI spec"""
     app = create_app(settings)
-
     if not output_file.parent.exists():
         output_file.parent.mkdir(exist_ok=True)
 
