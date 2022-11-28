@@ -21,4 +21,4 @@ def generate(
 
     spec = app.openapi()
     with open(output_file, "w") as fp:
-        fp.write(json.dumps(spec))
+        fp.write(json.dumps(spec, indent=2))

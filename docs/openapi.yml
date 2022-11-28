@@ -1,1 +1,278 @@
-{"openapi": "3.0.2", "info": {"title": "Observer API", "description": "Observer API server", "version": "0.1.0"}, "paths": {"/auth/token": {"post": {"summary": "Token Login", "description": "Login using email and password", "operationId": "token_login_auth_token_post", "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/LoginPayload"}}}, "required": true}, "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/TokenResponse"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}}}, "/auth/token/refresh": {"post": {"summary": "Token Refresh", "description": "Refresh access token using refresh token", "operationId": "token_refresh_auth_token_refresh_post", "parameters": [{"description": "Refresh token cookie", "required": false, "schema": {"title": "Refresh Token", "type": "string", "description": "Refresh token cookie"}, "name": "refresh_token", "in": "cookie"}], "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/TokenResponse"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}}}, "/auth/register": {"post": {"summary": "Token Register", "description": "Register using email and password", "operationId": "token_register_auth_register_post", "requestBody": {"content": {"application/json": {"schema": {"$ref": "#/components/schemas/RegistrationPayload"}}}, "required": true}, "responses": {"201": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/TokenResponse"}}}}, "422": {"description": "Validation Error", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HTTPValidationError"}}}}}}}, "/health": {"get": {"summary": "Health", "description": "Simple health endpoint", "operationId": "health_health_get", "responses": {"200": {"description": "Successful Response", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/HealthResponse"}}}}}}}}, "components": {"schemas": {"HTTPValidationError": {"title": "HTTPValidationError", "type": "object", "properties": {"detail": {"title": "Detail", "type": "array", "items": {"$ref": "#/components/schemas/ValidationError"}}}}, "HealthResponse": {"title": "HealthResponse", "required": ["status"], "type": "object", "properties": {"status": {"title": "Status", "type": "string"}}}, "LoginPayload": {"title": "LoginPayload", "required": ["email", "password"], "type": "object", "properties": {"email": {"title": "Email", "type": "string", "description": "E-mail address to login", "format": "email"}, "password": {"title": "Password", "type": "string", "description": "Password to login", "format": "password", "writeOnly": true}}}, "RegistrationPayload": {"title": "RegistrationPayload", "required": ["email", "password"], "type": "object", "properties": {"email": {"title": "Email", "type": "string", "description": "E-mail address of a user", "format": "email"}, "password": {"title": "Password", "type": "string", "description": "Password which user has provided", "format": "password", "writeOnly": true}}}, "TokenResponse": {"title": "TokenResponse", "required": ["access_token", "refresh_token"], "type": "object", "properties": {"access_token": {"title": "Access Token", "type": "string", "description": "JWT access token"}, "refresh_token": {"title": "Refresh Token", "type": "string", "description": "JWT refresh token"}}}, "ValidationError": {"title": "ValidationError", "required": ["loc", "msg", "type"], "type": "object", "properties": {"loc": {"title": "Location", "type": "array", "items": {"anyOf": [{"type": "string"}, {"type": "integer"}]}}, "msg": {"title": "Message", "type": "string"}, "type": {"title": "Error Type", "type": "string"}}}}}}
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Observer API",
+    "description": "Observer API server",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/auth/token": {
+      "post": {
+        "summary": "Token Login",
+        "description": "Login using email and password",
+        "operationId": "token_login_auth_token_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/token/refresh": {
+      "post": {
+        "summary": "Token Refresh",
+        "description": "Refresh access token using refresh token",
+        "operationId": "token_refresh_auth_token_refresh_post",
+        "parameters": [
+          {
+            "description": "Refresh token cookie",
+            "required": false,
+            "schema": {
+              "title": "Refresh Token",
+              "type": "string",
+              "description": "Refresh token cookie"
+            },
+            "name": "refresh_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Token Register",
+        "description": "Register using email and password",
+        "operationId": "token_register_auth_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationPayload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "description": "Simple health endpoint",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "HealthResponse": {
+        "title": "HealthResponse",
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        }
+      },
+      "LoginPayload": {
+        "title": "LoginPayload",
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "E-mail address to login",
+            "format": "email"
+          },
+          "password": {
+            "title": "Password",
+            "type": "string",
+            "description": "Password to login",
+            "format": "password",
+            "writeOnly": true
+          }
+        }
+      },
+      "RegistrationPayload": {
+        "title": "RegistrationPayload",
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "E-mail address of a user",
+            "format": "email"
+          },
+          "password": {
+            "title": "Password",
+            "type": "string",
+            "description": "Password which user has provided",
+            "format": "password",
+            "writeOnly": true
+          }
+        }
+      },
+      "TokenResponse": {
+        "title": "TokenResponse",
+        "required": [
+          "access_token",
+          "refresh_token"
+        ],
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "title": "Access Token",
+            "type": "string",
+            "description": "JWT access token"
+          },
+          "refresh_token": {
+            "title": "Refresh Token",
+            "type": "string",
+            "description": "JWT refresh token"
+          }
+        }
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
