@@ -1,10 +1,12 @@
 from typing import Protocol
 
+import shortuuid
+
+from observer.common import bcrypt
 from observer.common.types import Identifier
-from observer.entities.users import User
+from observer.entities.users import NewUser, User
 from observer.repositories.users import UsersRepositoryInterface
-from observer.schemas import users
-from observer.schemas.users import NewUser
+from observer.schemas.users import NewUserRequest, UserResponse, UsersResponse
 
 
 class UsersServiceInterface(Protocol):
@@ -19,15 +21,15 @@ class UsersServiceInterface(Protocol):
     async def get_by_email(self, email: str) -> User | None:
         raise NotImplementedError
 
-    async def create_user(self, new_user: NewUser) -> User:
+    async def create_user(self, new_user: NewUserRequest) -> User:
         raise NotImplementedError
 
     @staticmethod
-    async def to_response(user: User) -> users.User:
+    async def to_response(user: User) -> UserResponse:
         raise NotImplementedError
 
     @staticmethod
-    async def list_to_response(user_list: list[User]) -> list[users.User]:
+    async def list_to_response(total: int, user_list: list[User]) -> UsersResponse:
         raise NotImplementedError
 
 
@@ -44,13 +46,27 @@ class UsersService(UsersServiceInterface):
     async def get_by_email(self, email: str) -> User | None:
         return await self.repo.get_by_email(email)
 
-    async def create_user(self, new_user: NewUser) -> User:
-        return await self.repo.create_user(users.NewUser(**new_user.dict()))
+    async def create_user(self, new_user: NewUserRequest) -> User:
+        ref_id = shortuuid.uuid(name=new_user.email)
+        password_hash = bcrypt.hash_password(new_user.password.get_secret_value())
+        user = NewUser(
+            ref_id=ref_id,
+            email=new_user.email,
+            full_name=new_user.full_name,
+            password_hash=password_hash,
+            role=new_user.role,
+            is_active=True,
+            is_confirmed=False,
+        )
+        return await self.repo.create_user(user)
 
     @staticmethod
-    async def to_response(user: User) -> users.User:
-        return users.User(**user.dict())
+    async def to_response(user: User) -> UserResponse:
+        return UserResponse(**user.dict())
 
     @staticmethod
-    async def list_to_response(user_list: list[User]) -> list[users.User]:
-        return [users.User(**user.dict()) for user in user_list]
+    async def list_to_response(total: int, user_list: list[User]) -> UsersResponse:
+        return UsersResponse(
+            total=total,
+            items=[UserResponse(**user.dict()) for user in user_list],
+        )

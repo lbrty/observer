@@ -3,12 +3,20 @@ from typing import Protocol
 
 from jwt.exceptions import DecodeError, InvalidAlgorithmError, InvalidSignatureError
 
-from observer.api.exceptions import ForbiddenError, UnauthorizedError
+from observer.api.exceptions import (
+    ForbiddenError,
+    RegistrationError,
+    UnauthorizedError,
+    WeakPasswordError,
+)
 from observer.common import bcrypt
-from observer.common.types import Identifier
-from observer.schemas.auth import LoginPayload, TokenResponse
+from observer.common.bcrypt import is_strong_password
+from observer.common.types import Identifier, Role
+from observer.schemas.auth import LoginPayload, RegistrationPayload, TokenResponse
+from observer.schemas.users import NewUserRequest
 from observer.services.jwt import JWTService, TokenData
 from observer.services.users import UsersServiceInterface
+from observer.settings import settings
 
 AccessTokenExpirationMinutes = 15
 RefreshTokenExpirationMinutes = 10 * 60 * 24
@@ -21,6 +29,9 @@ class AuthServiceInterface(Protocol):
     users_service: UsersServiceInterface
 
     async def token_login(self, login_payload: LoginPayload) -> TokenResponse:
+        raise NotImplementedError
+
+    async def register(self, registration_payload: RegistrationPayload) -> TokenResponse:
         raise NotImplementedError
 
     async def refresh_token(self, refresh_token: str) -> TokenResponse:
@@ -44,6 +55,24 @@ class AuthService(AuthServiceInterface):
                 return await self.create_token(user.ref_id)
 
         raise UnauthorizedError(message="Wrong email or password")
+
+    async def register(self, registration_payload: RegistrationPayload) -> TokenResponse:
+        if _ := await self.users_service.get_by_email(registration_payload.email):
+            raise RegistrationError(message="User with same e-mail already exists")
+
+        if not is_strong_password(registration_payload.password.get_secret_value(), settings.password_policy):
+            raise WeakPasswordError(message="Given password is weak")
+
+        user = await self.users_service.create_user(
+            NewUserRequest(
+                email=registration_payload.email,
+                full_name=None,
+                role=Role.guest,
+                password=registration_payload.password,
+            )
+        )
+
+        return await self.create_token(user.ref_id)
 
     async def refresh_token(self, refresh_token: str) -> TokenResponse:
         try:
