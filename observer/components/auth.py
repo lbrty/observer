@@ -31,20 +31,21 @@ async def authenticated_user(user: SomeUser = Depends(current_user)) -> User:
     return user
 
 
-async def admin_required(user: SomeUser = Depends(authenticated_user)) -> User:
-    if not user:
-        raise ForbiddenError(message="Access forbidden")
-
-    return user
-
-
 class RequiredRoles:
+    """Check roles authenticated user"""
     def __init__(self, roles: List[Role]):
         self.roles = roles
 
     async def __call__(self, user: SomeUser = Depends(authenticated_user), **kwargs):
         if user.role not in self.roles:
             raise ForbiddenError(message="Access forbidden")
+
+
+async def admin_user(user: SomeUser = Depends(RequiredRoles([Role.admin]))) -> User:
+    if not user:
+        raise ForbiddenError(message="Access forbidden")
+
+    return user
 
 
 async def refresh_token_cookie(refresh_token: str = Cookie(None, description="Refresh token cookie")) -> str:
