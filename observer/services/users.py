@@ -39,7 +39,7 @@ class UsersService(UsersServiceInterface):
         self.repo = users_repository
 
     async def get_by_id(self, user_id: Identifier) -> SomeUser:
-        ...
+        return await self.repo.get_by_id(user_id)
 
     async def get_by_ref_id(self, ref_id: Identifier) -> SomeUser:
         return await self.repo.get_by_ref_id(ref_id)
