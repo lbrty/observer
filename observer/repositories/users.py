@@ -5,17 +5,18 @@ from sqlalchemy import insert, select
 from observer.common.types import Identifier
 from observer.db import Database
 from observer.db.tables.users import users
+from observer.entities.base import SomeUser
 from observer.entities.users import NewUser, User
 
 
 class UsersRepositoryInterface(Protocol):
-    async def get_by_id(self, user_id: Identifier) -> User | None:
+    async def get_by_id(self, user_id: Identifier) -> SomeUser:
         raise NotImplementedError
 
-    async def get_by_ref_id(self, ref_id: Identifier) -> User | None:
+    async def get_by_ref_id(self, ref_id: Identifier) -> SomeUser:
         raise NotImplementedError
 
-    async def get_by_email(self, email: str) -> User | None:
+    async def get_by_email(self, email: str) -> SomeUser:
         raise NotImplementedError
 
     async def create_user(self, new_user: NewUser) -> User:
@@ -26,21 +27,21 @@ class UsersRepository(UsersRepositoryInterface):
     def __init__(self, db: Database):
         self.db = db
 
-    async def get_by_id(self, user_id: Identifier) -> User | None:
+    async def get_by_id(self, user_id: Identifier) -> SomeUser:
         query = select(users).where(users.c.id == user_id)
         if result := await self.db.fetchone(query):
             return User(**result)
 
         return None
 
-    async def get_by_ref_id(self, ref_id: Identifier) -> User | None:
+    async def get_by_ref_id(self, ref_id: Identifier) -> SomeUser:
         query = select(users).where(users.c.ref_id == ref_id)
         if result := await self.db.fetchone(query):
             return User(**result)
 
         return None
 
-    async def get_by_email(self, email: str) -> User | None:
+    async def get_by_email(self, email: str) -> SomeUser:
         query = select(users).where(users.c.email == email)
         if result := await self.db.fetchone(query):
             return User(**result)

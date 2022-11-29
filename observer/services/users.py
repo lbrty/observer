@@ -4,6 +4,7 @@ import shortuuid
 
 from observer.common import bcrypt
 from observer.common.types import Identifier
+from observer.entities.base import SomeUser
 from observer.entities.users import NewUser, User
 from observer.repositories.users import UsersRepositoryInterface
 from observer.schemas.users import NewUserRequest, UserResponse, UsersResponse
@@ -12,13 +13,13 @@ from observer.schemas.users import NewUserRequest, UserResponse, UsersResponse
 class UsersServiceInterface(Protocol):
     repo: UsersRepositoryInterface
 
-    async def get_by_id(self, user_id: Identifier) -> User | None:
+    async def get_by_id(self, user_id: Identifier) -> SomeUser:
         raise NotImplementedError
 
-    async def get_by_ref_id(self, ref_id: Identifier) -> User | None:
+    async def get_by_ref_id(self, ref_id: Identifier) -> SomeUser:
         raise NotImplementedError
 
-    async def get_by_email(self, email: str) -> User | None:
+    async def get_by_email(self, email: str) -> SomeUser:
         raise NotImplementedError
 
     async def create_user(self, new_user: NewUserRequest) -> User:
@@ -37,13 +38,13 @@ class UsersService(UsersServiceInterface):
     def __init__(self, users_repository: UsersRepositoryInterface):
         self.repo = users_repository
 
-    async def get_by_id(self, user_id: Identifier) -> User | None:
+    async def get_by_id(self, user_id: Identifier) -> SomeUser:
         ...
 
-    async def get_by_ref_id(self, ref_id: Identifier) -> User | None:
+    async def get_by_ref_id(self, ref_id: Identifier) -> SomeUser:
         return await self.repo.get_by_ref_id(ref_id)
 
-    async def get_by_email(self, email: str) -> User | None:
+    async def get_by_email(self, email: str) -> SomeUser:
         return await self.repo.get_by_email(email)
 
     async def create_user(self, new_user: NewUserRequest) -> User:
