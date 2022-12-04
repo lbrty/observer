@@ -39,3 +39,18 @@ where `system_key_hash` is a hash of a key which is used to encrypt generated pr
 ### ⚡️ Auth & security
 
 To hash and verify user's passwords we use `passlib` with `bcrypt` and for MFA (TOTP) we use `totp` packages.
+
+#### OTP activation
+
+When users enable MFA the following things happen:
+1. Endpoint `POST /mfa/enable` generates TOTP secret,
+2. Sends QR code as base64 image and TOTP secret,
+3. Client scans and creates OTP client,
+4. Then enters TOTP code which,
+5. Then sent to `POST /mfa/setup` alongside with secret,
+6. On backend we encrypt TOTP code,
+7. Then generate backup codes,
+8. Then encrypt backup codes,
+9. Then save TOTP secret and backup codes and secure encryption key,
+10. Then return backup codes to user,
+11. Done.
