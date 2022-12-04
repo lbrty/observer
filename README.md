@@ -1,4 +1,5 @@
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
+
 # 🎩 Observer
 
 This project seeks to bridge the gap in tools and systems to support and help internally displaced persons
@@ -11,6 +12,17 @@ Made in 🇩🇪 with love from 🇰🇬 & 🇺🇦 for people in need.
 Motivation behind this is to avoid database queries to verify sessions and keep it as stateless as possible.
 To manage sessions we use JWT access tokens and refresh tokens where access token is a short living
 token, while refresh tokens will last a lot longer they are used to obtain new access tokens.
+
+### TOTP auth flow
+
+Users will enter email and password which will sent to API then
+
+1. If credentials are valid,
+2. And TOTP is enabled,
+3. Then return `417 Expectation Failed` response,
+4. Given `HTTP 417` response,
+5. Then clients should present TOTP code input,
+6. And send the same authentication credentials with TOTP code.
 
 ## 🍄 Encryption
 
