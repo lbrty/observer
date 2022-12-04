@@ -42,6 +42,9 @@ class Settings(SettingsBase):
         strength=0.68,
     )
 
+    # Allow 10 seconds more for otp codes
+    totp_leeway: int = 10
+
     # CORS settings
     cors_origins: List[str] = ["*"]
     cors_allow_credentials: bool = True
