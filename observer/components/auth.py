@@ -33,6 +33,7 @@ async def authenticated_user(user: SomeUser = Depends(current_user)) -> User:
 
 class RequiredRoles:
     """Check roles authenticated user"""
+
     def __init__(self, roles: List[Role]):
         self.roles = roles
 
