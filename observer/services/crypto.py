@@ -1,60 +1,28 @@
-import hashlib
-from glob import glob
-from typing import List, Protocol
+from typing import Protocol
 
-from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from structlog import get_logger
 
-from observer.schemas.crypto import KeyLoaderTypes, PrivateKey
+from observer.services.keys import KeychainLoader
 
 logger = get_logger(service="crypto")
 
 
-class KeychainLoader(Protocol):
-    keys: List[PrivateKey] = []
-    name: KeyLoaderTypes = KeyLoaderTypes.not_set
+class CryptoServiceInterface(Protocol):
+    keys: KeychainLoader = None
 
-    async def load(self, path: str):
+    async def encrypt(self, data: bytes, key_hash: str | None = None) -> bytes:
+        raise NotImplementedError
+
+    async def decrypt(self, data: bytes, key_hash: str | None = None) -> bytes:
         raise NotImplementedError
 
 
-class FSLoader(KeychainLoader):
-    name = KeyLoaderTypes.fs
+class CryptoService(CryptoServiceInterface):
+    def __init__(self, keychain: KeychainLoader):
+        self.keys = keychain
 
-    async def load(self, path: str):
-        if key_list := glob(f"{path}/*.pem"):
-            for key in key_list:
-                with open(key, "rb") as fp:
-                    file_bytes = fp.read()
-                    h = hashlib.new("sha256", file_bytes)
-                    private_key = PrivateKey(
-                        hash=str(h.hexdigest())[:16].upper(),
-                        key=load_pem_private_key(
-                            file_bytes,
-                            password=None,
-                        ),
-                    )
-                    self.keys.append(private_key)
+    async def encrypt(self, data: bytes, key_hash: str | None = None) -> bytes:
+        ...
 
-                    logger.info("Loaded RSAPrivateKey", SHA256=h)
-
-
-class S3Loader(KeychainLoader):
-    name = KeyLoaderTypes.s3
-
-    async def load(self, path: str):
-        pass
-
-
-class UnknownKeyLoaderError(ValueError):
-    pass
-
-
-def get_key_loader(loader_type: KeyLoaderTypes) -> KeychainLoader:
-    match loader_type:
-        case KeyLoaderTypes.fs:
-            return FSLoader()
-        case KeyLoaderTypes.s3:
-            return S3Loader()
-        case _:
-            raise UnknownKeyLoaderError
+    async def decrypt(self, data: bytes, key_hash: str | None = None) -> bytes:
+        ...
