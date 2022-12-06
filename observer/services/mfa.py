@@ -22,7 +22,7 @@ class MFAServiceInterface(Protocol):
     crypto_service: CryptoServiceInterface
     totp_leeway: int = 0
 
-    async def into_qr(self, secret) -> bytes:
+    async def into_qr(self, secret: MFASecret) -> bytes:
         raise NotImplementedError
 
     async def create(self, app_name: str, ref_id: Identifier) -> MFASecret:
@@ -37,9 +37,9 @@ class MFAService(MFAServiceInterface):
         self.totp_leeway = totp_leeway
         self.crypto_service = crypto_service
 
-    async def into_qr(self, secret) -> bytes:
+    async def into_qr(self, secret: MFASecret) -> bytes:
         qr = QRCode(error_correction=constants.ERROR_CORRECT_L)
-        qr.add_data(secret)
+        qr.add_data(secret.totp_uri)
         image = qr.make_image(
             image_factory=StyledPilImage,
             color_mask=RadialGradiantColorMask(),
