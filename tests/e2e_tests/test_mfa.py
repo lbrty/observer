@@ -13,7 +13,7 @@ async def test_mfa_setup_request(client, ensure_db, app_context, consultant_user
 
     resp_json = resp.json()
     resp = await client.post(
-        "/mfa/setup",
+        "/mfa/configure",
         json=dict(
             email=consultant_user.email,
             password="secret",
