@@ -2,13 +2,13 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from observer.common.types import Identifier
+from observer.common.types import Identifier, SomeDatetime, SomeStr
 
 
 class AuditLogFilters(BaseModel):
-    action: str | None = Field(None, description="Type of action create,update,delete")
-    origin: str | None = Field(None, description="Origin something like user_id, document_id etc.")
-    source: str | None = Field(None, description="Which parts of system created a given audit log")
+    action: SomeStr = Field(None, description="Type of action create,update,delete")
+    origin: SomeStr = Field(None, description="Origin something like user_id, document_id etc.")
+    source: SomeStr = Field(None, description="Which parts of system created a given audit log")
 
 
 class AuditLog(BaseModel):
@@ -19,7 +19,7 @@ class AuditLog(BaseModel):
     )
     data: dict | None = Field(None, description="JSON slice with changes")
     created_at: datetime = Field(..., description="Creation date time of event")
-    expires_at: datetime | None = Field(None, description="Expiration date time of event")
+    expires_at: SomeDatetime = Field(None, description="Expiration date time of event")
 
 
 class AuditLogsResponse(BaseModel):

@@ -27,8 +27,8 @@ from observer.entities.users import NewUser, User
 from observer.repositories.users import UsersRepository
 from observer.schemas.crypto import PrivateKey
 from observer.services.auth import AuthService
-from observer.services.crypto import FSLoader
 from observer.services.jwt import JWTService
+from observer.services.keys import FSLoader
 from observer.services.users import UsersService
 from observer.settings import db_settings, settings
 
