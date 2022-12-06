@@ -11,4 +11,9 @@ class MFAActivationRequest(SchemaBase):
 
 
 class MFAActivationResponse(SchemaBase):
+    secret: str = Field(..., description="TOTP secret")
+    qr_image: str = Field(..., description="Base64 QR code image")
+
+
+class MFABackupCodesResponse(SchemaBase):
     backup_codes: List[str] = Field(..., description="List of backup codes")
