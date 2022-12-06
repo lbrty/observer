@@ -12,7 +12,6 @@ async def test_mfa_setup_request(client, ensure_db, app_context, consultant_user
     assert resp.status_code == status.HTTP_200_OK
 
     resp_json = resp.json()
-
     resp = await client.post(
         "/mfa/setup",
         json=dict(
@@ -22,3 +21,7 @@ async def test_mfa_setup_request(client, ensure_db, app_context, consultant_user
         cookies=resp_json,
     )
     assert resp.status_code == status.HTTP_200_OK
+
+    resp_json = resp.json()
+    assert "secret" in resp_json
+    assert "qr_image" in resp_json
