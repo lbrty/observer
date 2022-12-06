@@ -5,8 +5,9 @@ from observer.context import ctx
 from observer.db import PoolOptions, connect, disconnect
 from observer.repositories.users import UsersRepository
 from observer.services.auth import AuthService
-from observer.services.crypto import CryptoService, get_key_loader
+from observer.services.crypto import CryptoService
 from observer.services.jwt import JWTService
+from observer.services.keys import get_key_loader
 from observer.services.mfa import MFAService
 from observer.services.users import UsersService
 from observer.settings import db_settings, settings

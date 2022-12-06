@@ -13,12 +13,12 @@ from observer.services.users import UsersServiceInterface
 
 
 async def current_user(
-    auth_token: str | None = Cookie("auth_token"),
+    access_token: str | None = Cookie(None),
     jwt_service: JWTService = Depends(jwt_handler),
     users_service: UsersServiceInterface = Depends(services.users_service),
 ) -> SomeUser:
-    if auth_token:
-        token_data, _ = await jwt_service.decode(auth_token)
+    if access_token:
+        token_data, _ = await jwt_service.decode(access_token)
         return await users_service.get_by_ref_id(token_data.ref_id)
     else:
         return None

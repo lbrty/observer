@@ -46,7 +46,7 @@ class MFAService(MFAServiceInterface):
             module_drawer=RoundedModuleDrawer(),
         )
         img_bytes = io.BytesIO()
-        image.save(img_bytes, format="jpg")
+        image.save(img_bytes, format="jpeg")
         return img_bytes.getvalue()
 
     async def create(self, app_name: str, ref_id: Identifier) -> MFASecret:

@@ -25,4 +25,7 @@ async def setup_mfa(
     """Setup MFA authentication"""
     mfa_secret = await mfa.create(settings.title, user.ref_id)
     qr_image = await mfa.into_qr(mfa_secret)
-    return MFAActivationResponse(secret=mfa_secret.secret, qr_image=base64.b64encode(qr_image))
+    return MFAActivationResponse(
+        secret=mfa_secret.secret,
+        qr_image=base64.b64encode(qr_image),
+    )
