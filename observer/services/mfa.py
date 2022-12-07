@@ -1,7 +1,9 @@
 import io
 from dataclasses import dataclass
-from typing import Protocol
+from hashlib import sha1
+from typing import Protocol, Set
 
+import shortuuid
 from pyotp import TOTP, random_base32
 from qrcode import QRCode, constants
 from qrcode.image.styledpil import StyledPilImage
@@ -29,6 +31,9 @@ class MFAServiceInterface(Protocol):
         raise NotImplementedError
 
     async def valid(self, totp_code: str, secret: str) -> bool:
+        raise NotImplementedError
+
+    async def create_backup_codes(self, how_many: int) -> Set[str]:
         raise NotImplementedError
 
 
@@ -60,3 +65,17 @@ class MFAService(MFAServiceInterface):
     async def valid(self, totp_code: str, secret: str) -> bool:
         totp = TOTP(secret)
         return totp.verify(totp_code, valid_window=self.totp_leeway)
+
+    async def create_backup_codes(self, how_many: int) -> Set[str]:
+        backup_codes = set()
+        while True:
+            if len(backup_codes) == how_many:
+                break
+
+            hashcode = sha1(shortuuid.uuid())
+            hexcode = hashcode.hexdigest()
+            code = hexcode[:-6]
+            if code not in backup_codes:
+                backup_codes.add(code)
+
+        return backup_codes
