@@ -72,8 +72,8 @@ class UsersService(UsersServiceInterface):
     async def update_mfa(self, user_id: Identifier, updates: UserMFAUpdateRequest):
         user_update = UserUpdate(
             mfa_enabled=updates.mfa_enabled,
-            mfa_encrypted_secret=updates.mfa_encrypted_secret.get_secret_value(),
-            mfa_encrypted_backup_codes=updates.mfa_encrypted_backup_codes.get_secret_value(),
+            mfa_encrypted_secret=updates.mfa_encrypted_secret,
+            mfa_encrypted_backup_codes=updates.mfa_encrypted_backup_codes,
         )
         await self.repo.update_user(user_id, user_update)
 
