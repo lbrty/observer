@@ -3,9 +3,9 @@ from typing import List
 from fastapi import Cookie, Depends
 
 from observer.api.exceptions import ForbiddenError, UnauthorizedError
-from observer.common.types import Role
+from observer.common.types import Role, SomeStr
 from observer.components import services
-from observer.components.jwt import jwt_service
+from observer.components.services import jwt_service
 from observer.entities.base import SomeUser
 from observer.entities.users import User
 from observer.services.jwt import JWTService
@@ -13,7 +13,7 @@ from observer.services.users import UsersServiceInterface
 
 
 async def current_user(
-    access_token: str | None = Cookie(None),
+    access_token: SomeStr = Cookie(None),
     jwt: JWTService = Depends(jwt_service),
     users_service: UsersServiceInterface = Depends(services.users_service),
 ) -> SomeUser:
