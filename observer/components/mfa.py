@@ -1,9 +1,9 @@
 from fastapi import Depends
 
-from api.exceptions import TOTPExistsError
-from components.auth import authenticated_user
-from entities.users import User
+from observer.api.exceptions import TOTPExistsError
+from observer.components.auth import authenticated_user
 from observer.context import ctx
+from observer.entities.users import User
 from observer.services.mfa import MFAServiceInterface
 
 
@@ -12,5 +12,14 @@ async def mfa_service() -> MFAServiceInterface:
 
 
 async def user_with_no_mfa(user: User = Depends(authenticated_user)):
+    """Checks if user has empty MFA configuration.
+
+    If MFA configuration exists then it raises `TOTPException`.
+
+    Returns:
+        user: User instance
+    """
     if user.mfa_enabled and user.mfa_encrypted_secret is not None:
         raise TOTPExistsError
+
+    return user

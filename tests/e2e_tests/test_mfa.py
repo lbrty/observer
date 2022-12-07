@@ -38,4 +38,4 @@ async def test_mfa_setup_request(client, ensure_db, app_context, consultant_user
     )
     assert resp.status_code == status.HTTP_200_OK
 
-    resp_json = resp.json()
+    resp.json()
