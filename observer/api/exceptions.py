@@ -7,6 +7,7 @@ from starlette import status
 class ErrorCode(str, Enum):
     unauthorized = "unauthorized"
     forbidden = "forbidden"
+    not_found = "not_found"
     totp_error = "totp_error"
     totp_exists_error = "totp_exists_error"
     registration_error = "registration_error"
@@ -35,6 +36,10 @@ class BaseAPIException(Exception):
         )
 
 
+class InternalError(BaseAPIException):
+    ...
+
+
 class TOTPError(BaseAPIException):
     default_code = ErrorCode.totp_error
     default_status = status.HTTP_400_BAD_REQUEST
@@ -57,6 +62,12 @@ class ForbiddenError(BaseAPIException):
     default_code = ErrorCode.unauthorized
     default_status = status.HTTP_403_FORBIDDEN
     default_message = "access forbidden"
+
+
+class NotFoundError(BaseAPIException):
+    default_code = ErrorCode.not_found
+    default_status = status.HTTP_404_NOT_FOUND
+    default_message = "not found"
 
 
 class RegistrationError(BaseAPIException):
