@@ -5,13 +5,17 @@ from starlette import status
 
 from observer.api.exceptions import TOTPError
 from observer.components.mfa import mfa_service, user_with_no_mfa
+from observer.components.services import crypto_service, users_service
 from observer.entities.users import User
 from observer.schemas.mfa import (
     MFAActivationRequest,
     MFAActivationResponse,
     MFABackupCodesResponse,
 )
+from observer.schemas.users import UserMFAUpdateRequest
+from observer.services.crypto import CryptoServiceInterface
 from observer.services.mfa import MFAServiceInterface
+from observer.services.users import UsersServiceInterface
 from observer.settings import settings
 
 router = APIRouter(prefix="/mfa")
@@ -38,16 +42,29 @@ async def configure_mfa(
 @router.post(
     "/setup",
     response_model=MFABackupCodesResponse,
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_201_CREATED,
 )
 async def setup_mfa(
     activation_request: MFAActivationRequest,
     user: User = Depends(user_with_no_mfa),
     mfa: MFAServiceInterface = Depends(mfa_service),
+    crypto: CryptoServiceInterface = Depends(crypto_service),
+    user_service: UsersServiceInterface = Depends(users_service),
 ) -> MFABackupCodesResponse:
     """Save MFA configuration and create backup codes"""
     if await mfa.valid(activation_request.totp_code.get_secret_value(), activation_request.secret.get_secret_value()):
-        await mfa.create_backup_codes(settings.num_backup_codes)
+        backup_codes = await mfa.create_backup_codes(settings.num_backup_codes)
+        encrypted_secret = crypto.encrypt(None, activation_request.secret.get_secret_value().encode())
+        encrypted_backup_codes = crypto.encrypt(None, ",".join(backup_codes).encode())
+        mfa_update_request = UserMFAUpdateRequest(
+            mfa_enabled=True,
+            mfa_encrypted_secret=encrypted_secret,
+            mfa_encrypted_backup_codes=encrypted_backup_codes,
+        )
+        await user_service.update_mfa(
+            user.id,
+            mfa_update_request,
+        )
         return MFABackupCodesResponse(backup_codes=[])
 
     raise TOTPError

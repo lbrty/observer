@@ -5,9 +5,14 @@ import shortuuid
 from observer.common import bcrypt
 from observer.common.types import Identifier
 from observer.entities.base import SomeUser
-from observer.entities.users import NewUser, User
+from observer.entities.users import NewUser, User, UserUpdate
 from observer.repositories.users import UsersRepositoryInterface
-from observer.schemas.users import NewUserRequest, UserResponse, UsersResponse
+from observer.schemas.users import (
+    NewUserRequest,
+    UserMFAUpdateRequest,
+    UserResponse,
+    UsersResponse,
+)
 
 
 class UsersServiceInterface(Protocol):
@@ -23,6 +28,9 @@ class UsersServiceInterface(Protocol):
         raise NotImplementedError
 
     async def create_user(self, new_user: NewUserRequest) -> User:
+        raise NotImplementedError
+
+    async def update_mfa(self, user_id: Identifier, updates: UserMFAUpdateRequest):
         raise NotImplementedError
 
     @staticmethod
@@ -60,6 +68,14 @@ class UsersService(UsersServiceInterface):
             is_confirmed=False,
         )
         return await self.repo.create_user(user)
+
+    async def update_mfa(self, user_id: Identifier, updates: UserMFAUpdateRequest):
+        user_update = UserUpdate(
+            mfa_enabled=updates.mfa_enabled,
+            mfa_encrypted_secret=updates.mfa_encrypted_secret,
+            mfa_encrypted_backup_codes=updates.mfa_encrypted_backup_codes,
+        )
+        await self.repo.update_user(user_id, user_update)
 
     @staticmethod
     async def to_response(user: User) -> UserResponse:

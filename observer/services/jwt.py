@@ -34,7 +34,7 @@ class JWTService:
         """
         return jwt.encode(
             asdict(payload),
-            self.private_key.key,
+            self.private_key.private_key,
             algorithm="RS256",
             headers={
                 "kid": self.private_key.hash,
@@ -60,5 +60,5 @@ class JWTService:
         Returns:
             tuple[TokenData, dict]: a pair of `TokenData` and jwt token headers dictionary
         """
-        decoded = jwt.decode(token, self.private_key.key.public_key(), algorithms=["RS256"])
+        decoded = jwt.decode(token, self.private_key.private_key.public_key(), algorithms=["RS256"])
         return TokenData(**decoded), jwt.get_unverified_header(token)

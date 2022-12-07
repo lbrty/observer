@@ -29,7 +29,7 @@ class FSLoader(KeychainLoader):
                     h = hashlib.new("sha256", file_bytes)
                     private_key = PrivateKey(
                         hash=str(h.hexdigest())[:16].upper(),
-                        key=load_pem_private_key(
+                        private_key=load_pem_private_key(
                             file_bytes,
                             password=None,
                         ),

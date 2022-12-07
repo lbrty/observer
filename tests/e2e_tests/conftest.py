@@ -87,7 +87,7 @@ async def app_context(db_engine):
     ctx.key_loader.keys = [
         PrivateKey(
             hash=str(h.hexdigest())[:16].upper(),
-            key=load_pem_private_key(
+            private_key=load_pem_private_key(
                 private_key_bytes,
                 password=None,
             ),

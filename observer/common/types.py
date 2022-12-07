@@ -6,6 +6,7 @@ from uuid import UUID
 Identifier: TypeAlias = UUID | str
 SomeStr: TypeAlias = str | None
 SomeDate: TypeAlias = date | None
+SomeBool: TypeAlias = bool | None
 SomeDatetime: TypeAlias = datetime | None
 SomeIdentifier: TypeAlias = Identifier | None
 SomeList: TypeAlias = List | None

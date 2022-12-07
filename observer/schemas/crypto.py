@@ -7,7 +7,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 @dataclass
 class PrivateKey:
     hash: str
-    key: RSAPrivateKey
+    private_key: RSAPrivateKey
 
 
 class KeyLoaderTypes(str, Enum):
