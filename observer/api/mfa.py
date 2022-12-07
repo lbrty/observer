@@ -5,7 +5,7 @@ from starlette import status
 
 from observer.api.exceptions import TOTPError
 from observer.components.mfa import mfa_service, user_with_no_mfa
-from observer.components.services import crypto_service, users_service
+from observer.components.services import crypto_service, users_service, keychain
 from observer.entities.users import User
 from observer.schemas.mfa import (
     MFAActivationRequest,
@@ -14,6 +14,7 @@ from observer.schemas.mfa import (
 )
 from observer.schemas.users import UserMFAUpdateRequest
 from observer.services.crypto import CryptoServiceInterface
+from observer.services.keys import Keychain
 from observer.services.mfa import MFAServiceInterface
 from observer.services.users import UsersServiceInterface
 from observer.settings import settings
@@ -50,6 +51,7 @@ async def setup_mfa(
     mfa: MFAServiceInterface = Depends(mfa_service),
     crypto: CryptoServiceInterface = Depends(crypto_service),
     user_service: UsersServiceInterface = Depends(users_service),
+    key_chain: Keychain = Depends(keychain),
 ) -> MFABackupCodesResponse:
     """Save MFA configuration and create backup codes"""
     if await mfa.valid(activation_request.totp_code.get_secret_value(), activation_request.secret.get_secret_value()):
