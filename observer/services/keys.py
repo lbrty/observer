@@ -10,7 +10,7 @@ from observer.schemas.crypto import KeyLoaderTypes, PrivateKey
 logger = get_logger(service="keys")
 
 
-class KeychainLoader(Protocol):
+class Keychain(Protocol):
     keys: List[PrivateKey] = []
     name: KeyLoaderTypes = KeyLoaderTypes.not_set
 
@@ -18,7 +18,7 @@ class KeychainLoader(Protocol):
         raise NotImplementedError
 
 
-class FSLoader(KeychainLoader):
+class FS(Keychain):
     name = KeyLoaderTypes.fs
 
     async def load(self, path: str):
@@ -39,7 +39,7 @@ class FSLoader(KeychainLoader):
                     logger.info("Loaded RSAPrivateKey", SHA256=h)
 
 
-class S3Loader(KeychainLoader):
+class S3(Keychain):
     name = KeyLoaderTypes.s3
 
     async def load(self, path: str):
@@ -50,11 +50,11 @@ class UnknownKeyLoaderError(ValueError):
     pass
 
 
-def get_key_loader(loader_type: KeyLoaderTypes) -> KeychainLoader:
+def get_key_loader(loader_type: KeyLoaderTypes) -> Keychain:
     match loader_type:
         case KeyLoaderTypes.fs:
-            return FSLoader()
+            return FS()
         case KeyLoaderTypes.s3:
-            return S3Loader()
+            return S3()
         case _:
             raise UnknownKeyLoaderError

@@ -29,7 +29,7 @@ from observer.schemas.crypto import PrivateKey
 from observer.services.auth import AuthService
 from observer.services.crypto import CryptoService
 from observer.services.jwt import JWTService
-from observer.services.keys import FSLoader
+from observer.services.keys import FS
 from observer.services.mfa import MFAService
 from observer.services.users import UsersService
 from observer.settings import db_settings, settings
@@ -71,7 +71,7 @@ async def app_context(db_engine):
         session=sessionmaker(db_engine, class_=AsyncSession),
     )
 
-    ctx.key_loader = FSLoader()
+    ctx.keychain = FS()
     private_key = generate_private_key(
         public_exponent=settings.public_exponent,
         key_size=settings.key_size,
@@ -84,7 +84,7 @@ async def app_context(db_engine):
     )
 
     h = hashlib.new("sha256", private_key_bytes)
-    ctx.key_loader.keys = [
+    ctx.keychain.keys = [
         PrivateKey(
             hash=str(h.hexdigest())[:16].upper(),
             private_key=load_pem_private_key(
@@ -93,8 +93,8 @@ async def app_context(db_engine):
             ),
         )
     ]
-    ctx.jwt_service = JWTService(ctx.key_loader.keys[0])
-    ctx.crypto_service = CryptoService(ctx.key_loader)
+    ctx.jwt_service = JWTService(ctx.keychain.keys[0])
+    ctx.crypto_service = CryptoService(ctx.keychain)
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)
     ctx.users_repo = UsersRepository(ctx.db)
     ctx.users_service = UsersService(ctx.users_repo)

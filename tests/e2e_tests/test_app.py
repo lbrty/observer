@@ -10,4 +10,4 @@ async def test_app(client):
 
 
 async def test_app_keys_loaded(app_context):
-    assert len(ctx.key_loader.keys) == 1
+    assert len(ctx.keychain.keys) == 1

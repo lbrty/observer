@@ -1,6 +1,7 @@
 from observer.context import ctx
 from observer.services.crypto import CryptoServiceInterface
 from observer.services.jwt import JWTService
+from observer.services.keys import Keychain
 from observer.services.users import UsersServiceInterface
 
 
@@ -14,3 +15,7 @@ async def jwt_service() -> JWTService:
 
 async def crypto_service() -> CryptoServiceInterface:
     return ctx.crypto_service
+
+
+async def keychain() -> Keychain:
+    return ctx.keychain

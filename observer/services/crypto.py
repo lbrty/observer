@@ -7,13 +7,13 @@ from structlog import get_logger
 from observer.api.exceptions import InternalError
 from observer.common.types import SomeStr
 from observer.schemas.crypto import PrivateKey
-from observer.services.keys import KeychainLoader
+from observer.services.keys import Keychain
 
 logger = get_logger(service="crypto")
 
 
 class CryptoServiceInterface(Protocol):
-    keychain: KeychainLoader = None
+    keychain: Keychain = None
 
     async def encrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
         raise NotImplementedError
@@ -29,7 +29,7 @@ class CryptoServiceInterface(Protocol):
 
 
 class CryptoService(CryptoServiceInterface):
-    def __init__(self, keychain: KeychainLoader):
+    def __init__(self, keychain: Keychain):
         self.keychain = keychain
 
         # More about padding https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding

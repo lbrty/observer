@@ -28,16 +28,16 @@ async def on_startup():
         ),
     )
 
-    ctx.key_loader = get_key_loader(settings.key_loader_type)
-    await ctx.key_loader.load(settings.keystore_path)
-    num_keys = len(ctx.key_loader.keys)
+    ctx.keychain = get_key_loader(settings.key_loader_type)
+    await ctx.keychain.load(settings.keystore_path)
+    num_keys = len(ctx.keychain.keys)
     if num_keys == 0:
         print(f"No keys found, please generate new keys and move to {settings.keystore_path}")
         sys.exit(1)
 
-    print(f"Key loader: {settings.key_loader}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
-    ctx.jwt_service = JWTService(ctx.key_loader.keys[0])
-    ctx.crypto_service = CryptoService(ctx.key_loader)
+    print(f"Key loader: {settings.keychain}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
+    ctx.jwt_service = JWTService(ctx.keychain.keys[0])
+    ctx.crypto_service = CryptoService(ctx.keychain)
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)
     ctx.users_repo = UsersRepository(ctx.db)
     ctx.users_service = UsersService(ctx.users_repo)
