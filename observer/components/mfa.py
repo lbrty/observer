@@ -16,6 +16,9 @@ async def user_with_no_mfa(user: User = Depends(authenticated_user)):
 
     If MFA configuration exists then it raises `TOTPException`.
 
+    Args:
+        user(User): injected user instance
+
     Returns:
         user: User instance
     """

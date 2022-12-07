@@ -47,6 +47,7 @@ async def setup_mfa(
 ) -> MFABackupCodesResponse:
     """Save MFA configuration and create backup codes"""
     if await mfa.valid(activation_request.totp_code.get_secret_value(), activation_request.secret.get_secret_value()):
+        await mfa.create_backup_codes(settings.num_backup_codes)
         return MFABackupCodesResponse(backup_codes=[])
 
     raise TOTPError
