@@ -3,9 +3,8 @@ import base64
 from fastapi import APIRouter, Depends
 from starlette import status
 
-from observer.api.exceptions import TOTPError, TOTPExistsError
-from observer.components.auth import authenticated_user
-from observer.components.mfa import mfa_service
+from observer.api.exceptions import TOTPError
+from observer.components.mfa import mfa_service, user_with_no_mfa
 from observer.entities.users import User
 from observer.schemas.mfa import (
     MFAActivationRequest,
@@ -24,13 +23,10 @@ router = APIRouter(prefix="/mfa")
     status_code=status.HTTP_200_OK,
 )
 async def configure_mfa(
-    user: User = Depends(authenticated_user),
+    user: User = Depends(user_with_no_mfa),
     mfa: MFAServiceInterface = Depends(mfa_service),
 ) -> MFAActivationResponse:
     """Setup MFA authentication"""
-    if user.mfa_enabled and user.mfa_encrypted_secret is not None:
-        raise TOTPExistsError
-
     mfa_secret = await mfa.create(settings.title, user.ref_id)
     qr_image = await mfa.into_qr(mfa_secret)
     return MFAActivationResponse(
@@ -46,13 +42,10 @@ async def configure_mfa(
 )
 async def setup_mfa(
     activation_request: MFAActivationRequest,
-    user: User = Depends(authenticated_user),
+    user: User = Depends(user_with_no_mfa),
     mfa: MFAServiceInterface = Depends(mfa_service),
 ) -> MFABackupCodesResponse:
     """Save MFA configuration and create backup codes"""
-    if user.mfa_enabled and user.mfa_encrypted_secret is not None:
-        raise TOTPExistsError
-
     if await mfa.valid(activation_request.totp_code.get_secret_value(), activation_request.secret.get_secret_value()):
         return MFABackupCodesResponse(backup_codes=[])
 
