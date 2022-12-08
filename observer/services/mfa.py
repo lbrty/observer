@@ -20,6 +20,13 @@ class MFASecret:
     totp_uri: str
 
 
+@dataclass
+class MFASetupResult:
+    encrypted_secret: str
+    plain_backup_codes: Set[str]
+    encrypted_backup_codes: str
+
+
 class MFAServiceInterface(Protocol):
     crypto_service: CryptoServiceInterface
     totp_leeway: int = 0
@@ -34,6 +41,9 @@ class MFAServiceInterface(Protocol):
         raise NotImplementedError
 
     async def create_backup_codes(self, how_many: int) -> Set[str]:
+        raise NotImplementedError
+
+    async def setup_mfa(self, mfa_secret: str, key_hash: str, num_backup_codes: int) -> MFASetupResult:
         raise NotImplementedError
 
 
@@ -79,3 +89,13 @@ class MFAService(MFAServiceInterface):
                 backup_codes.add(code)
 
         return backup_codes
+
+    async def setup_mfa(self, mfa_secret: str, key_hash: str, num_backup_codes: int) -> MFASetupResult:
+        backup_codes = await self.create_backup_codes(num_backup_codes)
+        encrypted_secret = await self.crypto_service.encrypt(key_hash, mfa_secret.encode())
+        encrypted_backup_codes = await self.crypto_service.encrypt(key_hash, ",".join(backup_codes).encode())
+        return MFASetupResult(
+            encrypted_secret=f"{key_hash}:{encrypted_secret}",
+            plain_backup_codes=backup_codes,
+            encrypted_backup_codes=f"{key_hash}:{encrypted_backup_codes}",
+        )
