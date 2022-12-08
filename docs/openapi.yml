@@ -126,6 +126,81 @@
         }
       }
     },
+    "/auth/reset-password": {
+      "post": {
+        "summary": "Reset Password",
+        "description": "Reset password for user using email",
+        "operationId": "reset_password_auth_reset_password_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password/{code}": {
+      "post": {
+        "summary": "Reset Password",
+        "description": "Reset password using reset code",
+        "operationId": "reset_password_auth_reset_password__code__post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            },
+            "name": "code",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -353,6 +428,22 @@
           }
         }
       },
+      "NewPasswordRequest": {
+        "title": "NewPasswordRequest",
+        "required": [
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "password": {
+            "title": "Password",
+            "type": "string",
+            "description": "Password which user has provided",
+            "format": "password",
+            "writeOnly": true
+          }
+        }
+      },
       "RegistrationPayload": {
         "title": "RegistrationPayload",
         "required": [
@@ -373,6 +464,21 @@
             "description": "Password which user has provided",
             "format": "password",
             "writeOnly": true
+          }
+        }
+      },
+      "ResetPasswordRequest": {
+        "title": "ResetPasswordRequest",
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "E-mail address of a user",
+            "format": "email"
           }
         }
       },
