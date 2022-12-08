@@ -144,6 +144,96 @@
           }
         }
       }
+    },
+    "/mfa/configure": {
+      "post": {
+        "summary": "Configure Mfa",
+        "description": "Setup MFA authentication",
+        "operationId": "configure_mfa_mfa_configure_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MFAActivationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mfa/setup": {
+      "post": {
+        "summary": "Setup Mfa",
+        "description": "Save MFA configuration and create backup codes",
+        "operationId": "setup_mfa_mfa_setup_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MFAActivationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MFABackupCodesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -194,6 +284,72 @@
             "description": "Password to login",
             "format": "password",
             "writeOnly": true
+          },
+          "totp_code": {
+            "title": "Totp Code",
+            "type": "string",
+            "description": "TOTP code if MFA is active for a given user"
+          }
+        }
+      },
+      "MFAActivationRequest": {
+        "title": "MFAActivationRequest",
+        "required": [
+          "secret",
+          "totp_code"
+        ],
+        "type": "object",
+        "properties": {
+          "secret": {
+            "title": "Secret",
+            "type": "string",
+            "description": "TOTP secret",
+            "format": "password",
+            "writeOnly": true
+          },
+          "totp_code": {
+            "title": "Totp Code",
+            "type": "string",
+            "description": "TOTP code to validate and save for user",
+            "format": "password",
+            "writeOnly": true
+          }
+        }
+      },
+      "MFAActivationResponse": {
+        "title": "MFAActivationResponse",
+        "required": [
+          "secret",
+          "qr_image"
+        ],
+        "type": "object",
+        "properties": {
+          "secret": {
+            "title": "Secret",
+            "type": "string",
+            "description": "TOTP secret"
+          },
+          "qr_image": {
+            "title": "Qr Image",
+            "type": "string",
+            "description": "Base64 QR code image"
+          }
+        }
+      },
+      "MFABackupCodesResponse": {
+        "title": "MFABackupCodesResponse",
+        "required": [
+          "backup_codes"
+        ],
+        "type": "object",
+        "properties": {
+          "backup_codes": {
+            "title": "Backup Codes",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of backup codes"
           }
         }
       },
