@@ -18,3 +18,17 @@ class LoginPayload(SchemaBase):
 class RegistrationPayload(SchemaBase):
     email: EmailStr = Field(..., description="E-mail address of a user")
     password: SecretStr = Field(..., description="Password which user has provided")
+
+
+class ResetPasswordRequest(SchemaBase):
+    email: EmailStr = Field(..., description="E-mail address of a user")
+
+
+class NewPasswordRequest(SchemaBase):
+    password: SecretStr = Field(..., description="Password which user has provided")
+
+
+class ChangePasswordRequest(SchemaBase):
+    old_password: SecretStr = Field(..., description="Old password which user has provided")
+    new_password: SecretStr = Field(..., description="New password which user has provided")
+    totp_code: SomeStr = Field(None, description="TOTP code if MFA is active for a given user")

@@ -1,9 +1,15 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from starlette import status
 
 from observer.components.auth import refresh_token_cookie
 from observer.context import ctx
-from observer.schemas.auth import LoginPayload, RegistrationPayload, TokenResponse
+from observer.schemas.auth import (
+    LoginPayload,
+    NewPasswordRequest,
+    RegistrationPayload,
+    ResetPasswordRequest,
+    TokenResponse,
+)
 
 router = APIRouter(prefix="/auth")
 
@@ -39,3 +45,21 @@ async def token_register(registration_payload: RegistrationPayload) -> TokenResp
     """Register using email and password"""
     result = await ctx.auth_service.register(registration_payload)
     return result
+
+
+@router.post(
+    "/reset-password",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def reset_password(reset_password_payload: ResetPasswordRequest) -> Response:
+    """Reset password for user using email"""
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post(
+    "/reset-password/{code}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def reset_password(code: str, new_password_payload: NewPasswordRequest) -> Response:
+    """Reset password using reset code"""
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
