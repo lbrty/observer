@@ -1,3 +1,4 @@
+import base64
 from typing import Protocol
 
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -43,18 +44,18 @@ class CryptoService(CryptoServiceInterface):
 
     async def encrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
         key = await self.find_key(key_hash)
-        return key.private_key.public_key().encrypt(data, self.padding)
+        return base64.b64encode(key.private_key.public_key().encrypt(data, self.padding))
 
     async def decrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
         key = await self.find_key(key_hash)
-        return key.private_key.decrypt(data, self.padding)
+        return base64.b64encode(key.private_key.decrypt(data, self.padding))
 
     async def find_key(self, key_hash: SomeStr) -> PrivateKey:
         for key in self.keychain.keys:
             if key.hash == key_hash:
                 return key
 
-        raise InternalError(message="private keys not found")
+        raise InternalError(message=f"private key with hash={key_hash} not found")
 
     async def aes_encrypt(self, secret: str, data: bytes) -> bytes:
         ...
