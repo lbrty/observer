@@ -126,6 +126,38 @@
         }
       }
     },
+    "/auth/change-password": {
+      "post": {
+        "summary": "Reset Password",
+        "description": "Reset password for user using email",
+        "operationId": "reset_password_auth_change_password_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/reset-password": {
       "post": {
         "summary": "Reset Password",
@@ -313,6 +345,35 @@
   },
   "components": {
     "schemas": {
+      "ChangePasswordRequest": {
+        "title": "ChangePasswordRequest",
+        "required": [
+          "old_password",
+          "new_password"
+        ],
+        "type": "object",
+        "properties": {
+          "old_password": {
+            "title": "Old Password",
+            "type": "string",
+            "description": "Old password which user has provided",
+            "format": "password",
+            "writeOnly": true
+          },
+          "new_password": {
+            "title": "New Password",
+            "type": "string",
+            "description": "New password which user has provided",
+            "format": "password",
+            "writeOnly": true
+          },
+          "totp_code": {
+            "title": "Totp Code",
+            "type": "string",
+            "description": "TOTP code if MFA is active for a given user"
+          }
+        }
+      },
       "HTTPValidationError": {
         "title": "HTTPValidationError",
         "type": "object",

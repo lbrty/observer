@@ -8,7 +8,7 @@ from observer.schemas.auth import (
     NewPasswordRequest,
     RegistrationPayload,
     ResetPasswordRequest,
-    TokenResponse,
+    TokenResponse, ChangePasswordRequest,
 )
 
 router = APIRouter(prefix="/auth")
@@ -45,6 +45,15 @@ async def token_register(registration_payload: RegistrationPayload) -> TokenResp
     """Register using email and password"""
     result = await ctx.auth_service.register(registration_payload)
     return result
+
+
+@router.post(
+    "/change-password",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def reset_password(change_password_payload: ChangePasswordRequest) -> Response:
+    """Reset password for user using email"""
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.post(
