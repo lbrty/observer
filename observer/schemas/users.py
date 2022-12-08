@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import EmailStr, Field, SecretStr
 
 from observer.common.types import Identifier, Role, SomeStr
@@ -6,7 +8,7 @@ from observer.schemas.base import SchemaBase
 
 class BaseUser(SchemaBase):
     email: EmailStr = Field(..., description="E-mail address of a user")
-    full_name: str | None = Field(None, description="Full name of a user")
+    full_name: SomeStr = Field(None, description="Full name of a user")
     role: Role = Field(..., description="Role of a user")
 
 
@@ -42,4 +44,4 @@ class UserResponse(BaseUser):
 
 class UsersResponse(SchemaBase):
     total: int = Field(..., description="Total count of users")
-    items: list[UserResponse] = Field(..., description="List of users")
+    items: List[UserResponse] = Field(..., description="List of users")

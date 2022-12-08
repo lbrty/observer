@@ -75,6 +75,6 @@ class UsersRepository(UsersRepositoryInterface):
             update_values["mfa_encrypted_secret"] = updates.mfa_encrypted_secret
             update_values["mfa_encrypted_backup_codes"] = updates.mfa_encrypted_backup_codes
 
-        query = update(users).values(update_values).where(users.c.id == user_id).returning("*")
+        query = update(users).values(update_values).where(users.c.id == str(user_id)).returning("*")
         if result := await self.db.fetchone(query):
             return User(**result)
