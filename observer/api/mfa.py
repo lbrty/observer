@@ -90,6 +90,7 @@ async def reset_mfa(
         HTTP 204 returned anyway to prevent user email brute forcing  because we only
         want exact matches to check and reset if given backup code is valid.
     """
+    # TODO: Send email about MFA reset
     if user := await user_service.get_by_email(reset_request.email):
         await user_service.check_backup_code(user.mfa_encrypted_backup_codes, reset_request.backup_code)
         await user_service.reset_mfa(user.id)

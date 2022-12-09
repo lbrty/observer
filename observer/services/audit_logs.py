@@ -5,6 +5,7 @@ from observer.repositories.audit_logs import AuditLogsRepositoryInterface
 from observer.schemas.audit_logs import NewAuditLog
 
 
+# TODO: rename files audit_logs to audits
 class AuditLogsServiceInterface(Protocol):
     async def add_event(self, event: NewAuditLog):
         raise NotImplementedError
