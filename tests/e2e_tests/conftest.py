@@ -115,12 +115,6 @@ def test_app(env_settings) -> FastAPI:
     return create_app(env_settings)
 
 
-@pytest.fixture(scope="session")
-async def client(test_app):
-    app_client = httpx.AsyncClient(app=test_app, base_url="http://test")
-    yield app_client
-
-
 @pytest.fixture(scope="function")
 async def consultant_user(ensure_db, app_context) -> User:
     user = await app_context.users_service.repo.create_user(
@@ -136,3 +130,20 @@ async def consultant_user(ensure_db, app_context) -> User:
     )
 
     yield user
+
+
+@pytest.fixture(scope="session")
+async def client(test_app):
+    app_client = httpx.AsyncClient(app=test_app, base_url="http://test")
+    yield app_client
+
+
+@pytest.fixture(scope="function")
+async def authorized_client(test_app, app_context, consultant_user):
+    token = await app_context.auth_service.create_token(consultant_user.ref_id)
+    app_client = httpx.AsyncClient(
+        app=test_app,
+        base_url="http://test",
+        cookies=token.dict(),
+    )
+    yield app_client

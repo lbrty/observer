@@ -1,7 +1,7 @@
 from starlette import status
 
 
-async def test_token_login(client, ensure_db, app_context, consultant_user):
+async def test_token_login_works_as_expected(client, ensure_db, app_context, consultant_user):
     resp = await client.post(
         "/auth/token",
         json=dict(
@@ -33,21 +33,8 @@ async def test_token_login_fails_if_credentials_are_wrong(client, ensure_db, con
     }
 
 
-async def test_token_refresh_works_as_expected(client, ensure_db, app_context, consultant_user):
-    resp = await client.post(
-        "/auth/token",
-        json=dict(
-            email=consultant_user.email,
-            password="secret",
-        ),
-    )
-    assert resp.status_code == status.HTTP_200_OK
-
-    resp_json = resp.json()
-    resp = await client.post(
-        "/auth/token/refresh",
-        cookies={"refresh_token": resp_json["refresh_token"]},
-    )
+async def test_token_refresh_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
+    resp = await authorized_client.post("/auth/token/refresh")
     assert resp.status_code == status.HTTP_200_OK
     resp_json = resp.json()
     token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])

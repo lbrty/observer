@@ -4,11 +4,12 @@ from starlette import status
 from observer.components.auth import refresh_token_cookie
 from observer.context import ctx
 from observer.schemas.auth import (
+    ChangePasswordRequest,
     LoginPayload,
     NewPasswordRequest,
     RegistrationPayload,
     ResetPasswordRequest,
-    TokenResponse, ChangePasswordRequest,
+    TokenResponse,
 )
 
 router = APIRouter(prefix="/auth")

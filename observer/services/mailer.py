@@ -3,7 +3,7 @@ from typing import Protocol
 
 
 @dataclass
-class Message:
+class EmailMessage:
     to_email: str
     from_email: str
     subject: str
@@ -11,5 +11,5 @@ class Message:
 
 
 class MailerInterface(Protocol):
-    async def send(self, message: Message):
+    async def send(self, message: EmailMessage):
         raise NotImplementedError
