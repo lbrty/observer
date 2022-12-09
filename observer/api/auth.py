@@ -52,7 +52,7 @@ async def token_register(registration_payload: RegistrationPayload) -> TokenResp
     "/change-password",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def reset_password(change_password_payload: ChangePasswordRequest) -> Response:
+async def change_password(change_password_payload: ChangePasswordRequest) -> Response:
     """Reset password for user using email"""
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -61,7 +61,7 @@ async def reset_password(change_password_payload: ChangePasswordRequest) -> Resp
     "/reset-password",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def reset_password(reset_password_payload: ResetPasswordRequest) -> Response:
+async def reset_password_request(reset_password_payload: ResetPasswordRequest) -> Response:
     """Reset password for user using email"""
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -70,6 +70,6 @@ async def reset_password(reset_password_payload: ResetPasswordRequest) -> Respon
     "/reset-password/{code}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def reset_password(code: str, new_password_payload: NewPasswordRequest) -> Response:
+async def reset_password_with_code(code: str, new_password_payload: NewPasswordRequest) -> Response:
     """Reset password using reset code"""
     return Response(status_code=status.HTTP_204_NO_CONTENT)

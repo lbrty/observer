@@ -56,7 +56,11 @@ async def setup_mfa(
     user_service: UsersServiceInterface = Depends(users_service),
     key_chain: Keychain = Depends(keychain),
 ) -> MFABackupCodesResponse:
-    """Save MFA configuration and create backup codes"""
+    """Save MFA configuration and create backup codes.
+
+    NOTE:
+        Only the latest private key is used to encrypt secret and backup codes.
+    """
     if await mfa.valid(activation_request.totp_code.get_secret_value(), activation_request.secret.get_secret_value()):
         key_hash = key_chain.keys[0].hash
         mfa_setup_result = await mfa.setup_mfa(
@@ -92,7 +96,6 @@ async def reset_mfa(
         HTTP 204 returned anyway to prevent user email brute forcing  because we only
         want exact matches to check and reset if given backup code is valid.
     """
-    # TODO: Send email about MFA reset
     if user := await user_service.get_by_email(reset_request.email):
         await user_service.check_backup_code(user.mfa_encrypted_backup_codes, reset_request.backup_code)
         await user_service.reset_mfa(user.id)
@@ -103,16 +106,17 @@ async def reset_mfa(
                 from_email=settings.from_email,
                 subject=settings.mfa_reset_subject,
                 body="Your MFA was reset, you can login using your credentials.",
-            )
+            ),
         )
     else:
+        now = datetime.now(tz=timezone.utc)
         tasks.add_task(
             audit_logs.add_event,
             NewAuditLog(
                 ref="origin=mfa,source=endpoint:reset_mfa,action=reset,type=system",
                 data=reset_request.dict(),
-                created_at=datetime.now(tz=timezone.utc),
-                expires_at=datetime.now(tz=timezone.utc) + timedelta(days=365),
+                created_at=now,
+                expires_at=now + timedelta(days=settings.mfa_audit_event_lifetime_days),
             ),
         )
 

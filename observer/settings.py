@@ -60,6 +60,7 @@ class Settings(SettingsBase):
     # Mailer settings
     from_email: str = "no-reply@email.com"
     mfa_reset_subject: str = "MFA has been reset"
+    mfa_audit_event_lifetime_days: int = 365
 
 
 class DatabaseSettings(SettingsBase):
