@@ -224,3 +224,63 @@ async def test_mfa_reset_request_works_as_expected(authorized_client, client, en
     assert user.mfa_enabled is False
     assert user.mfa_encrypted_secret is None
     assert user.mfa_encrypted_backup_codes is None
+
+
+async def test_mfa_reset_request_works_as_expected_when_invalid_backup_code_given(
+    authorized_client,
+    client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
+    resp = await authorized_client.post(
+        "/mfa/configure",
+        json=dict(
+            email=consultant_user.email,
+            password="secret",
+        ),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+    resp_json = resp.json()
+    assert "secret" in resp_json
+    secret = resp_json["secret"]
+    totp = TOTP(secret)
+
+    resp = await authorized_client.post(
+        "/mfa/setup",
+        json=dict(
+            totp_code=totp.now(),
+            secret=secret,
+        ),
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    resp = await client.post(
+        "/mfa/reset",
+        json=dict(
+            email=consultant_user.email,
+            backup_code="wronk-backup-kode",
+        ),
+    )
+    assert resp.status_code == status.HTTP_401_UNAUTHORIZED
+    assert resp.json() == {
+        "code": "totp_error",
+        "data": None,
+        "message": "invalid backup code",
+        "status_code": 401,
+    }
+
+
+async def test_mfa_reset_request_works_as_expected_when_email_given(
+    client,
+    ensure_db,
+    app_context,
+):
+    resp = await client.post(
+        "/mfa/reset",
+        json=dict(
+            email="some-random@email.com",
+            backup_code="hacking-attempt",
+        ),
+    )
+    assert resp.status_code == status.HTTP_204_NO_CONTENT

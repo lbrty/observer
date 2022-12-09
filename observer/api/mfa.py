@@ -1,12 +1,14 @@
 import base64
+from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
 from observer.api.exceptions import TOTPError
 from observer.components.mfa import mfa_service, user_with_no_mfa
-from observer.components.services import keychain, users_service
+from observer.components.services import audit_service, keychain, users_service
 from observer.entities.users import User
+from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.mfa import (
     MFAActivationRequest,
     MFAActivationResponse,
@@ -14,6 +16,7 @@ from observer.schemas.mfa import (
     MFABackupCodesResponse,
 )
 from observer.schemas.users import UserMFAUpdateRequest
+from observer.services.audit_logs import AuditLogsServiceInterface
 from observer.services.keys import Keychain
 from observer.services.mfa import MFAServiceInterface
 from observer.services.users import UsersServiceInterface
@@ -77,10 +80,28 @@ async def setup_mfa(
 @router.post("/reset", status_code=status.HTTP_204_NO_CONTENT)
 async def reset_mfa(
     reset_request: MFAAResetRequest,
+    tasks: BackgroundTasks,
     user_service: UsersServiceInterface = Depends(users_service),
+    audit_logs: AuditLogsServiceInterface = Depends(audit_service),
 ) -> Response:
-    """Reset MFA using one of backup codes"""
-    user = await user_service.get_by_email(reset_request.email)
-    await user_service.check_backup_code(user.mfa_encrypted_backup_codes, reset_request.backup_code)
-    await user_service.reset_mfa(user.id)
+    """Reset MFA using one of backup codes
+
+    NOTE:
+        HTTP 204 returned anyway to prevent user email brute forcing  because we only
+        want exact matches to check and reset if given backup code is valid.
+    """
+    if user := await user_service.get_by_email(reset_request.email):
+        await user_service.check_backup_code(user.mfa_encrypted_backup_codes, reset_request.backup_code)
+        await user_service.reset_mfa(user.id)
+    else:
+        tasks.add_task(
+            audit_logs.add_event,
+            NewAuditLog(
+                ref=f"origin=mfa,source=endpoint:reset_mfa,action=reset",
+                data=reset_request.dict(),
+                created_at=datetime.now(tz=timezone.utc),
+                expires=datetime.now(tz=timezone.utc) + timedelta(days=365),
+            ),
+        )
+
     return Response(status_code=status.HTTP_204_NO_CONTENT)
