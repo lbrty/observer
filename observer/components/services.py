@@ -1,9 +1,10 @@
 from observer.api.exceptions import InternalError
 from observer.context import ctx
-from observer.services.audit_logs import AuditService
+from observer.services.audit_logs import AuditServiceInterface
 from observer.services.crypto import CryptoServiceInterface
 from observer.services.jwt import JWTService
 from observer.services.keys import Keychain
+from observer.services.mailer import MailerInterface
 from observer.services.users import UsersServiceInterface
 
 
@@ -26,5 +27,9 @@ async def keychain() -> Keychain:
     return ctx.keychain
 
 
-async def audit_service() -> AuditService:
+async def audit_service() -> AuditServiceInterface:
     return ctx.audit_service
+
+
+async def mailer() -> MailerInterface:
+    return ctx.mailer
