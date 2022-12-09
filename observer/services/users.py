@@ -1,7 +1,9 @@
+import base64
 from typing import Protocol
 
 import shortuuid
 
+from observer.api.exceptions import TOTPError
 from observer.common import bcrypt
 from observer.common.types import Identifier
 from observer.entities.base import SomeUser
@@ -13,6 +15,7 @@ from observer.schemas.users import (
     UserResponse,
     UsersResponse,
 )
+from observer.services.crypto import CryptoServiceInterface
 
 
 class UsersServiceInterface(Protocol):
@@ -33,6 +36,12 @@ class UsersServiceInterface(Protocol):
     async def update_mfa(self, user_id: Identifier, updates: UserMFAUpdateRequest):
         raise NotImplementedError
 
+    async def reset_mfa(self, user_id: Identifier):
+        raise NotImplementedError
+
+    async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
+        raise NotImplementedError
+
     @staticmethod
     async def to_response(user: User) -> UserResponse:
         raise NotImplementedError
@@ -43,8 +52,9 @@ class UsersServiceInterface(Protocol):
 
 
 class UsersService(UsersServiceInterface):
-    def __init__(self, users_repository: UsersRepositoryInterface):
+    def __init__(self, users_repository: UsersRepositoryInterface, crypto_service: CryptoServiceInterface):
         self.repo = users_repository
+        self.crypto_service = crypto_service
 
     async def get_by_id(self, user_id: Identifier) -> SomeUser:
         return await self.repo.get_by_id(user_id)
@@ -76,6 +86,17 @@ class UsersService(UsersServiceInterface):
             mfa_encrypted_backup_codes=updates.mfa_encrypted_backup_codes,
         )
         await self.repo.update_user(user_id, user_update)
+
+    async def reset_mfa(self, user_id: Identifier):
+        await self.repo.reset_mfa(user_id)
+
+    async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
+        keys_hash, encrypted_backup_codes = user_backup_codes.split(":", maxsplit=1)
+        decrypted_backup_codes = await self.crypto_service.decrypt(
+            keys_hash, base64.b64decode(encrypted_backup_codes.encode())
+        )
+        if given_backup_code not in decrypted_backup_codes.decode().split(","):
+            raise TOTPError(message="invalid backup code")
 
     @staticmethod
     async def to_response(user: User) -> UserResponse:

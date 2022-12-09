@@ -25,13 +25,16 @@ class UsersRepositoryInterface(Protocol):
     async def update_user(self, user_id: Identifier, updates: UserUpdate) -> User:
         raise NotImplementedError
 
+    async def reset_mfa(self, user_id: Identifier) -> User:
+        raise NotImplementedError
+
 
 class UsersRepository(UsersRepositoryInterface):
     def __init__(self, db: Database):
         self.db = db
 
     async def get_by_id(self, user_id: Identifier) -> SomeUser:
-        query = select(users).where(users.c.id == user_id)
+        query = select(users).where(users.c.id == str(user_id))
         if result := await self.db.fetchone(query):
             return User(**result)
 
@@ -74,6 +77,17 @@ class UsersRepository(UsersRepositoryInterface):
             update_values["mfa_enabled"] = updates.mfa_enabled
             update_values["mfa_encrypted_secret"] = updates.mfa_encrypted_secret
             update_values["mfa_encrypted_backup_codes"] = updates.mfa_encrypted_backup_codes
+
+        query = update(users).values(update_values).where(users.c.id == str(user_id)).returning("*")
+        if result := await self.db.fetchone(query):
+            return User(**result)
+
+    async def reset_mfa(self, user_id: Identifier) -> User:
+        update_values = dict(
+            mfa_enabled=False,
+            mfa_encrypted_secret=None,
+            mfa_encrypted_backup_codes=None,
+        )
 
         query = update(users).values(update_values).where(users.c.id == str(user_id)).returning("*")
         if result := await self.db.fetchone(query):

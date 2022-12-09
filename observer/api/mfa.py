@@ -5,7 +5,7 @@ from starlette import status
 
 from observer.api.exceptions import TOTPError
 from observer.components.mfa import mfa_service, user_with_no_mfa
-from observer.components.services import crypto_service, keychain, users_service
+from observer.components.services import keychain, users_service
 from observer.entities.users import User
 from observer.schemas.mfa import (
     MFAActivationRequest,
@@ -14,7 +14,6 @@ from observer.schemas.mfa import (
     MFABackupCodesResponse,
 )
 from observer.schemas.users import UserMFAUpdateRequest
-from observer.services.crypto import CryptoServiceInterface
 from observer.services.keys import Keychain
 from observer.services.mfa import MFAServiceInterface
 from observer.services.users import UsersServiceInterface
@@ -78,8 +77,10 @@ async def setup_mfa(
 @router.post("/reset", status_code=status.HTTP_204_NO_CONTENT)
 async def reset_mfa(
     reset_request: MFAAResetRequest,
-    crypto: CryptoServiceInterface = Depends(crypto_service),
     user_service: UsersServiceInterface = Depends(users_service),
-    key_chain: Keychain = Depends(keychain),
 ) -> Response:
+    """Reset MFA using one of backup codes"""
+    user = await user_service.get_by_email(reset_request.email)
+    await user_service.check_backup_code(user.mfa_encrypted_backup_codes, reset_request.backup_code)
+    await user_service.reset_mfa(user.id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
