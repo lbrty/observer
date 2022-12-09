@@ -345,6 +345,7 @@
     "/mfa/reset": {
       "post": {
         "summary": "Reset Mfa",
+        "description": "Reset MFA using one of backup codes",
         "operationId": "reset_mfa_mfa_reset_post",
         "requestBody": {
           "content": {
