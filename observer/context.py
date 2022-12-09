@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 
 from observer.db import Database
+from observer.repositories.audit_logs import AuditLogsRepositoryInterface
 from observer.repositories.users import UsersRepositoryInterface
+from observer.services.audit_logs import AuditLogsServiceInterface
 from observer.services.auth import AuthServiceInterface
 from observer.services.crypto import CryptoServiceInterface, Keychain
 from observer.services.jwt import JWTService
@@ -13,6 +15,8 @@ from observer.services.users import UsersServiceInterface
 class Context:
     db: Database = None
     keychain: Keychain = None
+    audit_service: AuditLogsServiceInterface = None
+    audit_repo: AuditLogsRepositoryInterface = None
     jwt_service: JWTService = None
     auth_service: AuthServiceInterface = None
     crypto_service: CryptoServiceInterface = None

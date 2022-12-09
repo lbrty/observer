@@ -24,8 +24,10 @@ from observer.common.types import Role
 from observer.context import ctx
 from observer.db import Database, metadata
 from observer.entities.users import NewUser, User
+from observer.repositories.audit_logs import AuditLogsRepository
 from observer.repositories.users import UsersRepository
 from observer.schemas.crypto import PrivateKey
+from observer.services.audit_logs import AuditLogsService
 from observer.services.auth import AuthService
 from observer.services.crypto import CryptoService
 from observer.services.jwt import JWTService
@@ -94,6 +96,8 @@ async def app_context(db_engine):
         )
     ]
     ctx.jwt_service = JWTService(ctx.keychain.keys[0])
+    ctx.audit_repo = AuditLogsRepository(ctx.db)
+    ctx.audit_service = AuditLogsService(ctx.audit_repo)
     ctx.crypto_service = CryptoService(ctx.keychain)
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)
     ctx.users_repo = UsersRepository(ctx.db)
