@@ -10,6 +10,7 @@ from observer.services.auth import AuthService
 from observer.services.crypto import CryptoService
 from observer.services.jwt import JWTService
 from observer.services.keys import get_key_loader
+from observer.services.mailer import Mailer
 from observer.services.mfa import MFAService
 from observer.services.users import UsersService
 from observer.settings import db_settings, settings
@@ -39,6 +40,7 @@ async def on_startup():
 
     print(f"Key loader: {settings.keychain}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
     ctx.jwt_service = JWTService(ctx.keychain.keys[0])
+    ctx.mailer = Mailer()
     ctx.audit_repo = AuditRepository(ctx.db)
     ctx.audit_service = AuditService(ctx.audit_repo)
     ctx.crypto_service = CryptoService(ctx.keychain)

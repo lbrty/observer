@@ -7,6 +7,7 @@ from observer.services.audit_logs import AuditServiceInterface
 from observer.services.auth import AuthServiceInterface
 from observer.services.crypto import CryptoServiceInterface, Keychain
 from observer.services.jwt import JWTService
+from observer.services.mailer import MailerInterface
 from observer.services.mfa import MFAServiceInterface
 from observer.services.users import UsersServiceInterface
 
@@ -15,6 +16,7 @@ from observer.services.users import UsersServiceInterface
 class Context:
     db: Database = None
     keychain: Keychain = None
+    mailer: MailerInterface = None
     audit_service: AuditServiceInterface = None
     audit_repo: AuditRepositoryInterface = None
     jwt_service: JWTService = None

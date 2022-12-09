@@ -35,6 +35,7 @@ from observer.services.keys import FS
 from observer.services.mfa import MFAService
 from observer.services.users import UsersService
 from observer.settings import db_settings, settings
+from tests.mocks.mailer import MockMailer
 
 
 @pytest.fixture(scope="session")
@@ -97,6 +98,7 @@ async def app_context(db_engine):
     ]
     ctx.jwt_service = JWTService(ctx.keychain.keys[0])
     ctx.audit_repo = AuditRepository(ctx.db)
+    ctx.mailer = MockMailer()
     ctx.audit_service = AuditService(ctx.audit_repo)
     ctx.crypto_service = CryptoService(ctx.keychain)
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)

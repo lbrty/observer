@@ -13,3 +13,8 @@ class EmailMessage:
 class MailerInterface(Protocol):
     async def send(self, message: EmailMessage):
         raise NotImplementedError
+
+
+class Mailer(MailerInterface):
+    async def send(self, message: EmailMessage):
+        pass
