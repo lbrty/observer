@@ -345,7 +345,7 @@
     "/mfa/reset": {
       "post": {
         "summary": "Reset Mfa",
-        "description": "Reset MFA using one of backup codes",
+        "description": "Reset MFA using one of backup codes\n\nNOTE:\n    HTTP 204 returned anyway to prevent user email brute forcing  because we only\n    want exact matches to check and reset if given backup code is valid.",
         "operationId": "reset_mfa_mfa_reset_post",
         "requestBody": {
           "content": {
