@@ -1,5 +1,6 @@
 from observer.api.exceptions import InternalError
 from observer.context import ctx
+from observer.services.audit_logs import AuditLogsService
 from observer.services.crypto import CryptoServiceInterface
 from observer.services.jwt import JWTService
 from observer.services.keys import Keychain
@@ -23,3 +24,7 @@ async def keychain() -> Keychain:
         raise InternalError(message="private keys not found")
 
     return ctx.keychain
+
+
+async def audit_service() -> AuditLogsService:
+    return ctx.audit_service
