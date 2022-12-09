@@ -19,10 +19,9 @@ Users will enter email and password which will sent to API then
 
 1. If credentials are valid,
 2. And TOTP is enabled,
-3. Then return `417 Expectation Failed` response,
-4. Given `HTTP 417` response,
-5. Then clients should present TOTP code input,
-6. And send the same authentication credentials with TOTP code.
+3. Then return `401 Unauthorized` response,
+4. Given `HTTP 401` response,
+5. Then clients should present TOTP code with the same authentication credentials.
 
 ## 🍄 Encryption
 
