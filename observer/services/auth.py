@@ -69,7 +69,10 @@ class AuthService(AuthServiceInterface):
             # resend auth credentials and TOTP code.
             if user.mfa_enabled and not login_payload.totp_code:
                 raise TOTPRequiredError
-            else:
+
+            # If MFA is enabled and TOTP given
+            # Then we verify it
+            if user.mfa_enabled:
                 # Now we need to decrypt `totp_secret` and verify given `totp_code`
                 # if invalid we return `TOTPError`
                 keys_hash, encrypted_secret = user.mfa_encrypted_secret.split(":", maxsplit=1)
