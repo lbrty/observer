@@ -96,7 +96,8 @@ async def reset_mfa(
     if user := await user_service.get_by_email(reset_request.email):
         await user_service.check_backup_code(user.mfa_encrypted_backup_codes, reset_request.backup_code)
         await user_service.reset_mfa(user.id)
-        await mail.send(
+        tasks.add_task(
+            mail.send,
             EmailMessage(
                 to_email=user.email,
                 from_email=settings.from_email,
