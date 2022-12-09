@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, EmailStr
 
 from observer.common.types import Identifier, Role, SomeBool, SomeStr
@@ -35,3 +37,9 @@ class UserUpdate(BaseModel):
     mfa_enabled: SomeBool
     mfa_encrypted_secret: SomeStr
     mfa_encrypted_backup_codes: SomeStr
+
+
+class PasswordReset(BaseModel):
+    code: str
+    user_id: Identifier
+    created_at: datetime
