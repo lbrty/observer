@@ -341,6 +341,37 @@
           }
         }
       }
+    },
+    "/mfa/reset": {
+      "post": {
+        "summary": "Reset Mfa",
+        "operationId": "reset_mfa_mfa_reset_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MFAAResetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -425,6 +456,27 @@
             "title": "Totp Code",
             "type": "string",
             "description": "TOTP code if MFA is active for a given user"
+          }
+        }
+      },
+      "MFAAResetRequest": {
+        "title": "MFAAResetRequest",
+        "required": [
+          "email",
+          "backup_code"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "User email",
+            "format": "email"
+          },
+          "backup_code": {
+            "title": "Backup Code",
+            "type": "string",
+            "description": "MFA backup code"
           }
         }
       },

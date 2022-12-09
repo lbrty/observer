@@ -1,18 +1,20 @@
 import base64
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from starlette import status
 
 from observer.api.exceptions import TOTPError
 from observer.components.mfa import mfa_service, user_with_no_mfa
-from observer.components.services import keychain, users_service
+from observer.components.services import crypto_service, keychain, users_service
 from observer.entities.users import User
 from observer.schemas.mfa import (
     MFAActivationRequest,
     MFAActivationResponse,
+    MFAAResetRequest,
     MFABackupCodesResponse,
 )
 from observer.schemas.users import UserMFAUpdateRequest
+from observer.services.crypto import CryptoServiceInterface
 from observer.services.keys import Keychain
 from observer.services.mfa import MFAServiceInterface
 from observer.services.users import UsersServiceInterface
@@ -71,3 +73,13 @@ async def setup_mfa(
         return MFABackupCodesResponse(backup_codes=list(mfa_setup_result.plain_backup_codes))
 
     raise TOTPError
+
+
+@router.post("/reset", status_code=status.HTTP_204_NO_CONTENT)
+async def reset_mfa(
+    reset_request: MFAAResetRequest,
+    crypto: CryptoServiceInterface = Depends(crypto_service),
+    user_service: UsersServiceInterface = Depends(users_service),
+    key_chain: Keychain = Depends(keychain),
+) -> Response:
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
