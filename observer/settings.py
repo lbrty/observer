@@ -57,6 +57,9 @@ class Settings(SettingsBase):
     # swagger settings
     swagger_output_file: Path = here / "docs/openapi.yml"
 
+    # Mailer settings
+    from_email: str = "no-reply@email.com"
+
 
 class DatabaseSettings(SettingsBase):
     db_uri: PostgresDsn

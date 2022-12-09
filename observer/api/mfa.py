@@ -6,7 +6,7 @@ from starlette import status
 
 from observer.api.exceptions import TOTPError
 from observer.components.mfa import mfa_service, user_with_no_mfa
-from observer.components.services import audit_service, keychain, users_service
+from observer.components.services import audit_service, keychain, mailer, users_service
 from observer.entities.users import User
 from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.mfa import (
@@ -18,6 +18,7 @@ from observer.schemas.mfa import (
 from observer.schemas.users import UserMFAUpdateRequest
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.keys import Keychain
+from observer.services.mailer import EmailMessage, MailerInterface
 from observer.services.mfa import MFAServiceInterface
 from observer.services.users import UsersServiceInterface
 from observer.settings import settings
@@ -83,6 +84,7 @@ async def reset_mfa(
     tasks: BackgroundTasks,
     user_service: UsersServiceInterface = Depends(users_service),
     audit_logs: AuditServiceInterface = Depends(audit_service),
+    mail: MailerInterface = Depends(mailer),
 ) -> Response:
     """Reset MFA using one of backup codes
 
@@ -94,6 +96,14 @@ async def reset_mfa(
     if user := await user_service.get_by_email(reset_request.email):
         await user_service.check_backup_code(user.mfa_encrypted_backup_codes, reset_request.backup_code)
         await user_service.reset_mfa(user.id)
+        await mail.send(
+            EmailMessage(
+                to_email=user.email,
+                from_email=settings.from_email,
+                subject="MFA has been reset",
+                body="Your MFA was reset, you can login using your credentials.",
+            )
+        )
     else:
         tasks.add_task(
             audit_logs.add_event,
