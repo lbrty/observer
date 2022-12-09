@@ -100,7 +100,7 @@ async def reset_mfa(
             EmailMessage(
                 to_email=user.email,
                 from_email=settings.from_email,
-                subject="MFA has been reset",
+                subject=settings.mfa_reset_subject,
                 body="Your MFA was reset, you can login using your credentials.",
             )
         )

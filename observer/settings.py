@@ -59,6 +59,7 @@ class Settings(SettingsBase):
 
     # Mailer settings
     from_email: str = "no-reply@email.com"
+    mfa_reset_subject: str = "MFA has been reset"
 
 
 class DatabaseSettings(SettingsBase):
