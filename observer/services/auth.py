@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime, timedelta, timezone
 from typing import Protocol
 
@@ -6,6 +7,8 @@ from jwt.exceptions import DecodeError, InvalidAlgorithmError, InvalidSignatureE
 from observer.api.exceptions import (
     ForbiddenError,
     RegistrationError,
+    TOTPError,
+    TOTPRequiredError,
     UnauthorizedError,
     WeakPasswordError,
 )
@@ -14,7 +17,9 @@ from observer.common.bcrypt import is_strong_password
 from observer.common.types import Identifier, Role
 from observer.schemas.auth import LoginPayload, RegistrationPayload, TokenResponse
 from observer.schemas.users import NewUserRequest
+from observer.services.crypto import CryptoServiceInterface
 from observer.services.jwt import JWTService, TokenData
+from observer.services.mfa import MFAServiceInterface
 from observer.services.users import UsersServiceInterface
 from observer.settings import settings
 
@@ -45,12 +50,35 @@ class AuthServiceInterface(Protocol):
 
 
 class AuthService(AuthServiceInterface):
-    def __init__(self, jwt_service: JWTService, users_service: UsersServiceInterface):
+    def __init__(
+        self,
+        crypto_service: CryptoServiceInterface,
+        mfa_service: MFAServiceInterface,
+        jwt_service: JWTService,
+        users_service: UsersServiceInterface,
+    ):
+        self.crypto_service = crypto_service
         self.jwt_service = jwt_service
+        self.mfa_service = mfa_service
         self.users_service = users_service
 
     async def token_login(self, login_payload: LoginPayload) -> TokenResponse:
         if user := await self.users_service.get_by_email(login_payload.email):
+            # If MFA is enabled and no TOTP code provided
+            # then we need to return HTTP 417 so clients
+            # resend auth credentials and TOTP code.
+            if user.mfa_enabled and not login_payload.totp_code:
+                raise TOTPRequiredError
+            else:
+                # Now we need to decrypt `totp_secret` and verify given `totp_code`
+                # if invalid we return `TOTPError`
+                keys_hash, encrypted_secret = user.mfa_encrypted_secret.split(":", maxsplit=1)
+                decrypted_secret = await self.crypto_service.decrypt(
+                    keys_hash, base64.b64decode(encrypted_secret.encode())
+                )
+                if not await self.mfa_service.valid(login_payload.totp_code, decrypted_secret.decode()):
+                    raise TOTPError(message="invalid totp code")
+
             if bcrypt.check_password(login_payload.password.get_secret_value(), user.password_hash):
                 return await self.create_token(user.ref_id)
 

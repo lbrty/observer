@@ -48,7 +48,7 @@ class CryptoService(CryptoServiceInterface):
 
     async def decrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
         key = await self.find_key(key_hash)
-        return base64.b64encode(key.private_key.decrypt(data, self.padding))
+        return key.private_key.decrypt(data, self.padding)
 
     async def find_key(self, key_hash: SomeStr) -> PrivateKey:
         for key in self.keychain.keys:

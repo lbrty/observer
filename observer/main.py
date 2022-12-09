@@ -41,7 +41,7 @@ async def on_startup():
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)
     ctx.users_repo = UsersRepository(ctx.db)
     ctx.users_service = UsersService(ctx.users_repo)
-    ctx.auth_service = AuthService(ctx.jwt_service, ctx.users_service)
+    ctx.auth_service = AuthService(ctx.crypto_service, ctx.mfa_service, ctx.jwt_service, ctx.users_service)
 
 
 @app.on_event("shutdown")

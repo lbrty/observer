@@ -9,6 +9,7 @@ class ErrorCode(str, Enum):
     forbidden = "forbidden"
     not_found = "not_found"
     totp_error = "totp_error"
+    totp_required_error = "totp_required_error"
     totp_exists_error = "totp_exists_error"
     registration_error = "registration_error"
     weak_password_error = "weak_password_error"
@@ -42,8 +43,14 @@ class InternalError(BaseAPIException):
 
 class TOTPError(BaseAPIException):
     default_code = ErrorCode.totp_error
-    default_status = status.HTTP_400_BAD_REQUEST
+    default_status = status.HTTP_401_UNAUTHORIZED
     default_message = "invalid totp code"
+
+
+class TOTPRequiredError(BaseAPIException):
+    default_code = ErrorCode.totp_required_error
+    default_status = status.HTTP_417_EXPECTATION_FAILED
+    default_message = "totp required"
 
 
 class TOTPExistsError(BaseAPIException):
