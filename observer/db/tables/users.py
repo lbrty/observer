@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, CheckConstraint, Column, Index, Table, Text, text
+from sqlalchemy import (Boolean, CheckConstraint, Column, DateTime, ForeignKey, Index, Table, Text, func, text,)
 from sqlalchemy.dialects.postgresql import UUID
 
 from observer.db import metadata
@@ -22,4 +22,14 @@ users = Table(
     Index("ux_users_ref_id", "ref_id", unique=True),
     Index("ix_users_is_active", "is_active"),
     CheckConstraint("role IN ('admin', 'consultant', 'guest', 'staff')", name="users_role_type_check"),
+)
+
+password_resets = Table(
+    "password_resets",
+    metadata,
+    Column("code", UUID()),
+    Column("user_id", UUID(), ForeignKey("users.id"), nullable=False),
+    Column("created_at", DateTime(timezone=True), server_default=func.now(), nullable=True),
+    Index("ix_password_resets_code", "code"),
+    Index("ix_password_resets_user_id", "user_id"),
 )
