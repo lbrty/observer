@@ -1,6 +1,6 @@
 from observer.api.exceptions import InternalError
 from observer.context import ctx
-from observer.services.audit_logs import AuditLogsService
+from observer.services.audit_logs import AuditService
 from observer.services.crypto import CryptoServiceInterface
 from observer.services.jwt import JWTService
 from observer.services.keys import Keychain
@@ -26,5 +26,5 @@ async def keychain() -> Keychain:
     return ctx.keychain
 
 
-async def audit_service() -> AuditLogsService:
+async def audit_service() -> AuditService:
     return ctx.audit_service

@@ -16,7 +16,7 @@ from observer.schemas.mfa import (
     MFABackupCodesResponse,
 )
 from observer.schemas.users import UserMFAUpdateRequest
-from observer.services.audit_logs import AuditLogsServiceInterface
+from observer.services.audit_logs import AuditServiceInterface
 from observer.services.keys import Keychain
 from observer.services.mfa import MFAServiceInterface
 from observer.services.users import UsersServiceInterface
@@ -82,7 +82,7 @@ async def reset_mfa(
     reset_request: MFAAResetRequest,
     tasks: BackgroundTasks,
     user_service: UsersServiceInterface = Depends(users_service),
-    audit_logs: AuditLogsServiceInterface = Depends(audit_service),
+    audit_logs: AuditServiceInterface = Depends(audit_service),
 ) -> Response:
     """Reset MFA using one of backup codes
 

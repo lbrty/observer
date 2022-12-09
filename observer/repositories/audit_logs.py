@@ -8,7 +8,7 @@ from observer.entities.audit_logs import AuditLog
 from observer.schemas.audit_logs import NewAuditLog
 
 
-class AuditLogsRepositoryInterface(Protocol):
+class AuditRepositoryInterface(Protocol):
     async def add_event(self, new_event: NewAuditLog) -> AuditLog:
         raise NotImplementedError
 
@@ -16,7 +16,7 @@ class AuditLogsRepositoryInterface(Protocol):
         raise NotImplementedError
 
 
-class AuditLogsRepository(AuditLogsRepositoryInterface):
+class AuditRepository(AuditRepositoryInterface):
     def __init__(self, db: Database):
         self.db = db
 

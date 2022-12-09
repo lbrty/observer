@@ -1,12 +1,11 @@
 from typing import Protocol
 
 from observer.entities.audit_logs import AuditLog
-from observer.repositories.audit_logs import AuditLogsRepositoryInterface
+from observer.repositories.audit_logs import AuditRepositoryInterface
 from observer.schemas.audit_logs import NewAuditLog
 
 
-# TODO: rename files audit_logs to audits
-class AuditLogsServiceInterface(Protocol):
+class AuditServiceInterface(Protocol):
     async def add_event(self, event: NewAuditLog):
         raise NotImplementedError
 
@@ -14,8 +13,8 @@ class AuditLogsServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class AuditLogsService(AuditLogsServiceInterface):
-    def __init__(self, repo: AuditLogsRepositoryInterface):
+class AuditService(AuditServiceInterface):
+    def __init__(self, repo: AuditRepositoryInterface):
         self.repo = repo
 
     async def add_event(self, new_event: NewAuditLog) -> AuditLog:
