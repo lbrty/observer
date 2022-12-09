@@ -271,16 +271,21 @@ async def test_mfa_reset_request_works_as_expected_when_invalid_backup_code_give
     }
 
 
-async def test_mfa_reset_request_works_as_expected_when_email_given(
+async def test_mfa_reset_request_works_as_expected_when_random_email_given(
     client,
     ensure_db,
     app_context,
 ):
+    payload = dict(
+        email="some-random@email.com",
+        backup_code="hacking-attempt",
+    )
     resp = await client.post(
         "/mfa/reset",
-        json=dict(
-            email="some-random@email.com",
-            backup_code="hacking-attempt",
-        ),
+        json=payload,
     )
     assert resp.status_code == status.HTTP_204_NO_CONTENT
+    audit_log = await app_context.audit_service.find_by_ref(
+        "origin=mfa,source=endpoint:reset_mfa,action=reset,type=system",
+    )
+    assert audit_log.data == payload

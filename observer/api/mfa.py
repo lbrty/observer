@@ -97,10 +97,10 @@ async def reset_mfa(
         tasks.add_task(
             audit_logs.add_event,
             NewAuditLog(
-                ref=f"origin=mfa,source=endpoint:reset_mfa,action=reset",
+                ref="origin=mfa,source=endpoint:reset_mfa,action=reset,type=system",
                 data=reset_request.dict(),
                 created_at=datetime.now(tz=timezone.utc),
-                expires=datetime.now(tz=timezone.utc) + timedelta(days=365),
+                expires_at=datetime.now(tz=timezone.utc) + timedelta(days=365),
             ),
         )
 
