@@ -183,3 +183,44 @@ async def test_configured_mfa_works_as_expected_when_incorrect_totp_code_given(
         "message": "invalid totp code",
         "status_code": 401,
     }
+
+
+async def test_mfa_reset_request_works_as_expected(authorized_client, client, ensure_db, app_context, consultant_user):
+    resp = await authorized_client.post(
+        "/mfa/configure",
+        json=dict(
+            email=consultant_user.email,
+            password="secret",
+        ),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+    resp_json = resp.json()
+    assert "secret" in resp_json
+    secret = resp_json["secret"]
+    totp = TOTP(secret)
+
+    resp = await authorized_client.post(
+        "/mfa/setup",
+        json=dict(
+            totp_code=totp.now(),
+            secret=secret,
+        ),
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    resp_json = resp.json()
+    backup_codes = resp_json["backup_codes"]
+    assert len(backup_codes) == 6
+
+    resp = await client.post(
+        "/mfa/reset",
+        json=dict(
+            email=consultant_user.email,
+            backup_code=backup_codes[0],
+        ),
+    )
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+    user = await app_context.users_repo.get_by_id(consultant_user.id)
+    assert user.mfa_enabled is False
+    assert user.mfa_encrypted_secret is None
+    assert user.mfa_encrypted_backup_codes is None
