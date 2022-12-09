@@ -97,7 +97,7 @@ async def app_context(db_engine):
     ctx.crypto_service = CryptoService(ctx.keychain)
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)
     ctx.users_repo = UsersRepository(ctx.db)
-    ctx.users_service = UsersService(ctx.users_repo)
+    ctx.users_service = UsersService(ctx.users_repo, ctx.crypto_service)
     ctx.auth_service = AuthService(ctx.crypto_service, ctx.mfa_service, ctx.jwt_service, ctx.users_service)
 
     yield ctx
