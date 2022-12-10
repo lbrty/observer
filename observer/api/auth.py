@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Request, Response
 from starlette import status
 
 from observer.components.auth import refresh_token_cookie
@@ -64,10 +64,17 @@ async def change_password(change_password_payload: ChangePasswordRequest) -> Res
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def reset_password_request(
-    reset_password_payload: ResetPasswordRequest, auth: AuthServiceInterface = Depends(auth_service)
+    reset_password_payload: ResetPasswordRequest,
+    request: Request,
+    auth: AuthServiceInterface = Depends(auth_service),
 ) -> Response:
     """Reset password for user using email"""
-    await auth.reset_password(reset_password_payload.email)
+    await auth.reset_password(
+        reset_password_payload.email,
+        metadata=dict(
+            host=request.client.host,
+        ),
+    )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
