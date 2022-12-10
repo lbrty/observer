@@ -46,7 +46,7 @@ class AuthServiceInterface(Protocol):
     async def refresh_token(self, refresh_token: str) -> TokenResponse:
         raise NotImplementedError
 
-    async def reset_password(self, email: str):
+    async def reset_password(self, email: str, metadata: dict = None):
         raise NotImplementedError
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
@@ -121,25 +121,42 @@ class AuthService(AuthServiceInterface):
         except (DecodeError, InvalidAlgorithmError, InvalidSignatureError):
             raise ForbiddenError(message="Invalid refresh token")
 
-    async def reset_password(self, email: str):
+    async def reset_password(self, email: str, metadata: dict = None):
+        now = datetime.now(tz=timezone.utc)
+        data = dict(email=email)
+        if metadata:
+            data = {
+                **data,
+                **metadata,
+            }
+
         if user := await self.users_service.get_by_email(email):
-            await self.users_service.reset_password(user.id)
+            password_reset = await self.users_service.reset_password(user.id)
+            reset_link = f"{settings.app_domain}/{settings.password_reset_url.format(code=password_reset.code)}"
             self.tasks.add_task(
                 self.mailer.send,
                 EmailMessage(
                     to_email=user.email,
                     from_email=settings.from_email,
                     subject=settings.mfa_reset_subject,
-                    body="Your MFA was reset, you can login using your credentials.",
+                    body=f"To reset you password please use the following link {reset_link}.",
                 ),
             )
-        else:
-            now = datetime.now(tz=timezone.utc)
             self.tasks.add_task(
                 self.audits.add_event,
                 NewAuditLog(
-                    ref="origin=auth,source=service:auth,action=reset:password,type=external",
-                    data=dict(email=email),
+                    ref="origin=auth,source=service:auth,action=reset:password,type=external,outcome=success",
+                    data=data,
+                    created_at=now,
+                    expires_at=now + timedelta(days=settings.auth_audit_event_lifetime_days),
+                ),
+            )
+        else:
+            self.tasks.add_task(
+                self.audits.add_event,
+                NewAuditLog(
+                    ref="origin=auth,source=service:auth,action=reset:password,type=external,outcome=error",
+                    data=data,
                     created_at=now,
                     expires_at=now + timedelta(days=settings.auth_audit_event_lifetime_days),
                 ),

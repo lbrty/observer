@@ -7,7 +7,7 @@ from observer.api.exceptions import TOTPError
 from observer.common import bcrypt
 from observer.common.types import Identifier
 from observer.entities.base import SomeUser
-from observer.entities.users import NewUser, User, UserUpdate
+from observer.entities.users import NewUser, PasswordReset, User, UserUpdate
 from observer.repositories.users import UsersRepositoryInterface
 from observer.schemas.users import (
     NewUserRequest,
@@ -42,7 +42,7 @@ class UsersServiceInterface(Protocol):
     async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
         raise NotImplementedError
 
-    async def reset_password(self, user_id: Identifier):
+    async def reset_password(self, user_id: Identifier) -> PasswordReset:
         raise NotImplementedError
 
     @staticmethod
@@ -101,8 +101,8 @@ class UsersService(UsersServiceInterface):
         if given_backup_code not in decrypted_backup_codes.decode().split(","):
             raise TOTPError(message="invalid backup code")
 
-    async def reset_password(self, user_id: Identifier):
-        await self.repo.create_password_reset_code(user_id, shortuuid.uuid())
+    async def reset_password(self, user_id: Identifier) -> PasswordReset:
+        return await self.repo.create_password_reset_code(user_id, shortuuid.uuid())
 
     @staticmethod
     async def to_response(user: User) -> UserResponse:
