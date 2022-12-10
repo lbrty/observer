@@ -27,7 +27,7 @@ def upgrade():
             ondelete="CASCADE",
         ),
     )
-    op.create_index(op.f("ix_password_resets_code"), "password_resets", ["code"])
+    op.create_index(op.f("ux_password_resets_code"), "password_resets", ["code"], unique=True)
     op.create_index(op.f("ix_password_resets_user_id"), "password_resets", ["user_id"])
 
 

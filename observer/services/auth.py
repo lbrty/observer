@@ -113,7 +113,6 @@ class AuthService(AuthServiceInterface):
             raise ForbiddenError(message="Invalid refresh token")
 
     async def reset_password(self, email: str):
-        # TODO: add password reset codes table
         if user := await self.users_service.get_by_email(email):
             pass
 

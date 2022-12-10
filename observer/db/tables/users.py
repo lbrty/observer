@@ -41,6 +41,6 @@ password_resets = Table(
     Column("code", UUID()),
     Column("user_id", UUID(), ForeignKey("users.id"), nullable=False),
     Column("created_at", DateTime(timezone=True), server_default=func.now(), nullable=True),
-    Index("ix_password_resets_code", "code"),
+    Index("ux_password_resets_code", "code", unique=True),
     Index("ix_password_resets_user_id", "user_id"),
 )
