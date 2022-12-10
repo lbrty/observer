@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, Request, Response
+from datetime import datetime, timedelta, timezone
+
+from fastapi import APIRouter, BackgroundTasks, Depends, Request, Response
 from starlette import status
 
 from observer.components.auth import refresh_token_cookie
-from observer.components.services import auth_service
+from observer.components.services import audit_service, auth_service
 from observer.context import ctx
+from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.auth import (
     ChangePasswordRequest,
     LoginPayload,
@@ -12,7 +15,9 @@ from observer.schemas.auth import (
     ResetPasswordRequest,
     TokenResponse,
 )
+from observer.services.audit_logs import AuditServiceInterface
 from observer.services.auth import AuthServiceInterface
+from observer.settings import settings
 
 router = APIRouter(prefix="/auth")
 
@@ -22,10 +27,24 @@ router = APIRouter(prefix="/auth")
     response_model=TokenResponse,
     status_code=status.HTTP_200_OK,
 )
-async def token_login(login_payload: LoginPayload) -> TokenResponse:
+async def token_login(
+    tasks: BackgroundTasks,
+    login_payload: LoginPayload,
+    audit_logs: AuditServiceInterface = Depends(audit_service),
+) -> TokenResponse:
     """Login using email and password"""
-    result = await ctx.auth_service.token_login(login_payload)
-    return result
+    user, auth_token = await ctx.auth_service.token_login(login_payload)
+    now = datetime.now(tz=timezone.utc)
+    tasks.add_task(
+        audit_logs.add_event,
+        NewAuditLog(
+            ref=f"origin=auth,source=service:auth,action=token:login,ref_id={user.ref_id}",
+            data=dict(ref_id=user.ref_id),
+            expires_at=now + timedelta(days=settings.auth_audit_event_login_days),
+        ),
+    )
+
+    return auth_token
 
 
 @router.post(

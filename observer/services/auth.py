@@ -1,6 +1,6 @@
 import base64
 from datetime import datetime, timedelta, timezone
-from typing import Protocol
+from typing import Protocol, Tuple
 
 from jwt.exceptions import DecodeError, InvalidAlgorithmError, InvalidSignatureError
 from starlette.background import BackgroundTasks
@@ -16,6 +16,7 @@ from observer.api.exceptions import (
 from observer.common import bcrypt
 from observer.common.bcrypt import is_strong_password
 from observer.common.types import Identifier, Role
+from observer.entities.users import User
 from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.auth import LoginPayload, RegistrationPayload, TokenResponse
 from observer.schemas.users import NewUserRequest
@@ -37,7 +38,7 @@ class AuthServiceInterface(Protocol):
     jwt_service: JWTService
     users_service: UsersServiceInterface
 
-    async def token_login(self, login_payload: LoginPayload) -> TokenResponse:
+    async def token_login(self, login_payload: LoginPayload) -> Tuple[User, TokenResponse]:
         raise NotImplementedError
 
     async def register(self, registration_payload: RegistrationPayload) -> TokenResponse:
@@ -73,7 +74,7 @@ class AuthService(AuthServiceInterface):
         self.users_service = users_service
         self.tasks = BackgroundTasks()
 
-    async def token_login(self, login_payload: LoginPayload) -> TokenResponse:
+    async def token_login(self, login_payload: LoginPayload) -> Tuple[User, TokenResponse]:
         if user := await self.users_service.get_by_email(login_payload.email):
             # If MFA is enabled and no TOTP code provided
             # then we need to return HTTP 417 so clients
@@ -95,17 +96,7 @@ class AuthService(AuthServiceInterface):
 
             if bcrypt.check_password(login_payload.password.get_secret_value(), user.password_hash):
                 token_response = await self.create_token(user.ref_id)
-                now = datetime.now(tz=timezone.utc)
-                self.tasks.add_task(
-                    self.audits.add_event,
-                    NewAuditLog(
-                        ref=f"{self.tag},action=token:login",
-                        data=dict(ref_id=user.ref_id, role=user.role.value),
-                        created_at=now,
-                        expires_at=now + timedelta(days=settings.auth_audit_event_login_days),
-                    ),
-                )
-                return token_response
+                return user, token_response
 
         raise UnauthorizedError(message="Wrong email or password")
 
@@ -126,13 +117,11 @@ class AuthService(AuthServiceInterface):
         )
 
         token_response = await self.create_token(user.ref_id)
-        now = datetime.now(tz=timezone.utc)
         self.tasks.add_task(
             self.audits.add_event,
             NewAuditLog(
                 ref=f"{self.tag},action=token:register",
                 data=dict(ref_id=user.ref_id, role=user.role.value),
-                created_at=now,
                 expires_at=None,
             ),
         )
@@ -148,7 +137,6 @@ class AuthService(AuthServiceInterface):
                 NewAuditLog(
                     ref=f"{self.tag},action=token:refresh",
                     data=dict(ref_id=token_data.ref_id),
-                    created_at=now,
                     expires_at=now + timedelta(days=settings.auth_audit_event_refresh_days),
                 ),
             )
@@ -159,7 +147,6 @@ class AuthService(AuthServiceInterface):
                 NewAuditLog(
                     ref=f"{self.tag},action=token:refresh,kind=error",
                     data=dict(refresh_token=refresh_token, notice="invalid refresh token"),
-                    created_at=now,
                     expires_at=now + timedelta(days=settings.auth_audit_event_lifetime_days),
                 ),
             )
@@ -191,7 +178,6 @@ class AuthService(AuthServiceInterface):
                 NewAuditLog(
                     ref=f"{self.tag},action=reset:password",
                     data=data,
-                    created_at=now,
                     expires_at=now + timedelta(days=settings.auth_audit_event_lifetime_days),
                 ),
             )

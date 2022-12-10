@@ -15,6 +15,11 @@ async def test_token_login_works_as_expected(client, ensure_db, app_context, con
     token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])
     assert token_data.ref_id == consultant_user.ref_id
 
+    audit_log = await app_context.audit_service.find_by_ref(
+        f"origin=auth,source=service:auth,action=token:login,ref_id={consultant_user.ref_id}"
+    )
+    assert audit_log.data["ref_id"] == consultant_user.ref_id
+
 
 async def test_token_login_fails_if_credentials_are_wrong(client, ensure_db, consultant_user):
     resp = await client.post(
