@@ -128,9 +128,9 @@
     },
     "/auth/change-password": {
       "post": {
-        "summary": "Reset Password",
+        "summary": "Change Password",
         "description": "Reset password for user using email",
-        "operationId": "reset_password_auth_change_password_post",
+        "operationId": "change_password_auth_change_password_post",
         "requestBody": {
           "content": {
             "application/json": {
@@ -160,9 +160,9 @@
     },
     "/auth/reset-password": {
       "post": {
-        "summary": "Reset Password",
+        "summary": "Reset Password Request",
         "description": "Reset password for user using email",
-        "operationId": "reset_password_auth_reset_password_post",
+        "operationId": "reset_password_request_auth_reset_password_post",
         "requestBody": {
           "content": {
             "application/json": {
@@ -192,9 +192,9 @@
     },
     "/auth/reset-password/{code}": {
       "post": {
-        "summary": "Reset Password",
+        "summary": "Reset Password With Code",
         "description": "Reset password using reset code",
-        "operationId": "reset_password_auth_reset_password__code__post",
+        "operationId": "reset_password_with_code_auth_reset_password__code__post",
         "parameters": [
           {
             "required": true,
@@ -295,7 +295,7 @@
     "/mfa/setup": {
       "post": {
         "summary": "Setup Mfa",
-        "description": "Save MFA configuration and create backup codes",
+        "description": "Save MFA configuration and create backup codes.\n\nNOTE:\n    Only the latest private key is used to encrypt secret and backup codes.",
         "operationId": "setup_mfa_mfa_setup_post",
         "parameters": [
           {

@@ -42,6 +42,9 @@ class UsersServiceInterface(Protocol):
     async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
         raise NotImplementedError
 
+    async def reset_password(self, user_id: Identifier):
+        raise NotImplementedError
+
     @staticmethod
     async def to_response(user: User) -> UserResponse:
         raise NotImplementedError
@@ -97,6 +100,9 @@ class UsersService(UsersServiceInterface):
         )
         if given_backup_code not in decrypted_backup_codes.decode().split(","):
             raise TOTPError(message="invalid backup code")
+
+    async def reset_password(self, user_id: Identifier):
+        await self.repo.create_password_reset_code(user_id, shortuuid.uuid())
 
     @staticmethod
     async def to_response(user: User) -> UserResponse:

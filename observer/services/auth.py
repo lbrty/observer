@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Protocol
 
 from jwt.exceptions import DecodeError, InvalidAlgorithmError, InvalidSignatureError
+from starlette.background import BackgroundTasks
 
 from observer.api.exceptions import (
     ForbiddenError,
@@ -15,10 +16,13 @@ from observer.api.exceptions import (
 from observer.common import bcrypt
 from observer.common.bcrypt import is_strong_password
 from observer.common.types import Identifier, Role
+from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.auth import LoginPayload, RegistrationPayload, TokenResponse
 from observer.schemas.users import NewUserRequest
+from observer.services.audit_logs import AuditServiceInterface
 from observer.services.crypto import CryptoServiceInterface
 from observer.services.jwt import JWTService, TokenData
+from observer.services.mailer import EmailMessage, MailerInterface
 from observer.services.mfa import MFAServiceInterface
 from observer.services.users import UsersServiceInterface
 from observer.settings import settings
@@ -53,14 +57,19 @@ class AuthService(AuthServiceInterface):
     def __init__(
         self,
         crypto_service: CryptoServiceInterface,
+        audits: AuditServiceInterface,
+        mailer: MailerInterface,
         mfa_service: MFAServiceInterface,
         jwt_service: JWTService,
         users_service: UsersServiceInterface,
     ):
         self.crypto_service = crypto_service
+        self.audits = audits
+        self.mailer = mailer
         self.jwt_service = jwt_service
         self.mfa_service = mfa_service
         self.users_service = users_service
+        self.tasks = BackgroundTasks()
 
     async def token_login(self, login_payload: LoginPayload) -> TokenResponse:
         if user := await self.users_service.get_by_email(login_payload.email):
@@ -114,7 +123,27 @@ class AuthService(AuthServiceInterface):
 
     async def reset_password(self, email: str):
         if user := await self.users_service.get_by_email(email):
-            pass
+            await self.users_service.reset_password(user.id)
+            self.tasks.add_task(
+                self.mailer.send,
+                EmailMessage(
+                    to_email=user.email,
+                    from_email=settings.from_email,
+                    subject=settings.mfa_reset_subject,
+                    body="Your MFA was reset, you can login using your credentials.",
+                ),
+            )
+        else:
+            now = datetime.now(tz=timezone.utc)
+            self.tasks.add_task(
+                self.audits.add_event,
+                NewAuditLog(
+                    ref="origin=auth,source=service:auth,action=reset:password,type=external",
+                    data=dict(email=email),
+                    created_at=now,
+                    expires_at=now + timedelta(days=settings.auth_audit_event_lifetime_days),
+                ),
+            )
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
         payload = TokenData(ref_id=ref_id)

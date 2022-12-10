@@ -1,12 +1,13 @@
+from datetime import datetime, timezone
 from typing import Protocol
 
 from sqlalchemy import insert, select, update
 
 from observer.common.types import Identifier
 from observer.db import Database
-from observer.db.tables.users import users
+from observer.db.tables.users import password_resets, users
 from observer.entities.base import SomeUser
-from observer.entities.users import NewUser, User, UserUpdate
+from observer.entities.users import NewUser, PasswordReset, User, UserUpdate
 
 
 class UsersRepositoryInterface(Protocol):
@@ -26,6 +27,9 @@ class UsersRepositoryInterface(Protocol):
         raise NotImplementedError
 
     async def reset_mfa(self, user_id: Identifier) -> User:
+        raise NotImplementedError
+
+    async def create_password_reset_code(self, user_id: Identifier, code: str) -> PasswordReset:
         raise NotImplementedError
 
 
@@ -92,3 +96,13 @@ class UsersRepository(UsersRepositoryInterface):
         query = update(users).values(update_values).where(users.c.id == str(user_id)).returning("*")
         if result := await self.db.fetchone(query):
             return User(**result)
+
+    async def create_password_reset_code(self, user_id: Identifier, code: str) -> PasswordReset:
+        values = dict(
+            code=code,
+            user_id=str(user_id),
+            created_at=datetime.now(tz=timezone.utc),
+        )
+        query = insert(password_resets).values(**values).returning("*")
+        if result := await self.db.fetchone(query):
+            return PasswordReset(**result)
