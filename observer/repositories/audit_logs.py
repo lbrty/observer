@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import Protocol
 
 from sqlalchemy import insert, select
@@ -21,7 +22,11 @@ class AuditRepository(AuditRepositoryInterface):
         self.db = db
 
     async def add_event(self, new_event: NewAuditLog) -> AuditLog:
-        query = insert(audit_logs).values(**new_event.dict()).returning("*")
+        values = {
+            **new_event.dict(),
+            "created_at": datetime.now(tz=timezone.utc),
+        }
+        query = insert(audit_logs).values(**values).returning("*")
         if result := await self.db.fetchone(query):
             return AuditLog(**result)
 

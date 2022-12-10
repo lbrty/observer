@@ -28,7 +28,6 @@ class NewAuditLog(BaseModel):
         description="Reference in the following format - origin=<user_id...>;source=services:users;action=create:user;",
     )
     data: dict | None = Field(None, description="JSON slice with changes")
-    created_at: datetime = Field(..., description="Creation date time of event")
     expires_at: SomeDatetime = Field(None, description="Expiration date time of event")
 
 

@@ -115,7 +115,6 @@ async def reset_mfa(
             NewAuditLog(
                 ref="origin=mfa,source=endpoint:reset_mfa,action=reset,type=system",
                 data=reset_request.dict(),
-                created_at=now,
                 expires_at=now + timedelta(days=settings.mfa_audit_event_lifetime_days),
             ),
         )
