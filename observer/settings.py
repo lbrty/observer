@@ -25,6 +25,7 @@ class Settings(SettingsBase):
     title: str = "Observer API"
     description: str = "Observer API server"
     version: str = "0.1.0"
+    app_domain: str = "https://observer.app"
 
     # Keystore and RSA key settings
     key_loader_type: KeyLoaderTypes = KeyLoaderTypes.fs
@@ -41,6 +42,7 @@ class Settings(SettingsBase):
         nonletters=1,
         strength=0.68,
     )
+    password_reset_url: str = "/reset-password/{code}"
 
     # Allow 10 seconds more for otp codes
     totp_leeway: int = 10
@@ -60,6 +62,8 @@ class Settings(SettingsBase):
     # Mailer settings
     from_email: str = "no-reply@email.com"
     mfa_reset_subject: str = "MFA has been reset"
+
+    # Audit log settings
     mfa_audit_event_lifetime_days: int = 365
     auth_audit_event_lifetime_days: int = 365
 
