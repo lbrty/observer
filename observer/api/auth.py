@@ -64,8 +64,8 @@ async def change_password(change_password_payload: ChangePasswordRequest) -> Res
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def reset_password_request(
-    reset_password_payload: ResetPasswordRequest,
     request: Request,
+    reset_password_payload: ResetPasswordRequest,
     auth: AuthServiceInterface = Depends(auth_service),
 ) -> Response:
     """Reset password for user using email"""

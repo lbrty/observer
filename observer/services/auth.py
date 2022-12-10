@@ -54,6 +54,8 @@ class AuthServiceInterface(Protocol):
 
 
 class AuthService(AuthServiceInterface):
+    tag: str = "origin=auth,source=service:auth"
+
     def __init__(
         self,
         crypto_service: CryptoServiceInterface,
@@ -92,7 +94,18 @@ class AuthService(AuthServiceInterface):
                     raise TOTPError(message="invalid totp code")
 
             if bcrypt.check_password(login_payload.password.get_secret_value(), user.password_hash):
-                return await self.create_token(user.ref_id)
+                token_response = await self.create_token(user.ref_id)
+                now = datetime.now(tz=timezone.utc)
+                self.tasks.add_task(
+                    self.audits.add_event,
+                    NewAuditLog(
+                        ref=f"{self.tag},action=token:login",
+                        data=dict(ref_id=user.ref_id, role=user.role.value),
+                        created_at=now,
+                        expires_at=now + timedelta(days=settings.auth_audit_event_login_days),
+                    ),
+                )
+                return token_response
 
         raise UnauthorizedError(message="Wrong email or password")
 
@@ -112,13 +125,44 @@ class AuthService(AuthServiceInterface):
             )
         )
 
-        return await self.create_token(user.ref_id)
+        token_response = await self.create_token(user.ref_id)
+        now = datetime.now(tz=timezone.utc)
+        self.tasks.add_task(
+            self.audits.add_event,
+            NewAuditLog(
+                ref=f"{self.tag},action=token:register",
+                data=dict(ref_id=user.ref_id, role=user.role.value),
+                created_at=now,
+                expires_at=None,
+            ),
+        )
+        return token_response
 
     async def refresh_token(self, refresh_token: str) -> TokenResponse:
+        now = datetime.now(tz=timezone.utc)
         try:
             token_data, _ = await self.jwt_service.decode(refresh_token)
-            return await self.create_token(token_data.ref_id)
+            token_response = await self.create_token(token_data.ref_id)
+            self.tasks.add_task(
+                self.audits.add_event,
+                NewAuditLog(
+                    ref=f"{self.tag},action=token:refresh",
+                    data=dict(ref_id=token_data.ref_id),
+                    created_at=now,
+                    expires_at=now + timedelta(days=settings.auth_audit_event_refresh_days),
+                ),
+            )
+            return token_response
         except (DecodeError, InvalidAlgorithmError, InvalidSignatureError):
+            self.tasks.add_task(
+                self.audits.add_event,
+                NewAuditLog(
+                    ref=f"{self.tag},action=token:refresh,kind=error",
+                    data=dict(refresh_token=refresh_token, notice="invalid refresh token"),
+                    created_at=now,
+                    expires_at=now + timedelta(days=settings.auth_audit_event_lifetime_days),
+                ),
+            )
             raise ForbiddenError(message="Invalid refresh token")
 
     async def reset_password(self, email: str, metadata: dict = None):
@@ -145,17 +189,7 @@ class AuthService(AuthServiceInterface):
             self.tasks.add_task(
                 self.audits.add_event,
                 NewAuditLog(
-                    ref="origin=auth,source=service:auth,action=reset:password,type=external,outcome=success",
-                    data=data,
-                    created_at=now,
-                    expires_at=now + timedelta(days=settings.auth_audit_event_lifetime_days),
-                ),
-            )
-        else:
-            self.tasks.add_task(
-                self.audits.add_event,
-                NewAuditLog(
-                    ref="origin=auth,source=service:auth,action=reset:password,type=external,outcome=error",
+                    ref=f"{self.tag},action=reset:password",
                     data=data,
                     created_at=now,
                     expires_at=now + timedelta(days=settings.auth_audit_event_lifetime_days),

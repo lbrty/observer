@@ -66,6 +66,8 @@ class Settings(SettingsBase):
     # Audit log settings
     mfa_audit_event_lifetime_days: int = 365
     auth_audit_event_lifetime_days: int = 365
+    auth_audit_event_login_days: int = 7
+    auth_audit_event_refresh_days: int = 7
 
 
 class DatabaseSettings(SettingsBase):
