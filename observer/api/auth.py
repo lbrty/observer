@@ -159,7 +159,7 @@ async def reset_password_with_code(
     """Reset password using reset code"""
     user = await auth.reset_password_with_code(code, new_password_payload.password.get_secret_value())
     audit_log = await auth.create_log(
-        f"action=reset:password,ref_id={user.ref_id}",
+        f"endpoint=reset_password_with_code,action=reset:password,ref_id={user.ref_id}",
         timedelta(days=settings.auth_audit_event_lifetime_days),
         data=dict(
             code=code,

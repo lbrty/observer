@@ -1,4 +1,12 @@
+from datetime import datetime, timedelta, timezone
+
+from sqlalchemy import select, update
 from starlette import status
+
+from observer.db.tables.users import password_resets
+from observer.entities.users import PasswordReset
+
+SECURE_PASSWORD = "!@1StronKPassw0rd#"
 
 
 async def test_token_login_works_as_expected(client, ensure_db, app_context, consultant_user):
@@ -71,7 +79,7 @@ async def test_registration_works_as_expected(client, ensure_db, app_context):
         "/auth/register",
         json=dict(
             email="email@example.com",
-            password="!@1StronKPassw0rd#",
+            password=SECURE_PASSWORD,
         ),
     )
     assert resp.status_code == status.HTTP_201_CREATED
@@ -84,3 +92,90 @@ async def test_registration_works_as_expected(client, ensure_db, app_context):
         f"origin=auth,source=service:auth,action=token:register,ref_id={user.ref_id}"
     )
     assert audit_log.data == dict(ref_id=user.ref_id, role=user.role.value)
+
+
+async def test_password_reset_request_works_as_expected(client, ensure_db, app_context, consultant_user):
+    resp = await client.post("/auth/reset-password", json=dict(email=consultant_user.email))
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+    query = select(password_resets).where(password_resets.c.user_id == str(consultant_user.id))
+
+    result = await app_context.db.fetchone(query)
+    password_reset = PasswordReset(**result)
+    assert password_reset is not None
+
+
+async def test_password_reset_with_valid_code_works_as_expected(client, ensure_db, app_context, consultant_user):
+    resp = await client.post("/auth/reset-password", json=dict(email=consultant_user.email))
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+
+    query = select(password_resets).where(password_resets.c.user_id == str(consultant_user.id))
+    result = await app_context.db.fetchone(query)
+    password_reset = PasswordReset(**result)
+    resp = await client.post(
+        f"/auth/reset-password/{password_reset.code}",
+        json=dict(
+            password=SECURE_PASSWORD,
+        ),
+    )
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+    audit_log = await app_context.audit_service.find_by_ref(
+        "origin=auth,source=service:auth,endpoint=reset_password_with_code,"
+        f"action=reset:password,ref_id={consultant_user.ref_id}"
+    )
+    assert audit_log.data == dict(code=password_reset.code, ref_id=consultant_user.ref_id)
+
+
+async def test_password_reset_works_as_expected_when_expired_reset_code_is_used(
+    client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
+    resp = await client.post("/auth/reset-password", json=dict(email=consultant_user.email))
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+
+    query = (
+        update(password_resets)
+        .values(dict(created_at=datetime.now(tz=timezone.utc) - timedelta(hours=2)))
+        .where(password_resets.c.user_id == str(consultant_user.id))
+        .returning("*")
+    )
+    result = await app_context.db.fetchone(query)
+    password_reset = PasswordReset(**result)
+    resp = await client.post(
+        f"/auth/reset-password/{password_reset.code}",
+        json=dict(
+            password=SECURE_PASSWORD,
+        ),
+    )
+    assert resp.status_code == status.HTTP_401_UNAUTHORIZED
+    assert resp.json() == {
+        "code": "password_reset_code_expired_error",
+        "data": None,
+        "message": "password reset code hash expired",
+        "status_code": 401,
+    }
+
+
+async def test_password_reset_works_as_expected_when_unknown_reset_code_is_used(
+    client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
+    resp = await client.post("/auth/reset-password", json=dict(email=consultant_user.email))
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+
+    resp = await client.post(
+        f"/auth/reset-password/random-code",
+        json=dict(
+            password=SECURE_PASSWORD,
+        ),
+    )
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+    assert resp.json() == {
+        "code": "not_found",
+        "status_code": 404,
+        "message": "not found",
+        "data": None,
+    }

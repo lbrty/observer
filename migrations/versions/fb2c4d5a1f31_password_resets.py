@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     op.create_table(
         "password_resets",
-        sa.Column("code", postgresql.UUID()),
+        sa.Column("code", sa.Text()),
         sa.Column("user_id", postgresql.UUID(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=True),
         sa.ForeignKeyConstraint(

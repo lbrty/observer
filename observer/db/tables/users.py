@@ -38,7 +38,7 @@ users = Table(
 password_resets = Table(
     "password_resets",
     metadata,
-    Column("code", UUID()),
+    Column("code", Text()),
     Column("user_id", UUID(), ForeignKey("users.id"), nullable=False),
     Column("created_at", DateTime(timezone=True), server_default=func.now(), nullable=True),
     Index("ux_password_resets_code", "code", unique=True),
