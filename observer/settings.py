@@ -43,6 +43,7 @@ class Settings(SettingsBase):
         strength=0.68,
     )
     password_reset_url: str = "/reset-password/{code}"
+    password_reset_expiration_minutes: int = 60
 
     # Allow 10 seconds more for otp codes
     totp_leeway: int = 10
