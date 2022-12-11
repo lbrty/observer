@@ -179,3 +179,83 @@ async def test_password_reset_works_as_expected_when_unknown_reset_code_is_used(
         "message": "not found",
         "data": None,
     }
+
+
+async def test_password_change_works_as_expected(
+    client,
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
+    resp = await authorized_client.post(
+        "/auth/change-password",
+        json=dict(
+            old_password="secret",
+            new_password=SECURE_PASSWORD,
+        ),
+    )
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+    audit_log = await app_context.audit_service.find_by_ref(
+        "origin=auth,source=service:auth,endpoint=change_password,"
+        f"action=change_password:request,ref_id={consultant_user.ref_id}"
+    )
+    assert audit_log.data["ref_id"] == consultant_user.ref_id
+    resp = await client.post(
+        "/auth/token",
+        json=dict(
+            email=consultant_user.email,
+            password=SECURE_PASSWORD,
+        ),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+
+    resp_json = resp.json()
+    token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])
+    assert token_data.ref_id == consultant_user.ref_id
+
+
+async def test_password_change_works_as_expected_when_new_password_is_weak(
+    client,
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
+    resp = await authorized_client.post(
+        "/auth/change-password",
+        json=dict(
+            old_password="secret",
+            new_password="weak-pass",
+        ),
+    )
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
+    assert resp.json() == {
+        "code": "weak_password_error",
+        "data": None,
+        "message": "Given password is weak",
+        "status_code": 400,
+    }
+
+
+async def test_password_change_works_as_expected_when_old_password_is_invalid(
+    client,
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
+    resp = await authorized_client.post(
+        "/auth/change-password",
+        json=dict(
+            old_password="invalid-secret",
+            new_password=SECURE_PASSWORD,
+        ),
+    )
+    assert resp.status_code == status.HTTP_403_FORBIDDEN
+    assert resp.json() == {
+        "code": "invalid_password_error",
+        "data": None,
+        "message": "Invalid password",
+        "status_code": 403,
+    }

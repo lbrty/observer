@@ -2,14 +2,17 @@ import base64
 from datetime import datetime, timedelta, timezone
 from typing import Protocol, Tuple
 
+from jarowinkler import jarowinkler_similarity
 from jwt.exceptions import DecodeError, InvalidAlgorithmError, InvalidSignatureError
 from starlette.background import BackgroundTasks
 
 from observer.api.exceptions import (
     ForbiddenError,
+    InvalidPasswordError,
     NotFoundError,
     PasswordResetCodeExpiredError,
     RegistrationError,
+    SimilarPasswordsError,
     TOTPError,
     TOTPRequiredError,
     UnauthorizedError,
@@ -17,10 +20,15 @@ from observer.api.exceptions import (
 )
 from observer.common import bcrypt
 from observer.common.bcrypt import is_strong_password
-from observer.common.types import Identifier, Role
+from observer.common.types import Identifier, Role, SomeStr
 from observer.entities.users import PasswordReset, User
 from observer.schemas.audit_logs import NewAuditLog
-from observer.schemas.auth import LoginPayload, RegistrationPayload, TokenResponse
+from observer.schemas.auth import (
+    ChangePasswordRequest,
+    LoginPayload,
+    RegistrationPayload,
+    TokenResponse,
+)
 from observer.schemas.users import NewUserRequest
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.crypto import CryptoServiceInterface
@@ -48,6 +56,9 @@ class AuthServiceInterface(Protocol):
         raise NotImplementedError
 
     async def refresh_token(self, refresh_token: str) -> Tuple[TokenData, TokenResponse]:
+        raise NotImplementedError
+
+    async def change_password(self, user_id: Identifier, payload: ChangePasswordRequest) -> User:
         raise NotImplementedError
 
     async def reset_password_request(self, email: str) -> Tuple[User, PasswordReset]:
@@ -119,6 +130,25 @@ class AuthService(AuthServiceInterface):
         except (DecodeError, InvalidAlgorithmError, InvalidSignatureError):
             raise ForbiddenError(message="Invalid refresh token")
 
+    async def change_password(self, user_id: Identifier, payload: ChangePasswordRequest) -> User:
+        similarity = jarowinkler_similarity(
+            payload.old_password.get_secret_value(),
+            payload.new_password.get_secret_value(),
+        )
+        if similarity >= 0.86:
+            raise SimilarPasswordsError(message="Passwords can not be similar")
+
+        if not is_strong_password(payload.new_password.get_secret_value(), settings.password_policy):
+            raise WeakPasswordError(message="Given password is weak")
+
+        user = await self.users_service.get_by_id(user_id)
+        await self.check_totp(user, payload.totp_code)
+        if bcrypt.check_password(payload.old_password.get_secret_value(), user.password_hash):
+            password_hash = bcrypt.hash_password(payload.new_password.get_secret_value())
+            return await self.users_service.update_password(user_id, password_hash)
+        else:
+            raise InvalidPasswordError(message="Invalid password")
+
     async def reset_password_request(self, email: str) -> Tuple[User, PasswordReset]:
         if user := await self.users_service.get_by_email(email):
             password_reset = await self.users_service.reset_password(user.id)
@@ -138,7 +168,7 @@ class AuthService(AuthServiceInterface):
 
         raise NotFoundError
 
-    async def check_totp(self, user: User, totp_code: str | None):
+    async def check_totp(self, user: User, totp_code: SomeStr):
         # If MFA is enabled and no TOTP code provided
         # then we need to return HTTP 417 so clients
         # resend auth credentials and TOTP code.

@@ -4,8 +4,9 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
 from observer.api.exceptions import ForbiddenError
-from observer.components.auth import refresh_token_cookie
+from observer.components.auth import authenticated_user, refresh_token_cookie
 from observer.components.services import audit_service, auth_service, mailer
+from observer.entities.users import User
 from observer.schemas.auth import (
     ChangePasswordRequest,
     LoginPayload,
@@ -30,7 +31,7 @@ router = APIRouter(prefix="/auth")
 async def token_login(
     tasks: BackgroundTasks,
     login_payload: LoginPayload,
-    audit_logs: AuditServiceInterface = Depends(audit_service),
+    audits: AuditServiceInterface = Depends(audit_service),
     auth: AuthServiceInterface = Depends(auth_service),
 ) -> TokenResponse:
     """Login using email and password"""
@@ -42,7 +43,7 @@ async def token_login(
         timedelta(days=settings.auth_audit_event_login_days),
         data=dict(ref_id=user.ref_id),
     )
-    tasks.add_task(audit_logs.add_event, audit_log)
+    tasks.add_task(audits.add_event, audit_log)
     return auth_token
 
 
@@ -54,7 +55,7 @@ async def token_login(
 async def token_refresh(
     tasks: BackgroundTasks,
     refresh_token: str = Depends(refresh_token_cookie),
-    audit_logs: AuditServiceInterface = Depends(audit_service),
+    audits: AuditServiceInterface = Depends(audit_service),
     auth: AuthServiceInterface = Depends(auth_service),
 ) -> TokenResponse:
     """Refresh access token using refresh token"""
@@ -65,7 +66,7 @@ async def token_refresh(
             timedelta(days=settings.auth_audit_event_refresh_days),
             data=dict(ref_id=token_data.ref_id),
         )
-        tasks.add_task(audit_logs.add_event, audit_log)
+        tasks.add_task(audits.add_event, audit_log)
         return result
     except ForbiddenError:
         # Since it is an exception we need to create audit log synchronously
@@ -74,7 +75,7 @@ async def token_refresh(
             timedelta(days=settings.auth_audit_event_lifetime_days),
             data=dict(refresh_token=refresh_token, notice="invalid refresh token"),
         )
-        await audit_logs.add_event(audit_log)
+        await audits.add_event(audit_log)
         raise
 
 
@@ -86,7 +87,7 @@ async def token_refresh(
 async def token_register(
     tasks: BackgroundTasks,
     registration_payload: RegistrationPayload,
-    audit_logs: AuditServiceInterface = Depends(audit_service),
+    audits: AuditServiceInterface = Depends(audit_service),
     auth: AuthServiceInterface = Depends(auth_service),
 ) -> TokenResponse:
     """Register using email and password"""
@@ -96,7 +97,7 @@ async def token_register(
         None,
         data=dict(ref_id=user.ref_id, role=user.role.value),
     )
-    tasks.add_task(audit_logs.add_event, audit_log)
+    tasks.add_task(audits.add_event, audit_log)
     return token_response
 
 
@@ -104,8 +105,23 @@ async def token_register(
     "/change-password",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def change_password(change_password_payload: ChangePasswordRequest) -> Response:
-    """Reset password for user using email"""
+async def change_password(
+    tasks: BackgroundTasks,
+    change_password_payload: ChangePasswordRequest,
+    audits: AuditServiceInterface = Depends(audit_service),
+    user: User = Depends(authenticated_user),
+    auth: AuthServiceInterface = Depends(auth_service),
+) -> Response:
+    """Change password for user"""
+    await auth.change_password(user.id, change_password_payload)
+    audit_log = await auth.create_log(
+        f"endpoint=change_password,action=change_password:request,ref_id={user.ref_id}",
+        timedelta(days=settings.auth_audit_event_lifetime_days),
+        data=dict(
+            ref_id=user.ref_id,
+        ),
+    )
+    tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
