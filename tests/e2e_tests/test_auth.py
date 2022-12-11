@@ -50,6 +50,22 @@ async def test_token_refresh_works_as_expected(authorized_client, ensure_db, app
     assert audit_log.data["ref_id"] == consultant_user.ref_id
 
 
+async def test_token_refresh_works_as_expected_when_refresh_token_is_invalid(client, ensure_db, app_context):
+    resp = await client.post("/auth/token/refresh", cookies=dict(refresh_token="INVALID-TOKEN"))
+    assert resp.status_code == status.HTTP_403_FORBIDDEN
+    assert resp.json() == {
+        "code": "unauthorized",
+        "data": None,
+        "message": "Invalid refresh token",
+        "status_code": 403,
+    }
+
+    audit_log = await app_context.audit_service.find_by_ref(
+        "origin=auth,source=service:auth,action=token:refresh,kind=error"
+    )
+    assert audit_log.data == dict(refresh_token="INVALID-TOKEN", notice="invalid refresh token")
+
+
 async def test_registration_works_as_expected(client, ensure_db, app_context):
     resp = await client.post(
         "/auth/register",

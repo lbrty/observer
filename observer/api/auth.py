@@ -66,12 +66,13 @@ async def token_refresh(
         tasks.add_task(audit_logs.add_event, audit_log)
         return result
     except ForbiddenError:
+        # Since it is an exception we need to create audit log synchronously
         audit_log = await ctx.auth_service.create_log(
-            f"{ctx.auth_service.tag},action=token:refresh,kind=error",
+            "action=token:refresh,kind=error",
             timedelta(days=settings.auth_audit_event_lifetime_days),
             data=dict(refresh_token=refresh_token, notice="invalid refresh token"),
         )
-        tasks.add_task(audit_logs.add_event, audit_log)
+        await audit_logs.add_event(audit_log)
         raise
 
 
