@@ -81,10 +81,20 @@ async def token_refresh(
     response_model=TokenResponse,
     status_code=status.HTTP_201_CREATED,
 )
-async def token_register(registration_payload: RegistrationPayload) -> TokenResponse:
+async def token_register(
+    tasks: BackgroundTasks,
+    registration_payload: RegistrationPayload,
+    audit_logs: AuditServiceInterface = Depends(audit_service),
+) -> TokenResponse:
     """Register using email and password"""
-    result = await ctx.auth_service.register(registration_payload)
-    return result
+    user, token_response = await ctx.auth_service.register(registration_payload)
+    audit_log = await ctx.auth_service.create_log(
+        f"action=token:register,ref_id={user.ref_id}",
+        None,
+        data=dict(ref_id=user.ref_id, role=user.role.value),
+    )
+    tasks.add_task(audit_logs.add_event, audit_log)
+    return token_response
 
 
 @router.post(

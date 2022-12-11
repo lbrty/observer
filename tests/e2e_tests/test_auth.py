@@ -79,3 +79,8 @@ async def test_registration_works_as_expected(client, ensure_db, app_context):
     token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])
     user = await app_context.users_service.get_by_email("email@example.com")
     assert token_data.ref_id == user.ref_id
+
+    audit_log = await app_context.audit_service.find_by_ref(
+        f"origin=auth,source=service:auth,action=token:register,ref_id={user.ref_id}"
+    )
+    assert audit_log.data == dict(ref_id=user.ref_id, role=user.role.value)

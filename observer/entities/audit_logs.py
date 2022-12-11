@@ -10,4 +10,4 @@ class AuditLog(BaseModel):
     ref: str  # format - origin=<user_id...>;source=services:users;action=create:user;
     data: dict | None
     created_at: datetime
-    expires_at: datetime
+    expires_at: datetime | None

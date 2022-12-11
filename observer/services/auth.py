@@ -42,7 +42,7 @@ class AuthServiceInterface(Protocol):
     async def token_login(self, login_payload: LoginPayload) -> Tuple[User, TokenResponse]:
         raise NotImplementedError
 
-    async def register(self, registration_payload: RegistrationPayload) -> TokenResponse:
+    async def register(self, registration_payload: RegistrationPayload) -> Tuple[User, TokenResponse]:
         raise NotImplementedError
 
     async def refresh_token(self, refresh_token: str) -> Tuple[TokenData, TokenResponse]:
@@ -87,7 +87,7 @@ class AuthService(AuthServiceInterface):
 
         raise UnauthorizedError(message="Wrong email or password")
 
-    async def register(self, registration_payload: RegistrationPayload) -> TokenResponse:
+    async def register(self, registration_payload: RegistrationPayload) -> Tuple[User, TokenResponse]:
         if _ := await self.users_service.get_by_email(registration_payload.email):
             raise RegistrationError(message="User with same e-mail already exists")
 
@@ -104,15 +104,7 @@ class AuthService(AuthServiceInterface):
         )
 
         token_response = await self.create_token(user.ref_id)
-        self.tasks.add_task(
-            self.audits.add_event,
-            NewAuditLog(
-                ref=f"{self.tag},action=token:register",
-                data=dict(ref_id=user.ref_id, role=user.role.value),
-                expires_at=None,
-            ),
-        )
-        return token_response
+        return user, token_response
 
     async def refresh_token(self, refresh_token: str) -> Tuple[TokenData, TokenResponse]:
         try:
@@ -172,12 +164,16 @@ class AuthService(AuthServiceInterface):
             if not await self.mfa_service.valid(totp_code, decrypted_secret.decode()):
                 raise TOTPError(message="Invalid totp code")
 
-    async def create_log(self, ref: str, expires_in: timedelta, data: dict | None = None) -> NewAuditLog:
+    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
         now = datetime.now(tz=timezone.utc)
+        expires_at = None
+        if expires_in:
+            expires_at = now + expires_in
+
         return NewAuditLog(
             ref=f"{self.tag},{ref}",
             data=data,
-            expires_at=now + expires_in,
+            expires_at=expires_at,
         )
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
