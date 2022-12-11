@@ -3,6 +3,7 @@ from datetime import timedelta
 from fastapi import APIRouter, BackgroundTasks, Depends, Request, Response
 from starlette import status
 
+from observer.api.exceptions import ForbiddenError
 from observer.components.auth import refresh_token_cookie
 from observer.components.services import audit_service, auth_service
 from observer.context import ctx
@@ -49,10 +50,29 @@ async def token_login(
     response_model=TokenResponse,
     status_code=status.HTTP_200_OK,
 )
-async def token_refresh(refresh_token: str = Depends(refresh_token_cookie)) -> TokenResponse:
+async def token_refresh(
+    tasks: BackgroundTasks,
+    refresh_token: str = Depends(refresh_token_cookie),
+    audit_logs: AuditServiceInterface = Depends(audit_service),
+) -> TokenResponse:
     """Refresh access token using refresh token"""
-    result = await ctx.auth_service.refresh_token(refresh_token)
-    return result
+    try:
+        token_data, result = await ctx.auth_service.refresh_token(refresh_token)
+        audit_log = await ctx.auth_service.create_log(
+            f"action=token:refresh,ref_id={token_data.ref_id}",
+            timedelta(days=settings.auth_audit_event_refresh_days),
+            data=dict(ref_id=token_data.ref_id),
+        )
+        tasks.add_task(audit_logs.add_event, audit_log)
+        return result
+    except ForbiddenError:
+        audit_log = await ctx.auth_service.create_log(
+            f"{ctx.auth_service.tag},action=token:refresh,kind=error",
+            timedelta(days=settings.auth_audit_event_lifetime_days),
+            data=dict(refresh_token=refresh_token, notice="invalid refresh token"),
+        )
+        tasks.add_task(audit_logs.add_event, audit_log)
+        raise
 
 
 @router.post(

@@ -44,6 +44,10 @@ async def test_token_refresh_works_as_expected(authorized_client, ensure_db, app
     resp_json = resp.json()
     token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])
     assert token_data.ref_id == consultant_user.ref_id
+    audit_log = await app_context.audit_service.find_by_ref(
+        f"origin=auth,source=service:auth,action=token:refresh,ref_id={consultant_user.ref_id}"
+    )
+    assert audit_log.data["ref_id"] == consultant_user.ref_id
 
 
 async def test_registration_works_as_expected(client, ensure_db, app_context):

@@ -35,6 +35,7 @@ RefreshTokenExpirationDelta = timedelta(minutes=RefreshTokenExpirationMinutes)
 
 
 class AuthServiceInterface(Protocol):
+    tag: str
     jwt_service: JWTService
     users_service: UsersServiceInterface
 
@@ -44,7 +45,7 @@ class AuthServiceInterface(Protocol):
     async def register(self, registration_payload: RegistrationPayload) -> TokenResponse:
         raise NotImplementedError
 
-    async def refresh_token(self, refresh_token: str) -> TokenResponse:
+    async def refresh_token(self, refresh_token: str) -> Tuple[TokenData, TokenResponse]:
         raise NotImplementedError
 
     async def reset_password(self, email: str, metadata: dict = None):
@@ -113,29 +114,12 @@ class AuthService(AuthServiceInterface):
         )
         return token_response
 
-    async def refresh_token(self, refresh_token: str) -> TokenResponse:
-        now = datetime.now(tz=timezone.utc)
+    async def refresh_token(self, refresh_token: str) -> Tuple[TokenData, TokenResponse]:
         try:
             token_data, _ = await self.jwt_service.decode(refresh_token)
             token_response = await self.create_token(token_data.ref_id)
-            self.tasks.add_task(
-                self.audits.add_event,
-                NewAuditLog(
-                    ref=f"{self.tag},action=token:refresh",
-                    data=dict(ref_id=token_data.ref_id),
-                    expires_at=now + timedelta(days=settings.auth_audit_event_refresh_days),
-                ),
-            )
-            return token_response
+            return token_data, token_response
         except (DecodeError, InvalidAlgorithmError, InvalidSignatureError):
-            self.tasks.add_task(
-                self.audits.add_event,
-                NewAuditLog(
-                    ref=f"{self.tag},action=token:refresh,kind=error",
-                    data=dict(refresh_token=refresh_token, notice="invalid refresh token"),
-                    expires_at=now + timedelta(days=settings.auth_audit_event_lifetime_days),
-                ),
-            )
             raise ForbiddenError(message="Invalid refresh token")
 
     async def reset_password(self, email: str, metadata: dict = None):
