@@ -7,6 +7,8 @@ from starlette.background import BackgroundTasks
 
 from observer.api.exceptions import (
     ForbiddenError,
+    NotFoundError,
+    PasswordResetCodeExpiredError,
     RegistrationError,
     TOTPError,
     TOTPRequiredError,
@@ -48,7 +50,10 @@ class AuthServiceInterface(Protocol):
     async def refresh_token(self, refresh_token: str) -> Tuple[TokenData, TokenResponse]:
         raise NotImplementedError
 
-    async def reset_password(self, email: str) -> Tuple[User, PasswordReset]:
+    async def reset_password_request(self, email: str) -> Tuple[User, PasswordReset]:
+        raise NotImplementedError
+
+    async def reset_password_with_code(self, code: str, new_password: str) -> User:
         raise NotImplementedError
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
@@ -114,10 +119,24 @@ class AuthService(AuthServiceInterface):
         except (DecodeError, InvalidAlgorithmError, InvalidSignatureError):
             raise ForbiddenError(message="Invalid refresh token")
 
-    async def reset_password(self, email: str) -> Tuple[User, PasswordReset]:
+    async def reset_password_request(self, email: str) -> Tuple[User, PasswordReset]:
         if user := await self.users_service.get_by_email(email):
             password_reset = await self.users_service.reset_password(user.id)
             return user, password_reset
+
+    async def reset_password_with_code(self, code: str, new_password: str) -> User:
+        if not is_strong_password(new_password, settings.password_policy):
+            raise WeakPasswordError(message="Given password is weak")
+
+        if password_reset := await self.users_service.get_password_reset(code):
+            now = datetime.now(tz=timezone.utc)
+            if now < (password_reset.created_at + timedelta(minutes=settings.password_reset_expiration_minutes)):
+                password_hash = bcrypt.hash_password(new_password)
+                return await self.users_service.update_password(password_reset.user_id, password_hash)
+            else:
+                raise PasswordResetCodeExpiredError
+
+        raise NotFoundError
 
     async def check_totp(self, user: User, totp_code: str | None):
         # If MFA is enabled and no TOTP code provided

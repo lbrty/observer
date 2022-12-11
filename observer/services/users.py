@@ -33,6 +33,9 @@ class UsersServiceInterface(Protocol):
     async def create_user(self, new_user: NewUserRequest) -> User:
         raise NotImplementedError
 
+    async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
+        raise NotImplementedError
+
     async def update_mfa(self, user_id: Identifier, updates: UserMFAUpdateRequest):
         raise NotImplementedError
 
@@ -43,6 +46,9 @@ class UsersServiceInterface(Protocol):
         raise NotImplementedError
 
     async def reset_password(self, user_id: Identifier) -> PasswordReset:
+        raise NotImplementedError
+
+    async def get_password_reset(self, code: str) -> PasswordReset | None:
         raise NotImplementedError
 
     @staticmethod
@@ -82,6 +88,9 @@ class UsersService(UsersServiceInterface):
         )
         return await self.repo.create_user(user)
 
+    async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
+        return await self.repo.update_password(user_id, new_password_hash)
+
     async def update_mfa(self, user_id: Identifier, updates: UserMFAUpdateRequest):
         user_update = UserUpdate(
             mfa_enabled=updates.mfa_enabled,
@@ -103,6 +112,9 @@ class UsersService(UsersServiceInterface):
 
     async def reset_password(self, user_id: Identifier) -> PasswordReset:
         return await self.repo.create_password_reset_code(user_id, shortuuid.uuid())
+
+    async def get_password_reset(self, code: str) -> PasswordReset | None:
+        return await self.repo.get_password_reset(code)
 
     @staticmethod
     async def to_response(user: User) -> UserResponse:

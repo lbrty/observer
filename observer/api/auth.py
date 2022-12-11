@@ -121,7 +121,7 @@ async def reset_password_request(
     mail: MailerInterface = Depends(mailer),
 ) -> Response:
     """Reset password for user using email"""
-    user, password_reset = await auth.reset_password(reset_password_payload.email)
+    user, password_reset = await auth.reset_password_request(reset_password_payload.email)
     reset_link = f"{settings.app_domain}/{settings.password_reset_url.format(code=password_reset.code)}"
     tasks.add_task(
         mail.send,
@@ -153,8 +153,18 @@ async def reset_password_with_code(
     tasks: BackgroundTasks,
     code: str,
     new_password_payload: NewPasswordRequest,
-    audit_logs: AuditServiceInterface = Depends(audit_service),
+    audits: AuditServiceInterface = Depends(audit_service),
     auth: AuthServiceInterface = Depends(auth_service),
 ) -> Response:
     """Reset password using reset code"""
+    user = await auth.reset_password_with_code(code, new_password_payload.password.get_secret_value())
+    audit_log = await auth.create_log(
+        f"action=reset:password,ref_id={user.ref_id}",
+        timedelta(days=settings.auth_audit_event_lifetime_days),
+        data=dict(
+            code=code,
+            ref_id=user.ref_id,
+        ),
+    )
+    tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

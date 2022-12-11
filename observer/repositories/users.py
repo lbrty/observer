@@ -26,10 +26,16 @@ class UsersRepositoryInterface(Protocol):
     async def update_user(self, user_id: Identifier, updates: UserUpdate) -> User:
         raise NotImplementedError
 
+    async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
+        raise NotImplementedError
+
     async def reset_mfa(self, user_id: Identifier) -> User:
         raise NotImplementedError
 
     async def create_password_reset_code(self, user_id: Identifier, code: str) -> PasswordReset:
+        raise NotImplementedError
+
+    async def get_password_reset(self, code: str) -> PasswordReset:
         raise NotImplementedError
 
 
@@ -86,6 +92,12 @@ class UsersRepository(UsersRepositoryInterface):
         if result := await self.db.fetchone(query):
             return User(**result)
 
+    async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
+        update_values = dict(password_hash=new_password_hash)
+        query = update(users).values(update_values).where(users.c.id == str(user_id)).returning("*")
+        if result := await self.db.fetchone(query):
+            return User(**result)
+
     async def reset_mfa(self, user_id: Identifier) -> User:
         update_values = dict(
             mfa_enabled=False,
@@ -106,3 +118,10 @@ class UsersRepository(UsersRepositoryInterface):
         query = insert(password_resets).values(**values).returning("*")
         if result := await self.db.fetchone(query):
             return PasswordReset(**result)
+
+    async def get_password_reset(self, code: str) -> PasswordReset | None:
+        query = select(password_resets).where(password_resets.c.code == code)
+        if result := await self.db.fetchone(query):
+            return PasswordReset(**result)
+
+        return None
