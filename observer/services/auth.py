@@ -16,14 +16,14 @@ from observer.api.exceptions import (
 from observer.common import bcrypt
 from observer.common.bcrypt import is_strong_password
 from observer.common.types import Identifier, Role
-from observer.entities.users import User
+from observer.entities.users import PasswordReset, User
 from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.auth import LoginPayload, RegistrationPayload, TokenResponse
 from observer.schemas.users import NewUserRequest
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.crypto import CryptoServiceInterface
 from observer.services.jwt import JWTService, TokenData
-from observer.services.mailer import EmailMessage, MailerInterface
+from observer.services.mailer import MailerInterface
 from observer.services.mfa import MFAServiceInterface
 from observer.services.users import UsersServiceInterface
 from observer.settings import settings
@@ -48,13 +48,13 @@ class AuthServiceInterface(Protocol):
     async def refresh_token(self, refresh_token: str) -> Tuple[TokenData, TokenResponse]:
         raise NotImplementedError
 
-    async def reset_password(self, email: str, metadata: dict = None):
+    async def reset_password(self, email: str) -> Tuple[User, PasswordReset]:
         raise NotImplementedError
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
         raise NotImplementedError
 
-    async def create_log(self, ref: str, expires_in: timedelta, data: dict | None = None) -> NewAuditLog:
+    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
         raise NotImplementedError
 
 
@@ -114,35 +114,10 @@ class AuthService(AuthServiceInterface):
         except (DecodeError, InvalidAlgorithmError, InvalidSignatureError):
             raise ForbiddenError(message="Invalid refresh token")
 
-    async def reset_password(self, email: str, metadata: dict = None):
-        now = datetime.now(tz=timezone.utc)
-        data = dict(email=email)
-        if metadata:
-            data = {
-                **data,
-                **metadata,
-            }
-
+    async def reset_password(self, email: str) -> Tuple[User, PasswordReset]:
         if user := await self.users_service.get_by_email(email):
             password_reset = await self.users_service.reset_password(user.id)
-            reset_link = f"{settings.app_domain}/{settings.password_reset_url.format(code=password_reset.code)}"
-            self.tasks.add_task(
-                self.mailer.send,
-                EmailMessage(
-                    to_email=user.email,
-                    from_email=settings.from_email,
-                    subject=settings.mfa_reset_subject,
-                    body=f"To reset you password please use the following link {reset_link}.",
-                ),
-            )
-            self.tasks.add_task(
-                self.audits.add_event,
-                NewAuditLog(
-                    ref=f"{self.tag},action=reset:password",
-                    data=data,
-                    expires_at=now + timedelta(days=settings.auth_audit_event_lifetime_days),
-                ),
-            )
+            return user, password_reset
 
     async def check_totp(self, user: User, totp_code: str | None):
         # If MFA is enabled and no TOTP code provided
