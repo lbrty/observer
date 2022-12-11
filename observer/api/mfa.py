@@ -1,5 +1,5 @@
 import base64
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
@@ -8,7 +8,6 @@ from observer.api.exceptions import TOTPError
 from observer.components.mfa import mfa_service, user_with_no_mfa
 from observer.components.services import audit_service, keychain, mailer, users_service
 from observer.entities.users import User
-from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.mfa import (
     MFAActivationRequest,
     MFAActivationResponse,
@@ -51,9 +50,11 @@ async def configure_mfa(
 )
 async def setup_mfa(
     activation_request: MFAActivationRequest,
+    tasks: BackgroundTasks,
     user: User = Depends(user_with_no_mfa),
     mfa: MFAServiceInterface = Depends(mfa_service),
     user_service: UsersServiceInterface = Depends(users_service),
+    audits: AuditServiceInterface = Depends(audit_service),
     key_chain: Keychain = Depends(keychain),
 ) -> MFABackupCodesResponse:
     """Save MFA configuration and create backup codes.
@@ -77,6 +78,12 @@ async def setup_mfa(
             user.id,
             mfa_update_request,
         )
+        audit_log = await user_service.create_log(
+            "endpoint=setup_mfa,action=setup:mfa",
+            timedelta(days=settings.mfa_audit_event_lifetime_days),
+            dict(setup_totp_code=activation_request.totp_code.get_secret_value()),
+        )
+        tasks.add_task(audits.add_event, audit_log)
         return MFABackupCodesResponse(backup_codes=list(mfa_setup_result.plain_backup_codes))
 
     raise TOTPError
@@ -87,7 +94,7 @@ async def reset_mfa(
     reset_request: MFAAResetRequest,
     tasks: BackgroundTasks,
     user_service: UsersServiceInterface = Depends(users_service),
-    audit_logs: AuditServiceInterface = Depends(audit_service),
+    audits: AuditServiceInterface = Depends(audit_service),
     mail: MailerInterface = Depends(mailer),
 ) -> Response:
     """Reset MFA using one of backup codes
@@ -99,6 +106,12 @@ async def reset_mfa(
     if user := await user_service.get_by_email(reset_request.email):
         await user_service.check_backup_code(user.mfa_encrypted_backup_codes, reset_request.backup_code)
         await user_service.reset_mfa(user.id)
+        audit_log = await user_service.create_log(
+            "endpoint=reset_mfa,action=reset:mfa",
+            timedelta(days=settings.mfa_audit_event_lifetime_days),
+            reset_request.dict(),
+        )
+        tasks.add_task(audits.add_event, audit_log)
         tasks.add_task(
             mail.send,
             EmailMessage(
@@ -109,14 +122,11 @@ async def reset_mfa(
             ),
         )
     else:
-        now = datetime.now(tz=timezone.utc)
-        tasks.add_task(
-            audit_logs.add_event,
-            NewAuditLog(
-                ref="origin=mfa,source=endpoint:reset_mfa,action=reset,type=system",
-                data=reset_request.dict(),
-                expires_at=now + timedelta(days=settings.mfa_audit_event_lifetime_days),
-            ),
+        audit_log = await user_service.create_log(
+            "endpoint=reset_mfa,action=reset:mfa,kind=error",
+            timedelta(days=settings.mfa_audit_event_lifetime_days),
+            reset_request.dict(),
         )
+        tasks.add_task(audits.add_event, audit_log)
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)

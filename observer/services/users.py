@@ -1,4 +1,5 @@
 import base64
+from datetime import datetime, timedelta, timezone
 from typing import Protocol
 
 import shortuuid
@@ -9,6 +10,7 @@ from observer.common.types import Identifier
 from observer.entities.base import SomeUser
 from observer.entities.users import NewUser, PasswordReset, User, UserUpdate
 from observer.repositories.users import UsersRepositoryInterface
+from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.users import (
     NewUserRequest,
     UserMFAUpdateRequest,
@@ -19,6 +21,7 @@ from observer.services.crypto import CryptoServiceInterface
 
 
 class UsersServiceInterface(Protocol):
+    tag: str
     repo: UsersRepositoryInterface
 
     async def get_by_id(self, user_id: Identifier) -> SomeUser:
@@ -51,6 +54,9 @@ class UsersServiceInterface(Protocol):
     async def get_password_reset(self, code: str) -> PasswordReset | None:
         raise NotImplementedError
 
+    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
+        raise NotImplementedError
+
     @staticmethod
     async def to_response(user: User) -> UserResponse:
         raise NotImplementedError
@@ -61,6 +67,8 @@ class UsersServiceInterface(Protocol):
 
 
 class UsersService(UsersServiceInterface):
+    tag: str = "origin=mfa,source=service:user"
+
     def __init__(self, users_repository: UsersRepositoryInterface, crypto_service: CryptoServiceInterface):
         self.repo = users_repository
         self.crypto_service = crypto_service
@@ -115,6 +123,18 @@ class UsersService(UsersServiceInterface):
 
     async def get_password_reset(self, code: str) -> PasswordReset | None:
         return await self.repo.get_password_reset(code)
+
+    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
+        now = datetime.now(tz=timezone.utc)
+        expires_at = None
+        if expires_in:
+            expires_at = now + expires_in
+
+        return NewAuditLog(
+            ref=f"{self.tag},{ref}",
+            data=data,
+            expires_at=expires_at,
+        )
 
     @staticmethod
     async def to_response(user: User) -> UserResponse:

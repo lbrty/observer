@@ -1,5 +1,6 @@
 import io
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 from hashlib import sha1
 from typing import List, Protocol
 
@@ -11,6 +12,7 @@ from qrcode.image.styles.colormasks import RadialGradiantColorMask
 from qrcode.image.styles.moduledrawers import RoundedModuleDrawer
 
 from observer.common.types import Identifier
+from observer.schemas.audit_logs import NewAuditLog
 from observer.services.crypto import CryptoServiceInterface
 
 
@@ -28,6 +30,7 @@ class MFASetupResult:
 
 
 class MFAServiceInterface(Protocol):
+    tag: str
     crypto_service: CryptoServiceInterface
     totp_leeway: int = 0
 
@@ -46,8 +49,13 @@ class MFAServiceInterface(Protocol):
     async def setup_mfa(self, mfa_secret: str, key_hash: str, num_backup_codes: int) -> MFASetupResult:
         raise NotImplementedError
 
+    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
+        raise NotImplementedError
+
 
 class MFAService(MFAServiceInterface):
+    tag: str = "origin=mfa,source=service:mfa"
+
     def __init__(self, totp_leeway: int, crypto_service: CryptoServiceInterface):
         self.totp_leeway = totp_leeway
         self.crypto_service = crypto_service
@@ -110,4 +118,16 @@ class MFAService(MFAServiceInterface):
             encrypted_secret=f"{key_hash}:{encrypted_secret.decode()}",
             plain_backup_codes=backup_codes,
             encrypted_backup_codes=f"{key_hash}:{encrypted_backup_codes.decode()}",
+        )
+
+    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
+        now = datetime.now(tz=timezone.utc)
+        expires_at = None
+        if expires_in:
+            expires_at = now + expires_in
+
+        return NewAuditLog(
+            ref=f"{self.tag},{ref}",
+            data=data,
+            expires_at=expires_at,
         )
