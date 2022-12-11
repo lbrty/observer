@@ -133,7 +133,7 @@ async def reset_password_request(
         ),
     )
     audit_log = await auth.create_log(
-        f"action=reset:password,ref_id={user.ref_id}",
+        f"action=reset_password:request,ref_id={user.ref_id}",
         timedelta(days=settings.auth_audit_event_lifetime_days),
         data=dict(
             email=reset_password_payload.email,
