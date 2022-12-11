@@ -53,6 +53,9 @@ class AuthServiceInterface(Protocol):
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
         raise NotImplementedError
 
+    async def create_log(self, ref: str, expires_in: timedelta, data: dict | None = None) -> NewAuditLog:
+        raise NotImplementedError
+
 
 class AuthService(AuthServiceInterface):
     tag: str = "origin=auth,source=service:auth"
@@ -76,24 +79,7 @@ class AuthService(AuthServiceInterface):
 
     async def token_login(self, login_payload: LoginPayload) -> Tuple[User, TokenResponse]:
         if user := await self.users_service.get_by_email(login_payload.email):
-            # If MFA is enabled and no TOTP code provided
-            # then we need to return HTTP 417 so clients
-            # resend auth credentials and TOTP code.
-            if user.mfa_enabled and not login_payload.totp_code:
-                raise TOTPRequiredError
-
-            # If MFA is enabled and TOTP given
-            # Then we verify it
-            if user.mfa_enabled:
-                # Now we need to decrypt `totp_secret` and verify given `totp_code`
-                # if invalid we return `TOTPError`
-                keys_hash, encrypted_secret = user.mfa_encrypted_secret.split(":", maxsplit=1)
-                decrypted_secret = await self.crypto_service.decrypt(
-                    keys_hash, base64.b64decode(encrypted_secret.encode())
-                )
-                if not await self.mfa_service.valid(login_payload.totp_code, decrypted_secret.decode()):
-                    raise TOTPError(message="invalid totp code")
-
+            await self.check_totp(user, login_payload.totp_code)
             if bcrypt.check_password(login_payload.password.get_secret_value(), user.password_hash):
                 token_response = await self.create_token(user.ref_id)
                 return user, token_response
@@ -181,6 +167,34 @@ class AuthService(AuthServiceInterface):
                     expires_at=now + timedelta(days=settings.auth_audit_event_lifetime_days),
                 ),
             )
+
+    async def check_totp(self, user: User, totp_code: str | None):
+        # If MFA is enabled and no TOTP code provided
+        # then we need to return HTTP 417 so clients
+        # resend auth credentials and TOTP code.
+        if user.mfa_enabled and not totp_code:
+            raise TOTPRequiredError
+
+        # If MFA is enabled and TOTP given
+        # Then we verify it
+        if user.mfa_enabled:
+            # Now we need to decrypt `totp_secret` and verify given `totp_code`
+            # if invalid we return `TOTPError`
+            keys_hash, encrypted_secret = user.mfa_encrypted_secret.split(":", maxsplit=1)
+            decrypted_secret = await self.crypto_service.decrypt(
+                keys_hash,
+                base64.b64decode(encrypted_secret.encode()),
+            )
+            if not await self.mfa_service.valid(totp_code, decrypted_secret.decode()):
+                raise TOTPError(message="Invalid totp code")
+
+    async def create_log(self, ref: str, expires_in: timedelta, data: dict | None = None) -> NewAuditLog:
+        now = datetime.now(tz=timezone.utc)
+        return NewAuditLog(
+            ref=f"{self.tag},{ref}",
+            data=data,
+            expires_at=now + expires_in,
+        )
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
         payload = TokenData(ref_id=ref_id)

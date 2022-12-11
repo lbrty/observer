@@ -180,7 +180,7 @@ async def test_configured_mfa_works_as_expected_when_incorrect_totp_code_given(
     assert resp.json() == {
         "code": "totp_error",
         "data": None,
-        "message": "invalid totp code",
+        "message": "Invalid totp code",
         "status_code": 401,
     }
 

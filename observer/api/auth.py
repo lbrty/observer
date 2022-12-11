@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Request, Response
 from starlette import status
@@ -6,7 +6,6 @@ from starlette import status
 from observer.components.auth import refresh_token_cookie
 from observer.components.services import audit_service, auth_service
 from observer.context import ctx
-from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.auth import (
     ChangePasswordRequest,
     LoginPayload,
@@ -34,16 +33,14 @@ async def token_login(
 ) -> TokenResponse:
     """Login using email and password"""
     user, auth_token = await ctx.auth_service.token_login(login_payload)
-    now = datetime.now(tz=timezone.utc)
-    tasks.add_task(
-        audit_logs.add_event,
-        NewAuditLog(
-            ref=f"origin=auth,source=service:auth,action=token:login,ref_id={user.ref_id}",
-            data=dict(ref_id=user.ref_id),
-            expires_at=now + timedelta(days=settings.auth_audit_event_login_days),
-        ),
-    )
 
+    # Now we need to save login event
+    audit_log = await ctx.auth_service.create_log(
+        f"action=token:login,ref_id={user.ref_id}",
+        timedelta(days=settings.auth_audit_event_login_days),
+        data=dict(ref_id=user.ref_id),
+    )
+    tasks.add_task(audit_logs.add_event, audit_log)
     return auth_token
 
 
