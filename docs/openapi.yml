@@ -129,8 +129,19 @@
     "/auth/change-password": {
       "post": {
         "summary": "Change Password",
-        "description": "Reset password for user using email",
+        "description": "Change password for user",
         "operationId": "change_password_auth_change_password_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
