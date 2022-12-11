@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
@@ -111,9 +111,22 @@ async def change_password(
     audits: AuditServiceInterface = Depends(audit_service),
     user: User = Depends(authenticated_user),
     auth: AuthServiceInterface = Depends(auth_service),
+    mail: MailerInterface = Depends(mailer),
 ) -> Response:
     """Change password for user"""
     await auth.change_password(user.id, change_password_payload)
+    tasks.add_task(
+        mail.send,
+        EmailMessage(
+            to_email=user.email,
+            from_email=settings.from_email,
+            subject=settings.auth_password_change_subject,
+            body=(
+                "Your account password has been updated "
+                f"at {datetime.now(tz=timezone.utc).strftime('%m/%d/%Y, %H:%M:%S')}."
+            ),
+        ),
+    )
     audit_log = await auth.create_log(
         f"endpoint=change_password,action=change_password:request,ref_id={user.ref_id}",
         timedelta(days=settings.auth_audit_event_lifetime_days),
