@@ -14,6 +14,8 @@ class ErrorCode(str, Enum):
     registration_error = "registration_error"
     password_reset_code_expired_error = "password_reset_code_expired_error"
     weak_password_error = "weak_password_error"
+    invalid_password_error = "invalid_password_error"
+    similar_passwords_error = "similar_passwords_error"
     internal_error = "internal_error"
 
 
@@ -90,7 +92,19 @@ class PasswordResetCodeExpiredError(BaseAPIException):
     default_message = "password reset code hash expired"
 
 
+class InvalidPasswordError(BaseAPIException):
+    default_code = ErrorCode.invalid_password_error
+    default_status = status.HTTP_403_FORBIDDEN
+    default_message = "password is invalid"
+
+
 class WeakPasswordError(BaseAPIException):
     default_code = ErrorCode.weak_password_error
     default_status = status.HTTP_400_BAD_REQUEST
     default_message = "password is weak"
+
+
+class SimilarPasswordsError(BaseAPIException):
+    default_code = ErrorCode.similar_passwords_error
+    default_status = status.HTTP_400_BAD_REQUEST
+    default_message = "passwords are too similar"
