@@ -27,6 +27,7 @@ password-strength = "^0.0.3.post2"
 pyotp = "^2.7.0"
 qrcode = "^7.3.1"
 pillow = "^9.3.0"
+jarowinkler = "^1.2.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"
