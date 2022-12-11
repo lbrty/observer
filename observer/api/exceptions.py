@@ -12,6 +12,7 @@ class ErrorCode(str, Enum):
     totp_required_error = "totp_required_error"
     totp_exists_error = "totp_exists_error"
     registration_error = "registration_error"
+    password_reset_code_expired_error = "password_reset_code_expired_error"
     weak_password_error = "weak_password_error"
     internal_error = "internal_error"
 
@@ -81,6 +82,12 @@ class RegistrationError(BaseAPIException):
     default_code = ErrorCode.registration_error
     default_status = status.HTTP_409_CONFLICT
     default_message = "registration error"
+
+
+class PasswordResetCodeExpiredError(BaseAPIException):
+    default_code = ErrorCode.password_reset_code_expired_error
+    default_status = status.HTTP_401_UNAUTHORIZED
+    default_message = "password reset code hash expired"
 
 
 class WeakPasswordError(BaseAPIException):
