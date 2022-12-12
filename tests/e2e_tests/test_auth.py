@@ -46,7 +46,12 @@ async def test_token_login_fails_if_credentials_are_wrong(client, ensure_db, con
     }
 
 
-async def test_token_refresh_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
+async def test_token_refresh_works_as_expected(
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
     resp = await authorized_client.post("/auth/token/refresh")
     assert resp.status_code == status.HTTP_200_OK
     resp_json = resp.json()
@@ -94,7 +99,12 @@ async def test_registration_works_as_expected(client, ensure_db, app_context):
     assert audit_log.data == dict(ref_id=user.ref_id, role=user.role.value)
 
 
-async def test_password_reset_request_works_as_expected(client, ensure_db, app_context, consultant_user):
+async def test_password_reset_request_works_as_expected(
+    client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
     resp = await client.post("/auth/reset-password", json=dict(email=consultant_user.email))
     assert resp.status_code == status.HTTP_204_NO_CONTENT
     query = select(password_resets).where(password_resets.c.user_id == str(consultant_user.id))
@@ -104,7 +114,12 @@ async def test_password_reset_request_works_as_expected(client, ensure_db, app_c
     assert password_reset is not None
 
 
-async def test_password_reset_with_valid_code_works_as_expected(client, ensure_db, app_context, consultant_user):
+async def test_password_reset_with_valid_code_works_as_expected(
+    client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
     resp = await client.post("/auth/reset-password", json=dict(email=consultant_user.email))
     assert resp.status_code == status.HTTP_204_NO_CONTENT
 
