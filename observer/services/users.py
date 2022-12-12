@@ -8,7 +8,13 @@ from observer.api.exceptions import TOTPError
 from observer.common import bcrypt
 from observer.common.types import Identifier
 from observer.entities.base import SomeUser
-from observer.entities.users import NewUser, PasswordReset, User, UserUpdate
+from observer.entities.users import (
+    Confirmation,
+    NewUser,
+    PasswordReset,
+    User,
+    UserUpdate,
+)
 from observer.repositories.users import UsersRepositoryInterface
 from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.users import (
@@ -46,6 +52,12 @@ class UsersServiceInterface(Protocol):
         raise NotImplementedError
 
     async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
+        raise NotImplementedError
+
+    async def create_confirmation(self, user_id: Identifier, code: str) -> Confirmation:
+        raise NotImplementedError
+
+    async def get_confirmation(self, code: str) -> Confirmation:
         raise NotImplementedError
 
     async def reset_password(self, user_id: Identifier) -> PasswordReset:
@@ -117,6 +129,12 @@ class UsersService(UsersServiceInterface):
         )
         if given_backup_code not in decrypted_backup_codes.decode().split(","):
             raise TOTPError(message="invalid backup code")
+
+    async def create_confirmation(self, user_id: Identifier, code: str) -> Confirmation:
+        return await self.repo.create_confirmation(user_id, shortuuid.uuid())
+
+    async def get_confirmation(self, code: str) -> Confirmation | None:
+        return await self.repo.get_confirmation(code)
 
     async def reset_password(self, user_id: Identifier) -> PasswordReset:
         return await self.repo.create_password_reset_code(user_id, shortuuid.uuid())

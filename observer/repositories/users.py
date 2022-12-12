@@ -5,9 +5,15 @@ from sqlalchemy import insert, select, update
 
 from observer.common.types import Identifier
 from observer.db import Database
-from observer.db.tables.users import password_resets, users
+from observer.db.tables.users import confirmations, password_resets, users
 from observer.entities.base import SomeUser
-from observer.entities.users import NewUser, PasswordReset, User, UserUpdate
+from observer.entities.users import (
+    Confirmation,
+    NewUser,
+    PasswordReset,
+    User,
+    UserUpdate,
+)
 
 
 class UsersRepositoryInterface(Protocol):
@@ -35,7 +41,13 @@ class UsersRepositoryInterface(Protocol):
     async def create_password_reset_code(self, user_id: Identifier, code: str) -> PasswordReset:
         raise NotImplementedError
 
-    async def get_password_reset(self, code: str) -> PasswordReset:
+    async def get_password_reset(self, code: str) -> PasswordReset | None:
+        raise NotImplementedError
+
+    async def create_confirmation(self, user_id: Identifier, code: str) -> Confirmation:
+        raise NotImplementedError
+
+    async def get_confirmation(self, code: str) -> Confirmation | None:
         raise NotImplementedError
 
 
@@ -68,6 +80,23 @@ class UsersRepository(UsersRepositoryInterface):
         query = insert(users).values(**new_user.dict()).returning("*")
         if result := await self.db.fetchone(query):
             return User(**result)
+
+    async def create_confirmation(self, user_id: Identifier, code: str) -> Confirmation:
+        values = dict(
+            code=code,
+            user_id=str(user_id),
+            created_at=datetime.now(tz=timezone.utc),
+        )
+        query = insert(confirmations).values(**values).returning("*")
+        if result := await self.db.fetchone(query):
+            return Confirmation(**result)
+
+    async def get_confirmation(self, code: str) -> Confirmation | None:
+        query = select(confirmations).where(confirmations.c.code == code)
+        if result := await self.db.fetchone(query):
+            return Confirmation(**result)
+
+        return None
 
     async def update_user(self, user_id: Identifier, updates: UserUpdate) -> User:
         update_values = {}

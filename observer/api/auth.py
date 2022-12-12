@@ -184,9 +184,19 @@ async def reset_password_with_code(
     new_password_payload: NewPasswordRequest,
     audits: AuditServiceInterface = Depends(audit_service),
     auth: AuthServiceInterface = Depends(auth_service),
+    mail: MailerInterface = Depends(mailer),
 ) -> Response:
     """Reset password using reset code"""
     user = await auth.reset_password_with_code(code, new_password_payload.password.get_secret_value())
+    tasks.add_task(
+        mail.send,
+        EmailMessage(
+            to_email=user.email,
+            from_email=settings.from_email,
+            subject=settings.mfa_reset_subject,
+            body=f"You password has been reset at {datetime.now(tz=timezone.utc).strftime('%m/%d/%Y, %H:%M:%S')}.",
+        ),
+    )
     audit_log = await auth.create_log(
         f"endpoint=reset_password_with_code,action=reset:password,ref_id={user.ref_id}",
         timedelta(days=settings.auth_audit_event_lifetime_days),

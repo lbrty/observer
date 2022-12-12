@@ -44,3 +44,13 @@ password_resets = Table(
     Index("ux_password_resets_code", "code", unique=True),
     Index("ix_password_resets_user_id", "user_id"),
 )
+
+confirmations = Table(
+    "confirmations",
+    metadata,
+    Column("code", Text()),
+    Column("user_id", UUID(), ForeignKey("users.id"), nullable=False),
+    Column("created_at", DateTime(timezone=True), server_default=func.now(), nullable=True),
+    Index("ux_confirmations_code", "code", unique=True),
+    Index("ix_confirmations_user_id", "user_id"),
+)

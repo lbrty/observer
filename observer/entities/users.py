@@ -43,3 +43,9 @@ class PasswordReset(BaseModel):
     code: str
     user_id: Identifier
     created_at: datetime
+
+
+class Confirmation(BaseModel):
+    code: str
+    user_id: Identifier
+    created_at: datetime
