@@ -4,7 +4,6 @@ from typing import Protocol, Tuple
 
 from jarowinkler import jarowinkler_similarity
 from jwt.exceptions import DecodeError, InvalidAlgorithmError, InvalidSignatureError
-from starlette.background import BackgroundTasks
 
 from observer.api.exceptions import (
     ForbiddenError,
@@ -33,7 +32,6 @@ from observer.schemas.users import NewUserRequest
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.crypto import CryptoServiceInterface
 from observer.services.jwt import JWTService, TokenData
-from observer.services.mailer import MailerInterface
 from observer.services.mfa import MFAServiceInterface
 from observer.services.users import UsersServiceInterface
 from observer.settings import settings
@@ -46,6 +44,9 @@ RefreshTokenExpirationDelta = timedelta(minutes=RefreshTokenExpirationMinutes)
 
 class AuthServiceInterface(Protocol):
     tag: str
+    crypto_service: CryptoServiceInterface
+    audits: AuditServiceInterface
+    mfa_service: MFAServiceInterface
     jwt_service: JWTService
     users_service: UsersServiceInterface
 
@@ -80,19 +81,14 @@ class AuthService(AuthServiceInterface):
     def __init__(
         self,
         crypto_service: CryptoServiceInterface,
-        audits: AuditServiceInterface,
-        mailer: MailerInterface,
         mfa_service: MFAServiceInterface,
         jwt_service: JWTService,
         users_service: UsersServiceInterface,
     ):
         self.crypto_service = crypto_service
-        self.audits = audits
-        self.mailer = mailer
         self.jwt_service = jwt_service
         self.mfa_service = mfa_service
         self.users_service = users_service
-        self.tasks = BackgroundTasks()
 
     async def token_login(self, login_payload: LoginPayload) -> Tuple[User, TokenResponse]:
         if user := await self.users_service.get_by_email(login_payload.email):

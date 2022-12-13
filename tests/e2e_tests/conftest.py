@@ -106,8 +106,6 @@ async def app_context(db_engine):
     ctx.users_service = UsersService(ctx.users_repo, ctx.crypto_service)
     ctx.auth_service = AuthService(
         ctx.crypto_service,
-        ctx.audit_service,
-        ctx.mailer,
         ctx.mfa_service,
         ctx.jwt_service,
         ctx.users_service,
