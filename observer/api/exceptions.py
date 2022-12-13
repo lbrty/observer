@@ -16,6 +16,7 @@ class ErrorCode(str, Enum):
     weak_password_error = "weak_password_error"
     invalid_password_error = "invalid_password_error"
     similar_passwords_error = "similar_passwords_error"
+    confirmation_code_expired_error = "confirmation_code_expired_error"
     internal_error = "internal_error"
 
 
@@ -84,6 +85,12 @@ class RegistrationError(BaseAPIException):
     default_code = ErrorCode.registration_error
     default_status = status.HTTP_409_CONFLICT
     default_message = "registration error"
+
+
+class ConfirmationCodeExpiredError(BaseAPIException):
+    default_code = ErrorCode.confirmation_code_expired_error
+    default_status = status.HTTP_409_CONFLICT
+    default_message = "confirmation code has expired"
 
 
 class PasswordResetCodeExpiredError(BaseAPIException):
