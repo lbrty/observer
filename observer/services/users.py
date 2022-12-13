@@ -62,7 +62,7 @@ class UsersServiceInterface(Protocol):
     async def confirm_user(self, user_id: Identifier | None, code: str) -> User:
         raise NotImplementedError
 
-    async def create_confirmation(self, user_id: Identifier, code: str) -> Confirmation:
+    async def create_confirmation(self, user_id: Identifier) -> Confirmation:
         raise NotImplementedError
 
     async def get_confirmation(self, code: str) -> Confirmation:
@@ -161,7 +161,7 @@ class UsersService(UsersServiceInterface):
         await self.repo.confirm_user(confirmation.user_id)
         return user
 
-    async def create_confirmation(self, user_id: Identifier, code: str) -> Confirmation:
+    async def create_confirmation(self, user_id: Identifier) -> Confirmation:
         return await self.repo.create_confirmation(user_id, shortuuid.uuid())
 
     async def get_confirmation(self, code: str) -> Confirmation | None:

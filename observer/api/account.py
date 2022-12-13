@@ -1,4 +1,3 @@
-import shortuuid
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
@@ -51,7 +50,7 @@ async def resend_confirmation(
     users: UsersServiceInterface = Depends(users_service),
     mail: MailerInterface = Depends(mailer),
 ):
-    confirmation = await users.create_confirmation(user.id, shortuuid.uuid())
+    confirmation = await users.create_confirmation(user.id)
     link = f"{settings.app_domain}{settings.confirmation_url.format(code=confirmation.code)}"
     tasks.add_task(
         mail.send,

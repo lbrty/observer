@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta, timezone
 
-import shortuuid
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
@@ -107,7 +106,7 @@ async def token_register(
         data=dict(ref_id=user.ref_id, role=user.role.value),
     )
     tasks.add_task(audits.add_event, audit_log)
-    confirmation = await users.create_confirmation(user.id, shortuuid.uuid())
+    confirmation = await users.create_confirmation(user.id)
     link = f"{settings.app_domain}{settings.confirmation_url.format(code=confirmation.code)}"
     tasks.add_task(
         mail.send,
