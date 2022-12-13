@@ -14,17 +14,17 @@ from observer.services.users import UsersServiceInterface
 
 @dataclass
 class Context:
-    db: Database = None
-    keychain: Keychain = None
-    mailer: MailerInterface = None
-    audit_service: AuditServiceInterface = None
-    audit_repo: AuditRepositoryInterface = None
-    jwt_service: JWTService = None
-    auth_service: AuthServiceInterface = None
-    crypto_service: CryptoServiceInterface = None
-    mfa_service: MFAServiceInterface = None
-    users_repo: UsersRepositoryInterface = None
-    users_service: UsersServiceInterface = None
+    db: Database | None = None
+    keychain: Keychain | None = None
+    mailer: MailerInterface | None = None
+    audit_service: AuditServiceInterface | None = None
+    audit_repo: AuditRepositoryInterface | None = None
+    jwt_service: JWTService | None = None
+    auth_service: AuthServiceInterface | None = None
+    crypto_service: CryptoServiceInterface | None = None
+    mfa_service: MFAServiceInterface | None = None
+    users_repo: UsersRepositoryInterface | None = None
+    users_service: UsersServiceInterface | None = None
 
 
 ctx = Context()

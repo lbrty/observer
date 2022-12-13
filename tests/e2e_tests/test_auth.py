@@ -182,7 +182,7 @@ async def test_password_reset_works_as_expected_when_unknown_reset_code_is_used(
     assert resp.status_code == status.HTTP_204_NO_CONTENT
 
     resp = await client.post(
-        f"/auth/reset-password/random-code",
+        "/auth/reset-password/random-code",
         json=dict(
             password=SECURE_PASSWORD,
         ),
