@@ -137,18 +137,22 @@ class AuthService(AuthServiceInterface):
         if not is_strong_password(payload.new_password.get_secret_value(), settings.password_policy):
             raise WeakPasswordError(message="Given password is weak")
 
-        user = await self.users_service.get_by_id(user_id)
-        await self.check_totp(user, payload.totp_code)
-        if bcrypt.check_password(payload.old_password.get_secret_value(), user.password_hash):
-            password_hash = bcrypt.hash_password(payload.new_password.get_secret_value())
-            return await self.users_service.update_password(user_id, password_hash)
-        else:
-            raise InvalidPasswordError(message="Invalid password")
+        if user := await self.users_service.get_by_id(user_id):
+            await self.check_totp(user, payload.totp_code)
+            if bcrypt.check_password(payload.old_password.get_secret_value(), user.password_hash):
+                password_hash = bcrypt.hash_password(payload.new_password.get_secret_value())
+                return await self.users_service.update_password(user_id, password_hash)
+            else:
+                raise InvalidPasswordError(message="Invalid password")
+
+        raise UnauthorizedError(message="Unknown user")
 
     async def reset_password_request(self, email: str) -> Tuple[User, PasswordReset]:
         if user := await self.users_service.get_by_email(email):
             password_reset = await self.users_service.reset_password(user.id)
             return user, password_reset
+        else:
+            raise UnauthorizedError(message="Unknown user")
 
     async def reset_password_with_code(self, code: str, new_password: str) -> User:
         if not is_strong_password(new_password, settings.password_policy):
@@ -173,7 +177,7 @@ class AuthService(AuthServiceInterface):
 
         # If MFA is enabled and TOTP given
         # Then we verify it
-        if user.mfa_enabled:
+        if user.mfa_enabled and user.mfa_encrypted_secret:
             # Now we need to decrypt `totp_secret` and verify given `totp_code`
             # if invalid we return `TOTPError`
             keys_hash, encrypted_secret = user.mfa_encrypted_secret.split(":", maxsplit=1)
@@ -181,6 +185,10 @@ class AuthService(AuthServiceInterface):
                 keys_hash,
                 base64.b64decode(encrypted_secret.encode()),
             )
+
+            if not totp_code:
+                raise TOTPRequiredError
+
             if not await self.mfa_service.valid(totp_code, decrypted_secret.decode()):
                 raise TOTPError(message="Invalid totp code")
 

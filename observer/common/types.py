@@ -1,15 +1,15 @@
 from datetime import date, datetime
 from enum import Enum
-from typing import List, TypeAlias
+from typing import List, Optional, TypeAlias
 from uuid import UUID
 
 Identifier: TypeAlias = UUID | str
-SomeStr: TypeAlias = str | None
-SomeDate: TypeAlias = date | None
-SomeBool: TypeAlias = bool | None
-SomeDatetime: TypeAlias = datetime | None
-SomeIdentifier: TypeAlias = Identifier | None
-SomeList: TypeAlias = List | None
+SomeStr: TypeAlias = Optional[str]
+SomeDate: TypeAlias = Optional[date]
+SomeBool: TypeAlias = Optional[bool]
+SomeDatetime: TypeAlias = Optional[datetime]
+SomeIdentifier: TypeAlias = Optional[Identifier]
+SomeList: TypeAlias = Optional[List]
 
 
 class Role(str, Enum):

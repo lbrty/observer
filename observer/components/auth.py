@@ -38,6 +38,9 @@ class RequiredRoles:
         self.roles = roles
 
     async def __call__(self, user: SomeUser = Depends(authenticated_user), **kwargs):
+        if user is None:
+            raise ForbiddenError(message="Access forbidden")
+
         if user.role not in self.roles:
             raise ForbiddenError(message="Access forbidden")
 
