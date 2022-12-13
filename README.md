@@ -53,3 +53,18 @@ When users enable MFA the following things happen:
 9. Then save TOTP secret and backup codes and secure encryption key,
 10. Then return backup codes to user,
 11. Done.
+
+##### Schema level
+Users' table and schemas have the following fields the last two of which are encrypted with
+private key and if users have MFA enabled we decrypt TOTP secret to verify given TOTP code.
+To reset MFA we also keep backup codes in encrypted form and only decrypt to verify if
+given backup code is correct.
+Both encrypted fields have the following format `system_key_hash:base64_key_contents`.
+
+```py
+class User(BaseModel):
+    ...
+    mfa_enabled: bool
+    mfa_encrypted_secret: SomeStr
+    mfa_encrypted_backup_codes: SomeStr
+```
