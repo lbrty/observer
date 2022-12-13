@@ -6,6 +6,79 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/account/confirm/{code}": {
+      "get": {
+        "summary": "Confirm Account",
+        "operationId": "confirm_account_account_confirm__code__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            },
+            "name": "code",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/confirmation/resend": {
+      "post": {
+        "summary": "Resend Confirmation",
+        "operationId": "resend_confirmation_account_confirmation_resend_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/token": {
       "post": {
         "summary": "Token Login",
