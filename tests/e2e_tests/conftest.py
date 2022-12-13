@@ -1,7 +1,6 @@
 import asyncio
 import hashlib
 import os
-from typing import Any, AsyncGenerator
 
 import httpx
 import pytest
@@ -24,7 +23,7 @@ from observer.common.bcrypt import hash_password
 from observer.common.types import Role
 from observer.context import ctx
 from observer.db import Database, metadata
-from observer.entities.users import NewUser, User
+from observer.entities.users import NewUser
 from observer.repositories.audit_logs import AuditRepository
 from observer.repositories.users import UsersRepository
 from observer.schemas.crypto import PrivateKey
@@ -128,7 +127,7 @@ def test_app(env_settings) -> FastAPI:
 
 
 @pytest.fixture(scope="function")
-async def consultant_user(ensure_db, app_context) -> AsyncGenerator[User, Any]:
+async def consultant_user(ensure_db, app_context):  # type:ignore
     user = await app_context.users_service.repo.create_user(
         NewUser(
             ref_id="ref-consultant-1",
@@ -152,7 +151,7 @@ async def client(test_app):
 
 @pytest.fixture(scope="function")
 async def authorized_client(test_app, app_context, consultant_user):
-    token = await app_context.auth_service.create_token(consultant_user.ref_id)
+    token = await app_context.auth_service.create_token(consultant_user.ref_id)  # noqa
     app_client = httpx.AsyncClient(
         app=test_app,
         base_url="http://test",

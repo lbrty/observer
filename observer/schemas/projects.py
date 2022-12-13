@@ -15,20 +15,20 @@ class BaseProject(SchemaBase):
     description: str | None = Field(None, description="Description of project")
 
 
-class Project(SchemaBase):
+class ProjectResponse(SchemaBase):
     id: Identifier = Field(..., description="ID of project")
     name: str = Field(..., description="Name of project")
     description: str | None = Field(None, description="Description of project")
 
 
-class NewProject(BaseProject):
+class NewProjectRequest(BaseProject):
     ...
 
 
-class UpdateProject(BaseProject):
+class UpdateProjectRequest(BaseProject):
     ...
 
 
 class ProjectsResponse(SchemaBase):
     total: int = Field(..., description="Total count of projects")
-    items: list[Project] = Field(..., description="List of projects")
+    items: list[ProjectResponse] = Field(..., description="List of projects")

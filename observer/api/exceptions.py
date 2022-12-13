@@ -48,14 +48,14 @@ class InternalError(BaseAPIException):
 
 class BadRequestError(BaseAPIException):
     default_code = ErrorCode.bad_request
-    default_status = status.HTTP_401_UNAUTHORIZED
-    default_message = "invalid totp code"
+    default_status = status.HTTP_400_BAD_REQUEST
+    default_message = "bad request"
 
 
 class TOTPError(BaseAPIException):
     default_code = ErrorCode.totp_error
-    default_status = status.HTTP_400_BAD_REQUEST
-    default_message = "bad request"
+    default_status = status.HTTP_401_UNAUTHORIZED
+    default_message = "invalid totp code"
 
 
 class TOTPRequiredError(BaseAPIException):

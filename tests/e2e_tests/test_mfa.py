@@ -139,7 +139,7 @@ async def test_configured_mfa_works_as_expected_when_correct_credentials_given(
     assert token_data.ref_id == consultant_user.ref_id
 
 
-async def test_configured_mfa_works_as_expected_when_incorrect_totp_code_given(
+async def test_configure_mfa_works_as_expected_when_incorrect_totp_code_given(
     authorized_client,
     client,
     ensure_db,
