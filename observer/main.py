@@ -38,7 +38,7 @@ async def on_startup():
         print(f"No keys found, please generate new keys and move to {settings.keystore_path}")
         sys.exit(1)
 
-    print(f"Key loader: {settings.keychain}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
+    print(f"Key loader: {settings.key_loader_type}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
     ctx.jwt_service = JWTService(ctx.keychain.keys[0])
     ctx.mailer = Mailer()
     ctx.audit_repo = AuditRepository(ctx.db)

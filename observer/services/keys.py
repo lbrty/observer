@@ -26,19 +26,19 @@ class FS(Keychain):
         keys = []
         if key_list := glob(f"{path}/*.pem"):
             for key in key_list:
-                with os.open(key, os.O_RDONLY | os.O_BINARY) as fp:
-                    stats = os.fstat(fp)
+                fp = os.open(key, os.O_RDONLY)
+                stats = os.fstat(fp)
+                file_bytes = os.read(fp, stats.st_size)
+                h = hashlib.new("sha256", file_bytes)
+                pem_private_key = load_pem_private_key(file_bytes, password=None)
+                private_key = PrivateKey(
+                    hash=str(h.hexdigest())[:16].upper(),
+                    private_key=pem_private_key,
+                )
+                keys.append((stats.st_ctime, private_key))
 
-                    file_bytes = fp.read()
-                    h = hashlib.new("sha256", file_bytes)
-                    pem_private_key = load_pem_private_key(file_bytes, password=None)
-                    private_key = PrivateKey(
-                        hash=str(h.hexdigest())[:16].upper(),
-                        private_key=pem_private_key,
-                    )
-                    keys.append((stats.st_ctime, private_key))
-
-                    logger.info("Loaded RSAPrivateKey", SHA256=h)
+                logger.info("Loaded RSAPrivateKey", SHA256=private_key.hash)
+                os.close(fp)
 
         sorted(keys, key=lambda item: item[0])
         self.keys = [item[1] for item in keys]
