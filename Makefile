@@ -9,6 +9,7 @@ lint:
 	poetry run ruff . -q
 	poetry run black . --check -q
 	poetry run isort . -c -q
+	poetry run mypy . --pretty
 
 .PHONY: test
 test:
