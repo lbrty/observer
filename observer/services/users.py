@@ -4,7 +4,11 @@ from typing import Protocol
 
 import shortuuid
 
-from observer.api.exceptions import TOTPError
+from observer.api.exceptions import (
+    ConfirmationCodeExpiredError,
+    NotFoundError,
+    TOTPError,
+)
 from observer.common import bcrypt
 from observer.common.types import Identifier
 from observer.entities.base import SomeUser
@@ -24,6 +28,7 @@ from observer.schemas.users import (
     UsersResponse,
 )
 from observer.services.crypto import CryptoServiceInterface
+from observer.settings import settings
 
 
 class UsersServiceInterface(Protocol):
@@ -52,6 +57,9 @@ class UsersServiceInterface(Protocol):
         raise NotImplementedError
 
     async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
+        raise NotImplementedError
+
+    async def confirm_user(self, user_id: Identifier | None, code: str) -> User:
         raise NotImplementedError
 
     async def create_confirmation(self, user_id: Identifier, code: str) -> Confirmation:
@@ -129,6 +137,29 @@ class UsersService(UsersServiceInterface):
         )
         if given_backup_code not in decrypted_backup_codes.decode().split(","):
             raise TOTPError(message="invalid backup code")
+
+    async def confirm_user(self, user_id: Identifier | None, code: str) -> User:
+        confirmation = await self.get_confirmation(code)
+
+        # If user is authenticated then we need to check
+        # if confirmation code belongs to this user
+        # and if not so then we need to return not found error.
+        if user_id is not None and confirmation.user_id != user_id:
+            raise NotFoundError(message="Confirmation code not found")
+
+        now = datetime.now(tz=timezone.utc)
+        confirmation_delta = timedelta(minutes=settings.confirmation_expiration_minutes)
+        if confirmation.created_at + confirmation_delta < now:
+            raise ConfirmationCodeExpiredError(message="Confirmation code has already expired")
+
+        # For the case if confirmation code has not expired, and yet we still
+        # get requests we just need to return original confirmation instance.
+        user = await self.get_by_id(confirmation.user_id)
+        if user.is_confirmed:
+            return user
+
+        await self.repo.confirm_user(confirmation.user_id)
+        return user
 
     async def create_confirmation(self, user_id: Identifier, code: str) -> Confirmation:
         return await self.repo.create_confirmation(user_id, shortuuid.uuid())

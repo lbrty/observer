@@ -50,6 +50,9 @@ class UsersRepositoryInterface(Protocol):
     async def get_confirmation(self, code: str) -> Confirmation | None:
         raise NotImplementedError
 
+    async def confirm_user(self, user_id: Identifier) -> User:
+        raise NotImplementedError
+
 
 class UsersRepository(UsersRepositoryInterface):
     def __init__(self, db: Database):
@@ -97,6 +100,11 @@ class UsersRepository(UsersRepositoryInterface):
             return Confirmation(**result)
 
         return None
+
+    async def confirm_user(self, user_id: Identifier) -> User:
+        query = update(user_id).values(dict(is_confirmed=True)).where(users.c.id == str(user_id)).returning("*")
+        if result := await self.db.fetchone(query):
+            return User(**result)
 
     async def update_user(self, user_id: Identifier, updates: UserUpdate) -> User:
         update_values = {}

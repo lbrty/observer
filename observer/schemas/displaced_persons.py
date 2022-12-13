@@ -15,7 +15,7 @@ class VulnerabilityCategory(BaseModel):
     name: str
 
 
-class DisplacedPerson(BaseModel):
+class DisplacedPersonResponse(BaseModel):
     id: Identifier = Field(..., description="Displaced person ID")
     encryption_key: SomeStr = Field(None, description="Encrypted encryption key")
     status: DisplacedPersonStatus = Field(DisplacedPersonStatus.registered, description="Current status")

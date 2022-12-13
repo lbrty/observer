@@ -1,11 +1,17 @@
 from datetime import datetime, timedelta, timezone
 
+import shortuuid
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
 from observer.api.exceptions import ForbiddenError
 from observer.components.auth import authenticated_user, refresh_token_cookie
-from observer.components.services import audit_service, auth_service, mailer
+from observer.components.services import (
+    audit_service,
+    auth_service,
+    mailer,
+    users_service,
+)
 from observer.entities.users import User
 from observer.schemas.auth import (
     ChangePasswordRequest,
@@ -18,6 +24,7 @@ from observer.schemas.auth import (
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.auth import AuthServiceInterface
 from observer.services.mailer import EmailMessage, MailerInterface
+from observer.services.users import UsersServiceInterface
 from observer.settings import settings
 
 router = APIRouter(prefix="/auth")
@@ -89,6 +96,8 @@ async def token_register(
     registration_payload: RegistrationPayload,
     audits: AuditServiceInterface = Depends(audit_service),
     auth: AuthServiceInterface = Depends(auth_service),
+    users: UsersServiceInterface = Depends(users_service),
+    mail: MailerInterface = Depends(mailer),
 ) -> TokenResponse:
     """Register using email and password"""
     user, token_response = await auth.register(registration_payload)
@@ -96,6 +105,23 @@ async def token_register(
         f"action=token:register,ref_id={user.ref_id}",
         None,
         data=dict(ref_id=user.ref_id, role=user.role.value),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    confirmation = await users.create_confirmation(user.id, shortuuid.uuid())
+    link = f"{settings.app_domain}{settings.confirmation_url.format(code=confirmation.code)}"
+    tasks.add_task(
+        mail.send,
+        EmailMessage(
+            to_email=user.email,
+            from_email=settings.from_email,
+            subject=settings.mfa_reset_subject,
+            body=f"To confirm your email please use the following link {link}",
+        ),
+    )
+    audit_log = await auth.create_log(
+        f"endpoint=token_register,action=send:confirmation,ref_id={user.ref_id}",
+        None,
+        data=dict(ref_id=user.ref_id),
     )
     tasks.add_task(audits.add_event, audit_log)
     return token_response
@@ -162,7 +188,7 @@ async def reset_password_request(
         ),
     )
     audit_log = await auth.create_log(
-        f"action=reset_password:request,ref_id={user.ref_id}",
+        f"endpoint=reset_password,action=reset_password:request,ref_id={user.ref_id}",
         timedelta(days=settings.auth_audit_event_lifetime_days),
         data=dict(
             email=reset_password_payload.email,
