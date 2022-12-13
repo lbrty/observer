@@ -147,9 +147,7 @@ class UsersService(UsersServiceInterface):
         if user_id is not None and confirmation.user_id != user_id:
             raise NotFoundError(message="Confirmation code not found")
 
-        now = datetime.now(tz=timezone.utc)
-        confirmation_delta = timedelta(minutes=settings.confirmation_expiration_minutes)
-        if confirmation.created_at + confirmation_delta < now:
+        if confirmation.expires_at < datetime.now(tz=timezone.utc):
             raise ConfirmationCodeExpiredError(message="Confirmation code has already expired")
 
         # For the case if confirmation code has not expired, and yet we still
@@ -162,7 +160,9 @@ class UsersService(UsersServiceInterface):
         return user
 
     async def create_confirmation(self, user_id: Identifier) -> Confirmation:
-        return await self.repo.create_confirmation(user_id, shortuuid.uuid())
+        now = datetime.now(tz=timezone.utc)
+        confirmation_delta = timedelta(minutes=settings.confirmation_expiration_minutes)
+        return await self.repo.create_confirmation(user_id, shortuuid.uuid(), now + confirmation_delta)
 
     async def get_confirmation(self, code: str) -> Confirmation | None:
         return await self.repo.get_confirmation(code)

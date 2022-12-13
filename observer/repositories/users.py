@@ -44,7 +44,7 @@ class UsersRepositoryInterface(Protocol):
     async def get_password_reset(self, code: str) -> PasswordReset | None:
         raise NotImplementedError
 
-    async def create_confirmation(self, user_id: Identifier, code: str) -> Confirmation:
+    async def create_confirmation(self, user_id: Identifier, code: str, expires_at: datetime) -> Confirmation:
         raise NotImplementedError
 
     async def get_confirmation(self, code: str) -> Confirmation | None:
@@ -84,11 +84,11 @@ class UsersRepository(UsersRepositoryInterface):
         if result := await self.db.fetchone(query):
             return User(**result)
 
-    async def create_confirmation(self, user_id: Identifier, code: str) -> Confirmation:
+    async def create_confirmation(self, user_id: Identifier, code: str, expires_at: datetime) -> Confirmation:
         values = dict(
             code=code,
             user_id=str(user_id),
-            created_at=datetime.now(tz=timezone.utc),
+            expires_at=expires_at,
         )
         query = insert(confirmations).values(**values).returning("*")
         if result := await self.db.fetchone(query):
@@ -102,7 +102,7 @@ class UsersRepository(UsersRepositoryInterface):
         return None
 
     async def confirm_user(self, user_id: Identifier) -> User:
-        query = update(user_id).values(dict(is_confirmed=True)).where(users.c.id == str(user_id)).returning("*")
+        query = update(users).values(dict(is_confirmed=True)).where(users.c.id == str(user_id)).returning("*")
         if result := await self.db.fetchone(query):
             return User(**result)
 

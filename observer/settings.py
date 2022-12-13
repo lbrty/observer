@@ -43,8 +43,8 @@ class Settings(SettingsBase):
         strength=0.68,
     )
     password_reset_url: str = "/reset-password/{code}"
-    password_reset_expiration_minutes: int = 60
-    confirmation_expiration_minutes: int = 120
+    password_reset_expiration_minutes: int = 15
+    confirmation_expiration_minutes: int = 20
     confirmation_url: str = "/account/confirm/{code}"
 
     # Allow 10 seconds more for otp codes

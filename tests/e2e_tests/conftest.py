@@ -160,3 +160,8 @@ async def authorized_client(test_app, app_context, consultant_user):
         cookies=token.dict(),
     )
     yield app_client
+
+
+@pytest.fixture(scope="function")
+async def clean_mailbox(app_context):
+    app_context.mailer.messages = []

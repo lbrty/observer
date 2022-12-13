@@ -1,7 +1,7 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
-from observer.components.auth import authenticated_user
+from observer.components.auth import authenticated_user, current_user
 from observer.components.services import (
     audit_service,
     auth_service,
@@ -19,11 +19,11 @@ from observer.settings import settings
 router = APIRouter(prefix="/account")
 
 
-@router.get("/confirmation/{code}", status_code=status.HTTP_204_NO_CONTENT)
+@router.get("/confirm/{code}", status_code=status.HTTP_204_NO_CONTENT)
 async def confirm_account(
     tasks: BackgroundTasks,
     code: str,
-    user: SomeUser = Depends(authenticated_user),
+    user: SomeUser = Depends(current_user),
     audits: AuditServiceInterface = Depends(audit_service),
     auth: AuthServiceInterface = Depends(auth_service),
     users: UsersServiceInterface = Depends(users_service),
@@ -41,7 +41,7 @@ async def confirm_account(
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.get("/confirmation/resend", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/confirmation/resend", status_code=status.HTTP_204_NO_CONTENT)
 async def resend_confirmation(
     tasks: BackgroundTasks,
     user: User = Depends(authenticated_user),
