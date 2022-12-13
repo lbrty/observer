@@ -48,4 +48,4 @@ class PasswordReset(BaseModel):
 class Confirmation(BaseModel):
     code: str
     user_id: Identifier
-    created_at: datetime
+    expires_at: datetime

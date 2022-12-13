@@ -20,7 +20,7 @@ def upgrade():
         "confirmations",
         sa.Column("code", sa.Text()),
         sa.Column("user_id", postgresql.UUID(), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=True),
+        sa.Column("expires_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=True),
         sa.ForeignKeyConstraint(
             ("user_id",),
             ["users.id"],
