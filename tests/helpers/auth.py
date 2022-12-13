@@ -4,4 +4,7 @@ from observer.schemas.auth import TokenResponse
 
 
 async def get_auth_tokens(ctx: Context, user: User) -> TokenResponse:
-    return await ctx.auth_service.create_token(user.ref_id)
+    if ctx.auth_service:
+        return await ctx.auth_service.create_token(user.ref_id)
+
+    raise RuntimeError("AuthService is None")

@@ -14,7 +14,7 @@ logger = get_logger(service="crypto")
 
 
 class CryptoServiceInterface(Protocol):
-    keychain: Keychain = None
+    keychain: Keychain | None
 
     async def encrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
         raise NotImplementedError

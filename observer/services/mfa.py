@@ -2,7 +2,7 @@ import io
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from hashlib import sha1
-from typing import List, Protocol
+from typing import List, Protocol, Set
 
 import shortuuid
 from pyotp import TOTP, random_base32
@@ -74,7 +74,7 @@ class MFAService(MFAServiceInterface):
 
     async def create(self, app_name: str, ref_id: Identifier) -> MFASecret:
         secret = random_base32()
-        totp_uri = TOTP(secret).provisioning_uri(ref_id, app_name)
+        totp_uri = TOTP(secret).provisioning_uri(str(ref_id), app_name)
         return MFASecret(
             secret=secret,
             totp_uri=totp_uri,
@@ -85,7 +85,7 @@ class MFAService(MFAServiceInterface):
         return totp.verify(totp_code, valid_window=self.totp_leeway)
 
     async def create_backup_codes(self, how_many: int) -> List[str]:
-        backup_codes = set()
+        backup_codes: Set[str] = set()
         while True:
             if len(backup_codes) == how_many:
                 break

@@ -65,7 +65,7 @@ class UsersServiceInterface(Protocol):
     async def create_confirmation(self, user_id: Identifier) -> Confirmation:
         raise NotImplementedError
 
-    async def get_confirmation(self, code: str) -> Confirmation:
+    async def get_confirmation(self, code: str) -> Confirmation | None:
         raise NotImplementedError
 
     async def reset_password(self, user_id: Identifier) -> PasswordReset:
@@ -144,7 +144,7 @@ class UsersService(UsersServiceInterface):
         # If user is authenticated then we need to check
         # if confirmation code belongs to this user
         # and if not so then we need to return not found error.
-        if user_id is not None and confirmation.user_id != user_id:
+        if not confirmation or (user_id is not None and confirmation.user_id != user_id):
             raise NotFoundError(message="Confirmation code not found")
 
         if confirmation.expires_at < datetime.now(tz=timezone.utc):
@@ -153,6 +153,9 @@ class UsersService(UsersServiceInterface):
         # For the case if confirmation code has not expired, and yet we still
         # get requests we just need to return original confirmation instance.
         user = await self.get_by_id(confirmation.user_id)
+        if not user:
+            raise NotFoundError(message="Unknown user")
+
         if user.is_confirmed:
             return user
 

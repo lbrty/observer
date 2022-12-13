@@ -1,6 +1,7 @@
 import asyncio
 import hashlib
 import os
+from typing import Any, AsyncGenerator
 
 import httpx
 import pytest
@@ -127,7 +128,7 @@ def test_app(env_settings) -> FastAPI:
 
 
 @pytest.fixture(scope="function")
-async def consultant_user(ensure_db, app_context) -> User:
+async def consultant_user(ensure_db, app_context) -> AsyncGenerator[User, Any]:
     user = await app_context.users_service.repo.create_user(
         NewUser(
             ref_id="ref-consultant-1",

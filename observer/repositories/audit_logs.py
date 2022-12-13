@@ -27,10 +27,10 @@ class AuditRepository(AuditRepositoryInterface):
             "created_at": datetime.now(tz=timezone.utc),
         }
         query = insert(audit_logs).values(**values).returning("*")
-        if result := await self.db.fetchone(query):
-            return AuditLog(**result)
+        result = await self.db.fetchone(query)
+        return AuditLog(**result)
 
     async def find_by_ref(self, ref: str) -> AuditLog:
         query = select(audit_logs).where(audit_logs.c.ref == ref)
-        if result := await self.db.fetchone(query):
-            return AuditLog(**result)
+        result = await self.db.fetchone(query)
+        return AuditLog(**result)

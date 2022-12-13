@@ -18,6 +18,7 @@ class ErrorCode(str, Enum):
     similar_passwords_error = "similar_passwords_error"
     confirmation_code_expired_error = "confirmation_code_expired_error"
     internal_error = "internal_error"
+    bad_request = "bad_request"
 
 
 class BaseAPIException(Exception):
@@ -45,10 +46,16 @@ class InternalError(BaseAPIException):
     ...
 
 
-class TOTPError(BaseAPIException):
-    default_code = ErrorCode.totp_error
+class BadRequestError(BaseAPIException):
+    default_code = ErrorCode.bad_request
     default_status = status.HTTP_401_UNAUTHORIZED
     default_message = "invalid totp code"
+
+
+class TOTPError(BaseAPIException):
+    default_code = ErrorCode.totp_error
+    default_status = status.HTTP_400_BAD_REQUEST
+    default_message = "bad request"
 
 
 class TOTPRequiredError(BaseAPIException):

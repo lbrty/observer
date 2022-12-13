@@ -8,7 +8,10 @@ from observer.services.mfa import MFAServiceInterface
 
 
 async def mfa_service() -> MFAServiceInterface:
-    return ctx.mfa_service
+    if ctx.mfa_service:
+        return ctx.mfa_service
+
+    raise RuntimeError("MFAService is None")
 
 
 async def user_with_no_mfa(user: User = Depends(authenticated_user)):

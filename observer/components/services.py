@@ -10,22 +10,33 @@ from observer.services.users import UsersServiceInterface
 
 
 async def users_service() -> UsersServiceInterface:
-    return ctx.users_service
+    if ctx.users_service:
+        return ctx.users_service
+    raise RuntimeError("UsersService is None")
 
 
 async def auth_service() -> AuthServiceInterface:
-    return ctx.auth_service
+    if ctx.auth_service:
+        return ctx.auth_service
+    raise RuntimeError("AuthService is None")
 
 
 async def jwt_service() -> JWTService:
-    return ctx.jwt_service
+    if ctx.jwt_service:
+        return ctx.jwt_service
+    raise RuntimeError("JWTService is None")
 
 
 async def crypto_service() -> CryptoServiceInterface:
-    return ctx.crypto_service
+    if ctx.crypto_service:
+        return ctx.crypto_service
+    raise RuntimeError("CryptoService is None")
 
 
 async def keychain() -> Keychain:
+    if not ctx.keychain:
+        raise RuntimeError("Keychain is None")
+
     if len(ctx.keychain.keys) == 0:
         raise InternalError(message="private keys not found")
 
@@ -33,8 +44,12 @@ async def keychain() -> Keychain:
 
 
 async def audit_service() -> AuditServiceInterface:
-    return ctx.audit_service
+    if ctx.audit_service:
+        return ctx.audit_service
+    raise RuntimeError("AuditService is None")
 
 
 async def mailer() -> MailerInterface:
-    return ctx.mailer
+    if ctx.mailer:
+        return ctx.mailer
+    raise RuntimeError("Mailer is None")

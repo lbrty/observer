@@ -4,7 +4,7 @@ from datetime import timedelta
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
-from observer.api.exceptions import TOTPError
+from observer.api.exceptions import BadRequestError, TOTPError
 from observer.components.mfa import mfa_service, user_with_no_mfa
 from observer.components.services import audit_service, keychain, mailer, users_service
 from observer.entities.users import User
@@ -104,23 +104,26 @@ async def reset_mfa(
         want exact matches to check and reset if given backup code is valid.
     """
     if user := await user_service.get_by_email(reset_request.email):
-        await user_service.check_backup_code(user.mfa_encrypted_backup_codes, reset_request.backup_code)
-        await user_service.reset_mfa(user.id)
-        audit_log = await user_service.create_log(
-            "endpoint=reset_mfa,action=reset:mfa",
-            timedelta(days=settings.mfa_audit_event_lifetime_days),
-            reset_request.dict(),
-        )
-        tasks.add_task(audits.add_event, audit_log)
-        tasks.add_task(
-            mail.send,
-            EmailMessage(
-                to_email=user.email,
-                from_email=settings.from_email,
-                subject=settings.mfa_reset_subject,
-                body="Your MFA was reset, you can login using your credentials.",
-            ),
-        )
+        if user.mfa_encrypted_backup_codes:
+            await user_service.check_backup_code(user.mfa_encrypted_backup_codes, reset_request.backup_code)
+            await user_service.reset_mfa(user.id)
+            audit_log = await user_service.create_log(
+                "endpoint=reset_mfa,action=reset:mfa",
+                timedelta(days=settings.mfa_audit_event_lifetime_days),
+                reset_request.dict(),
+            )
+            tasks.add_task(audits.add_event, audit_log)
+            tasks.add_task(
+                mail.send,
+                EmailMessage(
+                    to_email=user.email,
+                    from_email=settings.from_email,
+                    subject=settings.mfa_reset_subject,
+                    body="Your MFA was reset, you can login using your credentials.",
+                ),
+            )
+        else:
+            raise BadRequestError(message="Backup codes not found")
     else:
         audit_log = await user_service.create_log(
             "endpoint=reset_mfa,action=reset:mfa,kind=error",

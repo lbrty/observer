@@ -33,7 +33,7 @@ class FS(Keychain):
                 pem_private_key = load_pem_private_key(file_bytes, password=None)
                 private_key = PrivateKey(
                     hash=str(h.hexdigest())[:16].upper(),
-                    private_key=pem_private_key,
+                    private_key=pem_private_key,  # type:ignore
                 )
                 keys.append((stats.st_ctime, private_key))
 

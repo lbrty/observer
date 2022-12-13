@@ -2,6 +2,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 
 import jwt
+from cryptography.hazmat.primitives import serialization
 
 from observer.common.types import Identifier
 from observer.schemas.crypto import PrivateKey
@@ -34,7 +35,11 @@ class JWTService:
         """
         return jwt.encode(
             asdict(payload),
-            self.private_key.private_key,
+            self.private_key.private_key.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.PKCS8,
+                encryption_algorithm=serialization.NoEncryption(),
+            ).decode(),
             algorithm="RS256",
             headers={
                 "kid": self.private_key.hash,
@@ -60,5 +65,14 @@ class JWTService:
         Returns:
             tuple[TokenData, dict]: a pair of `TokenData` and jwt token headers dictionary
         """
-        decoded = jwt.decode(token, self.private_key.private_key.public_key(), algorithms=["RS256"])
+        decoded = jwt.decode(
+            token,
+            self.private_key.private_key.public_key()
+            .public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.PKCS1,
+            )
+            .decode(),
+            algorithms=["RS256"],
+        )
         return TokenData(**decoded), jwt.get_unverified_header(token)
