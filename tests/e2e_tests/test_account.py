@@ -66,7 +66,36 @@ async def test_it_is_possible_to_resend_account_confirmation_email(
     assert confirmation.expires_at < recent_confirmation.expires_at
 
 
-async def test_account_confirmation_works_as_expected(
+async def test_account_confirmation_works_as_expected_for_same_authenticated_user(
+    client,
+    ensure_db,
+    app_context,
+    clean_mailbox,
+):
+    app_context.mailer.messages = []
+    resp = await client.post(
+        "/auth/register",
+        json=dict(
+            email="emails@examples.com",
+            password=SECURE_PASSWORD,
+        ),
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    message = app_context.mailer.messages[0]
+    [confirmation_link] = re.findall(r"https?://\S+", message.body)
+    parts = confirmation_link.split("/")
+    confirmation = await app_context.users_service.get_confirmation(parts[-1])
+
+    assert confirmation is not None
+    resp = await client.get(f"/account/confirm/{confirmation.code}", cookies=resp.json())
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+
+    user = await app_context.users_service.get_by_id(confirmation.user_id)
+    assert user.is_confirmed
+
+
+async def test_account_confirmation_works_as_expected_if_user_is_not_authenticated(
     client,
     ensure_db,
     app_context,
