@@ -457,6 +457,62 @@
           }
         }
       }
+    },
+    "/projects/{project_id}": {
+      "get": {
+        "summary": "Get Project",
+        "operationId": "get_project_projects__project_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Project Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "project_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -639,6 +695,39 @@
             "description": "Password which user has provided",
             "format": "password",
             "writeOnly": true
+          }
+        }
+      },
+      "ProjectResponse": {
+        "title": "ProjectResponse",
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "ID of project"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of project"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "description": "Description of project"
           }
         }
       },
