@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from observer.db import Database
 from observer.repositories.audit_logs import AuditRepositoryInterface
+from observer.repositories.permissions import PermissionsRepositoryInterface
 from observer.repositories.projects import ProjectsRepositoryInterface
 from observer.repositories.users import UsersRepositoryInterface
 from observer.services.audit_logs import AuditServiceInterface
@@ -10,6 +11,7 @@ from observer.services.crypto import CryptoServiceInterface, Keychain
 from observer.services.jwt import JWTService
 from observer.services.mailer import MailerInterface
 from observer.services.mfa import MFAServiceInterface
+from observer.services.permissions import PermissionsServiceInterface
 from observer.services.projects import ProjectsServiceInterface
 from observer.services.users import UsersServiceInterface
 
@@ -29,6 +31,8 @@ class Context:
     users_service: UsersServiceInterface | None = None
     projects_repo: ProjectsRepositoryInterface | None = None
     projects_service: ProjectsServiceInterface | None = None
+    permissions_repo: PermissionsRepositoryInterface | None = None
+    permissions_service: PermissionsServiceInterface | None = None
 
 
 ctx = Context()

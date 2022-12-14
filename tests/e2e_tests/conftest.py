@@ -25,6 +25,8 @@ from observer.context import ctx
 from observer.db import Database, metadata
 from observer.entities.users import NewUser
 from observer.repositories.audit_logs import AuditRepository
+from observer.repositories.permissions import PermissionsRepository
+from observer.repositories.projects import ProjectsRepository
 from observer.repositories.users import UsersRepository
 from observer.schemas.crypto import PrivateKey
 from observer.services.audit_logs import AuditService
@@ -33,6 +35,8 @@ from observer.services.crypto import CryptoService
 from observer.services.jwt import JWTService
 from observer.services.keys import FS
 from observer.services.mfa import MFAService
+from observer.services.permissions import PermissionsService
+from observer.services.projects import ProjectsService
 from observer.services.users import UsersService
 from observer.settings import db_settings, settings
 from tests.mocks.mailer import MockMailer
@@ -110,6 +114,10 @@ async def app_context(db_engine):
         ctx.jwt_service,
         ctx.users_service,
     )
+    ctx.projects_repo = ProjectsRepository(ctx.db)
+    ctx.projects_service = ProjectsService(ctx.projects_repo)
+    ctx.permissions_repo = PermissionsRepository(ctx.db)
+    ctx.permissions_service = PermissionsService(ctx.permissions_repo)
 
     yield ctx
 
