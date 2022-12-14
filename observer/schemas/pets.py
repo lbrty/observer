@@ -24,10 +24,10 @@ class BasePet(SchemaBase):
 
 class Pet(BaseModel):
     id: Identifier = Field(..., description="Pet ID")
-    created_at: datetime
+    created_at: datetime = Field(..., description="Creation datetime")
 
 
-class UpdatePermission(BasePet):
+class UpdatePet(BasePet):
     ...
 
 
