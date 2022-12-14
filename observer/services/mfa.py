@@ -54,7 +54,7 @@ class MFAServiceInterface(Protocol):
 
 
 class MFAService(MFAServiceInterface):
-    tag: str = "origin=mfa,source=service:mfa"
+    tag: str = "source=service:mfa"
 
     def __init__(self, totp_leeway: int, crypto_service: CryptoServiceInterface):
         self.totp_leeway = totp_leeway

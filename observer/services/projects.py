@@ -31,6 +31,11 @@ class ProjectsServiceInterface(Protocol):
 
 
 class ProjectsService(ProjectsServiceInterface):
+    tag: str = "source=service:projects"
+
+    def __init__(self, repo: ProjectsServiceInterface):
+        self.repo = repo
+
     async def get_by_id(self, project_id: Identifier) -> SomeProject:
         if project := await self.repo.get_by_id(project_id):
             return project

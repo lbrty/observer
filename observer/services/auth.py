@@ -76,7 +76,7 @@ class AuthServiceInterface(Protocol):
 
 
 class AuthService(AuthServiceInterface):
-    tag: str = "origin=auth,source=service:auth"
+    tag: str = "source=service:auth"
 
     def __init__(
         self,

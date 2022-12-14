@@ -4,6 +4,7 @@ from observer.app import create_app
 from observer.context import ctx
 from observer.db import PoolOptions, connect, disconnect
 from observer.repositories.audit_logs import AuditRepository
+from observer.repositories.projects import ProjectsRepository
 from observer.repositories.users import UsersRepository
 from observer.services.audit_logs import AuditService
 from observer.services.auth import AuthService
@@ -12,6 +13,7 @@ from observer.services.jwt import JWTService
 from observer.services.keys import get_key_loader
 from observer.services.mailer import Mailer
 from observer.services.mfa import MFAService
+from observer.services.projects import ProjectsService
 from observer.services.users import UsersService
 from observer.settings import db_settings, settings
 
@@ -53,6 +55,8 @@ async def on_startup():
         ctx.jwt_service,
         ctx.users_service,
     )
+    ctx.projects_repo = ProjectsRepository(ctx.db)
+    ctx.projects_service = ProjectsService(ctx.projects_repo)
 
 
 @app.on_event("shutdown")

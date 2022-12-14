@@ -87,7 +87,7 @@ class UsersServiceInterface(Protocol):
 
 
 class UsersService(UsersServiceInterface):
-    tag: str = "origin=mfa,source=service:user"
+    tag: str = "source=service:user"
 
     def __init__(self, users_repository: UsersRepositoryInterface, crypto_service: CryptoServiceInterface):
         self.repo = users_repository
