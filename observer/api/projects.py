@@ -28,7 +28,11 @@ async def create_project(
     audit_log = await projects.create_log(
         f"endpoint=create_project,action=create:project,project_id={project.id},ref_id={user.ref_id}",
         None,
-        project.dict(),
+        dict(
+            id=str(project.id),
+            name=project.name,
+            description=project.description,
+        ),
     )
     tasks.add_task(audits.add_event, audit_log)
     return await projects.to_response(project)
