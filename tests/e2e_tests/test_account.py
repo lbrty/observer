@@ -9,6 +9,32 @@ from observer.db.tables.users import confirmations
 SECURE_PASSWORD = "!@1StronKPassw0rd#Accounts"
 
 
+async def test_get_current_user_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
+    resp = await authorized_client.get("/account/me")
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == {
+        "email": "consultant-1@example.com",
+        "full_name": "full name",
+        "id": str(consultant_user.id),
+        "is_active": True,
+        "is_confirmed": True,
+        "mfa_enabled": False,
+        "ref_id": "ref-consultant-1",
+        "role": "consultant",
+    }
+
+
+async def test_get_current_user_works_as_expected_for_strangers(client, ensure_db, app_context):
+    resp = await client.get("/account/me")
+    assert resp.status_code == status.HTTP_401_UNAUTHORIZED
+    assert resp.json() == {
+        "code": "unauthorized",
+        "data": None,
+        "message": "Please authenticate",
+        "status_code": 401,
+    }
+
+
 async def test_registration_creates_account_confirmation(
     client,
     ensure_db,

@@ -10,6 +10,7 @@ from observer.components.services import (
 )
 from observer.entities.base import SomeUser
 from observer.entities.users import User
+from observer.schemas.users import UserResponse
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.auth import AuthServiceInterface
 from observer.services.mailer import EmailMessage, MailerInterface
@@ -17,6 +18,17 @@ from observer.services.users import UsersServiceInterface
 from observer.settings import settings
 
 router = APIRouter(prefix="/account")
+
+
+@router.get(
+    "/me",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def get_me(
+    user: User = Depends(authenticated_user),
+) -> UserResponse:
+    return UserResponse(**user.dict())
 
 
 @router.get("/confirm/{code}", status_code=status.HTTP_204_NO_CONTENT)

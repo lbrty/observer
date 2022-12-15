@@ -38,8 +38,6 @@ class UserResponse(BaseUser):
     is_active: bool = Field(True, description="Is user active?")
     is_confirmed: bool = Field(False, description="Is user confirmed?")
     mfa_enabled: bool = Field(False, description="Is MFA enabled for user?")
-    mfa_encrypted_secret: SecretStr | None = Field(None, description="Secret value for MFA")
-    mfa_encrypted_backup_codes: SecretStr | None = Field(None, description="Backup codes for MFA")
 
 
 class UsersResponse(SchemaBase):
