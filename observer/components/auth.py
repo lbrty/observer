@@ -31,7 +31,7 @@ async def authenticated_user(user: SomeUser = Depends(current_user)) -> User:
     return user
 
 
-class RequiredRoles:
+class RequiresRoles:
     """Check roles authenticated user"""
 
     def __init__(self, roles: List[Role]):
@@ -45,7 +45,7 @@ class RequiredRoles:
             raise ForbiddenError(message="Access forbidden")
 
 
-async def admin_user(user: SomeUser = Depends(RequiredRoles([Role.admin]))) -> User:
+async def admin_user(user: SomeUser = Depends(RequiresRoles([Role.admin]))) -> User:
     if not user:
         raise ForbiddenError(message="Access forbidden")
 

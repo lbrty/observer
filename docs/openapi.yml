@@ -501,6 +501,35 @@
       "post": {
         "summary": "Create Project",
         "operationId": "create_project_projects__post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Kwargs"
+            },
+            "name": "kwargs",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewProjectRequest"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "201": {
             "description": "Successful Response",
@@ -508,6 +537,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProjectResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -752,6 +791,25 @@
             "description": "Password which user has provided",
             "format": "password",
             "writeOnly": true
+          }
+        }
+      },
+      "NewProjectRequest": {
+        "title": "NewProjectRequest",
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of project"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "description": "Description of project"
           }
         }
       },
