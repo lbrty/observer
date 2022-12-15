@@ -23,6 +23,22 @@ Users will enter email and password which will sent to API then
 4. Given `HTTP 401` response,
 5. Then clients should present TOTP code with the same authentication credentials.
 
+```mermaid
+%%{init: {'theme':'dark'}}%%
+flowchart TD
+    A(Login) --> B{Credentials valid?}
+    B --> |Yes| C
+    B --> |No| F
+    C{MFA Enabled?}
+    C --> |No| H
+    C --> |Yes| D
+    D{TOTP Valid?}
+    D --> |Yes| H
+    D --> |No| F
+    F[Respond: HTTP 401]
+    H[Return Auth Tokens]
+```
+
 ## 🍄 Encryption
 
 **NOTE:**
