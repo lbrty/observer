@@ -176,12 +176,12 @@ async def test_configure_mfa_works_as_expected_when_incorrect_totp_code_given(
             totp_code="wrong_totp",
         ),
     )
-    assert resp.status_code == status.HTTP_401_UNAUTHORIZED
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
     assert resp.json() == {
         "code": "totp_error",
         "data": None,
         "message": "Invalid totp code",
-        "status_code": 401,
+        "status_code": 400,
     }
 
 
@@ -264,9 +264,9 @@ async def test_mfa_reset_request_works_as_expected_when_invalid_backup_code_give
     )
     assert resp.status_code == status.HTTP_401_UNAUTHORIZED
     assert resp.json() == {
-        "code": "totp_error",
+        "code": "totp_invalid_backup_code_error",
         "data": None,
-        "message": "invalid backup code",
+        "message": "Invalid backup code",
         "status_code": 401,
     }
 

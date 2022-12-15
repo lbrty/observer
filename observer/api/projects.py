@@ -9,9 +9,7 @@ router = APIRouter(prefix="/projects")
 
 
 @router.post("/", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
-async def create_project(
-
-) -> ProjectResponse:
+async def create_project() -> ProjectResponse:
     pass
 
 

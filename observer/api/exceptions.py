@@ -9,6 +9,7 @@ class ErrorCode(str, Enum):
     forbidden = "forbidden"
     not_found = "not_found"
     totp_error = "totp_error"
+    totp_invalid_backup_code_error = "totp_invalid_backup_code_error"
     totp_required_error = "totp_required_error"
     totp_exists_error = "totp_exists_error"
     registration_error = "registration_error"
@@ -52,9 +53,15 @@ class BadRequestError(BaseAPIException):
     default_message = "bad request"
 
 
+class TOTPInvalidBackupCodeError(BaseAPIException):
+    default_code = ErrorCode.totp_invalid_backup_code_error
+    default_status = status.HTTP_401_UNAUTHORIZED
+    default_message = "invalid totp backup code"
+
+
 class TOTPError(BaseAPIException):
     default_code = ErrorCode.totp_error
-    default_status = status.HTTP_401_UNAUTHORIZED
+    default_status = status.HTTP_400_BAD_REQUEST
     default_message = "invalid totp code"
 
 

@@ -497,6 +497,24 @@
         }
       }
     },
+    "/projects/": {
+      "post": {
+        "summary": "Create Project",
+        "operationId": "create_project_projects__post",
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/{project_id}": {
       "get": {
         "summary": "Get Project",

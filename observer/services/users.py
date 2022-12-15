@@ -7,7 +7,7 @@ import shortuuid
 from observer.api.exceptions import (
     ConfirmationCodeExpiredError,
     NotFoundError,
-    TOTPError,
+    TOTPInvalidBackupCodeError,
 )
 from observer.common import bcrypt
 from observer.common.types import Identifier
@@ -136,7 +136,7 @@ class UsersService(UsersServiceInterface):
             keys_hash, base64.b64decode(encrypted_backup_codes.encode())
         )
         if given_backup_code not in decrypted_backup_codes.decode().split(","):
-            raise TOTPError(message="invalid backup code")
+            raise TOTPInvalidBackupCodeError(message="Invalid backup code")
 
     async def confirm_user(self, user_id: Identifier | None, code: str) -> User:
         confirmation = await self.get_confirmation(code)
