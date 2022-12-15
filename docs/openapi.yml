@@ -6,6 +6,45 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/account/me": {
+      "get": {
+        "summary": "Get Me",
+        "operationId": "get_me_account_me_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/account/confirm/{code}": {
       "get": {
         "summary": "Confirm Account",
@@ -769,6 +808,17 @@
           }
         }
       },
+      "Role": {
+        "title": "Role",
+        "enum": [
+          "admin",
+          "staff",
+          "consultant",
+          "guest"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
       "TokenResponse": {
         "title": "TokenResponse",
         "required": [
@@ -786,6 +836,81 @@
             "title": "Refresh Token",
             "type": "string",
             "description": "JWT refresh token"
+          }
+        }
+      },
+      "UserResponse": {
+        "title": "UserResponse",
+        "required": [
+          "email",
+          "role",
+          "id",
+          "ref_id"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "E-mail address of a user",
+            "format": "email"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string",
+            "description": "Full name of a user"
+          },
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Role"
+              }
+            ],
+            "description": "Role of a user"
+          },
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "ID of user"
+          },
+          "ref_id": {
+            "title": "Ref Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Reference ID generated using short uuid format"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean",
+            "description": "Is user active?",
+            "default": true
+          },
+          "is_confirmed": {
+            "title": "Is Confirmed",
+            "type": "boolean",
+            "description": "Is user confirmed?",
+            "default": false
+          },
+          "mfa_enabled": {
+            "title": "Mfa Enabled",
+            "type": "boolean",
+            "description": "Is MFA enabled for user?",
+            "default": false
           }
         }
       },
