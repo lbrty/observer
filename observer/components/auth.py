@@ -37,12 +37,14 @@ class RequiresRoles:
     def __init__(self, roles: List[Role]):
         self.roles = roles
 
-    async def __call__(self, user: SomeUser = Depends(authenticated_user), **kwargs):
+    async def __call__(self, user: SomeUser = Depends(authenticated_user)) -> User:
         if user is None:
             raise ForbiddenError(message="Access forbidden")
 
         if user.role not in self.roles:
             raise ForbiddenError(message="Access forbidden")
+
+        return user
 
 
 async def admin_user(user: SomeUser = Depends(RequiresRoles([Role.admin]))) -> User:
