@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     op.create_table(
         "permissions",
-        sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
+        sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("can_create", sa.Boolean(), nullable=False),
         sa.Column("can_read", sa.Boolean(), nullable=False),
         sa.Column("can_update", sa.Boolean(), nullable=False),
@@ -26,8 +26,8 @@ def upgrade():
         sa.Column("can_create_projects", sa.Boolean(), default=False, nullable=False),
         sa.Column("can_read_documents", sa.Boolean(), nullable=False),
         sa.Column("can_read_personal_info", sa.Boolean(), nullable=False),
-        sa.Column("user_id", postgresql.UUID(), nullable=False),
-        sa.Column("project_id", postgresql.UUID(), nullable=False),
+        sa.Column("user_id", postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column("project_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(
             ("project_id",),

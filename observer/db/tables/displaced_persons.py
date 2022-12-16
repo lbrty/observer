@@ -16,7 +16,7 @@ from observer.db import metadata
 vulnerability_categories = Table(
     "vulnerability_categories",
     metadata,
-    Column("id", UUID(), primary_key=True, server_default=text("gen_random_uuid()")),
+    Column("id", UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("name", Text(), nullable=False),
     Index("ux_vulnerability_categories_name", text("lower(name)"), unique=True),
 )
@@ -25,7 +25,7 @@ vulnerability_categories = Table(
 displaced_persons = Table(
     "displaced_persons",
     metadata,
-    Column("id", UUID(), primary_key=True, server_default=text("gen_random_uuid()")),
+    Column("id", UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("encryption_key", Text(), nullable=True),
     Column("status", Text(), nullable=True),
     Column("external_id", Text(), nullable=True),
@@ -38,14 +38,14 @@ displaced_persons = Table(
     Column("phone_number_additional", Text(), nullable=True),
     Column("migration_date", DATE(), nullable=True),
     # Location info
-    Column("from_city_id", UUID(), ForeignKey("cities.id"), nullable=True),
-    Column("from_state_id", UUID(), ForeignKey("states.id"), nullable=True),
-    Column("current_city_id", UUID(), ForeignKey("cities.id"), nullable=True),
-    Column("current_state_id", UUID(), ForeignKey("states.id"), nullable=True),
-    Column("project_id", UUID(), ForeignKey("projects.id"), nullable=True),
-    Column("category_id", UUID(), ForeignKey("vulnerability_categories.id"), nullable=True),
+    Column("from_city_id", UUID(as_uuid=True), ForeignKey("cities.id"), nullable=True),
+    Column("from_state_id", UUID(as_uuid=True), ForeignKey("states.id"), nullable=True),
+    Column("current_city_id", UUID(as_uuid=True), ForeignKey("cities.id"), nullable=True),
+    Column("current_state_id", UUID(as_uuid=True), ForeignKey("states.id"), nullable=True),
+    Column("project_id", UUID(as_uuid=True), ForeignKey("projects.id"), nullable=True),
+    Column("category_id", UUID(as_uuid=True), ForeignKey("vulnerability_categories.id"), nullable=True),
     # User's id who registered
-    Column("consultant_id", UUID(), ForeignKey("users.id"), nullable=True),
+    Column("consultant_id", UUID(as_uuid=True), ForeignKey("users.id"), nullable=True),
     Column("tags", ARRAY(Text()), nullable=True),
     Column("created_at", DateTime(timezone=True), server_default=func.now()),
     Column("updated_at", DateTime(timezone=True), server_default=func.now(), onupdate=func.now()),

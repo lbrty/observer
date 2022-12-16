@@ -18,7 +18,7 @@ depends_on = None
 def upgrade():
     op.create_table(
         "countries",
-        sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
+        sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("name", sa.Text(), nullable=False),
         sa.Column("code", sa.Text(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
@@ -29,10 +29,10 @@ def upgrade():
 
     op.create_table(
         "states",
-        sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
+        sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("name", sa.Text(), nullable=False),
         sa.Column("code", sa.Text(), nullable=False),
-        sa.Column("country_id", postgresql.UUID(), nullable=False),
+        sa.Column("country_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.ForeignKeyConstraint(
             ("country_id",),
             ["countries.id"],
@@ -47,11 +47,11 @@ def upgrade():
 
     op.create_table(
         "cities",
-        sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
+        sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("name", sa.Text(), nullable=False),
         sa.Column("code", sa.Text(), nullable=False),
-        sa.Column("state_id", postgresql.UUID(), nullable=False),
-        sa.Column("country_id", postgresql.UUID(), nullable=False),
+        sa.Column("state_id", postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column("country_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.ForeignKeyConstraint(
             ("state_id",),
             ["states.id"],

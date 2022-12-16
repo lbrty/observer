@@ -20,7 +20,7 @@ depends_on = None
 def upgrade():
     op.create_table(
         "audit_logs",
-        sa.Column("id", postgresql.UUID(), nullable=False, server_default=sa.text("gen_random_uuid()")),
+        sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("ref", sa.Text(), nullable=False),
         sa.Column("data", postgresql.JSONB(), nullable=True, server_default="{}"),
         sa.Column("created_at", postgresql.TIMESTAMP(timezone=True), default=utcnow),
