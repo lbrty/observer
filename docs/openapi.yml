@@ -645,6 +645,26 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -661,6 +681,31 @@
   },
   "components": {
     "schemas": {
+      "APIError": {
+        "title": "APIError",
+        "required": [
+          "code",
+          "status_code",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "status_code": {
+            "title": "Status Code",
+            "type": "integer"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "data": {
+            "title": "Data"
+          }
+        }
+      },
       "BasePermission": {
         "title": "BasePermission",
         "type": "object",
@@ -737,6 +782,28 @@
             "description": "TOTP code if MFA is active for a given user"
           }
         }
+      },
+      "ErrorCode": {
+        "title": "ErrorCode",
+        "enum": [
+          "unauthorized",
+          "forbidden",
+          "not_found",
+          "totp_error",
+          "totp_invalid_backup_code_error",
+          "totp_required_error",
+          "totp_exists_error",
+          "registration_error",
+          "password_reset_code_expired_error",
+          "weak_password_error",
+          "invalid_password_error",
+          "similar_passwords_error",
+          "confirmation_code_expired_error",
+          "internal_error",
+          "bad_request"
+        ],
+        "type": "string",
+        "description": "An enumeration."
       },
       "HTTPValidationError": {
         "title": "HTTPValidationError",
