@@ -1,6 +1,7 @@
 from fastapi import APIRouter, BackgroundTasks, Depends
 from starlette import status
 
+from observer.common.exceptions import get_api_errors
 from observer.common.permissions import permission_matrix
 from observer.common.types import Role
 from observer.components.auth import RequiresRoles
@@ -79,7 +80,12 @@ async def get_project(project: Project = Depends(project_details)) -> ProjectRes
 
 
 # TODO: Add pagination
-@router.get("/{project_id}/members", response_model=ProjectMembersResponse, status_code=status.HTTP_200_OK)
+@router.get(
+    "/{project_id}/members",
+    response_model=ProjectMembersResponse,
+    responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
+    status_code=status.HTTP_200_OK,
+)
 async def get_project(
     project: Project = Depends(project_details),
     permissions: PermissionsServiceInterface = Depends(permissions_service),
