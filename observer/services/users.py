@@ -1,6 +1,6 @@
 import base64
 from datetime import datetime, timedelta, timezone
-from typing import Protocol
+from typing import List, Protocol
 
 import shortuuid
 
@@ -45,6 +45,9 @@ class UsersServiceInterface(Protocol):
         raise NotImplementedError
 
     async def create_user(self, new_user: NewUserRequest) -> User:
+        raise NotImplementedError
+
+    async def filter_by_ids(self, ids: List[Identifier]) -> List[User]:
         raise NotImplementedError
 
     async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
@@ -115,6 +118,9 @@ class UsersService(UsersServiceInterface):
             is_confirmed=False,
         )
         return await self.repo.create_user(user)
+
+    async def filter_by_ids(self, ids: List[Identifier]) -> List[User]:
+        return await self.repo.filter_by_ids(ids)
 
     async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
         return await self.repo.update_password(user_id, new_password_hash)

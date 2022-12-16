@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from typing import Protocol
+from typing import List, Protocol
 
 from sqlalchemy import insert, select, update
 
@@ -27,6 +27,9 @@ class UsersRepositoryInterface(Protocol):
         raise NotImplementedError
 
     async def create_user(self, new_user: NewUser) -> User:
+        raise NotImplementedError
+
+    async def filter_by_ids(self, ids: List[Identifier]) -> List[User]:
         raise NotImplementedError
 
     async def update_user(self, user_id: Identifier, updates: UserUpdate) -> User:
@@ -83,6 +86,11 @@ class UsersRepository(UsersRepositoryInterface):
         query = insert(users).values(**new_user.dict()).returning("*")
         result = await self.db.fetchone(query)
         return User(**result)
+
+    async def filter_by_ids(self, ids: List[Identifier]) -> List[User]:
+        query = select(users).where(users.c.id.in_(ids))
+        rows = await self.db.fetchall(query)
+        return [User(**row) for row in rows]
 
     async def create_confirmation(self, user_id: Identifier, code: str, expires_at: datetime) -> Confirmation:
         values = dict(
