@@ -9,14 +9,21 @@ from observer.components.services import (
     audit_service,
     permissions_service,
     projects_service,
+    users_service,
 )
 from observer.entities.base import SomeUser
 from observer.entities.projects import Project
-from observer.schemas.permissions import NewPermission
-from observer.schemas.projects import NewProjectRequest, ProjectResponse
+from observer.schemas.permissions import BasePermission, NewPermission
+from observer.schemas.projects import (
+    NewProjectRequest,
+    ProjectMemberResponse,
+    ProjectMembersResponse,
+    ProjectResponse,
+)
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.permissions import PermissionsServiceInterface
 from observer.services.projects import ProjectsServiceInterface
+from observer.services.users import UsersServiceInterface
 
 router = APIRouter(prefix="/projects")
 
@@ -69,3 +76,23 @@ async def create_project(
 @router.get("/{project_id}", response_model=ProjectResponse, status_code=status.HTTP_200_OK)
 async def get_project(project: Project = Depends(project_details)) -> ProjectResponse:
     return ProjectResponse(**project.dict())
+
+
+# TODO: Add pagination
+@router.get("/{project_id}/members", response_model=ProjectMembersResponse, status_code=status.HTTP_200_OK)
+async def get_project(
+    project: Project = Depends(project_details),
+    permissions: PermissionsServiceInterface = Depends(permissions_service),
+    users: UsersServiceInterface = Depends(users_service),
+) -> ProjectMembersResponse:
+    permission_list = await permissions.get_by_project_id(project.id)
+    user_list = await users.filter_by_ids([p.user_id for p in permission_list])
+    return ProjectMembersResponse(
+        items=[
+            ProjectMemberResponse(
+                user=await users.to_response(user),
+                permissions=BasePermission(**permission.dict()),
+            )
+            for permission, user in zip(permission_list, user_list)
+        ]
+    )
