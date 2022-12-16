@@ -503,14 +503,6 @@
         "operationId": "create_project_projects__post",
         "parameters": [
           {
-            "required": true,
-            "schema": {
-              "title": "Kwargs"
-            },
-            "name": "kwargs",
-            "in": "query"
-          },
-          {
             "required": false,
             "schema": {
               "title": "Access Token",

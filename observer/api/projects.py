@@ -57,9 +57,9 @@ async def create_project(
         f"{tag},action=create:permission,permission_id={permission.id},ref_id={user.ref_id}",
         None,
         dict(
-            id=str(project.id),
-            name=project.name,
-            description=project.description,
+            project_id=str(project.id),
+            project_name=str(project.name),
+            user_id=str(user.id),
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
