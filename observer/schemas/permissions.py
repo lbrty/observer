@@ -20,12 +20,12 @@ class PermissionResponse(BasePermission):
     project_id: Identifier = Field(..., description="User can create records")
 
 
-class NewPermission(BasePermission):
+class NewPermissionRequest(BasePermission):
     user_id: Identifier = Field(..., description="User can create records")
     project_id: Identifier = Field(..., description="User can create records")
 
 
-class UpdatePermission(BasePermission):
+class UpdatePermissionRequest(BasePermission):
     ...
 
 

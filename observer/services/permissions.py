@@ -5,10 +5,10 @@ from observer.entities.base import SomePermission
 from observer.entities.permissions import Permission
 from observer.repositories.permissions import PermissionsRepositoryInterface
 from observer.schemas.permissions import (
-    NewPermission,
+    NewPermissionRequest,
     PermissionResponse,
     PermissionsResponse,
-    UpdatePermission,
+    UpdatePermissionRequest,
 )
 
 
@@ -30,10 +30,10 @@ class PermissionsServiceInterface(Protocol):
     async def find(self, project_id: Identifier, user_id: Identifier) -> SomePermission:
         raise NotImplementedError
 
-    async def create_permission(self, new_permission: NewPermission) -> Permission:
+    async def create_permission(self, new_permission: NewPermissionRequest) -> Permission:
         raise NotImplementedError
 
-    async def update_permission(self, permission_id: Identifier, updates: UpdatePermission) -> Permission:
+    async def update_permission(self, permission_id: Identifier, updates: UpdatePermissionRequest) -> Permission:
         raise NotImplementedError
 
     @staticmethod
@@ -66,11 +66,11 @@ class PermissionsService(PermissionsServiceInterface):
     async def find(self, project_id: Identifier, user_id: Identifier) -> SomePermission:
         return await self.repo.find(project_id, user_id)
 
-    async def create_permission(self, new_permission: NewPermission) -> Permission:
+    async def create_permission(self, new_permission: NewPermissionRequest) -> Permission:
         permission = await self.repo.create_permission(new_permission)
         return permission
 
-    async def update_permission(self, permission_id: Identifier, updates: UpdatePermission) -> Permission:
+    async def update_permission(self, permission_id: Identifier, updates: UpdatePermissionRequest) -> Permission:
         permission = await self.repo.update_permission(permission_id, updates)
         return permission
 

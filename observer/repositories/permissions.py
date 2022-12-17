@@ -7,7 +7,7 @@ from observer.db import Database
 from observer.db.tables.permissions import permissions
 from observer.entities.base import SomePermission
 from observer.entities.permissions import Permission
-from observer.schemas.permissions import NewPermission, UpdatePermission
+from observer.schemas.permissions import NewPermissionRequest, UpdatePermissionRequest
 
 
 class PermissionsRepositoryInterface(Protocol):
@@ -25,10 +25,10 @@ class PermissionsRepositoryInterface(Protocol):
     async def find(self, project_id: Identifier, user_id: Identifier) -> SomePermission:
         raise NotImplementedError
 
-    async def create_permission(self, new_permission: NewPermission) -> Permission:
+    async def create_permission(self, new_permission: NewPermissionRequest) -> Permission:
         raise NotImplementedError
 
-    async def update_permission(self, permission_id: Identifier, updates: UpdatePermission) -> Permission:
+    async def update_permission(self, permission_id: Identifier, updates: UpdatePermissionRequest) -> Permission:
         raise NotImplementedError
 
 
@@ -64,12 +64,12 @@ class PermissionsRepository(PermissionsRepositoryInterface):
             return Permission(**result)
         return None
 
-    async def create_permission(self, new_permission: NewPermission) -> Permission:
+    async def create_permission(self, new_permission: NewPermissionRequest) -> Permission:
         query = insert(permissions).values(**new_permission.dict()).returning("*")
         result = await self.db.fetchone(query)
         return Permission(**result)
 
-    async def update_permission(self, permission_id: Identifier, updates: UpdatePermission) -> Permission:
+    async def update_permission(self, permission_id: Identifier, updates: UpdatePermissionRequest) -> Permission:
         update_values = {}
         if updates.can_create is not None:
             update_values["can_create"] = updates.can_create

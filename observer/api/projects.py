@@ -17,7 +17,7 @@ from observer.components.services import (
 from observer.entities.base import SomeUser
 from observer.entities.projects import Project, ProjectMember
 from observer.schemas.pagination import Pagination
-from observer.schemas.permissions import NewPermission
+from observer.schemas.permissions import NewPermissionRequest, UpdatePermissionRequest
 from observer.schemas.projects import (
     NewProjectRequest,
     ProjectMemberResponse,
@@ -58,7 +58,7 @@ async def create_project(
 
     base_permission = permission_matrix[user.role]
     permission = await permissions.create_permission(
-        NewPermission(
+        NewPermissionRequest(
             **base_permission.dict(),
             user_id=user.id,
             project_id=project.id,
@@ -153,3 +153,47 @@ async def get_project_members(
 ) -> ProjectMembersResponse:
     members = await projects.get_members(project.id, pages.offset, pages.limit)
     return ProjectMembersResponse(items=[ProjectMemberResponse(**member.dict()) for member in members])
+
+
+@router.post(
+    "/{project_id}/members",
+    response_model=ProjectMemberResponse,
+    responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
+    status_code=status.HTTP_200_OK,
+)
+async def add_project_members(
+    permission: NewPermissionRequest,
+    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
+    projects: ProjectsServiceInterface = Depends(projects_service),
+    pages: Pagination = Depends(pagination),
+) -> ProjectMemberResponse:
+    pass
+
+
+@router.put(
+    "/{project_id}/members",
+    response_model=ProjectMemberResponse,
+    responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
+    status_code=status.HTTP_200_OK,
+)
+async def update_project_members_permissions(
+    permission: UpdatePermissionRequest,
+    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
+    projects: ProjectsServiceInterface = Depends(projects_service),
+    pages: Pagination = Depends(pagination),
+) -> ProjectMemberResponse:
+    pass
+
+
+@router.delete(
+    "/{project_id}/members/{user_id}",
+    responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_project_members(
+    permission: NewPermissionRequest,
+    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
+    projects: ProjectsServiceInterface = Depends(projects_service),
+    pages: Pagination = Depends(pagination),
+) -> Response:
+    pass

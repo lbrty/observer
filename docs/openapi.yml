@@ -871,6 +871,325 @@
             }
           }
         }
+      },
+      "put": {
+        "summary": "Update Project Members Permissions",
+        "operationId": "update_project_members_permissions_projects__project_id__members_put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Project Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "project_id",
+            "in": "path"
+          },
+          {
+            "description": "How many items to return?",
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "description": "How many items to return?",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "description": "How many items to skip?",
+            "required": false,
+            "schema": {
+              "title": "Offset",
+              "type": "integer",
+              "description": "How many items to skip?",
+              "default": 0
+            },
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePermissionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMemberResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Project Members",
+        "operationId": "add_project_members_projects__project_id__members_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Project Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "project_id",
+            "in": "path"
+          },
+          {
+            "description": "How many items to return?",
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "description": "How many items to return?",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "description": "How many items to skip?",
+            "required": false,
+            "schema": {
+              "title": "Offset",
+              "type": "integer",
+              "description": "How many items to skip?",
+              "default": 0
+            },
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewPermissionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMemberResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/projects/{project_id}/members/{user_id}": {
+      "delete": {
+        "summary": "Delete Project Members",
+        "operationId": "delete_project_members_projects__project_id__members__user_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Project Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "project_id",
+            "in": "path"
+          },
+          {
+            "description": "How many items to return?",
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "description": "How many items to return?",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "description": "How many items to skip?",
+            "required": false,
+            "schema": {
+              "title": "Offset",
+              "type": "integer",
+              "description": "How many items to skip?",
+              "default": 0
+            },
+            "name": "offset",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewPermissionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -1152,6 +1471,84 @@
           }
         }
       },
+      "NewPermissionRequest": {
+        "title": "NewPermissionRequest",
+        "required": [
+          "user_id",
+          "project_id"
+        ],
+        "type": "object",
+        "properties": {
+          "can_create": {
+            "title": "Can Create",
+            "type": "boolean",
+            "description": "User can create records",
+            "default": false
+          },
+          "can_read": {
+            "title": "Can Read",
+            "type": "boolean",
+            "description": "User can create records",
+            "default": true
+          },
+          "can_update": {
+            "title": "Can Update",
+            "type": "boolean",
+            "description": "User can update records",
+            "default": false
+          },
+          "can_delete": {
+            "title": "Can Delete",
+            "type": "boolean",
+            "description": "User can delete records",
+            "default": false
+          },
+          "can_create_projects": {
+            "title": "Can Create Projects",
+            "type": "boolean",
+            "description": "User can create projects",
+            "default": false
+          },
+          "can_read_documents": {
+            "title": "Can Read Documents",
+            "type": "boolean",
+            "description": "User can read documents",
+            "default": false
+          },
+          "can_read_personal_info": {
+            "title": "Can Read Personal Info",
+            "type": "boolean",
+            "description": "User can read personal info",
+            "default": false
+          },
+          "user_id": {
+            "title": "User Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "User can create records"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "User can create records"
+          }
+        }
+      },
       "NewProjectRequest": {
         "title": "NewProjectRequest",
         "required": [
@@ -1325,6 +1722,54 @@
             "title": "Refresh Token",
             "type": "string",
             "description": "JWT refresh token"
+          }
+        }
+      },
+      "UpdatePermissionRequest": {
+        "title": "UpdatePermissionRequest",
+        "type": "object",
+        "properties": {
+          "can_create": {
+            "title": "Can Create",
+            "type": "boolean",
+            "description": "User can create records",
+            "default": false
+          },
+          "can_read": {
+            "title": "Can Read",
+            "type": "boolean",
+            "description": "User can create records",
+            "default": true
+          },
+          "can_update": {
+            "title": "Can Update",
+            "type": "boolean",
+            "description": "User can update records",
+            "default": false
+          },
+          "can_delete": {
+            "title": "Can Delete",
+            "type": "boolean",
+            "description": "User can delete records",
+            "default": false
+          },
+          "can_create_projects": {
+            "title": "Can Create Projects",
+            "type": "boolean",
+            "description": "User can create projects",
+            "default": false
+          },
+          "can_read_documents": {
+            "title": "Can Read Documents",
+            "type": "boolean",
+            "description": "User can read documents",
+            "default": false
+          },
+          "can_read_personal_info": {
+            "title": "Can Read Personal Info",
+            "type": "boolean",
+            "description": "User can read personal info",
+            "default": false
           }
         }
       },
