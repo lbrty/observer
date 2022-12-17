@@ -21,6 +21,7 @@ from observer.schemas.projects import (
     ProjectMemberResponse,
     ProjectMembersResponse,
     ProjectResponse,
+    UpdateProjectRequest,
 )
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.permissions import PermissionsServiceInterface
@@ -82,6 +83,20 @@ async def create_project(
 )
 async def get_project(project: Project = Depends(project_details)) -> ProjectResponse:
     return ProjectResponse(**project.dict())
+
+
+@router.put(
+    "/{project_id}/",
+    response_model=UpdateProjectRequest,
+    responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
+    status_code=status.HTTP_200_OK,
+)
+async def get_project_members(
+    updates: UpdateProjectRequest,
+    project: Project = Depends(project_details),
+    projects: ProjectsServiceInterface = Depends(projects_service),
+) -> ProjectMembersResponse:
+    pass
 
 
 @router.get(
