@@ -131,6 +131,30 @@ async def test_update_project_works_as_expected_for_admins(
     }
 
 
+async def test_delete_project_works_as_expected_for_members(authorized_client, ensure_db, app_context, consultant_user):
+    resp = await authorized_client.post(
+        "/projects/",
+        json=dict(
+            name="Test Project",
+            description="Project description",
+        ),
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    resp_json = resp.json()
+    project_id = resp_json["id"]
+    resp = await authorized_client.delete(f"/projects/{project_id}")
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+
+    project_id = resp_json["id"]
+    audit_log = await app_context.audit_service.find_by_ref(
+        "source=service:projects,endpoint=delete_project,action=delete:project,"
+        f"project_id={project_id},ref_id={consultant_user.ref_id}",
+    )
+
+    assert audit_log.data is None
+
+
 async def test_update_project_works_as_expected_for_users_without_permissions(
     authorized_client,
     client,

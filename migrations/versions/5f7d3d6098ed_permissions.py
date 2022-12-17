@@ -32,10 +32,12 @@ def upgrade():
         sa.ForeignKeyConstraint(
             ("project_id",),
             ["projects.id"],
+            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ("user_id",),
             ["users.id"],
+            ondelete="CASCADE",
         ),
     )
 

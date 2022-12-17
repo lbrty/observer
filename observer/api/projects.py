@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
 from observer.common.exceptions import get_api_errors
@@ -119,26 +119,25 @@ async def update_project(
 
 @router.delete(
     "/{project_id}",
-    response_model=ProjectResponse,
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_project(
     tasks: BackgroundTasks,
     project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
     projects: ProjectsServiceInterface = Depends(projects_service),
     audits: AuditServiceInterface = Depends(audit_service),
-) -> ProjectResponse:
+) -> Response:
     tag = "endpoint=delete_project"
     project, member = project_and_member
-    deleted_project = await projects.delete_project(project.id)
+    await projects.delete_project(project.id)
     audit_log = await projects.create_log(
         f"{tag},action=delete:project,project_id={project.id},ref_id={member.ref_id}",
         None,
         None,
     )
     tasks.add_task(audits.add_event, audit_log)
-    return await projects.to_response(deleted_project)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get(
