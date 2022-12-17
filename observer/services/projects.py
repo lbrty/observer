@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta, timezone
-from typing import Protocol
+from typing import List, Protocol
 
 from observer.common.types import Identifier
 from observer.entities.base import SomeProject
-from observer.entities.projects import NewProject, Project, ProjectUpdate
+from observer.entities.projects import NewProject, Project, ProjectMember, ProjectUpdate
 from observer.entities.users import User
 from observer.repositories.projects import ProjectsRepositoryInterface
 from observer.schemas.audit_logs import NewAuditLog
@@ -26,6 +26,9 @@ class ProjectsServiceInterface(Protocol):
         raise NotImplementedError
 
     async def update_project(self, project_id: Identifier, updates: UpdateProjectRequest) -> Project:
+        raise NotImplementedError
+
+    async def get_members(self, project_id: Identifier, offset: int, limit: int) -> List[ProjectMember]:
         raise NotImplementedError
 
     async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
@@ -59,6 +62,10 @@ class ProjectsService(ProjectsServiceInterface):
     async def update_project(self, project_id: Identifier, updates: UpdateProjectRequest) -> Project:
         project = await self.repo.update_project(project_id, ProjectUpdate(**updates.dict()))
         return project
+
+    async def get_members(self, project_id: Identifier, offset: int, limit: int) -> List[ProjectMember]:
+        members = await self.repo.get_members(project_id, offset, limit)
+        return members
 
     async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
         now = datetime.now(tz=timezone.utc)

@@ -2,10 +2,9 @@ from typing import List
 
 from pydantic import Field
 
-from observer.common.types import Identifier, SomeStr
+from observer.common.types import Identifier, Role, SomeStr
 from observer.schemas.base import SchemaBase
 from observer.schemas.permissions import BasePermission
-from observer.schemas.users import UserResponse
 
 
 class ProjectFilters(SchemaBase):
@@ -39,7 +38,10 @@ class ProjectsResponse(SchemaBase):
 
 
 class ProjectMemberResponse(SchemaBase):
-    user: UserResponse
+    ref_id: Identifier
+    is_active: bool
+    full_name: SomeStr
+    role: Role
     permissions: BasePermission
 
 

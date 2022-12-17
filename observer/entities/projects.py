@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
-from observer.common.types import Identifier, SomeStr
+from observer.common.types import Identifier, Role, SomeStr
+from observer.entities.permissions import BasePermission
 
 
 class Project(BaseModel):
@@ -17,3 +18,11 @@ class NewProject(BaseModel):
 class ProjectUpdate(BaseModel):
     name: SomeStr
     description: SomeStr
+
+
+class ProjectMember(BaseModel):
+    ref_id: Identifier
+    is_active: bool
+    full_name: SomeStr
+    role: Role
+    permissions: BasePermission
