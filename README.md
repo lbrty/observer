@@ -28,15 +28,18 @@ Users will enter email and password which will sent to API then
 flowchart TD
     A(Login) --> B{Credentials valid?}
     B --> |Yes| C
-    B --> |No| F
+    B --> |No| G
     C{MFA Enabled?}
+    C --> |No TOTP Code given| I
     C --> |No| H
     C --> |Yes| D
     D{TOTP Valid?}
     D --> |Yes| H
     D --> |No| F
-    F[Respond: HTTP 417]
+    F[Respond: HTTP 400]
+    G[Respond: HTTP 401]
     H[Return Auth Tokens]
+    I[Respond: HTTP 417]
 ```
 
 ## 🍄 Encryption
