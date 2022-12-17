@@ -625,6 +625,30 @@
             "in": "path"
           },
           {
+            "description": "How many items to return?",
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "description": "How many items to return?",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "description": "How many items to skip?",
+            "required": false,
+            "schema": {
+              "title": "Offset",
+              "type": "integer",
+              "description": "How many items to skip?",
+              "default": 0
+            },
+            "name": "offset",
+            "in": "query"
+          },
+          {
             "required": false,
             "schema": {
               "title": "Access Token",
@@ -979,13 +1003,35 @@
       "ProjectMemberResponse": {
         "title": "ProjectMemberResponse",
         "required": [
-          "user",
+          "ref_id",
+          "is_active",
+          "role",
           "permissions"
         ],
         "type": "object",
         "properties": {
-          "user": {
-            "$ref": "#/components/schemas/UserResponse"
+          "ref_id": {
+            "title": "Ref Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
           },
           "permissions": {
             "$ref": "#/components/schemas/BasePermission"

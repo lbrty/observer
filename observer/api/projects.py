@@ -5,16 +5,17 @@ from observer.common.exceptions import get_api_errors
 from observer.common.permissions import permission_matrix
 from observer.common.types import Role
 from observer.components.auth import RequiresRoles
+from observer.components.pagination import pagination
 from observer.components.projects import project_details
 from observer.components.services import (
     audit_service,
     permissions_service,
     projects_service,
-    users_service,
 )
 from observer.entities.base import SomeUser
 from observer.entities.projects import Project
-from observer.schemas.permissions import BasePermission, NewPermission
+from observer.schemas.pagination import Pagination
+from observer.schemas.permissions import NewPermission
 from observer.schemas.projects import (
     NewProjectRequest,
     ProjectMemberResponse,
@@ -24,7 +25,6 @@ from observer.schemas.projects import (
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.permissions import PermissionsServiceInterface
 from observer.services.projects import ProjectsServiceInterface
-from observer.services.users import UsersServiceInterface
 
 router = APIRouter(prefix="/projects")
 
@@ -79,7 +79,6 @@ async def get_project(project: Project = Depends(project_details)) -> ProjectRes
     return ProjectResponse(**project.dict())
 
 
-# TODO: Add pagination
 @router.get(
     "/{project_id}/members",
     response_model=ProjectMembersResponse,
@@ -88,17 +87,8 @@ async def get_project(project: Project = Depends(project_details)) -> ProjectRes
 )
 async def get_project(
     project: Project = Depends(project_details),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
-    users: UsersServiceInterface = Depends(users_service),
+    projects: ProjectsServiceInterface = Depends(projects_service),
+    pages: Pagination = Depends(pagination),
 ) -> ProjectMembersResponse:
-    permission_list = await permissions.get_by_project_id(project.id)
-    user_list = await users.filter_by_ids([p.user_id for p in permission_list])
-    return ProjectMembersResponse(
-        items=[
-            ProjectMemberResponse(
-                user=await users.to_response(user),
-                permissions=BasePermission(**permission.dict()),
-            )
-            for permission, user in zip(permission_list, user_list)
-        ]
-    )
+    members = await projects.get_members(project.id, pages.offset, pages.limit)
+    return ProjectMembersResponse(items=[ProjectMemberResponse(**member.dict()) for member in members])

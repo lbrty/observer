@@ -46,22 +46,16 @@ async def test_get_project_members_works_as_expected(authorized_client, ensure_d
     )
     assert resp.status_code == status.HTTP_201_CREATED
     resp_json = resp.json()
-    resp = await authorized_client.get(f"/projects/{resp_json['id']}/members")
+    project_id = resp_json["id"]
+    resp = await authorized_client.get(f"/projects/{project_id}/members")
     assert resp.status_code == status.HTTP_200_OK
-    member = {
-        "email": "consultant-1@example.com",
-        "full_name": "full name",
-        "role": "consultant",
-        "id": str(consultant_user.id),
-        "ref_id": "ref-consultant-1",
-        "is_active": True,
-        "is_confirmed": True,
-        "mfa_enabled": False,
-    }
     assert resp.json() == {
         "items": [
             {
-                "user": member,
+                "ref_id": "ref-consultant-1",
+                "is_active": True,
+                "full_name": "full name",
+                "role": "consultant",
                 "permissions": {
                     "can_create": True,
                     "can_read": True,
