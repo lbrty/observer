@@ -1,5 +1,7 @@
 from starlette import status
 
+from tests.helpers.auth import get_auth_tokens
+
 
 async def test_create_project_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
     resp = await authorized_client.post(
@@ -36,7 +38,7 @@ async def test_get_project_works_as_expected(authorized_client, ensure_db, app_c
     )
 
 
-async def test_update_project_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
+async def test_update_project_works_as_expected_for_members(authorized_client, ensure_db, app_context, consultant_user):
     resp = await authorized_client.post(
         "/projects/",
         json=dict(
@@ -60,6 +62,77 @@ async def test_update_project_works_as_expected(authorized_client, ensure_db, ap
         name="Test Project Updated",
         description="Project description updated",
     )
+
+
+async def test_update_project_works_as_expected_for_admins(
+    authorized_client,
+    client,
+    ensure_db,
+    app_context,
+    admin_user,
+):
+    auth_token = await get_auth_tokens(app_context, admin_user)
+    resp = await authorized_client.post(
+        "/projects/",
+        json=dict(
+            name="Test Project",
+            description="Project description",
+        ),
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    resp_json = resp.json()
+    resp = await client.put(
+        f"/projects/{resp_json['id']}",
+        json=dict(
+            name="Test Project Updated",
+            description="Project description updated",
+        ),
+        cookies=auth_token.dict(),
+    )
+
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == dict(
+        id=resp_json["id"],
+        name="Test Project Updated",
+        description="Project description updated",
+    )
+
+
+async def test_update_project_works_as_expected_for_users_without_permissions(
+    authorized_client,
+    client,
+    ensure_db,
+    app_context,
+    guest_user,
+):
+    auth_token = await get_auth_tokens(app_context, guest_user)
+    resp = await authorized_client.post(
+        "/projects/",
+        json=dict(
+            name="Test Project",
+            description="Project description",
+        ),
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    resp_json = resp.json()
+    resp = await client.put(
+        f"/projects/{resp_json['id']}",
+        json=dict(
+            name="Test Project Updated",
+            description="Project description updated",
+        ),
+        cookies=auth_token.dict(),
+    )
+
+    assert resp.status_code == status.HTTP_403_FORBIDDEN
+    assert resp.json() == {
+        "code": "unauthorized",
+        "status_code": 403,
+        "message": "Yoo can not view this project",
+        "data": None,
+    }
 
 
 async def test_get_project_members_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):

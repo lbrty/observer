@@ -151,6 +151,40 @@ async def consultant_user(ensure_db, app_context):  # type:ignore
     yield user
 
 
+@pytest.fixture(scope="function")
+async def guest_user(ensure_db, app_context):  # type:ignore
+    user = await app_context.users_service.repo.create_user(
+        NewUser(
+            ref_id="ref-guest-1",
+            email="guest-1@example.com",
+            full_name="full name",
+            password_hash=hash_password("secret"),
+            role=Role.guest,
+            is_active=True,
+            is_confirmed=True,
+        )
+    )
+
+    yield user
+
+
+@pytest.fixture(scope="function")
+async def admin_user(ensure_db, app_context):  # type:ignore
+    user = await app_context.users_service.repo.create_user(
+        NewUser(
+            ref_id="ref-admin-1",
+            email="admin-1@example.com",
+            full_name="full name",
+            password_hash=hash_password("secret"),
+            role=Role.admin,
+            is_active=True,
+            is_confirmed=True,
+        )
+    )
+
+    yield user
+
+
 @pytest.fixture(scope="session")
 async def client(test_app):
     app_client = httpx.AsyncClient(app=test_app, base_url="http://test")
