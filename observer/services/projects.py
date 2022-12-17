@@ -28,6 +28,9 @@ class ProjectsServiceInterface(Protocol):
     async def update_project(self, project_id: Identifier, updates: UpdateProjectRequest) -> Project:
         raise NotImplementedError
 
+    async def delete_project(self, project_id: Identifier) -> Project:
+        raise NotImplementedError
+
     async def get_members(self, project_id: Identifier, offset: int, limit: int) -> List[ProjectMember]:
         raise NotImplementedError
 
@@ -61,6 +64,10 @@ class ProjectsService(ProjectsServiceInterface):
 
     async def update_project(self, project_id: Identifier, updates: UpdateProjectRequest) -> Project:
         project = await self.repo.update_project(project_id, ProjectUpdate(**updates.dict()))
+        return project
+
+    async def delete_project(self, project_id: Identifier) -> Project:
+        project = await self.repo.delete_project(project_id)
         return project
 
     async def get_members(self, project_id: Identifier, offset: int, limit: int) -> List[ProjectMember]:

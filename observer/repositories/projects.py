@@ -1,6 +1,6 @@
 from typing import List, Protocol
 
-from sqlalchemy import and_, insert, select, update
+from sqlalchemy import and_, delete, insert, select, update
 
 from observer.common.types import Identifier
 from observer.db import Database
@@ -20,6 +20,9 @@ class ProjectsRepositoryInterface(Protocol):
         raise NotImplementedError
 
     async def update_project(self, project_id: Identifier, updates: ProjectUpdate) -> Project:
+        raise NotImplementedError
+
+    async def delete_project(self, project_id: Identifier) -> Project:
         raise NotImplementedError
 
     async def get_members(self, project_id: Identifier, offset: int, limit: int) -> List[ProjectMember]:
@@ -50,7 +53,12 @@ class ProjectsRepository(ProjectsRepositoryInterface):
         if updates.description:
             update_values["description"] = updates.description  # type:ignore
 
-        query = update(projects).values(update_values).where(projects.c.id == str(project_id)).returning("*")
+        query = update(projects).values(update_values).where(projects.c.id == project_id).returning("*")
+        result = await self.db.fetchone(query)
+        return Project(**result)
+
+    async def delete_project(self, project_id: Identifier) -> Project:
+        query = delete(projects).where(projects.c.id == project_id).returning("*")
         result = await self.db.fetchone(query)
         return Project(**result)
 

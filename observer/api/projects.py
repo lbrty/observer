@@ -82,7 +82,10 @@ async def create_project(
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_200_OK,
 )
-async def get_project(project: Project = Depends(project_details)) -> ProjectResponse:
+async def get_project(
+    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
+) -> ProjectResponse:
+    project, _ = project_and_member
     return ProjectResponse(**project.dict())
 
 
@@ -112,6 +115,30 @@ async def update_project(
     )
     tasks.add_task(audits.add_event, audit_log)
     return await projects.to_response(updated_project)
+
+
+@router.delete(
+    "/{project_id}",
+    response_model=ProjectResponse,
+    responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
+    status_code=status.HTTP_200_OK,
+)
+async def delete_project(
+    tasks: BackgroundTasks,
+    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
+    projects: ProjectsServiceInterface = Depends(projects_service),
+    audits: AuditServiceInterface = Depends(audit_service),
+) -> ProjectResponse:
+    tag = "endpoint=delete_project"
+    project, member = project_and_member
+    deleted_project = await projects.delete_project(project.id)
+    audit_log = await projects.create_log(
+        f"{tag},action=delete:project,project_id={project.id},ref_id={member.ref_id}",
+        None,
+        None,
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return await projects.to_response(deleted_project)
 
 
 @router.get(
