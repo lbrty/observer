@@ -21,11 +21,16 @@ def upgrade():
         sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column("type", sa.Text(), nullable=False),
-        sa.Column("consultant_id", postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column("consultant_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("beneficiary_age", sa.Text(), nullable=True),
         sa.Column("owner_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=True),
         sa.PrimaryKeyConstraint("id"),
+        sa.ForeignKeyConstraint(
+            ("consultant_id",),
+            ["users.id"],
+            ondelete="SET NULL",
+        ),
         sa.CheckConstraint("type IN ('humanitarian', 'legal', 'medical', 'general')", name="support_records_types"),
         sa.CheckConstraint(
             "beneficiary_age IN ('0-1', '1-3', '4-5', '6-11', '12-14', '15-17', '18-25', '26-34', '35-59', '60-100+')",

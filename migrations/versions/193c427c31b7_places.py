@@ -36,7 +36,7 @@ def upgrade():
         sa.ForeignKeyConstraint(
             ("country_id",),
             ["countries.id"],
-            ondelete="cascade",
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -55,12 +55,12 @@ def upgrade():
         sa.ForeignKeyConstraint(
             ("state_id",),
             ["states.id"],
-            ondelete="cascade",
+            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ("country_id",),
             ["countries.id"],
-            ondelete="cascade",
+            ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id"),
     )
