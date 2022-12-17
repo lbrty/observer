@@ -589,6 +589,26 @@
               }
             }
           },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
           "422": {
             "description": "Validation Error",
             "content": {
@@ -604,8 +624,8 @@
     },
     "/projects/{project_id}/members": {
       "get": {
-        "summary": "Get Project",
-        "operationId": "get_project_projects__project_id__members_get",
+        "summary": "Get Project Members",
+        "operationId": "get_project_members_projects__project_id__members_get",
         "parameters": [
           {
             "required": true,

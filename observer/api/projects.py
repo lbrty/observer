@@ -74,7 +74,12 @@ async def create_project(
     return await projects.to_response(project)
 
 
-@router.get("/{project_id}", response_model=ProjectResponse, status_code=status.HTTP_200_OK)
+@router.get(
+    "/{project_id}",
+    response_model=ProjectResponse,
+    responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
+    status_code=status.HTTP_200_OK,
+)
 async def get_project(project: Project = Depends(project_details)) -> ProjectResponse:
     return ProjectResponse(**project.dict())
 
@@ -85,7 +90,7 @@ async def get_project(project: Project = Depends(project_details)) -> ProjectRes
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_200_OK,
 )
-async def get_project(
+async def get_project_members(
     project: Project = Depends(project_details),
     projects: ProjectsServiceInterface = Depends(projects_service),
     pages: Pagination = Depends(pagination),
