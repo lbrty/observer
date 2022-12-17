@@ -57,11 +57,27 @@ async def test_update_project_works_as_expected_for_members(authorized_client, e
         ),
     )
     assert resp.status_code == status.HTTP_200_OK
+    project_id = resp_json["id"]
     assert resp.json() == dict(
         id=resp_json["id"],
         name="Test Project Updated",
         description="Project description updated",
     )
+    audit_log = await app_context.audit_service.find_by_ref(
+        "source=service:projects,endpoint=update_project,action=update:project,"
+        f"project_id={project_id},ref_id={consultant_user.ref_id}",
+    )
+
+    assert audit_log.data == {
+        "new_project": {
+            "name": "Test Project Updated",
+            "description": "Project description updated",
+        },
+        "old_project": {
+            "name": "Test Project",
+            "description": "Project description",
+        },
+    }
 
 
 async def test_update_project_works_as_expected_for_admins(
@@ -92,11 +108,27 @@ async def test_update_project_works_as_expected_for_admins(
     )
 
     assert resp.status_code == status.HTTP_200_OK
+    project_id = resp_json["id"]
     assert resp.json() == dict(
-        id=resp_json["id"],
+        id=project_id,
         name="Test Project Updated",
         description="Project description updated",
     )
+    audit_log = await app_context.audit_service.find_by_ref(
+        "source=service:projects,endpoint=update_project,action=update:project,"
+        f"project_id={project_id},ref_id={admin_user.ref_id}",
+    )
+
+    assert audit_log.data == {
+        "new_project": {
+            "name": "Test Project Updated",
+            "description": "Project description updated",
+        },
+        "old_project": {
+            "name": "Test Project",
+            "description": "Project description",
+        },
+    }
 
 
 async def test_update_project_works_as_expected_for_users_without_permissions(

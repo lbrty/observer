@@ -105,7 +105,10 @@ async def update_project(
     audit_log = await projects.create_log(
         f"{tag},action=update:project,project_id={project.id},ref_id={member.ref_id}",
         None,
-        project.dict(exclude={"id"}),
+        dict(
+            old_project=project.dict(exclude={"id"}),
+            new_project=updated_project.dict(exclude={"id"}),
+        ),
     )
     tasks.add_task(audits.add_event, audit_log)
     return await projects.to_response(updated_project)
