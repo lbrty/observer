@@ -36,6 +36,32 @@ async def test_get_project_works_as_expected(authorized_client, ensure_db, app_c
     )
 
 
+async def test_update_project_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
+    resp = await authorized_client.post(
+        "/projects/",
+        json=dict(
+            name="Test Project",
+            description="Project description",
+        ),
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    resp_json = resp.json()
+    resp = await authorized_client.put(
+        f"/projects/{resp_json['id']}",
+        json=dict(
+            name="Test Project Updated",
+            description="Project description updated",
+        ),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == dict(
+        id=resp_json["id"],
+        name="Test Project Updated",
+        description="Project description updated",
+    )
+
+
 async def test_get_project_members_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
     resp = await authorized_client.post(
         "/projects/",

@@ -620,12 +620,10 @@
             }
           }
         }
-      }
-    },
-    "/projects/{project_id}/": {
+      },
       "put": {
-        "summary": "Get Project Members",
-        "operationId": "get_project_members_projects__project_id___put",
+        "summary": "Update Project",
+        "operationId": "update_project_projects__project_id__put",
         "parameters": [
           {
             "required": true,
@@ -670,7 +668,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UpdateProjectRequest"
+                  "$ref": "#/components/schemas/ProjectResponse"
                 }
               }
             }

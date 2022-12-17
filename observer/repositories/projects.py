@@ -48,7 +48,7 @@ class ProjectsRepository(ProjectsRepositoryInterface):
             update_values["name"] = updates.name
 
         if updates.description:
-            update_values["full_name"] = updates.description  # type:ignore
+            update_values["description"] = updates.description  # type:ignore
 
         query = update(projects).values(update_values).where(projects.c.id == str(project_id)).returning("*")
         result = await self.db.fetchone(query)

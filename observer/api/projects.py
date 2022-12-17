@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from fastapi import APIRouter, BackgroundTasks, Depends
 from starlette import status
 
@@ -6,14 +8,14 @@ from observer.common.permissions import permission_matrix
 from observer.common.types import Role
 from observer.components.auth import RequiresRoles
 from observer.components.pagination import pagination
-from observer.components.projects import project_details
+from observer.components.projects import project_details, project_with_member
 from observer.components.services import (
     audit_service,
     permissions_service,
     projects_service,
 )
 from observer.entities.base import SomeUser
-from observer.entities.projects import Project
+from observer.entities.projects import Project, ProjectMember
 from observer.schemas.pagination import Pagination
 from observer.schemas.permissions import NewPermission
 from observer.schemas.projects import (
@@ -68,7 +70,6 @@ async def create_project(
         dict(
             project_id=str(project.id),
             project_name=str(project.name),
-            user_id=str(user.id),
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -86,17 +87,28 @@ async def get_project(project: Project = Depends(project_details)) -> ProjectRes
 
 
 @router.put(
-    "/{project_id}/",
-    response_model=UpdateProjectRequest,
+    "/{project_id}",
+    response_model=ProjectResponse,
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_200_OK,
 )
-async def get_project_members(
+async def update_project(
+    tasks: BackgroundTasks,
     updates: UpdateProjectRequest,
-    project: Project = Depends(project_details),
+    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
     projects: ProjectsServiceInterface = Depends(projects_service),
-) -> ProjectMembersResponse:
-    pass
+    audits: AuditServiceInterface = Depends(audit_service),
+) -> ProjectResponse:
+    tag = "endpoint=update_project"
+    project, member = project_and_member
+    updated_project = await projects.update_project(project.id, updates)
+    audit_log = await projects.create_log(
+        f"{tag},action=update:project,project_id={project.id},ref_id={member.ref_id}",
+        None,
+        project.dict(exclude={"id"}),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return await projects.to_response(updated_project)
 
 
 @router.get(
