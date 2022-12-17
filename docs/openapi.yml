@@ -737,15 +737,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectResponse"
-                }
-              }
-            }
+          "204": {
+            "description": "Successful Response"
           },
           "404": {
             "description": "Not Found",
