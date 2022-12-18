@@ -8,7 +8,7 @@ from observer.db.tables.permissions import permissions
 from observer.db.tables.projects import projects
 from observer.db.tables.users import users
 from observer.entities.base import SomeProject
-from observer.entities.permissions import BasePermission
+from observer.entities.permissions import BasePermission, NewPermission, Permission
 from observer.entities.projects import NewProject, Project, ProjectMember, ProjectUpdate
 
 
@@ -16,7 +16,7 @@ class ProjectsRepositoryInterface(Protocol):
     async def get_by_id(self, project_id: Identifier) -> SomeProject:
         raise NotImplementedError
 
-    async def create_project(self, new_user: NewProject) -> Project:
+    async def create_project(self, new_project: NewProject) -> Project:
         raise NotImplementedError
 
     async def update_project(self, project_id: Identifier, updates: ProjectUpdate) -> Project:
@@ -26,6 +26,9 @@ class ProjectsRepositoryInterface(Protocol):
         raise NotImplementedError
 
     async def get_members(self, project_id: Identifier, offset: int, limit: int) -> List[ProjectMember]:
+        raise NotImplementedError
+
+    async def add_member(self, project_id: Identifier, new_permission: NewPermission) -> Permission:
         raise NotImplementedError
 
 
@@ -84,6 +87,7 @@ class ProjectsRepository(ProjectsRepositoryInterface):
                     permissions.c.can_create_projects,
                     permissions.c.can_read_documents,
                     permissions.c.can_read_personal_info,
+                    permissions.c.can_invite_members,
                 ]
             )
             .select_from(join_stmt)
@@ -93,6 +97,11 @@ class ProjectsRepository(ProjectsRepositoryInterface):
 
         rows = await self.db.fetchall(query)
         return [self.row_to_member(dict(row)) for row in rows]
+
+    async def add_member(self, project_id: Identifier, new_permission: NewPermission) -> Permission:
+        query = insert(permissions).values(**new_permission.dict()).returning("*")
+        result = await self.db.fetchone(query)
+        return Permission(**result)
 
     def row_to_member(self, data: dict) -> ProjectMember:
         permission = BasePermission(**data)

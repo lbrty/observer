@@ -56,8 +56,8 @@ class PermissionsRepository(PermissionsRepositoryInterface):
     async def find(self, project_id: Identifier, user_id: Identifier) -> SomePermission:
         query = select(permissions).where(
             and_(
-                permissions.c.user_id == str(user_id),
-                permissions.c.project_id == str(project_id),
+                permissions.c.user_id == user_id,
+                permissions.c.project_id == project_id,
             )
         )
         if result := await self.db.fetchone(query):

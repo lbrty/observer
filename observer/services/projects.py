@@ -3,10 +3,12 @@ from typing import List, Protocol
 
 from observer.common.types import Identifier
 from observer.entities.base import SomeProject
+from observer.entities.permissions import NewPermission, Permission
 from observer.entities.projects import NewProject, Project, ProjectMember, ProjectUpdate
 from observer.entities.users import User
 from observer.repositories.projects import ProjectsRepositoryInterface
 from observer.schemas.audit_logs import NewAuditLog
+from observer.schemas.permissions import NewPermissionRequest
 from observer.schemas.projects import (
     NewProjectRequest,
     ProjectResponse,
@@ -32,6 +34,9 @@ class ProjectsServiceInterface(Protocol):
         raise NotImplementedError
 
     async def get_members(self, project_id: Identifier, offset: int, limit: int) -> List[ProjectMember]:
+        raise NotImplementedError
+
+    async def add_member(self, project_id: Identifier, new_permission: NewPermissionRequest) -> Permission:
         raise NotImplementedError
 
     async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
@@ -73,6 +78,10 @@ class ProjectsService(ProjectsServiceInterface):
     async def get_members(self, project_id: Identifier, offset: int, limit: int) -> List[ProjectMember]:
         members = await self.repo.get_members(project_id, offset, limit)
         return members
+
+    async def add_member(self, project_id: Identifier, new_permission: NewPermissionRequest) -> Permission:
+        permission = await self.repo.add_member(project_id, NewPermission(**new_permission.dict()))
+        return permission
 
     async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
         now = datetime.now(tz=timezone.utc)

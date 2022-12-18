@@ -1,23 +1,33 @@
-from typing import Tuple
-
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
+from observer.api.exceptions import ConflictError, NotFoundError
 from observer.common.exceptions import get_api_errors
 from observer.common.permissions import permission_matrix
-from observer.common.types import Role
-from observer.components.auth import RequiresRoles
+from observer.common.types import Identifier, Role
+from observer.components.auth import RequiresRoles, current_user
 from observer.components.pagination import pagination
-from observer.components.projects import project_details, project_with_member
+from observer.components.projects import (
+    deletable_project,
+    invitable_project,
+    updatable_project,
+    viewable_project,
+)
 from observer.components.services import (
     audit_service,
     permissions_service,
     projects_service,
+    users_service,
 )
 from observer.entities.base import SomeUser
-from observer.entities.projects import Project, ProjectMember
+from observer.entities.projects import Project
+from observer.entities.users import User
 from observer.schemas.pagination import Pagination
-from observer.schemas.permissions import NewPermissionRequest, UpdatePermissionRequest
+from observer.schemas.permissions import (
+    BasePermission,
+    NewPermissionRequest,
+    UpdatePermissionRequest,
+)
 from observer.schemas.projects import (
     NewProjectRequest,
     ProjectMemberResponse,
@@ -28,6 +38,7 @@ from observer.schemas.projects import (
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.permissions import PermissionsServiceInterface
 from observer.services.projects import ProjectsServiceInterface
+from observer.services.users import UsersServiceInterface
 
 router = APIRouter(prefix="/projects")
 
@@ -83,9 +94,8 @@ async def create_project(
     status_code=status.HTTP_200_OK,
 )
 async def get_project(
-    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
+    project: Project = Depends(viewable_project),
 ) -> ProjectResponse:
-    project, _ = project_and_member
     return ProjectResponse(**project.dict())
 
 
@@ -98,15 +108,15 @@ async def get_project(
 async def update_project(
     tasks: BackgroundTasks,
     updates: UpdateProjectRequest,
-    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
+    user: User = Depends(current_user),
+    project: Project = Depends(updatable_project),
     projects: ProjectsServiceInterface = Depends(projects_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> ProjectResponse:
     tag = "endpoint=update_project"
-    project, member = project_and_member
     updated_project = await projects.update_project(project.id, updates)
     audit_log = await projects.create_log(
-        f"{tag},action=update:project,project_id={project.id},ref_id={member.ref_id}",
+        f"{tag},action=update:project,project_id={project.id},ref_id={user.ref_id}",
         None,
         dict(
             old_project=project.dict(exclude={"id"}),
@@ -124,15 +134,16 @@ async def update_project(
 )
 async def delete_project(
     tasks: BackgroundTasks,
-    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
+    user: User = Depends(current_user),
+    project: Project = Depends(deletable_project),
     projects: ProjectsServiceInterface = Depends(projects_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> Response:
     tag = "endpoint=delete_project"
-    project, member = project_and_member
+
     await projects.delete_project(project.id)
     audit_log = await projects.create_log(
-        f"{tag},action=delete:project,project_id={project.id},ref_id={member.ref_id}",
+        f"{tag},action=delete:project,project_id={project.id},ref_id={user.ref_id}",
         None,
         None,
     )
@@ -147,7 +158,7 @@ async def delete_project(
     status_code=status.HTTP_200_OK,
 )
 async def get_project_members(
-    project: Project = Depends(project_details),
+    project: Project = Depends(viewable_project),
     projects: ProjectsServiceInterface = Depends(projects_service),
     pages: Pagination = Depends(pagination),
 ) -> ProjectMembersResponse:
@@ -161,13 +172,35 @@ async def get_project_members(
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_200_OK,
 )
-async def add_project_members(
-    permission: NewPermissionRequest,
-    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
+async def add_project_member(
+    tasks: BackgroundTasks,
+    project_id: Identifier,
+    new_permission: NewPermissionRequest,
+    user: User = Depends(current_user),
+    project: Project = Depends(invitable_project),
     projects: ProjectsServiceInterface = Depends(projects_service),
-    pages: Pagination = Depends(pagination),
+    permissions: PermissionsServiceInterface = Depends(permissions_service),
+    users: UsersServiceInterface = Depends(users_service),
+    audits: AuditServiceInterface = Depends(audit_service),
 ) -> ProjectMemberResponse:
-    pass
+    tag = "endpoint=add_project_member"
+    member_user = await users.get_by_id(new_permission.user_id)
+    if not member_user:
+        raise NotFoundError(message="User not found")
+
+    if str(project.id) != str(project_id):
+        raise ConflictError(message="Project ids in path and payload differ")
+
+    permission = await permissions.create_permission(
+        NewPermissionRequest(**new_permission.dict()),
+    )
+    audit_log = await projects.create_log(
+        f"{tag},action=create:permission,permission_id={permission.id},ref_id={user.ref_id}",
+        None,
+        dict(member_ref_id=str(member_user.ref_id)),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return ProjectMemberResponse(**dict(**member_user.dict(), permissions=BasePermission(**permission.dict())))
 
 
 @router.put(
@@ -178,7 +211,7 @@ async def add_project_members(
 )
 async def update_project_members_permissions(
     permission: UpdatePermissionRequest,
-    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
+    project: Project = Depends(invitable_project),
     projects: ProjectsServiceInterface = Depends(projects_service),
     pages: Pagination = Depends(pagination),
 ) -> ProjectMemberResponse:
@@ -192,7 +225,7 @@ async def update_project_members_permissions(
 )
 async def delete_project_members(
     permission: NewPermissionRequest,
-    project_and_member: Tuple[Project, ProjectMember] = Depends(project_with_member),
+    project: Project = Depends(invitable_project),
     projects: ProjectsServiceInterface = Depends(projects_service),
     pages: Pagination = Depends(pagination),
 ) -> Response:
