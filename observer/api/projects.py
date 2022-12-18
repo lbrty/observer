@@ -4,7 +4,7 @@ from starlette import status
 from observer.api.exceptions import ConflictError, NotFoundError
 from observer.common.exceptions import get_api_errors
 from observer.common.permissions import permission_matrix
-from observer.common.types import Identifier, Role
+from observer.common.types import Role
 from observer.components.auth import RequiresRoles, current_user
 from observer.components.pagination import pagination
 from observer.components.projects import (
@@ -174,7 +174,6 @@ async def get_project_members(
 )
 async def add_project_member(
     tasks: BackgroundTasks,
-    project_id: Identifier,
     new_permission: NewPermissionRequest,
     user: User = Depends(current_user),
     project: Project = Depends(invitable_project),
@@ -188,7 +187,7 @@ async def add_project_member(
     if not member_user:
         raise NotFoundError(message="User not found")
 
-    if str(project.id) != str(project_id):
+    if str(project.id) != str(new_permission.project_id):
         raise ConflictError(message="Project ids in path and payload differ")
 
     permission = await permissions.create_permission(
