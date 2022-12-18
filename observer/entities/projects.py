@@ -8,11 +8,13 @@ class Project(BaseModel):
     id: Identifier
     name: str
     description: SomeStr
+    owner_id: SomeStr
 
 
 class NewProject(BaseModel):
     name: str
     description: SomeStr
+    owner_id: SomeStr
 
 
 class ProjectUpdate(BaseModel):

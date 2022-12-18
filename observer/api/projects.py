@@ -54,6 +54,7 @@ async def create_project(
     permissions: PermissionsServiceInterface = Depends(permissions_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> ProjectResponse:
+    new_project.owner_id = str(user.id)
     project = await projects.create_project(new_project)
     tag = "endpoint=create_project"
     audit_log = await projects.create_log(
@@ -67,6 +68,7 @@ async def create_project(
     )
     tasks.add_task(audits.add_event, audit_log)
 
+    # According to role we need to use default permissions
     base_permission = permission_matrix[user.role]
     permission = await permissions.create_permission(
         NewPermissionRequest(

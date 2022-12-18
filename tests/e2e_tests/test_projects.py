@@ -5,7 +5,12 @@ from starlette import status
 from tests.helpers.auth import get_auth_tokens
 
 
-async def test_create_project_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
+async def test_create_project_works_as_expected(
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
     resp = await authorized_client.post(
         "/projects/",
         json=dict(
@@ -20,7 +25,12 @@ async def test_create_project_works_as_expected(authorized_client, ensure_db, ap
     assert resp_json["description"] == "Project description"
 
 
-async def test_get_project_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
+async def test_get_project_works_as_expected(
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
     resp = await authorized_client.post(
         "/projects/",
         json=dict(
@@ -37,10 +47,16 @@ async def test_get_project_works_as_expected(authorized_client, ensure_db, app_c
         id=resp_json["id"],
         name="Test Project",
         description="Project description",
+        owner_id=str(consultant_user.id),
     )
 
 
-async def test_update_project_works_as_expected_for_members(authorized_client, ensure_db, app_context, consultant_user):
+async def test_update_project_works_as_expected_for_members(
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
     resp = await authorized_client.post(
         "/projects/",
         json=dict(
@@ -51,19 +67,20 @@ async def test_update_project_works_as_expected_for_members(authorized_client, e
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
+    project_id = resp_json["id"]
     resp = await authorized_client.put(
-        f"/projects/{resp_json['id']}",
+        f"/projects/{project_id}",
         json=dict(
             name="Test Project Updated",
             description="Project description updated",
         ),
     )
     assert resp.status_code == status.HTTP_200_OK
-    project_id = resp_json["id"]
     assert resp.json() == dict(
         id=resp_json["id"],
         name="Test Project Updated",
         description="Project description updated",
+        owner_id=str(consultant_user.id),
     )
     audit_log = await app_context.audit_service.find_by_ref(
         "source=service:projects,endpoint=update_project,action=update:project,"
@@ -74,10 +91,12 @@ async def test_update_project_works_as_expected_for_members(authorized_client, e
         "new_project": {
             "name": "Test Project Updated",
             "description": "Project description updated",
+            "owner_id": str(consultant_user.id),
         },
         "old_project": {
             "name": "Test Project",
             "description": "Project description",
+            "owner_id": str(consultant_user.id),
         },
     }
 
@@ -88,6 +107,7 @@ async def test_update_project_works_as_expected_for_admins(
     ensure_db,
     app_context,
     admin_user,
+    consultant_user,
 ):
     auth_token = await get_auth_tokens(app_context, admin_user)
     resp = await authorized_client.post(
@@ -115,6 +135,7 @@ async def test_update_project_works_as_expected_for_admins(
         id=project_id,
         name="Test Project Updated",
         description="Project description updated",
+        owner_id=str(consultant_user.id),
     )
     audit_log = await app_context.audit_service.find_by_ref(
         "source=service:projects,endpoint=update_project,action=update:project,"
@@ -125,10 +146,12 @@ async def test_update_project_works_as_expected_for_admins(
         "new_project": {
             "name": "Test Project Updated",
             "description": "Project description updated",
+            "owner_id": str(consultant_user.id),
         },
         "old_project": {
             "name": "Test Project",
             "description": "Project description",
+            "owner_id": str(consultant_user.id),
         },
     }
 

@@ -21,10 +21,12 @@ def upgrade():
         sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("name", sa.Text(), nullable=False),
         sa.Column("description", sa.Text(), nullable=False),
+        sa.Column("owner_id", sa.Text(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
 
     op.create_index(op.f("ix_projects_name"), "projects", [sa.text("lower(name)")])
+    op.create_index(op.f("ix_projects_owner_id"), "projects", [sa.text("owner_id")])
 
 
 def downgrade():
