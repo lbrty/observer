@@ -894,30 +894,6 @@
             "in": "path"
           },
           {
-            "description": "How many items to return?",
-            "required": false,
-            "schema": {
-              "title": "Limit",
-              "type": "integer",
-              "description": "How many items to return?",
-              "default": 100
-            },
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "description": "How many items to skip?",
-            "required": false,
-            "schema": {
-              "title": "Offset",
-              "type": "integer",
-              "description": "How many items to skip?",
-              "default": 0
-            },
-            "name": "offset",
-            "in": "query"
-          },
-          {
             "required": false,
             "schema": {
               "title": "Access Token",
@@ -1067,8 +1043,8 @@
     },
     "/projects/{project_id}/members/{user_id}": {
       "delete": {
-        "summary": "Delete Project Members",
-        "operationId": "delete_project_members_projects__project_id__members__user_id__delete",
+        "summary": "Delete Project Member",
+        "operationId": "delete_project_member_projects__project_id__members__user_id__delete",
         "parameters": [
           {
             "required": true,
@@ -1088,30 +1064,6 @@
             "in": "path"
           },
           {
-            "description": "How many items to return?",
-            "required": false,
-            "schema": {
-              "title": "Limit",
-              "type": "integer",
-              "description": "How many items to return?",
-              "default": 100
-            },
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "description": "How many items to skip?",
-            "required": false,
-            "schema": {
-              "title": "Offset",
-              "type": "integer",
-              "description": "How many items to skip?",
-              "default": 0
-            },
-            "name": "offset",
-            "in": "query"
-          },
-          {
             "required": false,
             "schema": {
               "title": "Access Token",
@@ -1121,16 +1073,6 @@
             "in": "cookie"
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPermissionRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "204": {
             "description": "Successful Response"
