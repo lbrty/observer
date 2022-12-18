@@ -1554,6 +1554,11 @@
             "title": "Description",
             "type": "string",
             "description": "Description of project"
+          },
+          "owner_id": {
+            "title": "Owner Id",
+            "type": "string",
+            "description": "ID of creator it overridden currently active user"
           }
         }
       },
@@ -1642,6 +1647,11 @@
             "title": "Description",
             "type": "string",
             "description": "Description of project"
+          },
+          "owner_id": {
+            "title": "Owner Id",
+            "type": "string",
+            "description": "ID of creator"
           }
         }
       },
