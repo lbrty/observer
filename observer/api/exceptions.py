@@ -8,6 +8,7 @@ class ErrorCode(str, Enum):
     unauthorized = "unauthorized"
     forbidden = "forbidden"
     not_found = "not_found"
+    conflict_error = "conflict_error"
     totp_error = "totp_error"
     totp_invalid_backup_code_error = "totp_invalid_backup_code_error"
     totp_required_error = "totp_required_error"
@@ -93,6 +94,12 @@ class NotFoundError(BaseAPIException):
     default_code = ErrorCode.not_found
     default_status = status.HTTP_404_NOT_FOUND
     default_message = "not found"
+
+
+class ConflictError(BaseAPIException):
+    default_code = ErrorCode.conflict_error
+    default_status = status.HTTP_409_CONFLICT
+    default_message = "conflict error"
 
 
 class RegistrationError(BaseAPIException):
