@@ -14,6 +14,7 @@ permissions = Table(
     Column("can_create_projects", Boolean(), default=False, nullable=False),
     Column("can_read_documents", Boolean(), default=False, nullable=False),
     Column("can_read_personal_info", Boolean(), default=False, nullable=False),
+    Column("can_invite_members", Boolean(), default=False, nullable=False),
     Column("user_id", UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
     Column("project_id", UUID(as_uuid=True), ForeignKey("projects.id", ondelete="CASCADE"), nullable=False),
     Index("ix_permissions_user_id", "user_id"),
