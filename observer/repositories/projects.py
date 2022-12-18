@@ -31,6 +31,9 @@ class ProjectsRepositoryInterface(Protocol):
     async def add_member(self, project_id: Identifier, new_permission: NewPermission) -> Permission:
         raise NotImplementedError
 
+    async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Permission:
+        raise NotImplementedError
+
 
 class ProjectsRepository(ProjectsRepositoryInterface):
     def __init__(self, db: Database):
@@ -100,6 +103,20 @@ class ProjectsRepository(ProjectsRepositoryInterface):
 
     async def add_member(self, project_id: Identifier, new_permission: NewPermission) -> Permission:
         query = insert(permissions).values(**new_permission.dict()).returning("*")
+        result = await self.db.fetchone(query)
+        return Permission(**result)
+
+    async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Permission:
+        query = (
+            delete(permissions)
+            .where(
+                and_(
+                    permissions.c.user_id == user_id,
+                    permissions.c.project_id == project_id,
+                )
+            )
+            .returning("*")
+        )
         result = await self.db.fetchone(query)
         return Permission(**result)
 

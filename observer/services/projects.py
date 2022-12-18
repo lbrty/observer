@@ -39,6 +39,9 @@ class ProjectsServiceInterface(Protocol):
     async def add_member(self, project_id: Identifier, new_permission: NewPermissionRequest) -> Permission:
         raise NotImplementedError
 
+    async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Permission:
+        raise NotImplementedError
+
     async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
         raise NotImplementedError
 
@@ -81,6 +84,10 @@ class ProjectsService(ProjectsServiceInterface):
 
     async def add_member(self, project_id: Identifier, new_permission: NewPermissionRequest) -> Permission:
         permission = await self.repo.add_member(project_id, NewPermission(**new_permission.dict()))
+        return permission
+
+    async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Permission:
+        permission = await self.repo.delete_member(project_id, user_id)
         return permission
 
     async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:

@@ -58,7 +58,8 @@ async def deletable_project(
     permission = await permissions.find(project.id, user.id)
     can_delete = permission and permission.can_delete
     is_admin = user.role == Role.admin
-    if is_admin or can_delete:
+    is_owner = project.owner_id == str(user.id)
+    if is_admin or can_delete or is_owner:
         return project
 
     raise ForbiddenError(message="You can not delete this project")
@@ -77,3 +78,16 @@ async def invitable_project(
         return project
 
     raise ForbiddenError(message="You can not invite members in this project")
+
+
+async def owned_project(
+    user: User = Depends(current_user),
+    project: Project = Depends(current_project),
+) -> Project:
+    """Returns project instance if user is admin or has `can_delete=True` permission"""
+    is_owner = project.owner_id == str(user.id)
+    is_admin = user.role == Role.admin
+    if is_admin or is_owner:
+        return project
+
+    raise ForbiddenError(message="Action not permitted")

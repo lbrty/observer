@@ -10,6 +10,7 @@ from observer.components.pagination import pagination
 from observer.components.projects import (
     deletable_project,
     invitable_project,
+    owned_project,
     updatable_project,
     viewable_project,
 )
@@ -137,7 +138,7 @@ async def update_project(
 async def delete_project(
     tasks: BackgroundTasks,
     user: User = Depends(current_user),
-    project: Project = Depends(deletable_project),
+    project: Project = Depends(owned_project),
     projects: ProjectsServiceInterface = Depends(projects_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> Response:
@@ -214,7 +215,6 @@ async def update_project_members_permissions(
     permission: UpdatePermissionRequest,
     project: Project = Depends(invitable_project),
     projects: ProjectsServiceInterface = Depends(projects_service),
-    pages: Pagination = Depends(pagination),
 ) -> ProjectMemberResponse:
     pass
 
@@ -224,10 +224,19 @@ async def update_project_members_permissions(
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_project_members(
-    permission: NewPermissionRequest,
-    project: Project = Depends(invitable_project),
+async def delete_project_member(
+    tasks: BackgroundTasks,
+    user: User = Depends(current_user),
+    project: Project = Depends(deletable_project),
     projects: ProjectsServiceInterface = Depends(projects_service),
-    pages: Pagination = Depends(pagination),
+    audits: AuditServiceInterface = Depends(audit_service),
 ) -> Response:
-    pass
+    tag = "endpoint=delete_project_member"
+    deleted_permission = await projects.delete_member(project.id, user.id)
+    audit_log = await projects.create_log(
+        f"{tag},action=delete:permission,permission_id={deleted_permission.id},ref_id={user.ref_id}",
+        None,
+        deleted_permission.dict(),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
