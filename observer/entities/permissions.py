@@ -11,6 +11,7 @@ class BasePermission(BaseModel):
     can_create_projects: bool
     can_read_documents: bool
     can_read_personal_info: bool
+    can_invite_members: bool
 
 
 class Permission(BasePermission):
