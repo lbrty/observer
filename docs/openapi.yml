@@ -981,8 +981,8 @@
         }
       },
       "post": {
-        "summary": "Add Project Members",
-        "operationId": "add_project_members_projects__project_id__members_post",
+        "summary": "Add Project Member",
+        "operationId": "add_project_member_projects__project_id__members_post",
         "parameters": [
           {
             "required": true,
@@ -1000,30 +1000,6 @@
             },
             "name": "project_id",
             "in": "path"
-          },
-          {
-            "description": "How many items to return?",
-            "required": false,
-            "schema": {
-              "title": "Limit",
-              "type": "integer",
-              "description": "How many items to return?",
-              "default": 100
-            },
-            "name": "limit",
-            "in": "query"
-          },
-          {
-            "description": "How many items to skip?",
-            "required": false,
-            "schema": {
-              "title": "Offset",
-              "type": "integer",
-              "description": "How many items to skip?",
-              "default": 0
-            },
-            "name": "offset",
-            "in": "query"
           },
           {
             "required": false,
@@ -1265,6 +1241,12 @@
             "type": "boolean",
             "description": "User can read personal info",
             "default": false
+          },
+          "can_invite_members": {
+            "title": "Can Invite Members",
+            "type": "boolean",
+            "description": "User can invite new members to projects",
+            "default": false
           }
         }
       },
@@ -1303,6 +1285,7 @@
           "unauthorized",
           "forbidden",
           "not_found",
+          "conflict_error",
           "totp_error",
           "totp_invalid_backup_code_error",
           "totp_required_error",
@@ -1519,6 +1502,12 @@
             "title": "Can Read Personal Info",
             "type": "boolean",
             "description": "User can read personal info",
+            "default": false
+          },
+          "can_invite_members": {
+            "title": "Can Invite Members",
+            "type": "boolean",
+            "description": "User can invite new members to projects",
             "default": false
           },
           "user_id": {
@@ -1769,6 +1758,12 @@
             "title": "Can Read Personal Info",
             "type": "boolean",
             "description": "User can read personal info",
+            "default": false
+          },
+          "can_invite_members": {
+            "title": "Can Invite Members",
+            "type": "boolean",
+            "description": "User can invite new members to projects",
             "default": false
           }
         }
