@@ -4,7 +4,7 @@ from starlette import status
 from observer.api.exceptions import ConflictError, NotFoundError
 from observer.common.exceptions import get_api_errors
 from observer.common.permissions import permission_matrix
-from observer.common.types import Role
+from observer.common.types import Identifier, Role
 from observer.components.auth import RequiresRoles, current_user
 from observer.components.pagination import pagination
 from observer.components.projects import (
@@ -226,17 +226,21 @@ async def update_project_members_permissions(
 )
 async def delete_project_member(
     tasks: BackgroundTasks,
+    user_id: Identifier,
     user: User = Depends(current_user),
     project: Project = Depends(deletable_project),
     projects: ProjectsServiceInterface = Depends(projects_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> Response:
     tag = "endpoint=delete_project_member"
-    deleted_permission = await projects.delete_member(project.id, user.id)
+    deleted_permission = await projects.delete_member(project.id, user_id)
     audit_log = await projects.create_log(
         f"{tag},action=delete:permission,permission_id={deleted_permission.id},ref_id={user.ref_id}",
         None,
-        deleted_permission.dict(),
+        {
+            **deleted_permission.dict(exclude={"id", "project_id", "user_id"}),
+            **dict(user_id=str(user_id), project_id=str(project.id)),
+        },
     )
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

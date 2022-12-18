@@ -28,7 +28,8 @@ async def viewable_project(
     permission = await permissions.find(project.id, user.id)
     can_read = permission and permission.can_read
     is_admin = user.role == Role.admin
-    if is_admin or can_read:
+    is_owner = project.owner_id == str(user.id)
+    if is_admin or can_read or is_owner:
         return project
 
     raise ForbiddenError(message="You can not view this project")

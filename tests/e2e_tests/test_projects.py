@@ -432,3 +432,59 @@ async def test_add_project_member_works_as_expected_if_project_ids_mismatch(
         "message": "Project ids in path and payload differ",
         "data": None,
     }
+
+
+async def test_delete_project_member_works_as_expected(
+    authorized_client, ensure_db, app_context, consultant_user, guest_user
+):
+    resp = await authorized_client.post(
+        "/projects/",
+        json=dict(
+            name="Test Project",
+            description="Project description",
+        ),
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+    resp_json = resp.json()
+    project_id = resp_json["id"]
+    resp = await authorized_client.post(
+        f"/projects/{project_id}/members",
+        json=dict(
+            can_create=False,
+            can_read=True,
+            can_update=True,
+            can_delete=False,
+            can_create_projects=False,
+            can_read_documents=False,
+            can_read_personal_info=False,
+            can_invite_members=False,
+            project_id=project_id,
+            user_id=str(guest_user.id),
+        ),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+
+    resp = await authorized_client.delete(f"/projects/{project_id}/members/{guest_user.id}")
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+    resp = await authorized_client.get(f"/projects/{project_id}/members")
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == {
+        "items": [
+            {
+                "ref_id": "ref-consultant-1",
+                "is_active": True,
+                "full_name": "full name",
+                "role": "consultant",
+                "permissions": {
+                    "can_create": True,
+                    "can_read": True,
+                    "can_update": True,
+                    "can_delete": True,
+                    "can_create_projects": True,
+                    "can_read_documents": True,
+                    "can_read_personal_info": True,
+                    "can_invite_members": True,
+                },
+            }
+        ]
+    }
