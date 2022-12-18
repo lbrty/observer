@@ -1,69 +1,79 @@
-from typing import Tuple
-
 from fastapi import Depends
 
 from observer.api.exceptions import ForbiddenError, NotFoundError
-from observer.common.permissions import permission_matrix
 from observer.common.types import Identifier, Role
 from observer.components.auth import current_user
 from observer.components.services import permissions_service, projects_service
-from observer.entities.permissions import BasePermission
-from observer.entities.projects import Project, ProjectMember
+from observer.entities.projects import Project
 from observer.entities.users import User
 from observer.services.permissions import PermissionsServiceInterface
 from observer.services.projects import ProjectsServiceInterface
 
 
-async def project_details(
+async def current_project(
     project_id: Identifier,
-    user: User = Depends(current_user),
     projects: ProjectsServiceInterface = Depends(projects_service),
+) -> Project:
+    if project := await projects.get_by_id(project_id):
+        return project
+    raise NotFoundError(message="Project not found")
+
+
+async def viewable_project(
+    user: User = Depends(current_user),
+    project: Project = Depends(current_project),
     permissions: PermissionsServiceInterface = Depends(permissions_service),
 ) -> Project:
-    project = await projects.get_by_id(project_id)
-    if project is None:
-        raise NotFoundError(message="Project not found")
-
-    if user.role == Role.admin:
+    """Returns project instance if user is admin or has `can_read=True` permission"""
+    permission = await permissions.find(project.id, user.id)
+    can_read = permission and permission.can_read
+    is_admin = user.role == Role.admin
+    if is_admin or can_read:
         return project
 
-    permission = await permissions.find(project_id, user.id)
-    if permission and permission.can_read:
-        return project
-    else:
-        raise ForbiddenError(message="Yoo can not view this project")
+    raise ForbiddenError(message="You can not view this project")
 
 
-async def project_with_member(
-    project_id: Identifier,
+async def updatable_project(
     user: User = Depends(current_user),
-    projects: ProjectsServiceInterface = Depends(projects_service),
+    project: Project = Depends(current_project),
     permissions: PermissionsServiceInterface = Depends(permissions_service),
-) -> Tuple[Project, ProjectMember]:
-    """We check if user is admin user or the one with `can_update` permission"""
-    project = await projects.get_by_id(project_id)
-    if project is None:
-        raise NotFoundError(message="Project not found")
+) -> Project:
+    """Returns project instance if user is admin or has `can_update=True` permission"""
+    permission = await permissions.find(project.id, user.id)
+    can_update = permission and permission.can_update
+    is_admin = user.role == Role.admin
+    if is_admin or can_update:
+        return project
 
-    """
-    NOTE:
-        Since both `permission` instances intersect and are sub-classes of
-        Pydantic models both will have `.dict()` method.
-    """
-    if user.role == Role.admin:
-        permission = permission_matrix[Role.admin]
-    else:
-        permission = await permissions.find(project_id, user.id)
+    raise ForbiddenError(message="You can not update this project")
 
-    if permission and permission.can_update:
-        return (
-            project,
-            ProjectMember(
-                **dict(
-                    **user.dict(),
-                    permissions=BasePermission(**permission.dict()),
-                )
-            ),
-        )
-    else:
-        raise ForbiddenError(message="Yoo can not view this project")
+
+async def deletable_project(
+    user: User = Depends(current_user),
+    project: Project = Depends(current_project),
+    permissions: PermissionsServiceInterface = Depends(permissions_service),
+) -> Project:
+    """Returns project instance if user is admin or has `can_delete=True` permission"""
+    permission = await permissions.find(project.id, user.id)
+    can_delete = permission and permission.can_delete
+    is_admin = user.role == Role.admin
+    if is_admin or can_delete:
+        return project
+
+    raise ForbiddenError(message="You can not delete this project")
+
+
+async def invitable_project(
+    user: User = Depends(current_user),
+    project: Project = Depends(current_project),
+    permissions: PermissionsServiceInterface = Depends(permissions_service),
+) -> Project:
+    """Returns project instance if user is admin or has `can_invite_members=True` permission"""
+    permission = await permissions.find(project.id, user.id)
+    can_invite = permission and permission.can_invite_members
+    is_admin = user.role == Role.admin
+    if is_admin or can_invite:
+        return project
+
+    raise ForbiddenError(message="You can not invite members in this project")
