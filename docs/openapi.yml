@@ -1049,6 +1049,23 @@
           {
             "required": true,
             "schema": {
+              "title": "User Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "user_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
               "title": "Project Id",
               "anyOf": [
                 {
