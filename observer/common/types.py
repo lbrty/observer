@@ -55,3 +55,9 @@ class SupportType(str, Enum):
     legal = "legal"
     medical = "medical"
     general = "general"
+
+
+class PlaceType(str, Enum):
+    city = "city"
+    town = "town"
+    village = "village"

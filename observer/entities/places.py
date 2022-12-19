@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from observer.common.types import Identifier
+from observer.common.types import Identifier, PlaceType
 
 
 class Country(BaseModel):
@@ -16,9 +16,10 @@ class State(BaseModel):
     country_id: Identifier
 
 
-class City(BaseModel):
+class Place(BaseModel):
     id: Identifier
     name: str
     code: str
+    place_type: PlaceType
     country_id: Identifier
     state_id: Identifier

@@ -38,9 +38,9 @@ displaced_persons = Table(
     Column("phone_number_additional", Text(), nullable=True),
     Column("migration_date", DATE(), nullable=True),
     # Location info
-    Column("from_city_id", UUID(as_uuid=True), ForeignKey("cities.id", ondelete="SET NULL"), nullable=True),
+    Column("from_place_id", UUID(as_uuid=True), ForeignKey("places.id", ondelete="SET NULL"), nullable=True),
     Column("from_state_id", UUID(as_uuid=True), ForeignKey("states.id", ondelete="SET NULL"), nullable=True),
-    Column("current_city_id", UUID(as_uuid=True), ForeignKey("cities.id", ondelete="SET NULL"), nullable=True),
+    Column("current_place_id", UUID(as_uuid=True), ForeignKey("places.id", ondelete="SET NULL"), nullable=True),
     Column("current_state_id", UUID(as_uuid=True), ForeignKey("states.id", ondelete="SET NULL"), nullable=True),
     Column("project_id", UUID(as_uuid=True), ForeignKey("projects.id", ondelete="SET NULL"), nullable=True),
     Column(
@@ -73,9 +73,9 @@ displaced_persons = Table(
     Index("ix_displaced_persons_category_id", "category_id"),
     Index("ix_displaced_persons_consultant_id", "consultant_id"),
     Index("ix_displaced_persons_current_state_id", "current_state_id"),
-    Index("ix_displaced_persons_current_city_id", "current_city_id"),
+    Index("ix_displaced_persons_current_place_id", "current_place_id"),
     Index("ix_displaced_persons_from_state_id", "from_state_id"),
-    Index("ix_displaced_persons_from_city_id", "from_city_id"),
+    Index("ix_displaced_persons_from_place_id", "from_place_id"),
     Index("ix_displaced_persons_project_id", "project_id"),
     Index("ix_displaced_persons_tags", "tags"),
 )
