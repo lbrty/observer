@@ -69,7 +69,7 @@ def upgrade():
 
     op.create_index(op.f("ux_places_name"), "places", [sa.text("lower(name)")], unique=True)
     op.create_index(op.f("ux_places_code"), "places", [sa.text("lower(code)")], unique=True)
-    op.create_index(op.f("ux_places_code"), "places", [sa.text("lower(code)")], unique=True)
+    op.create_index(op.f("ux_places_place_type"), "places", [sa.text("lower(place_type)")], unique=True)
     op.create_index(op.f("ix_places_state_id"), "places", ["state_id"])
     op.create_index(op.f("ix_places_country_id"), "places", ["country_id"])
 
