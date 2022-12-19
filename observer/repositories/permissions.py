@@ -92,6 +92,9 @@ class PermissionsRepository(PermissionsRepositoryInterface):
         if updates.can_read_personal_info is not None:
             update_values["can_read_personal_info"] = updates.can_read_personal_info
 
+        if updates.can_invite_members is not None:
+            update_values["can_invite_members"] = updates.can_invite_members
+
         query = update(permissions).values(update_values).where(permissions.c.id == str(permission_id)).returning("*")
         result = await self.db.fetchone(query)
         return Permission(**result)

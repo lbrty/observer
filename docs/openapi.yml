@@ -872,90 +872,6 @@
           }
         }
       },
-      "put": {
-        "summary": "Update Project Members Permissions",
-        "operationId": "update_project_members_permissions_projects__project_id__members_put",
-        "parameters": [
-          {
-            "required": true,
-            "schema": {
-              "title": "Project Id",
-              "anyOf": [
-                {
-                  "type": "string",
-                  "format": "uuid"
-                },
-                {
-                  "type": "string"
-                }
-              ]
-            },
-            "name": "project_id",
-            "in": "path"
-          },
-          {
-            "required": false,
-            "schema": {
-              "title": "Access Token",
-              "type": "string"
-            },
-            "name": "access_token",
-            "in": "cookie"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePermissionRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectMemberResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIError"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/APIError"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
       "post": {
         "summary": "Add Project Member",
         "operationId": "add_project_member_projects__project_id__members_post",
@@ -1042,6 +958,107 @@
       }
     },
     "/projects/{project_id}/members/{user_id}": {
+      "put": {
+        "summary": "Update Project Members Permissions",
+        "operationId": "update_project_members_permissions_projects__project_id__members__user_id__put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "user_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Project Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "project_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePermissionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMemberResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "summary": "Delete Project Member",
         "operationId": "delete_project_member_projects__project_id__members__user_id__delete",
@@ -1152,60 +1169,6 @@
           },
           "data": {
             "title": "Data"
-          }
-        }
-      },
-      "BasePermission": {
-        "title": "BasePermission",
-        "type": "object",
-        "properties": {
-          "can_create": {
-            "title": "Can Create",
-            "type": "boolean",
-            "description": "User can create records",
-            "default": false
-          },
-          "can_read": {
-            "title": "Can Read",
-            "type": "boolean",
-            "description": "User can create records",
-            "default": true
-          },
-          "can_update": {
-            "title": "Can Update",
-            "type": "boolean",
-            "description": "User can update records",
-            "default": false
-          },
-          "can_delete": {
-            "title": "Can Delete",
-            "type": "boolean",
-            "description": "User can delete records",
-            "default": false
-          },
-          "can_create_projects": {
-            "title": "Can Create Projects",
-            "type": "boolean",
-            "description": "User can create projects",
-            "default": false
-          },
-          "can_read_documents": {
-            "title": "Can Read Documents",
-            "type": "boolean",
-            "description": "User can read documents",
-            "default": false
-          },
-          "can_read_personal_info": {
-            "title": "Can Read Personal Info",
-            "type": "boolean",
-            "description": "User can read personal info",
-            "default": false
-          },
-          "can_invite_members": {
-            "title": "Can Invite Members",
-            "type": "boolean",
-            "description": "User can invite new members to projects",
-            "default": false
           }
         }
       },
@@ -1521,6 +1484,104 @@
           }
         }
       },
+      "PermissionResponse": {
+        "title": "PermissionResponse",
+        "required": [
+          "id",
+          "user_id",
+          "project_id"
+        ],
+        "type": "object",
+        "properties": {
+          "can_create": {
+            "title": "Can Create",
+            "type": "boolean",
+            "description": "User can create records",
+            "default": false
+          },
+          "can_read": {
+            "title": "Can Read",
+            "type": "boolean",
+            "description": "User can create records",
+            "default": true
+          },
+          "can_update": {
+            "title": "Can Update",
+            "type": "boolean",
+            "description": "User can update records",
+            "default": false
+          },
+          "can_delete": {
+            "title": "Can Delete",
+            "type": "boolean",
+            "description": "User can delete records",
+            "default": false
+          },
+          "can_create_projects": {
+            "title": "Can Create Projects",
+            "type": "boolean",
+            "description": "User can create projects",
+            "default": false
+          },
+          "can_read_documents": {
+            "title": "Can Read Documents",
+            "type": "boolean",
+            "description": "User can read documents",
+            "default": false
+          },
+          "can_read_personal_info": {
+            "title": "Can Read Personal Info",
+            "type": "boolean",
+            "description": "User can read personal info",
+            "default": false
+          },
+          "can_invite_members": {
+            "title": "Can Invite Members",
+            "type": "boolean",
+            "description": "User can invite new members to projects",
+            "default": false
+          },
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Permission ID"
+          },
+          "user_id": {
+            "title": "User Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "User can create records"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "User can create records"
+          }
+        }
+      },
       "ProjectMemberResponse": {
         "title": "ProjectMemberResponse",
         "required": [
@@ -1555,7 +1616,7 @@
             "$ref": "#/components/schemas/Role"
           },
           "permissions": {
-            "$ref": "#/components/schemas/BasePermission"
+            "$ref": "#/components/schemas/PermissionResponse"
           }
         }
       },

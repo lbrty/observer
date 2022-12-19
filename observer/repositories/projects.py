@@ -8,7 +8,7 @@ from observer.db.tables.permissions import permissions
 from observer.db.tables.projects import projects
 from observer.db.tables.users import users
 from observer.entities.base import SomeProject
-from observer.entities.permissions import BasePermission, NewPermission, Permission
+from observer.entities.permissions import NewPermission, Permission
 from observer.entities.projects import NewProject, Project, ProjectMember, ProjectUpdate
 
 
@@ -83,6 +83,7 @@ class ProjectsRepository(ProjectsRepositoryInterface):
                     users.c.full_name,
                     users.c.is_active,
                     users.c.role,
+                    permissions.c.id,
                     permissions.c.can_create,
                     permissions.c.can_read,
                     permissions.c.can_update,
@@ -91,6 +92,8 @@ class ProjectsRepository(ProjectsRepositoryInterface):
                     permissions.c.can_read_documents,
                     permissions.c.can_read_personal_info,
                     permissions.c.can_invite_members,
+                    permissions.c.user_id,
+                    permissions.c.project_id,
                 ]
             )
             .select_from(join_stmt)
@@ -121,7 +124,7 @@ class ProjectsRepository(ProjectsRepositoryInterface):
         return Permission(**result)
 
     def row_to_member(self, data: dict) -> ProjectMember:
-        permission = BasePermission(**data)
+        permission = Permission(**data)
         return ProjectMember(
             **dict(
                 **data,

@@ -227,6 +227,7 @@ async def test_get_project_members_works_as_expected(authorized_client, ensure_d
     assert resp.status_code == status.HTTP_201_CREATED
     resp_json = resp.json()
     project_id = resp_json["id"]
+    permission = await app_context.permissions_repo.find(project_id, consultant_user.id)
     resp = await authorized_client.get(f"/projects/{project_id}/members")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == {
@@ -237,6 +238,7 @@ async def test_get_project_members_works_as_expected(authorized_client, ensure_d
                 "full_name": "full name",
                 "role": "consultant",
                 "permissions": {
+                    "id": str(permission.id),
                     "can_create": True,
                     "can_read": True,
                     "can_update": True,
@@ -245,6 +247,8 @@ async def test_get_project_members_works_as_expected(authorized_client, ensure_d
                     "can_read_documents": True,
                     "can_read_personal_info": True,
                     "can_invite_members": True,
+                    "project_id": project_id,
+                    "user_id": str(consultant_user.id),
                 },
             }
         ],
@@ -281,6 +285,8 @@ async def test_add_project_member_works_as_expected(
     )
     assert resp.status_code == status.HTTP_200_OK
 
+    consultant_permission = await app_context.permissions_repo.find(project_id, consultant_user.id)
+    guest_permission = await app_context.permissions_repo.find(project_id, guest_user.id)
     resp = await authorized_client.get(f"/projects/{project_id}/members")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == {
@@ -291,6 +297,7 @@ async def test_add_project_member_works_as_expected(
                 "full_name": "full name",
                 "role": "consultant",
                 "permissions": {
+                    "id": str(consultant_permission.id),
                     "can_create": True,
                     "can_read": True,
                     "can_update": True,
@@ -299,6 +306,8 @@ async def test_add_project_member_works_as_expected(
                     "can_read_documents": True,
                     "can_read_personal_info": True,
                     "can_invite_members": True,
+                    "project_id": project_id,
+                    "user_id": str(consultant_user.id),
                 },
             },
             {
@@ -307,6 +316,7 @@ async def test_add_project_member_works_as_expected(
                 "full_name": "full name",
                 "role": "guest",
                 "permissions": {
+                    "id": str(guest_permission.id),
                     "can_create": False,
                     "can_read": True,
                     "can_update": True,
@@ -315,6 +325,8 @@ async def test_add_project_member_works_as_expected(
                     "can_read_documents": False,
                     "can_read_personal_info": False,
                     "can_invite_members": False,
+                    "project_id": project_id,
+                    "user_id": str(guest_user.id),
                 },
             },
         ]
@@ -464,8 +476,10 @@ async def test_delete_project_member_works_as_expected(
     )
     assert resp.status_code == status.HTTP_200_OK
 
+    consultant_permission = await app_context.permissions_repo.find(project_id, consultant_user.id)
     resp = await authorized_client.delete(f"/projects/{project_id}/members/{guest_user.id}")
     assert resp.status_code == status.HTTP_204_NO_CONTENT
+
     resp = await authorized_client.get(f"/projects/{project_id}/members")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == {
@@ -476,6 +490,7 @@ async def test_delete_project_member_works_as_expected(
                 "full_name": "full name",
                 "role": "consultant",
                 "permissions": {
+                    "id": str(consultant_permission.id),
                     "can_create": True,
                     "can_read": True,
                     "can_update": True,
@@ -484,6 +499,65 @@ async def test_delete_project_member_works_as_expected(
                     "can_read_documents": True,
                     "can_read_personal_info": True,
                     "can_invite_members": True,
+                    "project_id": project_id,
+                    "user_id": str(consultant_user.id),
+                },
+            }
+        ]
+    }
+
+
+async def test_update_project_member_permissions_works_as_expected(
+    authorized_client, ensure_db, app_context, consultant_user, guest_user
+):
+    resp = await authorized_client.post(
+        "/projects/",
+        json=dict(
+            name="Test Project",
+            description="Project description",
+        ),
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    resp_json = resp.json()
+    project_id = resp_json["id"]
+    consultant_permission = await app_context.permissions_repo.find(project_id, consultant_user.id)
+    resp = await authorized_client.put(
+        f"/projects/{project_id}/members/{consultant_user.id}",
+        json={
+            "can_create": True,
+            "can_read": True,
+            "can_update": True,
+            "can_delete": True,
+            "can_create_projects": False,
+            "can_read_documents": False,
+            "can_read_personal_info": False,
+            "can_invite_members": False,
+        },
+    )
+    assert resp.status_code == status.HTTP_200_OK
+
+    resp = await authorized_client.get(f"/projects/{project_id}/members")
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == {
+        "items": [
+            {
+                "ref_id": "ref-consultant-1",
+                "is_active": True,
+                "full_name": "full name",
+                "role": "consultant",
+                "permissions": {
+                    "id": str(consultant_permission.id),
+                    "can_create": True,
+                    "can_read": True,
+                    "can_update": True,
+                    "can_delete": True,
+                    "can_create_projects": False,
+                    "can_read_documents": False,
+                    "can_read_personal_info": False,
+                    "can_invite_members": False,
+                    "project_id": project_id,
+                    "user_id": str(consultant_user.id),
                 },
             }
         ]

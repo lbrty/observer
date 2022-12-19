@@ -4,6 +4,7 @@ from starlette import status
 from observer.api.exceptions import ConflictError, NotFoundError
 from observer.common.exceptions import get_api_errors
 from observer.common.permissions import permission_matrix
+from observer.common.pydantic import serialize_uuid_fields
 from observer.common.types import Identifier, Role
 from observer.components.auth import RequiresRoles, current_user
 from observer.components.pagination import pagination
@@ -25,8 +26,8 @@ from observer.entities.projects import Project
 from observer.entities.users import User
 from observer.schemas.pagination import Pagination
 from observer.schemas.permissions import (
-    BasePermission,
     NewPermissionRequest,
+    PermissionResponse,
     UpdatePermissionRequest,
 )
 from observer.schemas.projects import (
@@ -165,6 +166,7 @@ async def get_project_members(
     projects: ProjectsServiceInterface = Depends(projects_service),
     pages: Pagination = Depends(pagination),
 ) -> ProjectMembersResponse:
+    # TODO: Add pagination tests
     members = await projects.get_members(project.id, pages.offset, pages.limit)
     return ProjectMembersResponse(items=[ProjectMemberResponse(**member.dict()) for member in members])
 
@@ -202,21 +204,53 @@ async def add_project_member(
         dict(member_ref_id=str(member_user.ref_id)),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return ProjectMemberResponse(**dict(**member_user.dict(), permissions=BasePermission(**permission.dict())))
+    return ProjectMemberResponse(
+        **dict(
+            **member_user.dict(),
+            permissions=PermissionResponse(**permission.dict()),
+        ),
+    )
 
 
 @router.put(
-    "/{project_id}/members",
+    "/{project_id}/members/{user_id}",
     response_model=ProjectMemberResponse,
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_200_OK,
 )
 async def update_project_members_permissions(
-    permission: UpdatePermissionRequest,
+    tasks: BackgroundTasks,
+    user_id: Identifier,
+    updated_permission: UpdatePermissionRequest,
+    user: User = Depends(current_user),
     project: Project = Depends(invitable_project),
     projects: ProjectsServiceInterface = Depends(projects_service),
+    permissions: PermissionsServiceInterface = Depends(permissions_service),
+    users: UsersServiceInterface = Depends(users_service),
+    audits: AuditServiceInterface = Depends(audit_service),
 ) -> ProjectMemberResponse:
-    pass
+    tag = "endpoint=update_project_members_permissions"
+    member_user = await users.get_by_id(user_id)
+    if not member_user:
+        raise NotFoundError(message="User not found")
+
+    old_permission = await permissions.find(project.id, user_id)
+    permission = await permissions.update_permission(old_permission.id, updated_permission)
+    audit_log = await projects.create_log(
+        f"{tag},action=update:permission,permission_id={permission.id},ref_id={user.ref_id}",
+        None,
+        dict(
+            old_permission=serialize_uuid_fields(old_permission.dict()),
+            new_permission=serialize_uuid_fields(permission.dict()),
+        ),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return ProjectMemberResponse(
+        **dict(
+            **member_user.dict(),
+            permissions=PermissionResponse(**permission.dict()),
+        ),
+    )
 
 
 @router.delete(

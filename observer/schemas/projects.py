@@ -2,13 +2,13 @@ from typing import List
 
 from pydantic import Field
 
-from observer.common.types import Identifier, Role, SomeStr
+from observer.common.types import Identifier, Role, SomeIdentifier, SomeStr
 from observer.schemas.base import SchemaBase
-from observer.schemas.permissions import BasePermission
+from observer.schemas.permissions import PermissionResponse
 
 
 class ProjectFilters(SchemaBase):
-    id: Identifier | None = Field(None, description="ID of project")
+    id: SomeIdentifier = Field(None, description="ID of project")
     name: SomeStr = Field(None, description="Name of project")
     description: SomeStr = Field(None, description="Description of project")
 
@@ -43,7 +43,7 @@ class ProjectMemberResponse(SchemaBase):
     is_active: bool
     full_name: SomeStr
     role: Role
-    permissions: BasePermission
+    permissions: PermissionResponse
 
 
 # TODO: Add pagination
