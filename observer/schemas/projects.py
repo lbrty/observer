@@ -46,7 +46,6 @@ class ProjectMemberResponse(SchemaBase):
     permissions: PermissionResponse
 
 
-# TODO: Add pagination
 class ProjectMembersResponse(SchemaBase):
     # total: int = Field(..., description="Total count of members")
     items: List[ProjectMemberResponse] = Field(..., description="List of project member")
