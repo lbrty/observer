@@ -36,7 +36,7 @@ class NewStateRequest(BaseState):
     country_id: Identifier = Field(..., description="Country ID")
 
 
-class UpdateStateRequest(BaseCountry):
+class UpdateStateRequest(BaseState):
     country_id: Identifier = Field(..., description="Country ID")
 
 
@@ -53,11 +53,11 @@ class PlaceResponse(BasePlace):
     state_id: Identifier = Field(..., description="State ID")
 
 
-class NewPlaceRequest(BaseState):
+class NewPlaceRequest(BasePlace):
     country_id: Identifier = Field(..., description="Country ID")
     state_id: Identifier = Field(..., description="State ID")
 
 
-class UpdatePlaceRequest(BaseCountry):
+class UpdatePlaceRequest(BasePlace):
     country_id: Identifier = Field(..., description="Country ID")
     state_id: Identifier = Field(..., description="State ID")
