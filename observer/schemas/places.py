@@ -3,23 +3,61 @@ from pydantic import BaseModel, Field
 from observer.common.types import Identifier, PlaceType
 
 
-class CountryResponse(BaseModel):
-    id: Identifier = Field(..., description="Country ID")
+# Countries
+class BaseCountry(BaseModel):
     name: str = Field(..., description="Name of country")
     code: str = Field(..., description="Country code")
 
 
-class StateResponse(BaseModel):
-    id: Identifier = Field(..., description="State ID")
+class CountryResponse(BaseCountry):
+    id: Identifier = Field(..., description="Country ID")
+
+
+class NewCountryRequest(BaseCountry):
+    ...
+
+
+class UpdateCountryRequest(BaseCountry):
+    ...
+
+
+# States
+class BaseState(BaseModel):
     name: str = Field(..., description="Name of state")
     code: str = Field(..., description="State code")
-    country_id: Identifier
 
 
-class PlaceResponse(BaseModel):
-    id: Identifier = Field(..., description="City ID")
-    name: str = Field(..., description="Name of city")
-    code: str = Field(..., description="City code")
+class StateResponse(BaseState):
+    id: Identifier = Field(..., description="State ID")
+    country_id: Identifier = Field(..., description="Country ID")
+
+
+class NewStateRequest(BaseState):
+    country_id: Identifier = Field(..., description="Country ID")
+
+
+class UpdateStateRequest(BaseCountry):
+    country_id: Identifier = Field(..., description="Country ID")
+
+
+# Places
+class BasePlace(BaseModel):
+    name: str = Field(..., description="Name of place")
+    code: str = Field(..., description="Place code")
     place_type: PlaceType = Field(PlaceType.city, description="Type of place")
-    country_id: Identifier
-    state_id: Identifier
+
+
+class PlaceResponse(BasePlace):
+    id: Identifier = Field(..., description="Place ID")
+    country_id: Identifier = Field(..., description="Country ID")
+    state_id: Identifier = Field(..., description="State ID")
+
+
+class NewPlaceRequest(BaseState):
+    country_id: Identifier = Field(..., description="Country ID")
+    state_id: Identifier = Field(..., description="State ID")
+
+
+class UpdatePlaceRequest(BaseCountry):
+    country_id: Identifier = Field(..., description="Country ID")
+    state_id: Identifier = Field(..., description="State ID")
