@@ -2,14 +2,14 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from observer.common.types import Identifier, PetStatus
+from observer.common.types import Identifier, PetStatus, SomeStr
 
 
 class Pet(BaseModel):
     id: Identifier
     name: str
-    notes: str | None
+    notes: SomeStr
     status: PetStatus
-    registration_id: str | None
+    registration_id: SomeStr
     owner_id: Identifier
     created_at: datetime

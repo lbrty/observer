@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from observer.common.types import Identifier
+from observer.common.types import Identifier, SomeDatetime
 
 
 class AuditLog(BaseModel):
@@ -10,4 +10,4 @@ class AuditLog(BaseModel):
     ref: str  # format - origin=<user_id...>;source=services:users;action=create:user;
     data: dict | None
     created_at: datetime
-    expires_at: datetime | None
+    expires_at: SomeDatetime
