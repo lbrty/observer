@@ -501,6 +501,17 @@
       "get": {
         "summary": "Get Countries",
         "operationId": "get_countries_places_countries_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -515,6 +526,230 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Country",
+        "operationId": "create_country_places_countries_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewCountryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/places/countries/{country_id}": {
+      "get": {
+        "summary": "Get Country",
+        "operationId": "get_country_places_countries__country_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Country Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "country_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Country",
+        "operationId": "update_country_places_countries__country_id__put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Country Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "country_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCountryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Country",
+        "operationId": "delete_country_places_countries__country_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Country Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "country_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
           }
         }
       }
@@ -523,6 +758,17 @@
       "get": {
         "summary": "Get States",
         "operationId": "get_states_places_states_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -537,25 +783,484 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create State",
+        "operationId": "create_state_places_states_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewStateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/places/places": {
+    "/places/states/{state_id}": {
       "get": {
-        "summary": "Get States",
-        "operationId": "get_states_places_places_get",
+        "summary": "Get State",
+        "operationId": "get_state_places_states__state_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "State Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "state_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Get States Places Places Get",
+                  "$ref": "#/components/schemas/StateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update State",
+        "operationId": "update_state_places_states__state_id__put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "State Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "state_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateStateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StateResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete State",
+        "operationId": "delete_state_places_states__state_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "State Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "state_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/places/places": {
+      "get": {
+        "summary": "Get Places",
+        "operationId": "get_places_places_places_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Places Places Places Get",
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/PlaceResponse"
                   }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Place",
+        "operationId": "create_place_places_places_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewPlaceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/places/places/{place_id}": {
+      "get": {
+        "summary": "Get Place",
+        "operationId": "get_place_places_places__place_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Place Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "place_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Place",
+        "operationId": "update_place_places_places__place_id__put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Place Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "place_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlaceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Place",
+        "operationId": "delete_place_places_places__place_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Place Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "place_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -1270,12 +1975,22 @@
       "CountryResponse": {
         "title": "CountryResponse",
         "required": [
-          "id",
           "name",
-          "code"
+          "code",
+          "id"
         ],
         "type": "object",
         "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of country"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "Country code"
+          },
           "id": {
             "title": "Id",
             "anyOf": [
@@ -1288,16 +2003,6 @@
               }
             ],
             "description": "Country ID"
-          },
-          "name": {
-            "title": "Name",
-            "type": "string",
-            "description": "Name of country"
-          },
-          "code": {
-            "title": "Code",
-            "type": "string",
-            "description": "Country code"
           }
         }
       },
@@ -1460,6 +2165,26 @@
           }
         }
       },
+      "NewCountryRequest": {
+        "title": "NewCountryRequest",
+        "required": [
+          "name",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of country"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "Country code"
+          }
+        }
+      },
       "NewPasswordRequest": {
         "title": "NewPasswordRequest",
         "required": [
@@ -1560,6 +2285,63 @@
           }
         }
       },
+      "NewPlaceRequest": {
+        "title": "NewPlaceRequest",
+        "required": [
+          "name",
+          "code",
+          "country_id",
+          "state_id"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of place"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "Place code"
+          },
+          "place_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlaceType"
+              }
+            ],
+            "description": "Type of place",
+            "default": "city"
+          },
+          "country_id": {
+            "title": "Country Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Country ID"
+          },
+          "state_id": {
+            "title": "State Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "State ID"
+          }
+        }
+      },
       "NewProjectRequest": {
         "title": "NewProjectRequest",
         "required": [
@@ -1581,6 +2363,40 @@
             "title": "Owner Id",
             "type": "string",
             "description": "ID of creator it overridden currently active user"
+          }
+        }
+      },
+      "NewStateRequest": {
+        "title": "NewStateRequest",
+        "required": [
+          "name",
+          "code",
+          "country_id"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of state"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "State code"
+          },
+          "country_id": {
+            "title": "Country Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Country ID"
           }
         }
       },
@@ -1685,14 +2501,33 @@
       "PlaceResponse": {
         "title": "PlaceResponse",
         "required": [
-          "id",
           "name",
           "code",
+          "id",
           "country_id",
           "state_id"
         ],
         "type": "object",
         "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of place"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "Place code"
+          },
+          "place_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlaceType"
+              }
+            ],
+            "description": "Type of place",
+            "default": "city"
+          },
           "id": {
             "title": "Id",
             "anyOf": [
@@ -1704,26 +2539,7 @@
                 "type": "string"
               }
             ],
-            "description": "City ID"
-          },
-          "name": {
-            "title": "Name",
-            "type": "string",
-            "description": "Name of city"
-          },
-          "code": {
-            "title": "Code",
-            "type": "string",
-            "description": "City code"
-          },
-          "place_type": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PlaceType"
-              }
-            ],
-            "description": "Type of place",
-            "default": "city"
+            "description": "Place ID"
           },
           "country_id": {
             "title": "Country Id",
@@ -1735,7 +2551,8 @@
               {
                 "type": "string"
               }
-            ]
+            ],
+            "description": "Country ID"
           },
           "state_id": {
             "title": "State Id",
@@ -1747,7 +2564,8 @@
               {
                 "type": "string"
               }
-            ]
+            ],
+            "description": "State ID"
           }
         }
       },
@@ -1906,13 +2724,23 @@
       "StateResponse": {
         "title": "StateResponse",
         "required": [
-          "id",
           "name",
           "code",
+          "id",
           "country_id"
         ],
         "type": "object",
         "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of state"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "State code"
+          },
           "id": {
             "title": "Id",
             "anyOf": [
@@ -1926,16 +2754,6 @@
             ],
             "description": "State ID"
           },
-          "name": {
-            "title": "Name",
-            "type": "string",
-            "description": "Name of state"
-          },
-          "code": {
-            "title": "Code",
-            "type": "string",
-            "description": "State code"
-          },
           "country_id": {
             "title": "Country Id",
             "anyOf": [
@@ -1946,7 +2764,8 @@
               {
                 "type": "string"
               }
-            ]
+            ],
+            "description": "Country ID"
           }
         }
       },
@@ -1967,6 +2786,26 @@
             "title": "Refresh Token",
             "type": "string",
             "description": "JWT refresh token"
+          }
+        }
+      },
+      "UpdateCountryRequest": {
+        "title": "UpdateCountryRequest",
+        "required": [
+          "name",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of country"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "Country code"
           }
         }
       },
@@ -2024,6 +2863,63 @@
           }
         }
       },
+      "UpdatePlaceRequest": {
+        "title": "UpdatePlaceRequest",
+        "required": [
+          "name",
+          "code",
+          "country_id",
+          "state_id"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of place"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "Place code"
+          },
+          "place_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlaceType"
+              }
+            ],
+            "description": "Type of place",
+            "default": "city"
+          },
+          "country_id": {
+            "title": "Country Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Country ID"
+          },
+          "state_id": {
+            "title": "State Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "State ID"
+          }
+        }
+      },
       "UpdateProjectRequest": {
         "title": "UpdateProjectRequest",
         "required": [
@@ -2040,6 +2936,40 @@
             "title": "Description",
             "type": "string",
             "description": "Description of project"
+          }
+        }
+      },
+      "UpdateStateRequest": {
+        "title": "UpdateStateRequest",
+        "required": [
+          "name",
+          "code",
+          "country_id"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of state"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "State code"
+          },
+          "country_id": {
+            "title": "Country Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Country ID"
           }
         }
       },
