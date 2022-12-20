@@ -497,6 +497,72 @@
         }
       }
     },
+    "/places/countries": {
+      "get": {
+        "summary": "Get Countries",
+        "operationId": "get_countries_places_countries_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Countries Places Countries Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CountryResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/places/states": {
+      "get": {
+        "summary": "Get States",
+        "operationId": "get_states_places_states_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get States Places States Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StateResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/places/places": {
+      "get": {
+        "summary": "Get States",
+        "operationId": "get_states_places_places_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get States Places Places Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlaceResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/": {
       "post": {
         "summary": "Create Project",
@@ -1201,6 +1267,40 @@
           }
         }
       },
+      "CountryResponse": {
+        "title": "CountryResponse",
+        "required": [
+          "id",
+          "name",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Country ID"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of country"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "Country code"
+          }
+        }
+      },
       "ErrorCode": {
         "title": "ErrorCode",
         "enum": [
@@ -1582,6 +1682,85 @@
           }
         }
       },
+      "PlaceResponse": {
+        "title": "PlaceResponse",
+        "required": [
+          "id",
+          "name",
+          "code",
+          "country_id",
+          "state_id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "City ID"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of city"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "City code"
+          },
+          "place_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlaceType"
+              }
+            ],
+            "description": "Type of place",
+            "default": "city"
+          },
+          "country_id": {
+            "title": "Country Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "state_id": {
+            "title": "State Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      "PlaceType": {
+        "title": "PlaceType",
+        "enum": [
+          "city",
+          "town",
+          "village"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
       "ProjectMemberResponse": {
         "title": "ProjectMemberResponse",
         "required": [
@@ -1723,6 +1902,53 @@
         ],
         "type": "string",
         "description": "An enumeration."
+      },
+      "StateResponse": {
+        "title": "StateResponse",
+        "required": [
+          "id",
+          "name",
+          "code",
+          "country_id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "State ID"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Name of state"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "State code"
+          },
+          "country_id": {
+            "title": "Country Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
       },
       "TokenResponse": {
         "title": "TokenResponse",
