@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from pytoolz.functional import pipe
 
-from observer.api import account, auth, health, mfa, places, projects
+from observer.api import account, auth, health, mfa, projects, world
 from observer.api.exceptions import BaseAPIException
 from observer.common.exceptions import handle_api_exception
 from observer.settings import Settings
@@ -29,7 +29,7 @@ def init_routes(env: Environment) -> Environment:
     env.app.include_router(auth.router)
     env.app.include_router(health.router)
     env.app.include_router(mfa.router)
-    env.app.include_router(places.router)
+    env.app.include_router(world.router)
     env.app.include_router(projects.router)
     return env
 

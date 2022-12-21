@@ -1,6 +1,6 @@
 import base64
 from datetime import datetime, timedelta, timezone
-from typing import Protocol
+from typing import List, Protocol
 
 import shortuuid
 
@@ -82,7 +82,7 @@ class UsersServiceInterface(Protocol):
         raise NotImplementedError
 
     @staticmethod
-    async def list_to_response(total: int, user_list: list[User]) -> UsersResponse:
+    async def list_to_response(total: int, user_list: List[User]) -> UsersResponse:
         raise NotImplementedError
 
 
@@ -193,7 +193,7 @@ class UsersService(UsersServiceInterface):
         return UserResponse(**user.dict())
 
     @staticmethod
-    async def list_to_response(total: int, user_list: list[User]) -> UsersResponse:
+    async def list_to_response(total: int, user_list: List[User]) -> UsersResponse:
         return UsersResponse(
             total=total,
             items=[UserResponse(**user.dict()) for user in user_list],

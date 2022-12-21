@@ -1,12 +1,13 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
 from observer.common.types import Identifier, Role
 from observer.components.auth import RequiresRoles, current_user
+from observer.components.services import audit_service, world_service
 from observer.entities.base import SomeUser
-from observer.schemas.places import (
+from observer.schemas.world import (
     CountryResponse,
     NewCountryRequest,
     NewPlaceRequest,
@@ -17,8 +18,10 @@ from observer.schemas.places import (
     UpdatePlaceRequest,
     UpdateStateRequest,
 )
+from observer.services.audit_logs import AuditServiceInterface
+from observer.services.world import WorldServiceInterface
 
-router = APIRouter(prefix="/places")
+router = APIRouter(prefix="/world")
 
 
 # Countries
@@ -28,12 +31,23 @@ router = APIRouter(prefix="/places")
     status_code=status.HTTP_201_CREATED,
 )
 async def create_country(
+    tasks: BackgroundTasks,
     new_country: NewCountryRequest,
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
+    world: WorldServiceInterface = Depends(world_service),
+    audits: AuditServiceInterface = Depends(audit_service),
 ) -> CountryResponse:
-    pass
+    country = await world.create_country(new_country)
+    tag = "endpoint=create_country"
+    audit_log = await world.create_log(
+        f"{tag},action=create:country,country_id={country.id},ref_id={user.ref_id}",
+        None,
+        country.dict(),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return await world.to_response(country)
 
 
 @router.get(
@@ -42,8 +56,9 @@ async def create_country(
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(current_user)],
 )
-async def get_countries() -> List[CountryResponse]:
-    pass
+async def get_countries(world: WorldServiceInterface = Depends(world_service)) -> List[CountryResponse]:
+    countries = await world.get_countries()
+    return await world.list_to_response(countries)
 
 
 @router.get(
@@ -52,8 +67,12 @@ async def get_countries() -> List[CountryResponse]:
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(current_user)],
 )
-async def get_country(country_id: Identifier) -> CountryResponse:
-    pass
+async def get_country(
+    country_id: Identifier,
+    world: WorldServiceInterface = Depends(world_service),
+) -> CountryResponse:
+    country = await world.get_country(country_id)
+    return await world.to_response(country)
 
 
 @router.put(
@@ -62,13 +81,28 @@ async def get_country(country_id: Identifier) -> CountryResponse:
     status_code=status.HTTP_200_OK,
 )
 async def update_country(
+    tasks: BackgroundTasks,
     country_id: Identifier,
     updates: UpdateCountryRequest,
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
+    world: WorldServiceInterface = Depends(world_service),
+    audits: AuditServiceInterface = Depends(audit_service),
 ) -> CountryResponse:
-    pass
+    country = await world.get_country(country_id)
+    updated_country = await world.update_country(country_id, updates)
+    tag = "endpoint=update_country"
+    audit_log = await world.create_log(
+        f"{tag},action=update:country,country_id={updated_country.id},ref_id={user.ref_id}",
+        None,
+        dict(
+            old_country=country.dict(exclude={"id"}),
+            new_country=updated_country.dict(exclude={"id"}),
+        ),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return await world.to_response(updated_country)
 
 
 @router.delete(
@@ -76,12 +110,23 @@ async def update_country(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_country(
+    tasks: BackgroundTasks,
     country_id: Identifier,
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
+    world: WorldServiceInterface = Depends(world_service),
+    audits: AuditServiceInterface = Depends(audit_service),
 ) -> Response:
-    pass
+    deleted_country = await world.delete_country(country_id)
+    tag = "endpoint=delete_country"
+    audit_log = await world.create_log(
+        f"{tag},action=delete:country,country_id={deleted_country.id},ref_id={user.ref_id}",
+        None,
+        None,
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 # States
