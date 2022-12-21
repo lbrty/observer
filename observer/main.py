@@ -7,6 +7,7 @@ from observer.repositories.audit_logs import AuditRepository
 from observer.repositories.permissions import PermissionsRepository
 from observer.repositories.projects import ProjectsRepository
 from observer.repositories.users import UsersRepository
+from observer.repositories.world import WorldRepository
 from observer.services.audit_logs import AuditService
 from observer.services.auth import AuthService
 from observer.services.crypto import CryptoService
@@ -17,6 +18,7 @@ from observer.services.mfa import MFAService
 from observer.services.permissions import PermissionsService
 from observer.services.projects import ProjectsService
 from observer.services.users import UsersService
+from observer.services.world import WorldService
 from observer.settings import db_settings, settings
 
 app = create_app(settings)
@@ -61,6 +63,8 @@ async def on_startup():
     ctx.projects_service = ProjectsService(ctx.projects_repo)
     ctx.permissions_repo = PermissionsRepository(ctx.db)
     ctx.permissions_service = PermissionsService(ctx.permissions_repo)
+    ctx.world_repo = WorldRepository(ctx.db)
+    ctx.world_service = WorldService(ctx.world_repo)
 
 
 @app.on_event("shutdown")
