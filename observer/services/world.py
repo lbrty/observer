@@ -36,11 +36,11 @@ class WorldServiceInterface(Protocol):
         raise NotImplementedError
 
     @staticmethod
-    async def to_response(country: Country) -> CountryResponse:
+    async def country_to_response(country: Country) -> CountryResponse:
         raise NotImplementedError
 
     @staticmethod
-    async def list_to_response(country_list: List[Country]) -> List[CountryResponse]:
+    async def countries_to_response(country_list: List[Country]) -> List[CountryResponse]:
         raise NotImplementedError
 
 
@@ -81,9 +81,9 @@ class WorldService(WorldServiceInterface):
         )
 
     @staticmethod
-    async def to_response(country: Country) -> CountryResponse:
+    async def country_to_response(country: Country) -> CountryResponse:
         return CountryResponse(**country.dict())
 
     @staticmethod
-    async def list_to_response(country_list: List[Country]) -> List[CountryResponse]:
+    async def countries_to_response(country_list: List[Country]) -> List[CountryResponse]:
         return [CountryResponse(**country.dict()) for country in country_list]

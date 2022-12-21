@@ -47,7 +47,7 @@ async def create_country(
         country.dict(exclude={"id"}),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return await world.to_response(country)
+    return await world.country_to_response(country)
 
 
 @router.get(
@@ -58,7 +58,7 @@ async def create_country(
 )
 async def get_countries(world: WorldServiceInterface = Depends(world_service)) -> List[CountryResponse]:
     countries = await world.get_countries()
-    return await world.list_to_response(countries)
+    return await world.countries_to_response(countries)
 
 
 @router.get(
@@ -72,7 +72,7 @@ async def get_country(
     world: WorldServiceInterface = Depends(world_service),
 ) -> CountryResponse:
     country = await world.get_country(country_id)
-    return await world.to_response(country)
+    return await world.country_to_response(country)
 
 
 @router.put(
@@ -102,7 +102,7 @@ async def update_country(
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return await world.to_response(updated_country)
+    return await world.country_to_response(updated_country)
 
 
 @router.delete(
