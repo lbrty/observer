@@ -9,6 +9,7 @@ from observer.services.mailer import MailerInterface
 from observer.services.permissions import PermissionsServiceInterface
 from observer.services.projects import ProjectsServiceInterface
 from observer.services.users import UsersServiceInterface
+from observer.services.world import WorldServiceInterface
 
 
 async def users_service() -> UsersServiceInterface:
@@ -61,6 +62,12 @@ async def audit_service() -> AuditServiceInterface:
     if ctx.audit_service:
         return ctx.audit_service
     raise RuntimeError("AuditService is None")
+
+
+async def world_service() -> WorldServiceInterface:
+    if ctx.world_service:
+        return ctx.world_service
+    raise RuntimeError("PlacesService is None")
 
 
 async def mailer() -> MailerInterface:
