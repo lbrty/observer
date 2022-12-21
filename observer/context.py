@@ -5,6 +5,7 @@ from observer.repositories.audit_logs import AuditRepositoryInterface
 from observer.repositories.permissions import PermissionsRepositoryInterface
 from observer.repositories.projects import ProjectsRepositoryInterface
 from observer.repositories.users import UsersRepositoryInterface
+from observer.repositories.world import WorldRepositoryInterface
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.auth import AuthServiceInterface
 from observer.services.crypto import CryptoServiceInterface, Keychain
@@ -14,6 +15,7 @@ from observer.services.mfa import MFAServiceInterface
 from observer.services.permissions import PermissionsServiceInterface
 from observer.services.projects import ProjectsServiceInterface
 from observer.services.users import UsersServiceInterface
+from observer.services.world import WorldServiceInterface
 
 
 @dataclass
@@ -33,6 +35,8 @@ class Context:
     projects_service: ProjectsServiceInterface | None = None
     permissions_repo: PermissionsRepositoryInterface | None = None
     permissions_service: PermissionsServiceInterface | None = None
+    world_repo: WorldRepositoryInterface | None = None
+    world_service: WorldServiceInterface | None = None
 
 
 ctx = Context()

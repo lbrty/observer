@@ -37,6 +37,6 @@ places = Table(
     CheckConstraint("place_type IN ('city', 'town', 'village')", name="places_place_types"),
     Index("ux_places_name", text("lower(name)"), unique=True),
     Index("ux_places_code", text("lower(code)"), unique=True),
-    Index("ix_states_country_id", "country_id"),
-    Index("ix_states_state_id", "state_id"),
+    Index("ix_places_country_id", "country_id"),
+    Index("ix_places_state_id", "state_id"),
 )
