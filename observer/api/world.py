@@ -44,7 +44,7 @@ async def create_country(
     audit_log = await world.create_log(
         f"{tag},action=create:country,country_id={country.id},ref_id={user.ref_id}",
         None,
-        country.dict(),
+        country.dict(exclude={"id"}),
     )
     tasks.add_task(audits.add_event, audit_log)
     return await world.to_response(country)

@@ -4,7 +4,7 @@ from sqlalchemy import delete, insert, select, update
 
 from observer.common.types import Identifier
 from observer.db import Database
-from observer.db.tables.places import countries
+from observer.db.tables.world import countries
 from observer.entities.world import Country, NewCountry, UpdateCountry
 
 
