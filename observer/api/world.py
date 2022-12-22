@@ -4,7 +4,6 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
-from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier, PlaceFilters, Role, StateFilters
 from observer.components.auth import RequiresRoles, current_user
 from observer.components.filters import place_filters, state_filters
@@ -128,9 +127,6 @@ async def delete_country(
 ) -> Response:
     tag = "endpoint=delete_country"
     deleted_country = await world.delete_country(country_id)
-    if not deleted_country:
-        raise NotFoundError(message="Country not found")
-
     audit_log = await world.create_log(
         f"{tag},action=delete:country,country_id={deleted_country.id},ref_id={user.ref_id}",
         None,
@@ -213,7 +209,6 @@ async def update_state(
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> StateResponse:
-    await world.get_country(updates.country_id)
     state = await world.get_state(state_id)
     updated_state = await world.update_state(state_id, updates)
     tag = "endpoint=update_state"
@@ -245,9 +240,6 @@ async def delete_state(
 ) -> Response:
     tag = "endpoint=delete_state"
     deleted_state = await world.delete_state(state_id)
-    if not deleted_state:
-        raise NotFoundError(message="State not found")
-
     audit_log = await world.create_log(
         f"{tag},action=delete:state,state_id={deleted_state.id},ref_id={user.ref_id}",
         None,
@@ -364,9 +356,6 @@ async def delete_place(
 ) -> Response:
     tag = "endpoint=delete_place"
     deleted_place = await world.delete_place(place_id)
-    if not deleted_place:
-        raise NotFoundError(message="Place not found")
-
     audit_log = await world.create_log(
         f"{tag},action=delete:place,place_id={deleted_place.id},ref_id={user.ref_id}",
         None,

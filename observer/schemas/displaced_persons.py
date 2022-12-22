@@ -10,9 +10,20 @@ from observer.common.types import (
 )
 
 
-class VulnerabilityCategory(BaseModel):
+class BaseCategory(BaseModel):
+    name: str = Field(..., description="Category name")
+
+
+class CategoryResponse(BaseCategory):
     id: Identifier
-    name: str
+
+
+class NewCategoryRequest(BaseCategory):
+    ...
+
+
+class UpdateCategoryRequest(BaseCategory):
+    ...
 
 
 class DisplacedPersonResponse(BaseModel):

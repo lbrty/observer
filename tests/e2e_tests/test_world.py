@@ -338,7 +338,7 @@ async def test_update_unknown_state_works_as_expected(
     assert resp.json() == {
         "code": "not_found",
         "data": None,
-        "message": "Country not found",
+        "message": "State not found",
         "status_code": 404,
     }
 

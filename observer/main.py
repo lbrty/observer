@@ -4,6 +4,7 @@ from observer.app import create_app
 from observer.context import ctx
 from observer.db import PoolOptions, connect, disconnect
 from observer.repositories.audit_logs import AuditRepository
+from observer.repositories.idp import IDPRepository
 from observer.repositories.permissions import PermissionsRepository
 from observer.repositories.projects import ProjectsRepository
 from observer.repositories.users import UsersRepository
@@ -11,6 +12,7 @@ from observer.repositories.world import WorldRepository
 from observer.services.audit_logs import AuditService
 from observer.services.auth import AuthService
 from observer.services.crypto import CryptoService
+from observer.services.idp import IDPService
 from observer.services.jwt import JWTService
 from observer.services.keys import get_key_loader
 from observer.services.mailer import Mailer
@@ -65,6 +67,8 @@ async def on_startup():
     ctx.permissions_service = PermissionsService(ctx.permissions_repo)
     ctx.world_repo = WorldRepository(ctx.db)
     ctx.world_service = WorldService(ctx.world_repo)
+    ctx.idp_repo = IDPRepository(ctx.db)
+    ctx.idp_service = IDPService(ctx.idp_repo)
 
 
 @app.on_event("shutdown")

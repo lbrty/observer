@@ -11,9 +11,20 @@ from observer.common.types import (
 )
 
 
-class VulnerabilityCategory(BaseModel):
-    id: Identifier
+class BaseCategory(BaseModel):
     name: str
+
+
+class Category(BaseCategory):
+    id: Identifier
+
+
+class NewCategory(BaseCategory):
+    ...
+
+
+class UpdateCategory(BaseCategory):
+    ...
 
 
 class DisplacedPerson(BaseModel):

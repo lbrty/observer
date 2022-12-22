@@ -13,12 +13,12 @@ from sqlalchemy.dialects.postgresql import ARRAY, DATE, UUID
 
 from observer.db import metadata
 
-vulnerability_categories = Table(
-    "vulnerability_categories",
+categories = Table(
+    "categories",
     metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("name", Text(), nullable=False),
-    Index("ux_vulnerability_categories_name", text("lower(name)"), unique=True),
+    Index("ux_categories_name", text("lower(name)"), unique=True),
 )
 
 # Phone numbers are encrypted if provided
@@ -43,9 +43,7 @@ displaced_persons = Table(
     Column("current_place_id", UUID(as_uuid=True), ForeignKey("places.id", ondelete="SET NULL"), nullable=True),
     Column("current_state_id", UUID(as_uuid=True), ForeignKey("states.id", ondelete="SET NULL"), nullable=True),
     Column("project_id", UUID(as_uuid=True), ForeignKey("projects.id", ondelete="SET NULL"), nullable=True),
-    Column(
-        "category_id", UUID(as_uuid=True), ForeignKey("vulnerability_categories.id", ondelete="SET NULL"), nullable=True
-    ),
+    Column("category_id", UUID(as_uuid=True), ForeignKey("categories.id", ondelete="SET NULL"), nullable=True),
     # User's id who registered
     Column("consultant_id", UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True),
     Column("tags", ARRAY(Text()), nullable=True),

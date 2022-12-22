@@ -26,6 +26,7 @@ from observer.db import Database, metadata
 from observer.entities.users import NewUser
 from observer.entities.world import NewCountry, NewState
 from observer.repositories.audit_logs import AuditRepository
+from observer.repositories.idp import IDPRepository
 from observer.repositories.permissions import PermissionsRepository
 from observer.repositories.projects import ProjectsRepository
 from observer.repositories.users import UsersRepository
@@ -34,6 +35,7 @@ from observer.schemas.crypto import PrivateKey
 from observer.services.audit_logs import AuditService
 from observer.services.auth import AuthService
 from observer.services.crypto import CryptoService
+from observer.services.idp import IDPService
 from observer.services.jwt import JWTService
 from observer.services.keys import FS
 from observer.services.mfa import MFAService
@@ -123,6 +125,8 @@ async def app_context(db_engine):
     ctx.permissions_service = PermissionsService(ctx.permissions_repo)
     ctx.world_repo = WorldRepository(ctx.db)
     ctx.world_service = WorldService(ctx.world_repo)
+    ctx.idp_repo = IDPRepository(ctx.db)
+    ctx.idp_service = IDPService(ctx.idp_repo)
 
     yield ctx
 

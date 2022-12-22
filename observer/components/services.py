@@ -3,6 +3,7 @@ from observer.context import ctx
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.auth import AuthServiceInterface
 from observer.services.crypto import CryptoServiceInterface
+from observer.services.idp import IDPServiceInterface
 from observer.services.jwt import JWTService
 from observer.services.keys import Keychain
 from observer.services.mailer import MailerInterface
@@ -68,6 +69,12 @@ async def world_service() -> WorldServiceInterface:
     if ctx.world_service:
         return ctx.world_service
     raise RuntimeError("PlacesService is None")
+
+
+async def idp_service() -> IDPServiceInterface:
+    if ctx.idp_service:
+        return ctx.idp_service
+    raise RuntimeError("IDPService is None")
 
 
 async def mailer() -> MailerInterface:

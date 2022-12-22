@@ -2,6 +2,7 @@ from typing import TypeAlias
 
 from pydantic import BaseModel
 
+from observer.entities.displaced_persons import Category
 from observer.entities.permissions import Permission
 from observer.entities.projects import Project
 from observer.entities.users import User
@@ -13,6 +14,7 @@ SomeProject: TypeAlias = Project | None
 SomeCountry: TypeAlias = Country | None
 SomeState: TypeAlias = State | None
 SomePlace: TypeAlias = Place | None
+SomeCategory: TypeAlias = Category | None
 
 
 class ModelBase(BaseModel):

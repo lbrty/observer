@@ -1,4 +1,4 @@
-"""vulnerability_categories
+"""categories
 
 Revision ID: 7e2a6f5627ca
 Revises: b9a0f0c6205d
@@ -17,16 +17,14 @@ depends_on = None
 
 def upgrade():
     op.create_table(
-        "vulnerability_categories",
+        "categories",
         sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("name", sa.Text(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
 
-    op.create_index(
-        op.f("ux_vulnerability_categories_name"), "vulnerability_categories", [sa.text("lower(name)")], unique=True
-    )
+    op.create_index(op.f("ux_categories_name"), "categories", [sa.text("lower(name)")], unique=True)
 
 
 def downgrade():
-    op.drop_table("vulnerability_categories")
+    op.drop_table("categories")

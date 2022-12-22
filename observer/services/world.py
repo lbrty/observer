@@ -130,9 +130,11 @@ class WorldService(WorldServiceInterface):
         raise NotFoundError(message="Country not found")
 
     async def update_country(self, country_id: Identifier, updates: UpdateCountryRequest) -> Country:
+        await self.get_country(country_id)
         return await self.repo.update_country(country_id, UpdateCountry(**updates.dict()))
 
     async def delete_country(self, country_id: Identifier) -> Country:
+        await self.get_country(country_id)
         return await self.repo.delete_country(country_id)
 
     @staticmethod
@@ -157,9 +159,11 @@ class WorldService(WorldServiceInterface):
         raise NotFoundError(message="State not found")
 
     async def update_state(self, state_id: Identifier, updates: UpdateStateRequest) -> SomeState:
+        await self.get_state(state_id)
         return await self.repo.update_state(state_id, UpdateState(**updates.dict()))
 
     async def delete_state(self, state_id: Identifier) -> SomeState:
+        await self.get_state(state_id)
         return await self.repo.delete_state(state_id)
 
     @staticmethod
@@ -184,9 +188,11 @@ class WorldService(WorldServiceInterface):
         raise NotFoundError(message="Place not found")
 
     async def update_place(self, place_id: Identifier, updates: UpdatePlaceRequest) -> SomePlace:
+        await self.get_place(place_id)
         return await self.repo.update_place(place_id, UpdatePlace(**updates.dict()))
 
     async def delete_place(self, place_id: Identifier) -> SomePlace:
+        await self.get_place(place_id)
         return await self.repo.delete_place(place_id)
 
     @staticmethod
