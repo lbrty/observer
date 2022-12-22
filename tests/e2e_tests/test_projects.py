@@ -89,11 +89,13 @@ async def test_update_project_works_as_expected_for_members(
 
     assert audit_log.data == {
         "new_project": {
+            "id": project_id,
             "name": "Test Project Updated",
             "description": "Project description updated",
             "owner_id": str(consultant_user.id),
         },
         "old_project": {
+            "id": project_id,
             "name": "Test Project",
             "description": "Project description",
             "owner_id": str(consultant_user.id),
@@ -144,11 +146,13 @@ async def test_update_project_works_as_expected_for_admins(
 
     assert audit_log.data == {
         "new_project": {
+            "id": project_id,
             "name": "Test Project Updated",
             "description": "Project description updated",
             "owner_id": str(consultant_user.id),
         },
         "old_project": {
+            "id": project_id,
             "name": "Test Project",
             "description": "Project description",
             "owner_id": str(consultant_user.id),

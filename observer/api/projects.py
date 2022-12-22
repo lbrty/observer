@@ -1,10 +1,10 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
+from fastapi.encoders import jsonable_encoder
 from starlette import status
 
 from observer.api.exceptions import ConflictError, NotFoundError
 from observer.common.exceptions import get_api_errors
 from observer.common.permissions import permission_matrix
-from observer.common.pydantic import serialize_uuid_fields
 from observer.common.types import Identifier, Role
 from observer.components.auth import RequiresRoles, current_user
 from observer.components.pagination import pagination
@@ -62,11 +62,7 @@ async def create_project(
     audit_log = await projects.create_log(
         f"{tag},action=create:project,project_id={project.id},ref_id={user.ref_id}",
         None,
-        dict(
-            id=str(project.id),
-            name=project.name,
-            description=project.description,
-        ),
+        jsonable_encoder(project),
     )
     tasks.add_task(audits.add_event, audit_log)
 
@@ -123,8 +119,8 @@ async def update_project(
         f"{tag},action=update:project,project_id={project.id},ref_id={user.ref_id}",
         None,
         dict(
-            old_project=project.dict(exclude={"id"}),
-            new_project=updated_project.dict(exclude={"id"}),
+            old_project=jsonable_encoder(project),
+            new_project=jsonable_encoder(updated_project),
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -240,8 +236,8 @@ async def update_project_members_permissions(
         f"{tag},action=update:permission,permission_id={permission.id},ref_id={user.ref_id}",
         None,
         dict(
-            old_permission=serialize_uuid_fields(old_permission.dict()),
-            new_permission=serialize_uuid_fields(permission.dict()),
+            old_permission=jsonable_encoder(old_permission),
+            new_permission=jsonable_encoder(permission),
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
