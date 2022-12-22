@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
+from fastapi.encoders import jsonable_encoder
 from starlette import status
 
 from observer.api.exceptions import NotFoundError
@@ -162,7 +163,7 @@ async def create_state(
     audit_log = await world.create_log(
         f"{tag},action=create:state,state_id={state.id},ref_id={user.ref_id}",
         None,
-        state.dict(exclude={"id"}),
+        jsonable_encoder(state),
     )
     tasks.add_task(audits.add_event, audit_log)
     return await world.state_to_response(state)

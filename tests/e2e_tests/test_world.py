@@ -158,3 +158,26 @@ async def test_delete_unknown_country_works_as_expected(
         "message": "Country not found",
         "status_code": 404,
     }
+
+
+async def test_create_state_works_as_expected(
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+    default_country,
+):
+    resp = await authorized_client.post(
+        "/world/states",
+        json=dict(
+            name="Qoçqor",
+            code="qr",
+            country_id=str(default_country.id),
+        ),
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    resp_json = resp.json()
+    assert resp_json["name"] == "Qoçqor"
+    assert resp_json["code"] == "qr"
+    assert resp_json["country_id"] == str(default_country.id)
