@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta, timezone
-from typing import List, Protocol
+from typing import List, Optional, Protocol
 
 from observer.api.exceptions import NotFoundError
-from observer.common.types import Identifier
+from observer.common.types import Identifier, PlaceFilters, StateFilters
 from observer.entities.base import SomeCountry, SomePlace, SomeState
 from observer.entities.world import (
     Country,
@@ -62,7 +62,7 @@ class WorldServiceInterface(Protocol):
     async def create_state(self, new_state: NewStateRequest) -> State:
         raise NotImplementedError
 
-    async def get_states(self) -> List[State]:
+    async def get_states(self, filters: Optional[StateFilters]) -> List[State]:
         raise NotImplementedError
 
     async def get_state(self, state_id: Identifier) -> SomeState:
@@ -86,7 +86,7 @@ class WorldServiceInterface(Protocol):
     async def create_place(self, new_place: NewPlaceRequest) -> Place:
         raise NotImplementedError
 
-    async def get_places(self) -> List[Place]:
+    async def get_places(self, filters: Optional[PlaceFilters]) -> List[Place]:
         raise NotImplementedError
 
     async def get_place(self, place_id: Identifier) -> SomePlace:
@@ -147,8 +147,8 @@ class WorldService(WorldServiceInterface):
     async def create_state(self, new_state: NewStateRequest) -> State:
         return await self.repo.create_state(NewState(**new_state.dict()))
 
-    async def get_states(self) -> List[State]:
-        return await self.repo.get_states()
+    async def get_states(self, filters: Optional[StateFilters]) -> List[State]:
+        return await self.repo.get_states(filters)
 
     async def get_state(self, state_id: Identifier) -> SomeState:
         if state := await self.repo.get_state(state_id):
@@ -174,8 +174,8 @@ class WorldService(WorldServiceInterface):
     async def create_place(self, new_place: NewPlaceRequest) -> Place:
         return await self.repo.create_place(NewPlace(**new_place.dict()))
 
-    async def get_places(self) -> List[Place]:
-        return await self.repo.get_places()
+    async def get_places(self, filters: Optional[PlaceFilters]) -> List[Place]:
+        return await self.repo.get_places(filters)
 
     async def get_place(self, place_id: Identifier) -> SomePlace:
         if place := await self.repo.get_place(place_id):

@@ -178,7 +178,7 @@ async def get_states(
     filters: StateFilters = Depends(state_filters),
     world: WorldServiceInterface = Depends(world_service),
 ) -> List[StateResponse]:
-    states = await world.get_states()
+    states = await world.get_states(filters)
     return await world.states_to_response(states)
 
 
@@ -295,7 +295,7 @@ async def get_places(
     filters: PlaceFilters = Depends(place_filters),
     world: WorldServiceInterface = Depends(world_service),
 ) -> List[PlaceResponse]:
-    places = await world.get_places()
+    places = await world.get_places(filters)
     return await world.places_to_response(places)
 
 
