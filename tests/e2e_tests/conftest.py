@@ -24,6 +24,7 @@ from observer.common.types import Role
 from observer.context import ctx
 from observer.db import Database, metadata
 from observer.entities.users import NewUser
+from observer.entities.world import NewCountry
 from observer.repositories.audit_logs import AuditRepository
 from observer.repositories.permissions import PermissionsRepository
 from observer.repositories.projects import ProjectsRepository
@@ -187,6 +188,35 @@ async def admin_user(ensure_db, app_context):  # type:ignore
     )
 
     yield user
+
+
+@pytest.fixture(scope="function")
+async def staff_user(ensure_db, app_context):  # type:ignore
+    user = await app_context.users_service.repo.create_user(
+        NewUser(
+            ref_id="ref-staff-1",
+            email="staff-1@example.com",
+            full_name="full name",
+            password_hash=hash_password("secret"),
+            role=Role.staff,
+            is_active=True,
+            is_confirmed=True,
+        )
+    )
+
+    yield user
+
+
+@pytest.fixture(scope="function")
+async def default_country(ensure_db, app_context):  # type:ignore
+    country = await app_context.world_repo.create_country(
+        NewCountry(
+            name="No Stack Country",
+            code="nsc",
+        )
+    )
+
+    yield country
 
 
 @pytest.fixture(scope="session")
