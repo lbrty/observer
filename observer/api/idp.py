@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
@@ -127,7 +127,7 @@ async def delete_category(
     ),
     idp: IDPServiceInterface = Depends(idp_service),
     audits: AuditServiceInterface = Depends(audit_service),
-) -> CategoryResponse:
+) -> Response:
     tag = "endpoint=delete_category"
     category = await idp.delete_category(category_id)
     audit_log = await idp.create_log(
@@ -136,4 +136,4 @@ async def delete_category(
         jsonable_encoder(category),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return CategoryResponse(**category.dict())
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
