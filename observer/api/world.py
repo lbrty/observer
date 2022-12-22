@@ -5,8 +5,9 @@ from fastapi.encoders import jsonable_encoder
 from starlette import status
 
 from observer.api.exceptions import NotFoundError
-from observer.common.types import Identifier, Role
+from observer.common.types import Identifier, PlaceFilters, Role, StateFilters
 from observer.components.auth import RequiresRoles, current_user
+from observer.components.filters import place_filters, state_filters
 from observer.components.services import audit_service, world_service
 from observer.entities.base import SomeUser
 from observer.schemas.world import (
@@ -173,7 +174,10 @@ async def create_state(
     dependencies=[Depends(current_user)],
     tags=["world", "states"],
 )
-async def get_states(world: WorldServiceInterface = Depends(world_service)) -> List[StateResponse]:
+async def get_states(
+    filters: StateFilters = Depends(state_filters),
+    world: WorldServiceInterface = Depends(world_service),
+) -> List[StateResponse]:
     states = await world.get_states()
     return await world.states_to_response(states)
 
@@ -287,7 +291,10 @@ async def create_place(
     dependencies=[Depends(current_user)],
     tags=["world", "places"],
 )
-async def get_places(world: WorldServiceInterface = Depends(world_service)) -> List[PlaceResponse]:
+async def get_places(
+    filters: PlaceFilters = Depends(place_filters),
+    world: WorldServiceInterface = Depends(world_service),
+) -> List[PlaceResponse]:
     places = await world.get_places()
     return await world.places_to_response(places)
 

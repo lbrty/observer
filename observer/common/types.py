@@ -3,6 +3,8 @@ from enum import Enum
 from typing import List, Optional, TypeAlias
 from uuid import UUID
 
+from pydantic import BaseModel
+
 Identifier: TypeAlias = UUID | str
 SomeStr: TypeAlias = Optional[str]
 SomeDate: TypeAlias = Optional[date]
@@ -63,14 +65,15 @@ class PlaceType(str, Enum):
     village = "village"
 
 
-class StateFilters:
+class StateFilters(BaseModel):
     name: SomeStr
     code: SomeStr
     country_id: SomeIdentifier
 
 
-class PlaceFilters:
+class PlaceFilters(BaseModel):
     name: SomeStr
     code: SomeStr
+    place_type: PlaceType | None
     country_id: SomeIdentifier
     state_id: SomeIdentifier
