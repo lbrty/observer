@@ -244,6 +244,20 @@ async def test_get_states_with_filters_works_as_expected(
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json()[0] == states[1]
 
+    resp = await authorized_client.get(
+        "/world/states",
+        params=dict(country_id=str(default_country.id)),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == states
+
+    resp = await authorized_client.get(
+        "/world/states",
+        params=dict(country_id=str(default_country.id), code="qr1"),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json()[0] == states[1]
+
 
 async def test_get_state_works_as_expected(
     authorized_client,
@@ -416,6 +430,55 @@ async def test_get_places_works_as_expected(
     resp = await authorized_client.get("/world/places")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == places
+
+
+async def test_get_places_with_filters_works_as_expected(
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+    default_country,
+    default_state,
+):
+    places = []
+    for n in range(10):
+        resp = await authorized_client.post(
+            "/world/places",
+            json=dict(
+                name=f"Bişkek {n}",
+                code=f"bi{n}",
+                place_type=PlaceType.city.value,
+                country_id=str(default_country.id),
+                state_id=str(default_state.id),
+            ),
+        )
+        assert resp.status_code == status.HTTP_201_CREATED
+        places.append(resp.json())
+
+    resp = await authorized_client.get("/world/places")
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == places
+
+    resp = await authorized_client.get(
+        "/world/places",
+        params=dict(name="Bişkek 4"),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json()[0] == places[4]
+
+    resp = await authorized_client.get(
+        "/world/places",
+        params=dict(country_id=str(default_country.id)),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == places
+
+    resp = await authorized_client.get(
+        "/world/places",
+        params=dict(country_id=str(default_country.id), code="bi1"),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json()[0] == places[1]
 
 
 async def test_get_place_works_as_expected(
