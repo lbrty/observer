@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
+from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier, Role
 from observer.components.auth import RequiresRoles, current_user
 from observer.components.services import audit_service, world_service
@@ -91,6 +92,9 @@ async def update_country(
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> CountryResponse:
     country = await world.get_country(country_id)
+    if not country:
+        raise NotFoundError(message="Country not found")
+
     updated_country = await world.update_country(country_id, updates)
     tag = "endpoint=update_country"
     audit_log = await world.create_log(
@@ -118,8 +122,11 @@ async def delete_country(
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> Response:
-    deleted_country = await world.delete_country(country_id)
     tag = "endpoint=delete_country"
+    deleted_country = await world.delete_country(country_id)
+    if not deleted_country:
+        raise NotFoundError(message="Country not found")
+
     audit_log = await world.create_log(
         f"{tag},action=delete:country,country_id={deleted_country.id},ref_id={user.ref_id}",
         None,

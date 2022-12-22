@@ -5,6 +5,7 @@ from sqlalchemy import delete, insert, select, update
 from observer.common.types import Identifier
 from observer.db import Database
 from observer.db.tables.world import countries
+from observer.entities.base import SomeCountry
 from observer.entities.world import Country, NewCountry, UpdateCountry
 
 
@@ -39,17 +40,23 @@ class WorldRepository(WorldRepositoryInterface):
         rows = await self.db.fetchall(query)
         return [Country(**row) for row in rows]
 
-    async def get_country(self, country_id: Identifier) -> Country:
+    async def get_country(self, country_id: Identifier) -> SomeCountry:
         query = select(countries).where(countries.c.id == country_id)
-        row = await self.db.fetchone(query)
-        return Country(**row)
+        if row := await self.db.fetchone(query):
+            return Country(**row)
 
-    async def update_country(self, country_id: Identifier, updates: UpdateCountry) -> Country:
+        return None
+
+    async def update_country(self, country_id: Identifier, updates: UpdateCountry) -> SomeCountry:
         query = update(countries).values(**updates.dict()).where(countries.c.id == country_id).returning("*")
-        row = await self.db.fetchone(query)
-        return Country(**row)
+        if row := await self.db.fetchone(query):
+            return Country(**row)
 
-    async def delete_country(self, country_id: Identifier) -> Country:
+        return None
+
+    async def delete_country(self, country_id: Identifier) -> SomeCountry:
         query = delete(countries).where(countries.c.id == country_id).returning("*")
-        row = await self.db.fetchone(query)
-        return Country(**row)
+        if row := await self.db.fetchone(query):
+            return Country(**row)
+
+        return None

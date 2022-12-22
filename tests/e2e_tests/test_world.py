@@ -1,3 +1,5 @@
+import uuid
+
 from starlette import status
 
 
@@ -96,6 +98,25 @@ async def test_update_country_works_as_expected(
     assert country["code"] == "qy"
 
 
+async def test_update_unknown_country_works_as_expected(
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
+    resp = await authorized_client.put(
+        f"/world/countries/{uuid.uuid4()}",
+        json=dict(name="X", code="Y"),
+    )
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+    assert resp.json() == {
+        "code": "not_found",
+        "data": None,
+        "message": "Country not found",
+        "status_code": 404,
+    }
+
+
 async def test_delete_country_works_as_expected(
     authorized_client,
     ensure_db,
@@ -121,3 +142,19 @@ async def test_delete_country_works_as_expected(
     resp = await authorized_client.get("/world/countries")
     assert resp.status_code == status.HTTP_200_OK
     assert len(resp.json()) == 8
+
+
+async def test_delete_unknown_country_works_as_expected(
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
+    resp = await authorized_client.delete(f"/world/countries/{uuid.uuid4()}")
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+    assert resp.json() == {
+        "code": "not_found",
+        "data": None,
+        "message": "Country not found",
+        "status_code": 404,
+    }
