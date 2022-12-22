@@ -784,6 +784,47 @@
         "operationId": "get_states_world_states_get",
         "parameters": [
           {
+            "description": "Name of state",
+            "required": false,
+            "schema": {
+              "title": "Name",
+              "type": "string",
+              "description": "Name of state"
+            },
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "description": "Code of state",
+            "required": false,
+            "schema": {
+              "title": "Code",
+              "type": "string",
+              "description": "Code of state"
+            },
+            "name": "code",
+            "in": "query"
+          },
+          {
+            "description": "ID of country",
+            "required": false,
+            "schema": {
+              "title": "Country Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "ID of country"
+            },
+            "name": "country_id",
+            "in": "query"
+          },
+          {
             "required": false,
             "schema": {
               "title": "Access Token",
@@ -1060,6 +1101,80 @@
         "summary": "Get Places",
         "operationId": "get_places_world_places_get",
         "parameters": [
+          {
+            "description": "Name of place",
+            "required": false,
+            "schema": {
+              "title": "Name",
+              "type": "string",
+              "description": "Name of place"
+            },
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "description": "Code of place",
+            "required": false,
+            "schema": {
+              "title": "Code",
+              "type": "string",
+              "description": "Code of place"
+            },
+            "name": "code",
+            "in": "query"
+          },
+          {
+            "description": "Type of place",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/PlaceType"
+                }
+              ],
+              "description": "Type of place"
+            },
+            "name": "place_type",
+            "in": "query"
+          },
+          {
+            "description": "ID of state",
+            "required": false,
+            "schema": {
+              "title": "State Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "ID of state"
+            },
+            "name": "state_id",
+            "in": "query"
+          },
+          {
+            "description": "ID of country",
+            "required": false,
+            "schema": {
+              "title": "Country Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "ID of country"
+            },
+            "name": "country_id",
+            "in": "query"
+          },
           {
             "required": false,
             "schema": {
