@@ -479,6 +479,12 @@ async def test_get_places_with_filters_works_as_expected(
     )
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json()[0] == places[1]
+    resp = await authorized_client.get(
+        "/world/places",
+        params=dict(country_id=str(default_country.id), code="bix1"),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == []
 
 
 async def test_get_place_works_as_expected(
