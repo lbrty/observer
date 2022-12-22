@@ -3,13 +3,16 @@ from typing import List, Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier
-from observer.entities.base import SomeCountry, SomeState
+from observer.entities.base import SomeCountry, SomePlace, SomeState
 from observer.entities.world import (
     Country,
     NewCountry,
+    NewPlace,
     NewState,
+    Place,
     State,
     UpdateCountry,
+    UpdatePlace,
     UpdateState,
 )
 from observer.repositories.world import WorldRepositoryInterface
@@ -17,9 +20,12 @@ from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.world import (
     CountryResponse,
     NewCountryRequest,
+    NewPlaceRequest,
     NewStateRequest,
+    PlaceResponse,
     StateResponse,
     UpdateCountryRequest,
+    UpdatePlaceRequest,
     UpdateStateRequest,
 )
 
@@ -74,6 +80,30 @@ class WorldServiceInterface(Protocol):
 
     @staticmethod
     async def states_to_response(state_list: List[State]) -> List[StateResponse]:
+        raise NotImplementedError
+
+    # Places
+    async def create_place(self, new_place: NewPlaceRequest) -> Place:
+        raise NotImplementedError
+
+    async def get_places(self) -> List[Place]:
+        raise NotImplementedError
+
+    async def get_place(self, place_id: Identifier) -> SomePlace:
+        raise NotImplementedError
+
+    async def update_place(self, place_id: Identifier, updates: UpdatePlaceRequest) -> SomePlace:
+        raise NotImplementedError
+
+    async def delete_place(self, place_id: Identifier) -> SomePlace:
+        raise NotImplementedError
+
+    @staticmethod
+    async def place_to_response(place: Place) -> PlaceResponse:
+        raise NotImplementedError
+
+    @staticmethod
+    async def places_to_response(place_list: List[Place]) -> List[PlaceResponse]:
         raise NotImplementedError
 
     async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
@@ -139,6 +169,33 @@ class WorldService(WorldServiceInterface):
     @staticmethod
     async def states_to_response(state_list: List[State]) -> List[StateResponse]:
         return [StateResponse(**state.dict()) for state in state_list]
+
+    # Places
+    async def create_place(self, new_place: NewPlaceRequest) -> Place:
+        return await self.repo.create_place(NewPlace(**new_place.dict()))
+
+    async def get_places(self) -> List[Place]:
+        return await self.repo.get_places()
+
+    async def get_place(self, place_id: Identifier) -> SomePlace:
+        if place := await self.repo.get_place(place_id):
+            return place
+
+        raise NotFoundError(message="State not found")
+
+    async def update_place(self, place_id: Identifier, updates: UpdatePlaceRequest) -> SomePlace:
+        return await self.repo.update_place(place_id, UpdatePlace(**updates.dict()))
+
+    async def delete_place(self, place_id: Identifier) -> SomePlace:
+        return await self.repo.delete_place(place_id)
+
+    @staticmethod
+    async def place_to_response(place: Place) -> PlaceResponse:
+        raise NotImplementedError
+
+    @staticmethod
+    async def places_to_response(place_list: List[Place]) -> List[PlaceResponse]:
+        raise NotImplementedError
 
     async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
         now = datetime.now(tz=timezone.utc)

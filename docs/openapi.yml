@@ -499,6 +499,10 @@
     },
     "/world/countries": {
       "get": {
+        "tags": [
+          "world",
+          "places"
+        ],
         "summary": "Get Countries",
         "operationId": "get_countries_world_countries_get",
         "parameters": [
@@ -540,6 +544,10 @@
         }
       },
       "post": {
+        "tags": [
+          "world",
+          "places"
+        ],
         "summary": "Create Country",
         "operationId": "create_country_world_countries_post",
         "parameters": [
@@ -589,6 +597,10 @@
     },
     "/world/countries/{country_id}": {
       "get": {
+        "tags": [
+          "world",
+          "places"
+        ],
         "summary": "Get Country",
         "operationId": "get_country_world_countries__country_id__get",
         "parameters": [
@@ -643,6 +655,10 @@
         }
       },
       "put": {
+        "tags": [
+          "world",
+          "places"
+        ],
         "summary": "Update Country",
         "operationId": "update_country_world_countries__country_id__put",
         "parameters": [
@@ -707,6 +723,10 @@
         }
       },
       "delete": {
+        "tags": [
+          "world",
+          "places"
+        ],
         "summary": "Delete Country",
         "operationId": "delete_country_world_countries__country_id__delete",
         "parameters": [
@@ -756,6 +776,10 @@
     },
     "/world/states": {
       "get": {
+        "tags": [
+          "world",
+          "states"
+        ],
         "summary": "Get States",
         "operationId": "get_states_world_states_get",
         "parameters": [
@@ -797,6 +821,10 @@
         }
       },
       "post": {
+        "tags": [
+          "world",
+          "states"
+        ],
         "summary": "Create State",
         "operationId": "create_state_world_states_post",
         "parameters": [
@@ -846,6 +874,10 @@
     },
     "/world/states/{state_id}": {
       "get": {
+        "tags": [
+          "world",
+          "states"
+        ],
         "summary": "Get State",
         "operationId": "get_state_world_states__state_id__get",
         "parameters": [
@@ -900,6 +932,10 @@
         }
       },
       "put": {
+        "tags": [
+          "world",
+          "states"
+        ],
         "summary": "Update State",
         "operationId": "update_state_world_states__state_id__put",
         "parameters": [
@@ -964,6 +1000,10 @@
         }
       },
       "delete": {
+        "tags": [
+          "world",
+          "states"
+        ],
         "summary": "Delete State",
         "operationId": "delete_state_world_states__state_id__delete",
         "parameters": [
@@ -1013,6 +1053,10 @@
     },
     "/world/places": {
       "get": {
+        "tags": [
+          "world",
+          "places"
+        ],
         "summary": "Get Places",
         "operationId": "get_places_world_places_get",
         "parameters": [
@@ -1054,6 +1098,10 @@
         }
       },
       "post": {
+        "tags": [
+          "world",
+          "places"
+        ],
         "summary": "Create Place",
         "operationId": "create_place_world_places_post",
         "parameters": [
@@ -1103,6 +1151,10 @@
     },
     "/world/places/{place_id}": {
       "get": {
+        "tags": [
+          "world",
+          "places"
+        ],
         "summary": "Get Place",
         "operationId": "get_place_world_places__place_id__get",
         "parameters": [
@@ -1157,6 +1209,10 @@
         }
       },
       "put": {
+        "tags": [
+          "world",
+          "places"
+        ],
         "summary": "Update Place",
         "operationId": "update_place_world_places__place_id__put",
         "parameters": [
@@ -1221,6 +1277,10 @@
         }
       },
       "delete": {
+        "tags": [
+          "world",
+          "places"
+        ],
         "summary": "Delete Place",
         "operationId": "delete_place_world_places__place_id__delete",
         "parameters": [
