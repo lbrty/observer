@@ -215,6 +215,36 @@ async def test_get_states_works_as_expected(
     assert resp.json() == states
 
 
+async def test_get_states_with_filters_works_as_expected(
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+    default_country,
+):
+    states = []
+    for n in range(10):
+        resp = await authorized_client.post(
+            "/world/states",
+            json=dict(
+                name=f"Qoçqor {n}",
+                code=f"qr{n}",
+                country_id=str(default_country.id),
+            ),
+        )
+        assert resp.status_code == status.HTTP_201_CREATED
+        states.append(resp.json())
+
+    assert len(states) == 10
+
+    resp = await authorized_client.get(
+        "/world/states",
+        params=dict(name="Qoçqor 1"),
+    )
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json()[0] == states[1]
+
+
 async def test_get_state_works_as_expected(
     authorized_client,
     ensure_db,

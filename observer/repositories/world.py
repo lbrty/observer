@@ -124,7 +124,7 @@ class WorldRepository(WorldRepositoryInterface):
 
         query = select(states)
         if len(conditions) > 0:
-            query = query.where(and_(conditions))
+            query = query.where(and_(*conditions))
 
         rows = await self.db.fetchall(query)
         return [State(**row) for row in rows]
@@ -175,7 +175,7 @@ class WorldRepository(WorldRepositoryInterface):
 
         query = select(places)
         if len(conditions) > 0:
-            query = query.where(and_(conditions))
+            query = query.where(and_(*conditions))
 
         rows = await self.db.fetchall(query)
         return [Place(**row) for row in rows]
