@@ -61,3 +61,16 @@ class PlaceType(str, Enum):
     city = "city"
     town = "town"
     village = "village"
+
+
+class StateFilters:
+    name: SomeStr
+    code: SomeStr
+    country_id: SomeIdentifier
+
+
+class PlaceFilters:
+    name: SomeStr
+    code: SomeStr
+    country_id: SomeIdentifier
+    state_id: SomeIdentifier
