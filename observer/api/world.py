@@ -97,9 +97,6 @@ async def update_country(
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> CountryResponse:
     country = await world.get_country(country_id)
-    if not country:
-        raise NotFoundError(message="Country not found")
-
     updated_country = await world.update_country(country_id, updates)
     tag = "endpoint=update_country"
     audit_log = await world.create_log(
@@ -212,10 +209,8 @@ async def update_state(
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> StateResponse:
+    await world.get_country(updates.country_id)
     state = await world.get_state(state_id)
-    if not state:
-        raise NotFoundError(message="State not found")
-
     updated_state = await world.update_state(state_id, updates)
     tag = "endpoint=update_state"
     audit_log = await world.create_log(
@@ -279,7 +274,7 @@ async def create_place(
     audit_log = await world.create_log(
         f"{tag},action=create:place,place_id={place.id},ref_id={user.ref_id}",
         None,
-        place.dict(exclude={"id"}),
+        jsonable_encoder(place),
     )
     tasks.add_task(audits.add_event, audit_log)
     return await world.place_to_response(place)
@@ -328,18 +323,18 @@ async def update_place(
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> PlaceResponse:
-    place = await world.get_place(place_id)
-    if not place:
-        raise NotFoundError(message="Place not found")
+    await world.get_country(updates.country_id)
+    await world.get_state(updates.state_id)
 
+    place = await world.get_place(place_id)
     updated_place = await world.update_place(place_id, updates)
     tag = "endpoint=update_place"
     audit_log = await world.create_log(
         f"{tag},action=update:place,place_id={updated_place.id},ref_id={user.ref_id}",
         None,
         dict(
-            old_place=place.dict(exclude={"id"}),
-            new_place=updated_place.dict(exclude={"id"}),
+            old_place=jsonable_encoder(place),
+            new_place=jsonable_encoder(updated_place),
         ),
     )
     tasks.add_task(audits.add_event, audit_log)

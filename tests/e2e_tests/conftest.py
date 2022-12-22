@@ -24,7 +24,7 @@ from observer.common.types import Role
 from observer.context import ctx
 from observer.db import Database, metadata
 from observer.entities.users import NewUser
-from observer.entities.world import NewCountry
+from observer.entities.world import NewCountry, NewState
 from observer.repositories.audit_logs import AuditRepository
 from observer.repositories.permissions import PermissionsRepository
 from observer.repositories.projects import ProjectsRepository
@@ -217,6 +217,19 @@ async def default_country(ensure_db, app_context):  # type:ignore
     )
 
     yield country
+
+
+@pytest.fixture(scope="function")
+async def default_state(ensure_db, app_context, default_country):  # type:ignore
+    state = await app_context.world_repo.create_state(
+        NewState(
+            name="No Code State",
+            code="ncs",
+            country_id=default_country.id,
+        )
+    )
+
+    yield state
 
 
 @pytest.fixture(scope="session")

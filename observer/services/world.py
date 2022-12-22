@@ -181,7 +181,7 @@ class WorldService(WorldServiceInterface):
         if place := await self.repo.get_place(place_id):
             return place
 
-        raise NotFoundError(message="State not found")
+        raise NotFoundError(message="Place not found")
 
     async def update_place(self, place_id: Identifier, updates: UpdatePlaceRequest) -> SomePlace:
         return await self.repo.update_place(place_id, UpdatePlace(**updates.dict()))
@@ -191,11 +191,11 @@ class WorldService(WorldServiceInterface):
 
     @staticmethod
     async def place_to_response(place: Place) -> PlaceResponse:
-        raise NotImplementedError
+        return PlaceResponse(**place.dict())
 
     @staticmethod
     async def places_to_response(place_list: List[Place]) -> List[PlaceResponse]:
-        raise NotImplementedError
+        return [PlaceResponse(**place.dict()) for place in place_list]
 
     async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
         now = datetime.now(tz=timezone.utc)
