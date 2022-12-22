@@ -222,8 +222,8 @@ async def update_state(
         f"{tag},action=update:state,state_id={updated_state.id},ref_id={user.ref_id}",
         None,
         dict(
-            old_state=state.dict(exclude={"id"}),
-            new_state=updated_state.dict(exclude={"id"}),
+            old_state=jsonable_encoder(state),
+            new_state=jsonable_encoder(updated_state),
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
