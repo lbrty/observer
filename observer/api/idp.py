@@ -10,17 +10,18 @@ from observer.components.services import (
     audit_service,
     category_service,
     projects_service,
-    world_service,
+    world_service, idp_service,
 )
 from observer.entities.base import SomeUser
 from observer.schemas.idp import (
     CategoryResponse,
     IDPResponse,
     NewCategoryRequest,
-    UpdateCategoryRequest,
+    UpdateCategoryRequest, NewIDPRequest,
 )
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.categories import CategoryServiceInterface
+from observer.services.idp import IDPServiceInterface
 from observer.services.projects import ProjectsServiceInterface
 from observer.services.world import WorldServiceInterface
 
@@ -170,14 +171,15 @@ async def delete_category(
 )
 async def create_idp(
     tasks: BackgroundTasks,
-    new_category: NewCategoryRequest,
+    new_idp: NewIDPRequest,
     user: SomeUser = Depends(
-        RequiresRoles([Role.admin, Role.consultant, Role.staff]),
+        RequiresRoles([Role.admin, Role.consultant]),
     ),
     categories: CategoryServiceInterface = Depends(category_service),
     world: WorldServiceInterface = Depends(world_service),
     projects: ProjectsServiceInterface = Depends(projects_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    idp: IDPServiceInterface = Depends(idp_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=create_idp,action=create:idp",
@@ -186,7 +188,8 @@ async def create_idp(
         use_cache=False,
     ),
 ) -> IDPResponse:
-    category = await categories.create_category(new_category)
-    audit_log = props.new_event(f"category_id={category.id},ref_id={user.ref_id}", category)
+    # TODO: add verifications for foreign keys
+    person = await idp.create_idp(new_idp)
+    audit_log = props.new_event(f"person_id={person.id},ref_id={user.ref_id}", None)
     tasks.add_task(audits.add_event, audit_log)
-    return IDPResponse(**category.dict())
+    return IDPResponse(**person.dict())

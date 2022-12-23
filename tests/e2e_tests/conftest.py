@@ -130,7 +130,7 @@ async def app_context(db_engine):
     ctx.category_repo = CategoryRepository(ctx.db)
     ctx.category_service = CategoryService(ctx.category_repo)
     ctx.idp_repo = IDPRepository(ctx.db)
-    ctx.idp_service = IDPService(ctx.idp_repo)
+    ctx.idp_service = IDPService(ctx.idp_repo, ctx.crypto_service)
 
     yield ctx
 
