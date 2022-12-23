@@ -40,10 +40,8 @@ class DisplacedPersonResponse(BaseModel):
     phone_number_additional: SomeStr = Field(None, description="Displaced person ID")
     migration_date: SomeDatetime = Field(None, description="Date when person has moved")
     # Location info
-    from_city_id: SomeIdentifier = Field(None, description="City of origin")
-    from_state_id: SomeIdentifier = Field(None, description="State of origin")
-    current_city_id: SomeIdentifier = Field(None, description="Current or destination city")
-    current_state_id: SomeIdentifier = Field(None, description="Current or destination state")
+    from_place_id: SomeIdentifier = Field(None, description="Place of origin city/town/village")
+    current_place_id: SomeIdentifier = Field(None, description="Current or destination city/town/village")
     project_id: SomeIdentifier = Field(None, description="Related project ID")
     category_id: SomeIdentifier = Field(None, description="Vulnerability category ID")
     # User's id who registered

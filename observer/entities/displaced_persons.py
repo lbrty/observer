@@ -42,9 +42,7 @@ class DisplacedPerson(BaseModel):
     migration_date: SomeDate
     # Location info
     from_city_id: SomeIdentifier
-    from_state_id: SomeIdentifier
     current_city_id: SomeIdentifier
-    current_state_id: SomeIdentifier
     project_id: SomeIdentifier
     category_id: SomeIdentifier
     # User's id who registered
