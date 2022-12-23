@@ -2,7 +2,7 @@ from typing import TypeAlias
 
 from pydantic import BaseModel
 
-from observer.entities.displaced_persons import Category
+from observer.entities.idp import Category
 from observer.entities.permissions import Permission
 from observer.entities.projects import Project
 from observer.entities.users import User

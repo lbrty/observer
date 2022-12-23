@@ -26,7 +26,7 @@ class UpdateCategoryRequest(BaseCategory):
     ...
 
 
-class DisplacedPersonResponse(BaseModel):
+class IDPResponse(BaseModel):
     id: Identifier = Field(..., description="Displaced person ID")
     encryption_key: SomeStr = Field(None, description="Encrypted encryption key")
     status: DisplacedPersonStatus = Field(DisplacedPersonStatus.registered, description="Current status")

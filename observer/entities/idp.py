@@ -27,8 +27,7 @@ class UpdateCategory(BaseCategory):
     ...
 
 
-class DisplacedPerson(BaseModel):
-    id: Identifier
+class BaseIDP(BaseModel):
     encryption_key: SomeStr
     status: DisplacedPersonStatus
     external_id: SomeStr
@@ -48,5 +47,17 @@ class DisplacedPerson(BaseModel):
     # User's id who registered
     consultant_id: SomeIdentifier
     tags: SomeList
+
+
+class IDP(BaseIDP):
+    id: Identifier
     created_at: SomeDatetime
     updated_at: SomeDatetime
+
+
+class NewIDP(BaseIDP):
+    ...
+
+
+class UpdateIDP(BaseIDP):
+    ...

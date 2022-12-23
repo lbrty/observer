@@ -13,11 +13,10 @@ from observer.components.services import (
     world_service,
 )
 from observer.entities.base import SomeUser
-from observer.schemas.displaced_persons import (
+from observer.schemas.idp import (
     CategoryResponse,
-    DisplacedPersonResponse,
     NewCategoryRequest,
-    UpdateCategoryRequest,
+    UpdateCategoryRequest, IDPResponse,
 )
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.categories import CategoryServiceInterface
@@ -164,7 +163,7 @@ async def delete_category(
 
 @router.post(
     "/people",
-    response_model=DisplacedPersonResponse,
+    response_model=IDPResponse,
     status_code=status.HTTP_201_CREATED,
     tags=["idp", "people"],
 )
@@ -185,8 +184,8 @@ async def create_idp(
         ),
         use_cache=False,
     ),
-) -> CategoryResponse:
+) -> IDPResponse:
     category = await categories.create_category(new_category)
     audit_log = props.new_event(f"category_id={category.id},ref_id={user.ref_id}", category)
     tasks.add_task(audits.add_event, audit_log)
-    return CategoryResponse(**category.dict())
+    return IDPResponse(**category.dict())

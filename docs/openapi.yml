@@ -679,7 +679,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DisplacedPersonResponse"
+                  "$ref": "#/components/schemas/IDPResponse"
                 }
               }
             }
@@ -2549,8 +2549,71 @@
           }
         }
       },
-      "DisplacedPersonResponse": {
-        "title": "DisplacedPersonResponse",
+      "DisplacedPersonStatus": {
+        "title": "DisplacedPersonStatus",
+        "enum": [
+          "consulted",
+          "needs_call_back",
+          "needs_legal_support",
+          "needs_social_support",
+          "needs_monitoring",
+          "registered",
+          "unknown"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
+      "ErrorCode": {
+        "title": "ErrorCode",
+        "enum": [
+          "unauthorized",
+          "forbidden",
+          "not_found",
+          "conflict_error",
+          "totp_error",
+          "totp_invalid_backup_code_error",
+          "totp_required_error",
+          "totp_exists_error",
+          "registration_error",
+          "password_reset_code_expired_error",
+          "weak_password_error",
+          "invalid_password_error",
+          "similar_passwords_error",
+          "confirmation_code_expired_error",
+          "internal_error",
+          "bad_request"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "HealthResponse": {
+        "title": "HealthResponse",
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        }
+      },
+      "IDPResponse": {
+        "title": "IDPResponse",
         "required": [
           "id",
           "consultant_id"
@@ -2713,69 +2776,6 @@
             "type": "string",
             "description": "Update date",
             "format": "date-time"
-          }
-        }
-      },
-      "DisplacedPersonStatus": {
-        "title": "DisplacedPersonStatus",
-        "enum": [
-          "consulted",
-          "needs_call_back",
-          "needs_legal_support",
-          "needs_social_support",
-          "needs_monitoring",
-          "registered",
-          "unknown"
-        ],
-        "type": "string",
-        "description": "An enumeration."
-      },
-      "ErrorCode": {
-        "title": "ErrorCode",
-        "enum": [
-          "unauthorized",
-          "forbidden",
-          "not_found",
-          "conflict_error",
-          "totp_error",
-          "totp_invalid_backup_code_error",
-          "totp_required_error",
-          "totp_exists_error",
-          "registration_error",
-          "password_reset_code_expired_error",
-          "weak_password_error",
-          "invalid_password_error",
-          "similar_passwords_error",
-          "confirmation_code_expired_error",
-          "internal_error",
-          "bad_request"
-        ],
-        "type": "string",
-        "description": "An enumeration."
-      },
-      "HTTPValidationError": {
-        "title": "HTTPValidationError",
-        "type": "object",
-        "properties": {
-          "detail": {
-            "title": "Detail",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            }
-          }
-        }
-      },
-      "HealthResponse": {
-        "title": "HealthResponse",
-        "required": [
-          "status"
-        ],
-        "type": "object",
-        "properties": {
-          "status": {
-            "title": "Status",
-            "type": "string"
           }
         }
       },
