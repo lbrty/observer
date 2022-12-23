@@ -1,5 +1,7 @@
 from typing import Protocol
+
 from sqlalchemy import insert
+
 from observer.db import Database
 from observer.db.tables.idp import people
 from observer.entities.idp import IDP, NewIDP

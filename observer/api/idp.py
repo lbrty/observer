@@ -9,15 +9,17 @@ from observer.components.auth import RequiresRoles
 from observer.components.services import (
     audit_service,
     category_service,
+    idp_service,
     projects_service,
-    world_service, idp_service,
+    world_service,
 )
 from observer.entities.base import SomeUser
 from observer.schemas.idp import (
     CategoryResponse,
     IDPResponse,
     NewCategoryRequest,
-    UpdateCategoryRequest, NewIDPRequest,
+    NewIDPRequest,
+    UpdateCategoryRequest,
 )
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.categories import CategoryServiceInterface
