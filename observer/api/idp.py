@@ -1,10 +1,10 @@
 from typing import List
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
-from fastapi.encoders import jsonable_encoder
 from starlette import status
 
 from observer.common.types import Identifier, Role, SomeStr
+from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles
 from observer.components.services import (
     audit_service,
@@ -41,13 +41,18 @@ async def create_category(
     ),
     categories: CategoryServiceInterface = Depends(category_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=create_category,action=create:category",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> CategoryResponse:
-    tag = "endpoint=create_category"
     category = await categories.create_category(new_category)
-    audit_log = await categories.create_log(
-        f"{tag},action=create:category,category_id={category.id},ref_id={user.ref_id}",
-        None,
-        jsonable_encoder(category),
+    audit_log = props.new_event(
+        f"category_id={category.id},ref_id={user.ref_id}",
+        category,
     )
     tasks.add_task(audits.add_event, audit_log)
     return CategoryResponse(**category.dict())
@@ -106,16 +111,21 @@ async def update_category(
     ),
     categories: CategoryServiceInterface = Depends(category_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=update_category,action=update:category",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> CategoryResponse:
-    tag = "endpoint=update_category"
     category = await categories.get_category(category_id)
     updated_category = await categories.update_category(category_id, updates)
-    audit_log = await categories.create_log(
-        f"{tag},action=update:category,category_id={category_id},ref_id={user.ref_id}",
-        None,
+    audit_log = props.new_event(
+        f"category_id={category.id},ref_id={user.ref_id}",
         dict(
-            old_category=jsonable_encoder(category),
-            new_category=jsonable_encoder(updated_category),
+            old_category=category,
+            new_category=updated_category,
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -135,13 +145,18 @@ async def delete_category(
     ),
     categories: CategoryServiceInterface = Depends(category_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=delete_category,action=delete:category",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> Response:
-    tag = "endpoint=delete_category"
     category = await categories.delete_category(category_id)
-    audit_log = await categories.create_log(
-        f"{tag},action=delete:category,category_id={category_id},ref_id={user.ref_id}",
-        None,
-        jsonable_encoder(category),
+    audit_log = props.new_event(
+        f"category_id={category.id},ref_id={user.ref_id}",
+        category,
     )
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -163,13 +178,15 @@ async def create_idp(
     world: WorldServiceInterface = Depends(world_service),
     projects: ProjectsServiceInterface = Depends(projects_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=create_idp,action=create:idp",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> CategoryResponse:
-    tag = "endpoint=create_idp"
     category = await categories.create_category(new_category)
-    audit_log = await categories.create_log(
-        f"{tag},action=create:category,category_id={category.id},ref_id={user.ref_id}",
-        None,
-        jsonable_encoder(category),
-    )
+    audit_log = props.new_event(f"category_id={category.id},ref_id={user.ref_id}", category)
     tasks.add_task(audits.add_event, audit_log)
     return CategoryResponse(**category.dict())
