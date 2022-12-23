@@ -2620,24 +2620,6 @@
         ],
         "type": "object",
         "properties": {
-          "id": {
-            "title": "Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Displaced person ID"
-          },
-          "encryption_key": {
-            "title": "Encryption Key",
-            "type": "string",
-            "description": "Encrypted encryption key"
-          },
           "status": {
             "allOf": [
               {
@@ -2646,11 +2628,6 @@
             ],
             "description": "Current status",
             "default": "registered"
-          },
-          "external_id": {
-            "title": "External Id",
-            "type": "string",
-            "description": "External identifier"
           },
           "reference_id": {
             "title": "Reference Id",
@@ -2746,6 +2723,30 @@
             ],
             "description": "Vulnerability category ID"
           },
+          "tags": {
+            "title": "Tags",
+            "type": "array",
+            "items": {},
+            "description": "List of tags"
+          },
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Displaced person ID"
+          },
+          "external_id": {
+            "title": "External Id",
+            "type": "string",
+            "description": "External identifier"
+          },
           "consultant_id": {
             "title": "Consultant Id",
             "anyOf": [
@@ -2758,12 +2759,6 @@
               }
             ],
             "description": "Consultant ID"
-          },
-          "tags": {
-            "title": "Tags",
-            "type": "array",
-            "items": {},
-            "description": "List of tags"
           },
           "created_at": {
             "title": "Created At",
