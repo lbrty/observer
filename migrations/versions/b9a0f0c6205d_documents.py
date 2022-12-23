@@ -22,6 +22,7 @@ def upgrade():
         sa.Column("encryption_key", sa.Text(), nullable=True),
         sa.Column("name", sa.Text(), nullable=False),
         sa.Column("path", sa.Text(), nullable=False),
+        sa.Column("mimetype", sa.Text(), nullable=False),
         sa.Column("owner_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=True),
         sa.PrimaryKeyConstraint("id"),

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 from observer.common.types import (
@@ -29,7 +31,7 @@ class UpdateCategory(BaseCategory):
 
 class BaseIDP(BaseModel):
     encryption_key: SomeStr
-    status: DisplacedPersonStatus
+    status: Optional[DisplacedPersonStatus]
     external_id: SomeStr
     reference_id: SomeStr
     email: SomeStr
@@ -44,13 +46,13 @@ class BaseIDP(BaseModel):
     current_place_id: SomeIdentifier
     project_id: SomeIdentifier
     category_id: SomeIdentifier
-    # User's id who registered
-    consultant_id: SomeIdentifier
     tags: SomeList
 
 
 class IDP(BaseIDP):
     id: Identifier
+    # User's id who registered
+    consultant_id: SomeIdentifier
     created_at: SomeDatetime
     updated_at: SomeDatetime
 

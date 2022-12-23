@@ -15,8 +15,9 @@ from observer.components.services import (
 from observer.entities.base import SomeUser
 from observer.schemas.idp import (
     CategoryResponse,
+    IDPResponse,
     NewCategoryRequest,
-    UpdateCategoryRequest, IDPResponse,
+    UpdateCategoryRequest,
 )
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.categories import CategoryServiceInterface

@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field
+from typing import Optional
+
+from pydantic import Field
 
 from observer.common.types import (
     DisplacedPersonStatus,
@@ -8,9 +10,10 @@ from observer.common.types import (
     SomeList,
     SomeStr,
 )
+from observer.schemas.base import SchemaBase
 
 
-class BaseCategory(BaseModel):
+class BaseCategory(SchemaBase):
     name: str = Field(..., description="Category name")
 
 
@@ -26,11 +29,8 @@ class UpdateCategoryRequest(BaseCategory):
     ...
 
 
-class IDPResponse(BaseModel):
-    id: Identifier = Field(..., description="Displaced person ID")
-    encryption_key: SomeStr = Field(None, description="Encrypted encryption key")
-    status: DisplacedPersonStatus = Field(DisplacedPersonStatus.registered, description="Current status")
-    external_id: SomeStr = Field(None, description="External identifier")
+class BaseIDP(SchemaBase):
+    status: Optional[DisplacedPersonStatus] = Field(DisplacedPersonStatus.registered, description="Current status")
     reference_id: SomeStr = Field(None, description="Reference ID, maybe some of state issued IDs etc.")
     email: SomeStr = Field(None, description="Contact email")
     full_name: str = Field(None, description="Full name")
@@ -44,8 +44,21 @@ class IDPResponse(BaseModel):
     current_place_id: SomeIdentifier = Field(None, description="Current or destination city/town/village")
     project_id: SomeIdentifier = Field(None, description="Related project ID")
     category_id: SomeIdentifier = Field(None, description="Vulnerability category ID")
+    tags: SomeList = Field(None, description="List of tags")
+
+
+class NewIDPRequest(BaseIDP):
+    ...
+
+
+class UpdateIDPRequest(BaseIDP):
+    ...
+
+
+class IDPResponse(BaseIDP):
+    id: Identifier = Field(..., description="Displaced person ID")
+    external_id: SomeStr = Field(None, description="External identifier")
     # User's id who registered
     consultant_id: SomeIdentifier = Field(..., description="Consultant ID")
-    tags: SomeList = Field(None, description="List of tags")
     created_at: SomeDatetime = Field(None, description="Creation date")
     updated_at: SomeDatetime = Field(None, description="Update date")
