@@ -2,6 +2,7 @@ from observer.api.exceptions import InternalError
 from observer.context import ctx
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.auth import AuthServiceInterface
+from observer.services.categories import CategoryServiceInterface
 from observer.services.crypto import CryptoServiceInterface
 from observer.services.idp import IDPServiceInterface
 from observer.services.jwt import JWTService
@@ -75,6 +76,12 @@ async def idp_service() -> IDPServiceInterface:
     if ctx.idp_service:
         return ctx.idp_service
     raise RuntimeError("IDPService is None")
+
+
+async def category_service() -> CategoryServiceInterface:
+    if ctx.category_service:
+        return ctx.category_service
+    raise RuntimeError("CategoryService is None")
 
 
 async def mailer() -> MailerInterface:

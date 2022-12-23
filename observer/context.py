@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from observer.db import Database
 from observer.repositories.audit_logs import AuditRepositoryInterface
+from observer.repositories.categories import CategoryRepositoryInterface
 from observer.repositories.idp import IDPRepositoryInterface
 from observer.repositories.permissions import PermissionsRepositoryInterface
 from observer.repositories.projects import ProjectsRepositoryInterface
@@ -9,6 +10,7 @@ from observer.repositories.users import UsersRepositoryInterface
 from observer.repositories.world import WorldRepositoryInterface
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.auth import AuthServiceInterface
+from observer.services.categories import CategoryServiceInterface
 from observer.services.crypto import CryptoServiceInterface, Keychain
 from observer.services.idp import IDPServiceInterface
 from observer.services.jwt import JWTService
@@ -39,6 +41,8 @@ class Context:
     permissions_service: PermissionsServiceInterface | None = None
     world_repo: WorldRepositoryInterface | None = None
     world_service: WorldServiceInterface | None = None
+    category_repo: CategoryRepositoryInterface | None = None
+    category_service: CategoryServiceInterface | None = None
     idp_repo: IDPRepositoryInterface | None = None
     idp_service: IDPServiceInterface | None = None
 

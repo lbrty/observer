@@ -6,7 +6,7 @@ from starlette import status
 
 from observer.common.types import Identifier, Role, SomeStr
 from observer.components.auth import RequiresRoles
-from observer.components.services import audit_service, idp_service
+from observer.components.services import audit_service, category_service
 from observer.entities.base import SomeUser
 from observer.schemas.displaced_persons import (
     CategoryResponse,
@@ -14,7 +14,7 @@ from observer.schemas.displaced_persons import (
     UpdateCategoryRequest,
 )
 from observer.services.audit_logs import AuditServiceInterface
-from observer.services.idp import IDPServiceInterface
+from observer.services.categories import CategoryServiceInterface
 
 router = APIRouter(prefix="/idp")
 
@@ -31,12 +31,12 @@ async def create_category(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    idp: IDPServiceInterface = Depends(idp_service),
+    categories: CategoryServiceInterface = Depends(category_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> CategoryResponse:
     tag = "endpoint=create_category"
-    category = await idp.create_category(new_category)
-    audit_log = await idp.create_log(
+    category = await categories.create_category(new_category)
+    audit_log = await categories.create_log(
         f"{tag},action=create:category,category_id={category.id},ref_id={user.ref_id}",
         None,
         jsonable_encoder(category),
@@ -58,9 +58,9 @@ async def create_category(
 )
 async def get_categories(
     name: SomeStr = Query(..., description="Lookup by name"),
-    idp: IDPServiceInterface = Depends(idp_service),
+    categories: CategoryServiceInterface = Depends(category_service),
 ) -> List[CategoryResponse]:
-    categories = await idp.get_categories(name)
+    categories = await categories.get_categories(name)
     return [CategoryResponse(**category.dict()) for category in categories]
 
 
@@ -77,9 +77,9 @@ async def get_categories(
 )
 async def get_category(
     category_id: Identifier,
-    idp: IDPServiceInterface = Depends(idp_service),
+    categories: CategoryServiceInterface = Depends(category_service),
 ) -> CategoryResponse:
-    category = await idp.get_category(category_id)
+    category = await categories.get_category(category_id)
     return CategoryResponse(**category.dict())
 
 
@@ -96,13 +96,13 @@ async def update_category(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    idp: IDPServiceInterface = Depends(idp_service),
+    categories: CategoryServiceInterface = Depends(category_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> CategoryResponse:
     tag = "endpoint=update_category"
-    category = await idp.get_category(category_id)
-    updated_category = await idp.update_category(category_id, updates)
-    audit_log = await idp.create_log(
+    category = await categories.get_category(category_id)
+    updated_category = await categories.update_category(category_id, updates)
+    audit_log = await categories.create_log(
         f"{tag},action=update:category,category_id={category_id},ref_id={user.ref_id}",
         None,
         dict(
@@ -125,12 +125,12 @@ async def delete_category(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    idp: IDPServiceInterface = Depends(idp_service),
+    categories: CategoryServiceInterface = Depends(category_service),
     audits: AuditServiceInterface = Depends(audit_service),
 ) -> Response:
     tag = "endpoint=delete_category"
-    category = await idp.delete_category(category_id)
-    audit_log = await idp.create_log(
+    category = await categories.delete_category(category_id)
+    audit_log = await categories.create_log(
         f"{tag},action=delete:category,category_id={category_id},ref_id={user.ref_id}",
         None,
         jsonable_encoder(category),
