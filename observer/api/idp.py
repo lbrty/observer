@@ -65,11 +65,11 @@ async def create_category(
     tags=["idp", "categories"],
 )
 async def get_categories(
-    name: SomeStr = Query(..., description="Lookup by name"),
+    name: SomeStr = Query(None, description="Lookup by name"),
     categories: CategoryServiceInterface = Depends(category_service),
 ) -> List[CategoryResponse]:
-    categories = await categories.get_categories(name)
-    return [CategoryResponse(**category.dict()) for category in categories]
+    category_list = await categories.get_categories(name)
+    return [CategoryResponse(**category.dict()) for category in category_list]
 
 
 @router.get(
