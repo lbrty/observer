@@ -5,14 +5,13 @@ from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier, SomeStr
 from observer.entities.displaced_persons import Category, NewCategory, UpdateCategory
 from observer.repositories.categories import CategoryRepositoryInterface
-from observer.repositories.idp import IDPRepositoryInterface
 from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.displaced_persons import NewCategoryRequest, UpdateCategoryRequest
 
 
 class CategoryServiceInterface(Protocol):
     tag: str
-    repo: IDPRepositoryInterface
+    repo: CategoryRepositoryInterface
 
     # Categories
     async def create_category(self, new_category: NewCategoryRequest) -> Category:

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from observer.db import Database
 from observer.repositories.audit_logs import AuditRepositoryInterface
@@ -24,27 +25,27 @@ from observer.services.world import WorldServiceInterface
 
 @dataclass
 class Context:
-    db: Database | None = None
-    keychain: Keychain | None = None
-    mailer: MailerInterface | None = None
-    audit_service: AuditServiceInterface | None = None
-    audit_repo: AuditRepositoryInterface | None = None
-    jwt_service: JWTService | None = None
-    auth_service: AuthServiceInterface | None = None
-    crypto_service: CryptoServiceInterface | None = None
-    mfa_service: MFAServiceInterface | None = None
-    users_repo: UsersRepositoryInterface | None = None
-    users_service: UsersServiceInterface | None = None
-    projects_repo: ProjectsRepositoryInterface | None = None
-    projects_service: ProjectsServiceInterface | None = None
-    permissions_repo: PermissionsRepositoryInterface | None = None
-    permissions_service: PermissionsServiceInterface | None = None
-    world_repo: WorldRepositoryInterface | None = None
-    world_service: WorldServiceInterface | None = None
-    category_repo: CategoryRepositoryInterface | None = None
-    category_service: CategoryServiceInterface | None = None
-    idp_repo: IDPRepositoryInterface | None = None
-    idp_service: IDPServiceInterface | None = None
+    db: Optional[Database] = None
+    keychain: Optional[Keychain] = None
+    mailer: Optional[MailerInterface] = None
+    audit_service: Optional[AuditServiceInterface] = None
+    audit_repo: Optional[AuditRepositoryInterface] = None
+    jwt_service: Optional[JWTService] = None
+    auth_service: Optional[AuthServiceInterface] = None
+    crypto_service: Optional[CryptoServiceInterface] = None
+    mfa_service: Optional[MFAServiceInterface] = None
+    users_repo: Optional[UsersRepositoryInterface] = None
+    users_service: Optional[UsersServiceInterface] = None
+    projects_repo: Optional[ProjectsRepositoryInterface] = None
+    projects_service: Optional[ProjectsServiceInterface] = None
+    permissions_repo: Optional[PermissionsRepositoryInterface] = None
+    permissions_service: Optional[PermissionsServiceInterface] = None
+    world_repo: Optional[WorldRepositoryInterface] = None
+    world_service: Optional[WorldServiceInterface] = None
+    category_repo: Optional[CategoryRepositoryInterface] = None
+    category_service: Optional[CategoryServiceInterface] = None
+    idp_repo: Optional[IDPRepositoryInterface] = None
+    idp_service: Optional[IDPServiceInterface] = None
 
 
 ctx = Context()
