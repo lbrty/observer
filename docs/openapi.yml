@@ -367,7 +367,7 @@
         "parameters": [
           {
             "description": "Lookup by name",
-            "required": true,
+            "required": false,
             "schema": {
               "title": "Name",
               "type": "string",
@@ -630,6 +630,59 @@
         "responses": {
           "204": {
             "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/idp/people": {
+      "post": {
+        "tags": [
+          "idp",
+          "people"
+        ],
+        "summary": "Create Idp",
+        "operationId": "create_idp_idp_people_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewCategoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DisplacedPersonResponse"
+                }
+              }
+            }
           },
           "422": {
             "description": "Validation Error",
@@ -2495,6 +2548,187 @@
             "description": "Country ID"
           }
         }
+      },
+      "DisplacedPersonResponse": {
+        "title": "DisplacedPersonResponse",
+        "required": [
+          "id",
+          "consultant_id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Displaced person ID"
+          },
+          "encryption_key": {
+            "title": "Encryption Key",
+            "type": "string",
+            "description": "Encrypted encryption key"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DisplacedPersonStatus"
+              }
+            ],
+            "description": "Current status",
+            "default": "registered"
+          },
+          "external_id": {
+            "title": "External Id",
+            "type": "string",
+            "description": "External identifier"
+          },
+          "reference_id": {
+            "title": "Reference Id",
+            "type": "string",
+            "description": "Reference ID, maybe some of state issued IDs etc."
+          },
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "Contact email"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string",
+            "description": "Full name"
+          },
+          "birth_date": {
+            "title": "Birth Date",
+            "type": "string",
+            "description": "Birth date",
+            "format": "date-time"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string",
+            "description": "Additional notes"
+          },
+          "phone_number": {
+            "title": "Phone Number",
+            "type": "string",
+            "description": "Primary phone number"
+          },
+          "phone_number_additional": {
+            "title": "Phone Number Additional",
+            "type": "string",
+            "description": "Displaced person ID"
+          },
+          "migration_date": {
+            "title": "Migration Date",
+            "type": "string",
+            "description": "Date when person has moved",
+            "format": "date-time"
+          },
+          "from_place_id": {
+            "title": "From Place Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Place of origin city/town/village"
+          },
+          "current_place_id": {
+            "title": "Current Place Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Current or destination city/town/village"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Related project ID"
+          },
+          "category_id": {
+            "title": "Category Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Vulnerability category ID"
+          },
+          "consultant_id": {
+            "title": "Consultant Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Consultant ID"
+          },
+          "tags": {
+            "title": "Tags",
+            "type": "array",
+            "items": {},
+            "description": "List of tags"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string",
+            "description": "Creation date",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string",
+            "description": "Update date",
+            "format": "date-time"
+          }
+        }
+      },
+      "DisplacedPersonStatus": {
+        "title": "DisplacedPersonStatus",
+        "enum": [
+          "consulted",
+          "needs_call_back",
+          "needs_legal_support",
+          "needs_social_support",
+          "needs_monitoring",
+          "registered",
+          "unknown"
+        ],
+        "type": "string",
+        "description": "An enumeration."
       },
       "ErrorCode": {
         "title": "ErrorCode",
