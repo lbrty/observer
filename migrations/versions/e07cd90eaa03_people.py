@@ -19,7 +19,6 @@ def upgrade():
     op.create_table(
         "people",
         sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("encryption_key", sa.Text(), nullable=True),
         sa.Column("status", sa.Text(), nullable=True),
         sa.Column("external_id", sa.Text(), nullable=True),
         sa.Column("reference_id", sa.Text(), nullable=True),
