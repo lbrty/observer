@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from observer.api.exceptions import ForbiddenError, NotFoundError
+from observer.api.exceptions import ForbiddenError
 from observer.common.types import Identifier, Role
 from observer.components.auth import current_user
 from observer.components.services import permissions_service, projects_service
@@ -14,9 +14,7 @@ async def current_project(
     project_id: Identifier,
     projects: ProjectsServiceInterface = Depends(projects_service),
 ) -> Project:
-    if project := await projects.get_by_id(project_id):
-        return project
-    raise NotFoundError(message="Project not found")
+    return await projects.get_by_id(project_id)
 
 
 async def viewable_project(
