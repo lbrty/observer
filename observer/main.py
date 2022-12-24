@@ -72,7 +72,13 @@ async def on_startup():
     ctx.category_repo = CategoryRepository(ctx.db)
     ctx.category_service = CategoryService(ctx.category_repo)
     ctx.idp_repo = IDPRepository(ctx.db)
-    ctx.idp_service = IDPService(ctx.idp_repo, ctx.crypto_service)
+    ctx.idp_service = IDPService(
+        ctx.idp_repo,
+        ctx.crypto_service,
+        ctx.category_service,
+        ctx.projects_service,
+        ctx.world_service,
+    )
 
 
 @app.on_event("shutdown")

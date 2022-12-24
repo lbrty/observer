@@ -52,26 +52,29 @@ class IDPService(IDPServiceInterface):
         if new_idp.from_place_id:
             await self.world_service.get_place(new_idp.from_place_id)
 
+        if new_idp.category_id:
+            await self.categories_service.get_category(new_idp.category_id)
+
         if new_idp.email:
             encrypted_email = await self.crypto_service.encrypt(
                 key_hash,
-                bytes(new_idp.email),
+                new_idp.email.encode(),
             )
             new_idp.email = f"{key_hash}:{encrypted_email.decode()}"
 
         if new_idp.phone_number and new_idp.phone_number.strip():
             encrypted_phone_number = await self.crypto_service.encrypt(
                 key_hash,
-                bytes(new_idp.phone_number),
+                new_idp.phone_number.encode(),
             )
-            new_idp.phone_number = f"{key_hash}:{encrypted_phone_number}"
+            new_idp.phone_number = f"{key_hash}:{encrypted_phone_number.decode()}"
 
         if new_idp.phone_number_additional and new_idp.phone_number_additional.strip():
             encrypted_phone_number = await self.crypto_service.encrypt(
                 key_hash,
-                bytes(new_idp.phone_number_additional),
+                new_idp.phone_number_additional.encode(),
             )
-            new_idp.phone_number_additional = f"{key_hash}:{encrypted_phone_number}"
+            new_idp.phone_number_additional = f"{key_hash}:{encrypted_phone_number.decode()}"
 
         return await self.repo.create_idp(new_idp)
 
