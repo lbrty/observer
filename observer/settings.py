@@ -33,7 +33,7 @@ class Settings(SettingsBase):
     key_size: int = 2048
     key_passwords: Optional[str] = None
     public_exponent: int = 65537
-
+    aes_key_bits: int = 32
     # Password strength constraints
     password_policy: PasswordPolicy = PasswordPolicy.from_names(
         length=8,
