@@ -2669,7 +2669,7 @@
             "title": "Migration Date",
             "type": "string",
             "description": "Date when person has moved",
-            "format": "date-time"
+            "format": "date"
           },
           "from_place_id": {
             "title": "From Place Id",
@@ -2971,7 +2971,7 @@
             "title": "Migration Date",
             "type": "string",
             "description": "Date when person has moved",
-            "format": "date-time"
+            "format": "date"
           },
           "from_place_id": {
             "title": "From Place Id",
