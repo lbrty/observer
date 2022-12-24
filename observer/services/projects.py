@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from typing import List, Protocol
 
+from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier
-from observer.entities.base import SomeProject
 from observer.entities.permissions import NewPermission, Permission
 from observer.entities.projects import NewProject, Project, ProjectMember, ProjectUpdate
 from observer.entities.users import User
@@ -21,7 +21,7 @@ class ProjectsServiceInterface(Protocol):
     tag: str
     repo: ProjectsRepositoryInterface
 
-    async def get_by_id(self, project_id: Identifier) -> SomeProject:
+    async def get_by_id(self, project_id: Identifier) -> Project:
         raise NotImplementedError
 
     async def create_project(self, new_project: NewProjectRequest) -> Project:
@@ -60,11 +60,11 @@ class ProjectsService(ProjectsServiceInterface):
     def __init__(self, repo: ProjectsRepositoryInterface):
         self.repo = repo
 
-    async def get_by_id(self, project_id: Identifier) -> SomeProject:
+    async def get_by_id(self, project_id: Identifier) -> Project:
         if project := await self.repo.get_by_id(project_id):
             return project
 
-        return None
+        raise NotFoundError(message="Project not found")
 
     async def create_project(self, new_project: NewProjectRequest) -> Project:
         project = await self.repo.create_project(NewProject(**new_project.dict()))

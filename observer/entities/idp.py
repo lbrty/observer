@@ -30,7 +30,6 @@ class UpdateCategory(BaseCategory):
 
 
 class BaseIDP(BaseModel):
-    encryption_key: SomeStr
     status: Optional[DisplacedPersonStatus]
     external_id: SomeStr
     reference_id: SomeStr

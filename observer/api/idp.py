@@ -6,13 +6,7 @@ from starlette import status
 from observer.common.types import Identifier, Role, SomeStr
 from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles
-from observer.components.services import (
-    audit_service,
-    category_service,
-    idp_service,
-    projects_service,
-    world_service,
-)
+from observer.components.services import audit_service, category_service, idp_service
 from observer.entities.base import SomeUser
 from observer.schemas.idp import (
     CategoryResponse,
@@ -24,8 +18,6 @@ from observer.schemas.idp import (
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.categories import CategoryServiceInterface
 from observer.services.idp import IDPServiceInterface
-from observer.services.projects import ProjectsServiceInterface
-from observer.services.world import WorldServiceInterface
 
 router = APIRouter(prefix="/idp")
 
@@ -177,9 +169,6 @@ async def create_idp(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant]),
     ),
-    categories: CategoryServiceInterface = Depends(category_service),
-    world: WorldServiceInterface = Depends(world_service),
-    projects: ProjectsServiceInterface = Depends(projects_service),
     audits: AuditServiceInterface = Depends(audit_service),
     idp: IDPServiceInterface = Depends(idp_service),
     props: Props = Depends(
@@ -190,7 +179,6 @@ async def create_idp(
         use_cache=False,
     ),
 ) -> IDPResponse:
-    # TODO: add verifications for foreign keys
     person = await idp.create_idp(new_idp)
     audit_log = props.new_event(f"person_id={person.id},ref_id={user.ref_id}", None)
     tasks.add_task(audits.add_event, audit_log)
