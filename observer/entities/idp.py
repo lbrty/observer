@@ -11,6 +11,7 @@ from observer.common.types import (
     SomeList,
     SomeStr,
 )
+from observer.entities.base import SomePlace
 
 
 class BaseCategory(BaseModel):
@@ -39,10 +40,6 @@ class BaseIDP(BaseModel):
     notes: SomeStr
     phone_number: SomeStr
     phone_number_additional: SomeStr
-    migration_date: SomeDate
-    # Location info
-    from_place_id: SomeIdentifier
-    current_place_id: SomeIdentifier
     project_id: SomeIdentifier
     category_id: SomeIdentifier
     tags: SomeList
@@ -62,3 +59,24 @@ class NewIDP(BaseIDP):
 
 class UpdateIDP(BaseIDP):
     ...
+
+
+class PersonalInfo(BaseModel):
+    full_name: str
+    email: SomeStr
+    phone_number: SomeStr
+    phone_number_additional: SomeStr
+    from_place: SomePlace
+    current_place: SomePlace
+
+
+class BaseMigrationHistory(BaseModel):
+    idp_id: Identifier
+    migration_date: SomeDate
+    from_place_id: SomeIdentifier
+    current_place_id: SomeIdentifier
+
+
+class MigrationHistory(BaseModel):
+    id: Identifier
+    created_at: SomeDatetime

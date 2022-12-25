@@ -28,9 +28,6 @@ def upgrade():
         sa.Column("notes", sa.Text(), nullable=True),
         sa.Column("phone_number", sa.Text(), nullable=True),
         sa.Column("phone_number_additional", sa.Text(), nullable=True),
-        sa.Column("migration_date", sa.DATE(), nullable=True),
-        sa.Column("from_place_id", postgresql.UUID(as_uuid=True), nullable=True),
-        sa.Column("current_place_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("project_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("category_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("consultant_id", postgresql.UUID(as_uuid=True), nullable=True),
@@ -45,16 +42,6 @@ def upgrade():
         sa.ForeignKeyConstraint(
             ("consultant_id",),
             ["users.id"],
-            ondelete="SET NULL",
-        ),
-        sa.ForeignKeyConstraint(
-            ("current_place_id",),
-            ["places.id"],
-            ondelete="SET NULL",
-        ),
-        sa.ForeignKeyConstraint(
-            ("from_place_id",),
-            ["places.id"],
             ondelete="SET NULL",
         ),
         sa.ForeignKeyConstraint(
@@ -84,8 +71,6 @@ def upgrade():
     op.create_index(op.f("ix_people_birth_date"), "people", ["birth_date"])
     op.create_index(op.f("ix_people_category_id"), "people", ["category_id"])
     op.create_index(op.f("ix_people_consultant_id"), "people", ["consultant_id"])
-    op.create_index(op.f("is_people_current_place_id"), "people", ["current_place_id"])
-    op.create_index(op.f("ix_people_from_place_id"), "people", ["from_place_id"])
     op.create_index(op.f("ix_people_project_id"), "people", ["project_id"])
     op.create_index(op.f("ix_people_tags"), "people", ["tags"])
 

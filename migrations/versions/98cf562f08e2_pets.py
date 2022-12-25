@@ -28,7 +28,7 @@ def upgrade():
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(
             ("owner_id",),
-            ["users.id"],
+            ["people.id"],
             ondelete="SET NULL",
         ),
     )

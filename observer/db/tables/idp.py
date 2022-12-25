@@ -35,10 +35,6 @@ people = Table(
     Column("notes", Text(), nullable=True),
     Column("phone_number", Text(), nullable=True),
     Column("phone_number_additional", Text(), nullable=True),
-    Column("migration_date", DATE(), nullable=True),
-    # Location info
-    Column("from_place_id", UUID(as_uuid=True), ForeignKey("places.id", ondelete="SET NULL"), nullable=True),
-    Column("current_place_id", UUID(as_uuid=True), ForeignKey("places.id", ondelete="SET NULL"), nullable=True),
     Column("project_id", UUID(as_uuid=True), ForeignKey("projects.id", ondelete="SET NULL"), nullable=True),
     Column("category_id", UUID(as_uuid=True), ForeignKey("categories.id", ondelete="SET NULL"), nullable=True),
     # User's id who registered
@@ -67,8 +63,6 @@ people = Table(
     Index("ix_people_birth_date", "birth_date"),
     Index("ix_people_category_id", "category_id"),
     Index("ix_people_consultant_id", "consultant_id"),
-    Index("ix_people_current_place_id", "current_place_id"),
-    Index("ix_people_from_place_id", "from_place_id"),
     Index("ix_people_project_id", "project_id"),
     Index("ix_people_tags", "tags"),
 )

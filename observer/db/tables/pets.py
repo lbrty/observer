@@ -12,7 +12,7 @@ pets = Table(
     Column("status", Text(), nullable=False),
     Column("registration_id", Text(), nullable=True),  # registration document id
     Column("created_at", DateTime(timezone=True), server_default=func.now(), nullable=True),
-    Column("owner_id", UUID(as_uuid=True), ForeignKey("people.id"), nullable=True),
+    Column("owner_id", UUID(as_uuid=True), ForeignKey("people.id", ondelete="SET NULL"), nullable=True),
     Index("ix_pets_name", text("lower(name)")),
     Index("ix_pets_status", text("status")),
     Index("ix_pets_registration_id", text("status")),

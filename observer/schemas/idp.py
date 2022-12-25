@@ -12,6 +12,7 @@ from observer.common.types import (
     SomeStr,
 )
 from observer.schemas.base import SchemaBase
+from observer.schemas.world import PlaceResponse
 
 
 class BaseCategory(SchemaBase):
@@ -63,3 +64,12 @@ class IDPResponse(BaseIDP):
     consultant_id: SomeIdentifier = Field(..., description="Consultant ID")
     created_at: SomeDatetime = Field(None, description="Creation date")
     updated_at: SomeDatetime = Field(None, description="Update date")
+
+
+class PersonalInfoResponse(SchemaBase):
+    full_name: str = Field(None, description="Full name")
+    email: SomeStr = Field(None, description="Contact email")
+    phone_number: SomeStr = Field(None, description="Primary phone number")
+    phone_number_additional: SomeStr = Field(None, description="Displaced person ID")
+    from_place: PlaceResponse | None = Field(None, description="Place of origin city/town/village")
+    current_place: PlaceResponse | None = Field(None, description="Current or destination city/town/village")
