@@ -697,6 +697,66 @@
         }
       }
     },
+    "/idp/people/{idp_id}": {
+      "get": {
+        "tags": [
+          "idp",
+          "people"
+        ],
+        "summary": "Get Idp",
+        "operationId": "get_idp_idp_people__idp_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Idp Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "idp_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IDPResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
