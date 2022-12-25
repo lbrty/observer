@@ -1,6 +1,7 @@
 from observer.common.types import Identifier, PlaceType
 from observer.context import Context
 from observer.entities.idp import Category, NewCategory
+from observer.entities.permissions import NewPermission, Permission
 from observer.entities.projects import NewProject, Project
 from observer.entities.world import (
     Country,
@@ -15,6 +16,11 @@ from observer.entities.world import (
 async def create_project(ctx: Context, name: str, description: str) -> Project:
     project = await ctx.projects_repo.create_project(NewProject(name=name, description=description))
     return project
+
+
+async def create_permission(ctx: Context, new_permission: NewPermission) -> Permission:
+    permission = await ctx.permissions_repo.create_permission(new_permission)
+    return permission
 
 
 async def create_category(ctx: Context, name: str) -> Category:
