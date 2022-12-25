@@ -3,10 +3,16 @@ from typing import List
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
 from starlette import status
 
+from observer.common.permissions import assert_viewable, assert_writable
 from observer.common.types import Identifier, Role, SomeStr
 from observer.components.audit import Props, Tracked
-from observer.components.auth import RequiresRoles
-from observer.components.services import audit_service, category_service, idp_service
+from observer.components.auth import RequiresRoles, authenticated_user
+from observer.components.services import (
+    audit_service,
+    category_service,
+    idp_service,
+    permissions_service,
+)
 from observer.entities.base import SomeUser
 from observer.schemas.idp import (
     CategoryResponse,
@@ -18,6 +24,7 @@ from observer.schemas.idp import (
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.categories import CategoryServiceInterface
 from observer.services.idp import IDPServiceInterface
+from observer.services.permissions import PermissionsServiceInterface
 
 router = APIRouter(prefix="/idp")
 
@@ -166,11 +173,10 @@ async def delete_category(
 async def create_idp(
     tasks: BackgroundTasks,
     new_idp: NewIDPRequest,
-    user: SomeUser = Depends(
-        RequiresRoles([Role.admin, Role.consultant]),
-    ),
+    user: SomeUser = Depends(authenticated_user),
     audits: AuditServiceInterface = Depends(audit_service),
     idp: IDPServiceInterface = Depends(idp_service),
+    permissions: PermissionsServiceInterface = Depends(permissions_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=create_idp,action=create:idp",
@@ -179,8 +185,31 @@ async def create_idp(
         use_cache=False,
     ),
 ) -> IDPResponse:
+    permission = await permissions.find(new_idp.project_id, user.id)
+    if user.role != Role.admin:
+        assert_writable(permission)
+
     person = await idp.create_idp(new_idp)
     audit_log = props.new_event(f"person_id={person.id},ref_id={user.ref_id}", None)
     tasks.add_task(audits.add_event, audit_log)
-    # import ipdb;ipdb.set_trace()
     return IDPResponse(**person.dict())
+
+
+@router.get(
+    "/people/{idp_id}",
+    response_model=IDPResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["idp", "people"],
+)
+async def get_idp(
+    idp_id: Identifier,
+    user: SomeUser = Depends(authenticated_user),
+    idp: IDPServiceInterface = Depends(idp_service),
+    permissions: PermissionsServiceInterface = Depends(permissions_service),
+) -> IDPResponse:
+    idp_record = await idp.get_idp(idp_id)
+    permission = await permissions.find(idp_record.project_id, user.id)
+    if user.role != Role.admin:
+        assert_viewable(permission)
+
+    return IDPResponse(**idp_record.dict())

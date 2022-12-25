@@ -2,7 +2,7 @@ from typing import List, Protocol
 
 from observer.common.types import Identifier
 from observer.entities.base import SomePermission
-from observer.entities.permissions import Permission
+from observer.entities.permissions import NewPermission, Permission, UpdatePermission
 from observer.repositories.permissions import PermissionsRepositoryInterface
 from observer.schemas.permissions import (
     NewPermissionRequest,
@@ -67,11 +67,11 @@ class PermissionsService(PermissionsServiceInterface):
         return await self.repo.find(project_id, user_id)
 
     async def create_permission(self, new_permission: NewPermissionRequest) -> Permission:
-        permission = await self.repo.create_permission(new_permission)
+        permission = await self.repo.create_permission(NewPermission(**new_permission.dict()))
         return permission
 
     async def update_permission(self, permission_id: Identifier, updates: UpdatePermissionRequest) -> Permission:
-        permission = await self.repo.update_permission(permission_id, updates)
+        permission = await self.repo.update_permission(permission_id, UpdatePermission(**updates.dict()))
         return permission
 
     @staticmethod
