@@ -1,16 +1,9 @@
-from typing import Optional
+from datetime import date, datetime
+from typing import Optional, List
 
 from pydantic import BaseModel
 
-from observer.common.types import (
-    DisplacedPersonStatus,
-    Identifier,
-    SomeDate,
-    SomeDatetime,
-    SomeIdentifier,
-    SomeList,
-    SomeStr,
-)
+from observer.common.types import DisplacedPersonStatus, Identifier
 from observer.entities.world import Place
 
 
@@ -32,24 +25,24 @@ class UpdateCategory(BaseCategory):
 
 class BaseIDP(BaseModel):
     status: Optional[DisplacedPersonStatus]
-    external_id: SomeStr
-    reference_id: SomeStr
-    email: SomeStr
+    external_id: Optional[str]
+    reference_id: Optional[str]
+    email: Optional[str]
     full_name: str
-    birth_date: SomeDate
-    notes: SomeStr
-    phone_number: SomeStr
-    phone_number_additional: SomeStr
-    project_id: SomeIdentifier
-    category_id: SomeIdentifier
-    tags: SomeList
+    birth_date: Optional[date]
+    notes: Optional[str]
+    phone_number: Optional[str]
+    phone_number_additional: Optional[str]
+    project_id: Optional[Identifier]
+    category_id: Optional[Identifier]
+    tags: Optional[List[str]]
 
 
 class IDP(BaseIDP):
     id: Identifier
-    consultant_id: SomeIdentifier
-    created_at: SomeDatetime
-    updated_at: SomeDatetime
+    consultant_id: Optional[Identifier]
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
 
 class NewIDP(BaseIDP):
@@ -71,11 +64,11 @@ class PersonalInfo(BaseModel):
 
 class BaseMigrationHistory(BaseModel):
     idp_id: Identifier
-    migration_date: SomeDate
-    from_place_id: SomeIdentifier
-    current_place_id: SomeIdentifier
+    migration_date: Optional[date]
+    from_place_id: Optional[Identifier]
+    current_place_id: Optional[Identifier]
 
 
 class MigrationHistory(BaseModel):
     id: Identifier
-    created_at: SomeDatetime
+    created_at: Optional[datetime]
