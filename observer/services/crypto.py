@@ -72,7 +72,7 @@ class CryptoService(CryptoServiceInterface):
             if key.hash == key_hash:
                 return key
 
-        raise InternalError(message=f"private key with hash={key_hash} not found")
+        raise InternalError(message=f"Private key with hash={key_hash} not found")
 
     # AES encryption and decryption is based on official docs and recommendations
     # https://cryptography.io/en/latest/hazmat/primitives/symmetric-encryption/
