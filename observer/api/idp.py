@@ -3,7 +3,11 @@ from typing import List
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
 from starlette import status
 
-from observer.common.permissions import assert_viewable, assert_writable
+from observer.common.permissions import (
+    assert_updatable,
+    assert_viewable,
+    assert_writable,
+)
 from observer.common.types import Identifier, Role, SomeStr
 from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles, authenticated_user
@@ -19,6 +23,7 @@ from observer.schemas.idp import (
     IDPResponse,
     NewCategoryRequest,
     NewIDPRequest,
+    PersonalInfoResponse,
     UpdateCategoryRequest,
 )
 from observer.services.audit_logs import AuditServiceInterface
@@ -186,8 +191,7 @@ async def create_idp(
     ),
 ) -> IDPResponse:
     permission = await permissions.find(new_idp.project_id, user.id)
-    if user.role != Role.admin:
-        assert_writable(permission)
+    assert_writable(user, permission)
 
     person = await idp.create_idp(new_idp)
     audit_log = props.new_event(f"person_id={person.id},ref_id={user.ref_id}", None)
@@ -209,7 +213,41 @@ async def get_idp(
 ) -> IDPResponse:
     idp_record = await idp.get_idp(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
-    if user.role != Role.admin:
-        assert_viewable(permission)
+    assert_viewable(user, permission)
+    return IDPResponse(**idp_record.dict())
 
+
+@router.get(
+    "/people/{idp_id}/personal-info",
+    response_model=PersonalInfoResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["idp", "people"],
+)
+async def get_idp(
+    idp_id: Identifier,
+    user: SomeUser = Depends(authenticated_user),
+    idp: IDPServiceInterface = Depends(idp_service),
+    permissions: PermissionsServiceInterface = Depends(permissions_service),
+) -> PersonalInfoResponse:
+    idp_record = await idp.get_idp(idp_id)
+    permission = await permissions.find(idp_record.project_id, user.id)
+    assert_viewable(user, permission)
+    return PersonalInfoResponse(**idp_record.dict())
+
+
+@router.put(
+    "/people/{idp_id}",
+    response_model=IDPResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["idp", "people"],
+)
+async def get_idp(
+    idp_id: Identifier,
+    user: SomeUser = Depends(authenticated_user),
+    idp: IDPServiceInterface = Depends(idp_service),
+    permissions: PermissionsServiceInterface = Depends(permissions_service),
+) -> IDPResponse:
+    idp_record = await idp.get_idp(idp_id)
+    permission = await permissions.find(idp_record.project_id, user.id)
+    assert_updatable(user, permission)
     return IDPResponse(**idp_record.dict())
