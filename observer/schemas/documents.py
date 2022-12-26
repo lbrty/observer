@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -21,4 +22,4 @@ class Document(BaseDocument):
 
 class DocumentsResponse(BaseModel):
     total: int = Field(..., description="Total count of documents")
-    items: list[Document] = Field(..., description="List of documents")
+    items: List[Document] = Field(..., description="List of documents")
