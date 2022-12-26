@@ -8,7 +8,12 @@ from observer.schemas.idp import NewIDPRequest
 from tests.helpers.crud import create_permission, create_project
 
 
-async def test_create_idp_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
+async def test_create_idp_works_as_expected(
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
     project = await create_project(app_context, "test project", "test description")
     await create_permission(
         app_context,
@@ -38,7 +43,12 @@ async def test_create_idp_works_as_expected(authorized_client, ensure_db, app_co
     assert resp.status_code == status.HTTP_201_CREATED
 
 
-async def test_get_idp_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
+async def test_get_idp_works_as_expected(
+    authorized_client,
+    ensure_db,
+    app_context,
+    consultant_user,
+):
     project = await create_project(app_context, "test project", "test description")
     await create_permission(
         app_context,
@@ -77,7 +87,11 @@ async def test_get_idp_works_as_expected(authorized_client, ensure_db, app_conte
     assert resp.json() == resp_json
 
 
-async def test_get_idp_personal_info_works_as_expected(authorized_client, app_context, consultant_user):
+async def test_get_idp_personal_info_works_as_expected(
+    authorized_client,
+    app_context,
+    consultant_user,
+):
     project = await create_project(app_context, "test project", "test description")
     await create_permission(
         app_context,
