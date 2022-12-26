@@ -755,6 +755,124 @@
             }
           }
         }
+      },
+      "put": {
+        "tags": [
+          "idp",
+          "people"
+        ],
+        "summary": "Get Idp",
+        "operationId": "get_idp_idp_people__idp_id__put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Idp Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "idp_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IDPResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/idp/people/{idp_id}/personal-info": {
+      "get": {
+        "tags": [
+          "idp",
+          "people"
+        ],
+        "summary": "Get Idp",
+        "operationId": "get_idp_idp_people__idp_id__personal_info_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Idp Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "idp_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonalInfoResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/health": {
@@ -3403,6 +3521,50 @@
               }
             ],
             "description": "User can create records"
+          }
+        }
+      },
+      "PersonalInfoResponse": {
+        "title": "PersonalInfoResponse",
+        "type": "object",
+        "properties": {
+          "full_name": {
+            "title": "Full Name",
+            "type": "string",
+            "description": "Full name"
+          },
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "Contact email"
+          },
+          "phone_number": {
+            "title": "Phone Number",
+            "type": "string",
+            "description": "Primary phone number"
+          },
+          "phone_number_additional": {
+            "title": "Phone Number Additional",
+            "type": "string",
+            "description": "Displaced person ID"
+          },
+          "from_place": {
+            "title": "From Place",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlaceResponse"
+              }
+            ],
+            "description": "Place of origin city/town/village"
+          },
+          "current_place": {
+            "title": "Current Place",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlaceResponse"
+              }
+            ],
+            "description": "Current or destination city/town/village"
           }
         }
       },
