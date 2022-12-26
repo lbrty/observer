@@ -9,9 +9,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.hashes import SHA256
 from structlog import get_logger
 
-from observer.api.exceptions import InternalError
 from observer.common.types import SomeStr
-from observer.schemas.crypto import PrivateKey
 from observer.services.keys import Keychain
 
 logger = get_logger(service="crypto")
@@ -60,19 +58,12 @@ class CryptoService(CryptoServiceInterface):
         )
 
     async def encrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
-        key = await self.find_key(key_hash)
+        key = await self.keychain.find(key_hash)
         return base64.b64encode(key.private_key.public_key().encrypt(data, self.padding))
 
     async def decrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
-        key = await self.find_key(key_hash)
+        key = await self.keychain.find(key_hash)
         return key.private_key.decrypt(base64.b64decode(data), self.padding)
-
-    async def find_key(self, key_hash: SomeStr) -> PrivateKey:
-        for key in self.keychain.keys:
-            if key.hash == key_hash:
-                return key
-
-        raise InternalError(message=f"Private key with hash={key_hash} not found")
 
     # AES encryption and decryption is based on official docs and recommendations
     # https://cryptography.io/en/latest/hazmat/primitives/symmetric-encryption/

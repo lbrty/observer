@@ -6,6 +6,7 @@ from typing import List, Protocol
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from structlog import get_logger
 
+from observer.api.exceptions import InternalError
 from observer.schemas.crypto import KeyLoaderTypes, PrivateKey
 
 logger = get_logger(service="keys")
@@ -19,10 +20,7 @@ class Keychain(Protocol):
         raise NotImplementedError
 
     async def find(self, key_hash: str) -> PrivateKey | None:
-        for key in self.keys:
-            if key.hash == key_hash:
-                return key
-        return None
+        raise NotImplementedError
 
 
 class FS(Keychain):
@@ -49,12 +47,26 @@ class FS(Keychain):
         sorted(keys, key=lambda item: item[0])
         self.keys = [item[1] for item in keys]
 
+    async def find(self, key_hash: str) -> PrivateKey:
+        for key in self.keys:
+            if key.hash == key_hash:
+                return key
+
+        raise InternalError(message=f"Private key with hash={key_hash} not found")
+
 
 class S3(Keychain):
     name = KeyLoaderTypes.s3
 
     async def load(self, path: str):
         pass
+
+    async def find(self, key_hash: str) -> PrivateKey:
+        for key in self.keys:
+            if key.hash == key_hash:
+                return key
+
+        raise InternalError(message=f"Private key with hash={key_hash} not found")
 
 
 class UnknownKeyLoaderError(ValueError):
