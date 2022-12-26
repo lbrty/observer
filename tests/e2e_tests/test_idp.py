@@ -67,6 +67,8 @@ async def test_get_idp_works_as_expected(authorized_client, ensure_db, app_conte
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
+    resp_json["email"] = "********"
+    resp_json["phone_number"] = "********"
     idp_id = resp_json["id"]
     resp = await authorized_client.get(f"/idp/people/{idp_id}")
     assert resp.status_code == status.HTTP_200_OK
