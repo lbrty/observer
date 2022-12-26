@@ -226,6 +226,7 @@ async def get_idp(
 @router.get(
     "/people/{idp_id}/personal-info",
     response_model=PersonalInfoResponse,
+    response_model_exclude_none=True,
     status_code=status.HTTP_200_OK,
     tags=["idp", "people"],
 )
