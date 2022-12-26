@@ -19,6 +19,7 @@ from observer.services.mailer import MailerInterface
 from observer.services.mfa import MFAServiceInterface
 from observer.services.permissions import PermissionsServiceInterface
 from observer.services.projects import ProjectsServiceInterface
+from observer.services.secrets import SecretsServiceInterface
 from observer.services.users import UsersServiceInterface
 from observer.services.world import WorldServiceInterface
 
@@ -46,6 +47,7 @@ class Context:
     category_service: Optional[CategoryServiceInterface] = None
     idp_repo: Optional[IDPRepositoryInterface] = None
     idp_service: Optional[IDPServiceInterface] = None
+    secrets_service: Optional[SecretsServiceInterface] = None
 
 
 ctx = Context()

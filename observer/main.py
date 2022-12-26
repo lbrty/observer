@@ -21,6 +21,7 @@ from observer.services.mailer import Mailer
 from observer.services.mfa import MFAService
 from observer.services.permissions import PermissionsService
 from observer.services.projects import ProjectsService
+from observer.services.secrets import SecretsService
 from observer.services.users import UsersService
 from observer.services.world import WorldService
 from observer.settings import db_settings, settings
@@ -63,6 +64,7 @@ async def on_startup():
         ctx.jwt_service,
         ctx.users_service,
     )
+    ctx.secrets_service = SecretsService(ctx.crypto_service)
     ctx.projects_repo = ProjectsRepository(ctx.db)
     ctx.projects_service = ProjectsService(ctx.projects_repo)
     ctx.permissions_repo = PermissionsRepository(ctx.db)
@@ -78,6 +80,7 @@ async def on_startup():
         ctx.category_service,
         ctx.projects_service,
         ctx.world_service,
+        ctx.secrets_service,
     )
 
 
