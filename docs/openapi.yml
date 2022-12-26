@@ -2872,7 +2872,9 @@
           "tags": {
             "title": "Tags",
             "type": "array",
-            "items": {},
+            "items": {
+              "type": "string"
+            },
             "description": "List of tags"
           },
           "id": {
@@ -3142,7 +3144,9 @@
           "tags": {
             "title": "Tags",
             "type": "array",
-            "items": {},
+            "items": {
+              "type": "string"
+            },
             "description": "List of tags"
           }
         }

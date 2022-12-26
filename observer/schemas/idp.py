@@ -1,15 +1,9 @@
-from typing import Optional
+from datetime import datetime
+from typing import List, Optional
 
 from pydantic import Field
 
-from observer.common.types import (
-    DisplacedPersonStatus,
-    Identifier,
-    SomeDatetime,
-    SomeIdentifier,
-    SomeList,
-    SomeStr,
-)
+from observer.common.types import DisplacedPersonStatus, Identifier
 from observer.schemas.base import SchemaBase
 from observer.schemas.world import PlaceResponse
 
@@ -32,16 +26,16 @@ class UpdateCategoryRequest(BaseCategory):
 
 class BaseIDP(SchemaBase):
     status: Optional[DisplacedPersonStatus] = Field(DisplacedPersonStatus.registered, description="Current status")
-    reference_id: SomeStr = Field(None, description="Reference ID, maybe some of state issued IDs etc.")
-    email: SomeStr = Field(None, description="Contact email")
+    reference_id: Optional[str] = Field(None, description="Reference ID, maybe some of state issued IDs etc.")
+    email: Optional[str] = Field(None, description="Contact email")
     full_name: str = Field(None, description="Full name")
-    birth_date: SomeDatetime = Field(None, description="Birth date")
-    notes: SomeStr = Field(None, description="Additional notes")
-    phone_number: SomeStr = Field(None, description="Primary phone number")
-    phone_number_additional: SomeStr = Field(None, description="Displaced person ID")
-    project_id: SomeIdentifier = Field(None, description="Related project ID")
-    category_id: SomeIdentifier = Field(None, description="Vulnerability category ID")
-    tags: SomeList = Field(None, description="List of tags")
+    birth_date: Optional[datetime] = Field(None, description="Birth date")
+    notes: Optional[str] = Field(None, description="Additional notes")
+    phone_number: Optional[str] = Field(None, description="Primary phone number")
+    phone_number_additional: Optional[str] = Field(None, description="Displaced person ID")
+    project_id: Optional[Identifier] = Field(None, description="Related project ID")
+    category_id: Optional[Identifier] = Field(None, description="Vulnerability category ID")
+    tags: Optional[List[str]] = Field(None, description="List of tags")
 
 
 class NewIDPRequest(BaseIDP):
@@ -54,17 +48,17 @@ class UpdateIDPRequest(BaseIDP):
 
 class IDPResponse(BaseIDP):
     id: Identifier = Field(..., description="Displaced person ID")
-    external_id: SomeStr = Field(None, description="External identifier")
+    external_id: Optional[str] = Field(None, description="External identifier")
     # User's id who registered
-    consultant_id: SomeIdentifier = Field(..., description="Consultant ID")
-    created_at: SomeDatetime = Field(None, description="Creation date")
-    updated_at: SomeDatetime = Field(None, description="Update date")
+    consultant_id: Optional[Identifier] = Field(..., description="Consultant ID")
+    created_at: Optional[datetime] = Field(None, description="Creation date")
+    updated_at: Optional[datetime] = Field(None, description="Update date")
 
 
 class PersonalInfoResponse(SchemaBase):
     full_name: str = Field(None, description="Full name")
-    email: SomeStr = Field(None, description="Contact email")
-    phone_number: SomeStr = Field(None, description="Primary phone number")
-    phone_number_additional: SomeStr = Field(None, description="Displaced person ID")
-    from_place: PlaceResponse | None = Field(None, description="Place of origin city/town/village")
-    current_place: PlaceResponse | None = Field(None, description="Current or destination city/town/village")
+    email: Optional[str] = Field(None, description="Contact email")
+    phone_number: Optional[str] = Field(None, description="Primary phone number")
+    phone_number_additional: Optional[str] = Field(None, description="Displaced person ID")
+    from_place: Optional[PlaceResponse] = Field(None, description="Place of origin city/town/village")
+    current_place: Optional[PlaceResponse] = Field(None, description="Current or destination city/town/village")
