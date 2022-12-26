@@ -5,15 +5,17 @@ from sqlalchemy import insert, select
 from observer.common.types import Identifier
 from observer.db import Database
 from observer.db.tables.idp import people
-from observer.entities.base import SomeIDP
-from observer.entities.idp import IDP, NewIDP
+from observer.entities.idp import IDP, NewIDP, UpdateIDP
 
 
 class IDPRepositoryInterface(Protocol):
     async def create_idp(self, new_idp: NewIDP) -> IDP:
         raise NotImplementedError
 
-    async def get_idp(self, idp_id: Identifier) -> SomeIDP:
+    async def get_idp(self, idp_id: Identifier) -> IDP | None:
+        raise NotImplementedError
+
+    async def update_idp(self, idp_id: Identifier, updates: UpdateIDP) -> IDP:
         raise NotImplementedError
 
 
@@ -26,9 +28,12 @@ class IDPRepository(IDPRepositoryInterface):
         result = await self.db.fetchone(query)
         return IDP(**result)
 
-    async def get_idp(self, idp_id: Identifier) -> SomeIDP:
+    async def get_idp(self, idp_id: Identifier) -> IDP | None:
         query = select(people).where(people.c.id == idp_id)
         if result := await self.db.fetchone(query):
             return IDP(**result)
 
         return None
+
+    async def update_idp(self, idp_id: Identifier, updates: UpdateIDP) -> IDP:
+        raise NotImplementedError
