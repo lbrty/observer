@@ -5,6 +5,7 @@ from starlette import status
 
 from observer.common.permissions import (
     assert_can_see_private_info,
+    assert_deletable,
     assert_updatable,
     assert_viewable,
     assert_writable,
@@ -257,7 +258,7 @@ async def get_personal_info(
     status_code=status.HTTP_200_OK,
     tags=["idp", "people"],
 )
-async def get_idp(
+async def update_idp(
     idp_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
     idp: IDPServiceInterface = Depends(idp_service),
@@ -267,3 +268,20 @@ async def get_idp(
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_updatable(user, permission)
     return IDPResponse(**idp_record.dict())
+
+
+@router.delete(
+    "/people/{idp_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=["idp", "people"],
+)
+async def delete_idp(
+    idp_id: Identifier,
+    user: SomeUser = Depends(authenticated_user),
+    idp: IDPServiceInterface = Depends(idp_service),
+    permissions: PermissionsServiceInterface = Depends(permissions_service),
+) -> Response:
+    idp_record = await idp.get_idp(idp_id)
+    permission = await permissions.find(idp_record.project_id, user.id)
+    assert_deletable(user, permission)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

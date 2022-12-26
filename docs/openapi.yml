@@ -761,8 +761,8 @@
           "idp",
           "people"
         ],
-        "summary": "Get Idp",
-        "operationId": "get_idp_idp_people__idp_id__put",
+        "summary": "Update Idp",
+        "operationId": "update_idp_idp_people__idp_id__put",
         "parameters": [
           {
             "required": true,
@@ -801,6 +801,57 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "idp",
+          "people"
+        ],
+        "summary": "Delete Idp",
+        "operationId": "delete_idp_idp_people__idp_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Idp Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "idp_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
