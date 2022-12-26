@@ -10,6 +10,7 @@ from observer.services.keys import Keychain
 from observer.services.mailer import MailerInterface
 from observer.services.permissions import PermissionsServiceInterface
 from observer.services.projects import ProjectsServiceInterface
+from observer.services.secrets import SecretsServiceInterface
 from observer.services.users import UsersServiceInterface
 from observer.services.world import WorldServiceInterface
 
@@ -52,6 +53,13 @@ async def jwt_service() -> JWTService:
 async def crypto_service() -> CryptoServiceInterface:
     if ctx.crypto_service:
         return ctx.crypto_service
+
+    raise RuntimeError("CryptoService is None")
+
+
+async def secrets_service() -> SecretsServiceInterface:
+    if ctx.secrets_service:
+        return ctx.secrets_service
 
     raise RuntimeError("CryptoService is None")
 

@@ -44,7 +44,7 @@ class IDPService(IDPServiceInterface):
         categories: CategoryServiceInterface,
         projects: ProjectsServiceInterface,
         world: WorldServiceInterface,
-        secrets: SecretsServiceInterface
+        secrets: SecretsServiceInterface,
     ):
         self.repo = idp_repository
         self.crypto_service = crypto_service

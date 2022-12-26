@@ -1,6 +1,6 @@
 from typing import IO, Any, Protocol
 
-from observer.entities.idp import PersonalInfo
+from observer.entities.idp import IDP, PersonalInfo
 from observer.services.crypto import CryptoServiceInterface
 
 
@@ -19,6 +19,18 @@ class SecretsServiceInterface(Protocol):
 
     async def decrypt_document(self, secret: str, stream: IO[Any]) -> bytes:
         raise NotImplementedError
+
+    async def anonymize_idp(self, idp: IDP) -> IDP:
+        if idp.email:
+            idp.email = "*" * 8
+
+        if idp.phone_number:
+            idp.phone_number = "*" * 8
+
+        if idp.phone_number_additional:
+            idp.phone_number_additional = "*" * 8
+
+        return idp
 
 
 class SecretsService(SecretsServiceInterface):

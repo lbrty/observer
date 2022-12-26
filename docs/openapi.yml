@@ -821,8 +821,8 @@
           "idp",
           "people"
         ],
-        "summary": "Get Idp",
-        "operationId": "get_idp_idp_people__idp_id__personal_info_get",
+        "summary": "Get Personal Info",
+        "operationId": "get_personal_info_idp_people__idp_id__personal_info_get",
         "parameters": [
           {
             "required": true,
@@ -2843,38 +2843,6 @@
             "type": "string",
             "description": "Displaced person ID"
           },
-          "migration_date": {
-            "title": "Migration Date",
-            "type": "string",
-            "description": "Date when person has moved",
-            "format": "date"
-          },
-          "from_place_id": {
-            "title": "From Place Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Place of origin city/town/village"
-          },
-          "current_place_id": {
-            "title": "Current Place Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Current or destination city/town/village"
-          },
           "project_id": {
             "title": "Project Id",
             "anyOf": [
@@ -3144,38 +3112,6 @@
             "title": "Phone Number Additional",
             "type": "string",
             "description": "Displaced person ID"
-          },
-          "migration_date": {
-            "title": "Migration Date",
-            "type": "string",
-            "description": "Date when person has moved",
-            "format": "date"
-          },
-          "from_place_id": {
-            "title": "From Place Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Place of origin city/town/village"
-          },
-          "current_place_id": {
-            "title": "Current Place Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Current or destination city/town/village"
           },
           "project_id": {
             "title": "Project Id",

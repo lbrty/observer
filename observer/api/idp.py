@@ -4,6 +4,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
 from starlette import status
 
 from observer.common.permissions import (
+    assert_can_see_private_info,
     assert_updatable,
     assert_viewable,
     assert_writable,
@@ -16,8 +17,10 @@ from observer.components.services import (
     category_service,
     idp_service,
     permissions_service,
+    secrets_service,
 )
 from observer.entities.base import SomeUser
+from observer.entities.idp import PersonalInfo
 from observer.schemas.idp import (
     CategoryResponse,
     IDPResponse,
@@ -30,6 +33,7 @@ from observer.services.audit_logs import AuditServiceInterface
 from observer.services.categories import CategoryServiceInterface
 from observer.services.idp import IDPServiceInterface
 from observer.services.permissions import PermissionsServiceInterface
+from observer.services.secrets import SecretsServiceInterface
 
 router = APIRouter(prefix="/idp")
 
@@ -210,10 +214,12 @@ async def get_idp(
     user: SomeUser = Depends(authenticated_user),
     idp: IDPServiceInterface = Depends(idp_service),
     permissions: PermissionsServiceInterface = Depends(permissions_service),
+    secrets: SecretsServiceInterface = Depends(secrets_service),
 ) -> IDPResponse:
     idp_record = await idp.get_idp(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_viewable(user, permission)
+    idp_record = await secrets.anonymize_idp(idp_record)
     return IDPResponse(**idp_record.dict())
 
 
@@ -223,16 +229,25 @@ async def get_idp(
     status_code=status.HTTP_200_OK,
     tags=["idp", "people"],
 )
-async def get_idp(
+async def get_personal_info(
     idp_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
     idp: IDPServiceInterface = Depends(idp_service),
     permissions: PermissionsServiceInterface = Depends(permissions_service),
+    secrets: SecretsServiceInterface = Depends(secrets_service),
 ) -> PersonalInfoResponse:
     idp_record = await idp.get_idp(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
-    assert_viewable(user, permission)
-    return PersonalInfoResponse(**idp_record.dict())
+    assert_can_see_private_info(user, permission)
+    pi = await secrets.decrypt_personal_info(
+        PersonalInfo(
+            email=idp_record.email,
+            phone_number=idp_record.phone_number,
+            phone_number_additional=idp_record.phone_number_additional,
+        ),
+    )
+    pi.full_name = idp_record.full_name
+    return PersonalInfoResponse(**pi.dict())
 
 
 @router.put(

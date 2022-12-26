@@ -5,7 +5,6 @@ from pydantic import Field
 from observer.common.types import (
     DisplacedPersonStatus,
     Identifier,
-    SomeDate,
     SomeDatetime,
     SomeIdentifier,
     SomeList,
@@ -40,10 +39,6 @@ class BaseIDP(SchemaBase):
     notes: SomeStr = Field(None, description="Additional notes")
     phone_number: SomeStr = Field(None, description="Primary phone number")
     phone_number_additional: SomeStr = Field(None, description="Displaced person ID")
-    migration_date: SomeDate = Field(None, description="Date when person has moved")
-    # Location info
-    from_place_id: SomeIdentifier = Field(None, description="Place of origin city/town/village")
-    current_place_id: SomeIdentifier = Field(None, description="Current or destination city/town/village")
     project_id: SomeIdentifier = Field(None, description="Related project ID")
     category_id: SomeIdentifier = Field(None, description="Vulnerability category ID")
     tags: SomeList = Field(None, description="List of tags")
