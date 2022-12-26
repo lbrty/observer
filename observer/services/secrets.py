@@ -30,28 +30,29 @@ class SecretsService(SecretsServiceInterface):
 
     async def encrypt_personal_info(self, pi: PersonalInfo) -> PersonalInfo:
         key_hash = self.crypto_service.keychain.keys[0].hash
+        personal_info = PersonalInfo()
         if pi.email:
             encrypted_email = await self.crypto_service.encrypt(
                 key_hash,
                 pi.email.encode(),
             )
-            pi.email = f"{key_hash}:{encrypted_email.decode()}"
+            personal_info.email = f"{key_hash}:{encrypted_email.decode()}"
 
         if pi.phone_number and pi.phone_number.strip():
             encrypted_phone_number = await self.crypto_service.encrypt(
                 key_hash,
                 pi.phone_number.encode(),
             )
-            pi.phone_number = f"{key_hash}:{encrypted_phone_number.decode()}"
+            personal_info.phone_number = f"{key_hash}:{encrypted_phone_number.decode()}"
 
         if pi.phone_number_additional and pi.phone_number_additional.strip():
             encrypted_phone_number = await self.crypto_service.encrypt(
                 key_hash,
                 pi.phone_number_additional.encode(),
             )
-            pi.phone_number_additional = f"{key_hash}:{encrypted_phone_number.decode()}"
+            personal_info.phone_number_additional = f"{key_hash}:{encrypted_phone_number.decode()}"
 
-        return pi
+        return personal_info
 
     async def decrypt_personal_info(self, pi: PersonalInfo) -> PersonalInfo:
         if ":" in str(pi.email):

@@ -55,34 +55,22 @@ class IDPService(IDPServiceInterface):
 
     async def create_idp(self, new_idp: NewIDPRequest) -> IDP:
         new_idp = NewIDP(**new_idp.dict())
-        key_hash = self.crypto_service.keychain.keys[0].hash
         if new_idp.project_id:
             await self.projects_service.get_by_id(new_idp.project_id)
 
         if new_idp.category_id:
             await self.categories_service.get_category(new_idp.category_id)
 
-        if new_idp.email:
-            encrypted_email = await self.crypto_service.encrypt(
-                key_hash,
-                new_idp.email.encode(),
-            )
-            new_idp.email = f"{key_hash}:{encrypted_email.decode()}"
+        pi = PersonalInfo(
+            email=new_idp.email,
+            phone_number=new_idp.phone_number,
+            phone_number_additional=new_idp.phone_number_additional,
+        )
 
-        if new_idp.phone_number and new_idp.phone_number.strip():
-            encrypted_phone_number = await self.crypto_service.encrypt(
-                key_hash,
-                new_idp.phone_number.encode(),
-            )
-            new_idp.phone_number = f"{key_hash}:{encrypted_phone_number.decode()}"
-
-        if new_idp.phone_number_additional and new_idp.phone_number_additional.strip():
-            encrypted_phone_number = await self.crypto_service.encrypt(
-                key_hash,
-                new_idp.phone_number_additional.encode(),
-            )
-            new_idp.phone_number_additional = f"{key_hash}:{encrypted_phone_number.decode()}"
-
+        pi = await self.secrets_service.encrypt_personal_info(pi)
+        new_idp.email = pi.email
+        new_idp.phone_number = pi.phone_number
+        new_idp.phone_number_additional = pi.phone_number_additional
         return await self.repo.create_idp(new_idp)
 
     async def get_idp(self, idp_id: Identifier) -> IDP:

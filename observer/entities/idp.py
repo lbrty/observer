@@ -11,7 +11,7 @@ from observer.common.types import (
     SomeList,
     SomeStr,
 )
-from observer.entities.base import SomePlace
+from observer.entities.world import Place
 
 
 class BaseCategory(BaseModel):
@@ -47,7 +47,6 @@ class BaseIDP(BaseModel):
 
 class IDP(BaseIDP):
     id: Identifier
-    # User's id who registered
     consultant_id: SomeIdentifier
     created_at: SomeDatetime
     updated_at: SomeDatetime
@@ -62,12 +61,12 @@ class UpdateIDP(BaseIDP):
 
 
 class PersonalInfo(BaseModel):
-    full_name: str
-    email: SomeStr
-    phone_number: SomeStr
-    phone_number_additional: SomeStr
-    from_place: SomePlace
-    current_place: SomePlace
+    full_name: Optional[str]
+    email: Optional[str]
+    phone_number: Optional[str]
+    phone_number_additional: Optional[str]
+    from_place: Optional[Place]
+    current_place: Optional[Place]
 
 
 class BaseMigrationHistory(BaseModel):
