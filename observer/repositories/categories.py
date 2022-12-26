@@ -1,11 +1,10 @@
-from typing import List, Protocol
+from typing import List, Optional, Protocol
 
 from sqlalchemy import delete, insert, select, update
 
 from observer.common.types import Identifier, SomeStr
 from observer.db import Database
 from observer.db.tables.idp import categories
-from observer.entities.base import SomeCategory
 from observer.entities.idp import Category, NewCategory, UpdateCategory
 
 
@@ -16,13 +15,13 @@ class CategoryRepositoryInterface(Protocol):
     async def get_categories(self, name: SomeStr = None) -> List[Category]:
         raise NotImplementedError
 
-    async def get_category(self, category_id: Identifier) -> SomeCategory:
+    async def get_category(self, category_id: Identifier) -> Optional[Category]:
         raise NotImplementedError
 
-    async def update_category(self, category_id: Identifier, updates: UpdateCategory) -> SomeCategory:
+    async def update_category(self, category_id: Identifier, updates: UpdateCategory) -> Optional[Category]:
         raise NotImplementedError
 
-    async def delete_category(self, category_id: Identifier) -> SomeCategory:
+    async def delete_category(self, category_id: Identifier) -> Optional[Category]:
         raise NotImplementedError
 
 
@@ -45,21 +44,21 @@ class CategoryRepository(CategoryRepositoryInterface):
         rows = await self.db.fetchall(query)
         return [Category(**row) for row in rows]
 
-    async def get_category(self, category_id: Identifier) -> SomeCategory:
+    async def get_category(self, category_id: Identifier) -> Optional[Category]:
         query = select(categories).where(categories.c.id == category_id)
         if row := await self.db.fetchone(query):
             return Category(**row)
 
         return None
 
-    async def update_category(self, category_id: Identifier, updates: UpdateCategory) -> SomeCategory:
+    async def update_category(self, category_id: Identifier, updates: UpdateCategory) -> Optional[Category]:
         query = update(categories).values(**updates.dict()).where(categories.c.id == category_id).returning("*")
         if row := await self.db.fetchone(query):
             return Category(**row)
 
         return None
 
-    async def delete_category(self, category_id: Identifier) -> SomeCategory:
+    async def delete_category(self, category_id: Identifier) -> Optional[Category]:
         query = delete(categories).where(categories.c.id == category_id).returning("*")
         if row := await self.db.fetchone(query):
             return Category(**row)
