@@ -60,6 +60,7 @@ async def test_get_idp_works_as_expected(authorized_client, ensure_db, app_conte
         email="Full_Name@examples.com",
         full_name="Full Name",
         phone_number="+11111111",
+        phone_number_additional="+18181818",
         migration_date=datetime.today(),
         tags=["one", "two"],
     )
@@ -69,6 +70,7 @@ async def test_get_idp_works_as_expected(authorized_client, ensure_db, app_conte
     resp_json = resp.json()
     resp_json["email"] = "********"
     resp_json["phone_number"] = "********"
+    resp_json["phone_number_additional"] = "********"
     idp_id = resp_json["id"]
     resp = await authorized_client.get(f"/idp/people/{idp_id}")
     assert resp.status_code == status.HTTP_200_OK
