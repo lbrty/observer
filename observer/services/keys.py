@@ -18,6 +18,12 @@ class Keychain(Protocol):
     async def load(self, path: str):
         raise NotImplementedError
 
+    async def find(self, key_hash: str) -> PrivateKey | None:
+        for key in self.keys:
+            if key.hash == key_hash:
+                return key
+        return None
+
 
 class FS(Keychain):
     name = KeyLoaderTypes.fs
