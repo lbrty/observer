@@ -5,6 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from starlette import status
 
 from observer.common.types import Identifier, PlaceFilters, Role, StateFilters
+from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles, current_user
 from observer.components.filters import place_filters, state_filters
 from observer.components.services import audit_service, world_service
@@ -41,13 +42,18 @@ async def create_country(
     ),
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=create_country,action=create:country",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> CountryResponse:
-    tag = "endpoint=create_country"
     country = await world.create_country(new_country)
-    audit_log = await world.create_log(
-        f"{tag},action=create:country,country_id={country.id},ref_id={user.ref_id}",
-        None,
-        country.dict(exclude={"id"}),
+    audit_log = props.new_event(
+        f"country_id={country.id},ref_id={user.ref_id}",
+        jsonable_encoder(country.dict(exclude={"id"})),
     )
     tasks.add_task(audits.add_event, audit_log)
     return await world.country_to_response(country)
@@ -95,16 +101,23 @@ async def update_country(
     ),
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=update_country,action=update:country",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> CountryResponse:
     country = await world.get_country(country_id)
     updated_country = await world.update_country(country_id, updates)
-    tag = "endpoint=update_country"
-    audit_log = await world.create_log(
-        f"{tag},action=update:country,country_id={updated_country.id},ref_id={user.ref_id}",
-        None,
-        dict(
-            old_country=country.dict(exclude={"id"}),
-            new_country=updated_country.dict(exclude={"id"}),
+    audit_log = props.new_event(
+        f"country_id={country.id},ref_id={user.ref_id}",
+        jsonable_encoder(
+            dict(
+                old_country=country.dict(exclude={"id"}),
+                new_country=updated_country.dict(exclude={"id"}),
+            )
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -124,12 +137,17 @@ async def delete_country(
     ),
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=delete_country,action=delete:country",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> Response:
-    tag = "endpoint=delete_country"
     deleted_country = await world.delete_country(country_id)
-    audit_log = await world.create_log(
-        f"{tag},action=delete:country,country_id={deleted_country.id},ref_id={user.ref_id}",
-        None,
+    audit_log = props.new_event(
+        f"country_id={deleted_country.id},ref_id={user.ref_id}",
         None,
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -151,12 +169,17 @@ async def create_state(
     ),
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=create_state,action=create:state",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> StateResponse:
-    tag = "endpoint=create_state"
     state = await world.create_state(new_state)
-    audit_log = await world.create_log(
-        f"{tag},action=create:state,state_id={state.id},ref_id={user.ref_id}",
-        None,
+    audit_log = props.new_event(
+        f"state_id={state.id},ref_id={user.ref_id}",
         jsonable_encoder(state),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -208,13 +231,18 @@ async def update_state(
     ),
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=update_state,action=update:state",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> StateResponse:
     state = await world.get_state(state_id)
     updated_state = await world.update_state(state_id, updates)
-    tag = "endpoint=update_state"
-    audit_log = await world.create_log(
-        f"{tag},action=update:state,state_id={updated_state.id},ref_id={user.ref_id}",
-        None,
+    audit_log = props.new_event(
+        f"state_id={updated_state.id},ref_id={user.ref_id}",
         dict(
             old_state=jsonable_encoder(state),
             new_state=jsonable_encoder(updated_state),
@@ -237,12 +265,17 @@ async def delete_state(
     ),
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=delete_state,action=delete:state",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> Response:
-    tag = "endpoint=delete_state"
     deleted_state = await world.delete_state(state_id)
-    audit_log = await world.create_log(
-        f"{tag},action=delete:state,state_id={deleted_state.id},ref_id={user.ref_id}",
-        None,
+    audit_log = props.new_event(
+        f"state_id={deleted_state.id},ref_id={user.ref_id}",
         None,
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -264,12 +297,17 @@ async def create_place(
     ),
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=create_place,action=create:place",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> PlaceResponse:
-    tag = "endpoint=create_place"
     place = await world.create_place(new_place)
-    audit_log = await world.create_log(
-        f"{tag},action=create:place,place_id={place.id},ref_id={user.ref_id}",
-        None,
+    audit_log = props.new_event(
+        f"place_id={place.id},ref_id={user.ref_id}",
         jsonable_encoder(place),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -321,16 +359,21 @@ async def update_place(
     ),
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=update_place,action=update:place",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> PlaceResponse:
     await world.get_country(updates.country_id)
     await world.get_state(updates.state_id)
 
     place = await world.get_place(place_id)
     updated_place = await world.update_place(place_id, updates)
-    tag = "endpoint=update_place"
-    audit_log = await world.create_log(
-        f"{tag},action=update:place,place_id={updated_place.id},ref_id={user.ref_id}",
-        None,
+    audit_log = props.new_event(
+        f"place_id={updated_place.id},ref_id={user.ref_id}",
         dict(
             old_place=jsonable_encoder(place),
             new_place=jsonable_encoder(updated_place),
@@ -353,12 +396,17 @@ async def delete_place(
     ),
     world: WorldServiceInterface = Depends(world_service),
     audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=delete_place,action=delete:place",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> Response:
-    tag = "endpoint=delete_place"
     deleted_place = await world.delete_place(place_id)
-    audit_log = await world.create_log(
-        f"{tag},action=delete:place,place_id={deleted_place.id},ref_id={user.ref_id}",
-        None,
+    audit_log = props.new_event(
+        f"place_id={deleted_place.id},ref_id={user.ref_id}",
         None,
     )
     tasks.add_task(audits.add_event, audit_log)

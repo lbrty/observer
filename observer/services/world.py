@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta, timezone
 from typing import List, Optional, Protocol
 
 from observer.api.exceptions import NotFoundError
@@ -16,7 +15,6 @@ from observer.entities.world import (
     UpdateState,
 )
 from observer.repositories.world import WorldRepositoryInterface
-from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.world import (
     CountryResponse,
     NewCountryRequest,
@@ -104,9 +102,6 @@ class WorldServiceInterface(Protocol):
 
     @staticmethod
     async def places_to_response(place_list: List[Place]) -> List[PlaceResponse]:
-        raise NotImplementedError
-
-    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
         raise NotImplementedError
 
 
@@ -202,15 +197,3 @@ class WorldService(WorldServiceInterface):
     @staticmethod
     async def places_to_response(place_list: List[Place]) -> List[PlaceResponse]:
         return [PlaceResponse(**place.dict()) for place in place_list]
-
-    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
-        now = datetime.now(tz=timezone.utc)
-        expires_at = None
-        if expires_in:
-            expires_at = now + expires_in
-
-        return NewAuditLog(
-            ref=f"{self.tag},{ref}",
-            data=data,
-            expires_at=expires_at,
-        )
