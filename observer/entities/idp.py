@@ -50,7 +50,7 @@ class NewIDP(BaseIDP):
 
 
 class UpdateIDP(BaseIDP):
-    ...
+    full_name: Optional[str]
 
 
 class PersonalInfo(BaseModel):

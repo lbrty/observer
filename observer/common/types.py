@@ -13,6 +13,8 @@ SomeDatetime: TypeAlias = Optional[datetime]
 SomeIdentifier: TypeAlias = Optional[Identifier]
 SomeList: TypeAlias = Optional[List]
 
+EncryptedFieldValue: str = "*" * 8
+
 
 class Role(str, Enum):
     admin = "admin"

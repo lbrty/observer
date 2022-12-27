@@ -1,8 +1,8 @@
 from typing import Protocol
 
 from observer.api.exceptions import NotFoundError
-from observer.common.types import Identifier
-from observer.entities.idp import IDP, NewIDP, PersonalInfo
+from observer.common.types import EncryptedFieldValue, Identifier
+from observer.entities.idp import IDP, NewIDP, PersonalInfo, UpdateIDP
 from observer.repositories.idp import IDPRepositoryInterface
 from observer.schemas.idp import NewIDPRequest, UpdateIDPRequest
 from observer.services.categories import CategoryServiceInterface
@@ -25,9 +25,6 @@ class IDPServiceInterface(Protocol):
         raise NotImplementedError
 
     async def get_idp(self, idp_id: Identifier) -> IDP:
-        raise NotImplementedError
-
-    async def get_personal_info(self, idp_id: Identifier) -> PersonalInfo:
         raise NotImplementedError
 
     async def update_idp(self, idp_id: Identifier, updates: UpdateIDPRequest) -> IDP:
@@ -79,17 +76,36 @@ class IDPService(IDPServiceInterface):
 
         raise NotFoundError(message="IDP record not found")
 
-    async def get_personal_info(self, idp_id: Identifier) -> PersonalInfo:
-        idp = await self.get_idp(idp_id)
-        personal_info = PersonalInfo(
-            full_name=idp.full_name,
-            email=idp.email,
-            phone_number=idp.phone_number,
-            phone_number_additional=idp.phone_number_additional,
-        )
-
-        return personal_info
-
     async def update_idp(self, idp_id: Identifier, updates: UpdateIDPRequest) -> IDP:
-        idp = await self.get_idp(idp_id)
-        return idp
+        """Update IDP record
+
+        NOTES:
+            Since we return IDP records with encrypted fields which contain `********`
+            instead of real encrypted value we need to check if field does not have
+            the value above we can update these field otherwise we need to skip updating them.
+            So for this reason we initialize `PersonalInfo` instance which is then populated
+            and encrypted and later assigned to relevant `idp_updates` fields.
+        """
+        idp_updates = UpdateIDP(**updates.dict())
+        pi = PersonalInfo()
+        if updates.email != EncryptedFieldValue:
+            pi.email = updates.email
+
+        if updates.phone_number != EncryptedFieldValue:
+            pi.phone_number = updates.phone_number
+
+        if updates.phone_number_additional != EncryptedFieldValue:
+            pi.phone_number_additional = updates.phone_number_additional
+
+        pi = await self.secrets_service.encrypt_personal_info(pi)
+        if pi.email:
+            idp_updates.email = pi.email
+
+        if pi.phone_number:
+            idp_updates.phone_number = pi.phone_number
+
+        if pi.phone_number_additional:
+            idp_updates.phone_number_additional = pi.phone_number_additional
+
+        updated = await self.repo.update_idp(idp_id, idp_updates)
+        return updated

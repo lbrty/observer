@@ -791,6 +791,16 @@
             "in": "cookie"
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateIDPRequest"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -3881,6 +3891,91 @@
             "title": "Code",
             "type": "string",
             "description": "Country code"
+          }
+        }
+      },
+      "UpdateIDPRequest": {
+        "title": "UpdateIDPRequest",
+        "type": "object",
+        "properties": {
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DisplacedPersonStatus"
+              }
+            ],
+            "description": "Current status",
+            "default": "registered"
+          },
+          "reference_id": {
+            "title": "Reference Id",
+            "type": "string",
+            "description": "Reference ID, maybe some of state issued IDs etc."
+          },
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "Contact email"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string",
+            "description": "Full name"
+          },
+          "birth_date": {
+            "title": "Birth Date",
+            "type": "string",
+            "description": "Birth date",
+            "format": "date-time"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string",
+            "description": "Additional notes"
+          },
+          "phone_number": {
+            "title": "Phone Number",
+            "type": "string",
+            "description": "Primary phone number"
+          },
+          "phone_number_additional": {
+            "title": "Phone Number Additional",
+            "type": "string",
+            "description": "Displaced person ID"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Related project ID"
+          },
+          "category_id": {
+            "title": "Category Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Vulnerability category ID"
+          },
+          "tags": {
+            "title": "Tags",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of tags"
           }
         }
       },

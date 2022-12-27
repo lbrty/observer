@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
+from fastapi.encoders import jsonable_encoder
 from starlette import status
 
 from observer.common.permissions import (
@@ -29,6 +30,7 @@ from observer.schemas.idp import (
     NewIDPRequest,
     PersonalInfoResponse,
     UpdateCategoryRequest,
+    UpdateIDPRequest,
 )
 from observer.services.audit_logs import AuditServiceInterface
 from observer.services.categories import CategoryServiceInterface
@@ -259,15 +261,36 @@ async def get_personal_info(
     tags=["idp", "people"],
 )
 async def update_idp(
+    tasks: BackgroundTasks,
     idp_id: Identifier,
+    idp_updates: UpdateIDPRequest,
     user: SomeUser = Depends(authenticated_user),
     idp: IDPServiceInterface = Depends(idp_service),
     permissions: PermissionsServiceInterface = Depends(permissions_service),
+    audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=update_idp,action=update:idp",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> IDPResponse:
     idp_record = await idp.get_idp(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_updatable(user, permission)
-    return IDPResponse(**idp_record.dict())
+    updated_idp = await idp.update_idp(idp_id, idp_updates)
+    audit_log = props.new_event(
+        f"person_id={updated_idp.id},ref_id={user.ref_id}",
+        jsonable_encoder(
+            updated_idp.dict(
+                exclude_none=True,
+                exclude={"email", "phone_number", "phone_number_additional"},
+            )
+        ),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return IDPResponse(**updated_idp.dict())
 
 
 @router.delete(
@@ -276,10 +299,19 @@ async def update_idp(
     tags=["idp", "people"],
 )
 async def delete_idp(
+    tasks: BackgroundTasks,
     idp_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
     idp: IDPServiceInterface = Depends(idp_service),
     permissions: PermissionsServiceInterface = Depends(permissions_service),
+    audits: AuditServiceInterface = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=delete_idp,action=delete:idp",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> Response:
     idp_record = await idp.get_idp(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
