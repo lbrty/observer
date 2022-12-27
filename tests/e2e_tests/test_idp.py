@@ -223,3 +223,44 @@ async def test_update_idp_works_as_expected(
         "external_id": None,
         "consultant_id": None,
     }
+
+
+async def test_delete_idp_works_as_expected(
+    authorized_client,
+    app_context,
+    consultant_user,
+):
+    project = await create_project(app_context, "test project", "test description")
+    await create_permission(
+        app_context,
+        NewPermission(
+            can_create=True,
+            can_read=True,
+            can_update=True,
+            can_delete=True,
+            can_create_projects=True,
+            can_read_documents=False,
+            can_read_personal_info=True,
+            can_invite_members=False,
+            project_id=project.id,
+            user_id=consultant_user.id,
+        ),
+    )
+    payload = NewIDPRequest(
+        project_id=project.id,
+        email="Full_Name@examples.com",
+        full_name="Full Name",
+        phone_number="+11111111",
+        phone_number_additional="+18181818",
+        tags=["one", "two"],
+    )
+    resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    resp_json = resp.json()
+    idp_id = resp_json["id"]
+    resp = await authorized_client.delete(f"/idp/people/{idp_id}")
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+
+    resp = await authorized_client.get(f"/idp/people/{idp_id}")
+    assert resp.status_code == status.HTTP_404_NOT_FOUND

@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Optional, Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import EncryptedFieldValue, Identifier
@@ -28,6 +28,9 @@ class IDPServiceInterface(Protocol):
         raise NotImplementedError
 
     async def update_idp(self, idp_id: Identifier, updates: UpdateIDPRequest) -> IDP:
+        raise NotImplementedError
+
+    async def delete_idp(self, idp_id: Identifier) -> Optional[IDP]:
         raise NotImplementedError
 
 
@@ -109,3 +112,6 @@ class IDPService(IDPServiceInterface):
 
         updated = await self.repo.update_idp(idp_id, idp_updates)
         return updated
+
+    async def delete_idp(self, idp_id: Identifier) -> Optional[IDP]:
+        return await self.repo.delete_idp(idp_id)

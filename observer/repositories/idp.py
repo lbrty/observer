@@ -1,6 +1,6 @@
-from typing import Protocol
+from typing import Optional, Protocol
 
-from sqlalchemy import insert, select, update
+from sqlalchemy import delete, insert, select, update
 
 from observer.common.types import EncryptedFieldValue, Identifier
 from observer.db import Database
@@ -12,10 +12,13 @@ class IDPRepositoryInterface(Protocol):
     async def create_idp(self, new_idp: NewIDP) -> IDP:
         raise NotImplementedError
 
-    async def get_idp(self, idp_id: Identifier) -> IDP | None:
+    async def get_idp(self, idp_id: Identifier) -> Optional[IDP]:
         raise NotImplementedError
 
     async def update_idp(self, idp_id: Identifier, updates: UpdateIDP) -> IDP:
+        raise NotImplementedError
+
+    async def delete_idp(self, idp_id: Identifier) -> Optional[IDP]:
         raise NotImplementedError
 
 
@@ -28,10 +31,11 @@ class IDPRepository(IDPRepositoryInterface):
         result = await self.db.fetchone(query)
         return IDP(**result)
 
-    async def get_idp(self, idp_id: Identifier) -> IDP | None:
+    async def get_idp(self, idp_id: Identifier) -> Optional[IDP]:
         query = select(people).where(people.c.id == idp_id)
         if result := await self.db.fetchone(query):
             return IDP(**result)
+
         return None
 
     async def update_idp(self, idp_id: Identifier, updates: UpdateIDP) -> IDP:
@@ -54,3 +58,10 @@ class IDPRepository(IDPRepositoryInterface):
         query = update(people).values(values).where(people.c.id == idp_id).returning("*")
         result = await self.db.fetchone(query)
         return IDP(**result)
+
+    async def delete_idp(self, idp_id: Identifier) -> Optional[IDP]:
+        query = delete(people).where(people.c.id == idp_id).returning("*")
+        if result := await self.db.fetchone(query):
+            return IDP(**result)
+
+        return None

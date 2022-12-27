@@ -316,4 +316,10 @@ async def delete_idp(
     idp_record = await idp.get_idp(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_deletable(user, permission)
+    deleted_idp = await idp.delete_idp(idp_id)
+    audit_log = props.new_event(
+        f"person_id={deleted_idp.id},ref_id={user.ref_id}",
+        jsonable_encoder(deleted_idp.dict(exclude_none=True)),
+    )
+    tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
