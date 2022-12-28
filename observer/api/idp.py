@@ -199,7 +199,6 @@ async def create_idp(
 ) -> IDPResponse:
     permission = await permissions.find(new_idp.project_id, user.id)
     assert_writable(user, permission)
-
     person = await idp.create_idp(new_idp)
     audit_log = props.new_event(f"person_id={person.id},ref_id={user.ref_id}", None)
     tasks.add_task(audits.add_event, audit_log)
