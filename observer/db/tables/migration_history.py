@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 
 from observer.db import metadata
 
-projects = Table(
+migration_history = Table(
     "migration_history",
     metadata,
     Column(
