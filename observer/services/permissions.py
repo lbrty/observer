@@ -3,7 +3,7 @@ from typing import List, Protocol
 from observer.common.types import Identifier
 from observer.entities.base import SomePermission
 from observer.entities.permissions import NewPermission, Permission, UpdatePermission
-from observer.repositories.permissions import PermissionsRepositoryInterface
+from observer.repositories.permissions import IPermissionsRepository
 from observer.schemas.permissions import (
     NewPermissionRequest,
     PermissionResponse,
@@ -12,9 +12,9 @@ from observer.schemas.permissions import (
 )
 
 
-class PermissionsServiceInterface(Protocol):
+class IPermissionsService(Protocol):
     tag: str
-    repo: PermissionsRepositoryInterface
+    repo: IPermissionsRepository
 
     async def get_by_id(self, permission_id: Identifier) -> SomePermission:
         raise NotImplementedError
@@ -45,10 +45,10 @@ class PermissionsServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class PermissionsService(PermissionsServiceInterface):
+class PermissionsService(IPermissionsService):
     tag: str = "source=service:permissions"
 
-    def __init__(self, repo: PermissionsRepositoryInterface):
+    def __init__(self, repo: IPermissionsRepository):
         self.repo = repo
 
     async def get_by_id(self, permission_id: Identifier) -> SomePermission:

@@ -13,7 +13,7 @@ from qrcode.image.styles.moduledrawers import RoundedModuleDrawer
 
 from observer.common.types import Identifier
 from observer.schemas.audit_logs import NewAuditLog
-from observer.services.crypto import CryptoServiceInterface
+from observer.services.crypto import ICryptoService
 
 
 @dataclass
@@ -29,9 +29,9 @@ class MFASetupResult:
     encrypted_backup_codes: str
 
 
-class MFAServiceInterface(Protocol):
+class IMFAService(Protocol):
     tag: str
-    crypto_service: CryptoServiceInterface
+    crypto_service: ICryptoService
     totp_leeway: int = 0
 
     async def into_qr(self, secret: MFASecret) -> bytes:
@@ -53,10 +53,10 @@ class MFAServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class MFAService(MFAServiceInterface):
+class MFAService(IMFAService):
     tag: str = "source=service:mfa"
 
-    def __init__(self, totp_leeway: int, crypto_service: CryptoServiceInterface):
+    def __init__(self, totp_leeway: int, crypto_service: ICryptoService):
         self.totp_leeway = totp_leeway
         self.crypto_service = crypto_service
 

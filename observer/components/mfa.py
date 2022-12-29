@@ -4,10 +4,10 @@ from observer.api.exceptions import TOTPExistsError
 from observer.components.auth import authenticated_user
 from observer.context import ctx
 from observer.entities.users import User
-from observer.services.mfa import MFAServiceInterface
+from observer.services.mfa import IMFAService
 
 
-async def mfa_service() -> MFAServiceInterface:
+async def mfa_service() -> IMFAService:
     if ctx.mfa_service:
         return ctx.mfa_service
 

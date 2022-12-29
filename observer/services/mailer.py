@@ -10,11 +10,11 @@ class EmailMessage:
     body: str
 
 
-class MailerInterface(Protocol):
+class IMailer(Protocol):
     async def send(self, message: EmailMessage):
         raise NotImplementedError
 
 
-class Mailer(MailerInterface):
+class Mailer(IMailer):
     async def send(self, message: EmailMessage):
         pass

@@ -19,7 +19,7 @@ from observer.entities.world import (
 )
 
 
-class WorldRepositoryInterface(Protocol):
+class IWorldRepository(Protocol):
     async def create_country(self, new_country: NewCountry) -> Country:
         raise NotImplementedError
 
@@ -69,7 +69,7 @@ class WorldRepositoryInterface(Protocol):
         raise NotImplementedError
 
 
-class WorldRepository(WorldRepositoryInterface):
+class WorldRepository(IWorldRepository):
     def __init__(self, db: Database):
         self.db = db
 

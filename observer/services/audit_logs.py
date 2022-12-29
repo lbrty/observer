@@ -2,11 +2,11 @@ from datetime import datetime
 from typing import List, Optional, Protocol
 
 from observer.entities.audit_logs import AuditLog
-from observer.repositories.audit_logs import AuditRepositoryInterface
+from observer.repositories.audit_logs import IAuditRepository
 from observer.schemas.audit_logs import NewAuditLog
 
 
-class AuditServiceInterface(Protocol):
+class IAuditService(Protocol):
     async def add_event(self, new_event: NewAuditLog) -> AuditLog:
         raise NotImplementedError
 
@@ -23,8 +23,8 @@ class AuditServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class AuditService(AuditServiceInterface):
-    def __init__(self, repo: AuditRepositoryInterface):
+class AuditService(IAuditService):
+    def __init__(self, repo: IAuditRepository):
         self.repo = repo
 
     async def add_event(self, new_event: NewAuditLog) -> AuditLog:

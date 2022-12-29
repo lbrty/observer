@@ -8,7 +8,7 @@ from observer.db.tables.idp import categories
 from observer.entities.idp import Category, NewCategory, UpdateCategory
 
 
-class CategoryRepositoryInterface(Protocol):
+class ICategoryRepository(Protocol):
     async def create_category(self, new_category: NewCategory) -> Category:
         raise NotImplementedError
 
@@ -25,7 +25,7 @@ class CategoryRepositoryInterface(Protocol):
         raise NotImplementedError
 
 
-class CategoryRepository(CategoryRepositoryInterface):
+class CategoryRepository(ICategoryRepository):
     def __init__(self, db: Database):
         self.db = db
 

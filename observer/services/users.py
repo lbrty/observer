@@ -19,7 +19,7 @@ from observer.entities.users import (
     User,
     UserUpdate,
 )
-from observer.repositories.users import UsersRepositoryInterface
+from observer.repositories.users import IUsersRepository
 from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.users import (
     NewUserRequest,
@@ -27,13 +27,13 @@ from observer.schemas.users import (
     UserResponse,
     UsersResponse,
 )
-from observer.services.crypto import CryptoServiceInterface
+from observer.services.crypto import ICryptoService
 from observer.settings import settings
 
 
-class UsersServiceInterface(Protocol):
+class IUsersService(Protocol):
     tag: str
-    repo: UsersRepositoryInterface
+    repo: IUsersRepository
 
     async def get_by_id(self, user_id: Identifier) -> SomeUser:
         raise NotImplementedError
@@ -86,10 +86,10 @@ class UsersServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class UsersService(UsersServiceInterface):
+class UsersService(IUsersService):
     tag: str = "source=service:user"
 
-    def __init__(self, users_repository: UsersRepositoryInterface, crypto_service: CryptoServiceInterface):
+    def __init__(self, users_repository: IUsersRepository, crypto_service: ICryptoService):
         self.repo = users_repository
         self.crypto_service = crypto_service
 

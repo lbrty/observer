@@ -21,7 +21,7 @@ class AESCipherOptions:
     iv: bytes
 
 
-class CryptoServiceInterface(Protocol):
+class ICryptoService(Protocol):
     keychain: Keychain | None
     padding: padding.OAEP | None
 
@@ -44,7 +44,7 @@ class CryptoServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class CryptoService(CryptoServiceInterface):
+class CryptoService(ICryptoService):
     def __init__(self, keychain: Keychain):
         self.keychain = keychain
 

@@ -37,10 +37,10 @@ from observer.schemas.projects import (
     ProjectResponse,
     UpdateProjectRequest,
 )
-from observer.services.audit_logs import AuditServiceInterface
-from observer.services.permissions import PermissionsServiceInterface
-from observer.services.projects import ProjectsServiceInterface
-from observer.services.users import UsersServiceInterface
+from observer.services.audit_logs import IAuditService
+from observer.services.permissions import IPermissionsService
+from observer.services.projects import IProjectsService
+from observer.services.users import IUsersService
 
 router = APIRouter(prefix="/projects")
 
@@ -52,9 +52,9 @@ async def create_project(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant]),
     ),
-    projects: ProjectsServiceInterface = Depends(projects_service),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    projects: IProjectsService = Depends(projects_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    audits: IAuditService = Depends(audit_service),
 ) -> ProjectResponse:
     new_project.owner_id = str(user.id)
     project = await projects.create_project(new_project)
@@ -110,8 +110,8 @@ async def update_project(
     updates: UpdateProjectRequest,
     user: User = Depends(current_user),
     project: Project = Depends(updatable_project),
-    projects: ProjectsServiceInterface = Depends(projects_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    projects: IProjectsService = Depends(projects_service),
+    audits: IAuditService = Depends(audit_service),
 ) -> ProjectResponse:
     tag = "endpoint=update_project"
     updated_project = await projects.update_project(project.id, updates)
@@ -136,8 +136,8 @@ async def delete_project(
     tasks: BackgroundTasks,
     user: User = Depends(current_user),
     project: Project = Depends(owned_project),
-    projects: ProjectsServiceInterface = Depends(projects_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    projects: IProjectsService = Depends(projects_service),
+    audits: IAuditService = Depends(audit_service),
 ) -> Response:
     tag = "endpoint=delete_project"
 
@@ -159,7 +159,7 @@ async def delete_project(
 )
 async def get_project_members(
     project: Project = Depends(viewable_project),
-    projects: ProjectsServiceInterface = Depends(projects_service),
+    projects: IProjectsService = Depends(projects_service),
     pages: Pagination = Depends(pagination),
 ) -> ProjectMembersResponse:
     # TODO: Add pagination tests
@@ -178,10 +178,10 @@ async def add_project_member(
     new_permission: NewPermissionRequest,
     user: User = Depends(current_user),
     project: Project = Depends(invitable_project),
-    projects: ProjectsServiceInterface = Depends(projects_service),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
-    users: UsersServiceInterface = Depends(users_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    projects: IProjectsService = Depends(projects_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    users: IUsersService = Depends(users_service),
+    audits: IAuditService = Depends(audit_service),
 ) -> ProjectMemberResponse:
     tag = "endpoint=add_project_member"
     member_user = await users.get_by_id(new_permission.user_id)
@@ -220,10 +220,10 @@ async def update_project_members_permissions(
     updated_permission: UpdatePermissionRequest,
     user: User = Depends(current_user),
     project: Project = Depends(invitable_project),
-    projects: ProjectsServiceInterface = Depends(projects_service),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
-    users: UsersServiceInterface = Depends(users_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    projects: IProjectsService = Depends(projects_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    users: IUsersService = Depends(users_service),
+    audits: IAuditService = Depends(audit_service),
 ) -> ProjectMemberResponse:
     tag = "endpoint=update_project_members_permissions"
     member_user = await users.get_by_id(user_id)
@@ -259,8 +259,8 @@ async def delete_project_member(
     user_id: Identifier,
     user: User = Depends(current_user),
     project: Project = Depends(deletable_project),
-    projects: ProjectsServiceInterface = Depends(projects_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    projects: IProjectsService = Depends(projects_service),
+    audits: IAuditService = Depends(audit_service),
 ) -> Response:
     tag = "endpoint=delete_project_member"
     deleted_permission = await projects.delete_member(project.id, user_id)

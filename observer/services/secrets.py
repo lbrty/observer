@@ -1,12 +1,12 @@
 from typing import IO, Any, Protocol
 
 from observer.entities.idp import IDP, PersonalInfo
-from observer.services.crypto import CryptoServiceInterface
+from observer.services.crypto import ICryptoService
 
 
-class SecretsServiceInterface(Protocol):
+class ISecretsService(Protocol):
     tag: str
-    crypto_service: CryptoServiceInterface
+    crypto_service: ICryptoService
 
     async def encrypt_personal_info(self, pi: PersonalInfo) -> PersonalInfo:
         raise NotImplementedError
@@ -33,11 +33,11 @@ class SecretsServiceInterface(Protocol):
         return idp
 
 
-class SecretsService(SecretsServiceInterface):
+class SecretsService(ISecretsService):
     tag: str = "service=secrets"
-    crypto_service: CryptoServiceInterface
+    crypto_service: ICryptoService
 
-    def __init__(self, crypto_service: CryptoServiceInterface):
+    def __init__(self, crypto_service: ICryptoService):
         self.crypto_service = crypto_service
 
     async def encrypt_personal_info(self, pi: PersonalInfo) -> PersonalInfo:

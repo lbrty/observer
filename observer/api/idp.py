@@ -32,11 +32,11 @@ from observer.schemas.idp import (
     UpdateCategoryRequest,
     UpdateIDPRequest,
 )
-from observer.services.audit_logs import AuditServiceInterface
-from observer.services.categories import CategoryServiceInterface
-from observer.services.idp import IDPServiceInterface
-from observer.services.permissions import PermissionsServiceInterface
-from observer.services.secrets import SecretsServiceInterface
+from observer.services.audit_logs import IAuditService
+from observer.services.categories import ICategoryService
+from observer.services.idp import IIDPService
+from observer.services.permissions import IPermissionsService
+from observer.services.secrets import ISecretsService
 
 router = APIRouter(prefix="/idp")
 
@@ -53,8 +53,8 @@ async def create_category(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    categories: CategoryServiceInterface = Depends(category_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    categories: ICategoryService = Depends(category_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=create_category,action=create:category",
@@ -85,7 +85,7 @@ async def create_category(
 )
 async def get_categories(
     name: SomeStr = Query(None, description="Lookup by name"),
-    categories: CategoryServiceInterface = Depends(category_service),
+    categories: ICategoryService = Depends(category_service),
 ) -> List[CategoryResponse]:
     category_list = await categories.get_categories(name)
     return [CategoryResponse(**category.dict()) for category in category_list]
@@ -104,7 +104,7 @@ async def get_categories(
 )
 async def get_category(
     category_id: Identifier,
-    categories: CategoryServiceInterface = Depends(category_service),
+    categories: ICategoryService = Depends(category_service),
 ) -> CategoryResponse:
     category = await categories.get_category(category_id)
     return CategoryResponse(**category.dict())
@@ -123,8 +123,8 @@ async def update_category(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    categories: CategoryServiceInterface = Depends(category_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    categories: ICategoryService = Depends(category_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=update_category,action=update:category",
@@ -157,8 +157,8 @@ async def delete_category(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    categories: CategoryServiceInterface = Depends(category_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    categories: ICategoryService = Depends(category_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=delete_category,action=delete:category",
@@ -186,9 +186,9 @@ async def create_idp(
     tasks: BackgroundTasks,
     new_idp: NewIDPRequest,
     user: SomeUser = Depends(authenticated_user),
-    audits: AuditServiceInterface = Depends(audit_service),
-    idp: IDPServiceInterface = Depends(idp_service),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
+    audits: IAuditService = Depends(audit_service),
+    idp: IIDPService = Depends(idp_service),
+    permissions: IPermissionsService = Depends(permissions_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=create_idp,action=create:idp",
@@ -214,9 +214,9 @@ async def create_idp(
 async def get_idp(
     idp_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
-    idp: IDPServiceInterface = Depends(idp_service),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
-    secrets: SecretsServiceInterface = Depends(secrets_service),
+    idp: IIDPService = Depends(idp_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    secrets: ISecretsService = Depends(secrets_service),
 ) -> IDPResponse:
     idp_record = await idp.get_idp(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
@@ -235,9 +235,9 @@ async def get_idp(
 async def get_personal_info(
     idp_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
-    idp: IDPServiceInterface = Depends(idp_service),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
-    secrets: SecretsServiceInterface = Depends(secrets_service),
+    idp: IIDPService = Depends(idp_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    secrets: ISecretsService = Depends(secrets_service),
 ) -> PersonalInfoResponse:
     idp_record = await idp.get_idp(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
@@ -264,9 +264,9 @@ async def update_idp(
     idp_id: Identifier,
     idp_updates: UpdateIDPRequest,
     user: SomeUser = Depends(authenticated_user),
-    idp: IDPServiceInterface = Depends(idp_service),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    idp: IIDPService = Depends(idp_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=update_idp,action=update:idp",
@@ -301,9 +301,9 @@ async def delete_idp(
     tasks: BackgroundTasks,
     idp_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
-    idp: IDPServiceInterface = Depends(idp_service),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    idp: IIDPService = Depends(idp_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=delete_idp,action=delete:idp",

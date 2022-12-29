@@ -12,7 +12,7 @@ from observer.entities.migration_history import (
 )
 
 
-class MigrationRepositoryInterface(Protocol):
+class IMigrationRepository(Protocol):
     async def add_record(self, new_record: NewMigrationHistory) -> MigrationHistory:
         raise NotImplementedError
 
@@ -29,7 +29,7 @@ class MigrationRepositoryInterface(Protocol):
         raise NotImplementedError
 
 
-class MigrationRepository(MigrationRepositoryInterface):
+class MigrationRepository(IMigrationRepository):
     def __init__(self, db: Database):
         self.db = db
 

@@ -29,11 +29,11 @@ from observer.schemas.auth import (
     TokenResponse,
 )
 from observer.schemas.users import NewUserRequest
-from observer.services.audit_logs import AuditServiceInterface
-from observer.services.crypto import CryptoServiceInterface
+from observer.services.audit_logs import IAuditService
+from observer.services.crypto import ICryptoService
 from observer.services.jwt import JWTService, TokenData
-from observer.services.mfa import MFAServiceInterface
-from observer.services.users import UsersServiceInterface
+from observer.services.mfa import IMFAService
+from observer.services.users import IUsersService
 from observer.settings import settings
 
 AccessTokenExpirationMinutes = 15
@@ -42,13 +42,13 @@ AccessTokenExpirationDelta = timedelta(minutes=AccessTokenExpirationMinutes)
 RefreshTokenExpirationDelta = timedelta(minutes=RefreshTokenExpirationMinutes)
 
 
-class AuthServiceInterface(Protocol):
+class IAuthService(Protocol):
     tag: str
-    crypto_service: CryptoServiceInterface
-    audits: AuditServiceInterface
-    mfa_service: MFAServiceInterface
+    crypto_service: ICryptoService
+    audits: IAuditService
+    mfa_service: IMFAService
     jwt_service: JWTService
-    users_service: UsersServiceInterface
+    users_service: IUsersService
 
     async def token_login(self, login_payload: LoginPayload) -> Tuple[User, TokenResponse]:
         raise NotImplementedError
@@ -75,15 +75,15 @@ class AuthServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class AuthService(AuthServiceInterface):
+class AuthService(IAuthService):
     tag: str = "source=service:auth"
 
     def __init__(
         self,
-        crypto_service: CryptoServiceInterface,
-        mfa_service: MFAServiceInterface,
+        crypto_service: ICryptoService,
+        mfa_service: IMFAService,
         jwt_service: JWTService,
-        users_service: UsersServiceInterface,
+        users_service: IUsersService,
     ):
         self.crypto_service = crypto_service
         self.jwt_service = jwt_service

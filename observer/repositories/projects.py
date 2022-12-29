@@ -12,7 +12,7 @@ from observer.entities.permissions import NewPermission, Permission
 from observer.entities.projects import NewProject, Project, ProjectMember, ProjectUpdate
 
 
-class ProjectsRepositoryInterface(Protocol):
+class IProjectsRepository(Protocol):
     async def get_by_id(self, project_id: Identifier) -> SomeProject:
         raise NotImplementedError
 
@@ -35,7 +35,7 @@ class ProjectsRepositoryInterface(Protocol):
         raise NotImplementedError
 
 
-class ProjectsRepository(ProjectsRepositoryInterface):
+class ProjectsRepository(IProjectsRepository):
     def __init__(self, db: Database):
         self.db = db
 

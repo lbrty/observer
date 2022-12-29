@@ -21,8 +21,8 @@ from observer.schemas.world import (
     UpdatePlaceRequest,
     UpdateStateRequest,
 )
-from observer.services.audit_logs import AuditServiceInterface
-from observer.services.world import WorldServiceInterface
+from observer.services.audit_logs import IAuditService
+from observer.services.world import IWorldService
 
 router = APIRouter(prefix="/world")
 
@@ -40,8 +40,8 @@ async def create_country(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    world: WorldServiceInterface = Depends(world_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    world: IWorldService = Depends(world_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=create_country,action=create:country",
@@ -66,7 +66,7 @@ async def create_country(
     dependencies=[Depends(current_user)],
     tags=["world", "places"],
 )
-async def get_countries(world: WorldServiceInterface = Depends(world_service)) -> List[CountryResponse]:
+async def get_countries(world: IWorldService = Depends(world_service)) -> List[CountryResponse]:
     countries = await world.get_countries()
     return await world.countries_to_response(countries)
 
@@ -80,7 +80,7 @@ async def get_countries(world: WorldServiceInterface = Depends(world_service)) -
 )
 async def get_country(
     country_id: Identifier,
-    world: WorldServiceInterface = Depends(world_service),
+    world: IWorldService = Depends(world_service),
 ) -> CountryResponse:
     country = await world.get_country(country_id)
     return await world.country_to_response(country)
@@ -99,8 +99,8 @@ async def update_country(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    world: WorldServiceInterface = Depends(world_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    world: IWorldService = Depends(world_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=update_country,action=update:country",
@@ -135,8 +135,8 @@ async def delete_country(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    world: WorldServiceInterface = Depends(world_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    world: IWorldService = Depends(world_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=delete_country,action=delete:country",
@@ -167,8 +167,8 @@ async def create_state(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    world: WorldServiceInterface = Depends(world_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    world: IWorldService = Depends(world_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=create_state,action=create:state",
@@ -195,7 +195,7 @@ async def create_state(
 )
 async def get_states(
     filters: StateFilters = Depends(state_filters),
-    world: WorldServiceInterface = Depends(world_service),
+    world: IWorldService = Depends(world_service),
 ) -> List[StateResponse]:
     states = await world.get_states(filters)
     return await world.states_to_response(states)
@@ -210,7 +210,7 @@ async def get_states(
 )
 async def get_state(
     state_id: Identifier,
-    world: WorldServiceInterface = Depends(world_service),
+    world: IWorldService = Depends(world_service),
 ) -> StateResponse:
     state = await world.get_state(state_id)
     return await world.state_to_response(state)
@@ -229,8 +229,8 @@ async def update_state(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    world: WorldServiceInterface = Depends(world_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    world: IWorldService = Depends(world_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=update_state,action=update:state",
@@ -263,8 +263,8 @@ async def delete_state(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    world: WorldServiceInterface = Depends(world_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    world: IWorldService = Depends(world_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=delete_state,action=delete:state",
@@ -295,8 +295,8 @@ async def create_place(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    world: WorldServiceInterface = Depends(world_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    world: IWorldService = Depends(world_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=create_place,action=create:place",
@@ -323,7 +323,7 @@ async def create_place(
 )
 async def get_places(
     filters: PlaceFilters = Depends(place_filters),
-    world: WorldServiceInterface = Depends(world_service),
+    world: IWorldService = Depends(world_service),
 ) -> List[PlaceResponse]:
     places = await world.get_places(filters)
     return await world.places_to_response(places)
@@ -338,7 +338,7 @@ async def get_places(
 )
 async def get_place(
     place_id: Identifier,
-    world: WorldServiceInterface = Depends(world_service),
+    world: IWorldService = Depends(world_service),
 ) -> PlaceResponse:
     place = await world.get_place(place_id)
     return await world.place_to_response(place)
@@ -357,8 +357,8 @@ async def update_place(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    world: WorldServiceInterface = Depends(world_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    world: IWorldService = Depends(world_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=update_place,action=update:place",
@@ -394,8 +394,8 @@ async def delete_place(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    world: WorldServiceInterface = Depends(world_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    world: IWorldService = Depends(world_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=delete_place,action=delete:place",

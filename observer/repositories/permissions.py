@@ -9,7 +9,7 @@ from observer.entities.base import SomePermission
 from observer.entities.permissions import NewPermission, Permission, UpdatePermission
 
 
-class PermissionsRepositoryInterface(Protocol):
+class IPermissionsRepository(Protocol):
     async def get_by_id(self, permission_id: Identifier) -> SomePermission:
         raise NotImplementedError
 
@@ -31,7 +31,7 @@ class PermissionsRepositoryInterface(Protocol):
         raise NotImplementedError
 
 
-class PermissionsRepository(PermissionsRepositoryInterface):
+class PermissionsRepository(IPermissionsRepository):
     def __init__(self, db: Database):
         self.db = db
 

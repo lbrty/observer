@@ -7,17 +7,17 @@ from observer.entities.migration_history import (
     NewMigrationHistory,
     UpdateMigrationHistory,
 )
-from observer.repositories.migration_history import MigrationRepositoryInterface
+from observer.repositories.migration_history import IMigrationRepository
 from observer.schemas.migration_history import (
     NewMigrationHistoryRequest,
     UpdateMigrationHistoryRequest,
 )
-from observer.services.world import WorldServiceInterface
+from observer.services.world import IWorldService
 
 
-class MigrationServiceInterface(Protocol):
-    repo: MigrationRepositoryInterface
-    world: WorldServiceInterface
+class IMigrationService(Protocol):
+    repo: IMigrationRepository
+    world: IWorldService
 
     async def add_record(self, new_record: NewMigrationHistoryRequest) -> MigrationHistory:
         raise NotImplementedError
@@ -35,8 +35,8 @@ class MigrationServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class MigrationService(MigrationServiceInterface):
-    def __init__(self, repo: MigrationRepositoryInterface, world: WorldServiceInterface):
+class MigrationService(IMigrationService):
+    def __init__(self, repo: IMigrationRepository, world: IWorldService):
         self.repo = repo
         self.world = world
 

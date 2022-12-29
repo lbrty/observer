@@ -3,23 +3,23 @@ from typing import Optional, Protocol
 from observer.api.exceptions import NotFoundError
 from observer.common.types import EncryptedFieldValue, Identifier
 from observer.entities.idp import IDP, NewIDP, PersonalInfo, UpdateIDP
-from observer.repositories.idp import IDPRepositoryInterface
+from observer.repositories.idp import IIDPRepository
 from observer.schemas.idp import NewIDPRequest, UpdateIDPRequest
-from observer.services.categories import CategoryServiceInterface
-from observer.services.crypto import CryptoServiceInterface
-from observer.services.projects import ProjectsServiceInterface
-from observer.services.secrets import SecretsServiceInterface
-from observer.services.world import WorldServiceInterface
+from observer.services.categories import ICategoryService
+from observer.services.crypto import ICryptoService
+from observer.services.projects import IProjectsService
+from observer.services.secrets import ISecretsService
+from observer.services.world import IWorldService
 
 
-class IDPServiceInterface(Protocol):
+class IIDPService(Protocol):
     tag: str
-    repo: IDPRepositoryInterface
-    crypto_service: CryptoServiceInterface
-    categories_service: CategoryServiceInterface
-    projects_service: ProjectsServiceInterface
-    world_service: WorldServiceInterface
-    secrets_service: SecretsServiceInterface
+    repo: IIDPRepository
+    crypto_service: ICryptoService
+    categories_service: ICategoryService
+    projects_service: IProjectsService
+    world_service: IWorldService
+    secrets_service: ISecretsService
 
     async def create_idp(self, new_idp: NewIDPRequest) -> IDP:
         raise NotImplementedError
@@ -34,17 +34,17 @@ class IDPServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class IDPService(IDPServiceInterface):
+class IDPService(IIDPService):
     tag: str = "source=service:idp"
 
     def __init__(
         self,
-        idp_repository: IDPRepositoryInterface,
-        crypto_service: CryptoServiceInterface,
-        categories: CategoryServiceInterface,
-        projects: ProjectsServiceInterface,
-        world: WorldServiceInterface,
-        secrets: SecretsServiceInterface,
+        idp_repository: IIDPRepository,
+        crypto_service: ICryptoService,
+        categories: ICategoryService,
+        projects: IProjectsService,
+        world: IWorldService,
+        secrets: ISecretsService,
     ):
         self.repo = idp_repository
         self.crypto_service = crypto_service

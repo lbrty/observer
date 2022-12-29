@@ -4,14 +4,14 @@ from typing import List, Protocol
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier, SomeStr
 from observer.entities.idp import Category, NewCategory, UpdateCategory
-from observer.repositories.categories import CategoryRepositoryInterface
+from observer.repositories.categories import ICategoryRepository
 from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.idp import NewCategoryRequest, UpdateCategoryRequest
 
 
-class CategoryServiceInterface(Protocol):
+class ICategoryService(Protocol):
     tag: str
-    repo: CategoryRepositoryInterface
+    repo: ICategoryRepository
 
     # Categories
     async def create_category(self, new_category: NewCategoryRequest) -> Category:
@@ -33,10 +33,10 @@ class CategoryServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class CategoryService(CategoryServiceInterface):
+class CategoryService(ICategoryService):
     tag: str = "source=service:categories"
 
-    def __init__(self, categories_repository: CategoryRepositoryInterface):
+    def __init__(self, categories_repository: ICategoryRepository):
         self.repo = categories_repository
 
     # Categories

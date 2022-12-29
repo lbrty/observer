@@ -6,13 +6,13 @@ from observer.components.auth import current_user
 from observer.components.services import permissions_service, projects_service
 from observer.entities.projects import Project
 from observer.entities.users import User
-from observer.services.permissions import PermissionsServiceInterface
-from observer.services.projects import ProjectsServiceInterface
+from observer.services.permissions import IPermissionsService
+from observer.services.projects import IProjectsService
 
 
 async def current_project(
     project_id: Identifier,
-    projects: ProjectsServiceInterface = Depends(projects_service),
+    projects: IProjectsService = Depends(projects_service),
 ) -> Project:
     return await projects.get_by_id(project_id)
 
@@ -20,7 +20,7 @@ async def current_project(
 async def viewable_project(
     user: User = Depends(current_user),
     project: Project = Depends(current_project),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
+    permissions: IPermissionsService = Depends(permissions_service),
 ) -> Project:
     """Returns project instance if user is admin or has `can_read=True` permission"""
     permission = await permissions.find(project.id, user.id)
@@ -36,7 +36,7 @@ async def viewable_project(
 async def updatable_project(
     user: User = Depends(current_user),
     project: Project = Depends(current_project),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
+    permissions: IPermissionsService = Depends(permissions_service),
 ) -> Project:
     """Returns project instance if user is admin or has `can_update=True` permission"""
     permission = await permissions.find(project.id, user.id)
@@ -51,7 +51,7 @@ async def updatable_project(
 async def deletable_project(
     user: User = Depends(current_user),
     project: Project = Depends(current_project),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
+    permissions: IPermissionsService = Depends(permissions_service),
 ) -> Project:
     """Returns project instance if user is admin or has `can_delete=True` permission"""
     permission = await permissions.find(project.id, user.id)
@@ -67,7 +67,7 @@ async def deletable_project(
 async def invitable_project(
     user: User = Depends(current_user),
     project: Project = Depends(current_project),
-    permissions: PermissionsServiceInterface = Depends(permissions_service),
+    permissions: IPermissionsService = Depends(permissions_service),
 ) -> Project:
     """Returns project instance if user is admin or has `can_invite_members=True` permission"""
     permission = await permissions.find(project.id, user.id)

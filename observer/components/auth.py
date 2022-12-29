@@ -9,13 +9,13 @@ from observer.components.services import jwt_service
 from observer.entities.base import SomeUser
 from observer.entities.users import User
 from observer.services.jwt import JWTService
-from observer.services.users import UsersServiceInterface
+from observer.services.users import IUsersService
 
 
 async def current_user(
     access_token: SomeStr = Cookie(None),
     jwt: JWTService = Depends(jwt_service),
-    users_service: UsersServiceInterface = Depends(services.users_service),
+    users_service: IUsersService = Depends(services.users_service),
 ) -> SomeUser:
     if access_token:
         token_data, _ = await jwt.decode(access_token)

@@ -11,10 +11,10 @@ from observer.components.services import (
 from observer.entities.base import SomeUser
 from observer.entities.users import User
 from observer.schemas.users import UserResponse
-from observer.services.audit_logs import AuditServiceInterface
-from observer.services.auth import AuthServiceInterface
-from observer.services.mailer import EmailMessage, MailerInterface
-from observer.services.users import UsersServiceInterface
+from observer.services.audit_logs import IAuditService
+from observer.services.auth import IAuthService
+from observer.services.mailer import EmailMessage, IMailer
+from observer.services.users import IUsersService
 from observer.settings import settings
 
 router = APIRouter(prefix="/account")
@@ -36,9 +36,9 @@ async def confirm_account(
     tasks: BackgroundTasks,
     code: str,
     user: SomeUser = Depends(current_user),
-    audits: AuditServiceInterface = Depends(audit_service),
-    auth: AuthServiceInterface = Depends(auth_service),
-    users: UsersServiceInterface = Depends(users_service),
+    audits: IAuditService = Depends(audit_service),
+    auth: IAuthService = Depends(auth_service),
+    users: IUsersService = Depends(users_service),
 ):
     user = await users.confirm_user(user.id if user else None, code)
     audit_log = await auth.create_log(
@@ -57,10 +57,10 @@ async def confirm_account(
 async def resend_confirmation(
     tasks: BackgroundTasks,
     user: User = Depends(authenticated_user),
-    audits: AuditServiceInterface = Depends(audit_service),
-    auth: AuthServiceInterface = Depends(auth_service),
-    users: UsersServiceInterface = Depends(users_service),
-    mail: MailerInterface = Depends(mailer),
+    audits: IAuditService = Depends(audit_service),
+    auth: IAuthService = Depends(auth_service),
+    users: IUsersService = Depends(users_service),
+    mail: IMailer = Depends(mailer),
 ):
     confirmation = await users.create_confirmation(user.id)
     link = f"{settings.app_domain}{settings.confirmation_url.format(code=confirmation.code)}"

@@ -6,7 +6,7 @@ from observer.common.types import Identifier
 from observer.entities.permissions import NewPermission, Permission
 from observer.entities.projects import NewProject, Project, ProjectMember, ProjectUpdate
 from observer.entities.users import User
-from observer.repositories.projects import ProjectsRepositoryInterface
+from observer.repositories.projects import IProjectsRepository
 from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.permissions import NewPermissionRequest
 from observer.schemas.projects import (
@@ -17,9 +17,9 @@ from observer.schemas.projects import (
 )
 
 
-class ProjectsServiceInterface(Protocol):
+class IProjectsService(Protocol):
     tag: str
-    repo: ProjectsRepositoryInterface
+    repo: IProjectsRepository
 
     async def get_by_id(self, project_id: Identifier) -> Project:
         raise NotImplementedError
@@ -54,10 +54,10 @@ class ProjectsServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class ProjectsService(ProjectsServiceInterface):
+class ProjectsService(IProjectsService):
     tag: str = "source=service:projects"
 
-    def __init__(self, repo: ProjectsRepositoryInterface):
+    def __init__(self, repo: IProjectsRepository):
         self.repo = repo
 
     async def get_by_id(self, project_id: Identifier) -> Project:

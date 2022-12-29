@@ -20,10 +20,10 @@ from observer.schemas.auth import (
     ResetPasswordRequest,
     TokenResponse,
 )
-from observer.services.audit_logs import AuditServiceInterface
-from observer.services.auth import AuthServiceInterface
-from observer.services.mailer import EmailMessage, MailerInterface
-from observer.services.users import UsersServiceInterface
+from observer.services.audit_logs import IAuditService
+from observer.services.auth import IAuthService
+from observer.services.mailer import EmailMessage, IMailer
+from observer.services.users import IUsersService
 from observer.settings import settings
 
 router = APIRouter(prefix="/auth")
@@ -37,8 +37,8 @@ router = APIRouter(prefix="/auth")
 async def token_login(
     tasks: BackgroundTasks,
     login_payload: LoginPayload,
-    audits: AuditServiceInterface = Depends(audit_service),
-    auth: AuthServiceInterface = Depends(auth_service),
+    audits: IAuditService = Depends(audit_service),
+    auth: IAuthService = Depends(auth_service),
 ) -> TokenResponse:
     """Login using email and password"""
     user, auth_token = await auth.token_login(login_payload)
@@ -61,8 +61,8 @@ async def token_login(
 async def token_refresh(
     tasks: BackgroundTasks,
     refresh_token: str = Depends(refresh_token_cookie),
-    audits: AuditServiceInterface = Depends(audit_service),
-    auth: AuthServiceInterface = Depends(auth_service),
+    audits: IAuditService = Depends(audit_service),
+    auth: IAuthService = Depends(auth_service),
 ) -> TokenResponse:
     """Refresh access token using refresh token"""
     try:
@@ -93,10 +93,10 @@ async def token_refresh(
 async def token_register(
     tasks: BackgroundTasks,
     registration_payload: RegistrationPayload,
-    audits: AuditServiceInterface = Depends(audit_service),
-    auth: AuthServiceInterface = Depends(auth_service),
-    users: UsersServiceInterface = Depends(users_service),
-    mail: MailerInterface = Depends(mailer),
+    audits: IAuditService = Depends(audit_service),
+    auth: IAuthService = Depends(auth_service),
+    users: IUsersService = Depends(users_service),
+    mail: IMailer = Depends(mailer),
 ) -> TokenResponse:
     """Register using email and password"""
     user, token_response = await auth.register(registration_payload)
@@ -133,10 +133,10 @@ async def token_register(
 async def change_password(
     tasks: BackgroundTasks,
     change_password_payload: ChangePasswordRequest,
-    audits: AuditServiceInterface = Depends(audit_service),
+    audits: IAuditService = Depends(audit_service),
     user: User = Depends(authenticated_user),
-    auth: AuthServiceInterface = Depends(auth_service),
-    mail: MailerInterface = Depends(mailer),
+    auth: IAuthService = Depends(auth_service),
+    mail: IMailer = Depends(mailer),
 ) -> Response:
     """Change password for user"""
     await auth.change_password(user.id, change_password_payload)
@@ -170,9 +170,9 @@ async def change_password(
 async def reset_password_request(
     tasks: BackgroundTasks,
     reset_password_payload: ResetPasswordRequest,
-    audits: AuditServiceInterface = Depends(audit_service),
-    auth: AuthServiceInterface = Depends(auth_service),
-    mail: MailerInterface = Depends(mailer),
+    audits: IAuditService = Depends(audit_service),
+    auth: IAuthService = Depends(auth_service),
+    mail: IMailer = Depends(mailer),
 ) -> Response:
     """Reset password for user using email"""
     user, password_reset = await auth.reset_password_request(reset_password_payload.email)
@@ -207,9 +207,9 @@ async def reset_password_with_code(
     tasks: BackgroundTasks,
     code: str,
     new_password_payload: NewPasswordRequest,
-    audits: AuditServiceInterface = Depends(audit_service),
-    auth: AuthServiceInterface = Depends(auth_service),
-    mail: MailerInterface = Depends(mailer),
+    audits: IAuditService = Depends(audit_service),
+    auth: IAuthService = Depends(auth_service),
+    mail: IMailer = Depends(mailer),
 ) -> Response:
     """Reset password using reset code"""
     user = await auth.reset_password_with_code(code, new_password_payload.password.get_secret_value())

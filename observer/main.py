@@ -6,6 +6,7 @@ from observer.db import PoolOptions, connect, disconnect
 from observer.repositories.audit_logs import AuditRepository
 from observer.repositories.categories import CategoryRepository
 from observer.repositories.idp import IDPRepository
+from observer.repositories.migration_history import MigrationRepository
 from observer.repositories.permissions import PermissionsRepository
 from observer.repositories.projects import ProjectsRepository
 from observer.repositories.users import UsersRepository
@@ -19,6 +20,7 @@ from observer.services.jwt import JWTService
 from observer.services.keys import get_key_loader
 from observer.services.mailer import Mailer
 from observer.services.mfa import MFAService
+from observer.services.migration_history import MigrationService
 from observer.services.permissions import PermissionsService
 from observer.services.projects import ProjectsService
 from observer.services.secrets import SecretsService
@@ -82,6 +84,8 @@ async def on_startup():
         ctx.world_service,
         ctx.secrets_service,
     )
+    ctx.migrations_repo = MigrationRepository(ctx.db)
+    ctx.migrations_service = MigrationService(ctx.migrations_repo, ctx.world_service)
 
 
 @app.on_event("shutdown")

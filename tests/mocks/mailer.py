@@ -1,9 +1,9 @@
 from typing import List
 
-from observer.services.mailer import EmailMessage, MailerInterface
+from observer.services.mailer import EmailMessage, IMailer
 
 
-class MockMailer(MailerInterface):
+class MockMailer(IMailer):
     messages: List[EmailMessage] = []
 
     async def send(self, message: EmailMessage):

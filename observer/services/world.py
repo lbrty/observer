@@ -14,7 +14,7 @@ from observer.entities.world import (
     UpdatePlace,
     UpdateState,
 )
-from observer.repositories.world import WorldRepositoryInterface
+from observer.repositories.world import IWorldRepository
 from observer.schemas.world import (
     CountryResponse,
     NewCountryRequest,
@@ -28,9 +28,9 @@ from observer.schemas.world import (
 )
 
 
-class WorldServiceInterface(Protocol):
+class IWorldService(Protocol):
     tag: str
-    repo: WorldRepositoryInterface
+    repo: IWorldRepository
 
     # Countries
     async def create_country(self, new_country: NewCountryRequest) -> Country:
@@ -105,10 +105,10 @@ class WorldServiceInterface(Protocol):
         raise NotImplementedError
 
 
-class WorldService(WorldServiceInterface):
+class WorldService(IWorldService):
     tag: str = "source=service:world"
 
-    def __init__(self, places_repository: WorldRepositoryInterface):
+    def __init__(self, places_repository: IWorldRepository):
         self.repo = places_repository
 
     # States

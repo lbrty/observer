@@ -15,11 +15,11 @@ from observer.schemas.mfa import (
     MFABackupCodesResponse,
 )
 from observer.schemas.users import UserMFAUpdateRequest
-from observer.services.audit_logs import AuditServiceInterface
+from observer.services.audit_logs import IAuditService
 from observer.services.keys import Keychain
-from observer.services.mailer import EmailMessage, MailerInterface
-from observer.services.mfa import MFAServiceInterface
-from observer.services.users import UsersServiceInterface
+from observer.services.mailer import EmailMessage, IMailer
+from observer.services.mfa import IMFAService
+from observer.services.users import IUsersService
 from observer.settings import settings
 
 router = APIRouter(prefix="/mfa")
@@ -32,7 +32,7 @@ router = APIRouter(prefix="/mfa")
 )
 async def configure_mfa(
     user: User = Depends(user_with_no_mfa),
-    mfa: MFAServiceInterface = Depends(mfa_service),
+    mfa: IMFAService = Depends(mfa_service),
 ) -> MFAActivationResponse:
     """Setup MFA authentication"""
     mfa_secret = await mfa.create(settings.title, user.ref_id)
@@ -52,9 +52,9 @@ async def setup_mfa(
     activation_request: MFAActivationRequest,
     tasks: BackgroundTasks,
     user: User = Depends(user_with_no_mfa),
-    mfa: MFAServiceInterface = Depends(mfa_service),
-    user_service: UsersServiceInterface = Depends(users_service),
-    audits: AuditServiceInterface = Depends(audit_service),
+    mfa: IMFAService = Depends(mfa_service),
+    user_service: IUsersService = Depends(users_service),
+    audits: IAuditService = Depends(audit_service),
     key_chain: Keychain = Depends(keychain),
 ) -> MFABackupCodesResponse:
     """Save MFA configuration and create backup codes.
@@ -93,9 +93,9 @@ async def setup_mfa(
 async def reset_mfa(
     reset_request: MFAAResetRequest,
     tasks: BackgroundTasks,
-    user_service: UsersServiceInterface = Depends(users_service),
-    audits: AuditServiceInterface = Depends(audit_service),
-    mail: MailerInterface = Depends(mailer),
+    user_service: IUsersService = Depends(users_service),
+    audits: IAuditService = Depends(audit_service),
+    mail: IMailer = Depends(mailer),
 ) -> Response:
     """Reset MFA using one of backup codes
 

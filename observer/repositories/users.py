@@ -16,7 +16,7 @@ from observer.entities.users import (
 )
 
 
-class UsersRepositoryInterface(Protocol):
+class IUsersRepository(Protocol):
     async def get_by_id(self, user_id: Identifier) -> SomeUser:
         raise NotImplementedError
 
@@ -54,7 +54,7 @@ class UsersRepositoryInterface(Protocol):
         raise NotImplementedError
 
 
-class UsersRepository(UsersRepositoryInterface):
+class UsersRepository(IUsersRepository):
     def __init__(self, db: Database):
         self.db = db
 
