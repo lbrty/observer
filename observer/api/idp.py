@@ -18,6 +18,7 @@ from observer.components.services import (
     audit_service,
     category_service,
     idp_service,
+    migrations_service,
     permissions_service,
     secrets_service,
 )
@@ -32,9 +33,11 @@ from observer.schemas.idp import (
     UpdateCategoryRequest,
     UpdateIDPRequest,
 )
+from observer.schemas.migration_history import MigrationHistoryResponse
 from observer.services.audit_logs import IAuditService
 from observer.services.categories import ICategoryService
 from observer.services.idp import IIDPService
+from observer.services.migration_history import IMigrationService
 from observer.services.permissions import IPermissionsService
 from observer.services.secrets import ISecretsService
 
@@ -251,6 +254,28 @@ async def get_personal_info(
     )
     pi.full_name = idp_record.full_name
     return PersonalInfoResponse(**pi.dict())
+
+
+@router.get(
+    "/people/{idp_id}/migration-records",
+    response_model=List[MigrationHistoryResponse],
+    response_model_exclude_none=True,
+    status_code=status.HTTP_200_OK,
+    tags=["idp", "people", "migration", "history"],
+)
+async def get_person_migration_records(
+    idp_id: Identifier,
+    user: SomeUser = Depends(authenticated_user),
+    idp: IIDPService = Depends(idp_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    migrations: IMigrationService = Depends(migrations_service),
+) -> List[MigrationHistoryResponse]:
+    """Get migration records for a person"""
+    idp_record = await idp.get_idp(idp_id)
+    permission = await permissions.find(idp_record.project_id, user.id)
+    assert_can_see_private_info(user, permission)
+    records = await migrations.get_records_by_person_id(idp_id)
+    return [MigrationHistoryResponse(**record.dict()) for record in records]
 
 
 @router.put(

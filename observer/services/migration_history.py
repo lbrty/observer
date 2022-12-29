@@ -18,7 +18,7 @@ class IMigrationService(Protocol):
     async def get_record(self, record_id: Identifier) -> MigrationHistory:
         raise NotImplementedError
 
-    async def get_records(self, record_id: Identifier) -> List[MigrationHistory]:
+    async def get_records_by_person_id(self, idp_id: Identifier) -> List[MigrationHistory]:
         raise NotImplementedError
 
     async def delete_record(self, record_id: Identifier) -> MigrationHistory:
@@ -45,8 +45,8 @@ class MigrationService(IMigrationService):
 
         raise NotFoundError(message="Migration record not found")
 
-    async def get_records(self, record_id: Identifier) -> List[MigrationHistory]:
-        return await self.repo.get_records(record_id)
+    async def get_records_by_person_id(self, idp_id: Identifier) -> List[MigrationHistory]:
+        return await self.repo.get_records_by_person_id(idp_id)
 
     async def delete_record(self, record_id: Identifier) -> MigrationHistory:
         return await self.repo.delete_record(record_id)

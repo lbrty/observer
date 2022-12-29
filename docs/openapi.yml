@@ -936,6 +936,73 @@
         }
       }
     },
+    "/idp/people/{idp_id}/migration-records": {
+      "get": {
+        "tags": [
+          "idp",
+          "people",
+          "migration",
+          "history"
+        ],
+        "summary": "Get Person Migration Records",
+        "description": "Get migration records for a person",
+        "operationId": "get_person_migration_records_idp_people__idp_id__migration_records_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Idp Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "idp_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Person Migration Records Idp People  Idp Id  Migration Records Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MigrationHistoryResponse"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health",
@@ -994,6 +1061,126 @@
                 "schema": {
                   "$ref": "#/components/schemas/MigrationHistoryResponse"
                 }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/migrations/{record_id}": {
+      "get": {
+        "tags": [
+          "idp",
+          "migration",
+          "history"
+        ],
+        "summary": "Get Migration Record",
+        "description": "Get migration record",
+        "operationId": "get_migration_record_migrations__record_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Record Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "record_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MigrationHistoryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "idp",
+          "migration",
+          "history"
+        ],
+        "summary": "Create Migration Record",
+        "description": "Create migration record",
+        "operationId": "create_migration_record_migrations__record_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Record Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "record_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
               }
             }
           },
@@ -3301,6 +3488,7 @@
         "required": [
           "idp_id",
           "migration_date",
+          "project_id",
           "from_place_id",
           "current_place_id"
         ],
@@ -3324,6 +3512,19 @@
             "type": "string",
             "description": "Date of migration",
             "format": "date"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Project ID to which it belongs"
           },
           "from_place_id": {
             "title": "From Place Id",

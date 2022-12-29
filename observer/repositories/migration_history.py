@@ -1,6 +1,6 @@
-from typing import List, Protocol
+from typing import List, Optional, Protocol
 
-from sqlalchemy import delete, insert, select
+from sqlalchemy import delete, desc, insert, select
 
 from observer.common.types import Identifier
 from observer.db import Database
@@ -12,10 +12,10 @@ class IMigrationRepository(Protocol):
     async def add_record(self, new_record: NewMigrationHistory) -> MigrationHistory:
         raise NotImplementedError
 
-    async def get_record(self, record_id: Identifier) -> MigrationHistory:
+    async def get_record(self, record_id: Identifier) -> Optional[MigrationHistory]:
         raise NotImplementedError
 
-    async def get_records(self, record_id: Identifier) -> List[MigrationHistory]:
+    async def get_records_by_person_id(self, idp_id: Identifier) -> List[MigrationHistory]:
         raise NotImplementedError
 
     async def delete_record(self, record_id: Identifier) -> MigrationHistory:
@@ -31,13 +31,19 @@ class MigrationRepository(IMigrationRepository):
         result = await self.db.fetchone(query)
         return MigrationHistory(**result)
 
-    async def get_record(self, record_id: Identifier) -> MigrationHistory:
+    async def get_record(self, record_id: Identifier) -> Optional[MigrationHistory]:
         query = select(migration_history).where(migration_history.c.id == record_id)
-        result = await self.db.fetchone(query)
-        return MigrationHistory(**result)
+        if result := await self.db.fetchone(query):
+            return MigrationHistory(**result)
 
-    async def get_records(self, record_id: Identifier) -> List[MigrationHistory]:
-        query = select(migration_history).where(migration_history.c.id == record_id)
+        return None
+
+    async def get_records_by_person_id(self, idp_id: Identifier) -> List[MigrationHistory]:
+        query = (
+            select(migration_history)
+            .where(migration_history.c.idp_id == idp_id)
+            .order_by(desc(migration_history.c.created_at))
+        )
         rows = await self.db.fetchall(query)
         return [MigrationHistory(**row) for row in rows]
 
