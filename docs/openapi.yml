@@ -1144,9 +1144,9 @@
           "migration",
           "history"
         ],
-        "summary": "Create Migration Record",
-        "description": "Create migration record",
-        "operationId": "create_migration_record_migrations__record_id__delete",
+        "summary": "Delete Migration Record",
+        "description": "Delete migration record",
+        "operationId": "delete_migration_record_migrations__record_id__delete",
         "parameters": [
           {
             "required": true,

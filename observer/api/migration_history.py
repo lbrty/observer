@@ -3,6 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from starlette import status
 
 from observer.common.permissions import (
+    assert_can_see_private_info,
     assert_deletable,
     assert_viewable,
     assert_writable,
@@ -88,7 +89,7 @@ async def get_migration_record(
     status_code=status.HTTP_201_CREATED,
     tags=["idp", "migration", "history"],
 )
-async def create_migration_record(
+async def delete_migration_record(
     tasks: BackgroundTasks,
     record_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
@@ -103,10 +104,11 @@ async def create_migration_record(
         use_cache=False,
     ),
 ) -> Response:
-    """Create migration record"""
+    """Delete migration record"""
     migration_record = await migrations.get_record(record_id)
     permission = await permissions.find(migration_record.project_id, user.id)
     assert_deletable(user, permission)
+    assert_can_see_private_info(user, permission)
     new_record = await migrations.delete_record(record_id)
     audit_log = props.new_event(
         f"record_id={new_record.id},project_id={new_record.project_id},ref_id={user.ref_id}",
