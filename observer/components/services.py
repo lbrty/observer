@@ -8,6 +8,7 @@ from observer.services.idp import IIDPService
 from observer.services.jwt import JWTService
 from observer.services.keys import Keychain
 from observer.services.mailer import IMailer
+from observer.services.migration_history import IMigrationService
 from observer.services.permissions import IPermissionsService
 from observer.services.projects import IProjectsService
 from observer.services.secrets import ISecretsService
@@ -62,6 +63,13 @@ async def secrets_service() -> ISecretsService:
         return ctx.secrets_service
 
     raise RuntimeError("CryptoService is None")
+
+
+async def migrations_service() -> IMigrationService:
+    if ctx.migrations_service:
+        return ctx.migrations_service
+
+    raise RuntimeError("MigrationService is None")
 
 
 async def keychain() -> Keychain:

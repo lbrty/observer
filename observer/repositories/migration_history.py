@@ -5,10 +5,7 @@ from sqlalchemy import delete, insert, select
 from observer.common.types import Identifier
 from observer.db import Database
 from observer.db.tables.migration_history import migration_history
-from observer.entities.migration_history import (
-    MigrationHistory,
-    NewMigrationHistory,
-)
+from observer.entities.migration_history import MigrationHistory, NewMigrationHistory
 
 
 class IMigrationRepository(Protocol):

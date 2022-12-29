@@ -2,14 +2,9 @@ from typing import List, Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier
-from observer.entities.migration_history import (
-    MigrationHistory,
-    NewMigrationHistory,
-)
+from observer.entities.migration_history import MigrationHistory, NewMigrationHistory
 from observer.repositories.migration_history import IMigrationRepository
-from observer.schemas.migration_history import (
-    NewMigrationHistoryRequest,
-)
+from observer.schemas.migration_history import NewMigrationHistoryRequest
 from observer.services.world import IWorldService
 
 

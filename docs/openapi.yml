@@ -955,6 +955,61 @@
         }
       }
     },
+    "/migrations": {
+      "post": {
+        "tags": [
+          "idp",
+          "migration",
+          "history"
+        ],
+        "summary": "Create Migration Record",
+        "description": "Create migration record",
+        "operationId": "create_migration_record_migrations_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewMigrationHistoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MigrationHistoryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/mfa/configure": {
       "post": {
         "summary": "Configure Mfa",
@@ -3093,6 +3148,35 @@
           }
         }
       },
+      "MigrationHistoryResponse": {
+        "title": "MigrationHistoryResponse",
+        "required": [
+          "id",
+          "created_at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Migration record ID"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string",
+            "description": "Creation date",
+            "format": "date-time"
+          }
+        }
+      },
       "NewCategoryRequest": {
         "title": "NewCategoryRequest",
         "required": [
@@ -3209,6 +3293,63 @@
               "type": "string"
             },
             "description": "List of tags"
+          }
+        }
+      },
+      "NewMigrationHistoryRequest": {
+        "title": "NewMigrationHistoryRequest",
+        "required": [
+          "idp_id",
+          "migration_date",
+          "from_place_id",
+          "current_place_id"
+        ],
+        "type": "object",
+        "properties": {
+          "idp_id": {
+            "title": "Idp Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "IDP ID"
+          },
+          "migration_date": {
+            "title": "Migration Date",
+            "type": "string",
+            "description": "Date of migration",
+            "format": "date"
+          },
+          "from_place_id": {
+            "title": "From Place Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "From place ID where IDP has moved"
+          },
+          "current_place_id": {
+            "title": "Current Place Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Current place of living"
           }
         }
       },
