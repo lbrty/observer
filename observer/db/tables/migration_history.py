@@ -20,6 +20,12 @@ migration_history = Table(
     ),
     Column("migration_date", Date(), nullable=True),
     Column(
+        "project_id",
+        UUID(as_uuid=True),
+        ForeignKey("projects.id", ondelete="SET NULL"),
+        nullable=True,
+    ),
+    Column(
         "from_place_id",
         UUID(as_uuid=True),
         ForeignKey("places.id", ondelete="SET NULL"),
@@ -38,6 +44,7 @@ migration_history = Table(
         nullable=True,
     ),
     Index("ix_migration_history_idp_id", "idp_id"),
+    Index("ix_migration_history_project_id", "project_id"),
     Index("ix_migration_history_migration_date", "migration_date"),
     Index("ix_migration_history_from_place_id", "from_place_id"),
     Index("ix_migration_history_current_place_id", "current_place_id"),

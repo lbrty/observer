@@ -26,6 +26,7 @@ def upgrade():
         ),
         sa.Column("idp_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column("migration_date", sa.DATE(), nullable=True),
+        sa.Column("project_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("from_place_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("current_place_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column(
@@ -41,6 +42,12 @@ def upgrade():
             ["people.id"],
             ondelete="CASCADE",
         ),
+        # If project gets deleted we still need to keep migration record
+        sa.ForeignKeyConstraint(
+            ("project_id",),
+            ["projects.id"],
+            ondelete="SET NULL",
+        ),
         # If place was deleted we want to preserve record
         sa.ForeignKeyConstraint(
             ("from_place_id",),
@@ -55,6 +62,7 @@ def upgrade():
     )
 
     op.create_index(op.f("ix_migration_history_idp_id"), "migration_history", ["idp_id"])
+    op.create_index(op.f("ix_migration_history_project_id"), "migration_history", ["project_id"])
     op.create_index(op.f("ix_migration_history_migration_date"), "migration_history", ["migration_date"])
     op.create_index(op.f("ix_migration_history_from_place_id"), "migration_history", ["from_place_id"])
     op.create_index(op.f("ix_migration_history_current_place_id"), "migration_history", ["current_place_id"])
