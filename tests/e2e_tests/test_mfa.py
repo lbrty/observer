@@ -286,6 +286,6 @@ async def test_mfa_reset_request_works_as_expected_when_random_email_given(
     )
     assert resp.status_code == status.HTTP_204_NO_CONTENT
     audit_log = await app_context.audit_service.find_by_ref(
-        "source=service:user,endpoint=reset_mfa,action=reset:mfa,kind=error",
+        "endpoint=reset_mfa,action=reset:mfa,kind=error",
     )
     assert audit_log.data == payload

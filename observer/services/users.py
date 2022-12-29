@@ -1,4 +1,3 @@
-import base64
 from datetime import datetime, timedelta, timezone
 from typing import List, Protocol
 
@@ -20,7 +19,6 @@ from observer.entities.users import (
     UserUpdate,
 )
 from observer.repositories.users import IUsersRepository
-from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.users import (
     NewUserRequest,
     UserMFAUpdateRequest,
@@ -32,7 +30,6 @@ from observer.settings import settings
 
 
 class IUsersService(Protocol):
-    tag: str
     repo: IUsersRepository
 
     async def get_by_id(self, user_id: Identifier) -> SomeUser:
@@ -74,9 +71,6 @@ class IUsersService(Protocol):
     async def get_password_reset(self, code: str) -> PasswordReset | None:
         raise NotImplementedError
 
-    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
-        raise NotImplementedError
-
     @staticmethod
     async def to_response(user: User) -> UserResponse:
         raise NotImplementedError
@@ -87,8 +81,6 @@ class IUsersService(Protocol):
 
 
 class UsersService(IUsersService):
-    tag: str = "source=service:user"
-
     def __init__(self, users_repository: IUsersRepository, crypto_service: ICryptoService):
         self.repo = users_repository
         self.crypto_service = crypto_service
@@ -132,9 +124,7 @@ class UsersService(IUsersService):
 
     async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
         keys_hash, encrypted_backup_codes = user_backup_codes.split(":", maxsplit=1)
-        decrypted_backup_codes = await self.crypto_service.decrypt(
-            keys_hash, base64.b64decode(encrypted_backup_codes.encode())
-        )
+        decrypted_backup_codes = await self.crypto_service.decrypt(keys_hash, encrypted_backup_codes.encode())
         if given_backup_code not in decrypted_backup_codes.decode().split(","):
             raise TOTPInvalidBackupCodeError(message="Invalid backup code")
 
@@ -175,18 +165,6 @@ class UsersService(IUsersService):
 
     async def get_password_reset(self, code: str) -> PasswordReset | None:
         return await self.repo.get_password_reset(code)
-
-    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
-        now = datetime.now(tz=timezone.utc)
-        expires_at = None
-        if expires_in:
-            expires_at = now + expires_in
-
-        return NewAuditLog(
-            ref=f"{self.tag},{ref}",
-            data=data,
-            expires_at=expires_at,
-        )
 
     @staticmethod
     async def to_response(user: User) -> UserResponse:

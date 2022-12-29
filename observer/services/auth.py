@@ -1,4 +1,3 @@
-import base64
 from datetime import datetime, timedelta, timezone
 from typing import Protocol, Tuple
 
@@ -42,7 +41,6 @@ RefreshTokenExpirationDelta = timedelta(minutes=RefreshTokenExpirationMinutes)
 
 
 class IAuthService(Protocol):
-    tag: str
     crypto_service: ICryptoService
     audits: IAuditService
     mfa_service: IMFAService
@@ -72,8 +70,6 @@ class IAuthService(Protocol):
 
 
 class AuthService(IAuthService):
-    tag: str = "source=service:auth"
-
     def __init__(
         self,
         crypto_service: ICryptoService,
@@ -179,7 +175,7 @@ class AuthService(IAuthService):
             keys_hash, encrypted_secret = user.mfa_encrypted_secret.split(":", maxsplit=1)
             decrypted_secret = await self.crypto_service.decrypt(
                 keys_hash,
-                base64.b64decode(encrypted_secret.encode()),
+                encrypted_secret.encode(),
             )
 
             if not totp_code:

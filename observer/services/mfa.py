@@ -30,7 +30,6 @@ class MFASetupResult:
 
 
 class IMFAService(Protocol):
-    tag: str
     crypto_service: ICryptoService
     totp_leeway: int = 0
 
@@ -54,8 +53,6 @@ class IMFAService(Protocol):
 
 
 class MFAService(IMFAService):
-    tag: str = "source=service:mfa"
-
     def __init__(self, totp_leeway: int, crypto_service: ICryptoService):
         self.totp_leeway = totp_leeway
         self.crypto_service = crypto_service

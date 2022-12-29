@@ -5,6 +5,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
 from observer.api.exceptions import BadRequestError, TOTPError
+from observer.components.audit import Props, Tracked
 from observer.components.mfa import mfa_service, user_with_no_mfa
 from observer.components.services import audit_service, keychain, mailer, users_service
 from observer.entities.users import User
@@ -58,6 +59,13 @@ async def setup_mfa(
     user_service: IUsersService = Depends(users_service),
     audits: IAuditService = Depends(audit_service),
     key_chain: Keychain = Depends(keychain),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=setup_mfa,action=setup:mfa",
+            expires_in=timedelta(days=settings.mfa_audit_event_lifetime_days),
+        ),
+        use_cache=False,
+    ),
 ) -> MFABackupCodesResponse:
     """Save MFA configuration and create backup codes.
 
@@ -80,9 +88,8 @@ async def setup_mfa(
             user.id,
             mfa_update_request,
         )
-        audit_log = await user_service.create_log(
-            "endpoint=setup_mfa,action=setup:mfa",
-            timedelta(days=settings.mfa_audit_event_lifetime_days),
+        audit_log = props.new_event(
+            f"ref_id={user.id}",
             dict(setup_totp_code=activation_request.totp_code.get_secret_value()),
         )
         tasks.add_task(audits.add_event, audit_log)
@@ -102,6 +109,13 @@ async def reset_mfa(
     user_service: IUsersService = Depends(users_service),
     audits: IAuditService = Depends(audit_service),
     mail: IMailer = Depends(mailer),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=reset_mfa,action=reset:mfa",
+            expires_in=timedelta(days=settings.mfa_audit_event_lifetime_days),
+        ),
+        use_cache=False,
+    ),
 ) -> Response:
     """Reset MFA using one of backup codes
 
@@ -113,11 +127,7 @@ async def reset_mfa(
         if user.mfa_encrypted_backup_codes:
             await user_service.check_backup_code(user.mfa_encrypted_backup_codes, reset_request.backup_code)
             await user_service.reset_mfa(user.id)
-            audit_log = await user_service.create_log(
-                "endpoint=reset_mfa,action=reset:mfa",
-                timedelta(days=settings.mfa_audit_event_lifetime_days),
-                reset_request.dict(),
-            )
+            audit_log = props.new_event(f"ref_id={user.id}", reset_request.dict())
             tasks.add_task(audits.add_event, audit_log)
             tasks.add_task(
                 mail.send,
@@ -131,11 +141,7 @@ async def reset_mfa(
         else:
             raise BadRequestError(message="Backup codes not found")
     else:
-        audit_log = await user_service.create_log(
-            "endpoint=reset_mfa,action=reset:mfa,kind=error",
-            timedelta(days=settings.mfa_audit_event_lifetime_days),
-            reset_request.dict(),
-        )
+        audit_log = props.new_event("kind=error", reset_request.dict())
         tasks.add_task(audits.add_event, audit_log)
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
