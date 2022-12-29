@@ -19,7 +19,3 @@ class MigrationHistory(ModelBase):
 
 class NewMigrationHistory(BaseMigrationHistory):
     ...
-
-
-class UpdateMigrationHistory(BaseMigrationHistory):
-    ...

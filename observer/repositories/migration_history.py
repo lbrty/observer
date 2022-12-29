@@ -1,6 +1,6 @@
 from typing import List, Protocol
 
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, insert, select
 
 from observer.common.types import Identifier
 from observer.db import Database
@@ -8,7 +8,6 @@ from observer.db.tables.migration_history import migration_history
 from observer.entities.migration_history import (
     MigrationHistory,
     NewMigrationHistory,
-    UpdateMigrationHistory,
 )
 
 
@@ -20,9 +19,6 @@ class IMigrationRepository(Protocol):
         raise NotImplementedError
 
     async def get_records(self, record_id: Identifier) -> List[MigrationHistory]:
-        raise NotImplementedError
-
-    async def update_record(self, record_id: Identifier, updates: UpdateMigrationHistory) -> MigrationHistory:
         raise NotImplementedError
 
     async def delete_record(self, record_id: Identifier) -> MigrationHistory:
@@ -47,13 +43,6 @@ class MigrationRepository(IMigrationRepository):
         query = select(migration_history).where(migration_history.c.id == record_id)
         rows = await self.db.fetchall(query)
         return [MigrationHistory(**row) for row in rows]
-
-    async def update_record(self, record_id: Identifier, updates: UpdateMigrationHistory) -> MigrationHistory:
-        query = (
-            update(migration_history).values(**updates.dict()).where(migration_history.c.id == record_id).returning("*")
-        )
-        result = await self.db.fetchone(query)
-        return MigrationHistory(**result)
 
     async def delete_record(self, record_id: Identifier) -> MigrationHistory:
         query = delete(migration_history).where(migration_history.c.id == record_id).returning("*")

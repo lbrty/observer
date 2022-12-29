@@ -5,12 +5,10 @@ from observer.common.types import Identifier
 from observer.entities.migration_history import (
     MigrationHistory,
     NewMigrationHistory,
-    UpdateMigrationHistory,
 )
 from observer.repositories.migration_history import IMigrationRepository
 from observer.schemas.migration_history import (
     NewMigrationHistoryRequest,
-    UpdateMigrationHistoryRequest,
 )
 from observer.services.world import IWorldService
 
@@ -26,9 +24,6 @@ class IMigrationService(Protocol):
         raise NotImplementedError
 
     async def get_records(self, record_id: Identifier) -> List[MigrationHistory]:
-        raise NotImplementedError
-
-    async def update_record(self, record_id: Identifier, updates: UpdateMigrationHistoryRequest) -> MigrationHistory:
         raise NotImplementedError
 
     async def delete_record(self, record_id: Identifier) -> MigrationHistory:
@@ -57,15 +52,6 @@ class MigrationService(IMigrationService):
 
     async def get_records(self, record_id: Identifier) -> List[MigrationHistory]:
         return await self.repo.get_records(record_id)
-
-    async def update_record(self, record_id: Identifier, updates: UpdateMigrationHistoryRequest) -> MigrationHistory:
-        if updates.from_place_id:
-            await self.world.get_place(updates.from_place_id)
-
-        if updates.current_place_id:
-            await self.world.get_place(updates.current_place_id)
-
-        return await self.repo.update_record(record_id, UpdateMigrationHistory(**updates.dict()))
 
     async def delete_record(self, record_id: Identifier) -> MigrationHistory:
         return await self.repo.delete_record(record_id)
