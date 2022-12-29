@@ -33,6 +33,7 @@ router = APIRouter(prefix="/auth")
     "/token",
     response_model=TokenResponse,
     status_code=status.HTTP_200_OK,
+    tags=["auth"],
 )
 async def token_login(
     tasks: BackgroundTasks,
@@ -57,6 +58,7 @@ async def token_login(
     "/token/refresh",
     response_model=TokenResponse,
     status_code=status.HTTP_200_OK,
+    tags=["auth"],
 )
 async def token_refresh(
     tasks: BackgroundTasks,
@@ -89,6 +91,7 @@ async def token_refresh(
     "/register",
     response_model=TokenResponse,
     status_code=status.HTTP_201_CREATED,
+    tags=["auth"],
 )
 async def token_register(
     tasks: BackgroundTasks,
@@ -129,6 +132,7 @@ async def token_register(
 @router.post(
     "/change-password",
     status_code=status.HTTP_204_NO_CONTENT,
+    tags=["auth"],
 )
 async def change_password(
     tasks: BackgroundTasks,
@@ -166,6 +170,7 @@ async def change_password(
 @router.post(
     "/reset-password",
     status_code=status.HTTP_204_NO_CONTENT,
+    tags=["auth"],
 )
 async def reset_password_request(
     tasks: BackgroundTasks,
@@ -202,6 +207,7 @@ async def reset_password_request(
 @router.post(
     "/reset-password/{code}",
     status_code=status.HTTP_204_NO_CONTENT,
+    tags=["auth"],
 )
 async def reset_password_with_code(
     tasks: BackgroundTasks,

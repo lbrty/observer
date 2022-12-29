@@ -24,6 +24,7 @@ router = APIRouter(prefix="/account")
     "/me",
     response_model=UserResponse,
     status_code=status.HTTP_200_OK,
+    tags=["account"],
 )
 async def get_me(
     user: User = Depends(authenticated_user),
@@ -31,7 +32,11 @@ async def get_me(
     return UserResponse(**user.dict())
 
 
-@router.get("/confirm/{code}", status_code=status.HTTP_204_NO_CONTENT)
+@router.get(
+    "/confirm/{code}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=["account"],
+)
 async def confirm_account(
     tasks: BackgroundTasks,
     code: str,
@@ -53,7 +58,11 @@ async def confirm_account(
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.post("/confirmation/resend", status_code=status.HTTP_204_NO_CONTENT)
+@router.post(
+    "/confirmation/resend",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=["account"],
+)
 async def resend_confirmation(
     tasks: BackgroundTasks,
     user: User = Depends(authenticated_user),

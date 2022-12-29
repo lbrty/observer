@@ -45,7 +45,12 @@ from observer.services.users import IUsersService
 router = APIRouter(prefix="/projects")
 
 
-@router.post("/", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/",
+    response_model=ProjectResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["projects"],
+)
 async def create_project(
     tasks: BackgroundTasks,
     new_project: NewProjectRequest,
@@ -92,6 +97,7 @@ async def create_project(
     response_model=ProjectResponse,
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_200_OK,
+    tags=["projects"],
 )
 async def get_project(
     project: Project = Depends(viewable_project),
@@ -104,6 +110,7 @@ async def get_project(
     response_model=ProjectResponse,
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_200_OK,
+    tags=["projects"],
 )
 async def update_project(
     tasks: BackgroundTasks,
@@ -131,6 +138,7 @@ async def update_project(
     "/{project_id}",
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_204_NO_CONTENT,
+    tags=["projects"],
 )
 async def delete_project(
     tasks: BackgroundTasks,
@@ -156,6 +164,7 @@ async def delete_project(
     response_model=ProjectMembersResponse,
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_200_OK,
+    tags=["projects"],
 )
 async def get_project_members(
     project: Project = Depends(viewable_project),
@@ -172,6 +181,7 @@ async def get_project_members(
     response_model=ProjectMemberResponse,
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_200_OK,
+    tags=["projects"],
 )
 async def add_project_member(
     tasks: BackgroundTasks,
@@ -213,6 +223,7 @@ async def add_project_member(
     response_model=ProjectMemberResponse,
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_200_OK,
+    tags=["projects"],
 )
 async def update_project_members_permissions(
     tasks: BackgroundTasks,
@@ -253,6 +264,7 @@ async def update_project_members_permissions(
     "/{project_id}/members/{user_id}",
     responses=get_api_errors(status.HTTP_404_NOT_FOUND, status.HTTP_403_FORBIDDEN),
     status_code=status.HTTP_204_NO_CONTENT,
+    tags=["projects"],
 )
 async def delete_project_member(
     tasks: BackgroundTasks,

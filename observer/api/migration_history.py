@@ -112,7 +112,7 @@ async def delete_migration_record(
     new_record = await migrations.delete_record(record_id)
     audit_log = props.new_event(
         f"record_id={new_record.id},project_id={new_record.project_id},ref_id={user.ref_id}",
-        jsonable_encoder(new_record),
+        None,
     )
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_200_OK)
