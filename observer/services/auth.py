@@ -21,7 +21,6 @@ from observer.common import bcrypt
 from observer.common.bcrypt import is_strong_password
 from observer.common.types import Identifier, Role, SomeStr
 from observer.entities.users import PasswordReset, User
-from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.auth import (
     ChangePasswordRequest,
     LoginPayload,
@@ -69,9 +68,6 @@ class IAuthService(Protocol):
         raise NotImplementedError
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
-        raise NotImplementedError
-
-    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
         raise NotImplementedError
 
 
@@ -191,18 +187,6 @@ class AuthService(IAuthService):
 
             if not await self.mfa_service.valid(totp_code, decrypted_secret.decode()):
                 raise TOTPError(message="Invalid totp code")
-
-    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
-        now = datetime.now(tz=timezone.utc)
-        expires_at = None
-        if expires_in:
-            expires_at = now + expires_in
-
-        return NewAuditLog(
-            ref=f"{self.tag},{ref}",
-            data=data,
-            expires_at=expires_at,
-        )
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
         payload = TokenData(ref_id=ref_id)

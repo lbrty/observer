@@ -24,7 +24,7 @@ async def test_token_login_works_as_expected(client, ensure_db, app_context, con
     assert token_data.ref_id == consultant_user.ref_id
 
     audit_log = await app_context.audit_service.find_by_ref(
-        f"source=service:auth,action=token:login,ref_id={consultant_user.ref_id}"
+        f"endpoint=token_login,action=token:login,ref_id={consultant_user.ref_id}"
     )
     assert audit_log.data["ref_id"] == consultant_user.ref_id
 
@@ -58,7 +58,7 @@ async def test_token_refresh_works_as_expected(
     token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])
     assert token_data.ref_id == consultant_user.ref_id
     audit_log = await app_context.audit_service.find_by_ref(
-        f"source=service:auth,action=token:refresh,ref_id={consultant_user.ref_id}"
+        f"endpoint=token_refresh,action=token:refresh,ref_id={consultant_user.ref_id}"
     )
     assert audit_log.data["ref_id"] == consultant_user.ref_id
 
@@ -73,7 +73,7 @@ async def test_token_refresh_works_as_expected_when_refresh_token_is_invalid(cli
         "status_code": 403,
     }
 
-    audit_log = await app_context.audit_service.find_by_ref("source=service:auth,action=token:refresh,kind=error")
+    audit_log = await app_context.audit_service.find_by_ref("endpoint=token_refresh,action=token:refresh,kind=error")
     assert audit_log.data == dict(refresh_token="INVALID-TOKEN", notice="invalid refresh token")
 
 
@@ -92,7 +92,7 @@ async def test_registration_works_as_expected(client, ensure_db, app_context):
     assert token_data.ref_id == user.ref_id
 
     audit_log = await app_context.audit_service.find_by_ref(
-        f"source=service:auth,action=token:register,ref_id={user.ref_id}"
+        f"endpoint=token_register,action=token:register,ref_id={user.ref_id}"
     )
     assert audit_log.data == dict(ref_id=user.ref_id, role=user.role.value)
 
@@ -132,7 +132,7 @@ async def test_password_reset_with_valid_code_works_as_expected(
     )
     assert resp.status_code == status.HTTP_204_NO_CONTENT
     audit_log = await app_context.audit_service.find_by_ref(
-        f"source=service:auth,endpoint=reset_password_with_code,action=reset:password,ref_id={consultant_user.ref_id}"
+        f"endpoint=reset_password_with_code,action=reset:password,ref_id={consultant_user.ref_id}"
     )
     assert audit_log.data == dict(code=password_reset.code, ref_id=consultant_user.ref_id)
 
@@ -209,7 +209,7 @@ async def test_password_change_works_as_expected(
     )
     assert resp.status_code == status.HTTP_204_NO_CONTENT
     audit_log = await app_context.audit_service.find_by_ref(
-        f"source=service:auth,endpoint=change_password,action=change_password:request,ref_id={consultant_user.ref_id}"
+        f"endpoint=change_password,action=change:password,ref_id={consultant_user.ref_id}"
     )
     assert audit_log.data["ref_id"] == consultant_user.ref_id
     resp = await client.post(
