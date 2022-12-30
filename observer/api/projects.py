@@ -238,9 +238,6 @@ async def update_project_members_permissions(
 ) -> ProjectMemberResponse:
     tag = "endpoint=update_project_members_permissions"
     member_user = await users.get_by_id(user_id)
-    if not member_user:
-        raise NotFoundError(message="User not found")
-
     old_permission = await permissions.find(project.id, user_id)
     permission = await permissions.update_permission(old_permission.id, updated_permission)
     audit_log = await projects.create_log(

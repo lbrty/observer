@@ -86,7 +86,11 @@ class UsersService(IUsersService):
         self.crypto_service = crypto_service
 
     async def get_by_id(self, user_id: Identifier) -> SomeUser:
-        return await self.repo.get_by_id(user_id)
+        user = await self.repo.get_by_id(user_id)
+        if not user:
+            raise NotFoundError(message="User not found")
+
+        return user
 
     async def get_by_ref_id(self, ref_id: Identifier) -> SomeUser:
         return await self.repo.get_by_ref_id(ref_id)
