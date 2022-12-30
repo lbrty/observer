@@ -15,7 +15,7 @@ class BaseMigrationHistory(SchemaBase):
     current_place_id: Optional[Identifier] = Field(None, description="Current place of living")
 
 
-class MigrationHistoryResponse(SchemaBase):
+class MigrationHistoryResponse(BaseMigrationHistory):
     id: Identifier = Field(..., description="Migration record ID")
     created_at: datetime = Field(..., description="Creation date")
 

@@ -1206,13 +1206,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -3407,11 +3402,72 @@
       "MigrationHistoryResponse": {
         "title": "MigrationHistoryResponse",
         "required": [
+          "idp_id",
+          "migration_date",
+          "project_id",
           "id",
           "created_at"
         ],
         "type": "object",
         "properties": {
+          "idp_id": {
+            "title": "Idp Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "IDP ID"
+          },
+          "migration_date": {
+            "title": "Migration Date",
+            "type": "string",
+            "description": "Date of migration",
+            "format": "date"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Project ID to which it belongs"
+          },
+          "from_place_id": {
+            "title": "From Place Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "From place ID where IDP has moved"
+          },
+          "current_place_id": {
+            "title": "Current Place Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Current place of living"
+          },
           "id": {
             "title": "Id",
             "anyOf": [

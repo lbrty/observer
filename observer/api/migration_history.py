@@ -86,7 +86,7 @@ async def get_migration_record(
 
 @router.delete(
     "/{record_id}",
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_204_NO_CONTENT,
     tags=["idp", "migration", "history"],
 )
 async def delete_migration_record(
@@ -115,4 +115,4 @@ async def delete_migration_record(
         None,
     )
     tasks.add_task(audits.add_event, audit_log)
-    return Response(status_code=status.HTTP_200_OK)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
