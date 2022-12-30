@@ -135,7 +135,6 @@ async def test_delete_migration_history_works_as_expected(authorized_client, app
 
     resp = await authorized_client.get(f"/migrations/{migration_record_id}")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
-    print(resp.json())
     assert resp.json() == {
         "code": "not_found",
         "data": None,

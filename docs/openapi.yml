@@ -1011,7 +1011,7 @@
                   "title": "Response Get Person Migration Records Idp People  Idp Id  Migration Records Get",
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MigrationHistoryResponse"
+                    "$ref": "#/components/schemas/FullMigrationHistoryResponse"
                   }
                 }
               }
@@ -3130,6 +3130,88 @@
         ],
         "type": "string",
         "description": "An enumeration."
+      },
+      "FullMigrationHistoryResponse": {
+        "title": "FullMigrationHistoryResponse",
+        "required": [
+          "id",
+          "idp_id",
+          "migration_date",
+          "project_id",
+          "created_at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Migration record ID"
+          },
+          "idp_id": {
+            "title": "Idp Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "IDP ID"
+          },
+          "migration_date": {
+            "title": "Migration Date",
+            "type": "string",
+            "description": "Date of migration",
+            "format": "date"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Project ID to which it belongs"
+          },
+          "from_place": {
+            "title": "From Place",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlaceResponse"
+              }
+            ],
+            "description": "Place where person has moved from"
+          },
+          "current_place": {
+            "title": "Current Place",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlaceResponse"
+              }
+            ],
+            "description": "Current place of living"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string",
+            "description": "Creation date",
+            "format": "date-time"
+          }
+        }
       },
       "HTTPValidationError": {
         "title": "HTTPValidationError",

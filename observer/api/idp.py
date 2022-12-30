@@ -21,6 +21,7 @@ from observer.components.services import (
     migrations_service,
     permissions_service,
     secrets_service,
+    world_service,
 )
 from observer.entities.base import SomeUser
 from observer.entities.idp import PersonalInfo
@@ -33,13 +34,15 @@ from observer.schemas.idp import (
     UpdateCategoryRequest,
     UpdateIDPRequest,
 )
-from observer.schemas.migration_history import MigrationHistoryResponse
+from observer.schemas.migration_history import FullMigrationHistoryResponse
+from observer.schemas.world import PlaceResponse
 from observer.services.audit_logs import IAuditService
 from observer.services.categories import ICategoryService
 from observer.services.idp import IIDPService
 from observer.services.migration_history import IMigrationService
 from observer.services.permissions import IPermissionsService
 from observer.services.secrets import ISecretsService
+from observer.services.world import IWorldService
 
 router = APIRouter(prefix="/idp")
 
@@ -258,7 +261,7 @@ async def get_personal_info(
 
 @router.get(
     "/people/{idp_id}/migration-records",
-    response_model=List[MigrationHistoryResponse],
+    response_model=List[FullMigrationHistoryResponse],
     response_model_exclude_none=True,
     status_code=status.HTTP_200_OK,
     tags=["idp", "people", "migration", "history"],
@@ -269,13 +272,26 @@ async def get_person_migration_records(
     idp: IIDPService = Depends(idp_service),
     permissions: IPermissionsService = Depends(permissions_service),
     migrations: IMigrationService = Depends(migrations_service),
-) -> List[MigrationHistoryResponse]:
+    world: IWorldService = Depends(world_service),
+) -> List[FullMigrationHistoryResponse]:
     """Get migration records for a person"""
     idp_record = await idp.get_idp(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_can_see_private_info(user, permission)
-    records = await migrations.get_records_by_person_id(idp_id)
-    return [MigrationHistoryResponse(**record.dict()) for record in records]
+    records = await migrations.get_idp_records(idp_id)
+    result = []
+    for record in records:
+        migration_record = FullMigrationHistoryResponse(**record.dict())
+        if record.from_place_id:
+            place = await world.get_place(record.from_place_id)
+            migration_record.from_place = PlaceResponse(**place.dict())
+
+        if record.current_place_id:
+            place = await world.get_place(record.current_place_id)
+            migration_record.current_place = PlaceResponse(**place.dict())
+        result.append(migration_record)
+
+    return result
 
 
 @router.put(

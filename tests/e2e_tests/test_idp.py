@@ -1,9 +1,21 @@
+from datetime import date
+
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
 from observer.entities.permissions import NewPermission
 from observer.schemas.idp import NewIDPRequest, UpdateIDPRequest
-from tests.helpers.crud import create_permission, create_project
+from observer.schemas.migration_history import (
+    FullMigrationHistoryResponse,
+    NewMigrationHistoryRequest,
+)
+from tests.helpers.crud import (
+    create_city,
+    create_country,
+    create_permission,
+    create_project,
+    create_state,
+)
 
 
 async def test_create_idp_works_as_expected(
@@ -264,3 +276,53 @@ async def test_delete_idp_works_as_expected(
 
     resp = await authorized_client.get(f"/idp/people/{idp_id}")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+
+async def test_get_idp_migration_history_works_as_expected(authorized_client, app_context, consultant_user):
+    project = await create_project(app_context, "test project", "test description")
+    await create_permission(
+        app_context,
+        NewPermission(
+            can_create=True,
+            can_read=True,
+            can_update=True,
+            can_delete=True,
+            can_create_projects=True,
+            can_read_documents=False,
+            can_read_personal_info=True,
+            can_invite_members=False,
+            project_id=project.id,
+            user_id=consultant_user.id,
+        ),
+    )
+    payload = NewIDPRequest(
+        project_id=project.id,
+        email="Full_Name@examples.com",
+        full_name="Full Name",
+        phone_number="+11111111",
+        phone_number_additional="+18181818",
+        tags=["one", "two"],
+    )
+    resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
+    assert resp.status_code == status.HTTP_201_CREATED
+    person_id = resp.json()["id"]
+    country = await create_country(app_context, "Country 1", "c1")
+    state = await create_state(app_context, "State 1", "s1", country.id)
+    city_1 = await create_city(app_context, "City 1", "cty1", country.id, state.id)
+    city_2 = await create_city(app_context, "City 2", "cty2", country.id, state.id)
+    payload = NewMigrationHistoryRequest(
+        idp_id=person_id,
+        project_id=project.id,
+        migration_date=date(year=2018, month=8, day=4),
+        from_place_id=city_1.id,
+        current_place_id=city_2.id,
+    )
+    resp = await authorized_client.post("/migrations", json=jsonable_encoder(payload))
+    assert resp.status_code == status.HTTP_201_CREATED
+    expected_response = FullMigrationHistoryResponse(**resp.json())
+    expected_response.from_place = city_1
+    expected_response.current_place = city_2
+
+    resp = await authorized_client.get(f"/idp/people/{person_id}/migration-records")
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == [jsonable_encoder(expected_response)]
