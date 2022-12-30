@@ -3557,9 +3557,7 @@
         "required": [
           "idp_id",
           "migration_date",
-          "project_id",
-          "from_place_id",
-          "current_place_id"
+          "project_id"
         ],
         "type": "object",
         "properties": {

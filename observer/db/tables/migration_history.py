@@ -15,7 +15,7 @@ migration_history = Table(
     Column(
         "idp_id",
         UUID(as_uuid=True),
-        ForeignKey("users.id", ondelete="CASCADE"),
+        ForeignKey("people.id", ondelete="CASCADE"),
         nullable=False,
     ),
     Column("migration_date", Date(), nullable=True),
