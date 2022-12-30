@@ -4095,24 +4095,6 @@
             "title": "Phone Number Additional",
             "type": "string",
             "description": "Displaced person ID"
-          },
-          "from_place": {
-            "title": "From Place",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PlaceResponse"
-              }
-            ],
-            "description": "Place of origin city/town/village"
-          },
-          "current_place": {
-            "title": "Current Place",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PlaceResponse"
-              }
-            ],
-            "description": "Current or destination city/town/village"
           }
         }
       },

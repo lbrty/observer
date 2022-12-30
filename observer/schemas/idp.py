@@ -5,7 +5,6 @@ from pydantic import Field
 
 from observer.common.types import DisplacedPersonStatus, Identifier
 from observer.schemas.base import SchemaBase
-from observer.schemas.world import PlaceResponse
 
 
 class BaseCategory(SchemaBase):
@@ -60,5 +59,3 @@ class PersonalInfoResponse(SchemaBase):
     email: Optional[str] = Field(None, description="Contact email")
     phone_number: Optional[str] = Field(None, description="Primary phone number")
     phone_number_additional: Optional[str] = Field(None, description="Displaced person ID")
-    from_place: Optional[PlaceResponse] = Field(None, description="Place of origin city/town/village")
-    current_place: Optional[PlaceResponse] = Field(None, description="Current or destination city/town/village")
