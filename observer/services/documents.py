@@ -1,6 +1,7 @@
 from io import BytesIO
 from typing import Protocol
 
+from aioboto3 import Session
 from aiofile import async_open
 
 
@@ -19,5 +20,12 @@ class FS(DocumentStoreInterface):
 
 
 class S3(DocumentStoreInterface):
+    def __init__(self, bucket: str):
+        self.bucket = bucket
+
     async def load(self, path: str) -> BytesIO:
-        raise NotImplementedError
+        # TODO: implement streaming?
+        session = Session()
+        async with session.client("s3") as s3:
+            obj = await s3.get_object(Bucket=self.bucket, Key=path)
+            return obj["Body"]
