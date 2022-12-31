@@ -24,6 +24,7 @@ def upgrade():
         sa.Column("status", sa.Text(), nullable=False),
         sa.Column("registration_id", sa.Text(), nullable=True),  # registration document id
         sa.Column("owner_id", postgresql.UUID(as_uuid=True), nullable=True),
+        sa.Column("project_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         sa.ForeignKeyConstraint(
@@ -31,12 +32,18 @@ def upgrade():
             ["people.id"],
             ondelete="SET NULL",
         ),
+        sa.ForeignKeyConstraint(
+            ("project_id",),
+            ["projects.id"],
+            ondelete="SET NULL",
+        ),
     )
 
     op.create_index(op.f("ix_pets_name"), "pets", [sa.text("lower(name)")])
     op.create_index(op.f("ix_pets_status"), "pets", ["status"])
-    op.create_index(op.f("ix_pets_owner_id"), "pets", ["owner_id"])
     op.create_index(op.f("ix_pets_registration_id"), "pets", ["registration_id"])
+    op.create_index(op.f("ix_pets_owner_id"), "pets", ["owner_id"])
+    op.create_index(op.f("ix_pets_project_id"), "pets", ["project_id"])
 
 
 def downgrade():

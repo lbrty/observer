@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -19,18 +20,23 @@ class BasePet(SchemaBase):
     notes: str | None = Field(None, description="Additional notes")
     status: PetStatus = Field(..., description="Pet status")
     registration_id: str | None = Field(None, description="Pet's registration ID, passport ID etc.")
-    owner_id: Identifier = Field(..., description="Pet's owner ID")
+    owner_id: Identifier = Field(..., description="Pet's owner ID (IDP ID)")
+    project_id: Identifier = Field(..., description="Project owner ID")
 
 
-class Pet(BaseModel):
+class PetResponse(BaseModel):
     id: Identifier = Field(..., description="Pet ID")
     created_at: datetime = Field(..., description="Creation datetime")
 
 
-class UpdatePet(BasePet):
+class NewPetRequest(BasePet):
+    ...
+
+
+class UpdatePetRequest(BasePet):
     ...
 
 
 class PetsResponse(BaseModel):
     total: int = Field(..., description="Total count of pets")
-    items: list[Pet] = Field(..., description="List of pets")
+    items: List[PetResponse] = Field(..., description="List of pets")

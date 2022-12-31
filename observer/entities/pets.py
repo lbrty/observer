@@ -12,4 +12,5 @@ class Pet(BaseModel):
     status: PetStatus
     registration_id: SomeStr
     owner_id: Identifier
+    project_id: Identifier
     created_at: datetime
