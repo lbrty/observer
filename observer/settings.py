@@ -73,6 +73,19 @@ class Settings(SettingsBase):
     auth_audit_event_login_days: int = 7
     auth_audit_event_refresh_days: int = 7
 
+    # Storage options
+    # Values below are optional exception
+    # is for storage backend type.
+    # Other settings must be checked manually.
+    storage_backend: str = "fs"
+    # Local storage
+    fs_keys_path: Optional[str] = str(here / "keys")
+    fs_documents_path: Optional[str] = str(here / "documents")
+    # Block storage
+    s3_endpoint: Optional[str] = "https://s3.aws.amazon.com/observer"
+    s3_keys_path: Optional[str] = "keys"
+    s3_documents_path: Optional[str] = "documents"
+
 
 class DatabaseSettings(SettingsBase):
     db_uri: PostgresDsn
