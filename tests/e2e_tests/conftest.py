@@ -4,6 +4,8 @@ import os
 
 import httpx
 import pytest
+from aiobotocore.config import AioConfig
+from aiobotocore.session import AioSession
 from cryptography.hazmat.primitives.asymmetric.rsa import generate_private_key
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
@@ -49,6 +51,7 @@ from observer.services.secrets import SecretsService
 from observer.services.users import UsersService
 from observer.services.world import WorldService
 from observer.settings import db_settings, settings
+from tests.e2e_tests.moto_server import MotoService
 from tests.mocks.mailer import MockMailer
 
 
@@ -68,6 +71,7 @@ def env_settings():
     return settings
 
 
+# TODO: Cleanup moto fixtures
 @pytest.fixture(scope="function")
 def aws_credentials():
     """Mocked AWS Credentials for moto."""
@@ -75,7 +79,44 @@ def aws_credentials():
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
     os.environ["AWS_SESSION_TOKEN"] = "testing"
-    os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
+    os.environ["AWS_DEFAULT_REGION"] = "us-central-1"
+
+
+@pytest.fixture
+def aio_session():
+    session = AioSession()
+    return session
+
+
+def moto_config():
+    return {"aws_secret_access_key": "xxx", "aws_access_key_id": "xxx"}
+
+
+@pytest.fixture
+def region() -> str:
+    return "eu-central-1"
+
+
+@pytest.fixture
+def signature_version() -> str:
+    return "v4"
+
+
+@pytest.fixture
+def aio_config(signature_version) -> AioConfig:
+    return AioConfig(signature_version=signature_version, read_timeout=5, connect_timeout=5)
+
+
+@pytest.fixture(scope="function")
+async def s3_server():
+    async with MotoService("s3", ssl=False) as svc:
+        yield svc.endpoint_url
+
+
+@pytest.fixture(scope="function")
+async def s3_client(request, region, aio_session, aio_config, s3_server):
+    async with aio_session.create_client("s3", region_name=region, endpoint_url=s3_server, config=aio_config) as client:
+        yield client
 
 
 @pytest.fixture(scope="session")
