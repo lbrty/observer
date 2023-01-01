@@ -13,6 +13,7 @@ class SupportRecord(SchemaBase):
     consultant_id: Identifier = Field(..., description="Consultant ID")
     beneficiary_age: BeneficiaryAge | None = Field(..., description="Beneficiary age")
     owner_id: Identifier = Field(..., description="Owner of support humans or pets")
+    project_id: Identifier = Field(..., description="Project ID")
     created_at: datetime = Field(..., description="Creation date")
 
 
