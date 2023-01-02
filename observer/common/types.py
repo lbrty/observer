@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from enum import Enum
-from typing import List, Optional, TypeAlias
+from pathlib import Path
+from typing import List, Optional, Tuple, TypeAlias
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -79,3 +80,11 @@ class PlaceFilters(BaseModel):
     place_type: PlaceType | None
     country_id: SomeIdentifier
     state_id: SomeIdentifier
+
+
+class StorageKind(str, Enum):
+    fs: str = "fs"
+    s3: str = "s3"
+
+
+FileInfo: TypeAlias = Tuple[datetime, str | Path]
