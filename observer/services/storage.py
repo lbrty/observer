@@ -58,8 +58,8 @@ class S3Storage(IStorage):
             result = await client.list_objects_v2(Bucket=self.bucket, Prefix=path)
             return [
                 (
-                    datetime.fromisoformat(item["LastModified"]),
-                    f"{path}/{item['Key']}",
+                    item["LastModified"],
+                    item["Key"],
                 )
                 for item in result["Contents"]
             ]
