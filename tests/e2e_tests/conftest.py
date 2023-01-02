@@ -42,12 +42,13 @@ from observer.services.categories import CategoryService
 from observer.services.crypto import CryptoService
 from observer.services.idp import IDPService
 from observer.services.jwt import JWTService
-from observer.services.keys import FS
+from observer.services.keys import Keychain
 from observer.services.mfa import MFAService
 from observer.services.migration_history import MigrationService
 from observer.services.permissions import PermissionsService
 from observer.services.projects import ProjectsService
 from observer.services.secrets import SecretsService
+from observer.services.storage import FSStorage
 from observer.services.users import UsersService
 from observer.services.world import WorldService
 from observer.settings import db_settings, settings
@@ -139,7 +140,8 @@ async def app_context(db_engine):
         session=sessionmaker(db_engine, class_=AsyncSession),
     )
 
-    ctx.keychain = FS()
+    ctx.storage = FSStorage()
+    ctx.keychain = Keychain(ctx.storage)
     private_key = generate_private_key(
         public_exponent=settings.public_exponent,
         key_size=settings.key_size,

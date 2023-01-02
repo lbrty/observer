@@ -13,7 +13,7 @@ from observer.repositories.world import IWorldRepository
 from observer.services.audit_logs import IAuditService
 from observer.services.auth import IAuthService
 from observer.services.categories import ICategoryService
-from observer.services.crypto import ICryptoService, Keychain
+from observer.services.crypto import ICryptoService, IKeychain
 from observer.services.idp import IIDPService
 from observer.services.jwt import JWTService
 from observer.services.mailer import IMailer
@@ -22,6 +22,7 @@ from observer.services.migration_history import IMigrationService
 from observer.services.permissions import IPermissionsService
 from observer.services.projects import IProjectsService
 from observer.services.secrets import ISecretsService
+from observer.services.storage import IStorage
 from observer.services.users import IUsersService
 from observer.services.world import IWorldService
 
@@ -29,7 +30,8 @@ from observer.services.world import IWorldService
 @dataclass
 class Context:
     db: Optional[Database] = None
-    keychain: Optional[Keychain] = None
+    storage: Optional[IStorage] = None
+    keychain: Optional[IKeychain] = None
     mailer: Optional[IMailer] = None
     audit_service: Optional[IAuditService] = None
     audit_repo: Optional[IAuditRepository] = None
