@@ -29,9 +29,9 @@ qrcode = "^7.3.1"
 pillow = "^9.3.0"
 jarowinkler = "^1.2.3"
 python-box = {extras = ["all"], version = "^6.1.0"}
-aiofile = "^3.8.1"
 aioboto3 = "^10.2.0"
 moto = {extras = ["s3"], version = "^4.0.12"}
+aiofiles = "^22.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"

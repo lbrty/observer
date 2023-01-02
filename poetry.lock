@@ -43,21 +43,16 @@ awscli = ["awscli (>=1.25.60,<1.25.61)"]
 boto3 = ["boto3 (>=1.24.59,<1.24.60)"]
 
 [[package]]
-name = "aiofile"
-version = "3.8.1"
-description = "Asynchronous file operations."
+name = "aiofiles"
+version = "22.1.0"
+description = "File support for asyncio."
 category = "main"
 optional = false
-python-versions = ">=3.7, <4"
+python-versions = ">=3.7,<4.0"
 files = [
-    {file = "aiofile-3.8.1.tar.gz", hash = "sha256:1623b98d88fbd16bbd2808d010de4e185a700e950ed3f17455dd851aa2455f40"},
+    {file = "aiofiles-22.1.0-py3-none-any.whl", hash = "sha256:1142fa8e80dbae46bb6339573ad4c8c0841358f79c6eb50a493dceca14621bad"},
+    {file = "aiofiles-22.1.0.tar.gz", hash = "sha256:9107f1ca0b2a5553987a94a3c9959fe5b491fdf731389aa5b7b1bd0733e32de6"},
 ]
-
-[package.dependencies]
-caio = ">=0.9.0,<0.10.0"
-
-[package.extras]
-develop = ["aiomisc", "pytest", "pytest-cov"]
 
 [[package]]
 name = "aiohttp"
@@ -440,36 +435,6 @@ urllib3 = ">=1.25.4,<1.27"
 
 [package.extras]
 crt = ["awscrt (==0.14.0)"]
-
-[[package]]
-name = "caio"
-version = "0.9.11"
-description = "Asynchronous file IO for Linux MacOS or Windows."
-category = "main"
-optional = false
-python-versions = ">=3.7, <4"
-files = [
-    {file = "caio-0.9.11-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:3b9b2f1d94876ee3544b78d8a33e0c0091b79fe4bdc8cc00b64d4d9c59385195"},
-    {file = "caio-0.9.11-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7a3adc061b2005e3e3e83066b5e9ac9966634ff65db5b60abe3bf1ec7f2c7903"},
-    {file = "caio-0.9.11-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0a5c0d2d7d437c13ef72061acf0f4f878ae17642b73bd1d8a5594b9c7398f98e"},
-    {file = "caio-0.9.11-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:b9856bcb2f523e9ac2e00e75f3bd110a927b9ed0569a9d13c029d4b3aa8a79e4"},
-    {file = "caio-0.9.11-cp311-cp311-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:58e184d33e94962acbc9f4e8ff9b993ca6f78794de9018a2c3060cb2c190398e"},
-    {file = "caio-0.9.11-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:19255def9e395768573f002e9d01c3eaabbf6f4dda68a1c56a0862403da1faa6"},
-    {file = "caio-0.9.11-cp37-cp37m-macosx_10_15_x86_64.whl", hash = "sha256:8157587b6ee340d7510c7e37b6f5f1223ec363154b38b43b718c7cc6b77d58c2"},
-    {file = "caio-0.9.11-cp37-cp37m-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6e81dd50f9b53db5214469f3b953bb16cfb96c05f08f334c7aaf0d9096c37689"},
-    {file = "caio-0.9.11-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7dcd1f63e50b6a175750bf1fd92734b0a9a53108ee14afa72971b64da1d701e5"},
-    {file = "caio-0.9.11-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:e02e0c241b6dc19be0f85ece23ff6861907ef1cc6a8923a81345887a79f29300"},
-    {file = "caio-0.9.11-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:22ad87a94b2062151ef78c613711c97ddcebba7399ece39e4fd88728853137d2"},
-    {file = "caio-0.9.11-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cf65276487232bca415f62699298601537b558d8fd11b038633e555c45d0e82f"},
-    {file = "caio-0.9.11-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:2086d65b157d39b0f070a3e6dfbca970c69d15547dfa9ef346506f4da968e960"},
-    {file = "caio-0.9.11-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:510f01f71361d31ce8938f691e96a7a1306c29e0475aa59a77300a61b6f0732a"},
-    {file = "caio-0.9.11-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:8e35124be09f9f26a420c279bbabb5ef0626ce0edff3e5b445e6102855453d63"},
-    {file = "caio-0.9.11-py3-none-any.whl", hash = "sha256:287f7a598d8497588f0f0578eb90343b0c9ff3803b57c24e58f54793333132bf"},
-    {file = "caio-0.9.11.tar.gz", hash = "sha256:33ca49789bf2d55bc3f5def36784c4624fbf16b78e9c299a2c7f6f22ac084aa6"},
-]
-
-[package.extras]
-develop = ["aiomisc", "pytest", "pytest-cov"]
 
 [[package]]
 name = "certifi"
@@ -3120,4 +3085,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "5f224f4b7d7a902fca4c5b54fa0318a56ae2d4ea09b7ee7222ba3aca75a65c4e"
+content-hash = "c0a1f6029c50bf37afee4b791efb9628f3ce5c8d56fc13e4977311ab9b677a16"

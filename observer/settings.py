@@ -5,7 +5,7 @@ from password_strength import PasswordPolicy
 from pydantic.env_settings import BaseSettings
 from pydantic.networks import PostgresDsn
 
-from observer.schemas.crypto import KeyLoaderTypes
+from observer.common.types import StorageKind
 
 here = Path(__file__).parent.parent
 
@@ -28,7 +28,6 @@ class Settings(SettingsBase):
     app_domain: str = "https://observer.app"
 
     # Keystore and RSA key settings
-    key_loader_type: KeyLoaderTypes = KeyLoaderTypes.fs
     keystore_path: Path = here / "keys"
     key_size: int = 2048
     key_passwords: Optional[str] = None
@@ -77,14 +76,13 @@ class Settings(SettingsBase):
     # Values below are optional exception
     # is for storage backend type.
     # Other settings must be checked manually.
-    storage_backend: str = "fs"
-    # Local storage
-    fs_keys_path: Optional[str] = str(here / "keys")
-    fs_documents_path: Optional[str] = str(here / "documents")
+    storage_kind: str = StorageKind
+    # Local storage uses the same path
+    documents_path: Optional[Path] = here / "documents"
     # Block storage
     s3_endpoint: Optional[str] = "https://s3.aws.amazon.com/observer"
-    s3_keys_path: Optional[str] = "keys"
-    s3_documents_path: Optional[str] = "documents"
+    s3_region: Optional[str] = "eu-central-1"
+    s3_bucket: Optional[str] = "observer-keys"
 
 
 class DatabaseSettings(SettingsBase):
