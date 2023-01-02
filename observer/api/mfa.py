@@ -17,7 +17,7 @@ from observer.schemas.mfa import (
 )
 from observer.schemas.users import UserMFAUpdateRequest
 from observer.services.audit_logs import IAuditService
-from observer.services.keys import Keychain
+from observer.services.keys import IKeychain
 from observer.services.mailer import EmailMessage, IMailer
 from observer.services.mfa import IMFAService
 from observer.services.users import IUsersService
@@ -58,7 +58,7 @@ async def setup_mfa(
     mfa: IMFAService = Depends(mfa_service),
     user_service: IUsersService = Depends(users_service),
     audits: IAuditService = Depends(audit_service),
-    key_chain: Keychain = Depends(keychain),
+    key_chain: IKeychain = Depends(keychain),
     props: Props = Depends(
         Tracked(
             tag="endpoint=setup_mfa,action=setup:mfa",

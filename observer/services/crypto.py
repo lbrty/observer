@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.hashes import SHA256
 from structlog import get_logger
 
 from observer.common.types import SomeStr
-from observer.services.keys import Keychain
+from observer.services.keys import IKeychain
 
 logger = get_logger(service="crypto")
 
@@ -22,7 +22,7 @@ class AESCipherOptions:
 
 
 class ICryptoService(Protocol):
-    keychain: Keychain | None
+    keychain: IKeychain | None
     padding: padding.OAEP | None
 
     async def encrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
@@ -45,7 +45,7 @@ class ICryptoService(Protocol):
 
 
 class CryptoService(ICryptoService):
-    def __init__(self, keychain: Keychain):
+    def __init__(self, keychain: IKeychain):
         self.keychain = keychain
 
         # More about padding https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding
