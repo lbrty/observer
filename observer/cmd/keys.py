@@ -1,7 +1,8 @@
-import hashlib
-from glob import glob
+import asyncio
+import logging
 from pathlib import Path
 
+import structlog as slog
 from cryptography.hazmat.primitives.asymmetric.rsa import generate_private_key
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
@@ -12,10 +13,16 @@ from rich.console import Console
 from rich.tree import Tree
 from typer import Option, Typer
 
+from observer.services.keys import Keychain
+from observer.services.storage import init_storage
 from observer.settings import settings
 
 keys = Typer()
 console = Console()
+
+slog.configure(
+    wrapper_class=slog.make_filtering_bound_logger(logging.WARNING),
+)
 
 
 @keys.command()
@@ -46,14 +53,14 @@ def generate(
 @keys.command()
 def list_keys():
     """List all keys from key store"""
-    key_list = glob(f"{str(settings.keystore_path)}/*.pem")
+    storage = init_storage(settings.storage_kind, settings)
+    keychain = Keychain(storage)
+    asyncio.get_event_loop().run_until_complete(keychain.load(settings.keystore_path))
+
     tree = Tree(f"Key store: {settings.keystore_path}")
-    if key_list:
-        for key in key_list:
-            with open(key, "rb") as fp:
-                file_bytes = fp.read()
-                h = hashlib.new("sha256", file_bytes)
-                tree.add(f"{Path(key).name}    [blue bold]{str(h.hexdigest())[:16].upper()}[/]")
+    if keychain.keys:
+        for key in keychain.keys:
+            tree.add(f"{Path(key.filename).name} \t [blue bold]{key.hash}[/]")
     else:
         tree.add("[bold red]No keys found[/]")
     console.print(tree)

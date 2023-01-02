@@ -76,7 +76,7 @@ class Settings(SettingsBase):
     # Values below are optional exception
     # is for storage backend type.
     # Other settings must be checked manually.
-    storage_kind: str = StorageKind
+    storage_kind: str = StorageKind.fs
     # Local storage uses the same path
     documents_path: Optional[Path] = here / "documents"
     # Block storage

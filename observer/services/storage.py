@@ -41,11 +41,8 @@ class FSStorage(IStorage):
         raise FileNotFoundError
 
     async def delete(self, path: str):
-        # TODO: shall we only allow files?
         pth = Path(path)
-        if pth.is_dir():
-            pth.rmdir()
-        else:
+        if pth.is_file():
             pth.unlink(missing_ok=True)
 
 
