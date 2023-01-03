@@ -1,6 +1,7 @@
 import asyncio
 import hashlib
 import os
+from itertools import chain
 from pathlib import Path
 
 import aiofiles
@@ -121,6 +122,53 @@ async def s3_server():
 async def s3_client(region, aio_session, aio_config, s3_server):
     async with aio_session.create_client("s3", region_name=region, endpoint_url=s3_server, config=aio_config) as client:
         yield client
+
+
+async def recursive_delete(s3_client, bucket_name):
+    # Recursively deletes a bucket and all of its contents.
+    paginator = s3_client.get_paginator("list_object_versions")
+    async for n in paginator.paginate(Bucket=bucket_name, Prefix=""):
+        for obj in chain(
+            n.get("Versions", []),
+            n.get("DeleteMarkers", []),
+            n.get("Contents", []),
+            n.get("CommonPrefixes", []),
+        ):
+            kwargs = dict(Bucket=bucket_name, Key=obj["Key"])
+            if "VersionId" in obj:
+                kwargs["VersionId"] = obj["VersionId"]
+            resp = await s3_client.delete_object(**kwargs)
+            assert resp["ResponseMetadata"]["HTTPStatusCode"] == 204
+
+    resp = await s3_client.delete_bucket(Bucket=bucket_name)
+    assert resp["ResponseMetadata"]["HTTPStatusCode"] == 204
+
+
+@pytest.fixture(scope="function")
+async def bucket_name(s3_client, create_bucket):
+    name = await create_bucket()
+    yield name
+
+
+@pytest.fixture(scope="function")
+async def create_bucket(s3_client):
+    region_name = "eu-central-1"
+    bucket_name = "test-buck"
+
+    async def _f():
+        bucket_kwargs = {"Bucket": bucket_name}
+        if region_name != "us-east-1":
+            bucket_kwargs["CreateBucketConfiguration"] = {
+                "LocationConstraint": region_name,
+            }
+        response = await s3_client.create_bucket(**bucket_kwargs)
+        assert response["ResponseMetadata"]["HTTPStatusCode"] == 200
+        return bucket_name
+
+    try:
+        yield _f
+    finally:
+        await recursive_delete(s3_client, bucket_name)
 
 
 @pytest.fixture(scope="function")

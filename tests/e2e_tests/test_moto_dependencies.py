@@ -1,6 +1,4 @@
-async def test_moto_server_works(aws_credentials, s3_server, s3_client):
-    bucket_name = "test-buck"
-    await s3_client.create_bucket(Bucket=bucket_name, CreateBucketConfiguration=dict(LocationConstraint="eu-central-1"))
+async def test_moto_server_works(aws_credentials, s3_server, s3_client, bucket_name):
     await s3_client.put_object(Bucket=bucket_name, Key="keys/key1.pem", Body="Hello woulda!")
     result = await s3_client.list_objects_v2(Bucket=bucket_name, Prefix="keys/")
     keys = []
