@@ -1,9 +1,10 @@
 from datetime import datetime
-from typing import Dict
+from typing import Dict, Optional
 
 from pydantic import BaseModel
 
 from observer.common.types import Identifier, SomeStr
+from observer.entities.base import ModelBase
 
 AllowedDocumentTypes: Dict[str, str] = {
     # Images
@@ -25,11 +26,19 @@ AllowedDocumentTypes: Dict[str, str] = {
 }
 
 
-class Document(BaseModel):
-    id: Identifier
+class BaseDocument(ModelBase):
     encryption_key: SomeStr
     name: str
     path: str
     mimetype: str
     owner_id: Identifier
+    project_id: Optional[Identifier]
+
+
+class Document(BaseModel):
+    id: Identifier
     created_at: datetime
+
+
+class NewDocument(BaseDocument):
+    ...
