@@ -7,6 +7,7 @@ from observer.repositories.categories import ICategoryRepository
 from observer.repositories.idp import IIDPRepository
 from observer.repositories.migration_history import IMigrationRepository
 from observer.repositories.permissions import IPermissionsRepository
+from observer.repositories.pets import IPetsRepository
 from observer.repositories.projects import IProjectsRepository
 from observer.repositories.users import IUsersRepository
 from observer.repositories.world import IWorldRepository
@@ -20,6 +21,7 @@ from observer.services.mailer import IMailer
 from observer.services.mfa import IMFAService
 from observer.services.migration_history import IMigrationService
 from observer.services.permissions import IPermissionsService
+from observer.services.pets import IPetsService
 from observer.services.projects import IProjectsService
 from observer.services.secrets import ISecretsService
 from observer.services.storage import IStorage
@@ -51,6 +53,8 @@ class Context:
     category_service: Optional[ICategoryService] = None
     idp_repo: Optional[IIDPRepository] = None
     idp_service: Optional[IIDPService] = None
+    pets_repo: Optional[IPetsRepository] = None
+    pets_service: Optional[IPetsService] = None
     migrations_repo: Optional[IMigrationRepository] = None
     migrations_service: Optional[IMigrationService] = None
     secrets_service: Optional[ISecretsService] = None

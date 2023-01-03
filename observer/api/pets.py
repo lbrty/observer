@@ -4,7 +4,12 @@ from fastapi import APIRouter, Response, UploadFile
 from starlette import status
 
 from observer.schemas.documents import DocumentResponse
-from observer.schemas.pets import NewPetRequest, PetResponse, UpdatePetRequest
+from observer.schemas.pets import (
+    NewPetRequest,
+    PetResponse,
+    PetsResponse,
+    UpdatePetRequest,
+)
 
 router = APIRouter(prefix="/pets")
 
@@ -16,6 +21,16 @@ router = APIRouter(prefix="/pets")
     tags=["pets"],
 )
 async def create_pet(new_pet: NewPetRequest) -> PetResponse:
+    ...
+
+
+@router.get(
+    "",
+    response_model=PetsResponse,
+    status_code=status.HTTP_200_OK,
+    tags=["pets"],
+)
+async def get_pets() -> PetsResponse:
     ...
 
 

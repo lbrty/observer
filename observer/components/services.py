@@ -10,6 +10,7 @@ from observer.services.keys import IKeychain
 from observer.services.mailer import IMailer
 from observer.services.migration_history import IMigrationService
 from observer.services.permissions import IPermissionsService
+from observer.services.pets import IPetsService
 from observer.services.projects import IProjectsService
 from observer.services.secrets import ISecretsService
 from observer.services.users import IUsersService
@@ -101,6 +102,13 @@ async def idp_service() -> IIDPService:
         return ctx.idp_service
 
     raise RuntimeError("IDPService is None")
+
+
+async def pets_service() -> IPetsService:
+    if ctx.pets_service:
+        return ctx.pets_service
+
+    raise RuntimeError("PetsService is None")
 
 
 async def category_service() -> ICategoryService:

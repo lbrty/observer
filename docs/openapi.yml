@@ -2345,6 +2345,25 @@
       }
     },
     "/pets": {
+      "get": {
+        "tags": [
+          "pets"
+        ],
+        "summary": "Get Pets",
+        "operationId": "get_pets_pets_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PetsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "pets"
@@ -4513,6 +4532,29 @@
         ],
         "type": "string",
         "description": "An enumeration."
+      },
+      "PetsResponse": {
+        "title": "PetsResponse",
+        "required": [
+          "total",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "total": {
+            "title": "Total",
+            "type": "integer",
+            "description": "Total count of pets"
+          },
+          "items": {
+            "title": "Items",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PetResponse"
+            },
+            "description": "List of pets"
+          }
+        }
       },
       "PlaceResponse": {
         "title": "PlaceResponse",
