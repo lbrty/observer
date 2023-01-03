@@ -13,7 +13,7 @@ from sqlalchemy.dialects.postgresql import UUID
 
 from observer.db import metadata
 
-projects = Table(
+support_records = Table(
     "support_records",
     metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")),
