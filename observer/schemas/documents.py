@@ -23,3 +23,7 @@ class DocumentResponse(BaseDocument):
 class DocumentsResponse(BaseModel):
     total: int = Field(..., description="Total count of documents")
     items: List[DocumentResponse] = Field(..., description="List of documents")
+
+
+class NewDocumentRequest(BaseDocument):
+    ...
