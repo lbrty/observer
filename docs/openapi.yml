@@ -383,6 +383,45 @@
         }
       }
     },
+    "/documents/upload": {
+      "post": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Upload Document",
+        "operationId": "upload_document_documents_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_document_documents_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/idp/categories": {
       "get": {
         "tags": [
@@ -3001,6 +3040,20 @@
           },
           "data": {
             "title": "Data"
+          }
+        }
+      },
+      "Body_upload_document_documents_upload_post": {
+        "title": "Body_upload_document_documents_upload_post",
+        "required": [
+          "file"
+        ],
+        "type": "object",
+        "properties": {
+          "file": {
+            "title": "File",
+            "type": "string",
+            "format": "binary"
           }
         }
       },

@@ -16,10 +16,10 @@ class BaseDocument(SchemaBase):
     created_at: datetime = Field(..., description="Creation date and time")
 
 
-class Document(BaseDocument):
+class DocumentResponse(BaseDocument):
     id: Identifier = Field(..., description="Document ID")
 
 
 class DocumentsResponse(BaseModel):
     total: int = Field(..., description="Total count of documents")
-    items: List[Document] = Field(..., description="List of documents")
+    items: List[DocumentResponse] = Field(..., description="List of documents")
