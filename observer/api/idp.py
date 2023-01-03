@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response, UploadFile
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
@@ -21,10 +21,12 @@ from observer.components.services import (
     migrations_service,
     permissions_service,
     secrets_service,
+    storage_service,
     world_service,
 )
 from observer.entities.base import SomeUser
 from observer.entities.idp import PersonalInfo
+from observer.schemas.documents import DocumentResponse
 from observer.schemas.idp import (
     CategoryResponse,
     IDPResponse,
@@ -42,6 +44,7 @@ from observer.services.idp import IIDPService
 from observer.services.migration_history import IMigrationService
 from observer.services.permissions import IPermissionsService
 from observer.services.secrets import ISecretsService
+from observer.services.storage import IStorage
 from observer.services.world import IWorldService
 
 router = APIRouter(prefix="/idp")
@@ -363,3 +366,31 @@ async def delete_idp(
     )
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.post(
+    "/people/{idp_id}/document",
+    response_model=DocumentResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["idp", "documents"],
+)
+async def idp_upload_document(
+    tasks: BackgroundTasks,
+    pet_id: Identifier,
+    file: UploadFile,
+    user: SomeUser = Depends(
+        RequiresRoles([Role.admin, Role.consultant, Role.staff]),
+    ),
+    audits: IAuditService = Depends(audit_service),
+    idp: IIDPService = Depends(idp_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    storage: IStorage = Depends(storage_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=idp_upload_document,action=create:document",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
+) -> DocumentResponse:
+    ...

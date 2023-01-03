@@ -1069,6 +1069,76 @@
         }
       }
     },
+    "/idp/people/{idp_id}/document": {
+      "post": {
+        "tags": [
+          "idp",
+          "documents"
+        ],
+        "summary": "Idp Upload Document",
+        "operationId": "idp_upload_document_idp_people__idp_id__document_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Pet Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "pet_id",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_idp_upload_document_idp_people__idp_id__document_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -2370,6 +2440,17 @@
         ],
         "summary": "Create Pet",
         "operationId": "create_pet_pets_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2411,6 +2492,34 @@
         ],
         "summary": "Get Pet",
         "operationId": "get_pet_pets__pet_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Pet Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "pet_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -2418,6 +2527,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PetResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -2430,6 +2549,34 @@
         ],
         "summary": "Update Pet",
         "operationId": "update_pet_pets__pet_id__put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Pet Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "pet_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -2469,9 +2616,47 @@
         ],
         "summary": "Delete Pet",
         "operationId": "delete_pet_pets__pet_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Pet Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "pet_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "responses": {
           "204": {
             "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
           }
         }
       }
@@ -2484,6 +2669,34 @@
         ],
         "summary": "Pet Upload Document",
         "operationId": "pet_upload_document_pets__pet_id__document_post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Pet Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "pet_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -3243,6 +3456,20 @@
           }
         }
       },
+      "Body_idp_upload_document_idp_people__idp_id__document_post": {
+        "title": "Body_idp_upload_document_idp_people__idp_id__document_post",
+        "required": [
+          "file"
+        ],
+        "type": "object",
+        "properties": {
+          "file": {
+            "title": "File",
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
       "Body_pet_upload_document_pets__pet_id__document_post": {
         "title": "Body_pet_upload_document_pets__pet_id__document_post",
         "required": [
@@ -3387,11 +3614,6 @@
         ],
         "type": "object",
         "properties": {
-          "encryption_key": {
-            "title": "Encryption Key",
-            "type": "string",
-            "description": "Encryption key"
-          },
           "name": {
             "title": "Name",
             "type": "string",
@@ -3419,6 +3641,19 @@
               }
             ],
             "description": "Owner ID"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Project ID"
           },
           "created_at": {
             "title": "Created At",
