@@ -6,9 +6,14 @@ from typing import IO, Any, List, Protocol
 import aiofiles as af
 from aiobotocore.session import AioSession, ClientCreatorContext
 from aiofiles.os import stat
+from botocore.exceptions import ClientError
+from structlog import get_logger
 
+from observer.api.exceptions import InternalError
 from observer.common.types import FileInfo, StorageKind
 from observer.settings import Settings
+
+logger = get_logger(name="storage")
 
 
 class IStorage(Protocol):
@@ -66,12 +71,23 @@ class S3Storage(IStorage):
 
     async def open(self, path: str | Path) -> IO[Any]:
         async with self.s3_client as client:
-            result = await client.get_object(Bucket=self.bucket, Key=path)
-            return result["Body"]
+            try:
+                result = await client.get_object(Bucket=self.bucket, Key=path)
+                return result["Body"]
+            except ClientError as ex:
+                if ex.response["Error"]["Code"] == "NoSuchKey":
+                    logger.error("Document not found", name=path)
+                else:
+                    logger.error("Document not found", metadata=ex.response["ResponseMetadata"])
+                    raise InternalError(message="Document not found")
 
     async def delete(self, path: str):
         async with self.s3_client as client:
-            await client.delete_object(Bucket=self.bucket, Key=path)
+            try:
+                await client.delete_object(Bucket=self.bucket, Key=path)
+            except ClientError as ex:
+                logger.error("Unable to delete document", metadata=ex.response["ResponseMetadata"])
+                raise InternalError(message=f"Unable to delete document {path}")
 
     @property
     def s3_client(self) -> ClientCreatorContext:
