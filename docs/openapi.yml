@@ -2344,6 +2344,187 @@
         }
       }
     },
+    "/pets": {
+      "post": {
+        "tags": [
+          "pets"
+        ],
+        "summary": "Create Pet",
+        "operationId": "create_pet_pets_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewPetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PetResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/{pet_id}": {
+      "get": {
+        "tags": [
+          "pets"
+        ],
+        "summary": "Get Pet",
+        "operationId": "get_pet_pets__pet_id__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PetResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "pets"
+        ],
+        "summary": "Update Pet",
+        "operationId": "update_pet_pets__pet_id__put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePetRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PetResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "pets"
+        ],
+        "summary": "Delete Pet",
+        "operationId": "delete_pet_pets__pet_id__delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        }
+      }
+    },
+    "/pets/{pet_id}/document": {
+      "post": {
+        "tags": [
+          "pets",
+          "documents"
+        ],
+        "summary": "Pet Upload Document",
+        "operationId": "pet_upload_document_pets__pet_id__document_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_pet_upload_document_pets__pet_id__document_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/{pet_id}/documents": {
+      "get": {
+        "tags": [
+          "pets",
+          "documents"
+        ],
+        "summary": "Pet Get Documents",
+        "operationId": "pet_get_documents_pets__pet_id__documents_get",
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Pet Get Documents Pets  Pet Id  Documents Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DocumentResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/": {
       "post": {
         "tags": [
@@ -3043,6 +3224,20 @@
           }
         }
       },
+      "Body_pet_upload_document_pets__pet_id__document_post": {
+        "title": "Body_pet_upload_document_pets__pet_id__document_post",
+        "required": [
+          "file"
+        ],
+        "type": "object",
+        "properties": {
+          "file": {
+            "title": "File",
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
       "Body_upload_document_documents_upload_post": {
         "title": "Body_upload_document_documents_upload_post",
         "required": [
@@ -3160,6 +3355,72 @@
         ],
         "type": "string",
         "description": "An enumeration."
+      },
+      "DocumentResponse": {
+        "title": "DocumentResponse",
+        "required": [
+          "name",
+          "path",
+          "mimetype",
+          "owner_id",
+          "created_at",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "encryption_key": {
+            "title": "Encryption Key",
+            "type": "string",
+            "description": "Encryption key"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Document filename"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string",
+            "description": "Document path"
+          },
+          "mimetype": {
+            "title": "Mimetype",
+            "type": "string",
+            "description": "Document type (mimetype)"
+          },
+          "owner_id": {
+            "title": "Owner Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Owner ID"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string",
+            "description": "Creation date and time",
+            "format": "date-time"
+          },
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Document ID"
+          }
+        }
       },
       "ErrorCode": {
         "title": "ErrorCode",
@@ -3912,6 +4173,67 @@
           }
         }
       },
+      "NewPetRequest": {
+        "title": "NewPetRequest",
+        "required": [
+          "name",
+          "status",
+          "owner_id",
+          "project_id"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Pet's name"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string",
+            "description": "Additional notes"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PetStatus"
+              }
+            ],
+            "description": "Pet status"
+          },
+          "registration_id": {
+            "title": "Registration Id",
+            "type": "string",
+            "description": "Pet's registration ID, passport ID etc."
+          },
+          "owner_id": {
+            "title": "Owner Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Pet's owner ID (IDP ID)"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Project owner ID"
+          }
+        }
+      },
       "NewPlaceRequest": {
         "title": "NewPlaceRequest",
         "required": [
@@ -4150,6 +4472,47 @@
             "description": "Displaced person ID"
           }
         }
+      },
+      "PetResponse": {
+        "title": "PetResponse",
+        "required": [
+          "id",
+          "created_at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Pet ID"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string",
+            "description": "Creation datetime",
+            "format": "date-time"
+          }
+        }
+      },
+      "PetStatus": {
+        "title": "PetStatus",
+        "enum": [
+          "registered",
+          "adopted",
+          "owner_found",
+          "needs_shelter",
+          "unknown"
+        ],
+        "type": "string",
+        "description": "An enumeration."
       },
       "PlaceResponse": {
         "title": "PlaceResponse",
@@ -4612,6 +4975,67 @@
             "type": "boolean",
             "description": "User can invite new members to projects",
             "default": false
+          }
+        }
+      },
+      "UpdatePetRequest": {
+        "title": "UpdatePetRequest",
+        "required": [
+          "name",
+          "status",
+          "owner_id",
+          "project_id"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "description": "Pet's name"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string",
+            "description": "Additional notes"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PetStatus"
+              }
+            ],
+            "description": "Pet status"
+          },
+          "registration_id": {
+            "title": "Registration Id",
+            "type": "string",
+            "description": "Pet's registration ID, passport ID etc."
+          },
+          "owner_id": {
+            "title": "Owner Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Pet's owner ID (IDP ID)"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Project owner ID"
           }
         }
       },
