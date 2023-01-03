@@ -32,6 +32,11 @@ def upgrade():
             ["users.id"],
             ondelete="SET NULL",
         ),
+        sa.ForeignKeyConstraint(
+            ("project_id",),
+            ["projects.id"],
+            ondelete="SET NULL",
+        ),
         sa.CheckConstraint("type IN ('humanitarian', 'legal', 'medical', 'general')", name="support_records_types"),
         sa.CheckConstraint(
             "beneficiary_age IN ('0-1', '1-3', '4-5', '6-11', '12-14', '15-17', '18-25', '26-34', '35-59', '60-100+')",

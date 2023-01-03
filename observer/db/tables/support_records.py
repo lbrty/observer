@@ -1,4 +1,14 @@
-from sqlalchemy import CheckConstraint, Column, DateTime, Index, Table, Text, func, text
+from sqlalchemy import (
+    CheckConstraint,
+    Column,
+    DateTime,
+    ForeignKey,
+    Index,
+    Table,
+    Text,
+    func,
+    text,
+)
 from sqlalchemy.dialects.postgresql import UUID
 
 from observer.db import metadata
@@ -12,7 +22,12 @@ projects = Table(
     Column("consultant_id", UUID(as_uuid=True), nullable=False),
     Column("beneficiary_age", Text(), nullable=True),
     Column("owner_id", UUID(as_uuid=True), nullable=False),
-    Column("project_id", UUID(as_uuid=True), nullable=False),
+    Column(
+        "project_id",
+        UUID(as_uuid=True),
+        ForeignKey("projects.id", ondelete="SET NULL"),
+        nullable=True,
+    ),
     Column("created_at", DateTime(timezone=True), server_default=func.now(), nullable=True),
     Index("ix_support_records_type", "type"),
     Index("ix_support_records_description", "description"),
