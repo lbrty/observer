@@ -1,4 +1,3 @@
-import pytest
 from cryptography.hazmat.primitives.asymmetric.rsa import generate_private_key
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
@@ -7,10 +6,9 @@ from cryptography.hazmat.primitives.serialization import (
 )
 
 from observer.services.keys import Keychain
-from observer.services.storage import S3Storage
+from observer.services.storage import FSStorage, S3Storage
 
 
-@pytest.mark.moto
 async def test_keychain_can_load_keys_from_remote_store(aws_credentials, s3_server, s3_client, env_settings):
     bucket_name = "test-buck"
     await s3_client.create_bucket(
@@ -36,3 +34,11 @@ async def test_keychain_can_load_keys_from_remote_store(aws_credentials, s3_serv
 
     await keychain.load("keys")
     assert len(keychain.keys) == 2
+
+
+async def test_keychain_can_load_keys_from_filesystem_store(temp_keystore, env_settings):
+    env_settings.keystore_path = temp_keystore
+    storage = FSStorage()
+    keychain = Keychain(storage)
+    await keychain.load(temp_keystore)
+    assert len(keychain.keys) == 5
