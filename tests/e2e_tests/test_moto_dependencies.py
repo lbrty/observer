@@ -1,7 +1,3 @@
-import pytest
-
-
-@pytest.mark.moto
 async def test_moto_server_works(aws_credentials, s3_server, s3_client):
     bucket_name = "test-buck"
     await s3_client.create_bucket(Bucket=bucket_name, CreateBucketConfiguration=dict(LocationConstraint="eu-central-1"))
