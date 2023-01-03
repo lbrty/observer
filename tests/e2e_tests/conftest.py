@@ -1,11 +1,14 @@
 import asyncio
 import hashlib
 import os
+from pathlib import Path
 
+import aiofiles
 import httpx
 import pytest
 from aiobotocore.config import AioConfig
 from aiobotocore.session import AioSession
+from aiofiles.tempfile import TemporaryDirectory
 from cryptography.hazmat.primitives.asymmetric.rsa import generate_private_key
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
@@ -83,7 +86,7 @@ def aws_credentials():
     os.environ["AWS_DEFAULT_REGION"] = "us-central-1"
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def aio_session():
     session = AioSession()
     return session
@@ -93,17 +96,17 @@ def moto_config():
     return {"aws_secret_access_key": "xxx", "aws_access_key_id": "xxx"}
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def region() -> str:
     return "eu-central-1"
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def signature_version() -> str:
     return "v4"
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def aio_config(signature_version) -> AioConfig:
     return AioConfig(signature_version=signature_version, read_timeout=5, connect_timeout=5)
 
@@ -115,9 +118,31 @@ async def s3_server():
 
 
 @pytest.fixture(scope="function")
-async def s3_client(request, region, aio_session, aio_config, s3_server):
+async def s3_client(region, aio_session, aio_config, s3_server):
     async with aio_session.create_client("s3", region_name=region, endpoint_url=s3_server, config=aio_config) as client:
         yield client
+
+
+@pytest.fixture(scope="function")
+async def temp_keystore(env_settings):
+    async with TemporaryDirectory() as temp_dir:
+        pth = Path(temp_dir)
+        for n in range(5):
+            private_key = generate_private_key(
+                public_exponent=settings.public_exponent,
+                key_size=settings.key_size,
+            )
+
+            private_key_bytes = private_key.private_bytes(
+                encoding=Encoding.PEM,
+                format=PrivateFormat.PKCS8,
+                encryption_algorithm=NoEncryption(),
+            )
+            async with aiofiles.open(pth / f"key-{n}.pem", "wb") as fp:
+                await fp.write(private_key_bytes)
+                await asyncio.sleep(0.1)
+
+        yield temp_dir
 
 
 @pytest.fixture(scope="session")
@@ -156,6 +181,7 @@ async def app_context(db_engine):
     h = hashlib.new("sha256", private_key_bytes)
     ctx.keychain.keys = [
         PrivateKey(
+            filename="key1.pem",
             hash=str(h.hexdigest())[:16].upper(),
             private_key=load_pem_private_key(
                 private_key_bytes,
