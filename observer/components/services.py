@@ -13,6 +13,7 @@ from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
 from observer.services.projects import IProjectsService
 from observer.services.secrets import ISecretsService
+from observer.services.storage import IStorage
 from observer.services.users import IUsersService
 from observer.services.world import IWorldService
 
@@ -88,6 +89,13 @@ async def audit_service() -> IAuditService:
         return ctx.audit_service
 
     raise RuntimeError("AuditService is None")
+
+
+async def storage_service() -> IStorage:
+    if ctx.storage:
+        return ctx.storage
+
+    raise RuntimeError("Storage is None")
 
 
 async def world_service() -> IWorldService:

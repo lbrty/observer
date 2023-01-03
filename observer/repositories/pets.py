@@ -1,11 +1,12 @@
-from typing import Optional, Protocol
+from typing import List, Optional, Protocol, Tuple
 
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, func, insert, select, update
 
 from observer.common.types import Identifier
 from observer.db import Database
 from observer.db.tables.pets import pets
 from observer.entities.pets import NewPet, Pet, UpdatePet
+from observer.schemas.pagination import Pagination
 
 
 class IPetsRepository(Protocol):
@@ -13,6 +14,9 @@ class IPetsRepository(Protocol):
         raise NotImplementedError
 
     async def get_pet(self, pet_id: Identifier) -> Optional[Pet]:
+        raise NotImplementedError
+
+    async def get_pets_by_project(self, project_id: Identifier, page: Pagination) -> Tuple[int, List[Pet]]:
         raise NotImplementedError
 
     async def update_pet(self, pet_id: Identifier, updates: UpdatePet) -> Pet:
@@ -37,6 +41,14 @@ class PetsRepository(IPetsRepository):
             return Pet(**row)
 
         return None
+
+    async def get_pets_by_project(self, project_id: Identifier, page: Pagination) -> Tuple[int, List[Pet]]:
+        count_query = select([func.count()]).select_from(pets).where(pets.c.project_id == project_id)
+        query = select(pets).where(pets.c.project_id == project_id).offset(page.offset).limit(page.limit)
+        rows = await self.db.fetchall(query)
+        items = [Pet(**row.dict()) for row in rows]
+        pets_count = await self.db.fetchone(count_query)
+        return pets_count[0], items
 
     async def update_pet(self, pet_id: Identifier, updates: UpdatePet) -> Pet:
         query = update(pets).values(**updates.dict()).where(pets.c.id == pet_id)

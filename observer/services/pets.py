@@ -1,9 +1,10 @@
-from typing import Optional, Protocol
+from typing import List, Optional, Protocol, Tuple
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier
 from observer.entities.pets import NewPet, Pet, UpdatePet
 from observer.repositories.pets import IPetsRepository
+from observer.schemas.pagination import Pagination
 from observer.schemas.pets import NewPetRequest, UpdatePetRequest
 
 
@@ -14,6 +15,9 @@ class IPetsService(Protocol):
         raise NotImplementedError
 
     async def get_pet(self, pet_id: Identifier) -> Optional[Pet]:
+        raise NotImplementedError
+
+    async def get_pets_by_project(self, project_id: Identifier, page: Pagination) -> Tuple[int, List[Pet]]:
         raise NotImplementedError
 
     async def update_pet(self, pet_id: Identifier, updates: UpdatePetRequest) -> Pet:
@@ -36,6 +40,9 @@ class PetsRepository(IPetsService):
             return pet
 
         raise NotFoundError(message="Pet not found")
+
+    async def get_pets_by_project(self, project_id: Identifier, page: Pagination) -> Tuple[int, List[Pet]]:
+        return await self.repo.get_pets_by_project(project_id, page)
 
     async def update_pet(self, pet_id: Identifier, updates: UpdatePetRequest) -> Pet:
         await self.get_pet(pet_id)

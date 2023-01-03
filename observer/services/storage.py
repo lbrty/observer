@@ -20,14 +20,24 @@ class IStorage(Protocol):
     async def ls(self, path: str | Path) -> List[FileInfo]:
         raise NotImplementedError
 
+    async def save(self, path: str | Path, contents: bytes):
+        raise NotImplementedError
+
     async def open(self, path: str | Path) -> IO[Any]:
         raise NotImplementedError
 
     async def delete(self, path: str):
         raise NotImplementedError
 
+    @property
+    def root(self) -> str:
+        raise NotImplementedError
+
 
 class FSStorage(IStorage):
+    def __init__(self, documents_root: str):
+        self.documents_root = documents_root
+
     async def ls(self, path: str | Path) -> List[FileInfo]:
         items = []
         for root, _, files in os.walk(path):
@@ -37,6 +47,10 @@ class FSStorage(IStorage):
                 items.append((datetime.fromtimestamp(stats.st_ctime), full_path))
 
         return items
+
+    async def save(self, path: str | Path, contents: bytes):
+        async with af.open(path, "wb") as fp:
+            await fp.write(contents)
 
     async def open(self, path: str | Path) -> IO[Any]:
         if Path(path).exists():
@@ -50,12 +64,17 @@ class FSStorage(IStorage):
         if pth.is_file():
             pth.unlink(missing_ok=True)
 
+    @property
+    def root(self) -> str:
+        return self.documents_root
+
 
 class S3Storage(IStorage):
-    def __init__(self, bucket: str, region: str, endpoint_url: str):
+    def __init__(self, documents_root: str, bucket: str, region: str, endpoint_url: str):
         self.bucket = bucket
         self.region = region
         self.endpoint_url = endpoint_url
+        self.documents_root = documents_root
         self.session = AioSession()
 
     async def ls(self, path: str | Path) -> List[FileInfo]:
@@ -68,6 +87,15 @@ class S3Storage(IStorage):
                 )
                 for item in result["Contents"]
             ]
+
+    async def save(self, path: str | Path, contents: bytes):
+        async with self.s3_client as client:
+            try:
+                # TODO: check for success
+                await client.put_object(Bucket=self.bucket, Key=path, Body=contents)
+            except ClientError as ex:
+                logger.error("Unable to upload document", metadata=ex.response["ResponseMetadata"])
+                raise InternalError(message="Unable to upload document")
 
     async def open(self, path: str | Path) -> IO[Any]:
         async with self.s3_client as client:
@@ -97,12 +125,21 @@ class S3Storage(IStorage):
             endpoint_url=self.endpoint_url,
         )
 
+    @property
+    def root(self) -> str:
+        return self.documents_root
+
 
 def init_storage(kind: StorageKind, settings: Settings) -> IStorage:
     match kind:
         case StorageKind.fs:
-            return FSStorage()
+            return FSStorage(str(settings.documents_path))
         case StorageKind.s3:
-            return S3Storage(settings.s3_bucket, settings.s3_region, settings.s3_endpoint)
+            return S3Storage(
+                str(settings.documents_path),
+                settings.s3_bucket,
+                settings.s3_region,
+                settings.s3_endpoint,
+            )
         case _ as v:
             raise ValueError(f"Unknown storage type: {v}")
