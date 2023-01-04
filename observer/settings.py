@@ -28,7 +28,7 @@ class Settings(SettingsBase):
     app_domain: str = "https://observer.app"
 
     # Keystore and RSA key settings
-    keystore_path: Path = here / "keys"
+    keystore_path: str = str(here / "keys")
     key_size: int = 2048
     key_passwords: Optional[str] = None
     public_exponent: int = 65537
@@ -78,7 +78,7 @@ class Settings(SettingsBase):
     # Other settings must be checked manually.
     storage_kind: str = StorageKind.fs
     # Local storage uses the same path
-    documents_path: Optional[Path] = here / "documents"
+    documents_path: str = str(here / "documents")
     # Block storage
     s3_endpoint: Optional[str] = "https://s3.aws.amazon.com/observer"
     s3_region: Optional[str] = "eu-central-1"
