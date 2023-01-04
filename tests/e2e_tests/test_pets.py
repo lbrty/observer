@@ -52,6 +52,3 @@ async def test_upload_document_for_pet_works(authorized_client, app_context, con
     files = {"file": open("README.md", "rb")}
     resp = await authorized_client.post(f"/pets/{pet.id}/document", files=files)
     assert resp.status_code == status.HTTP_201_CREATED
-
-    print(app_context.storage.root)
-    shutil.rmtree(app_context.storage.root, ignore_errors=True)
