@@ -64,7 +64,11 @@ class FSStorage(IStorage):
         return items
 
     async def save(self, path: str | Path, contents: bytes):
-        async with af.open(Path(self.root) / path, "wb") as fp:
+        pth = Path(self.root)
+        if not pth.exists():
+            pth.mkdir(exist_ok=True)
+
+        async with af.open(pth / path, "wb") as fp:
             await fp.write(contents)
 
     async def open(self, path: str | Path) -> IO[Any]:

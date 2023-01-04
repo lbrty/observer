@@ -204,7 +204,8 @@ async def pet_upload_document(
     assert_docs_readable(user, permission)
     # TODO: Validate and encrypt document for now just testing out full cycle
     full_path = os.path.join(storage.root, file.filename)
-    await storage.save(full_path, await file.read())
+    contents = await file.read()
+    await storage.save(full_path, contents)
     document = await documents.create_document(
         NewDocumentRequest(
             name=file.filename,

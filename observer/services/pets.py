@@ -27,7 +27,7 @@ class IPetsService(Protocol):
         raise NotImplementedError
 
 
-class PetsRepository(IPetsService):
+class PetsService(IPetsService):
     def __init__(self, repo: IPetsRepository):
         self.repo = repo
 

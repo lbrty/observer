@@ -26,6 +26,7 @@ from observer.services.mailer import Mailer
 from observer.services.mfa import MFAService
 from observer.services.migration_history import MigrationService
 from observer.services.permissions import PermissionsService
+from observer.services.pets import PetsService
 from observer.services.projects import ProjectsService
 from observer.services.secrets import SecretsService
 from observer.services.storage import init_storage
@@ -98,6 +99,7 @@ async def on_startup():
         ctx.world_service,
         ctx.secrets_service,
     )
+    ctx.pets_service = PetsService(ctx.repos.pets)
     ctx.documents_service = DocumentsService(ctx.repos.documents, ctx.crypto_service)
     ctx.support_service = SupportRecordsService(ctx.repos.support)
     ctx.migrations_service = MigrationService(ctx.repos.migrations, ctx.world_service)

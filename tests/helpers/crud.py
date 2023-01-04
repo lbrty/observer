@@ -1,7 +1,8 @@
-from observer.common.types import Identifier, PlaceType
+from observer.common.types import Identifier, PetStatus, PlaceType
 from observer.context import Context
 from observer.entities.idp import Category, NewCategory
 from observer.entities.permissions import NewPermission, Permission
+from observer.entities.pets import NewPet, Pet
 from observer.entities.projects import NewProject, Project
 from observer.entities.world import (
     Country,
@@ -104,3 +105,24 @@ async def create_village(
         )
     )
     return village
+
+
+async def create_pet(
+    ctx: Context,
+    name: str,
+    status: PetStatus,
+    registration_id: Identifier,
+    project_id: Identifier,
+    owner_id: Identifier,
+) -> Pet:
+    pet = await ctx.repos.pets.create_pet(
+        NewPet(
+            name=name,
+            notes="Petya",
+            status=status,
+            registration_id=registration_id,
+            owner_id=owner_id,
+            project_id=project_id,
+        )
+    )
+    return pet
