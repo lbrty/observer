@@ -17,16 +17,31 @@ logger = get_logger(name="storage")
 
 
 class IStorage(Protocol):
+    documents_root: str | Path
+
     async def ls(self, path: str | Path) -> List[FileInfo]:
+        """List files under the given path
+
+        NOTE: `path` will be prefixed by `documents_root`
+        """
         raise NotImplementedError
 
     async def save(self, path: str | Path, contents: bytes):
+        """Save file
+        NOTE: `path` will be prefixed by `documents_root`
+        """
         raise NotImplementedError
 
     async def open(self, path: str | Path) -> IO[Any]:
+        """Open file at `path`
+        NOTE: `path` must be absolute path
+        """
         raise NotImplementedError
 
     async def delete(self, path: str):
+        """Delete file
+        NOTE: `path` will be prefixed by `documents_root`
+        """
         raise NotImplementedError
 
     @property
@@ -40,7 +55,7 @@ class FSStorage(IStorage):
 
     async def ls(self, path: str | Path) -> List[FileInfo]:
         items = []
-        for root, _, files in os.walk(path):
+        for root, _, files in os.walk(Path(self.root) / path):
             for filename in files:
                 full_path = os.path.join(root, filename)
                 stats = await stat(full_path)
@@ -49,7 +64,7 @@ class FSStorage(IStorage):
         return items
 
     async def save(self, path: str | Path, contents: bytes):
-        async with af.open(path, "wb") as fp:
+        async with af.open(Path(self.root) / path, "wb") as fp:
             await fp.write(contents)
 
     async def open(self, path: str | Path) -> IO[Any]:
@@ -60,7 +75,7 @@ class FSStorage(IStorage):
         raise FileNotFoundError
 
     async def delete(self, path: str):
-        pth = Path(path)
+        pth = Path(self.root) / path
         if pth.is_file():
             pth.unlink(missing_ok=True)
 
@@ -79,20 +94,23 @@ class S3Storage(IStorage):
 
     async def ls(self, path: str | Path) -> List[FileInfo]:
         async with self.s3_client as client:
-            result = await client.list_objects_v2(Bucket=self.bucket, Prefix=path)
+            full_path = os.path.join(self.root, path)
+            result = await client.list_objects_v2(Bucket=self.bucket, Prefix=full_path)
             return [
                 (
                     item["LastModified"],
                     item["Key"],
                 )
                 for item in result["Contents"]
+                if result["KeyCount"] > 0
             ]
 
     async def save(self, path: str | Path, contents: bytes):
         async with self.s3_client as client:
             try:
                 # TODO: check for success
-                await client.put_object(Bucket=self.bucket, Key=path, Body=contents)
+                full_path = os.path.join(self.root, path)
+                await client.put_object(Bucket=self.bucket, Key=full_path, Body=contents)
             except ClientError as ex:
                 logger.error("Unable to upload document", metadata=ex.response["ResponseMetadata"])
                 raise InternalError(message="Unable to upload document")
@@ -112,10 +130,11 @@ class S3Storage(IStorage):
     async def delete(self, path: str):
         async with self.s3_client as client:
             try:
-                await client.delete_object(Bucket=self.bucket, Key=path)
+                full_path = os.path.join(self.root, path)
+                await client.delete_object(Bucket=self.bucket, Key=full_path)
             except ClientError as ex:
                 logger.error("Unable to delete document", metadata=ex.response["ResponseMetadata"])
-                raise InternalError(message=f"Unable to delete document {path}")
+                raise InternalError(message=f"Unable to delete document {full_path}")
 
     @property
     def s3_client(self) -> ClientCreatorContext:
