@@ -16,6 +16,7 @@ from observer.common.permissions import (
 from observer.common.types import Identifier, Role
 from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles, authenticated_user
+from observer.components.pagination import pagination
 from observer.components.services import (
     audit_service,
     permissions_service,
@@ -24,6 +25,7 @@ from observer.components.services import (
 )
 from observer.entities.base import SomeUser
 from observer.schemas.documents import DocumentResponse
+from observer.schemas.pagination import Pagination
 from observer.schemas.pets import (
     NewPetRequest,
     PetResponse,
@@ -75,7 +77,7 @@ async def create_pet(
     status_code=status.HTTP_200_OK,
     tags=["pets"],
 )
-async def get_pets() -> PetsResponse:
+async def get_pets(page: Pagination = Depends(pagination)) -> PetsResponse:
     ...
 
 

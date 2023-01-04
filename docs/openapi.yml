@@ -2421,6 +2421,32 @@
         ],
         "summary": "Get Pets",
         "operationId": "get_pets_pets_get",
+        "parameters": [
+          {
+            "description": "How many items to return?",
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "description": "How many items to return?",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "description": "How many items to skip?",
+            "required": false,
+            "schema": {
+              "title": "Offset",
+              "type": "integer",
+              "description": "How many items to skip?",
+              "default": 0
+            },
+            "name": "offset",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -2428,6 +2454,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PetsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
