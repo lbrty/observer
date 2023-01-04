@@ -21,7 +21,7 @@ from observer.services.crypto import CryptoService
 from observer.services.documents import DocumentsService
 from observer.services.idp import IDPService
 from observer.services.jwt import JWTService
-from observer.services.keys import Keychain
+from observer.services.keychain import Keychain
 from observer.services.mailer import Mailer
 from observer.services.mfa import MFAService
 from observer.services.migration_history import MigrationService
@@ -65,8 +65,8 @@ async def on_startup():
     )
 
     ctx.storage = init_storage(settings.storage_kind, settings)
-    ctx.keychain = Keychain(ctx.storage)
-    await ctx.keychain.load(settings.keystore_path)
+    ctx.keychain = Keychain()
+    await ctx.keychain.load(settings.keystore_path, ctx.storage)
     num_keys = len(ctx.keychain.keys)
     if num_keys == 0:
         print(f"No keys found, please generate new keys and move to {settings.keystore_path}")

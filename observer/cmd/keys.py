@@ -13,7 +13,7 @@ from rich.console import Console
 from rich.tree import Tree
 from typer import Option, Typer
 
-from observer.services.keys import Keychain
+from observer.services.keychain import Keychain
 from observer.services.storage import init_storage
 from observer.settings import settings
 
@@ -44,7 +44,7 @@ def generate(
         encryption_algorithm=NoEncryption(),
     )
 
-    with open(settings.keystore_path / filename, "wb") as fp:
+    with open(Path(settings.keystore_path) / filename, "wb") as fp:
         fp.write(priv_key_bytes)
 
     print("Done")
@@ -54,8 +54,8 @@ def generate(
 def list_keys():
     """List all keys from key store"""
     storage = init_storage(settings.storage_kind, settings)
-    keychain = Keychain(storage)
-    asyncio.get_event_loop().run_until_complete(keychain.load(settings.keystore_path))
+    keychain = Keychain()
+    asyncio.get_event_loop().run_until_complete(keychain.load(settings.keystore_path, storage))
 
     tree = Tree(f"Key store: {settings.keystore_path}")
     if keychain.keys:

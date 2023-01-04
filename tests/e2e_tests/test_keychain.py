@@ -5,7 +5,7 @@ from cryptography.hazmat.primitives.serialization import (
     PrivateFormat,
 )
 
-from observer.services.keys import Keychain
+from observer.services.keychain import Keychain
 from observer.services.storage import FSStorage, S3Storage
 
 
@@ -15,8 +15,8 @@ async def test_keychain_can_load_keys_from_remote_store(aws_credentials, s3_serv
         Bucket=bucket_name,
         CreateBucketConfiguration=dict(LocationConstraint="eu-central-1"),
     )
-    storage = S3Storage(env_settings.documents_path, bucket_name, env_settings.s3_region, s3_server)
-    keychain = Keychain(storage)
+    storage = S3Storage("uploads", bucket_name, env_settings.s3_region, s3_server)
+    keychain = Keychain()
 
     for n in range(2):
         private_key = generate_private_key(
@@ -30,15 +30,15 @@ async def test_keychain_can_load_keys_from_remote_store(aws_credentials, s3_serv
             encryption_algorithm=NoEncryption(),
         )
 
-        await s3_client.put_object(Bucket=bucket_name, Key=f"keys/key{n}.pem", Body=private_key_bytes)
+        await s3_client.put_object(Bucket=bucket_name, Key=f"uploads/keys/key{n}.pem", Body=private_key_bytes)
 
-    await keychain.load("keys")
+    await keychain.load("keys", storage)
     assert len(keychain.keys) == 2
 
 
 async def test_keychain_can_load_keys_from_filesystem_store(temp_keystore, env_settings):
     env_settings.keystore_path = temp_keystore
     storage = FSStorage(env_settings.keystore_path)
-    keychain = Keychain(storage)
-    await keychain.load(temp_keystore)
+    keychain = Keychain()
+    await keychain.load(temp_keystore, storage)
     assert len(keychain.keys) == 5

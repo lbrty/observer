@@ -49,7 +49,7 @@ from observer.services.categories import CategoryService
 from observer.services.crypto import CryptoService
 from observer.services.idp import IDPService
 from observer.services.jwt import JWTService
-from observer.services.keys import Keychain
+from observer.services.keychain import Keychain
 from observer.services.mfa import MFAService
 from observer.services.migration_history import MigrationService
 from observer.services.permissions import PermissionsService
@@ -231,7 +231,7 @@ async def app_context(db_engine):
     )
 
     ctx.storage = FSStorage(settings.documents_path)
-    ctx.keychain = Keychain(ctx.storage)
+    ctx.keychain = Keychain()
     private_key = generate_private_key(
         public_exponent=settings.public_exponent,
         key_size=settings.key_size,

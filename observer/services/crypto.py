@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.hashes import SHA256
 from structlog import get_logger
 
 from observer.common.types import SomeStr
-from observer.services.keys import IKeychain
+from observer.services.keychain import IKeychain
 
 logger = get_logger(service="crypto")
 

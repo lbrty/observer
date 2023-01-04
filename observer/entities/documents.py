@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Dict, Optional
 
-
 from observer.common.types import Identifier, SomeStr
 from observer.entities.base import ModelBase
 

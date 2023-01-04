@@ -17,7 +17,7 @@ from observer.schemas.mfa import (
 )
 from observer.schemas.users import UserMFAUpdateRequest
 from observer.services.audit_logs import IAuditService
-from observer.services.keys import IKeychain
+from observer.services.keychain import IKeychain
 from observer.services.mailer import EmailMessage, IMailer
 from observer.services.mfa import IMFAService
 from observer.services.users import IUsersService
