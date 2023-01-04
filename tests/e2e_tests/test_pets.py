@@ -1,4 +1,5 @@
 import shutil
+from io import BytesIO
 
 from fastapi.encoders import jsonable_encoder
 from starlette import status
@@ -46,9 +47,13 @@ async def test_upload_document_for_pet_works(authorized_client, app_context, con
         project.id,
         owner_id,
     )
-    with open("README.md", "wb") as fp:
-        fp.write(b"BABA BLACK SHEEP")
-
-    files = {"file": open("README.md", "rb")}
+    # TODO: use tempdir
+    fp = BytesIO()
+    fp.write(b"BABA BLACK SHEEP")
+    fp.seek(0)
+    files = {"file": ("readme.md", fp, "text/markdown")}
     resp = await authorized_client.post(f"/pets/{pet.id}/document", files=files)
     assert resp.status_code == status.HTTP_201_CREATED
+    contents = open(f"{app_context.storage.root}/readme.md").read()
+    assert contents == "BABA BLACK SHEEP"
+    shutil.rmtree(app_context.storage.root)
