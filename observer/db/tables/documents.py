@@ -21,5 +21,5 @@ documents = Table(
     Column("created_at", DateTime(timezone=True), server_default=func.now()),
     Index("ix_documents_name", text("lower(name)")),
     Index("ix_documents_owner_id", "owner_id"),
-    Index("ix_documents_project", "project"),
+    Index("ix_documents_project", "project_id"),
 )

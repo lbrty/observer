@@ -14,22 +14,22 @@ from observer.entities.world import (
 
 
 async def create_project(ctx: Context, name: str, description: str) -> Project:
-    project = await ctx.projects_repo.create_project(NewProject(name=name, description=description))
+    project = await ctx.repos.projects.create_project(NewProject(name=name, description=description))
     return project
 
 
 async def create_permission(ctx: Context, new_permission: NewPermission) -> Permission:
-    permission = await ctx.permissions_repo.create_permission(new_permission)
+    permission = await ctx.repos.permissions.create_permission(new_permission)
     return permission
 
 
 async def create_category(ctx: Context, name: str) -> Category:
-    category = await ctx.category_repo.create_category(NewCategory(name=name))
+    category = await ctx.repos.category.create_category(NewCategory(name=name))
     return category
 
 
 async def create_country(ctx: Context, name: str, code: str) -> Country:
-    country = await ctx.world_repo.create_country(NewCountry(name=name, code=code))
+    country = await ctx.repos.world.create_country(NewCountry(name=name, code=code))
     return country
 
 
@@ -39,7 +39,7 @@ async def create_state(
     code: str,
     country_id: Identifier,
 ) -> State:
-    state = await ctx.world_repo.create_state(
+    state = await ctx.repos.world.create_state(
         NewState(
             name=name,
             code=code,
@@ -56,7 +56,7 @@ async def create_city(
     country_id: Identifier,
     state_id: Identifier,
 ) -> Place:
-    city = await ctx.world_repo.create_place(
+    city = await ctx.repos.world.create_place(
         NewPlace(
             name=name,
             code=code,
@@ -75,7 +75,7 @@ async def create_town(
     country_id: Identifier,
     state_id: Identifier,
 ) -> Place:
-    town = await ctx.world_repo.create_place(
+    town = await ctx.repos.world.create_place(
         NewPlace(
             name=name,
             code=code,
@@ -94,7 +94,7 @@ async def create_village(
     country_id: Identifier,
     state_id: Identifier,
 ) -> Place:
-    village = await ctx.world_repo.create_place(
+    village = await ctx.repos.world.create_place(
         NewPlace(
             name=name,
             code=code,

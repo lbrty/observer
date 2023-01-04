@@ -15,7 +15,7 @@ async def test_keychain_can_load_keys_from_remote_store(aws_credentials, s3_serv
         Bucket=bucket_name,
         CreateBucketConfiguration=dict(LocationConstraint="eu-central-1"),
     )
-    storage = S3Storage(bucket_name, env_settings.s3_region, s3_server)
+    storage = S3Storage(env_settings.documents_path, bucket_name, env_settings.s3_region, s3_server)
     keychain = Keychain(storage)
 
     for n in range(2):
@@ -38,7 +38,7 @@ async def test_keychain_can_load_keys_from_remote_store(aws_credentials, s3_serv
 
 async def test_keychain_can_load_keys_from_filesystem_store(temp_keystore, env_settings):
     env_settings.keystore_path = temp_keystore
-    storage = FSStorage()
+    storage = FSStorage(env_settings.keystore_path)
     keychain = Keychain(storage)
     await keychain.load(temp_keystore)
     assert len(keychain.keys) == 5

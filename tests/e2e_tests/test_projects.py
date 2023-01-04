@@ -231,7 +231,7 @@ async def test_get_project_members_works_as_expected(authorized_client, ensure_d
     assert resp.status_code == status.HTTP_201_CREATED
     resp_json = resp.json()
     project_id = resp_json["id"]
-    permission = await app_context.permissions_repo.find(project_id, consultant_user.id)
+    permission = await app_context.repos.permissions.find(project_id, consultant_user.id)
     resp = await authorized_client.get(f"/projects/{project_id}/members")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == {
@@ -289,8 +289,8 @@ async def test_add_project_member_works_as_expected(
     )
     assert resp.status_code == status.HTTP_200_OK
 
-    consultant_permission = await app_context.permissions_repo.find(project_id, consultant_user.id)
-    guest_permission = await app_context.permissions_repo.find(project_id, guest_user.id)
+    consultant_permission = await app_context.repos.permissions.find(project_id, consultant_user.id)
+    guest_permission = await app_context.repos.permissions.find(project_id, guest_user.id)
     resp = await authorized_client.get(f"/projects/{project_id}/members")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == {
@@ -480,7 +480,7 @@ async def test_delete_project_member_works_as_expected(
     )
     assert resp.status_code == status.HTTP_200_OK
 
-    consultant_permission = await app_context.permissions_repo.find(project_id, consultant_user.id)
+    consultant_permission = await app_context.repos.permissions.find(project_id, consultant_user.id)
     resp = await authorized_client.delete(f"/projects/{project_id}/members/{guest_user.id}")
     assert resp.status_code == status.HTTP_204_NO_CONTENT
 
@@ -525,7 +525,7 @@ async def test_update_project_member_permissions_works_as_expected(
 
     resp_json = resp.json()
     project_id = resp_json["id"]
-    consultant_permission = await app_context.permissions_repo.find(project_id, consultant_user.id)
+    consultant_permission = await app_context.repos.permissions.find(project_id, consultant_user.id)
     resp = await authorized_client.put(
         f"/projects/{project_id}/members/{consultant_user.id}",
         json={

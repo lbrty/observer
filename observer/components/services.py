@@ -119,6 +119,13 @@ async def pets_service() -> IPetsService:
     raise RuntimeError("PetsService is None")
 
 
+async def documents_service() -> IPetsService:
+    if ctx.documents_service:
+        return ctx.documents_service
+
+    raise RuntimeError("DocumentsService is None")
+
+
 async def category_service() -> ICategoryService:
     if ctx.category_service:
         return ctx.category_service

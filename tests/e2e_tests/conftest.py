@@ -27,16 +27,19 @@ from sqlalchemy.pool import NullPool
 from observer.app import create_app
 from observer.common.bcrypt import hash_password
 from observer.common.types import Role
-from observer.context import ctx
+from observer.context import Repositories, ctx
 from observer.db import Database, metadata
 from observer.entities.users import NewUser
 from observer.entities.world import NewCountry, NewState
 from observer.repositories.audit_logs import AuditRepository
 from observer.repositories.categories import CategoryRepository
+from observer.repositories.documents import DocumentsRepository
 from observer.repositories.idp import IDPRepository
 from observer.repositories.migration_history import MigrationRepository
 from observer.repositories.permissions import PermissionsRepository
+from observer.repositories.pets import PetsRepository
 from observer.repositories.projects import ProjectsRepository
+from observer.repositories.support_records import SupportRecordsRepository
 from observer.repositories.users import UsersRepository
 from observer.repositories.world import WorldRepository
 from observer.schemas.crypto import PrivateKey
@@ -154,6 +157,7 @@ async def bucket_name(s3_client, create_bucket):
 async def create_bucket(s3_client):
     region_name = "eu-central-1"
     bucket_name = "test-buck"
+    await recursive_delete(s3_client, bucket_name)
 
     async def _f():
         bucket_kwargs = {"Bucket": bucket_name}
@@ -212,8 +216,21 @@ async def app_context(db_engine):
         engine=db_engine,
         session=sessionmaker(db_engine, class_=AsyncSession),
     )
+    ctx.repos = Repositories(
+        audit=AuditRepository(ctx.db),
+        users=UsersRepository(ctx.db),
+        projects=ProjectsRepository(ctx.db),
+        permissions=PermissionsRepository(ctx.db),
+        world=WorldRepository(ctx.db),
+        category=CategoryRepository(ctx.db),
+        idp=IDPRepository(ctx.db),
+        pets=PetsRepository(ctx.db),
+        documents=DocumentsRepository(ctx.db),
+        support=SupportRecordsRepository(ctx.db),
+        migrations=MigrationRepository(ctx.db),
+    )
 
-    ctx.storage = FSStorage()
+    ctx.storage = FSStorage(settings.documents_path)
     ctx.keychain = Keychain(ctx.storage)
     private_key = generate_private_key(
         public_exponent=settings.public_exponent,
@@ -238,13 +255,11 @@ async def app_context(db_engine):
         )
     ]
     ctx.jwt_service = JWTService(ctx.keychain.keys[0])
-    ctx.audit_repo = AuditRepository(ctx.db)
     ctx.mailer = MockMailer()
-    ctx.audit_service = AuditService(ctx.audit_repo)
+    ctx.audit_service = AuditService(ctx.repos.audit)
     ctx.crypto_service = CryptoService(ctx.keychain)
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)
-    ctx.users_repo = UsersRepository(ctx.db)
-    ctx.users_service = UsersService(ctx.users_repo, ctx.crypto_service)
+    ctx.users_service = UsersService(ctx.repos.users, ctx.crypto_service)
     ctx.auth_service = AuthService(
         ctx.crypto_service,
         ctx.mfa_service,
@@ -252,25 +267,19 @@ async def app_context(db_engine):
         ctx.users_service,
     )
     ctx.secrets_service = SecretsService(ctx.crypto_service)
-    ctx.projects_repo = ProjectsRepository(ctx.db)
-    ctx.projects_service = ProjectsService(ctx.projects_repo)
-    ctx.permissions_repo = PermissionsRepository(ctx.db)
-    ctx.permissions_service = PermissionsService(ctx.permissions_repo)
-    ctx.world_repo = WorldRepository(ctx.db)
-    ctx.world_service = WorldService(ctx.world_repo)
-    ctx.category_repo = CategoryRepository(ctx.db)
-    ctx.category_service = CategoryService(ctx.category_repo)
-    ctx.idp_repo = IDPRepository(ctx.db)
+    ctx.projects_service = ProjectsService(ctx.repos.projects)
+    ctx.permissions_service = PermissionsService(ctx.repos.permissions)
+    ctx.world_service = WorldService(ctx.repos.world)
+    ctx.category_service = CategoryService(ctx.repos.category)
     ctx.idp_service = IDPService(
-        ctx.idp_repo,
+        ctx.repos.idp,
         ctx.crypto_service,
         ctx.category_service,
         ctx.projects_service,
         ctx.world_service,
         ctx.secrets_service,
     )
-    ctx.migrations_repo = MigrationRepository(ctx.db)
-    ctx.migrations_service = MigrationService(ctx.migrations_repo, ctx.world_service)
+    ctx.migrations_service = MigrationService(ctx.repos.migrations, ctx.world_service)
 
     yield ctx
 
@@ -357,7 +366,7 @@ async def staff_user(ensure_db, app_context):  # type:ignore
 
 @pytest.fixture(scope="function")
 async def default_country(ensure_db, app_context):  # type:ignore
-    country = await app_context.world_repo.create_country(
+    country = await app_context.repos.world.create_country(
         NewCountry(
             name="No Stack Country",
             code="nsc",
@@ -369,7 +378,7 @@ async def default_country(ensure_db, app_context):  # type:ignore
 
 @pytest.fixture(scope="function")
 async def default_state(ensure_db, app_context, default_country):  # type:ignore
-    state = await app_context.world_repo.create_state(
+    state = await app_context.repos.world.create_state(
         NewState(
             name="No Code State",
             code="ncs",

@@ -220,7 +220,7 @@ async def test_mfa_reset_request_works_as_expected(authorized_client, client, en
         ),
     )
     assert resp.status_code == status.HTTP_204_NO_CONTENT
-    user = await app_context.users_repo.get_by_id(consultant_user.id)
+    user = await app_context.repos.users.get_by_id(consultant_user.id)
     assert user.mfa_enabled is False
     assert user.mfa_encrypted_secret is None
     assert user.mfa_encrypted_backup_codes is None
