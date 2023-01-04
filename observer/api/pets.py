@@ -19,12 +19,13 @@ from observer.components.auth import RequiresRoles, authenticated_user
 from observer.components.pagination import pagination
 from observer.components.services import (
     audit_service,
+    documents_service,
     permissions_service,
     pets_service,
     storage_service,
 )
 from observer.entities.base import SomeUser
-from observer.schemas.documents import DocumentResponse
+from observer.schemas.documents import DocumentResponse, NewDocumentRequest
 from observer.schemas.pagination import Pagination
 from observer.schemas.pets import (
     NewPetRequest,
@@ -33,6 +34,7 @@ from observer.schemas.pets import (
     UpdatePetRequest,
 )
 from observer.services.audit_logs import IAuditService
+from observer.services.documents import IDocumentsService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
 from observer.services.storage import IStorage
@@ -186,6 +188,7 @@ async def pet_upload_document(
     audits: IAuditService = Depends(audit_service),
     pets: IPetsService = Depends(pets_service),
     permissions: IPermissionsService = Depends(permissions_service),
+    documents: IDocumentsService = Depends(documents_service),
     storage: IStorage = Depends(storage_service),
     props: Props = Depends(
         Tracked(
@@ -199,9 +202,24 @@ async def pet_upload_document(
     permission = await permissions.find(pet.project_id, user.id)
     assert_deletable(user, permission)
     assert_docs_readable(user, permission)
+    # TODO: Validate and encrypt document for now just testing out full cycle
     full_path = os.path.join(storage.root, file.filename)
     await storage.save(full_path, await file.read())
-    return DocumentResponse()
+    document = await documents.create_document(
+        NewDocumentRequest(
+            name=file.filename,
+            path=full_path,
+            mimetype=file.content_type,
+            owner_id=pet_id,
+            project_id=pet.project_id,
+        )
+    )
+    audit_log = props.new_event(
+        f"pet_id={pet.id},ref_id={user.ref_id}",
+        jsonable_encoder(document, exclude={"id", "encryption_key"}, exclude_none=True),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return DocumentResponse(**document.dict())
 
 
 @router.get(

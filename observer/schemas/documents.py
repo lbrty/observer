@@ -13,11 +13,11 @@ class BaseDocument(SchemaBase):
     mimetype: str = Field(..., description="Document type (mimetype)")
     owner_id: Identifier = Field(..., description="Owner ID")
     project_id: Optional[Identifier] = Field(None, description="Project ID")
-    created_at: datetime = Field(..., description="Creation date and time")
 
 
 class DocumentResponse(BaseDocument):
     id: Identifier = Field(..., description="Document ID")
+    created_at: datetime = Field(..., description="Creation date and time")
 
 
 class DocumentsResponse(BaseModel):

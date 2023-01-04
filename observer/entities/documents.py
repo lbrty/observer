@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Dict, Optional
 
-from pydantic import BaseModel
 
 from observer.common.types import Identifier, SomeStr
 from observer.entities.base import ModelBase
@@ -35,7 +34,7 @@ class BaseDocument(ModelBase):
     project_id: Optional[Identifier]
 
 
-class Document(BaseModel):
+class Document(BaseDocument):
     id: Identifier
     created_at: datetime
 

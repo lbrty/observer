@@ -4,6 +4,7 @@ from observer.services.audit_logs import IAuditService
 from observer.services.auth import IAuthService
 from observer.services.categories import ICategoryService
 from observer.services.crypto import ICryptoService
+from observer.services.documents import IDocumentsService
 from observer.services.idp import IIDPService
 from observer.services.jwt import JWTService
 from observer.services.keys import IKeychain
@@ -119,7 +120,7 @@ async def pets_service() -> IPetsService:
     raise RuntimeError("PetsService is None")
 
 
-async def documents_service() -> IPetsService:
+async def documents_service() -> IDocumentsService:
     if ctx.documents_service:
         return ctx.documents_service
 

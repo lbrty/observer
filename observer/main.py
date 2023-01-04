@@ -18,6 +18,7 @@ from observer.services.audit_logs import AuditService
 from observer.services.auth import AuthService
 from observer.services.categories import CategoryService
 from observer.services.crypto import CryptoService
+from observer.services.documents import DocumentsService
 from observer.services.idp import IDPService
 from observer.services.jwt import JWTService
 from observer.services.keys import Keychain
@@ -28,6 +29,7 @@ from observer.services.permissions import PermissionsService
 from observer.services.projects import ProjectsService
 from observer.services.secrets import SecretsService
 from observer.services.storage import init_storage
+from observer.services.support_records import SupportRecordsService
 from observer.services.users import UsersService
 from observer.services.world import WorldService
 from observer.settings import db_settings, settings
@@ -96,6 +98,8 @@ async def on_startup():
         ctx.world_service,
         ctx.secrets_service,
     )
+    ctx.documents_service = DocumentsService(ctx.repos.documents, ctx.crypto_service)
+    ctx.support_service = SupportRecordsService(ctx.repos.support)
     ctx.migrations_service = MigrationService(ctx.repos.migrations, ctx.world_service)
 
 

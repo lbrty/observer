@@ -67,7 +67,7 @@ class Context:
     category_service: Optional[ICategoryService] = None
     idp_service: Optional[IIDPService] = None
     pets_service: Optional[IPetsService] = None
-    document_service: Optional[IDocumentsService] = None
+    documents_service: Optional[IDocumentsService] = None
     support_service: Optional[ISupportRecordsService] = None
     migrations_service: Optional[IMigrationService] = None
     secrets_service: Optional[ISecretsService] = None
