@@ -1,7 +1,7 @@
 import os
-from typing import List
+from typing import List, Optional
 
-from fastapi import APIRouter, Depends, Response, UploadFile
+from fastapi import APIRouter, Depends, Header, Response, UploadFile
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 from starlette.background import BackgroundTasks
@@ -19,6 +19,7 @@ from observer.components.auth import RequiresRoles, authenticated_user
 from observer.components.pagination import pagination
 from observer.components.services import (
     audit_service,
+    crypto_service,
     documents_service,
     permissions_service,
     pets_service,
@@ -34,6 +35,7 @@ from observer.schemas.pets import (
     UpdatePetRequest,
 )
 from observer.services.audit_logs import IAuditService
+from observer.services.crypto import ICryptoService
 from observer.services.documents import IDocumentsService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
@@ -182,6 +184,7 @@ async def pet_upload_document(
     tasks: BackgroundTasks,
     pet_id: Identifier,
     file: UploadFile,
+    content_length: Optional[int] = Header(None, alias="content-length"),
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
@@ -190,6 +193,7 @@ async def pet_upload_document(
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
     storage: IStorage = Depends(storage_service),
+    crypto: ICryptoService = Depends(crypto_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=pet_upload_document,action=create:document",

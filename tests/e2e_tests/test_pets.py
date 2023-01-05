@@ -48,6 +48,7 @@ async def test_upload_document_for_pet_works(authorized_client, app_context, con
         owner_id,
     )
     # TODO: use tempdir
+    # TODO: test S3 storage
     fp = BytesIO()
     fp.write(b"BABA BLACK SHEEP")
     fp.seek(0)
