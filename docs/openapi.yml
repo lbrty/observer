@@ -2726,15 +2726,6 @@
           {
             "required": false,
             "schema": {
-              "title": "Content-Length",
-              "type": "integer"
-            },
-            "name": "content-length",
-            "in": "header"
-          },
-          {
-            "required": false,
-            "schema": {
               "title": "Access Token",
               "type": "string"
             },
@@ -3739,7 +3730,6 @@
           "similar_passwords_error",
           "document_is_too_large_error",
           "unsupported_document_format",
-          "content_length_required_error",
           "confirmation_code_expired_error",
           "internal_error",
           "bad_request"
