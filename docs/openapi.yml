@@ -2724,6 +2724,17 @@
             "in": "path"
           },
           {
+            "description": "Uploaded file size",
+            "required": true,
+            "schema": {
+              "title": "Content-Length",
+              "type": "integer",
+              "description": "Uploaded file size"
+            },
+            "name": "content-length",
+            "in": "header"
+          },
+          {
             "required": false,
             "schema": {
               "title": "Access Token",

@@ -25,6 +25,7 @@ from observer.components.services import (
     pets_service,
     storage_service,
 )
+from observer.components.validate import ContentLengthLimit
 from observer.entities.base import SomeUser
 from observer.schemas.documents import DocumentResponse, NewDocumentRequest
 from observer.schemas.pagination import Pagination
@@ -40,6 +41,7 @@ from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
 from observer.services.storage import IStorage
 from observer.services.uploads import UploadHandler
+from observer.settings import settings
 
 router = APIRouter(prefix="/pets")
 
@@ -178,6 +180,9 @@ async def delete_pet(
     "/{pet_id}/document",
     response_model=DocumentResponse,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[
+        Depends(ContentLengthLimit(settings.max_upload_size)),
+    ],
     tags=["pets", "documents"],
 )
 async def pet_upload_document(
@@ -216,7 +221,7 @@ async def pet_upload_document(
             mimetype=file.content_type,
             owner_id=pet_id,
             project_id=pet.project_id,
-        )
+        ),
     )
     audit_log = props.new_event(
         f"pet_id={pet.id},ref_id={user.ref_id}",
