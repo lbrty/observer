@@ -12,7 +12,7 @@ class IDocumentsService(Protocol):
     repo: IDocumentsRepository
     crypto: ICryptoService
 
-    async def create_document(self, new_document: NewDocumentRequest) -> Document:
+    async def create_document(self, encryption_key: str, new_document: NewDocumentRequest) -> Document:
         raise NotImplementedError
 
     async def get_document(self, doc_id: Identifier) -> Optional[Document]:
@@ -27,8 +27,12 @@ class DocumentsService(IDocumentsService):
         self.repo = repo
         self.crypto = crypto
 
-    async def create_document(self, new_document: NewDocumentRequest) -> Document:
-        return await self.repo.create_document(NewDocument(**new_document.dict()))
+    async def create_document(self, encryption_key: str, new_document: NewDocumentRequest) -> Document:
+        return await self.repo.create_document(
+            NewDocument(
+                **dict(**new_document.dict(), encryption_key=encryption_key),
+            )
+        )
 
     async def get_document(self, doc_id: Identifier) -> Optional[Document]:
         if document := await self.repo.get_document(doc_id):
