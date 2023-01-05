@@ -1,7 +1,7 @@
 import os
-from typing import List, Optional
+from typing import List
 
-from fastapi import APIRouter, Depends, Header, Response, UploadFile
+from fastapi import APIRouter, Depends, Response, UploadFile
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 from starlette.background import BackgroundTasks
@@ -19,7 +19,6 @@ from observer.components.auth import RequiresRoles, authenticated_user
 from observer.components.pagination import pagination
 from observer.components.services import (
     audit_service,
-    crypto_service,
     documents_service,
     documents_upload,
     permissions_service,
@@ -36,7 +35,6 @@ from observer.schemas.pets import (
     UpdatePetRequest,
 )
 from observer.services.audit_logs import IAuditService
-from observer.services.crypto import ICryptoService
 from observer.services.documents import IDocumentsService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
@@ -186,7 +184,6 @@ async def pet_upload_document(
     tasks: BackgroundTasks,
     pet_id: Identifier,
     file: UploadFile,
-    content_length: Optional[int] = Header(None, alias="content-length"),
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
@@ -195,7 +192,6 @@ async def pet_upload_document(
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
     storage: IStorage = Depends(storage_service),
-    crypto: ICryptoService = Depends(crypto_service),
     uploads: UploadHandler = Depends(documents_upload),
     props: Props = Depends(
         Tracked(
@@ -209,11 +205,11 @@ async def pet_upload_document(
     permission = await permissions.find(pet.project_id, user.id)
     assert_deletable(user, permission)
     assert_docs_readable(user, permission)
-    # TODO: Validate and encrypt document for now just testing out full cycle
+    file_vault = await uploads.process_upload(file)
     full_path = os.path.join(storage.root, file.filename)
-    contents = await file.read()
-    await storage.save(full_path, contents)
+    await storage.save(full_path, file_vault.encrypted_file)
     document = await documents.create_document(
+        file_vault.encryption_key,
         NewDocumentRequest(
             name=file.filename,
             path=full_path,
