@@ -20,7 +20,6 @@ class ErrorCode(str, Enum):
     similar_passwords_error = "similar_passwords_error"
     document_is_too_large_error = "document_is_too_large_error"
     unsupported_document_format = "unsupported_document_format"
-    content_length_required_error = "content_length_required_error"
     confirmation_code_expired_error = "confirmation_code_expired_error"
     internal_error = "internal_error"
     bad_request = "bad_request"
@@ -151,9 +150,3 @@ class TooLargeDocumentError(BaseAPIException):
     default_code = ErrorCode.document_is_too_large_error
     default_status = status.HTTP_413_REQUEST_ENTITY_TOO_LARGE
     default_message = "document is too large"
-
-
-class ContentLengthRequiredError(BaseAPIException):
-    default_code = ErrorCode.content_length_required_error
-    default_status = status.HTTP_411_LENGTH_REQUIRED
-    default_message = "content-length header is missing"
