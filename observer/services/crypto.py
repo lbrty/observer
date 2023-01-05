@@ -3,7 +3,6 @@ import os
 from dataclasses import dataclass
 from typing import Protocol
 
-import shortuuid
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.hashes import SHA256
@@ -79,8 +78,7 @@ class CryptoService(ICryptoService):
         )
 
     async def gen_key(self, key_bits: int) -> bytes:
-        random_bytes = base64.b64encode(os.urandom(key_bits))
-        return bytes(shortuuid.uuid(name=random_bytes.decode()))
+        return os.urandom(key_bits)
 
     async def aes_encrypt(self, secret: bytes, iv: bytes, data: bytes) -> bytes:
         cipher = Cipher(
