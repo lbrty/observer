@@ -11,6 +11,7 @@ AllowedDocumentTypes: Dict[str, str] = {
     # Documents
     "text/csv": ".csv",
     "text/plain": ".txt",
+    "text/markdown": ".md",
     "application/msword": ".doc",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
     "application/vnd.ms-excel": "xls",
