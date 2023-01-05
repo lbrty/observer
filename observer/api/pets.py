@@ -210,11 +210,11 @@ async def pet_upload_document(
     permission = await permissions.find(pet.project_id, user.id)
     assert_deletable(user, permission)
     assert_docs_readable(user, permission)
-    file_vault = await uploads.process_upload(file)
+    sealed_file = await uploads.process_upload(file)
     full_path = os.path.join(storage.root, file.filename)
-    await storage.save(full_path, file_vault.encrypted_file)
+    await storage.save(full_path, sealed_file.encrypted_file)
     document = await documents.create_document(
-        file_vault.encryption_key,
+        sealed_file.encryption_key,
         NewDocumentRequest(
             name=file.filename,
             path=full_path,

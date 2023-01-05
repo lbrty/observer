@@ -10,8 +10,7 @@ from observer.settings import settings
 
 
 @dataclass
-class FileVault:
-    key_hash: str
+class SealedFile:
     encryption_key: str
     encrypted_file: bytes
 
@@ -20,7 +19,7 @@ class UploadHandler:
     def __init__(self, crypto: ICryptoService):
         self.crypto = crypto
 
-    async def process_upload(self, file: UploadFile) -> FileVault:
+    async def process_upload(self, file: UploadFile) -> SealedFile:
         """Validate and encrypt uploaded file.
 
         To encrypt data we do the following things
@@ -52,8 +51,7 @@ class UploadHandler:
         secrets = await self.crypto.encrypt(key_hash, f"{secret}:{iv}".encode())
         encrypted_secrets = base64.b64encode(secrets).decode()
         encryption_key = f"{key_hash}:{encrypted_secrets}"
-        return FileVault(
-            key_hash=key_hash,
+        return SealedFile(
             encryption_key=encryption_key,
             encrypted_file=encrypted_contents,
         )
