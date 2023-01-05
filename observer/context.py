@@ -29,6 +29,7 @@ from observer.services.projects import IProjectsService
 from observer.services.secrets import ISecretsService
 from observer.services.storage import IStorage
 from observer.services.support_records import ISupportRecordsService
+from observer.services.uploads import UploadHandler
 from observer.services.users import IUsersService
 from observer.services.world import IWorldService
 
@@ -51,6 +52,7 @@ class Repositories:
 @dataclass
 class Context:
     db: Optional[Database] = None
+    uploads: Optional[UploadHandler] = None
     repos: Optional[Repositories] = None
     storage: Optional[IStorage] = None
     keychain: Optional[IKeychain] = None

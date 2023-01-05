@@ -21,6 +21,7 @@ from observer.components.services import (
     audit_service,
     crypto_service,
     documents_service,
+    documents_upload,
     permissions_service,
     pets_service,
     storage_service,
@@ -40,6 +41,7 @@ from observer.services.documents import IDocumentsService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
 from observer.services.storage import IStorage
+from observer.services.uploads import UploadHandler
 
 router = APIRouter(prefix="/pets")
 
@@ -194,6 +196,7 @@ async def pet_upload_document(
     documents: IDocumentsService = Depends(documents_service),
     storage: IStorage = Depends(storage_service),
     crypto: ICryptoService = Depends(crypto_service),
+    uploads: UploadHandler = Depends(documents_upload),
     props: Props = Depends(
         Tracked(
             tag="endpoint=pet_upload_document,action=create:document",

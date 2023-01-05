@@ -31,6 +31,7 @@ from observer.services.projects import ProjectsService
 from observer.services.secrets import SecretsService
 from observer.services.storage import init_storage
 from observer.services.support_records import SupportRecordsService
+from observer.services.uploads import UploadHandler
 from observer.services.users import UsersService
 from observer.services.world import WorldService
 from observer.settings import db_settings, settings
@@ -78,6 +79,7 @@ async def on_startup():
     ctx.mailer = Mailer()
     ctx.audit_service = AuditService(ctx.repos.audit)
     ctx.crypto_service = CryptoService(ctx.keychain)
+    ctx.uploads = UploadHandler(ctx.crypto_service)
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)
     ctx.users_service = UsersService(ctx.repos.users, ctx.crypto_service)
     ctx.auth_service = AuthService(
