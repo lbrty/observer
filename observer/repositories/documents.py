@@ -1,4 +1,4 @@
-from typing import Optional, Protocol
+from typing import List, Optional, Protocol
 
 from sqlalchemy import delete, insert, select
 
@@ -13,6 +13,9 @@ class IDocumentsRepository(Protocol):
         raise NotImplementedError
 
     async def get_document(self, doc_id: Identifier) -> Optional[Document]:
+        raise NotImplementedError
+
+    async def get_by_owner_id(self, owner_id: Identifier) -> List[Document]:
         raise NotImplementedError
 
     async def delete_document(self, doc_id: Identifier) -> Document:
@@ -34,6 +37,11 @@ class DocumentsRepository(IDocumentsRepository):
             return Document(**row)
 
         return None
+
+    async def get_by_owner_id(self, owner_id: Identifier) -> List[Document]:
+        query = select(documents).where(documents.c.owner_id == owner_id)
+        rows = await self.db.fetchall(query)
+        return [Document(**row) for row in rows]
 
     async def delete_document(self, doc_id: Identifier) -> Document:
         query = delete(documents).where(documents.c.id == doc_id).returning("*")

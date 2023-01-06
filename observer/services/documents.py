@@ -1,4 +1,4 @@
-from typing import Optional, Protocol
+from typing import List, Optional, Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier
@@ -18,6 +18,9 @@ class IDocumentsService(Protocol):
     async def get_document(self, doc_id: Identifier) -> Optional[Document]:
         raise NotImplementedError
 
+    async def get_by_owner_id(self, owner_id: Identifier) -> List[Document]:
+        raise NotImplementedError
+
     async def delete_document(self, doc_id: Identifier) -> Document:
         raise NotImplementedError
 
@@ -33,6 +36,9 @@ class DocumentsService(IDocumentsService):
                 **dict(**new_document.dict(), encryption_key=encryption_key),
             )
         )
+
+    async def get_by_owner_id(self, owner_id: Identifier) -> List[Document]:
+        return await self.repo.get_by_owner_id(owner_id)
 
     async def get_document(self, doc_id: Identifier) -> Optional[Document]:
         if document := await self.repo.get_document(doc_id):

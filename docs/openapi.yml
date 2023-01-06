@@ -2786,8 +2786,36 @@
         ],
         "summary": "Pet Get Documents",
         "operationId": "pet_get_documents_pets__pet_id__documents_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Pet Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "pet_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
@@ -2797,6 +2825,16 @@
                   "items": {
                     "$ref": "#/components/schemas/DocumentResponse"
                   }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }

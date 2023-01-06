@@ -234,8 +234,20 @@ async def pet_upload_document(
 @router.get(
     "/{pet_id}/documents",
     response_model=List[DocumentResponse],
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,
     tags=["pets", "documents"],
 )
-async def pet_get_documents() -> List[DocumentResponse]:
-    ...
+async def pet_get_documents(
+    pet_id: Identifier,
+    user: SomeUser = Depends(
+        RequiresRoles([Role.admin, Role.consultant, Role.staff]),
+    ),
+    pets: IPetsService = Depends(pets_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    documents: IDocumentsService = Depends(documents_service),
+) -> List[DocumentResponse]:
+    pet = await pets.get_pet(pet_id)
+    permission = await permissions.find(pet.project_id, user.id)
+    assert_docs_readable(user, permission)
+    docs = await documents.get_by_owner_id(pet_id)
+    return [DocumentResponse(**doc.dict()) for doc in docs]
