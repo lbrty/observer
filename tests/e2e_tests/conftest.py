@@ -180,6 +180,12 @@ async def create_bucket(s3_client):
 
 
 @pytest.fixture(scope="function")
+async def temp_storage(env_settings):
+    async with TemporaryDirectory() as temp_dir:
+        yield temp_dir
+
+
+@pytest.fixture(scope="function")
 async def temp_keystore(env_settings):
     async with TemporaryDirectory() as temp_dir:
         pth = Path(temp_dir)
