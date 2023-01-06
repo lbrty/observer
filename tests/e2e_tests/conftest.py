@@ -186,25 +186,25 @@ async def temp_storage(env_settings):
 
 
 @pytest.fixture(scope="function")
-async def temp_keystore(env_settings):
-    async with TemporaryDirectory() as temp_dir:
-        pth = Path(temp_dir)
-        for n in range(5):
-            private_key = generate_private_key(
-                public_exponent=settings.public_exponent,
-                key_size=settings.key_size,
-            )
+async def temp_keystore(env_settings, temp_storage):
+    pth = Path(temp_storage) / "keys"
+    pth.mkdir(parents=True, exist_ok=True)
+    for n in range(5):
+        private_key = generate_private_key(
+            public_exponent=settings.public_exponent,
+            key_size=settings.key_size,
+        )
 
-            private_key_bytes = private_key.private_bytes(
-                encoding=Encoding.PEM,
-                format=PrivateFormat.PKCS8,
-                encryption_algorithm=NoEncryption(),
-            )
-            async with aiofiles.open(pth / f"key-{n}.pem", "wb") as fp:
-                await fp.write(private_key_bytes)
-                await asyncio.sleep(0.1)
+        private_key_bytes = private_key.private_bytes(
+            encoding=Encoding.PEM,
+            format=PrivateFormat.PKCS8,
+            encryption_algorithm=NoEncryption(),
+        )
+        async with aiofiles.open(pth / f"key-{n}.pem", "wb") as fp:
+            await fp.write(private_key_bytes)
+            await asyncio.sleep(0.1)
 
-        yield temp_dir
+    yield pth
 
 
 @pytest.fixture(scope="session")
