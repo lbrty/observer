@@ -1,6 +1,6 @@
 from typing import List, Optional, Protocol
 
-from sqlalchemy import delete, insert, select
+from sqlalchemy import delete, insert, select, text
 
 from observer.common.types import Identifier
 from observer.db import Database
@@ -18,7 +18,13 @@ class IDocumentsRepository(Protocol):
     async def get_by_owner_id(self, owner_id: Identifier) -> List[Document]:
         raise NotImplementedError
 
+    async def get_by_project_id(self, project_id: Identifier) -> List[Document]:
+        raise NotImplementedError
+
     async def delete_document(self, doc_id: Identifier) -> Document:
+        raise NotImplementedError
+
+    async def bulk_delete(self, doc_ids: List[Identifier]) -> List[Identifier]:
         raise NotImplementedError
 
 
@@ -43,7 +49,17 @@ class DocumentsRepository(IDocumentsRepository):
         rows = await self.db.fetchall(query)
         return [Document(**row) for row in rows]
 
+    async def get_by_project_id(self, project_id: Identifier) -> List[Document]:
+        query = select(documents).where(documents.c.project_id == project_id)
+        rows = await self.db.fetchall(query)
+        return [Document(**row) for row in rows]
+
     async def delete_document(self, doc_id: Identifier) -> Document:
         query = delete(documents).where(documents.c.id == doc_id).returning("*")
         row = await self.db.fetchone(query)
         return Document(**row)
+
+    async def bulk_delete(self, doc_ids: List[Identifier]) -> List[Identifier]:
+        query = delete(documents).where(documents.c.id.in_(doc_ids)).returning(text("id"))
+        rows = await self.db.fetchall(query)
+        return [row["id"] for row in rows]

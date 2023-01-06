@@ -15,8 +15,7 @@ from observer.common.permissions import (
 )
 from observer.common.types import Identifier, Role
 from observer.components.audit import Props, Tracked
-from observer.components.auth import RequiresRoles, authenticated_user
-from observer.components.pagination import pagination
+from observer.components.auth import RequiresRoles
 from observer.components.services import (
     audit_service,
     documents_service,
@@ -28,13 +27,7 @@ from observer.components.services import (
 from observer.components.validate import ContentLengthLimit
 from observer.entities.base import SomeUser
 from observer.schemas.documents import DocumentResponse, NewDocumentRequest
-from observer.schemas.pagination import Pagination
-from observer.schemas.pets import (
-    NewPetRequest,
-    PetResponse,
-    PetsResponse,
-    UpdatePetRequest,
-)
+from observer.schemas.pets import NewPetRequest, PetResponse, UpdatePetRequest
 from observer.services.audit_logs import IAuditService
 from observer.services.documents import IDocumentsService
 from observer.services.permissions import IPermissionsService
@@ -78,16 +71,6 @@ async def create_pet(
 
 
 @router.get(
-    "",
-    response_model=PetsResponse,
-    status_code=status.HTTP_200_OK,
-    tags=["pets"],
-)
-async def get_pets(page: Pagination = Depends(pagination)) -> PetsResponse:
-    ...
-
-
-@router.get(
     "/{pet_id}",
     response_model=PetResponse,
     status_code=status.HTTP_200_OK,
@@ -95,7 +78,9 @@ async def get_pets(page: Pagination = Depends(pagination)) -> PetsResponse:
 )
 async def get_pet(
     pet_id: Identifier,
-    user: SomeUser = Depends(authenticated_user),
+    user: SomeUser = Depends(
+        RequiresRoles([Role.admin, Role.consultant, Role.staff]),
+    ),
     pets: IPetsService = Depends(pets_service),
     permissions: IPermissionsService = Depends(permissions_service),
 ) -> PetResponse:
@@ -155,6 +140,8 @@ async def delete_pet(
     audits: IAuditService = Depends(audit_service),
     pets: IPetsService = Depends(pets_service),
     permissions: IPermissionsService = Depends(permissions_service),
+    documents: IDocumentsService = Depends(documents_service),
+    storage: IStorage = Depends(storage_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=delete_pet,action=delete:pet",
@@ -163,16 +150,21 @@ async def delete_pet(
         use_cache=False,
     ),
 ) -> Response:
-    # TODO: Delete all related files with documents
     pet = await pets.get_pet(pet_id)
     permission = await permissions.find(pet.project_id, user.id)
     assert_deletable(user, permission)
+    pet_documents = await documents.get_by_owner_id(pet_id)
+    await documents.bulk_delete(
+        [str(doc.id) for doc in pet_documents],
+    )
+    full_path = os.path.join(settings.documents_path, str(pet_id))
     deleted_pet = await pets.delete_pet(pet_id)
     audit_log = props.new_event(
         f"pet_id={pet.id},ref_id={user.ref_id}",
         jsonable_encoder(deleted_pet, exclude={"id"}, exclude_none=True),
     )
     tasks.add_task(audits.add_event, audit_log)
+    tasks.add_task(storage.delete, full_path)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -211,7 +203,7 @@ async def pet_upload_document(
     assert_deletable(user, permission)
     assert_docs_readable(user, permission)
     sealed_file = await uploads.process_upload(file)
-    full_path = os.path.join(storage.root, file.filename)
+    full_path = os.path.join(storage.root, settings.documents_path, str(pet_id), file.filename)
     await storage.save(full_path, sealed_file.encrypted_file)
     document = await documents.create_document(
         sealed_file.encryption_key,

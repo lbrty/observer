@@ -1,4 +1,5 @@
 import os
+import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import IO, Any, List, Protocol
@@ -64,11 +65,11 @@ class FSStorage(IStorage):
         return items
 
     async def save(self, path: str | Path, contents: bytes):
-        pth = Path(self.root)
-        if not pth.exists():
-            pth.mkdir(exist_ok=True)
+        pth = Path(self.root) / path
+        if not pth.parent.exists():
+            pth.parent.mkdir(parents=True, exist_ok=True)
 
-        async with af.open(pth / path, "wb") as fp:
+        async with af.open(pth, "wb") as fp:
             await fp.write(contents)
 
     async def open(self, path: str | Path) -> IO[Any]:
@@ -82,6 +83,8 @@ class FSStorage(IStorage):
         pth = Path(self.root) / path
         if pth.is_file():
             pth.unlink(missing_ok=True)
+        elif pth.is_dir():
+            shutil.rmtree(pth)
 
     @property
     def root(self) -> str:

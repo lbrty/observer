@@ -21,7 +21,13 @@ class IDocumentsService(Protocol):
     async def get_by_owner_id(self, owner_id: Identifier) -> List[Document]:
         raise NotImplementedError
 
+    async def get_by_project_id(self, project_id: Identifier) -> List[Document]:
+        raise NotImplementedError
+
     async def delete_document(self, doc_id: Identifier) -> Document:
+        raise NotImplementedError
+
+    async def bulk_delete(self, doc_ids: List[Identifier]) -> List[Identifier]:
         raise NotImplementedError
 
 
@@ -40,6 +46,9 @@ class DocumentsService(IDocumentsService):
     async def get_by_owner_id(self, owner_id: Identifier) -> List[Document]:
         return await self.repo.get_by_owner_id(owner_id)
 
+    async def get_by_project_id(self, project_id: Identifier) -> List[Document]:
+        return await self.repo.get_by_project_id(project_id)
+
     async def get_document(self, doc_id: Identifier) -> Optional[Document]:
         if document := await self.repo.get_document(doc_id):
             return document
@@ -48,3 +57,6 @@ class DocumentsService(IDocumentsService):
 
     async def delete_document(self, doc_id: Identifier) -> Document:
         return await self.repo.delete_document(doc_id)
+
+    async def bulk_delete(self, doc_ids: List[Identifier]) -> List[Identifier]:
+        return await self.repo.bulk_delete(doc_ids)
