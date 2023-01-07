@@ -5,7 +5,7 @@ from starlette import status
 
 from observer.common.types import PetStatus
 from observer.entities.permissions import NewPermission
-from observer.schemas.pets import NewPetRequest
+from observer.schemas.pets import NewPetRequest, UpdatePetRequest
 from tests.helpers.crud import create_permission, create_person
 
 
@@ -96,6 +96,22 @@ async def test_get_pets_documents_works(
 
     resp = await authorized_client.get(f"/pets/{new_pet.id}/documents")
     assert resp.json() == documents
+
+
+async def test_update_pets_works(
+    authorized_client,
+    app_context,
+    new_pet,
+    env_settings,
+):
+    updates = UpdatePetRequest(**new_pet.dict())
+    updates.name = "Toto"
+    updates.status = PetStatus.owner_found
+    resp = await authorized_client.put(f"/pets/{new_pet.id}", json=jsonable_encoder(updates, exclude={"id"}))
+    assert resp.status_code == status.HTTP_200_OK
+    resp_json = resp.json()
+    resp_json["name"] = updates.name
+    resp_json["status"] = PetStatus.owner_found.value
 
 
 async def test_delete_pets_deletes_all_related_documents(

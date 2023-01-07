@@ -51,7 +51,7 @@ class PetsRepository(IPetsRepository):
         return pets_count[0], items
 
     async def update_pet(self, pet_id: Identifier, updates: UpdatePet) -> Pet:
-        query = update(pets).values(**updates.dict()).where(pets.c.id == pet_id)
+        query = update(pets).values(**updates.dict()).where(pets.c.id == pet_id).returning("*")
         row = await self.db.fetchone(query)
         return Pet(**row)
 
