@@ -1,6 +1,6 @@
 from observer.common.types import Identifier, PetStatus, PlaceType
 from observer.context import Context
-from observer.entities.idp import Category, NewCategory
+from observer.entities.idp import IDP, Category, NewCategory, NewIDP
 from observer.entities.permissions import NewPermission, Permission
 from observer.entities.pets import NewPet, Pet
 from observer.entities.projects import NewProject, Project
@@ -105,6 +105,22 @@ async def create_village(
         )
     )
     return village
+
+
+async def create_person(
+    ctx: Context,
+    project_id: Identifier,
+) -> IDP:
+    person = await ctx.repos.idp.create_idp(
+        NewIDP(
+            project_id=project_id,
+            email="Full_Name@examples.com",
+            full_name="Full Name",
+            phone_number="+11111111",
+            tags=["one", "two"],
+        )
+    )
+    return person
 
 
 async def create_pet(
