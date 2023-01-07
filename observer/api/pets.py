@@ -165,7 +165,7 @@ async def delete_pet(
         jsonable_encoder(deleted_pet, exclude={"id"}, exclude_none=True),
     )
     tasks.add_task(audits.add_event, audit_log)
-    tasks.add_task(storage.delete, full_path)
+    tasks.add_task(storage.delete_path, full_path)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 

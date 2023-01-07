@@ -30,7 +30,7 @@ class IStorage(Protocol):
 
     async def save(self, path: str | Path, contents: bytes):
         """Save file
-        NOTE: `path` will be prefixed by `documents_root`
+        NOTE: `path` will be prefixed by `root`
         """
         raise NotImplementedError
 
@@ -42,7 +42,13 @@ class IStorage(Protocol):
 
     async def delete(self, path: str):
         """Delete file
-        NOTE: `path` will be prefixed by `documents_root`
+        NOTE: `path` will be prefixed by `root`
+        """
+        raise NotImplementedError
+
+    async def delete_path(self, path: str):
+        """Delete folder
+        NOTE: `path` will be prefixed by `root`
         """
         raise NotImplementedError
 
@@ -85,7 +91,10 @@ class FSStorage(IStorage):
         if pth.is_file():
             if pth.exists():
                 await af.os.unlink(pth, missing_ok=True)
-        elif pth.is_dir():
+
+    async def delete_path(self, path: str):
+        pth = Path(self.root) / path
+        if pth.is_dir():
             shutil.rmtree(pth)
 
     @property
@@ -144,7 +153,22 @@ class S3Storage(IStorage):
     async def delete(self, path: str):
         async with self.s3_client as client:
             try:
+                if path.startswith(self.root):
+                    full_path = path
+                else:
+                    full_path = os.path.join(self.root, path)
+
+                await client.delete_object(Bucket=self.bucket, Key=full_path)
+            except ClientError as ex:
+                logger.error("Unable to delete document", metadata=ex.response["ResponseMetadata"])
+                raise InternalError(message=f"Unable to delete document {full_path}")
+
+    async def delete_path(self, path: str):
+        async with self.s3_client as client:
+            try:
                 full_path = os.path.join(self.root, path)
+                for _, key in await self.ls(path):
+                    await self.delete_path(key)
                 await client.delete_object(Bucket=self.bucket, Key=full_path)
             except ClientError as ex:
                 logger.error("Unable to delete document", metadata=ex.response["ResponseMetadata"])

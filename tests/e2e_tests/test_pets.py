@@ -165,3 +165,25 @@ async def test_delete_pets_deletes_all_related_documents(
     assert resp.status_code == status.HTTP_204_NO_CONTENT
     file_path = os.path.join(app_context.storage.root, env_settings.documents_path, str(new_pet.id))
     assert os.path.exists(file_path) is False
+
+
+async def test_delete_pets_deletes_all_related_documents_from_remote_storage(
+    authorized_client,
+    app_context,
+    env_settings,
+    new_pet,
+    markdown_file,
+    aws_credentials,
+    s3_storage,
+    s3_client,
+    bucket_name,
+):
+    files = {"file": ("readme.md", markdown_file, "text/markdown")}
+    resp = await authorized_client.post(f"/pets/{new_pet.id}/document", files=files)
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    resp = await authorized_client.delete(f"/pets/{new_pet.id}")
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+    folder_path = os.path.join(env_settings.documents_path, str(new_pet.id))
+    documents = await app_context.storage.ls(folder_path)
+    assert len(documents) == 0
