@@ -6,16 +6,13 @@ from cryptography.hazmat.primitives.serialization import (
 )
 
 from observer.services.keychain import Keychain
-from observer.services.storage import FSStorage, S3Storage
+from observer.services.storage import FSStorage
 
 
-async def test_keychain_can_load_keys_from_remote_store(aws_credentials, s3_server, s3_client, env_settings):
+async def test_keychain_can_load_keys_from_remote_store(
+    aws_credentials, create_bucket, s3_storage, s3_client, app_context, env_settings
+):
     bucket_name = "test-buck"
-    await s3_client.create_bucket(
-        Bucket=bucket_name,
-        CreateBucketConfiguration=dict(LocationConstraint="eu-central-1"),
-    )
-    storage = S3Storage("uploads", bucket_name, env_settings.s3_region, s3_server)
     keychain = Keychain()
 
     for n in range(2):
@@ -32,7 +29,7 @@ async def test_keychain_can_load_keys_from_remote_store(aws_credentials, s3_serv
 
         await s3_client.put_object(Bucket=bucket_name, Key=f"uploads/keys/key{n}.pem", Body=private_key_bytes)
 
-    await keychain.load("keys", storage)
+    await keychain.load("keys", app_context.storage)
     assert len(keychain.keys) == 2
 
 

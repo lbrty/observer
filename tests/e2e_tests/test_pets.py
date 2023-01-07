@@ -106,9 +106,9 @@ async def test_get_pets_documents_with_remote_storage_works(
     textfile,
     env_settings,
     aws_credentials,
+    create_bucket,
     s3_storage,
     s3_client,
-    bucket_name,
 ):
     documents = []
     resp = await authorized_client.post(
@@ -176,7 +176,6 @@ async def test_delete_pets_deletes_all_related_documents_from_remote_storage(
     aws_credentials,
     s3_storage,
     s3_client,
-    bucket_name,
 ):
     files = {"file": ("readme.md", markdown_file, "text/markdown")}
     resp = await authorized_client.post(f"/pets/{new_pet.id}/document", files=files)

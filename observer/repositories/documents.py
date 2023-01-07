@@ -33,7 +33,9 @@ class DocumentsRepository(IDocumentsRepository):
         self.db = db
 
     async def create_document(self, new_document: NewDocument) -> Document:
-        query = insert(documents).values(**new_document.dict()).returning("*")
+        values = new_document.dict()
+        # values["created_at"]
+        query = insert(documents).values(**values).returning("*")
         row = await self.db.fetchone(query)
         return Document(**row)
 

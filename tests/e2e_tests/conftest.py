@@ -11,6 +11,7 @@ import pytest
 from aiobotocore.config import AioConfig
 from aiobotocore.session import AioSession
 from aiofiles.tempfile import TemporaryDirectory
+from botocore.exceptions import ClientError
 from cryptography.hazmat.primitives.asymmetric.rsa import generate_private_key
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
@@ -75,6 +76,8 @@ from tests.helpers.crud import (
     create_project,
 )
 from tests.mocks.mailer import MockMailer
+
+BUCKET_NAME = "test-buck"
 
 
 @pytest.fixture(scope="session")
@@ -141,51 +144,44 @@ async def s3_client(region, aio_session, aio_config, s3_server):
         yield client
 
 
-async def recursive_delete(s3_client, bucket_name):
+async def recursive_delete(s3_client):
     # Recursively deletes a bucket and all of its contents.
     paginator = s3_client.get_paginator("list_object_versions")
-    async for n in paginator.paginate(Bucket=bucket_name, Prefix=""):
+    async for n in paginator.paginate(Bucket=BUCKET_NAME, Prefix=""):
         for obj in chain(
             n.get("Versions", []),
             n.get("DeleteMarkers", []),
             n.get("Contents", []),
             n.get("CommonPrefixes", []),
         ):
-            kwargs = dict(Bucket=bucket_name, Key=obj["Key"])
+            kwargs = dict(Bucket=BUCKET_NAME, Key=obj["Key"])
             if "VersionId" in obj:
                 kwargs["VersionId"] = obj["VersionId"]
             resp = await s3_client.delete_object(**kwargs)
             assert resp["ResponseMetadata"]["HTTPStatusCode"] == 204
 
-    resp = await s3_client.delete_bucket(Bucket=bucket_name)
+    resp = await s3_client.delete_bucket(Bucket=BUCKET_NAME)
     assert resp["ResponseMetadata"]["HTTPStatusCode"] == 204
 
 
 @pytest.fixture(scope="function")
-async def bucket_name(s3_client, create_bucket):
-    name = await create_bucket()
-    yield name
-
-
-@pytest.fixture(scope="function")
 async def create_bucket(s3_client):
-    region_name = "eu-central-1"
-    bucket_name = "test-buck"
-
-    async def _f():
-        bucket_kwargs = {"Bucket": bucket_name}
+    try:
+        region_name = "eu-central-1"
+        bucket_kwargs = {"Bucket": BUCKET_NAME}
         if region_name != "us-east-1":
             bucket_kwargs["CreateBucketConfiguration"] = {
                 "LocationConstraint": region_name,
             }
-        response = await s3_client.create_bucket(**bucket_kwargs)
-        assert response["ResponseMetadata"]["HTTPStatusCode"] == 200
-        return bucket_name
-
-    try:
-        yield _f
+        try:
+            response = await s3_client.create_bucket(**bucket_kwargs)
+            assert response["ResponseMetadata"]["HTTPStatusCode"] == 200
+            yield
+        except ClientError as ex:
+            if ex.response["Error"]["Code"] != "BucketAlreadyOwnedByYou":
+                raise ex
     finally:
-        await recursive_delete(s3_client, bucket_name)
+        await recursive_delete(s3_client)
 
 
 @pytest.fixture(scope="function")
@@ -223,9 +219,9 @@ async def fs_storage(app_context, env_settings, temp_dir):
 
 
 @pytest.fixture(scope="function")
-async def s3_storage(app_context, env_settings, s3_server, bucket_name):
+async def s3_storage(app_context, env_settings, s3_server, create_bucket):
     env_settings.storage_root = "uploads"
-    env_settings.s3_bucket = bucket_name
+    env_settings.s3_bucket = BUCKET_NAME
     env_settings.s3_endpoint = s3_server
     app_context.storage = S3Storage(
         env_settings.storage_root,
