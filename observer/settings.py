@@ -28,7 +28,7 @@ class Settings(SettingsBase):
     app_domain: str = "https://observer.app"
 
     # Keystore and RSA key settings
-    keystore_path: str = str(here / "keys")
+    keystore_path: str = "keys"
     key_size: int = 2048
     key_passwords: Optional[str] = None
     public_exponent: int = 65537
@@ -81,7 +81,7 @@ class Settings(SettingsBase):
     # Maximum upload file size is 5Mb
     max_upload_size = 1024 * 1024 * 5
     # Local storage uses the same path
-    documents_path: str = str(here / "documents")
+    documents_path: str = "documents"
     # Block storage
     s3_endpoint: Optional[str] = "https://s3.aws.amazon.com/observer"
     s3_region: Optional[str] = "eu-central-1"
