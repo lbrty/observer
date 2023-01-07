@@ -242,6 +242,12 @@ async def markdown_file():
     return fp
 
 
+@pytest.fixture(scope="function")
+async def textfile():
+    fp = BytesIO(b"Some plain text contents")
+    return fp
+
+
 @pytest.fixture(scope="session")
 async def db_engine(env_settings):
     opts = dict(

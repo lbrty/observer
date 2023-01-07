@@ -64,6 +64,40 @@ async def test_upload_document_for_pet_works(
     assert os.path.exists(file_path)
 
 
+async def test_get_pets_documents_works(
+    authorized_client,
+    app_context,
+    new_pet,
+    markdown_file,
+    textfile,
+    env_settings,
+    fs_storage,
+):
+    documents = []
+    resp = await authorized_client.post(
+        f"/pets/{new_pet.id}/document",
+        files={"file": ("readme.md", markdown_file, "text/markdown")},
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    documents.append(resp.json())
+    file_path = os.path.join(app_context.storage.root, env_settings.documents_path, str(new_pet.id), "readme.md")
+    assert os.path.exists(file_path)
+
+    resp = await authorized_client.post(
+        f"/pets/{new_pet.id}/document",
+        files={"file": ("notes.txt", textfile, "text/plain")},
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    documents.append(resp.json())
+    file_path = os.path.join(app_context.storage.root, env_settings.documents_path, str(new_pet.id), "notes.txt")
+    assert os.path.exists(file_path)
+
+    resp = await authorized_client.get(f"/pets/{new_pet.id}/documents")
+    assert resp.json() == documents
+
+
 async def test_delete_pets_deletes_all_related_documents(
     authorized_client,
     app_context,
