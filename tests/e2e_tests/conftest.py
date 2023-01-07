@@ -1,6 +1,7 @@
 import asyncio
 import hashlib
 import os
+from io import BytesIO
 from itertools import chain
 from pathlib import Path
 
@@ -26,10 +27,13 @@ from sqlalchemy.pool import NullPool
 
 from observer.app import create_app
 from observer.common.bcrypt import hash_password
-from observer.common.types import Role
-from observer.context import Repositories, ctx
+from observer.common.types import PetStatus, Role
+from observer.context import Context, Repositories, ctx
 from observer.db import Database, metadata
-from observer.entities.users import NewUser
+from observer.entities.permissions import NewPermission
+from observer.entities.pets import Pet
+from observer.entities.projects import Project
+from observer.entities.users import NewUser, User
 from observer.entities.world import NewCountry, NewState
 from observer.repositories.audit_logs import AuditRepository
 from observer.repositories.categories import CategoryRepository
@@ -57,13 +61,19 @@ from observer.services.permissions import PermissionsService
 from observer.services.pets import PetsService
 from observer.services.projects import ProjectsService
 from observer.services.secrets import SecretsService
-from observer.services.storage import FSStorage
+from observer.services.storage import FSStorage, S3Storage
 from observer.services.support_records import SupportRecordsService
 from observer.services.uploads import UploadHandler
 from observer.services.users import UsersService
 from observer.services.world import WorldService
 from observer.settings import db_settings, settings
 from tests.e2e_tests.moto_server import MotoService
+from tests.helpers.crud import (
+    create_permission,
+    create_person,
+    create_pet,
+    create_project,
+)
 from tests.mocks.mailer import MockMailer
 
 
@@ -180,14 +190,14 @@ async def create_bucket(s3_client):
 
 
 @pytest.fixture(scope="function")
-async def temp_storage(env_settings):
+async def temp_dir(env_settings):
     async with TemporaryDirectory() as temp_dir:
         yield temp_dir
 
 
 @pytest.fixture(scope="function")
-async def temp_keystore(env_settings, temp_storage):
-    pth = Path(temp_storage) / "keys"
+async def temp_keystore(env_settings, temp_dir):
+    pth = Path(temp_dir) / "keys"
     pth.mkdir(parents=True, exist_ok=True)
     for n in range(5):
         private_key = generate_private_key(
@@ -205,6 +215,31 @@ async def temp_keystore(env_settings, temp_storage):
             await asyncio.sleep(0.1)
 
     yield pth
+
+
+@pytest.fixture(scope="function")
+async def fs_storage(app_context, env_settings, temp_dir):
+    app_context.storage_root = temp_dir
+    app_context.storage = FSStorage(app_context.storage_root)
+
+
+@pytest.fixture(scope="function")
+async def s3_storage(app_context, env_settings, s3_server, bucket_name):
+    env_settings.storage_root = "uploads"
+    env_settings.s3_bucket = bucket_name
+    env_settings.s3_endpoint = s3_server
+    app_context.storage = S3Storage(
+        env_settings.storage_root,
+        env_settings.s3_bucket,
+        env_settings.s3_region,
+        s3_server,
+    )
+
+
+@pytest.fixture(scope="function")
+async def markdown_file():
+    fp = BytesIO(b"BABA BLACK SHEEP")
+    return fp
 
 
 @pytest.fixture(scope="session")
@@ -240,7 +275,7 @@ async def app_context(db_engine):
         migrations=MigrationRepository(ctx.db),
     )
 
-    ctx.storage = FSStorage(settings.documents_path)
+    ctx.storage = FSStorage(settings.storage_root)
     ctx.keychain = Keychain()
     private_key = generate_private_key(
         public_exponent=settings.public_exponent,
@@ -419,6 +454,42 @@ async def authorized_client(test_app, app_context, consultant_user):
         cookies=token.dict(),
     )
     yield app_client
+
+
+@pytest.fixture(scope="function")
+async def default_project(app_context: Context) -> Project:
+    project = await create_project(app_context, "default test project", "default project description")
+    return project
+
+
+@pytest.fixture(scope="function")
+async def new_pet(app_context: Context, default_project: Project, consultant_user: User) -> Pet:
+    await create_permission(
+        app_context,
+        NewPermission(
+            can_create=True,
+            can_read=True,
+            can_update=True,
+            can_delete=True,
+            can_create_projects=True,
+            can_read_documents=True,
+            can_read_personal_info=True,
+            can_invite_members=True,
+            project_id=default_project.id,
+            user_id=consultant_user.id,
+        ),
+    )
+
+    person = await create_person(app_context, default_project.id)
+    pet = await create_pet(
+        app_context,
+        "Jack",
+        PetStatus.needs_shelter,
+        "reg-id",
+        default_project.id,
+        person.id,
+    )
+    yield pet
 
 
 @pytest.fixture(scope="function")
