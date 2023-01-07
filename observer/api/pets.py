@@ -153,6 +153,7 @@ async def delete_pet(
     pet = await pets.get_pet(pet_id)
     permission = await permissions.find(pet.project_id, user.id)
     assert_deletable(user, permission)
+    assert_docs_readable(user, permission)
     pet_documents = await documents.get_by_owner_id(pet_id)
     await documents.bulk_delete(
         [str(doc.id) for doc in pet_documents],

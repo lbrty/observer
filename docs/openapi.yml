@@ -3636,7 +3636,6 @@
         "title": "DocumentResponse",
         "required": [
           "name",
-          "path",
           "mimetype",
           "owner_id",
           "id",
@@ -3648,11 +3647,6 @@
             "title": "Name",
             "type": "string",
             "description": "Document filename"
-          },
-          "path": {
-            "title": "Path",
-            "type": "string",
-            "description": "Document path"
           },
           "mimetype": {
             "title": "Mimetype",
