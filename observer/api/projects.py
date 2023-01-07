@@ -176,7 +176,6 @@ async def get_project_members(
     projects: IProjectsService = Depends(projects_service),
     pages: Pagination = Depends(pagination),
 ) -> ProjectMembersResponse:
-    # TODO: Add pagination tests
     members = await projects.get_members(project.id, pages.offset, pages.limit)
     return ProjectMembersResponse(items=[ProjectMemberResponse(**member.dict()) for member in members])
 

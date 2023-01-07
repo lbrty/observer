@@ -2,7 +2,9 @@ import uuid
 
 from starlette import status
 
+from observer.entities.permissions import NewPermission
 from tests.helpers.auth import get_auth_tokens
+from tests.helpers.crud import create_permission
 
 
 async def test_create_project_works_as_expected(
@@ -239,20 +241,26 @@ async def test_get_project_members_works_as_expected(authorized_client, ensure_d
 
 
 async def test_add_project_member_works_as_expected(
-    authorized_client, ensure_db, app_context, consultant_user, guest_user
+    authorized_client, ensure_db, app_context, consultant_user, guest_user, default_project
 ):
-    resp = await authorized_client.post(
-        "/projects/",
-        json=dict(
-            name="Test Project",
-            description="Project description",
+    await create_permission(
+        app_context,
+        NewPermission(
+            can_create=False,
+            can_read=True,
+            can_update=True,
+            can_delete=False,
+            can_create_projects=False,
+            can_read_documents=False,
+            can_read_personal_info=False,
+            can_invite_members=True,
+            project_id=default_project.id,
+            user_id=consultant_user.id,
         ),
     )
-    assert resp.status_code == status.HTTP_201_CREATED
-    resp_json = resp.json()
-    project_id = resp_json["id"]
+
     resp = await authorized_client.post(
-        f"/projects/{project_id}/members",
+        f"/projects/{default_project.id}/members",
         json=dict(
             can_create=False,
             can_read=True,
@@ -262,15 +270,15 @@ async def test_add_project_member_works_as_expected(
             can_read_documents=False,
             can_read_personal_info=False,
             can_invite_members=False,
-            project_id=project_id,
+            project_id=str(default_project.id),
             user_id=str(guest_user.id),
         ),
     )
     assert resp.status_code == status.HTTP_200_OK
 
-    consultant_permission = await app_context.repos.permissions.find(project_id, consultant_user.id)
-    guest_permission = await app_context.repos.permissions.find(project_id, guest_user.id)
-    resp = await authorized_client.get(f"/projects/{project_id}/members")
+    consultant_permission = await app_context.repos.permissions.find(default_project.id, consultant_user.id)
+    guest_permission = await app_context.repos.permissions.find(default_project.id, guest_user.id)
+    resp = await authorized_client.get(f"/projects/{default_project.id}/members")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == {
         "items": [
@@ -280,17 +288,17 @@ async def test_add_project_member_works_as_expected(
                 "full_name": "full name",
                 "role": "consultant",
                 "permissions": {
-                    "id": str(consultant_permission.id),
-                    "can_create": True,
+                    "can_create": False,
                     "can_read": True,
                     "can_update": True,
-                    "can_delete": True,
-                    "can_create_projects": True,
-                    "can_read_documents": True,
-                    "can_read_personal_info": True,
+                    "can_delete": False,
+                    "can_create_projects": False,
+                    "can_read_documents": False,
+                    "can_read_personal_info": False,
                     "can_invite_members": True,
-                    "project_id": project_id,
+                    "id": str(consultant_permission.id),
                     "user_id": str(consultant_user.id),
+                    "project_id": str(default_project.id),
                 },
             },
             {
@@ -299,7 +307,6 @@ async def test_add_project_member_works_as_expected(
                 "full_name": "full name",
                 "role": "guest",
                 "permissions": {
-                    "id": str(guest_permission.id),
                     "can_create": False,
                     "can_read": True,
                     "can_update": True,
@@ -308,11 +315,114 @@ async def test_add_project_member_works_as_expected(
                     "can_read_documents": False,
                     "can_read_personal_info": False,
                     "can_invite_members": False,
-                    "project_id": project_id,
+                    "id": str(guest_permission.id),
                     "user_id": str(guest_user.id),
+                    "project_id": str(default_project.id),
                 },
             },
-        ]
+        ],
+    }
+
+
+async def test_add_project_member_pagination_works_as_expected(
+    authorized_client, ensure_db, app_context, consultant_user, guest_user, staff_user, default_project
+):
+    await create_permission(
+        app_context,
+        NewPermission(
+            can_create=False,
+            can_read=True,
+            can_update=True,
+            can_delete=False,
+            can_create_projects=False,
+            can_read_documents=False,
+            can_read_personal_info=False,
+            can_invite_members=False,
+            project_id=default_project.id,
+            user_id=consultant_user.id,
+        ),
+    )
+    await create_permission(
+        app_context,
+        NewPermission(
+            can_create=False,
+            can_read=True,
+            can_update=True,
+            can_delete=False,
+            can_create_projects=False,
+            can_read_documents=False,
+            can_read_personal_info=False,
+            can_invite_members=False,
+            project_id=default_project.id,
+            user_id=guest_user.id,
+        ),
+    )
+    await create_permission(
+        app_context,
+        NewPermission(
+            can_create=False,
+            can_read=True,
+            can_update=True,
+            can_delete=False,
+            can_create_projects=False,
+            can_read_documents=False,
+            can_read_personal_info=False,
+            can_invite_members=False,
+            project_id=default_project.id,
+            user_id=staff_user.id,
+        ),
+    )
+
+    consultant_permission = await app_context.repos.permissions.find(default_project.id, consultant_user.id)
+    guest_permission = await app_context.repos.permissions.find(default_project.id, guest_user.id)
+    resp = await authorized_client.get(f"/projects/{default_project.id}/members?limit=1")
+    assert resp.json() == {
+        "items": [
+            {
+                "ref_id": "ref-consultant-1",
+                "is_active": True,
+                "full_name": "full name",
+                "role": "consultant",
+                "permissions": {
+                    "can_create": False,
+                    "can_read": True,
+                    "can_update": True,
+                    "can_delete": False,
+                    "can_create_projects": False,
+                    "can_read_documents": False,
+                    "can_read_personal_info": False,
+                    "can_invite_members": False,
+                    "id": str(consultant_permission.id),
+                    "user_id": str(consultant_user.id),
+                    "project_id": str(default_project.id),
+                },
+            }
+        ],
+    }
+
+    resp = await authorized_client.get(f"/projects/{default_project.id}/members?offset=1&limit=1")
+    assert resp.json() == {
+        "items": [
+            {
+                "ref_id": "ref-guest-1",
+                "is_active": True,
+                "full_name": "full name",
+                "role": "guest",
+                "permissions": {
+                    "can_create": False,
+                    "can_read": True,
+                    "can_update": True,
+                    "can_delete": False,
+                    "can_create_projects": False,
+                    "can_read_documents": False,
+                    "can_read_personal_info": False,
+                    "can_invite_members": False,
+                    "id": str(guest_permission.id),
+                    "user_id": str(guest_user.id),
+                    "project_id": str(default_project.id),
+                },
+            },
+        ],
     }
 
 
