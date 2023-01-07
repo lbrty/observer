@@ -1,4 +1,14 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Index, Table, Text, func, text
+from sqlalchemy import (
+    Column,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    Table,
+    Text,
+    func,
+    text,
+)
 from sqlalchemy.dialects.postgresql import UUID
 
 from observer.db import metadata
@@ -9,6 +19,7 @@ documents = Table(
     Column("id", UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")),
     Column("encryption_key", Text(), nullable=True),
     Column("name", Text(), nullable=False),
+    Column("size", Integer(), nullable=False),
     Column("path", Text(), nullable=False),
     Column("mimetype", Text(), nullable=False),
     Column(

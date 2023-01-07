@@ -9,6 +9,7 @@ from observer.schemas.base import SchemaBase
 
 class BaseDocument(SchemaBase):
     name: str = Field(..., description="Document filename")
+    size: int = Field(..., description="Size of document in bytes", gt=0)
     mimetype: str = Field(..., description="Document type (mimetype)")
     owner_id: Identifier = Field(..., description="Owner ID")
     project_id: Optional[Identifier] = Field(None, description="Project ID")

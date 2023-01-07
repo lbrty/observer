@@ -3636,6 +3636,7 @@
         "title": "DocumentResponse",
         "required": [
           "name",
+          "size",
           "mimetype",
           "owner_id",
           "id",
@@ -3647,6 +3648,12 @@
             "title": "Name",
             "type": "string",
             "description": "Document filename"
+          },
+          "size": {
+            "title": "Size",
+            "exclusiveMinimum": 0.0,
+            "type": "integer",
+            "description": "Size of document in bytes"
           },
           "mimetype": {
             "title": "Mimetype",

@@ -1,5 +1,6 @@
 import base64
 from dataclasses import dataclass
+from typing import Tuple
 
 from fastapi import UploadFile
 
@@ -19,7 +20,7 @@ class UploadHandler:
     def __init__(self, crypto: ICryptoService):
         self.crypto = crypto
 
-    async def process_upload(self, file: UploadFile) -> SealedFile:
+    async def process_upload(self, file: UploadFile) -> Tuple[int, SealedFile]:
         """Validate and encrypt uploaded file.
 
         To encrypt data we do the following things
@@ -34,7 +35,8 @@ class UploadHandler:
             raise UnsupportedDocumentError
 
         contents = await file.read()
-        if len(contents) > settings.max_upload_size:
+        content_size = len(contents)
+        if content_size > settings.max_upload_size:
             raise TooLargeDocumentError
 
         seal_options = await self.crypto.aes_cipher_options(settings.aes_key_bits)
@@ -51,7 +53,10 @@ class UploadHandler:
         secrets = await self.crypto.encrypt(key_hash, f"{secret}:{iv}".encode())
         encrypted_secrets = base64.b64encode(secrets).decode()
         encryption_key = f"{key_hash}:{encrypted_secrets}"
-        return SealedFile(
-            encryption_key=encryption_key,
-            encrypted_file=encrypted_contents,
+        return (
+            content_size,
+            SealedFile(
+                encryption_key=encryption_key,
+                encrypted_file=encrypted_contents,
+            ),
         )

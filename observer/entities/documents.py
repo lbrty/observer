@@ -28,6 +28,7 @@ AllowedDocumentTypes: Dict[str, str] = {
 class BaseDocument(ModelBase):
     encryption_key: SomeStr
     name: str
+    size: int
     path: str
     mimetype: str
     owner_id: Identifier

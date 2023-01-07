@@ -21,6 +21,7 @@ def upgrade():
         sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
         sa.Column("encryption_key", sa.Text(), nullable=True),
         sa.Column("name", sa.Text(), nullable=False),
+        sa.Column("size", sa.Integer(), nullable=False),
         sa.Column("path", sa.Text(), nullable=False),
         sa.Column("mimetype", sa.Text(), nullable=False),
         sa.Column("project_id", postgresql.UUID(as_uuid=True), nullable=False),
