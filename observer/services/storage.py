@@ -82,7 +82,8 @@ class FSStorage(IStorage):
     async def delete(self, path: str):
         pth = Path(self.root) / path
         if pth.is_file():
-            pth.unlink(missing_ok=True)
+            if pth.exists():
+                await af.os.unlink(pth, missing_ok=True)
         elif pth.is_dir():
             shutil.rmtree(pth)
 
