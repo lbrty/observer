@@ -459,7 +459,7 @@ async def authorized_client(test_app, app_context, consultant_user):
 @pytest.fixture(scope="function")
 async def default_project(app_context: Context) -> Project:
     project = await create_project(app_context, "default test project", "default project description")
-    return project
+    yield project
 
 
 @pytest.fixture(scope="function")
