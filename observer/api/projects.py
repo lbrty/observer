@@ -6,6 +6,7 @@ from observer.api.exceptions import ConflictError, NotFoundError
 from observer.common.exceptions import get_api_errors
 from observer.common.permissions import permission_matrix
 from observer.common.types import Identifier, Role
+from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles, current_user
 from observer.components.pagination import pagination
 from observer.components.projects import (
@@ -60,13 +61,18 @@ async def create_project(
     projects: IProjectsService = Depends(projects_service),
     permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=create_project",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> ProjectResponse:
     new_project.owner_id = str(user.id)
     project = await projects.create_project(new_project)
-    tag = "endpoint=create_project"
-    audit_log = await projects.create_log(
-        f"{tag},action=create:project,project_id={project.id},ref_id={user.ref_id}",
-        None,
+    audit_log = props.new_event(
+        f"action=create:project,project_id={project.id},ref_id={user.ref_id}",
         jsonable_encoder(project),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -80,13 +86,9 @@ async def create_project(
             project_id=project.id,
         )
     )
-    audit_log = await projects.create_log(
-        f"{tag},action=create:permission,permission_id={permission.id},ref_id={user.ref_id}",
-        None,
-        dict(
-            project_id=str(project.id),
-            project_name=str(project.name),
-        ),
+    audit_log = props.new_event(
+        f"action=create:permission,permission_id={permission.id},ref_id={user.ref_id}",
+        jsonable_encoder(project),
     )
     tasks.add_task(audits.add_event, audit_log)
     return await projects.to_response(project)
@@ -119,16 +121,18 @@ async def update_project(
     project: Project = Depends(updatable_project),
     projects: IProjectsService = Depends(projects_service),
     audits: IAuditService = Depends(audit_service),
-) -> ProjectResponse:
-    tag = "endpoint=update_project"
-    updated_project = await projects.update_project(project.id, updates)
-    audit_log = await projects.create_log(
-        f"{tag},action=update:project,project_id={project.id},ref_id={user.ref_id}",
-        None,
-        dict(
-            old_project=jsonable_encoder(project),
-            new_project=jsonable_encoder(updated_project),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=update_project,action=update:project",
+            expires_in=None,
         ),
+        use_cache=False,
+    ),
+) -> ProjectResponse:
+    updated_project = await projects.update_project(project.id, updates)
+    audit_log = props.new_event(
+        f"project_id={updated_project.id},ref_id={user.ref_id}",
+        jsonable_encoder(updated_project),
     )
     tasks.add_task(audits.add_event, audit_log)
     return await projects.to_response(updated_project)
@@ -146,15 +150,16 @@ async def delete_project(
     project: Project = Depends(owned_project),
     projects: IProjectsService = Depends(projects_service),
     audits: IAuditService = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=delete_project,action=delete:project",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> Response:
-    tag = "endpoint=delete_project"
-
     await projects.delete_project(project.id)
-    audit_log = await projects.create_log(
-        f"{tag},action=delete:project,project_id={project.id},ref_id={user.ref_id}",
-        None,
-        None,
-    )
+    audit_log = props.new_event(f"project_id={project.id},ref_id={user.ref_id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -188,12 +193,17 @@ async def add_project_member(
     new_permission: NewPermissionRequest,
     user: User = Depends(current_user),
     project: Project = Depends(invitable_project),
-    projects: IProjectsService = Depends(projects_service),
     permissions: IPermissionsService = Depends(permissions_service),
     users: IUsersService = Depends(users_service),
     audits: IAuditService = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=add_project_member,action=create:permission",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> ProjectMemberResponse:
-    tag = "endpoint=add_project_member"
     member_user = await users.get_by_id(new_permission.user_id)
     if not member_user:
         raise NotFoundError(message="User not found")
@@ -204,10 +214,9 @@ async def add_project_member(
     permission = await permissions.create_permission(
         NewPermissionRequest(**new_permission.dict()),
     )
-    audit_log = await projects.create_log(
-        f"{tag},action=create:permission,permission_id={permission.id},ref_id={user.ref_id}",
-        None,
-        dict(member_ref_id=str(member_user.ref_id)),
+    audit_log = props.new_event(
+        f"permission_id={permission.id},ref_id={user.ref_id}",
+        jsonable_encoder(permission),
     )
     tasks.add_task(audits.add_event, audit_log)
     return ProjectMemberResponse(
@@ -225,28 +234,29 @@ async def add_project_member(
     status_code=status.HTTP_200_OK,
     tags=["projects"],
 )
-async def update_project_members_permissions(
+async def update_project_member(
     tasks: BackgroundTasks,
     user_id: Identifier,
     updated_permission: UpdatePermissionRequest,
     user: User = Depends(current_user),
     project: Project = Depends(invitable_project),
-    projects: IProjectsService = Depends(projects_service),
     permissions: IPermissionsService = Depends(permissions_service),
     users: IUsersService = Depends(users_service),
     audits: IAuditService = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=update_project_member,action=update:permission",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> ProjectMemberResponse:
-    tag = "endpoint=update_project_members_permissions"
     member_user = await users.get_by_id(user_id)
     old_permission = await permissions.find(project.id, user_id)
     permission = await permissions.update_permission(old_permission.id, updated_permission)
-    audit_log = await projects.create_log(
-        f"{tag},action=update:permission,permission_id={permission.id},ref_id={user.ref_id}",
-        None,
-        dict(
-            old_permission=jsonable_encoder(old_permission),
-            new_permission=jsonable_encoder(permission),
-        ),
+    audit_log = props.new_event(
+        f"permission_id={permission.id},ref_id={user.ref_id}",
+        jsonable_encoder(permission),
     )
     tasks.add_task(audits.add_event, audit_log)
     return ProjectMemberResponse(
@@ -270,16 +280,18 @@ async def delete_project_member(
     project: Project = Depends(deletable_project),
     projects: IProjectsService = Depends(projects_service),
     audits: IAuditService = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=delete_project_member,action=delete:permission",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
 ) -> Response:
-    tag = "endpoint=delete_project_member"
     deleted_permission = await projects.delete_member(project.id, user_id)
-    audit_log = await projects.create_log(
-        f"{tag},action=delete:permission,permission_id={deleted_permission.id},ref_id={user.ref_id}",
-        None,
-        {
-            **deleted_permission.dict(exclude={"id", "project_id", "user_id"}),
-            **dict(user_id=str(user_id), project_id=str(project.id)),
-        },
+    audit_log = props.new_event(
+        f"permission_id={deleted_permission.id},ref_id={user.ref_id}",
+        jsonable_encoder(deleted_permission),
     )
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

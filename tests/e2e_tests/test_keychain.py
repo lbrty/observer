@@ -10,7 +10,12 @@ from observer.services.storage import FSStorage
 
 
 async def test_keychain_can_load_keys_from_remote_store(
-    aws_credentials, create_bucket, s3_storage, s3_client, app_context, env_settings
+    aws_credentials,
+    create_bucket,
+    s3_storage,
+    s3_client,
+    app_context,
+    env_settings,
 ):
     bucket_name = "test-buck"
     keychain = Keychain()

@@ -383,18 +383,94 @@
         }
       }
     },
-    "/documents/upload": {
-      "post": {
+    "/documents/{doc_id}": {
+      "get": {
         "tags": [
           "documents"
         ],
-        "summary": "Upload Document",
-        "operationId": "upload_document_documents_upload_post",
+        "summary": "Get Document",
+        "operationId": "get_document_documents__doc_id__get",
         "requestBody": {
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Body_upload_document_documents_upload_post"
+                "$ref": "#/components/schemas/Body_get_document_documents__doc_id__get"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Delete Document",
+        "operationId": "delete_document_documents__doc_id__delete",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_delete_document_documents__doc_id__delete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/{doc_id}/stream": {
+      "get": {
+        "tags": [
+          "documents"
+        ],
+        "summary": "Stream Document",
+        "operationId": "stream_document_documents__doc_id__stream_get",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_stream_document_documents__doc_id__stream_get"
               }
             }
           },
@@ -3270,8 +3346,8 @@
         "tags": [
           "projects"
         ],
-        "summary": "Update Project Members Permissions",
-        "operationId": "update_project_members_permissions_projects__project_id__members__user_id__put",
+        "summary": "Update Project Member",
+        "operationId": "update_project_member_projects__project_id__members__user_id__put",
         "parameters": [
           {
             "required": true,
@@ -3486,6 +3562,34 @@
           }
         }
       },
+      "Body_delete_document_documents__doc_id__delete": {
+        "title": "Body_delete_document_documents__doc_id__delete",
+        "required": [
+          "file"
+        ],
+        "type": "object",
+        "properties": {
+          "file": {
+            "title": "File",
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
+      "Body_get_document_documents__doc_id__get": {
+        "title": "Body_get_document_documents__doc_id__get",
+        "required": [
+          "file"
+        ],
+        "type": "object",
+        "properties": {
+          "file": {
+            "title": "File",
+            "type": "string",
+            "format": "binary"
+          }
+        }
+      },
       "Body_idp_upload_document_idp_people__idp_id__document_post": {
         "title": "Body_idp_upload_document_idp_people__idp_id__document_post",
         "required": [
@@ -3514,8 +3618,8 @@
           }
         }
       },
-      "Body_upload_document_documents_upload_post": {
-        "title": "Body_upload_document_documents_upload_post",
+      "Body_stream_document_documents__doc_id__stream_get": {
+        "title": "Body_stream_document_documents__doc_id__stream_get",
         "required": [
           "file"
         ],

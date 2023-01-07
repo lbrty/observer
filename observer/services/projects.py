@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta, timezone
 from typing import List, Protocol
 
 from observer.api.exceptions import NotFoundError
@@ -7,7 +6,6 @@ from observer.entities.permissions import NewPermission, Permission
 from observer.entities.projects import NewProject, Project, ProjectMember, ProjectUpdate
 from observer.entities.users import User
 from observer.repositories.projects import IProjectsRepository
-from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.permissions import NewPermissionRequest
 from observer.schemas.projects import (
     NewProjectRequest,
@@ -42,9 +40,6 @@ class IProjectsService(Protocol):
     async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Permission:
         raise NotImplementedError
 
-    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
-        raise NotImplementedError
-
     @staticmethod
     async def to_response(project: Project) -> ProjectResponse:
         raise NotImplementedError
@@ -55,8 +50,6 @@ class IProjectsService(Protocol):
 
 
 class ProjectsService(IProjectsService):
-    tag: str = "source=service:projects"
-
     def __init__(self, repo: IProjectsRepository):
         self.repo = repo
 
@@ -89,18 +82,6 @@ class ProjectsService(IProjectsService):
     async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Permission:
         permission = await self.repo.delete_member(project_id, user_id)
         return permission
-
-    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
-        now = datetime.now(tz=timezone.utc)
-        expires_at = None
-        if expires_in:
-            expires_at = now + expires_in
-
-        return NewAuditLog(
-            ref=f"{self.tag},{ref}",
-            data=data,
-            expires_at=expires_at,
-        )
 
     @staticmethod
     async def to_response(project: Project) -> ProjectResponse:
