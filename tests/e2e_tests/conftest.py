@@ -171,7 +171,6 @@ async def bucket_name(s3_client, create_bucket):
 async def create_bucket(s3_client):
     region_name = "eu-central-1"
     bucket_name = "test-buck"
-    await recursive_delete(s3_client, bucket_name)
 
     async def _f():
         bucket_kwargs = {"Bucket": bucket_name}

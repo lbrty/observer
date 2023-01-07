@@ -98,6 +98,41 @@ async def test_get_pets_documents_works(
     assert resp.json() == documents
 
 
+async def test_get_pets_documents_with_remote_storage_works(
+    authorized_client,
+    app_context,
+    new_pet,
+    markdown_file,
+    textfile,
+    env_settings,
+    aws_credentials,
+    s3_storage,
+    s3_client,
+    bucket_name,
+):
+    documents = []
+    resp = await authorized_client.post(
+        f"/pets/{new_pet.id}/document",
+        files={"file": ("readme.md", markdown_file, "text/markdown")},
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+    documents.append(resp.json())
+
+    resp = await authorized_client.post(
+        f"/pets/{new_pet.id}/document",
+        files={"file": ("notes.txt", textfile, "text/plain")},
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+    documents.append(resp.json())
+
+    resp = await authorized_client.get(f"/pets/{new_pet.id}/documents")
+    assert resp.json() == documents
+
+    folder_path = os.path.join(app_context.storage.root, env_settings.documents_path, str(new_pet.id))
+    documents = await app_context.storage.ls(folder_path)
+    assert len(documents) == 2
+
+
 async def test_update_pets_works(
     authorized_client,
     app_context,

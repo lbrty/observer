@@ -8,6 +8,7 @@ import aiofiles as af
 from aiobotocore.session import AioSession, ClientCreatorContext
 from aiofiles.os import stat
 from botocore.exceptions import ClientError
+from starlette import status
 from structlog import get_logger
 
 from observer.api.exceptions import InternalError
@@ -104,6 +105,9 @@ class S3Storage(IStorage):
         async with self.s3_client as client:
             full_path = os.path.join(self.root, path)
             result = await client.list_objects_v2(Bucket=self.bucket, Prefix=full_path)
+            if result.get("KeyCount", 0) == 0:
+                return []
+
             return [
                 (
                     item["LastModified"],
@@ -118,7 +122,9 @@ class S3Storage(IStorage):
             try:
                 # TODO: check for success
                 full_path = os.path.join(self.root, path)
-                await client.put_object(Bucket=self.bucket, Key=full_path, Body=contents)
+                result = await client.put_object(Bucket=self.bucket, Key=full_path, Body=contents)
+                if result["ResponseMetadata"]["HTTPStatusCode"] != status.HTTP_200_OK:
+                    raise InternalError(message="Unable to upload document to remote storage")
             except ClientError as ex:
                 logger.error("Unable to upload document", metadata=ex.response["ResponseMetadata"])
                 raise InternalError(message="Unable to upload document")
