@@ -42,6 +42,9 @@ class ICryptoService(Protocol):
     async def aes_decrypt(self, secret: bytes, iv: bytes, ciphertext: bytes) -> bytes:
         raise NotImplementedError
 
+    async def parse_aes_secrets(self, encoded_secrets: str) -> AESCipherOptions:
+        raise NotImplementedError
+
 
 class CryptoService(ICryptoService):
     def __init__(self, keychain: IKeychain):
@@ -95,3 +98,10 @@ class CryptoService(ICryptoService):
         )
         decryptor = cipher.decryptor()
         return decryptor.update(ciphertext) + decryptor.finalize()
+
+    async def parse_aes_secrets(self, encoded_secrets: str) -> AESCipherOptions:
+        secret, iv = encoded_secrets.split(":", maxsplit=1)
+        return AESCipherOptions(
+            secret=base64.b16decode(secret),
+            iv=base64.b16decode(iv),
+        )

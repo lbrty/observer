@@ -123,7 +123,6 @@ class S3Storage(IStorage):
                     item["Key"],
                 )
                 for item in result["Contents"]
-                if result["KeyCount"] > 0
             ]
 
     async def save(self, path: str | Path, contents: bytes):
