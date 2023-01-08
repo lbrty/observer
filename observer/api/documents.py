@@ -108,11 +108,12 @@ async def delete_document(
     except NotFoundError:
         pass
 
-    try:
-        await idp.get_idp(document.owner_id)
-        subject_key = "idp_id"
-    except NotFoundError:
-        pass
+    if not subject_key:
+        try:
+            await idp.get_idp(document.owner_id)
+            subject_key = "idp_id"
+        except NotFoundError:
+            pass
 
     tasks.add_task(storage.delete_path, document.path)
     audit_log = props.new_event(f"{subject_key}={document.owner_id},ref_id={user.ref_id}", None)
