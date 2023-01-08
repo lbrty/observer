@@ -217,6 +217,7 @@ async def fs_storage(app_context, env_settings, temp_dir):
     app_context.storage_root = temp_dir
     app_context.storage = FSStorage(app_context.storage_root)
     app_context.uploads.storage = app_context.storage
+    app_context.downloads.storage = app_context.storage
 
 
 @pytest.fixture(scope="function")
@@ -231,12 +232,13 @@ async def s3_storage(app_context, env_settings, s3_server, create_bucket):
         s3_server,
     )
     app_context.uploads.storage = app_context.storage
+    app_context.downloads.storage = app_context.storage
 
 
 @pytest.fixture(scope="function")
 async def markdown_file():
     fp = BytesIO(b"BABA BLACK SHEEP")
-    return fp
+    yield fp
 
 
 @pytest.fixture(scope="function")
