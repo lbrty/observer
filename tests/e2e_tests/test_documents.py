@@ -20,3 +20,7 @@ async def test_download_document_works_as_expected(
     assert resp.status_code == status.HTTP_200_OK
     markdown_file.seek(0)
     assert resp.content == markdown_file.read()
+    assert resp.headers == {
+        "content-disposition": 'text/markdown; filename="readme.md"',
+        "content-type": "text/markdown; charset=utf-8",
+    }
