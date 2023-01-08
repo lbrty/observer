@@ -95,7 +95,16 @@ exclude = ".venv,.git,.idea"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-addopts = "--cov=observer --cov-report=term-missing --cov-report=xml:reports/coverage.xml --junit-xml=reports/tests.xml"
+
+addopts = """
+    --cov=observer \
+    --cov-report=term-missing \
+    --cov-report=xml:reports/coverage.xml \
+    --cov-report=html:reports/html \
+    --junit-xml=reports/tests.xml \
+    --no-cov-on-fail
+"""
+
 filterwarnings = [
     "ignore::DeprecationWarning:qrcode.*"
 ]
