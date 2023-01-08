@@ -203,15 +203,14 @@ async def pet_upload_document(
     permission = await permissions.find(pet.project_id, user.id)
     assert_deletable(user, permission)
     assert_docs_readable(user, permission)
-    size, sealed_file = await uploads.process_upload(file)
-    full_path = os.path.join(storage.root, settings.documents_path, str(pet_id), file.filename)
-    await storage.save(full_path, sealed_file.encrypted_file)
+    save_to = os.path.join(storage.root, settings.documents_path, str(pet_id))
+    size, sealed_file = await uploads.process_upload(file, save_to)
     document = await documents.create_document(
         sealed_file.encryption_key,
         NewDocumentRequest(
             name=file.filename,
             size=size,
-            path=full_path,
+            path=sealed_file.path,
             mimetype=file.content_type,
             owner_id=pet_id,
             project_id=pet.project_id,
@@ -219,7 +218,11 @@ async def pet_upload_document(
     )
     audit_log = props.new_event(
         f"pet_id={pet.id},ref_id={user.ref_id}",
-        jsonable_encoder(document, exclude={"id", "encryption_key"}, exclude_none=True),
+        jsonable_encoder(
+            document,
+            exclude={"id", "encryption_key"},
+            exclude_none=True,
+        ),
     )
     tasks.add_task(audits.add_event, audit_log)
     return DocumentResponse(**document.dict())
