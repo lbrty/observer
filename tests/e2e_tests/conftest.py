@@ -53,6 +53,7 @@ from observer.services.auth import AuthService
 from observer.services.categories import CategoryService
 from observer.services.crypto import CryptoService
 from observer.services.documents import DocumentsService
+from observer.services.downloads import DownloadHandler
 from observer.services.idp import IDPService
 from observer.services.jwt import JWTService
 from observer.services.keychain import Keychain
@@ -96,7 +97,6 @@ def env_settings():
     return settings
 
 
-# TODO: Cleanup moto fixtures
 @pytest.fixture(scope="function")
 def aws_credentials():
     """Mocked AWS Credentials for moto."""
@@ -276,7 +276,6 @@ async def app_context(db_engine):
         migrations=MigrationRepository(ctx.db),
     )
 
-    ctx.storage = FSStorage(settings.storage_root)
     ctx.keychain = Keychain()
     private_key = generate_private_key(
         public_exponent=settings.public_exponent,
@@ -331,6 +330,8 @@ async def app_context(db_engine):
     ctx.documents_service = DocumentsService(ctx.repos.documents, ctx.crypto_service)
     ctx.support_service = SupportRecordsService(ctx.repos.support)
     ctx.migrations_service = MigrationService(ctx.repos.migrations, ctx.world_service)
+    ctx.storage = FSStorage(settings.storage_root)
+    ctx.downloads = DownloadHandler(ctx.storage, ctx.crypto_service)
 
     yield ctx
 

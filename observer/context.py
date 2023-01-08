@@ -18,6 +18,7 @@ from observer.services.auth import IAuthService
 from observer.services.categories import ICategoryService
 from observer.services.crypto import ICryptoService, IKeychain
 from observer.services.documents import IDocumentsService
+from observer.services.downloads import DownloadHandler
 from observer.services.idp import IIDPService
 from observer.services.jwt import JWTService
 from observer.services.mailer import IMailer
@@ -53,6 +54,7 @@ class Repositories:
 class Context:
     db: Optional[Database] = None
     uploads: Optional[UploadHandler] = None
+    downloads: Optional[DownloadHandler] = None
     repos: Optional[Repositories] = None
     storage: Optional[IStorage] = None
     keychain: Optional[IKeychain] = None

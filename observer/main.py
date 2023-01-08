@@ -19,6 +19,7 @@ from observer.services.auth import AuthService
 from observer.services.categories import CategoryService
 from observer.services.crypto import CryptoService
 from observer.services.documents import DocumentsService
+from observer.services.downloads import DownloadHandler
 from observer.services.idp import IDPService
 from observer.services.jwt import JWTService
 from observer.services.keychain import Keychain
@@ -66,7 +67,6 @@ async def on_startup():
         migrations=MigrationRepository(ctx.db),
     )
 
-    ctx.storage = init_storage(settings.storage_kind, settings)
     ctx.keychain = Keychain()
     await ctx.keychain.load(settings.keystore_path, ctx.storage)
     num_keys = len(ctx.keychain.keys)
@@ -105,6 +105,8 @@ async def on_startup():
     ctx.documents_service = DocumentsService(ctx.repos.documents, ctx.crypto_service)
     ctx.support_service = SupportRecordsService(ctx.repos.support)
     ctx.migrations_service = MigrationService(ctx.repos.migrations, ctx.world_service)
+    ctx.storage = init_storage(settings.storage_kind, settings)
+    ctx.downloads = DownloadHandler(ctx.storage, ctx.crypto_service)
 
 
 @app.on_event("shutdown")
