@@ -27,7 +27,7 @@ async def get_document() -> DocumentResponse:
 
 
 @router.get(
-    "stream/{doc_id}",
+    "/stream/{doc_id}",
     status_code=status.HTTP_200_OK,
     tags=["documents"],
 )

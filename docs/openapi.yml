@@ -419,13 +419,13 @@
         }
       }
     },
-    "/documentsstream/{doc_id}": {
+    "/documents/stream/{doc_id}": {
       "get": {
         "tags": [
           "documents"
         ],
         "summary": "Stream Document",
-        "operationId": "stream_document_documentsstream__doc_id__get",
+        "operationId": "stream_document_documents_stream__doc_id__get",
         "parameters": [
           {
             "required": true,
