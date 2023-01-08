@@ -168,7 +168,7 @@ async def test_delete_pets_deletes_all_related_documents_from_remote_storage(
     assert resp.status_code == status.HTTP_204_NO_CONTENT
     folder_path = os.path.join(env_settings.documents_path, str(new_pet.id))
     documents = await app_context.storage.ls(folder_path)
-    await asyncio.sleep(2)
+    await asyncio.sleep(1)
     assert len(documents) == 0
 
 
