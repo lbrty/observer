@@ -407,12 +407,45 @@
         ],
         "summary": "Delete Document",
         "operationId": "delete_document_documents__doc_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Doc Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "doc_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "responses": {
-          "200": {
-            "description": "Successful Response",
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }

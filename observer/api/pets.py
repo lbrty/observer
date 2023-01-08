@@ -1,10 +1,9 @@
 import os
 from typing import List
 
-from fastapi import APIRouter, Depends, Response, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, Response, UploadFile
 from fastapi.encoders import jsonable_encoder
 from starlette import status
-from starlette.background import BackgroundTasks
 
 from observer.common.permissions import (
     assert_deletable,

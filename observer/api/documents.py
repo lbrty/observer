@@ -1,22 +1,36 @@
 from urllib.parse import quote
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.responses import StreamingResponse
 from starlette import status
 
-from observer.common.permissions import assert_docs_readable, assert_viewable
+from observer.api.exceptions import NotFoundError
+from observer.common.permissions import (
+    assert_deletable,
+    assert_docs_readable,
+    assert_viewable,
+)
 from observer.common.types import Identifier, Role
+from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles
 from observer.components.services import (
+    audit_service,
     documents_download,
     documents_service,
+    idp_service,
     permissions_service,
+    pets_service,
+    storage_service,
 )
 from observer.entities.base import SomeUser
 from observer.schemas.documents import DocumentResponse
+from observer.services.audit_logs import IAuditService
 from observer.services.documents import IDocumentsService
 from observer.services.downloads import DownloadHandler
+from observer.services.idp import IIDPService
 from observer.services.permissions import IPermissionsService
+from observer.services.pets import IPetsService
+from observer.services.storage import IStorage
 
 router = APIRouter(prefix="/documents")
 
@@ -57,6 +71,50 @@ async def stream_document(
     )
 
 
-@router.delete("/{doc_id}", tags=["documents"])
-async def delete_document() -> Response:
-    pass
+@router.delete(
+    "/{doc_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=["documents"],
+)
+async def delete_document(
+    tasks: BackgroundTasks,
+    doc_id: Identifier,
+    user: SomeUser = Depends(
+        RequiresRoles([Role.admin, Role.consultant, Role.staff]),
+    ),
+    permissions: IPermissionsService = Depends(permissions_service),
+    documents: IDocumentsService = Depends(documents_service),
+    pets: IPetsService = Depends(pets_service),
+    idp: IIDPService = Depends(idp_service),
+    storage: IStorage = Depends(storage_service),
+    audits: IAuditService = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=delete_document,action=delete:document",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
+) -> Response:
+    document = await documents.get_document(doc_id)
+    permission = await permissions.find(document.project_id, user.id)
+    assert_viewable(user, permission)
+    assert_deletable(user, permission)
+    assert_docs_readable(user, permission)
+    subject_key = None
+    try:
+        await pets.get_pet(document.owner_id)
+        subject_key = "pet_id"
+    except NotFoundError:
+        pass
+
+    try:
+        await idp.get_idp(document.owner_id)
+        subject_key = "idp_id"
+    except NotFoundError:
+        pass
+
+    tasks.add_task(storage.delete_path, document.path)
+    audit_log = props.new_event(f"{subject_key}={document.owner_id},ref_id={user.ref_id}", None)
+    tasks.add_task(audits.add_event, audit_log)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

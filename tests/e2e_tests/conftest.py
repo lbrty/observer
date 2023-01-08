@@ -244,7 +244,7 @@ async def markdown_file():
 @pytest.fixture(scope="function")
 async def textfile():
     fp = BytesIO(b"Some plain text contents")
-    return fp
+    yield fp
 
 
 @pytest.fixture(scope="session")
