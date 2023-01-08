@@ -5,6 +5,7 @@ from observer.services.auth import IAuthService
 from observer.services.categories import ICategoryService
 from observer.services.crypto import ICryptoService
 from observer.services.documents import IDocumentsService
+from observer.services.downloads import DownloadHandler
 from observer.services.idp import IIDPService
 from observer.services.jwt import JWTService
 from observer.services.keychain import IKeychain
@@ -133,6 +134,13 @@ async def documents_upload() -> UploadHandler:
         return ctx.uploads
 
     raise RuntimeError("UploadHandler is None")
+
+
+async def documents_download() -> DownloadHandler:
+    if ctx.downloads:
+        return ctx.downloads
+
+    raise RuntimeError("DownloadHandler is None")
 
 
 async def category_service() -> ICategoryService:

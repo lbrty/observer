@@ -390,32 +390,12 @@
         ],
         "summary": "Get Document",
         "operationId": "get_document_documents__doc_id__get",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_get_document_documents__doc_id__get"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
               }
             }
           }
@@ -427,16 +407,6 @@
         ],
         "summary": "Delete Document",
         "operationId": "delete_document_documents__doc_id__delete",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_delete_document_documents__doc_id__delete"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -445,37 +415,45 @@
                 "schema": {}
               }
             }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
           }
         }
       }
     },
-    "/documents/{doc_id}/stream": {
+    "/documentsstream/{doc_id}": {
       "get": {
         "tags": [
           "documents"
         ],
         "summary": "Stream Document",
-        "operationId": "stream_document_documents__doc_id__stream_get",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_stream_document_documents__doc_id__stream_get"
-              }
-            }
+        "operationId": "stream_document_documentsstream__doc_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Doc Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "doc_id",
+            "in": "path"
           },
-          "required": true
-        },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -3562,34 +3540,6 @@
           }
         }
       },
-      "Body_delete_document_documents__doc_id__delete": {
-        "title": "Body_delete_document_documents__doc_id__delete",
-        "required": [
-          "file"
-        ],
-        "type": "object",
-        "properties": {
-          "file": {
-            "title": "File",
-            "type": "string",
-            "format": "binary"
-          }
-        }
-      },
-      "Body_get_document_documents__doc_id__get": {
-        "title": "Body_get_document_documents__doc_id__get",
-        "required": [
-          "file"
-        ],
-        "type": "object",
-        "properties": {
-          "file": {
-            "title": "File",
-            "type": "string",
-            "format": "binary"
-          }
-        }
-      },
       "Body_idp_upload_document_idp_people__idp_id__document_post": {
         "title": "Body_idp_upload_document_idp_people__idp_id__document_post",
         "required": [
@@ -3606,20 +3556,6 @@
       },
       "Body_pet_upload_document_pets__pet_id__document_post": {
         "title": "Body_pet_upload_document_pets__pet_id__document_post",
-        "required": [
-          "file"
-        ],
-        "type": "object",
-        "properties": {
-          "file": {
-            "title": "File",
-            "type": "string",
-            "format": "binary"
-          }
-        }
-      },
-      "Body_stream_document_documents__doc_id__stream_get": {
-        "title": "Body_stream_document_documents__doc_id__stream_get",
         "required": [
           "file"
         ],
