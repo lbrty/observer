@@ -17,18 +17,17 @@ class DownloadHandler:
         fd = await self.storage.open(document.path)
         secrets = await self.get_encryption_secrets(document)
         encrypted_contents = await fd.read()
-        decrypted_contents = BytesIO(
-            await self.crypto.aes_decrypt(
-                secrets.secret,
-                secrets.iv,
-                encrypted_contents,
-            )
-        )
-        while (chunk := decrypted_contents.read(CHUNK_SIZE)) is not None:
-            yield chunk
+        decrypted_contents = await self.crypto.aes_decrypt(secrets, encrypted_contents)
+        data = BytesIO(decrypted_contents)
+        while True:
+            if chunk := data.read(CHUNK_SIZE):
+                yield chunk
+            else:
+                break
 
     async def get_encryption_secrets(self, document: Document) -> AESCipherOptions:
         key_hash, secrets = document.encryption_key.split(":", maxsplit=1)
         decrypted_secrets = await self.crypto.decrypt(key_hash, secrets.encode())
         encoded_secrets = decrypted_secrets.decode()
-        return await self.crypto.parse_aes_secrets(encoded_secrets)
+        aes_cipher_options = await self.crypto.parse_aes_secrets(encoded_secrets)
+        return aes_cipher_options
