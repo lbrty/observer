@@ -6,22 +6,22 @@ from observer.entities.base import ModelBase
 
 AllowedDocumentTypes: Dict[str, str] = {
     # Images
-    "image/jpeg": ".jpg",
-    "image/png": ".png",
+    "image/jpeg": "jpg",
+    "image/png": "png",
     # Documents
-    "text/csv": ".csv",
-    "text/plain": ".txt",
-    "text/markdown": ".md",
-    "application/msword": ".doc",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
+    "text/csv": "csv",
+    "text/plain": "txt",
+    "text/markdown": "md",
+    "application/msword": "doc",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
     "application/vnd.ms-excel": "xls",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx",
-    "application/rtf": ".rtf",
-    "application/pdf": ".pdf",
+    "application/rtf": "rtf",
+    "application/pdf": "pdf",
     # Media files
-    "video/mp4": ".mp4",
-    "video/mpeg": ".mpeg",
-    "audio/mpeg": ".mp3",
+    "video/mp4": "mp4",
+    "video/mpeg": "mpeg",
+    "audio/mpeg": "mp3",
 }
 
 
