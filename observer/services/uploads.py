@@ -45,13 +45,9 @@ class UploadHandler:
             raise TooLargeDocumentError
 
         seal_options = await self.crypto.aes_cipher_options(settings.aes_key_bits)
-        encrypted_contents = base64.b64encode(
-            await self.crypto.aes_encrypt(
-                seal_options.secret,
-                seal_options.iv,
-                contents,
-            )
-        )
+        tag, ciphertext = await self.crypto.aes_encrypt(seal_options, contents)
+        seal_options.tag = tag
+        encrypted_contents = base64.b64encode(ciphertext)
 
         # Save file with hashed name and extension
         extension = AllowedDocumentTypes[file.content_type]
@@ -62,11 +58,9 @@ class UploadHandler:
 
         # Encode and encrypt AES options
         key_hash = self.crypto.keychain.keys[0].hash
-        secret = base64.b64encode(seal_options.secret).decode()
-        iv = base64.b64encode(seal_options.iv).decode()
-        encrypted_secrets = await self.crypto.encrypt(key_hash, f"{secret}:{iv}".encode())
-        encoded_secrets = base64.b64encode(encrypted_secrets).decode()
-        encryption_key = f"{key_hash}:{encoded_secrets}"
+        secrets = await self.crypto.format_aes_secrets(seal_options)
+        encrypted_secrets = await self.crypto.encrypt(key_hash, secrets.encode())
+        encryption_key = f"{key_hash}:{encrypted_secrets.decode()}"
         return (
             content_size,
             SealedFile(
