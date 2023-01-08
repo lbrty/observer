@@ -5,6 +5,7 @@ from fastapi.responses import StreamingResponse
 from starlette import status
 
 from observer.api.exceptions import NotFoundError
+from observer.common.exceptions import get_api_errors
 from observer.common.permissions import (
     assert_deletable,
     assert_docs_readable,
@@ -43,6 +44,11 @@ async def get_document() -> DocumentResponse:
 @router.get(
     "/stream/{doc_id}",
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["documents"],
 )
 async def stream_document(
@@ -74,6 +80,11 @@ async def stream_document(
 @router.delete(
     "/{doc_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["documents"],
 )
 async def delete_document(

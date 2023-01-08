@@ -5,6 +5,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Response, UploadFile
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
+from observer.common.exceptions import get_api_errors
 from observer.common.permissions import (
     assert_deletable,
     assert_docs_readable,
@@ -42,6 +43,11 @@ router = APIRouter(prefix="/pets")
     "",
     response_model=PetResponse,
     status_code=status.HTTP_201_CREATED,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["pets"],
 )
 async def create_pet(
@@ -73,6 +79,11 @@ async def create_pet(
     "/{pet_id}",
     response_model=PetResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["pets"],
 )
 async def get_pet(
@@ -93,6 +104,11 @@ async def get_pet(
     "/{pet_id}",
     response_model=PetResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["pets"],
 )
 async def update_pet(
@@ -128,6 +144,11 @@ async def update_pet(
 @router.delete(
     "/{pet_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["pets"],
 )
 async def delete_pet(
@@ -167,10 +188,24 @@ async def delete_pet(
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+responses = (
+    get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
+)
+
+
 @router.post(
     "/{pet_id}/document",
     response_model=DocumentResponse,
     status_code=status.HTTP_201_CREATED,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     dependencies=[
         Depends(ContentLengthLimit(settings.max_upload_size)),
     ],
@@ -229,6 +264,11 @@ async def pet_upload_document(
     "/{pet_id}/documents",
     response_model=List[DocumentResponse],
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["pets", "documents"],
 )
 async def pet_get_documents(
