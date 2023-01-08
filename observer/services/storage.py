@@ -1,3 +1,4 @@
+import asyncio
 import os
 import shutil
 from datetime import datetime
@@ -11,7 +12,7 @@ from botocore.exceptions import ClientError
 from starlette import status
 from structlog import get_logger
 
-from observer.api.exceptions import InternalError
+from observer.api.exceptions import InternalError, NotFoundError
 from observer.common.types import FileInfo, StorageKind
 from observer.settings import Settings
 
@@ -19,12 +20,12 @@ logger = get_logger(name="storage")
 
 
 class IStorage(Protocol):
-    documents_root: str | Path
+    storage_root: str | Path
 
     async def ls(self, path: str | Path) -> List[FileInfo]:
         """List files under the given path
 
-        NOTE: `path` will be prefixed by `documents_root`
+        NOTE: `path` will be prefixed by `storage_root`
         """
         raise NotImplementedError
 
@@ -58,8 +59,8 @@ class IStorage(Protocol):
 
 
 class FSStorage(IStorage):
-    def __init__(self, documents_root: str):
-        self.documents_root = documents_root
+    def __init__(self, storage_root: str):
+        self.storage_root = storage_root
 
     async def ls(self, path: str | Path) -> List[FileInfo]:
         items = []
@@ -99,15 +100,15 @@ class FSStorage(IStorage):
 
     @property
     def root(self) -> str:
-        return self.documents_root
+        return self.storage_root
 
 
 class S3Storage(IStorage):
-    def __init__(self, documents_root: str, bucket: str, region: str, endpoint_url: str):
+    def __init__(self, storage_root: str, bucket: str, region: str, endpoint_url: str):
         self.bucket = bucket
         self.region = region
         self.endpoint_url = endpoint_url
-        self.documents_root = documents_root
+        self.storage_root = storage_root
         self.session = AioSession()
 
     async def ls(self, path: str | Path) -> List[FileInfo]:
@@ -128,7 +129,6 @@ class S3Storage(IStorage):
     async def save(self, path: str | Path, contents: bytes):
         async with self.s3_client as client:
             try:
-                # TODO: check for success
                 full_path = os.path.join(self.root, path)
                 result = await client.put_object(Bucket=self.bucket, Key=full_path, Body=contents)
                 if result["ResponseMetadata"]["HTTPStatusCode"] != status.HTTP_200_OK:
@@ -147,7 +147,7 @@ class S3Storage(IStorage):
                     logger.error("Document not found", name=path)
                 else:
                     logger.error("Document not found", metadata=ex.response["ResponseMetadata"])
-                    raise InternalError(message="Document not found")
+                    raise NotFoundError(message="Document not found")
 
     async def delete(self, path: str):
         async with self.s3_client as client:
@@ -156,7 +156,6 @@ class S3Storage(IStorage):
                     full_path = path
                 else:
                     full_path = os.path.join(self.root, path)
-
                 await client.delete_object(Bucket=self.bucket, Key=full_path)
             except ClientError as ex:
                 logger.error("Unable to delete document", metadata=ex.response["ResponseMetadata"])
@@ -165,13 +164,14 @@ class S3Storage(IStorage):
     async def delete_path(self, path: str):
         async with self.s3_client as client:
             try:
-                full_path = os.path.join(self.root, path)
+                tasks = []
                 for _, key in await self.ls(path):
-                    await self.delete_path(key)
-                await client.delete_object(Bucket=self.bucket, Key=full_path)
+                    tasks.append(self.delete(key))
+                await asyncio.gather(*tasks)
+                await client.delete_object(Bucket=self.bucket, Key=path)
             except ClientError as ex:
                 logger.error("Unable to delete document", metadata=ex.response["ResponseMetadata"])
-                raise InternalError(message=f"Unable to delete document {full_path}")
+                raise InternalError(message=f"Unable to delete document {path}")
 
     @property
     def s3_client(self) -> ClientCreatorContext:
@@ -183,7 +183,7 @@ class S3Storage(IStorage):
 
     @property
     def root(self) -> str:
-        return self.documents_root
+        return self.storage_root
 
 
 def init_storage(kind: StorageKind, settings: Settings) -> IStorage:

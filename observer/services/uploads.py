@@ -55,9 +55,10 @@ class UploadHandler:
 
         # Save file with hashed name and extension
         extension = AllowedDocumentTypes[file.content_type]
-        filename = f"{hashlib.md5(file.filename).hexdigest()}.{extension}"
-        full_path = os.path.join(path, filename)
-        await self.storage.save(full_path, encrypted_contents)
+        filename = f"{hashlib.md5(file.filename.encode()).hexdigest()}.{extension}"
+        file_path = os.path.join(path, filename)
+        await self.storage.save(file_path, encrypted_contents)
+        full_path = os.path.join(self.storage.root, file_path)
 
         # Encode and encrypt AES options
         key_hash = self.crypto.keychain.keys[0].hash

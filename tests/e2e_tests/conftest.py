@@ -216,6 +216,7 @@ async def temp_keystore(env_settings, temp_dir):
 async def fs_storage(app_context, env_settings, temp_dir):
     app_context.storage_root = temp_dir
     app_context.storage = FSStorage(app_context.storage_root)
+    app_context.uploads.storage = app_context.storage
 
 
 @pytest.fixture(scope="function")
@@ -229,6 +230,7 @@ async def s3_storage(app_context, env_settings, s3_server, create_bucket):
         env_settings.s3_region,
         s3_server,
     )
+    app_context.uploads.storage = app_context.storage
 
 
 @pytest.fixture(scope="function")

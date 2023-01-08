@@ -155,9 +155,8 @@ async def delete_pet(
     assert_deletable(user, permission)
     assert_docs_readable(user, permission)
     pet_documents = await documents.get_by_owner_id(pet_id)
-    await documents.bulk_delete(
-        [str(doc.id) for doc in pet_documents],
-    )
+    document_ids = [str(doc.id) for doc in pet_documents]
+    await documents.bulk_delete(document_ids)
     full_path = os.path.join(settings.documents_path, str(pet_id))
     deleted_pet = await pets.delete_pet(pet_id)
     audit_log = props.new_event(
@@ -165,7 +164,8 @@ async def delete_pet(
         jsonable_encoder(deleted_pet, exclude={"id"}, exclude_none=True),
     )
     tasks.add_task(audits.add_event, audit_log)
-    tasks.add_task(storage.delete_path, full_path)
+    await storage.delete_path(full_path)
+    # tasks.add_task(storage.delete_path, full_path)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -189,7 +189,6 @@ async def pet_upload_document(
     pets: IPetsService = Depends(pets_service),
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
-    storage: IStorage = Depends(storage_service),
     uploads: UploadHandler = Depends(documents_upload),
     props: Props = Depends(
         Tracked(
@@ -203,7 +202,7 @@ async def pet_upload_document(
     permission = await permissions.find(pet.project_id, user.id)
     assert_deletable(user, permission)
     assert_docs_readable(user, permission)
-    save_to = os.path.join(storage.root, settings.documents_path, str(pet_id))
+    save_to = os.path.join(settings.documents_path, str(pet_id))
     size, sealed_file = await uploads.process_upload(file, save_to)
     document = await documents.create_document(
         sealed_file.encryption_key,

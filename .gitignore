@@ -107,6 +107,7 @@ ENV/
 env.bak/
 venv.bak/
 .tool-versions
+.DS_Store
 
 # Spyder project settings
 .spyderproject
