@@ -303,7 +303,6 @@ async def app_context(db_engine):
     ctx.mailer = MockMailer()
     ctx.audit_service = AuditService(ctx.repos.audit)
     ctx.crypto_service = CryptoService(ctx.keychain)
-    ctx.uploads = UploadHandler(ctx.crypto_service)
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)
     ctx.users_service = UsersService(ctx.repos.users, ctx.crypto_service)
     ctx.auth_service = AuthService(
@@ -331,6 +330,7 @@ async def app_context(db_engine):
     ctx.support_service = SupportRecordsService(ctx.repos.support)
     ctx.migrations_service = MigrationService(ctx.repos.migrations, ctx.world_service)
     ctx.storage = FSStorage(settings.storage_root)
+    ctx.uploads = UploadHandler(ctx.storage, ctx.crypto_service)
     ctx.downloads = DownloadHandler(ctx.storage, ctx.crypto_service)
 
     yield ctx

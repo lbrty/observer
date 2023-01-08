@@ -1,5 +1,5 @@
 from io import BytesIO
-from typing import Generator
+from typing import AsyncGenerator
 
 from observer.entities.documents import Document
 from observer.services.crypto import AESCipherOptions, ICryptoService
@@ -13,7 +13,7 @@ class DownloadHandler:
         self.storage = storage
         self.crypto = crypto
 
-    async def stream(self, document: Document) -> Generator:
+    async def stream(self, document: Document) -> AsyncGenerator:
         fd = await self.storage.open(document.path)
         secrets = await self.get_encryption_secrets(document)
         encrypted_contents = await fd.read()

@@ -79,7 +79,6 @@ async def on_startup():
     ctx.mailer = Mailer()
     ctx.audit_service = AuditService(ctx.repos.audit)
     ctx.crypto_service = CryptoService(ctx.keychain)
-    ctx.uploads = UploadHandler(ctx.crypto_service)
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)
     ctx.users_service = UsersService(ctx.repos.users, ctx.crypto_service)
     ctx.auth_service = AuthService(
@@ -106,6 +105,7 @@ async def on_startup():
     ctx.support_service = SupportRecordsService(ctx.repos.support)
     ctx.migrations_service = MigrationService(ctx.repos.migrations, ctx.world_service)
     ctx.storage = init_storage(settings.storage_kind, settings)
+    ctx.uploads = UploadHandler(ctx.storage, ctx.crypto_service)
     ctx.downloads = DownloadHandler(ctx.storage, ctx.crypto_service)
 
 
