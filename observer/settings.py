@@ -27,6 +27,9 @@ class Settings(SettingsBase):
     version: str = "0.1.0"
     app_domain: str = "https://observer.app"
 
+    # Invite only mode
+    invite_only: bool = False
+    admin_emails: List[str] = []
     # Keystore and RSA key settings
     keystore_path: str = "keys"
     key_size: int = 2048
