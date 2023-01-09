@@ -1,4 +1,5 @@
 from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi.encoders import jsonable_encoder
 from starlette import status
 
 from observer.common.exceptions import get_api_errors
@@ -61,10 +62,16 @@ async def create_support_record(
     assert_writable(user, permission)
 
     if new_record.record_for == SupportRecordSubject.person:
+        subject_key = "idp_id"
         await idp.get_idp(new_record.owner_id)
-
-    if new_record.record_for == SupportRecordSubject.pet:
+    else:
+        subject_key = "pet_id"
         await pets.get_pet(new_record.owner_id)
 
     support_record = await support_records.create_record(new_record)
+    audit_log = props.new_event(
+        f"{subject_key}={new_record.owner_id},ref_id={user.ref_id}",
+        jsonable_encoder(support_record),
+    )
+    tasks.add_task(audits.add_event, audit_log)
     return SupportRecordResponse(**support_record.dict())
