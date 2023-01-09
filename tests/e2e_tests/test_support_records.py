@@ -1,5 +1,52 @@
-async def test_create_support_record_works():
-    ...
+from fastapi.encoders import jsonable_encoder
+from starlette import status
+
+from observer.common.types import BeneficiaryAge, SupportRecordSubject, SupportType
+from observer.entities.permissions import NewPermission
+from observer.schemas.support_records import NewSupportRecordRequest
+from tests.helpers.crud import create_permission, create_person
+
+
+async def test_create_support_record_works(
+    authorized_client,
+    app_context,
+    default_project,
+    consultant_user,
+):
+    await create_permission(
+        app_context,
+        NewPermission(
+            can_create=True,
+            can_read=True,
+            can_update=True,
+            can_delete=True,
+            can_create_projects=True,
+            can_read_documents=True,
+            can_read_personal_info=True,
+            can_invite_members=True,
+            project_id=default_project.id,
+            user_id=consultant_user.id,
+        ),
+    )
+
+    person = await create_person(app_context, default_project.id)
+    payload = NewSupportRecordRequest(
+        description="Buy clothes",
+        type=SupportType.humanitarian,
+        consultant_id=consultant_user.id,
+        beneficiary_age=BeneficiaryAge.young_teen,
+        record_for=SupportRecordSubject.person,
+        owner_id=person.id,
+        project_id=default_project.id,
+    )
+    resp = await authorized_client.post("/support-records", json=jsonable_encoder(payload))
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    created_record = resp.json()
+    record_id = created_record["id"]
+    resp = await authorized_client.get(f"/support-records/{record_id}")
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == created_record
 
 
 async def test_get_support_record_works():
