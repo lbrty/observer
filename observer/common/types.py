@@ -62,6 +62,11 @@ class SupportType(str, Enum):
     general = "general"
 
 
+class SupportRecordSubject(str, Enum):
+    person = "person"
+    pet = "pet"
+
+
 class PlaceType(str, Enum):
     city = "city"
     town = "town"

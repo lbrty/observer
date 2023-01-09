@@ -3,7 +3,12 @@ from typing import Optional
 
 from pydantic import Field
 
-from observer.common.types import BeneficiaryAge, Identifier, SupportType
+from observer.common.types import (
+    BeneficiaryAge,
+    Identifier,
+    SupportRecordSubject,
+    SupportType,
+)
 from observer.schemas.base import SchemaBase
 
 
@@ -12,6 +17,7 @@ class BaseSupportRecord(SchemaBase):
     type: SupportType = Field(..., description="Type of support")
     consultant_id: Identifier = Field(..., description="Consultant ID")
     beneficiary_age: Optional[BeneficiaryAge] = Field(None, description="Beneficiary age")
+    record_for: SupportRecordSubject = Field(..., description="Record subject")
     owner_id: Identifier = Field(..., description="Owner of support humans or pets")
     project_id: Identifier = Field(..., description="Project ID")
 

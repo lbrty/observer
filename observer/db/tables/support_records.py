@@ -21,6 +21,7 @@ support_records = Table(
     Column("type", Text(), nullable=False),
     Column("consultant_id", UUID(as_uuid=True), nullable=False),
     Column("beneficiary_age", Text(), nullable=True),
+    Column("record_for", Text(), nullable=False),
     Column("owner_id", UUID(as_uuid=True), nullable=False),
     Column(
         "project_id",
@@ -36,6 +37,7 @@ support_records = Table(
     Index("ix_support_records_owner_id", "owner_id"),
     Index("ix_support_records_project_id", "project_id"),
     CheckConstraint("type IN ('humanitarian', 'legal', 'medical', 'general')", name="support_records_types"),
+    CheckConstraint("record_for IN ('person', 'pet')", name="support_records_record_for"),
     CheckConstraint(
         "beneficiary_age IN ('0-1', '1-3', '4-5', '6-11', '12-14', '15-17', '18-25', '26-34', '35-59', '60-100+')",
         name="support_records_beneficiary_ages",
