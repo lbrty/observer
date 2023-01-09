@@ -9,6 +9,7 @@ from observer.schemas.support_records import (
     NewSupportRecordRequest,
     UpdateSupportRecordRequest,
 )
+from tests.helpers.auth import get_auth_tokens
 from tests.helpers.crud import (
     create_permission,
     create_person,
@@ -245,6 +246,7 @@ async def test_permission_checks_work(
     client,
     app_context,
     consultant_user,
+    guest_user,
 ):
     project = await create_project(app_context, "Project Errors", description="Error catalog")
     person = await create_person(app_context, project.id)
@@ -260,3 +262,16 @@ async def test_permission_checks_work(
     record = await create_support_record(app_context, payload)
     resp = await client.get(f"/support-records/{record.id}")
     assert resp.status_code == status.HTTP_401_UNAUTHORIZED
+
+    auth_token = await get_auth_tokens(app_context, guest_user)
+    resp = await client.get(
+        f"/support-records/{record.id}",
+        cookies=auth_token.dict(),
+    )
+    assert resp.status_code == status.HTTP_403_FORBIDDEN
+    assert resp.json() == {
+        "code": "unauthorized",
+        "status_code": 403,
+        "message": "Access forbidden",
+        "data": None,
+    }
