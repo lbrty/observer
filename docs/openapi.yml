@@ -3114,6 +3114,88 @@
         }
       }
     },
+    "/support-records": {
+      "post": {
+        "tags": [
+          "support records"
+        ],
+        "summary": "Create Support Record",
+        "operationId": "create_support_record_support_records_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewSupportRecordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupportRecordResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/projects/": {
       "post": {
         "tags": [
@@ -3812,6 +3894,23 @@
             "title": "Data"
           }
         }
+      },
+      "BeneficiaryAge": {
+        "title": "BeneficiaryAge",
+        "enum": [
+          "infant",
+          "toddler",
+          "pre_school",
+          "middle_childhood",
+          "young_teen",
+          "teenager",
+          "young_adult",
+          "early_adult",
+          "middle_aged_adult",
+          "old_adult"
+        ],
+        "type": "string",
+        "description": "An enumeration."
       },
       "Body_idp_upload_document_idp_people__idp_id__document_post": {
         "title": "Body_idp_upload_document_idp_people__idp_id__document_post",
@@ -4949,6 +5048,87 @@
           }
         }
       },
+      "NewSupportRecordRequest": {
+        "title": "NewSupportRecordRequest",
+        "required": [
+          "type",
+          "consultant_id",
+          "record_for",
+          "owner_id",
+          "project_id"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "description": "Description of support record"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SupportType"
+              }
+            ],
+            "description": "Type of support"
+          },
+          "consultant_id": {
+            "title": "Consultant Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Consultant ID"
+          },
+          "beneficiary_age": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BeneficiaryAge"
+              }
+            ],
+            "description": "Beneficiary age"
+          },
+          "record_for": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SupportRecordSubject"
+              }
+            ],
+            "description": "Record subject"
+          },
+          "owner_id": {
+            "title": "Owner Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Owner of support humans or pets"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Project ID"
+          }
+        }
+      },
       "PermissionResponse": {
         "title": "PermissionResponse",
         "required": [
@@ -5384,6 +5564,128 @@
             "description": "Country ID"
           }
         }
+      },
+      "SupportRecordResponse": {
+        "title": "SupportRecordResponse",
+        "required": [
+          "type",
+          "consultant_id",
+          "record_for",
+          "owner_id",
+          "project_id",
+          "id",
+          "created_at"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string",
+            "description": "Description of support record"
+          },
+          "type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SupportType"
+              }
+            ],
+            "description": "Type of support"
+          },
+          "consultant_id": {
+            "title": "Consultant Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Consultant ID"
+          },
+          "beneficiary_age": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BeneficiaryAge"
+              }
+            ],
+            "description": "Beneficiary age"
+          },
+          "record_for": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SupportRecordSubject"
+              }
+            ],
+            "description": "Record subject"
+          },
+          "owner_id": {
+            "title": "Owner Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Owner of support humans or pets"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Project ID"
+          },
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Support record ID"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string",
+            "description": "Creation date",
+            "format": "date-time"
+          }
+        }
+      },
+      "SupportRecordSubject": {
+        "title": "SupportRecordSubject",
+        "enum": [
+          "person",
+          "pet"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
+      "SupportType": {
+        "title": "SupportType",
+        "enum": [
+          "humanitarian",
+          "legal",
+          "medical",
+          "general"
+        ],
+        "type": "string",
+        "description": "An enumeration."
       },
       "TokenResponse": {
         "title": "TokenResponse",
