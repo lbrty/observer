@@ -31,6 +31,7 @@ from observer.common.bcrypt import hash_password
 from observer.common.types import PetStatus, Role
 from observer.context import Context, Repositories, ctx
 from observer.db import Database, metadata
+from observer.entities.idp import IDP
 from observer.entities.permissions import NewPermission
 from observer.entities.pets import Pet
 from observer.entities.projects import Project
@@ -496,6 +497,28 @@ async def new_pet(app_context: Context, default_project: Project, consultant_use
         person.id,
     )
     yield pet
+
+
+@pytest.fixture(scope="function")
+async def default_idp(app_context: Context, default_project: Project, consultant_user: User) -> IDP:
+    await create_permission(
+        app_context,
+        NewPermission(
+            can_create=True,
+            can_read=True,
+            can_update=True,
+            can_delete=True,
+            can_create_projects=True,
+            can_read_documents=True,
+            can_read_personal_info=True,
+            can_invite_members=True,
+            project_id=default_project.id,
+            user_id=consultant_user.id,
+        ),
+    )
+
+    person = await create_person(app_context, default_project.id)
+    yield person
 
 
 @pytest.fixture(scope="function")

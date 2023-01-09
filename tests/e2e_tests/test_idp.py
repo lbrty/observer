@@ -1,3 +1,4 @@
+import os
 from datetime import date
 
 from fastapi.encoders import jsonable_encoder
@@ -326,3 +327,52 @@ async def test_get_idp_migration_history_works_as_expected(authorized_client, ap
     resp = await authorized_client.get(f"/idp/people/{person_id}/migration-records")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == [jsonable_encoder(expected_response)]
+
+
+async def test_upload_document_for_idp_works(
+    authorized_client,
+    app_context,
+    default_idp,
+    markdown_file,
+    env_settings,
+    fs_storage,
+):
+    files = {"file": ("readme.md", markdown_file, "text/markdown")}
+    resp = await authorized_client.post(f"/idp/people/{default_idp.id}/document", files=files)
+    assert resp.status_code == status.HTTP_201_CREATED
+    document = await app_context.documents_service.get_document(resp.json()["id"])
+    assert os.path.exists(document.path)
+
+
+async def test_get_persons_documents_works(
+    authorized_client,
+    app_context,
+    default_idp,
+    markdown_file,
+    textfile,
+    env_settings,
+    fs_storage,
+):
+    documents = []
+    files = {"file": ("readme.md", markdown_file, "text/markdown")}
+    resp = await authorized_client.post(f"/idp/people/{default_idp.id}/document", files=files)
+    assert resp.status_code == status.HTTP_201_CREATED
+    document = await app_context.documents_service.get_document(resp.json()["id"])
+    assert os.path.exists(document.path)
+
+    documents.append(resp.json())
+    document = await app_context.documents_service.get_document(documents[0]["id"])
+    assert os.path.exists(document.path)
+
+    resp = await authorized_client.post(
+        f"/idp/people/{default_idp.id}/document",
+        files={"file": ("notes.txt", textfile, "text/plain")},
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    documents.append(resp.json())
+    document = await app_context.documents_service.get_document(documents[1]["id"])
+    assert os.path.exists(document.path)
+
+    resp = await authorized_client.get(f"/idp/people/{default_idp.id}/documents")
+    assert resp.json() == documents

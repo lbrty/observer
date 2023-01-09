@@ -1,12 +1,15 @@
+import os
 from typing import List
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response, UploadFile
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
+from observer.common.exceptions import get_api_errors
 from observer.common.permissions import (
     assert_can_see_private_info,
     assert_deletable,
+    assert_docs_readable,
     assert_updatable,
     assert_viewable,
     assert_writable,
@@ -17,16 +20,17 @@ from observer.components.auth import RequiresRoles, authenticated_user
 from observer.components.services import (
     audit_service,
     category_service,
+    documents_service,
+    documents_upload,
     idp_service,
     migrations_service,
     permissions_service,
     secrets_service,
-    storage_service,
     world_service,
 )
 from observer.entities.base import SomeUser
 from observer.entities.idp import PersonalInfo
-from observer.schemas.documents import DocumentResponse
+from observer.schemas.documents import DocumentResponse, NewDocumentRequest
 from observer.schemas.idp import (
     CategoryResponse,
     IDPResponse,
@@ -40,12 +44,14 @@ from observer.schemas.migration_history import FullMigrationHistoryResponse
 from observer.schemas.world import PlaceResponse
 from observer.services.audit_logs import IAuditService
 from observer.services.categories import ICategoryService
+from observer.services.documents import IDocumentsService
 from observer.services.idp import IIDPService
 from observer.services.migration_history import IMigrationService
 from observer.services.permissions import IPermissionsService
 from observer.services.secrets import ISecretsService
-from observer.services.storage import IStorage
+from observer.services.uploads import UploadHandler
 from observer.services.world import IWorldService
+from observer.settings import settings
 
 router = APIRouter(prefix="/idp")
 
@@ -54,6 +60,11 @@ router = APIRouter(prefix="/idp")
     "/categories",
     response_model=CategoryResponse,
     status_code=status.HTTP_201_CREATED,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "categories"],
 )
 async def create_category(
@@ -85,6 +96,11 @@ async def create_category(
     "/categories",
     response_model=List[CategoryResponse],
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     dependencies=[
         Depends(
             RequiresRoles([Role.admin, Role.consultant, Role.staff]),
@@ -104,6 +120,11 @@ async def get_categories(
     "/categories/{category_id}",
     response_model=CategoryResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     dependencies=[
         Depends(
             RequiresRoles([Role.admin, Role.consultant, Role.staff]),
@@ -123,6 +144,11 @@ async def get_category(
     "/categories/{category_id}",
     response_model=CategoryResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "categories"],
 )
 async def update_category(
@@ -158,6 +184,11 @@ async def update_category(
 @router.delete(
     "/categories/{category_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "categories"],
 )
 async def delete_category(
@@ -189,6 +220,11 @@ async def delete_category(
     "/people",
     response_model=IDPResponse,
     status_code=status.HTTP_201_CREATED,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "people"],
 )
 async def create_idp(
@@ -239,6 +275,11 @@ async def get_idp(
     response_model=PersonalInfoResponse,
     response_model_exclude_none=True,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "people"],
 )
 async def get_personal_info(
@@ -267,6 +308,11 @@ async def get_personal_info(
     response_model=List[FullMigrationHistoryResponse],
     response_model_exclude_none=True,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "people", "migration", "history"],
 )
 async def get_person_migration_records(
@@ -301,6 +347,11 @@ async def get_person_migration_records(
     "/people/{idp_id}",
     response_model=IDPResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "people"],
 )
 async def update_idp(
@@ -339,6 +390,11 @@ async def update_idp(
 @router.delete(
     "/people/{idp_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "people"],
 )
 async def delete_idp(
@@ -372,11 +428,16 @@ async def delete_idp(
     "/people/{idp_id}/document",
     response_model=DocumentResponse,
     status_code=status.HTTP_201_CREATED,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "documents"],
 )
 async def idp_upload_document(
     tasks: BackgroundTasks,
-    pet_id: Identifier,
+    idp_id: Identifier,
     file: UploadFile,
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
@@ -384,7 +445,8 @@ async def idp_upload_document(
     audits: IAuditService = Depends(audit_service),
     idp: IIDPService = Depends(idp_service),
     permissions: IPermissionsService = Depends(permissions_service),
-    storage: IStorage = Depends(storage_service),
+    documents: IDocumentsService = Depends(documents_service),
+    uploads: UploadHandler = Depends(documents_upload),
     props: Props = Depends(
         Tracked(
             tag="endpoint=idp_upload_document,action=create:document",
@@ -393,4 +455,58 @@ async def idp_upload_document(
         use_cache=False,
     ),
 ) -> DocumentResponse:
-    ...
+    pet = await idp.get_idp(idp_id)
+    permission = await permissions.find(pet.project_id, user.id)
+    assert_deletable(user, permission)
+    assert_docs_readable(user, permission)
+    save_to = os.path.join(settings.documents_path, str(idp_id))
+    size, sealed_file = await uploads.process_upload(file, save_to)
+    document = await documents.create_document(
+        sealed_file.encryption_key,
+        NewDocumentRequest(
+            name=file.filename,
+            size=size,
+            path=sealed_file.path,
+            mimetype=file.content_type,
+            owner_id=idp_id,
+            project_id=pet.project_id,
+        ),
+    )
+    audit_log = props.new_event(
+        f"idp_id={pet.id},ref_id={user.ref_id}",
+        jsonable_encoder(
+            document,
+            exclude={"id", "encryption_key"},
+            exclude_none=True,
+        ),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return DocumentResponse(**document.dict())
+
+
+@router.get(
+    "/people/{idp_id}/documents",
+    response_model=List[DocumentResponse],
+    status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
+    tags=["idp", "documents"],
+)
+async def pet_get_documents(
+    idp_id: Identifier,
+    user: SomeUser = Depends(
+        RequiresRoles([Role.admin, Role.consultant, Role.staff]),
+    ),
+    idp: IIDPService = Depends(idp_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    documents: IDocumentsService = Depends(documents_service),
+) -> List[DocumentResponse]:
+    pet = await idp.get_idp(idp_id)
+    permission = await permissions.find(pet.project_id, user.id)
+    assert_viewable(user, permission)
+    assert_docs_readable(user, permission)
+    docs = await documents.get_by_owner_id(idp_id)
+    return [DocumentResponse(**doc.dict()) for doc in docs]
