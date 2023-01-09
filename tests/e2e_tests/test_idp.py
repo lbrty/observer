@@ -376,3 +376,39 @@ async def test_get_persons_documents_works(
 
     resp = await authorized_client.get(f"/idp/people/{default_idp.id}/documents")
     assert resp.json() == documents
+
+
+async def test_delete_person_deletes_documents_and_files(
+    authorized_client,
+    app_context,
+    default_idp,
+    markdown_file,
+    textfile,
+    env_settings,
+    fs_storage,
+):
+    resp = await authorized_client.post(
+        f"/idp/people/{default_idp.id}/document",
+        files={"file": ("readme.md", markdown_file, "text/markdown")},
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    resp = await authorized_client.post(
+        f"/idp/people/{default_idp.id}/document",
+        files={"file": ("notes.txt", textfile, "text/plain")},
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    folder_path = os.path.join(env_settings.documents_path, str(default_idp.id))
+    documents = await app_context.storage.ls(folder_path)
+    assert len(documents) == 2
+
+    resp = await authorized_client.delete(f"/idp/people/{default_idp.id}")
+    assert resp.status_code == status.HTTP_204_NO_CONTENT
+
+    resp = await authorized_client.get(f"/idp/people/{default_idp.id}/documents")
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+    folder_path = os.path.join(env_settings.documents_path, str(default_idp.id))
+    documents = await app_context.storage.ls(folder_path)
+    assert len(documents) == 0

@@ -26,6 +26,7 @@ from observer.components.services import (
     migrations_service,
     permissions_service,
     secrets_service,
+    storage_service,
     world_service,
 )
 from observer.entities.base import SomeUser
@@ -49,6 +50,7 @@ from observer.services.idp import IIDPService
 from observer.services.migration_history import IMigrationService
 from observer.services.permissions import IPermissionsService
 from observer.services.secrets import ISecretsService
+from observer.services.storage import IStorage
 from observer.services.uploads import UploadHandler
 from observer.services.world import IWorldService
 from observer.settings import settings
@@ -405,6 +407,8 @@ async def delete_idp(
     user: SomeUser = Depends(authenticated_user),
     idp: IIDPService = Depends(idp_service),
     permissions: IPermissionsService = Depends(permissions_service),
+    documents: IDocumentsService = Depends(documents_service),
+    storage: IStorage = Depends(storage_service),
     audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
@@ -417,11 +421,17 @@ async def delete_idp(
     idp_record = await idp.get_idp(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_deletable(user, permission)
+    assert_docs_readable(user, permission)
     deleted_idp = await idp.delete_idp(idp_id)
+    idp_documents = await documents.get_by_owner_id(idp_id)
+    document_ids = [str(doc.id) for doc in idp_documents]
+    await documents.bulk_delete(document_ids)
+    full_path = os.path.join(settings.documents_path, str(idp_id))
     audit_log = props.new_event(
         f"person_id={deleted_idp.id},ref_id={user.ref_id}",
         jsonable_encoder(deleted_idp.dict(exclude_none=True)),
     )
+    tasks.add_task(storage.delete_path, full_path)
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
