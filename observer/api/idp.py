@@ -63,7 +63,6 @@ router = APIRouter(prefix="/idp")
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
-        status.HTTP_404_NOT_FOUND,
     ),
     tags=["idp", "categories"],
 )
@@ -99,7 +98,6 @@ async def create_category(
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
-        status.HTTP_404_NOT_FOUND,
     ),
     dependencies=[
         Depends(
@@ -223,7 +221,6 @@ async def delete_category(
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
-        status.HTTP_404_NOT_FOUND,
     ),
     tags=["idp", "people"],
 )
@@ -254,6 +251,11 @@ async def create_idp(
     "/people/{idp_id}",
     response_model=IDPResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "people"],
 )
 async def get_idp(
@@ -495,7 +497,7 @@ async def idp_upload_document(
     ),
     tags=["idp", "documents"],
 )
-async def pet_get_documents(
+async def idp_get_documents(
     idp_id: Identifier,
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),

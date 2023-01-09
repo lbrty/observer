@@ -4,6 +4,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
+from observer.common.exceptions import get_api_errors
 from observer.common.types import Identifier, PlaceFilters, Role, StateFilters
 from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles, current_user
@@ -32,6 +33,10 @@ router = APIRouter(prefix="/world")
     "/countries",
     response_model=CountryResponse,
     status_code=status.HTTP_201_CREATED,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+    ),
     tags=["world", "places"],
 )
 async def create_country(
@@ -64,6 +69,10 @@ async def create_country(
     response_model=List[CountryResponse],
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(current_user)],
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+    ),
     tags=["world", "places"],
 )
 async def get_countries(world: IWorldService = Depends(world_service)) -> List[CountryResponse]:
@@ -76,6 +85,11 @@ async def get_countries(world: IWorldService = Depends(world_service)) -> List[C
     response_model=CountryResponse,
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(current_user)],
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["world", "places"],
 )
 async def get_country(
@@ -90,6 +104,11 @@ async def get_country(
     "/countries/{country_id}",
     response_model=CountryResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["world", "places"],
 )
 async def update_country(
@@ -127,6 +146,11 @@ async def update_country(
 @router.delete(
     "/countries/{country_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["world", "places"],
 )
 async def delete_country(
@@ -159,6 +183,10 @@ async def delete_country(
     "/states",
     status_code=status.HTTP_201_CREATED,
     response_model=StateResponse,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+    ),
     tags=["world", "states"],
 )
 async def create_state(
@@ -191,6 +219,10 @@ async def create_state(
     response_model=List[StateResponse],
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(current_user)],
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+    ),
     tags=["world", "states"],
 )
 async def get_states(
@@ -206,6 +238,11 @@ async def get_states(
     response_model=StateResponse,
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(current_user)],
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["world", "states"],
 )
 async def get_state(
@@ -220,6 +257,11 @@ async def get_state(
     "/states/{state_id}",
     response_model=StateResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["world", "states"],
 )
 async def update_state(
@@ -255,6 +297,11 @@ async def update_state(
 @router.delete(
     "/states/{state_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["world", "states"],
 )
 async def delete_state(
@@ -287,6 +334,10 @@ async def delete_state(
     "/places",
     response_model=PlaceResponse,
     status_code=status.HTTP_201_CREATED,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+    ),
     tags=["world", "places"],
 )
 async def create_place(
@@ -319,6 +370,10 @@ async def create_place(
     response_model=List[PlaceResponse],
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(current_user)],
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+    ),
     tags=["world", "places"],
 )
 async def get_places(
@@ -334,6 +389,11 @@ async def get_places(
     response_model=PlaceResponse,
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(current_user)],
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["world", "places"],
 )
 async def get_place(
@@ -348,6 +408,11 @@ async def get_place(
     "/places/{place_id}",
     response_model=PlaceResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["world", "places"],
 )
 async def update_place(
@@ -386,6 +451,11 @@ async def update_place(
 @router.delete(
     "/places/{place_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["world", "places"],
 )
 async def delete_place(

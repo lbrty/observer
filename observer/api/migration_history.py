@@ -2,6 +2,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
+from observer.common.exceptions import get_api_errors
 from observer.common.permissions import (
     assert_can_see_private_info,
     assert_deletable,
@@ -34,6 +35,10 @@ router = APIRouter(prefix="/migrations")
     "",
     response_model=MigrationHistoryResponse,
     status_code=status.HTTP_201_CREATED,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+    ),
     tags=["idp", "migration", "history"],
 )
 async def create_migration_record(
@@ -67,6 +72,11 @@ async def create_migration_record(
     "/{record_id}",
     response_model=MigrationHistoryResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "migration", "history"],
 )
 async def get_migration_record(
@@ -87,6 +97,11 @@ async def get_migration_record(
 @router.delete(
     "/{record_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["idp", "migration", "history"],
 )
 async def delete_migration_record(

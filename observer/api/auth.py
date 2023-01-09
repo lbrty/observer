@@ -4,6 +4,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
 from observer.api.exceptions import ForbiddenError
+from observer.common.exceptions import get_api_errors
 from observer.components.audit import Props, Tracked
 from observer.components.auth import authenticated_user, refresh_token_cookie
 from observer.components.services import (
@@ -34,6 +35,10 @@ router = APIRouter(prefix="/auth")
     "/token",
     response_model=TokenResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+    ),
     tags=["auth"],
 )
 async def token_login(
@@ -62,6 +67,7 @@ async def token_login(
     "/token/refresh",
     response_model=TokenResponse,
     status_code=status.HTTP_200_OK,
+    responses=get_api_errors(status.HTTP_403_FORBIDDEN),
     tags=["auth"],
 )
 async def token_refresh(
@@ -146,6 +152,7 @@ async def token_register(
 @router.post(
     "/change-password",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(status.HTTP_400_BAD_REQUEST, status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN),
     tags=["auth"],
 )
 async def change_password(
@@ -188,6 +195,10 @@ async def change_password(
 @router.post(
     "/reset-password",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+    ),
     tags=["auth"],
 )
 async def reset_password_request(
@@ -231,6 +242,11 @@ async def reset_password_request(
 @router.post(
     "/reset-password/{code}",
     status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
     tags=["auth"],
 )
 async def reset_password_with_code(
