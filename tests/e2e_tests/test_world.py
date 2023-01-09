@@ -114,7 +114,6 @@ async def test_update_unknown_country_works_as_expected(
     assert resp.status_code == status.HTTP_404_NOT_FOUND
     assert resp.json() == {
         "code": "not_found",
-        "data": None,
         "message": "Country not found",
         "status_code": 404,
     }
@@ -158,7 +157,6 @@ async def test_delete_unknown_country_works_as_expected(
     assert resp.status_code == status.HTTP_404_NOT_FOUND
     assert resp.json() == {
         "code": "not_found",
-        "data": None,
         "message": "Country not found",
         "status_code": 404,
     }
@@ -337,7 +335,6 @@ async def test_update_unknown_state_works_as_expected(
     assert resp.status_code == status.HTTP_404_NOT_FOUND
     assert resp.json() == {
         "code": "not_found",
-        "data": None,
         "message": "State not found",
         "status_code": 404,
     }
@@ -585,7 +582,6 @@ async def test_update_unknown_place_works_as_expected(
     assert resp.status_code == status.HTTP_404_NOT_FOUND
     assert resp.json() == {
         "code": "not_found",
-        "data": None,
         "message": "Place not found",
         "status_code": 404,
     }
@@ -612,7 +608,6 @@ async def test_update_place_with_unknown_country_works_as_expected(
     assert resp.status_code == status.HTTP_404_NOT_FOUND
     assert resp.json() == {
         "code": "not_found",
-        "data": None,
         "message": "Country not found",
         "status_code": 404,
     }
@@ -639,7 +634,6 @@ async def test_update_place_with_unknown_state_works_as_expected(
     assert resp.status_code == status.HTTP_404_NOT_FOUND
     assert resp.json() == {
         "code": "not_found",
-        "data": None,
         "message": "State not found",
         "status_code": 404,
     }

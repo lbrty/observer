@@ -38,12 +38,21 @@ class BaseAPIException(Exception):
         self.data = data or self.default_data
 
     def to_dict(self) -> dict:
-        return dict(
+        result = dict(
             code=self.code.value,
             status_code=self.status,
             message=self.message,
             data=self.data,
         )
+        to_remove = set()
+        for key, value in result.items():
+            if value is None:
+                to_remove.add(key)
+
+        for key in to_remove:
+            del result[key]
+
+        return result
 
 
 class InternalError(BaseAPIException):

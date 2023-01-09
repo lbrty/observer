@@ -40,7 +40,6 @@ async def test_token_login_fails_if_credentials_are_wrong(client, ensure_db, con
     assert resp.status_code == status.HTTP_401_UNAUTHORIZED
     assert resp.json() == {
         "code": "unauthorized",
-        "data": None,
         "message": "Wrong email or password",
         "status_code": status.HTTP_401_UNAUTHORIZED,
     }
@@ -68,7 +67,6 @@ async def test_token_refresh_works_as_expected_when_refresh_token_is_invalid(cli
     assert resp.status_code == status.HTTP_403_FORBIDDEN
     assert resp.json() == {
         "code": "unauthorized",
-        "data": None,
         "message": "Invalid refresh token",
         "status_code": 403,
     }
@@ -163,7 +161,6 @@ async def test_password_reset_works_as_expected_when_expired_reset_code_is_used(
     assert resp.status_code == status.HTTP_401_UNAUTHORIZED
     assert resp.json() == {
         "code": "password_reset_code_expired_error",
-        "data": None,
         "message": "password reset code hash expired",
         "status_code": 401,
     }
@@ -185,12 +182,7 @@ async def test_password_reset_works_as_expected_when_unknown_reset_code_is_used(
         ),
     )
     assert resp.status_code == status.HTTP_404_NOT_FOUND
-    assert resp.json() == {
-        "code": "not_found",
-        "status_code": 404,
-        "message": "not found",
-        "data": None,
-    }
+    assert resp.json() == {"code": "not_found", "status_code": 404, "message": "not found"}
 
 
 async def test_password_change_works_as_expected(
@@ -243,7 +235,6 @@ async def test_password_change_works_as_expected_when_new_password_is_weak(
     assert resp.status_code == status.HTTP_400_BAD_REQUEST
     assert resp.json() == {
         "code": "weak_password_error",
-        "data": None,
         "message": "Given password is weak",
         "status_code": 400,
     }
@@ -266,7 +257,6 @@ async def test_password_change_works_as_expected_when_old_password_is_invalid(
     assert resp.status_code == status.HTTP_403_FORBIDDEN
     assert resp.json() == {
         "code": "invalid_password_error",
-        "data": None,
         "message": "Invalid password",
         "status_code": 403,
     }

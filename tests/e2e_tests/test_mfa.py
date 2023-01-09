@@ -86,7 +86,6 @@ async def test_configured_mfa_requires_totp_code_during_login(
     assert resp.status_code == status.HTTP_417_EXPECTATION_FAILED
     assert resp.json() == {
         "code": "totp_required_error",
-        "data": None,
         "message": "totp required",
         "status_code": 417,
     }
@@ -179,7 +178,6 @@ async def test_configure_mfa_works_as_expected_when_incorrect_totp_code_given(
     assert resp.status_code == status.HTTP_400_BAD_REQUEST
     assert resp.json() == {
         "code": "totp_error",
-        "data": None,
         "message": "Invalid totp code",
         "status_code": 400,
     }
@@ -265,7 +263,6 @@ async def test_mfa_reset_request_works_as_expected_when_invalid_backup_code_give
     assert resp.status_code == status.HTTP_401_UNAUTHORIZED
     assert resp.json() == {
         "code": "totp_invalid_backup_code_error",
-        "data": None,
         "message": "Invalid backup code",
         "status_code": 401,
     }

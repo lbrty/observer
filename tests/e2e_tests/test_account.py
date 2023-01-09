@@ -29,7 +29,6 @@ async def test_get_current_user_works_as_expected_for_strangers(client, ensure_d
     assert resp.status_code == status.HTTP_401_UNAUTHORIZED
     assert resp.json() == {
         "code": "unauthorized",
-        "data": None,
         "message": "Please authenticate",
         "status_code": 401,
     }
@@ -180,7 +179,6 @@ async def test_account_confirmation_works_as_expected_when_other_authenticated_u
     assert resp.status_code == status.HTTP_404_NOT_FOUND
     assert resp.json() == {
         "code": "not_found",
-        "data": None,
         "message": "Confirmation code not found",
         "status_code": 404,
     }
@@ -219,7 +217,6 @@ async def test_account_confirmation_works_as_expected_when_it_has_expired(
         "code": "confirmation_code_expired_error",
         "status_code": 409,
         "message": "Confirmation code has already expired",
-        "data": None,
     }
     user = await app_context.users_service.get_by_id(confirmation.user_id)
     assert user.is_confirmed is False

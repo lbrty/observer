@@ -236,7 +236,6 @@ async def test_delete_support_record_works(
     assert resp.status_code == status.HTTP_404_NOT_FOUND
     assert resp.json() == {
         "code": "not_found",
-        "data": None,
         "message": "Support record not found",
         "status_code": 404,
     }
@@ -269,9 +268,4 @@ async def test_permission_checks_work(
         cookies=auth_token.dict(),
     )
     assert resp.status_code == status.HTTP_403_FORBIDDEN
-    assert resp.json() == {
-        "code": "unauthorized",
-        "status_code": 403,
-        "message": "Access forbidden",
-        "data": None,
-    }
+    assert resp.json() == {"code": "unauthorized", "status_code": 403, "message": "Access forbidden"}

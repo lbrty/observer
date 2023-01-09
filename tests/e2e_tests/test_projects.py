@@ -193,12 +193,7 @@ async def test_update_project_works_as_expected_for_users_without_permissions(
     )
 
     assert resp.status_code == status.HTTP_403_FORBIDDEN
-    assert resp.json() == {
-        "code": "unauthorized",
-        "status_code": 403,
-        "message": "You can not update this project",
-        "data": None,
-    }
+    assert resp.json() == {"code": "unauthorized", "status_code": 403, "message": "You can not update this project"}
 
 
 async def test_get_project_members_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
@@ -461,7 +456,6 @@ async def test_add_project_member_works_as_expected_for_users_without_permission
         "code": "unauthorized",
         "status_code": 403,
         "message": "You can not invite members in this project",
-        "data": None,
     }
 
 
@@ -494,12 +488,7 @@ async def test_add_project_member_works_as_expected_if_given_user_does_not_exist
         ),
     )
     assert resp.status_code == status.HTTP_404_NOT_FOUND
-    assert resp.json() == {
-        "code": "not_found",
-        "status_code": 404,
-        "message": "User not found",
-        "data": None,
-    }
+    assert resp.json() == {"code": "not_found", "status_code": 404, "message": "User not found"}
 
 
 async def test_add_project_member_works_as_expected_if_project_ids_mismatch(
@@ -535,7 +524,6 @@ async def test_add_project_member_works_as_expected_if_project_ids_mismatch(
         "code": "conflict_error",
         "status_code": 409,
         "message": "Project ids in path and payload differ",
-        "data": None,
     }
 
 

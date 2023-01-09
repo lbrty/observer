@@ -45,7 +45,6 @@ async def test_get_unknown_vulnerability_category_works_as_expected(
     assert resp.status_code == status.HTTP_404_NOT_FOUND
     assert resp.json() == {
         "code": "not_found",
-        "data": None,
         "message": "Category not found",
         "status_code": 404,
     }
