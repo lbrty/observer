@@ -4,6 +4,7 @@ from observer.entities.idp import IDP, Category, NewCategory, NewIDP
 from observer.entities.permissions import NewPermission, Permission
 from observer.entities.pets import NewPet, Pet
 from observer.entities.projects import NewProject, Project
+from observer.entities.support_records import NewSupportRecord, SupportRecord
 from observer.entities.world import (
     Country,
     NewCountry,
@@ -12,6 +13,7 @@ from observer.entities.world import (
     Place,
     State,
 )
+from observer.schemas.support_records import NewSupportRecordRequest
 
 
 async def create_project(ctx: Context, name: str, description: str) -> Project:
@@ -142,3 +144,8 @@ async def create_pet(
         )
     )
     return pet
+
+
+async def create_support_record(ctx: Context, request: NewSupportRecordRequest) -> SupportRecord:
+    record = await ctx.repos.support.create_record(NewSupportRecord(**request.dict()))
+    return record

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
@@ -156,8 +156,7 @@ async def update_support_record(
 
 @router.delete(
     "/{record_id}",
-    response_model=SupportRecordResponse,
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_204_NO_CONTENT,
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
@@ -183,11 +182,11 @@ async def delete_support_record(
         ),
         use_cache=False,
     ),
-) -> SupportRecordResponse:
+) -> Response:
     support_record = await support_records.get_record(record_id)
     permission = await permissions.find(support_record.project_id, user.id)
     assert_writable(user, permission)
-    updated_support_record = await support_records.delete_record(record_id)
+    await support_records.delete_record(record_id)
 
     if support_record.record_for == SupportRecordSubject.person:
         subject_key = "idp_id"
@@ -198,4 +197,4 @@ async def delete_support_record(
 
     audit_log = props.new_event(f"{subject_key}={support_record.owner_id},ref_id={user.ref_id}", None)
     tasks.add_task(audits.add_event, audit_log)
-    return SupportRecordResponse(**updated_support_record.dict())
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

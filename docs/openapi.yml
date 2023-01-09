@@ -3416,15 +3416,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SupportRecordResponse"
-                }
-              }
-            }
+          "204": {
+            "description": "Successful Response"
           },
           "401": {
             "description": "Unauthorized",
