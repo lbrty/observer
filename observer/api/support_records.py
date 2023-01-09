@@ -2,27 +2,34 @@ from fastapi import APIRouter, BackgroundTasks, Depends
 from starlette import status
 
 from observer.common.exceptions import get_api_errors
-from observer.common.types import Role
+from observer.common.permissions import assert_writable
+from observer.common.types import Role, SupportRecordSubject
 from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles
 from observer.components.services import (
     audit_service,
+    idp_service,
     permissions_service,
     pets_service,
+    support_records_service,
 )
 from observer.entities.base import SomeUser
-from observer.schemas.pets import PetResponse
-from observer.schemas.support_records import NewSupportRecordRequest
+from observer.schemas.support_records import (
+    NewSupportRecordRequest,
+    SupportRecordResponse,
+)
 from observer.services.audit_logs import IAuditService
+from observer.services.idp import IIDPService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
+from observer.services.support_records import ISupportRecordsService
 
 router = APIRouter(prefix="/support-records")
 
 
 @router.post(
     "",
-    response_model=PetResponse,
+    response_model=SupportRecordResponse,
     status_code=status.HTTP_201_CREATED,
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
@@ -37,9 +44,11 @@ async def create_support_record(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    audits: IAuditService = Depends(audit_service),
-    support_records: IPetsService = Depends(pets_service),
+    support_records: ISupportRecordsService = Depends(support_records_service),
+    pets: IPetsService = Depends(pets_service),
+    idp: IIDPService = Depends(idp_service),
     permissions: IPermissionsService = Depends(permissions_service),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=create_support_record,action=create:support_record",
@@ -47,5 +56,15 @@ async def create_support_record(
         ),
         use_cache=False,
     ),
-) -> PetResponse:
-    ...
+) -> SupportRecordResponse:
+    permission = await permissions.find(new_record.project_id, user.id)
+    assert_writable(user, permission)
+
+    if new_record.record_for == SupportRecordSubject.person:
+        await idp.get_idp(new_record.owner_id)
+
+    if new_record.record_for == SupportRecordSubject.pet:
+        await pets.get_pet(new_record.owner_id)
+
+    support_record = await support_records.create_record(new_record)
+    return SupportRecordResponse(**support_record.dict())

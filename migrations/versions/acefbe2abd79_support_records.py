@@ -41,7 +41,12 @@ def upgrade():
         sa.CheckConstraint("type IN ('humanitarian', 'legal', 'medical', 'general')", name="support_records_types"),
         sa.CheckConstraint("record_for IN ('person', 'pet')", name="support_records_record_for"),
         sa.CheckConstraint(
-            "beneficiary_age IN ('0-1', '1-3', '4-5', '6-11', '12-14', '15-17', '18-25', '26-34', '35-59', '60-100+')",
+            "beneficiary_age IN ("
+            "'infant', 'toddler', 'pre_school', "
+            "'middle_childhood', 'young_teen', "
+            "'teenager', 'young_adult', 'early_adult', "
+            "'middle_aged_adult', 'old_adult'"
+            ")",
             name="support_records_beneficiary_ages",
         ),
     )

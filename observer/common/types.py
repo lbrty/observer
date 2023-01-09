@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional, Tuple, TypeAlias
+from typing import Dict, List, Optional, Tuple, TypeAlias
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -43,16 +43,30 @@ class PetStatus(str, Enum):
 
 
 class BeneficiaryAge(str, Enum):
-    infant = "0-1"
-    toddler = "1-3"
-    pre_school = "4-5"
-    middle_childhood = "6-11"
-    young_teen = "12-14"
-    teenager = "15-17"
-    young_adult = "18-25"
-    early_adult = "26-34"
-    middle_aged_adult = "35-59"
-    old_adult = "60-100+"
+    infant = "infant"
+    toddler = "toddler"
+    pre_school = "pre_school"
+    middle_childhood = "middle_childhood"
+    young_teen = "young_teen"
+    teenager = "teenager"
+    young_adult = "young_adult"
+    early_adult = "early_adult"
+    middle_aged_adult = "middle_aged_adult"
+    old_adult = "old_adult"
+
+
+BeneficiaryAgeLabels: Dict[BeneficiaryAge, str] = {
+    BeneficiaryAge.infant: "0-1",
+    BeneficiaryAge.toddler: "1-3",
+    BeneficiaryAge.pre_school: "4-5",
+    BeneficiaryAge.middle_childhood: "6-11",
+    BeneficiaryAge.young_teen: "12-14",
+    BeneficiaryAge.teenager: "15-17",
+    BeneficiaryAge.young_adult: "18-25",
+    BeneficiaryAge.early_adult: "26-34",
+    BeneficiaryAge.middle_aged_adult: "35-59",
+    BeneficiaryAge.old_adult: "60-100+",
+}
 
 
 class SupportType(str, Enum):

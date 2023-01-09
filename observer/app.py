@@ -15,6 +15,7 @@ from observer.api import (
     migration_history,
     pets,
     projects,
+    support_records,
     world,
 )
 from observer.api.exceptions import BaseAPIException
@@ -45,6 +46,7 @@ def init_routes(env: Environment) -> Environment:
     env.app.include_router(mfa.router)
     env.app.include_router(world.router)
     env.app.include_router(pets.router)
+    env.app.include_router(support_records.router)
     env.app.include_router(projects.router)
     return env
 

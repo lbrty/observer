@@ -16,6 +16,7 @@ from observer.services.pets import IPetsService
 from observer.services.projects import IProjectsService
 from observer.services.secrets import ISecretsService
 from observer.services.storage import IStorage
+from observer.services.support_records import ISupportRecordsService
 from observer.services.uploads import UploadHandler
 from observer.services.users import IUsersService
 from observer.services.world import IWorldService
@@ -127,6 +128,13 @@ async def documents_service() -> IDocumentsService:
         return ctx.documents_service
 
     raise RuntimeError("DocumentsService is None")
+
+
+async def support_records_service() -> ISupportRecordsService:
+    if ctx.support_service:
+        return ctx.support_service
+
+    raise RuntimeError("SupportService is None")
 
 
 async def documents_upload() -> UploadHandler:
