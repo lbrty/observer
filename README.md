@@ -5,8 +5,6 @@
 This project seeks to bridge the gap in tools and systems to support and help internally displaced persons
 or in general people in need any kind of support humanitarian, legal or seeking medical help.
 
-Made in 🇩🇪 with love from 🇰🇬 & 🇺🇦 for people in need.
-
 ## 🌈 Session handling
 
 Motivation behind this is to avoid database queries to verify sessions and keep it as stateless as possible.
@@ -87,3 +85,6 @@ class User(BaseModel):
     mfa_encrypted_secret: SomeStr
     mfa_encrypted_backup_codes: SomeStr
 ```
+
+<hr/>
+Made in 🇩🇪 with love from 🇰🇬 & 🇺🇦 for people in need.
