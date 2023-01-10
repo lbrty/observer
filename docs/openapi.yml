@@ -5474,6 +5474,19 @@
             "type": "string",
             "description": "Full name"
           },
+          "sex": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Sex"
+              }
+            ],
+            "description": "Person's sex"
+          },
+          "pronoun": {
+            "title": "Pronoun",
+            "type": "string",
+            "description": "Person's pronouns"
+          },
           "birth_date": {
             "title": "Birth Date",
             "type": "string",
@@ -5835,6 +5848,19 @@
             "title": "Full Name",
             "type": "string",
             "description": "Full name"
+          },
+          "sex": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Sex"
+              }
+            ],
+            "description": "Person's sex"
+          },
+          "pronoun": {
+            "title": "Pronoun",
+            "type": "string",
+            "description": "Person's pronouns"
           },
           "birth_date": {
             "title": "Birth Date",
@@ -6426,6 +6452,19 @@
             "type": "string",
             "description": "Full name"
           },
+          "sex": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Sex"
+              }
+            ],
+            "description": "Person's sex"
+          },
+          "pronoun": {
+            "title": "Pronoun",
+            "type": "string",
+            "description": "Person's pronouns"
+          },
           "email": {
             "title": "Email",
             "type": "string",
@@ -6707,6 +6746,16 @@
         "type": "string",
         "description": "An enumeration."
       },
+      "Sex": {
+        "title": "Sex",
+        "enum": [
+          "male",
+          "female",
+          "unknown"
+        ],
+        "type": "string",
+        "description": "An enumeration."
+      },
       "StateResponse": {
         "title": "StateResponse",
         "required": [
@@ -6958,6 +7007,19 @@
             "title": "Full Name",
             "type": "string",
             "description": "Full name"
+          },
+          "sex": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Sex"
+              }
+            ],
+            "description": "Person's sex"
+          },
+          "pronoun": {
+            "title": "Pronoun",
+            "type": "string",
+            "description": "Person's pronouns"
           },
           "birth_date": {
             "title": "Birth Date",
