@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from observer.common.types import (
-    BeneficiaryAge,
+    AgeGroup,
     Identifier,
     SomeStr,
     SupportRecordSubject,
@@ -15,7 +15,7 @@ class BaseSupportRecord(ModelBase):
     description: SomeStr
     type: SupportType
     consultant_id: Identifier
-    beneficiary_age: Optional[BeneficiaryAge]
+    age_group: Optional[AgeGroup]
     record_for: SupportRecordSubject
     owner_id: Identifier
     project_id: Identifier

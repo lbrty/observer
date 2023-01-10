@@ -22,7 +22,7 @@ def upgrade():
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column("type", sa.Text(), nullable=False),
         sa.Column("consultant_id", postgresql.UUID(as_uuid=True), nullable=True),
-        sa.Column("beneficiary_age", sa.Text(), nullable=True),
+        sa.Column("age_group", sa.Text(), nullable=True),
         sa.Column("record_for", sa.Text(), nullable=False),
         sa.Column("owner_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column("project_id", postgresql.UUID(as_uuid=True), nullable=True),
@@ -41,13 +41,19 @@ def upgrade():
         sa.CheckConstraint("type IN ('humanitarian', 'legal', 'medical', 'general')", name="support_records_types"),
         sa.CheckConstraint("record_for IN ('person', 'pet')", name="support_records_record_for"),
         sa.CheckConstraint(
-            "beneficiary_age IN ("
-            "'infant', 'toddler', 'pre_school', "
-            "'middle_childhood', 'young_teen', "
-            "'teenager', 'young_adult', 'early_adult', "
-            "'middle_aged_adult', 'old_adult'"
-            ")",
-            name="support_records_beneficiary_ages",
+            """age_group IN (
+                'infant',
+                'toddler',
+                'pre_school',
+                'middle_childhood',
+                'young_teen',
+                'teenager',
+                'young_adult',
+                'early_adult',
+                'middle_aged_adult',
+                'old_adult'
+            )""",
+            name="support_records_age_group",
         ),
     )
 

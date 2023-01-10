@@ -5085,8 +5085,8 @@
           }
         }
       },
-      "BeneficiaryAge": {
-        "title": "BeneficiaryAge",
+      "AgeGroup": {
+        "title": "AgeGroup",
         "enum": [
           "infant",
           "toddler",
@@ -6304,7 +6304,7 @@
           "beneficiary_age": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/BeneficiaryAge"
+                "$ref": "#/components/schemas/AgeGroup"
               }
             ],
             "description": "Beneficiary age"
@@ -6846,7 +6846,7 @@
           "beneficiary_age": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/BeneficiaryAge"
+                "$ref": "#/components/schemas/AgeGroup"
               }
             ],
             "description": "Beneficiary age"
@@ -7343,7 +7343,7 @@
           "beneficiary_age": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/BeneficiaryAge"
+                "$ref": "#/components/schemas/AgeGroup"
               }
             ],
             "description": "Beneficiary age"

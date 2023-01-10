@@ -48,7 +48,7 @@ class PetStatus(str, Enum):
     unknown = "unknown"
 
 
-class BeneficiaryAge(str, Enum):
+class AgeGroup(str, Enum):
     infant = "infant"
     toddler = "toddler"
     pre_school = "pre_school"
@@ -61,17 +61,17 @@ class BeneficiaryAge(str, Enum):
     old_adult = "old_adult"
 
 
-BeneficiaryAgeLabels: Dict[BeneficiaryAge, str] = {
-    BeneficiaryAge.infant: "0-1",
-    BeneficiaryAge.toddler: "1-3",
-    BeneficiaryAge.pre_school: "4-5",
-    BeneficiaryAge.middle_childhood: "6-11",
-    BeneficiaryAge.young_teen: "12-14",
-    BeneficiaryAge.teenager: "15-17",
-    BeneficiaryAge.young_adult: "18-25",
-    BeneficiaryAge.early_adult: "26-34",
-    BeneficiaryAge.middle_aged_adult: "35-59",
-    BeneficiaryAge.old_adult: "60-100+",
+AgeGroupLabels: Dict[AgeGroup, str] = {
+    AgeGroup.infant: "0-1",
+    AgeGroup.toddler: "1-3",
+    AgeGroup.pre_school: "4-5",
+    AgeGroup.middle_childhood: "6-11",
+    AgeGroup.young_teen: "12-14",
+    AgeGroup.teenager: "15-17",
+    AgeGroup.young_adult: "18-25",
+    AgeGroup.early_adult: "26-34",
+    AgeGroup.middle_aged_adult: "35-59",
+    AgeGroup.old_adult: "60-100+",
 }
 
 

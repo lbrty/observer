@@ -3,7 +3,7 @@ import uuid
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
-from observer.common.types import BeneficiaryAge, SupportRecordSubject, SupportType
+from observer.common.types import AgeGroup, SupportRecordSubject, SupportType
 from observer.entities.permissions import NewPermission
 from observer.schemas.support_records import (
     NewSupportRecordRequest,
@@ -45,7 +45,7 @@ async def test_create_support_record_works(
         description="Buy clothes",
         type=SupportType.humanitarian,
         consultant_id=consultant_user.id,
-        beneficiary_age=BeneficiaryAge.young_teen,
+        beneficiary_age=AgeGroup.young_teen,
         record_for=SupportRecordSubject.person,
         owner_id=person.id,
         project_id=default_project.id,
@@ -86,7 +86,7 @@ async def test_create_support_relation_checks_work(
         description="Buy clothes",
         type=SupportType.humanitarian,
         consultant_id=consultant_user.id,
-        beneficiary_age=BeneficiaryAge.young_teen,
+        beneficiary_age=AgeGroup.young_teen,
         record_for=SupportRecordSubject.person,
         owner_id=uuid.uuid4(),
         project_id=default_project.id,
@@ -98,7 +98,7 @@ async def test_create_support_relation_checks_work(
         description="Buy clothes",
         type=SupportType.humanitarian,
         consultant_id=consultant_user.id,
-        beneficiary_age=BeneficiaryAge.young_teen,
+        beneficiary_age=AgeGroup.young_teen,
         record_for=SupportRecordSubject.pet,
         owner_id=uuid.uuid4(),
         project_id=default_project.id,
@@ -134,7 +134,7 @@ async def test_get_support_record_works(
         description="Recover documents",
         type=SupportType.legal,
         consultant_id=consultant_user.id,
-        beneficiary_age=BeneficiaryAge.young_adult,
+        beneficiary_age=AgeGroup.young_adult,
         record_for=SupportRecordSubject.person,
         owner_id=person.id,
         project_id=default_project.id,
@@ -172,7 +172,7 @@ async def test_update_support_record_works(
         description="Buy clothes",
         type=SupportType.humanitarian,
         consultant_id=consultant_user.id,
-        beneficiary_age=BeneficiaryAge.young_teen,
+        beneficiary_age=AgeGroup.young_teen,
         record_for=SupportRecordSubject.person,
         owner_id=person.id,
         project_id=default_project.id,
@@ -182,7 +182,7 @@ async def test_update_support_record_works(
         description="Buy clothes",
         type=SupportType.humanitarian,
         consultant_id=consultant_user.id,
-        beneficiary_age=BeneficiaryAge.young_teen,
+        beneficiary_age=AgeGroup.young_teen,
         record_for=SupportRecordSubject.person,
         owner_id=person.id,
         project_id=default_project.id,
@@ -223,7 +223,7 @@ async def test_delete_support_record_works(
         description="Buy clothes",
         type=SupportType.humanitarian,
         consultant_id=consultant_user.id,
-        beneficiary_age=BeneficiaryAge.young_teen,
+        beneficiary_age=AgeGroup.young_teen,
         record_for=SupportRecordSubject.person,
         owner_id=person.id,
         project_id=default_project.id,
@@ -253,7 +253,7 @@ async def test_permission_checks_work(
         description="Buy clothes",
         type=SupportType.humanitarian,
         consultant_id=consultant_user.id,
-        beneficiary_age=BeneficiaryAge.young_teen,
+        beneficiary_age=AgeGroup.young_teen,
         record_for=SupportRecordSubject.person,
         owner_id=person.id,
         project_id=project.id,
