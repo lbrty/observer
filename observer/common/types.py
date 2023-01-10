@@ -59,6 +59,7 @@ class AgeGroup(str, Enum):
     early_adult = "early_adult"
     middle_aged_adult = "middle_aged_adult"
     old_adult = "old_adult"
+    unknown = "unknown"
 
 
 AgeGroupLabels: Dict[AgeGroup, str] = {

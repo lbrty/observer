@@ -76,3 +76,45 @@ people = Table(
     Index("ix_people_project_id", "project_id"),
     Index("ix_people_tags", "tags"),
 )
+
+family_members = Table(
+    "family_members",
+    metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")),
+    Column("age_group", Text(), nullable=False),
+    Column("birth_date", DATE(), nullable=True),
+    Column("sex", Text(), nullable=True),
+    Column("notes", Text(), nullable=True),
+    Column("idp_id", UUID(as_uuid=True), ForeignKey("people.id", ondelete="CASCADE"), nullable=True),
+    Column("project_id", UUID(as_uuid=True), ForeignKey("projects.id", ondelete="SET NULL"), nullable=True),
+    CheckConstraint(
+        """age_group IN (
+            'unknown',
+            'infant',
+            'toddler',
+            'pre_school',
+            'middle_childhood',
+            'young_teen',
+            'teenager',
+            'young_adult',
+            'early_adult',
+            'middle_aged_adult',
+            'old_adult'
+        )""",
+        name="family_members_age_group",
+    ),
+    CheckConstraint(
+        """sex IN (
+            'male',
+            'female',
+            'unknown'
+        )""",
+        name="family_members_sex",
+    ),
+    Index("family_members_full_name", text("lower(full_name)")),
+    Index("family_members_age_group", "age_group"),
+    Index("family_members_birth_date", "birth_date"),
+    Index("family_members_sex", "sex"),
+    Index("family_members_idp_id", "idp_id"),
+    Index("family_members_project_id", "project_id"),
+)

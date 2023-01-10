@@ -5097,7 +5097,8 @@
           "young_adult",
           "early_adult",
           "middle_aged_adult",
-          "old_adult"
+          "old_adult",
+          "unknown"
         ],
         "type": "string",
         "description": "An enumeration."
