@@ -112,6 +112,8 @@ async def create_village(
 async def create_person(
     ctx: Context,
     project_id: Identifier,
+    sex: Sex = Sex.female,
+    pronoun: str = "she/her/hers",
 ) -> IDP:
     person = await ctx.repos.idp.create_idp(
         NewIDP(
@@ -119,8 +121,8 @@ async def create_person(
             email="Full_Name@examples.com",
             full_name="Full Name",
             phone_number="+11111111",
-            sex=Sex.female,
-            pronoun="she/her/hers",
+            sex=sex,
+            pronoun=pronoun,
             tags=["one", "two"],
         )
     )
