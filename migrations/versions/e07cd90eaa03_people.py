@@ -24,6 +24,8 @@ def upgrade():
         sa.Column("reference_id", sa.Text(), nullable=True),
         sa.Column("email", sa.Text(), nullable=True),
         sa.Column("full_name", sa.Text(), nullable=False),
+        sa.Column("sex", sa.Text(), nullable=True),
+        sa.Column("pronoun", sa.Text(), nullable=True),
         sa.Column("birth_date", sa.DATE(), nullable=True),
         sa.Column("notes", sa.Text(), nullable=True),
         sa.Column("phone_number", sa.Text(), nullable=True),
@@ -61,6 +63,14 @@ def upgrade():
                 'unknown'
             )""",
             name="people_status",
+        ),
+        sa.CheckConstraint(
+            """sex IN (
+                'male',
+                'female',
+                'unknown'
+            )""",
+            name="people_sex",
         ),
     )
 

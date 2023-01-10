@@ -1,4 +1,4 @@
-from observer.common.types import Identifier, PetStatus, PlaceType
+from observer.common.types import Identifier, PetStatus, PlaceType, Sex
 from observer.context import Context
 from observer.entities.idp import IDP, Category, NewCategory, NewIDP
 from observer.entities.permissions import NewPermission, Permission
@@ -119,6 +119,8 @@ async def create_person(
             email="Full_Name@examples.com",
             full_name="Full Name",
             phone_number="+11111111",
+            sex=Sex.female,
+            pronoun="she/her/hers",
             tags=["one", "two"],
         )
     )

@@ -24,6 +24,12 @@ class Role(str, Enum):
     guest = "guest"
 
 
+class Sex(str, Enum):
+    male = "male"
+    female = "female"
+    unknown = "unknown"
+
+
 class DisplacedPersonStatus(str, Enum):
     consulted = "consulted"
     needs_call_back = "needs_call_back"

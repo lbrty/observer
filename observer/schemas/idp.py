@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pydantic import Field
 
-from observer.common.types import DisplacedPersonStatus, Identifier
+from observer.common.types import DisplacedPersonStatus, Identifier, Sex
 from observer.schemas.base import SchemaBase
 
 
@@ -28,6 +28,8 @@ class BaseIDP(SchemaBase):
     reference_id: Optional[str] = Field(None, description="Reference ID, maybe some of state issued IDs etc.")
     email: Optional[str] = Field(None, description="Contact email")
     full_name: str = Field(None, description="Full name")
+    sex: Optional[Sex] = Field(None, description="Person's sex")
+    pronoun: Optional[str] = Field(None, description="Person's pronouns")
     birth_date: Optional[datetime] = Field(None, description="Birth date")
     notes: Optional[str] = Field(None, description="Additional notes")
     phone_number: Optional[str] = Field(None, description="Primary phone number")
@@ -56,6 +58,8 @@ class IDPResponse(BaseIDP):
 
 class PersonalInfoResponse(SchemaBase):
     full_name: str = Field(None, description="Full name")
+    sex: Optional[Sex] = Field(None, description="Person's sex")
+    pronoun: Optional[str] = Field(None, description="Person's pronouns")
     email: Optional[str] = Field(None, description="Contact email")
     phone_number: Optional[str] = Field(None, description="Primary phone number")
     phone_number_additional: Optional[str] = Field(None, description="Displaced person ID")

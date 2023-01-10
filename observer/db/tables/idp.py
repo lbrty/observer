@@ -31,6 +31,8 @@ people = Table(
     Column("reference_id", Text(), nullable=True),
     Column("email", Text(), nullable=True),
     Column("full_name", Text(), nullable=False),
+    Column("sex", Text(), nullable=True),
+    Column("pronoun", Text(), nullable=True),
     Column("birth_date", DATE(), nullable=True),
     Column("notes", Text(), nullable=True),
     Column("phone_number", Text(), nullable=True),
@@ -54,6 +56,14 @@ people = Table(
             'unknown'
         )""",
         name="people_status",
+    ),
+    CheckConstraint(
+        """sex IN (
+            'male',
+            'female',
+            'unknown'
+        )""",
+        name="people_sex",
     ),
     # Indexes
     Index("ix_people_full_name", text("lower(full_name)")),

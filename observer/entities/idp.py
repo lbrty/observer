@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from observer.common.types import DisplacedPersonStatus, Identifier
+from observer.common.types import DisplacedPersonStatus, Identifier, Sex
 from observer.entities.world import Place
 
 
@@ -29,6 +29,8 @@ class BaseIDP(BaseModel):
     reference_id: Optional[str]
     email: Optional[str]
     full_name: str
+    sex: Optional[Sex]
+    pronoun: Optional[str]
     birth_date: Optional[date]
     notes: Optional[str]
     phone_number: Optional[str]
@@ -55,6 +57,8 @@ class UpdateIDP(BaseIDP):
 
 class PersonalInfo(BaseModel):
     full_name: Optional[str]
+    sex: Optional[Sex]
+    pronoun: Optional[str]
     email: Optional[str]
     phone_number: Optional[str]
     phone_number_additional: Optional[str]

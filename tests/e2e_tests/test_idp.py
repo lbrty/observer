@@ -4,6 +4,7 @@ from datetime import date
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
+from observer.common.types import Sex
 from observer.entities.permissions import NewPermission
 from observer.schemas.idp import NewIDPRequest, UpdateIDPRequest
 from observer.schemas.migration_history import (
@@ -47,6 +48,8 @@ async def test_create_idp_works_as_expected(
         email="Full_Name@examples.com",
         full_name="Full Name",
         phone_number="+11111111",
+        sex=Sex.female,
+        pronoun="she/her/hers",
         tags=["one", "two"],
     )
     resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
@@ -80,6 +83,8 @@ async def test_get_idp_works_as_expected(
         email="Full_Name@examples.com",
         full_name="Full Name",
         phone_number="+11111111",
+        sex=Sex.female,
+        pronoun="she/her/hers",
         phone_number_additional="+18181818",
         tags=["one", "two"],
     )
@@ -121,6 +126,8 @@ async def test_get_idp_personal_info_works_as_expected(
         project_id=project.id,
         email="Full_Name@examples.com",
         full_name="Full Name",
+        sex=Sex.female,
+        pronoun="she/her/hers",
         phone_number="+11111111",
         phone_number_additional="+18181818",
         tags=["one", "two"],
@@ -132,9 +139,12 @@ async def test_get_idp_personal_info_works_as_expected(
     idp_id = resp_json["id"]
     resp = await authorized_client.get(f"/idp/people/{idp_id}/personal-info")
     assert resp.status_code == status.HTTP_200_OK
+    print(resp.json())
     assert resp.json() == {
         "email": "Full_Name@examples.com",
         "full_name": "Full Name",
+        "sex": "female",
+        "pronoun": "she/her/hers",
         "phone_number": "+11111111",
         "phone_number_additional": "+18181818",
     }
@@ -166,6 +176,8 @@ async def test_update_idp_works_as_expected(
         email="Full_Name@examples.com",
         full_name="Full Name",
         phone_number="+11111111",
+        sex=Sex.male,
+        pronoun="he/him/his",
         phone_number_additional="+18181818",
         tags=["one", "two"],
     )
@@ -178,6 +190,8 @@ async def test_update_idp_works_as_expected(
         project_id=project.id,
         email="********",
         full_name="Full Name Updated",
+        sex=Sex.male,
+        pronoun="he/him/his",
         phone_number="+111111118888888",
         phone_number_additional="+48186818",
         tags=["one", "two", "three"],
@@ -190,6 +204,8 @@ async def test_update_idp_works_as_expected(
     assert resp.json() == {
         "email": "Full_Name@examples.com",
         "full_name": "Full Name Updated",
+        "pronoun": "he/him/his",
+        "sex": "male",
         "phone_number": "+111111118888888",
         "phone_number_additional": "+48186818",
     }
@@ -199,6 +215,8 @@ async def test_update_idp_works_as_expected(
         email="updated@email.com",
         full_name="Full Name Updated",
         phone_number="+111111118888888",
+        sex=Sex.male,
+        pronoun="he/him/his",
         phone_number_additional="+48186818",
         tags=["one", "two", "three"],
     )
@@ -225,6 +243,8 @@ async def test_update_idp_works_as_expected(
         "reference_id": None,
         "email": "********",
         "full_name": "Full Name Updated",
+        "sex": "male",
+        "pronoun": "he/him/his",
         "birth_date": None,
         "notes": None,
         "phone_number": "********",
@@ -252,7 +272,7 @@ async def test_delete_idp_works_as_expected(
             can_update=True,
             can_delete=True,
             can_create_projects=True,
-            can_read_documents=False,
+            can_read_documents=True,
             can_read_personal_info=True,
             can_invite_members=False,
             project_id=project.id,
@@ -264,6 +284,8 @@ async def test_delete_idp_works_as_expected(
         email="Full_Name@examples.com",
         full_name="Full Name",
         phone_number="+11111111",
+        sex=Sex.male,
+        pronoun="he/him/his",
         phone_number_additional="+18181818",
         tags=["one", "two"],
     )
@@ -300,6 +322,8 @@ async def test_get_idp_migration_history_works_as_expected(authorized_client, ap
         project_id=project.id,
         email="Full_Name@examples.com",
         full_name="Full Name",
+        sex=Sex.female,
+        pronoun="she/her/hers",
         phone_number="+11111111",
         phone_number_additional="+18181818",
         tags=["one", "two"],

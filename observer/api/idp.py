@@ -304,6 +304,8 @@ async def get_personal_info(
         ),
     )
     pi.full_name = idp_record.full_name
+    pi.sex = idp_record.sex
+    pi.pronoun = idp_record.pronoun
     return PersonalInfoResponse(**pi.dict())
 
 
