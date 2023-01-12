@@ -34,6 +34,7 @@ moto = {extras = ["s3"], version = "^4.0.12"}
 aiofiles = "^22.1.0"
 python-multipart = "^0.0.5"
 sendgrid = "^6.9.7"
+aiosmtplib = "^2.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"
