@@ -19,10 +19,11 @@ def upgrade():
     op.create_table(
         "family_members",
         sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("age_group", sa.Text(), nullable=False),
+        sa.Column("full_name", sa.Text(), nullable=True),
         sa.Column("birth_date", sa.DATE(), nullable=True),
         sa.Column("sex", sa.Text(), nullable=True),
         sa.Column("notes", sa.Text(), nullable=True),
+        sa.Column("age_group", sa.Text(), nullable=False),
         sa.Column("idp_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("project_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.ForeignKeyConstraint(

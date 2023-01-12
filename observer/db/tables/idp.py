@@ -81,10 +81,11 @@ family_members = Table(
     "family_members",
     metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")),
-    Column("age_group", Text(), nullable=False),
+    Column("full_name", Text(), nullable=True),
     Column("birth_date", DATE(), nullable=True),
     Column("sex", Text(), nullable=True),
     Column("notes", Text(), nullable=True),
+    Column("age_group", Text(), nullable=False),
     Column("idp_id", UUID(as_uuid=True), ForeignKey("people.id", ondelete="CASCADE"), nullable=True),
     Column("project_id", UUID(as_uuid=True), ForeignKey("projects.id", ondelete="SET NULL"), nullable=True),
     CheckConstraint(

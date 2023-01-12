@@ -60,7 +60,7 @@ def upgrade():
     op.create_index(op.f("ix_support_records_type"), "support_records", ["type"])
     op.create_index(op.f("ix_support_records_description"), "support_records", [sa.text("lower(description)")])
     op.create_index(op.f("ix_support_records_consultant_id"), "support_records", ["consultant_id"])
-    op.create_index(op.f("ix_support_records_beneficiary_age"), "support_records", [sa.text("beneficiary_age")])
+    op.create_index(op.f("ix_support_records_age_group"), "support_records", [sa.text("age_group")])
     op.create_index(op.f("ix_support_records_owner_id"), "support_records", ["owner_id"])
     op.create_index(op.f("ix_support_records_project_id"), "support_records", ["project_id"])
 
