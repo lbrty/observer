@@ -5,6 +5,7 @@ from observer.db import Database
 from observer.repositories.audit_logs import IAuditRepository
 from observer.repositories.categories import ICategoryRepository
 from observer.repositories.documents import IDocumentsRepository
+from observer.repositories.family_members import IFamilyRepository
 from observer.repositories.idp import IIDPRepository
 from observer.repositories.migration_history import IMigrationRepository
 from observer.repositories.permissions import IPermissionsRepository
@@ -19,6 +20,7 @@ from observer.services.categories import ICategoryService
 from observer.services.crypto import ICryptoService, IKeychain
 from observer.services.documents import IDocumentsService
 from observer.services.downloads import DownloadHandler
+from observer.services.family_members import IFamilyService
 from observer.services.idp import IIDPService
 from observer.services.jwt import JWTService
 from observer.services.mailer import IMailer
@@ -44,6 +46,7 @@ class Repositories:
     world: Optional[IWorldRepository] = None
     category: Optional[ICategoryRepository] = None
     idp: Optional[IIDPRepository] = None
+    family: Optional[IFamilyRepository] = None
     pets: Optional[IPetsRepository] = None
     documents: Optional[IDocumentsRepository] = None
     support: Optional[ISupportRecordsRepository] = None
@@ -70,6 +73,7 @@ class Context:
     world_service: Optional[IWorldService] = None
     category_service: Optional[ICategoryService] = None
     idp_service: Optional[IIDPService] = None
+    family_service: Optional[IFamilyService] = None
     pets_service: Optional[IPetsService] = None
     documents_service: Optional[IDocumentsService] = None
     support_service: Optional[ISupportRecordsService] = None

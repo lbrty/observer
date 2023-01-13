@@ -40,6 +40,7 @@ from observer.entities.world import NewCountry, NewState
 from observer.repositories.audit_logs import AuditRepository
 from observer.repositories.categories import CategoryRepository
 from observer.repositories.documents import DocumentsRepository
+from observer.repositories.family_members import FamilyRepository
 from observer.repositories.idp import IDPRepository
 from observer.repositories.migration_history import MigrationRepository
 from observer.repositories.permissions import PermissionsRepository
@@ -55,6 +56,7 @@ from observer.services.categories import CategoryService
 from observer.services.crypto import CryptoService
 from observer.services.documents import DocumentsService
 from observer.services.downloads import DownloadHandler
+from observer.services.family_members import FamilyService
 from observer.services.idp import IDPService
 from observer.services.jwt import JWTService
 from observer.services.keychain import Keychain
@@ -275,6 +277,7 @@ async def app_context(db_engine):
         world=WorldRepository(ctx.db),
         category=CategoryRepository(ctx.db),
         idp=IDPRepository(ctx.db),
+        family=FamilyRepository(ctx.db),
         pets=PetsRepository(ctx.db),
         documents=DocumentsRepository(ctx.db),
         support=SupportRecordsRepository(ctx.db),
@@ -329,7 +332,7 @@ async def app_context(db_engine):
         ctx.world_service,
         ctx.secrets_service,
     )
-
+    ctx.family_service = FamilyService(ctx.repos.family)
     ctx.pets_service = PetsService(ctx.repos.pets)
     ctx.documents_service = DocumentsService(ctx.repos.documents, ctx.crypto_service)
     ctx.support_service = SupportRecordsService(ctx.repos.support)

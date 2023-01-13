@@ -65,6 +65,7 @@ class Settings(SettingsBase):
     swagger_output_file: Path = here / "docs/openapi.yml"
 
     # Mailer settings
+    mailer_type: str = "dummy"
     from_email: str = "no-reply@email.com"
     mfa_reset_subject: str = "MFA has been reset"
     auth_password_change_subject: str = "Your password has been updated"

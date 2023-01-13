@@ -82,3 +82,21 @@ class SendgridMailer(IMailer):
                 raise InternalError(message="Unable send Sendgrid email")
 
         asyncio.run(dispatch(message))
+
+
+class DummyMailer(IMailer):
+    async def send(self, message: EmailMessage):
+        ...
+
+
+def get_mailer(mailer_type: str) -> IMailer:
+    if mailer_type == "gmail":
+        return GmailMailer()
+
+    if mailer_type == "sendgrid":
+        return SendgridMailer()
+
+    if mailer_type == "dummy":
+        return DummyMailer()
+
+    raise InternalError(message=f"Unknown mailer {mailer_type}")
