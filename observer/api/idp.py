@@ -5,6 +5,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response, Upload
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
+from observer.api.exceptions import ConflictError
 from observer.common.exceptions import get_api_errors
 from observer.common.permissions import (
     assert_can_see_private_info,
@@ -22,6 +23,7 @@ from observer.components.services import (
     category_service,
     documents_service,
     documents_upload,
+    family_service,
     idp_service,
     migrations_service,
     permissions_service,
@@ -32,6 +34,11 @@ from observer.components.services import (
 from observer.entities.base import SomeUser
 from observer.entities.idp import PersonalInfo
 from observer.schemas.documents import DocumentResponse, NewDocumentRequest
+from observer.schemas.family_members import (
+    FamilyMemberResponse,
+    NewFamilyMemberRequest,
+    UpdateFamilyMemberRequest,
+)
 from observer.schemas.idp import (
     CategoryResponse,
     IDPResponse,
@@ -46,6 +53,7 @@ from observer.schemas.world import PlaceResponse
 from observer.services.audit_logs import IAuditService
 from observer.services.categories import ICategoryService
 from observer.services.documents import IDocumentsService
+from observer.services.family_members import IFamilyService
 from observer.services.idp import IIDPService
 from observer.services.migration_history import IMigrationService
 from observer.services.permissions import IPermissionsService
@@ -456,11 +464,11 @@ async def idp_upload_document(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    audits: IAuditService = Depends(audit_service),
     idp: IIDPService = Depends(idp_service),
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
     uploads: UploadHandler = Depends(documents_upload),
+    audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
             tag="endpoint=idp_upload_document,action=create:document",
@@ -524,3 +532,170 @@ async def idp_get_documents(
     assert_docs_readable(user, permission)
     docs = await documents.get_by_owner_id(idp_id)
     return [DocumentResponse(**doc.dict()) for doc in docs]
+
+
+@router.post(
+    "/people/{idp_id}/family-members",
+    response_model=FamilyMemberResponse,
+    status_code=status.HTTP_201_CREATED,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+        status.HTTP_409_CONFLICT,
+    ),
+    tags=["idp", "people", "family members"],
+)
+async def add_persons_family_member(
+    tasks: BackgroundTasks,
+    idp_id: Identifier,
+    new_member: NewFamilyMemberRequest,
+    user: SomeUser = Depends(authenticated_user),
+    idp: IIDPService = Depends(idp_service),
+    family: IFamilyService = Depends(family_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    audits: IAuditService = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=add_persons_family_member,action=create:family_member",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
+) -> FamilyMemberResponse:
+    """Add family member for a person"""
+    idp_record = await idp.get_idp(idp_id)
+    permission = await permissions.find(idp_record.project_id, user.id)
+    if idp_record.project_id != new_member.project_id:
+        raise ConflictError(message="Project ID is not the same as in request body")
+
+    assert_viewable(user, permission)
+    assert_can_see_private_info(user, permission)
+    member = await family.add_member(new_member)
+    audit_log = props.new_event(
+        f"idp_id={idp_id},project_id={new_member.project_id},member_id={member.id},ref_id={user.ref_id}",
+        jsonable_encoder(
+            member,
+            exclude={"id"},
+            exclude_none=True,
+        ),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return FamilyMemberResponse(**member.dict())
+
+
+@router.get(
+    "/people/{idp_id}/family-members",
+    response_model=List[FamilyMemberResponse],
+    status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
+    tags=["idp", "people", "family members"],
+)
+async def get_persons_family_members(
+    idp_id: Identifier,
+    user: SomeUser = Depends(authenticated_user),
+    idp: IIDPService = Depends(idp_service),
+    family: IFamilyService = Depends(family_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+) -> List[FamilyMemberResponse]:
+    """Get family members for a person"""
+    idp_record = await idp.get_idp(idp_id)
+    permission = await permissions.find(idp_record.project_id, user.id)
+    assert_viewable(user, permission)
+    assert_can_see_private_info(user, permission)
+    members = await family.get_by_person(idp_id)
+    return [FamilyMemberResponse(**member.dict()) for member in members]
+
+
+@router.put(
+    "/people/{idp_id}/family-members/{member_id}",
+    response_model=FamilyMemberResponse,
+    status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
+    tags=["idp", "people", "family members"],
+)
+async def update_persons_family_member(
+    tasks: BackgroundTasks,
+    idp_id: Identifier,
+    member_id: Identifier,
+    updates: UpdateFamilyMemberRequest,
+    user: SomeUser = Depends(authenticated_user),
+    idp: IIDPService = Depends(idp_service),
+    family: IFamilyService = Depends(family_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    audits: IAuditService = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=update_persons_family_member,action=update:family_member",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
+) -> FamilyMemberResponse:
+    """Add family member for a person"""
+    idp_record = await idp.get_idp(idp_id)
+    permission = await permissions.find(idp_record.project_id, user.id)
+    assert_viewable(user, permission)
+    assert_can_see_private_info(user, permission)
+    member = await family.get_member(member_id)
+    audit_log = props.new_event(
+        f"idp_id={idp_id},project_id={updates.project_id},member_id={member.id},ref_id={user.ref_id}",
+        jsonable_encoder(
+            member,
+            exclude={"id"},
+            exclude_none=True,
+        ),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return FamilyMemberResponse(**member.dict())
+
+
+@router.delete(
+    "/people/{idp_id}/family-members/{member_id}",
+    response_model=FamilyMemberResponse,
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
+    tags=["idp", "people", "family members"],
+)
+async def delete_persons_family_member(
+    tasks: BackgroundTasks,
+    idp_id: Identifier,
+    member_id: Identifier,
+    updates: UpdateFamilyMemberRequest,
+    user: SomeUser = Depends(authenticated_user),
+    idp: IIDPService = Depends(idp_service),
+    family: IFamilyService = Depends(family_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    audits: IAuditService = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=delete_persons_family_member,action=delete:family_member",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
+) -> Response:
+    """Delete family member for a person"""
+    idp_record = await idp.get_idp(idp_id)
+    permission = await permissions.find(idp_record.project_id, user.id)
+    assert_viewable(user, permission)
+    assert_can_see_private_info(user, permission)
+    member = await family.get_member(member_id)
+    audit_log = props.new_event(
+        f"idp_id={idp_id},project_id={updates.project_id},member_id={member.id},ref_id={user.ref_id}",
+        None,
+    )
+    tasks.add_task(audits.add_event, audit_log)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

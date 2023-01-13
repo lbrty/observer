@@ -6,6 +6,7 @@ from observer.services.categories import ICategoryService
 from observer.services.crypto import ICryptoService
 from observer.services.documents import IDocumentsService
 from observer.services.downloads import DownloadHandler
+from observer.services.family_members import IFamilyService
 from observer.services.idp import IIDPService
 from observer.services.jwt import JWTService
 from observer.services.keychain import IKeychain
@@ -114,6 +115,13 @@ async def idp_service() -> IIDPService:
         return ctx.idp_service
 
     raise RuntimeError("IDPService is None")
+
+
+async def family_service() -> IFamilyService:
+    if ctx.family_service:
+        return ctx.family_service
+
+    raise RuntimeError("FamilyService is None")
 
 
 async def pets_service() -> IPetsService:
