@@ -29,12 +29,26 @@ class IMailer(Protocol):
 
 
 class GmailMailer(IMailer):
-    port: int = 465
-    hostname: str = "smtp.gmail.com"
+    port: int
+    hostname: str
+    username: str
+    password: str
 
-    def __init__(self, username: str, password: str):
-        self.username = username
-        self.password = password
+    def __init__(self):
+        if username := os.getenv("GMAIL_USERNAME"):
+            self.username = username
+
+        if password := os.getenv("GMAIL_PASSWORD"):
+            self.password = password
+
+        if not self.username:
+            raise InternalError(message="GMAIL_USERNAME is not set")
+
+        if not self.password:
+            raise InternalError(message="GMAIL_PASSWORD is not set")
+
+        self.port = int(os.getenv("GMAIL_HOSTNAME", 465))
+        self.hostname = os.getenv("GMAIL_HOSTNAME", "smtp.gmail.com")
 
     async def send(self, message: EmailMessage):
         msg = Message()
