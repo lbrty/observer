@@ -660,7 +660,6 @@ async def update_persons_family_member(
 
 @router.delete(
     "/people/{idp_id}/family-members/{member_id}",
-    response_model=FamilyMemberResponse,
     status_code=status.HTTP_204_NO_CONTENT,
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
