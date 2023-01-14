@@ -8,6 +8,7 @@ from pytoolz.functional import pipe
 from observer.api import (
     account,
     auth,
+    categories,
     documents,
     health,
     idp,
@@ -39,6 +40,7 @@ def init_integrations(env: Environment) -> Environment:
 def init_routes(env: Environment) -> Environment:
     env.app.include_router(account.router)
     env.app.include_router(auth.router)
+    env.app.include_router(categories.router)
     env.app.include_router(documents.router)
     env.app.include_router(idp.router)
     env.app.include_router(health.router)
