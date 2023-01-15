@@ -9,7 +9,7 @@ class BaseFamilyMember(ModelBase):
     full_name: Optional[str]
     birth_date: Optional[date]
     sex: Optional[Sex]
-    notes: str
+    notes: Optional[str]
     age_group: AgeGroup
     idp_id: Identifier
     project_id: Identifier
