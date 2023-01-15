@@ -2459,7 +2459,29 @@
           "invites"
         ],
         "summary": "Join With Invite",
+        "description": "Once users receive invites we want them to hit this endpoint with new account password.\nGiven invite is valid and password is strong enough we do the following things:\n\n    1. Hash password and update user's password,\n    2. Confirm user automatically,\n    3. Issue session token and refresh token (aka authenticate users).",
         "operationId": "join_with_invite_invites_join__code__post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            },
+            "name": "code",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "X-Forwarded-For",
+              "type": "string",
+              "default": ""
+            },
+            "name": "X-Forwarded-For",
+            "in": "header"
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
