@@ -6,7 +6,7 @@ from observer.repositories.audit_logs import IAuditRepository
 from observer.repositories.categories import ICategoryRepository
 from observer.repositories.documents import IDocumentsRepository
 from observer.repositories.family_members import IFamilyRepository
-from observer.repositories.idp import IIDPRepository
+from observer.repositories.people import IIDPRepository
 from observer.repositories.migration_history import IMigrationRepository
 from observer.repositories.permissions import IPermissionsRepository
 from observer.repositories.pets import IPetsRepository
@@ -21,7 +21,7 @@ from observer.services.crypto import ICryptoService, IKeychain
 from observer.services.documents import IDocumentsService
 from observer.services.downloads import DownloadHandler
 from observer.services.family_members import IFamilyService
-from observer.services.idp import IIDPService
+from observer.services.people import IIDPService
 from observer.services.jwt import JWTService
 from observer.services.mailer import IMailer
 from observer.services.mfa import IMFAService

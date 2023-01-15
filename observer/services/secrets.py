@@ -1,6 +1,6 @@
 from typing import IO, Any, Protocol
 
-from observer.entities.idp import IDP, PersonalInfo
+from observer.entities.people import IDP, PersonalInfo
 from observer.services.crypto import ICryptoService
 
 

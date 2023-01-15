@@ -4,7 +4,7 @@ from sqlalchemy import delete, insert, select, update
 
 from observer.common.types import Identifier
 from observer.db import Database
-from observer.db.tables.idp import family_members
+from observer.db.tables.people import family_members
 from observer.entities.family_members import (
     FamilyMember,
     NewFamilyMember,

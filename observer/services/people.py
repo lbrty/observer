@@ -2,9 +2,9 @@ from typing import Optional, Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import EncryptedFieldValue, Identifier
-from observer.entities.idp import IDP, NewIDP, PersonalInfo, UpdateIDP
-from observer.repositories.idp import IIDPRepository
-from observer.schemas.idp import NewIDPRequest, UpdateIDPRequest
+from observer.entities.people import IDP, NewIDP, PersonalInfo, UpdateIDP
+from observer.repositories.people import IIDPRepository
+from observer.schemas.people import NewIDPRequest, UpdateIDPRequest
 from observer.services.categories import ICategoryService
 from observer.services.crypto import ICryptoService
 from observer.services.projects import IProjectsService

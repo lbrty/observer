@@ -3,10 +3,10 @@ from typing import List, Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier, SomeStr
-from observer.entities.idp import Category, NewCategory, UpdateCategory
+from observer.entities.people import Category, NewCategory, UpdateCategory
 from observer.repositories.categories import ICategoryRepository
 from observer.schemas.audit_logs import NewAuditLog
-from observer.schemas.idp import NewCategoryRequest, UpdateCategoryRequest
+from observer.schemas.people import NewCategoryRequest, UpdateCategoryRequest
 
 
 class ICategoryService(Protocol):

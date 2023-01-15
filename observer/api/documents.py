@@ -28,7 +28,7 @@ from observer.schemas.documents import DocumentResponse
 from observer.services.audit_logs import IAuditService
 from observer.services.documents import IDocumentsService
 from observer.services.downloads import DownloadHandler
-from observer.services.idp import IIDPService
+from observer.services.people import IIDPService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
 from observer.services.storage import IStorage

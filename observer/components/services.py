@@ -7,7 +7,7 @@ from observer.services.crypto import ICryptoService
 from observer.services.documents import IDocumentsService
 from observer.services.downloads import DownloadHandler
 from observer.services.family_members import IFamilyService
-from observer.services.idp import IIDPService
+from observer.services.people import IIDPService
 from observer.services.jwt import JWTService
 from observer.services.keychain import IKeychain
 from observer.services.mailer import IMailer

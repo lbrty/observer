@@ -1,7 +1,7 @@
 from observer.common.types import Identifier, PetStatus, PlaceType, Sex
 from observer.context import Context
 from observer.entities.family_members import FamilyMember
-from observer.entities.idp import IDP, Category, NewCategory, NewIDP
+from observer.entities.people import IDP, Category, NewCategory, NewIDP
 from observer.entities.permissions import NewPermission, Permission
 from observer.entities.pets import NewPet, Pet
 from observer.entities.projects import NewProject, Project

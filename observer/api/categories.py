@@ -9,7 +9,7 @@ from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles
 from observer.components.services import audit_service, category_service
 from observer.entities.base import SomeUser
-from observer.schemas.idp import (
+from observer.schemas.people import (
     CategoryResponse,
     NewCategoryRequest,
     UpdateCategoryRequest,

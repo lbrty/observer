@@ -7,7 +7,7 @@ from observer.repositories.audit_logs import AuditRepository
 from observer.repositories.categories import CategoryRepository
 from observer.repositories.documents import DocumentsRepository
 from observer.repositories.family_members import FamilyRepository
-from observer.repositories.idp import IDPRepository
+from observer.repositories.people import IDPRepository
 from observer.repositories.migration_history import MigrationRepository
 from observer.repositories.permissions import PermissionsRepository
 from observer.repositories.pets import PetsRepository
@@ -22,7 +22,7 @@ from observer.services.crypto import CryptoService
 from observer.services.documents import DocumentsService
 from observer.services.downloads import DownloadHandler
 from observer.services.family_members import FamilyService
-from observer.services.idp import IDPService
+from observer.services.people import IDPService
 from observer.services.jwt import JWTService
 from observer.services.keychain import Keychain
 from observer.services.mailer import get_mailer

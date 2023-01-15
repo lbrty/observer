@@ -31,14 +31,14 @@ from observer.components.services import (
     world_service,
 )
 from observer.entities.base import SomeUser
-from observer.entities.idp import PersonalInfo
+from observer.entities.people import PersonalInfo
 from observer.schemas.documents import DocumentResponse, NewDocumentRequest
 from observer.schemas.family_members import (
     FamilyMemberResponse,
     NewFamilyMemberRequest,
     UpdateFamilyMemberRequest,
 )
-from observer.schemas.idp import (
+from observer.schemas.people import (
     IDPResponse,
     NewIDPRequest,
     PersonalInfoResponse,
@@ -49,7 +49,7 @@ from observer.schemas.world import PlaceResponse
 from observer.services.audit_logs import IAuditService
 from observer.services.documents import IDocumentsService
 from observer.services.family_members import IFamilyService
-from observer.services.idp import IIDPService
+from observer.services.people import IIDPService
 from observer.services.migration_history import IMigrationService
 from observer.services.permissions import IPermissionsService
 from observer.services.secrets import ISecretsService

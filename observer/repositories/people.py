@@ -4,8 +4,8 @@ from sqlalchemy import delete, insert, select, update
 
 from observer.common.types import EncryptedFieldValue, Identifier
 from observer.db import Database
-from observer.db.tables.idp import people
-from observer.entities.idp import IDP, NewIDP, UpdateIDP
+from observer.db.tables.people import people
+from observer.entities.people import IDP, NewIDP, UpdateIDP
 
 
 class IIDPRepository(Protocol):

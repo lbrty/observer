@@ -4,8 +4,8 @@ from sqlalchemy import delete, insert, select, update
 
 from observer.common.types import Identifier, SomeStr
 from observer.db import Database
-from observer.db.tables.idp import categories
-from observer.entities.idp import Category, NewCategory, UpdateCategory
+from observer.db.tables.people import categories
+from observer.entities.people import Category, NewCategory, UpdateCategory
 
 
 class ICategoryRepository(Protocol):
