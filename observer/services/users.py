@@ -79,7 +79,7 @@ class IUsersService(Protocol):
     async def create_invite(self, user_id: Identifier) -> Invite:
         raise NotImplementedError
 
-    async def get_invite(self, code: str) -> Optional[Invite]:
+    async def get_invite(self, code: str, validate: bool = True) -> Optional[Invite]:
         raise NotImplementedError
 
     async def delete_invite(self, code: str) -> Invite:
@@ -186,7 +186,7 @@ class UsersService(IUsersService):
         delta = timedelta(minutes=settings.invite_expiration_minutes)
         return await self.repo.create_invite(user_id, shortuuid.uuid(), now + delta)
 
-    async def get_invite(self, code: str) -> Optional[Invite]:
+    async def get_invite(self, code: str, validate: bool = True) -> Optional[Invite]:
         invite = await self.repo.get_invite(code)
 
         # If user is authenticated then we need to check
@@ -194,6 +194,9 @@ class UsersService(IUsersService):
         # and if not so then we need to return not found error.
         if not invite:
             raise NotFoundError(message="Invite not found")
+
+        if not validate:
+            return invite
 
         if invite.expires_at < datetime.now(tz=timezone.utc):
             raise InviteExpiredError(message="Invite has already expired")

@@ -119,7 +119,7 @@ async def delete_invite(
         use_cache=False,
     ),
 ) -> Response:
-    invite = await users.get_invite(code)
+    invite = await users.get_invite(code, validate=False)
     await users.delete_invite(code)
     if delete_user:
         deleted_user = await users.delete_user(user.id)
