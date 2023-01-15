@@ -230,6 +230,8 @@ async def test_update_idp_works_as_expected(
         "full_name": "Full Name Updated",
         "phone_number": "+111111118888888",
         "phone_number_additional": "+48186818",
+        "pronoun": "he/him/his",
+        "sex": "male",
     }
 
     resp = await authorized_client.get(f"/people/{idp_id}")
