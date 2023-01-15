@@ -359,13 +359,13 @@ async def test_get_idp_migration_history_works_as_expected(authorized_client, ap
 async def test_upload_document_for_idp_works(
     authorized_client,
     app_context,
-    default_idp,
+    default_person,
     markdown_file,
     env_settings,
     fs_storage,
 ):
     files = {"file": ("readme.md", markdown_file, "text/markdown")}
-    resp = await authorized_client.post(f"/people/{default_idp.id}/document", files=files)
+    resp = await authorized_client.post(f"/people/{default_person.id}/document", files=files)
     assert resp.status_code == status.HTTP_201_CREATED
     document = await app_context.documents_service.get_document(resp.json()["id"])
     assert os.path.exists(document.path)
@@ -374,7 +374,7 @@ async def test_upload_document_for_idp_works(
 async def test_get_persons_documents_works(
     authorized_client,
     app_context,
-    default_idp,
+    default_person,
     markdown_file,
     textfile,
     env_settings,
@@ -382,7 +382,7 @@ async def test_get_persons_documents_works(
 ):
     documents = []
     files = {"file": ("readme.md", markdown_file, "text/markdown")}
-    resp = await authorized_client.post(f"/people/{default_idp.id}/document", files=files)
+    resp = await authorized_client.post(f"/people/{default_person.id}/document", files=files)
     assert resp.status_code == status.HTTP_201_CREATED
     document = await app_context.documents_service.get_document(resp.json()["id"])
     assert os.path.exists(document.path)
@@ -392,7 +392,7 @@ async def test_get_persons_documents_works(
     assert os.path.exists(document.path)
 
     resp = await authorized_client.post(
-        f"/people/{default_idp.id}/document",
+        f"/people/{default_person.id}/document",
         files={"file": ("notes.txt", textfile, "text/plain")},
     )
     assert resp.status_code == status.HTTP_201_CREATED
@@ -401,41 +401,41 @@ async def test_get_persons_documents_works(
     document = await app_context.documents_service.get_document(documents[1]["id"])
     assert os.path.exists(document.path)
 
-    resp = await authorized_client.get(f"/people/{default_idp.id}/documents")
+    resp = await authorized_client.get(f"/people/{default_person.id}/documents")
     assert resp.json() == documents
 
 
 async def test_delete_person_deletes_documents_and_files(
     authorized_client,
     app_context,
-    default_idp,
+    default_person,
     markdown_file,
     textfile,
     env_settings,
     fs_storage,
 ):
     resp = await authorized_client.post(
-        f"/people/{default_idp.id}/document",
+        f"/people/{default_person.id}/document",
         files={"file": ("readme.md", markdown_file, "text/markdown")},
     )
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp = await authorized_client.post(
-        f"/people/{default_idp.id}/document",
+        f"/people/{default_person.id}/document",
         files={"file": ("notes.txt", textfile, "text/plain")},
     )
     assert resp.status_code == status.HTTP_201_CREATED
 
-    folder_path = os.path.join(env_settings.documents_path, str(default_idp.id))
+    folder_path = os.path.join(env_settings.documents_path, str(default_person.id))
     documents = await app_context.storage.ls(folder_path)
     assert len(documents) == 2
 
-    resp = await authorized_client.delete(f"/people/{default_idp.id}")
+    resp = await authorized_client.delete(f"/people/{default_person.id}")
     assert resp.status_code == status.HTTP_204_NO_CONTENT
 
-    resp = await authorized_client.get(f"/people/{default_idp.id}/documents")
+    resp = await authorized_client.get(f"/people/{default_person.id}/documents")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
-    folder_path = os.path.join(env_settings.documents_path, str(default_idp.id))
+    folder_path = os.path.join(env_settings.documents_path, str(default_person.id))
     documents = await app_context.storage.ls(folder_path)
     assert len(documents) == 0
