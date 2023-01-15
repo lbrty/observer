@@ -509,7 +509,6 @@ async def delete_persons_family_member(
     tasks: BackgroundTasks,
     idp_id: Identifier,
     member_id: Identifier,
-    updates: UpdateFamilyMemberRequest,
     user: SomeUser = Depends(authenticated_user),
     idp: IIDPService = Depends(idp_service),
     family: IFamilyService = Depends(family_service),
@@ -528,9 +527,9 @@ async def delete_persons_family_member(
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_viewable(user, permission)
     assert_can_see_private_info(user, permission)
-    member = await family.get_member(member_id)
+    member = await family.delete_member(member_id)
     audit_log = props.new_event(
-        f"idp_id={idp_id},project_id={updates.project_id},member_id={member.id},ref_id={user.ref_id}",
+        f"idp_id={idp_id},project_id={member.project_id},member_id={member.id},ref_id={user.ref_id}",
         None,
     )
     tasks.add_task(audits.add_event, audit_log)
