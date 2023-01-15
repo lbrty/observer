@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime, timedelta, timezone
 from typing import Protocol, Tuple
 
@@ -63,6 +64,9 @@ class IAuthService(Protocol):
         raise NotImplementedError
 
     async def reset_password_with_code(self, code: str, new_password: str) -> User:
+        raise NotImplementedError
+
+    async def gen_password(self) -> str:
         raise NotImplementedError
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
@@ -183,6 +187,10 @@ class AuthService(IAuthService):
 
             if not await self.mfa_service.valid(totp_code, decrypted_secret.decode()):
                 raise TOTPError(message="Invalid totp code")
+
+    async def gen_password(self) -> str:
+        random_bytes = self.crypto_service.gen_key(settings.aes_key_bits)
+        return base64.b64encode(random_bytes).decode()
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
         payload = TokenData(ref_id=ref_id)
