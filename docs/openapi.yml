@@ -127,6 +127,133 @@
         }
       }
     },
+    "/admin/invites": {
+      "post": {
+        "tags": [
+          "admin",
+          "invites"
+        ],
+        "summary": "Create Invite",
+        "operationId": "create_invite_admin_invites_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserInviteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInviteResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/invites{invite_id}": {
+      "delete": {
+        "tags": [
+          "admin",
+          "invites"
+        ],
+        "summary": "Delete Invite",
+        "operationId": "delete_invite_admin_invites_invite_id__delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/token": {
       "post": {
         "tags": [
@@ -8035,6 +8162,56 @@
               }
             ],
             "description": "Project ID"
+          }
+        }
+      },
+      "UserInviteRequest": {
+        "title": "UserInviteRequest",
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "User email to send a new invite",
+            "format": "email"
+          }
+        }
+      },
+      "UserInviteResponse": {
+        "title": "UserInviteResponse",
+        "required": [
+          "code",
+          "user_id",
+          "expires_at"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string",
+            "description": "Invite code"
+          },
+          "user_id": {
+            "title": "User Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "User ID"
+          },
+          "expires_at": {
+            "title": "Expires At",
+            "type": "string",
+            "description": "Expiration datetime",
+            "format": "date-time"
           }
         }
       },
