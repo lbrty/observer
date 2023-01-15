@@ -43,7 +43,7 @@ class IUsersService(Protocol):
     async def get_by_email(self, email: str) -> SomeUser:
         raise NotImplementedError
 
-    async def create_user(self, new_user: NewUserRequest) -> User:
+    async def create_user(self, new_user: NewUserRequest, is_active: bool = True) -> User:
         raise NotImplementedError
 
     async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
@@ -109,7 +109,7 @@ class UsersService(IUsersService):
     async def get_by_email(self, email: str) -> SomeUser:
         return await self.repo.get_by_email(email)
 
-    async def create_user(self, new_user: NewUserRequest) -> User:
+    async def create_user(self, new_user: NewUserRequest, is_active: bool = True) -> User:
         ref_id = shortuuid.uuid(name=new_user.email)
         password_hash = bcrypt.hash_password(new_user.password.get_secret_value())
         user = NewUser(
@@ -118,7 +118,7 @@ class UsersService(IUsersService):
             full_name=new_user.full_name,
             password_hash=password_hash,
             role=new_user.role,
-            is_active=True,
+            is_active=is_active,
             is_confirmed=False,
         )
         return await self.repo.create_user(user)
