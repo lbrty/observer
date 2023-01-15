@@ -135,6 +135,27 @@
         ],
         "summary": "Create Invite",
         "operationId": "create_invite_admin_invites_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "X-Forwarded-For",
+              "type": "string",
+              "default": ""
+            },
+            "name": "X-Forwarded-For",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -209,14 +230,64 @@
         }
       }
     },
-    "/admin/invites{invite_id}": {
+    "/admin/invites{code}": {
       "delete": {
         "tags": [
           "admin",
           "invites"
         ],
         "summary": "Delete Invite",
-        "operationId": "delete_invite_admin_invites_invite_id__delete",
+        "operationId": "delete_invite_admin_invites_code__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "code",
+            "in": "path"
+          },
+          {
+            "description": "If set then related user will be deleted",
+            "required": false,
+            "schema": {
+              "title": "Delete User",
+              "type": "boolean",
+              "description": "If set then related user will be deleted",
+              "default": false
+            },
+            "name": "delete_user",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "X-Forwarded-For",
+              "type": "string",
+              "default": ""
+            },
+            "name": "X-Forwarded-For",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "responses": {
           "204": {
             "description": "Successful Response"
@@ -247,6 +318,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -8168,7 +8249,8 @@
       "UserInviteRequest": {
         "title": "UserInviteRequest",
         "required": [
-          "email"
+          "email",
+          "role"
         ],
         "type": "object",
         "properties": {
@@ -8177,6 +8259,14 @@
             "type": "string",
             "description": "User email to send a new invite",
             "format": "email"
+          },
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Role"
+              }
+            ],
+            "description": "Role of a user"
           }
         }
       },
