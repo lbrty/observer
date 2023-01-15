@@ -25,7 +25,7 @@ class Settings(SettingsBase):
     title: str = "Observer API"
     description: str = "Observer API server"
     version: str = "0.1.0"
-    app_domain: str = "https://observer.app"
+    app_domain: str = "observer.app"
 
     # Invite only mode
     invite_only: bool = False
