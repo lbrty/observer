@@ -152,7 +152,11 @@ async def token_register(
 @router.post(
     "/change-password",
     status_code=status.HTTP_204_NO_CONTENT,
-    responses=get_api_errors(status.HTTP_400_BAD_REQUEST, status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN),
+    responses=get_api_errors(
+        status.HTTP_400_BAD_REQUEST,
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+    ),
     tags=["auth"],
 )
 async def change_password(
@@ -178,10 +182,7 @@ async def change_password(
             to_email=user.email,
             from_email=settings.from_email,
             subject=settings.auth_password_change_subject,
-            body=(
-                "Your account password has been updated "
-                f"at {datetime.now(tz=timezone.utc).strftime('%m/%d/%Y, %H:%M:%S')}."
-            ),
+            body=f"Your password has been updated at {datetime.now(tz=timezone.utc).strftime('%m/%d/%Y, %H:%M:%S')}.",
         ),
     )
     audit_log = props.new_event(
