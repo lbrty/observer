@@ -64,6 +64,9 @@ class IUsersService(Protocol):
     async def confirm_user(self, user_id: Optional[Identifier], code: str) -> User:
         raise NotImplementedError
 
+    async def just_confirm_user(self, user_id: Optional[Identifier]) -> User:
+        raise NotImplementedError
+
     async def create_confirmation(self, user_id: Identifier) -> Confirmation:
         raise NotImplementedError
 
@@ -149,7 +152,7 @@ class UsersService(IUsersService):
         if given_backup_code not in decrypted_backup_codes.decode().split(","):
             raise TOTPInvalidBackupCodeError(message="Invalid backup code")
 
-    async def confirm_user(self, user_id: Identifier | None, code: str) -> User:
+    async def confirm_user(self, user_id: Optional[Identifier], code: str) -> User:
         confirmation = await self.get_confirmation(code)
 
         # If user is authenticated then we need to check
@@ -172,6 +175,9 @@ class UsersService(IUsersService):
 
         await self.repo.confirm_user(confirmation.user_id)
         return user
+
+    async def just_confirm_user(self, user_id: Optional[Identifier]) -> User:
+        return await self.repo.confirm_user(user_id)
 
     async def create_confirmation(self, user_id: Identifier) -> Confirmation:
         now = datetime.now(tz=timezone.utc)
