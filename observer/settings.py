@@ -29,7 +29,7 @@ class Settings(SettingsBase):
 
     # Invite only mode
     invite_only: bool = False
-    admin_emails: List[str] = []
+    admin_emails: List[str] = ["admin@examples.com"]
     # Keystore and RSA key settings
     keystore_path: str = "keys"
     key_size: int = 2048
