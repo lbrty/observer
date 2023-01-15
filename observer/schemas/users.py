@@ -55,3 +55,7 @@ class UserInviteResponse(SchemaBase):
     code: str = Field(..., description="Invite code")
     user_id: Identifier = Field(..., description="User ID")
     expires_at: datetime = Field(..., description="Expiration datetime")
+
+
+class InviteJoinRequest(SchemaBase):
+    password: SecretStr = Field(..., description="Password which user has provided")

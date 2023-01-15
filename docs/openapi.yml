@@ -2453,6 +2453,67 @@
         }
       }
     },
+    "/invites/join/{code}": {
+      "post": {
+        "tags": [
+          "invites"
+        ],
+        "summary": "Join With Invite",
+        "operationId": "join_with_invite_invites_join__code__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InviteJoinRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/APIError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -6322,6 +6383,22 @@
             "type": "string",
             "description": "Update date",
             "format": "date-time"
+          }
+        }
+      },
+      "InviteJoinRequest": {
+        "title": "InviteJoinRequest",
+        "required": [
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "password": {
+            "title": "Password",
+            "type": "string",
+            "description": "Password which user has provided",
+            "format": "password",
+            "writeOnly": true
           }
         }
       },
