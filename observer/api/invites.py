@@ -86,6 +86,13 @@ async def join_with_invite(
         )
     )
 
+    # Mark an event of first registration datetime
+    audit_log = props.new_event(
+        f"action=token:register,ref_id={user.ref_id}",
+        data=dict(ref_id=user.ref_id, role=user.role.value),
+    )
+    tasks.add_task(audits.add_event, audit_log)
+
     # Now we need to save login event
     audit_log = props.new_event(
         f"action=token:login,source=invite,ref_id={user.ref_id}",
