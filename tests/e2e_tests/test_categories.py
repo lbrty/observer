@@ -9,10 +9,7 @@ async def test_create_vulnerability_category_works_as_expected(
     app_context,
     consultant_user,
 ):
-    resp = await authorized_client.post(
-        "/categories",
-        json=dict(name="Vuln category"),
-    )
+    resp = await authorized_client.post("/categories", json=dict(name="Vuln category"))
     assert resp.status_code == status.HTTP_201_CREATED
 
 
@@ -22,10 +19,7 @@ async def test_get_vulnerability_category_works_as_expected(
     app_context,
     consultant_user,
 ):
-    resp = await authorized_client.post(
-        "/categories",
-        json=dict(name="Vuln category"),
-    )
+    resp = await authorized_client.post("/categories", json=dict(name="Vuln category"))
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
@@ -58,10 +52,7 @@ async def test_get_vulnerability_categories_works_as_expected(
 ):
     categories = []
     for n in range(10):
-        resp = await authorized_client.post(
-            "/categories",
-            json=dict(name=f"Vuln category #{n + 1}"),
-        )
+        resp = await authorized_client.post("/categories", json=dict(name=f"Vuln category #{n + 1}"))
         assert resp.status_code == status.HTTP_201_CREATED
         categories.append(resp.json())
 
@@ -82,10 +73,7 @@ async def test_filter_vulnerability_categories_works_as_expected(
         else:
             name = f"Cowsegory #{n + 1}"
 
-        resp = await authorized_client.post(
-            "/categories",
-            json=dict(name=name),
-        )
+        resp = await authorized_client.post("/categories", json=dict(name=name))
         assert resp.status_code == status.HTTP_201_CREATED
 
     resp = await authorized_client.get("/categories?name=egory")
@@ -107,10 +95,7 @@ async def test_update_vulnerability_category_works_as_expected(
     app_context,
     consultant_user,
 ):
-    resp = await authorized_client.post(
-        "/categories",
-        json=dict(name=f"Vulnerability category"),
-    )
+    resp = await authorized_client.post("/categories", json=dict(name="Vulnerability category"))
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
@@ -126,10 +111,7 @@ async def test_delete_vulnerability_category_works_as_expected(
     app_context,
     consultant_user,
 ):
-    resp = await authorized_client.post(
-        "/categories",
-        json=dict(name=f"Vulnerability category"),
-    )
+    resp = await authorized_client.post("/categories", json=dict(name="Vulnerability category"))
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
