@@ -2,9 +2,16 @@ from typing import List, Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier
-from observer.entities.family_members import FamilyMember, NewFamilyMember
+from observer.entities.family_members import (
+    FamilyMember,
+    NewFamilyMember,
+    UpdateFamilyMember,
+)
 from observer.repositories.family_members import IFamilyRepository
-from observer.schemas.family_members import NewFamilyMemberRequest
+from observer.schemas.family_members import (
+    NewFamilyMemberRequest,
+    UpdateFamilyMemberRequest,
+)
 
 
 class IFamilyService(Protocol):
@@ -20,6 +27,9 @@ class IFamilyService(Protocol):
         raise NotImplementedError
 
     async def get_by_project(self, project_id: Identifier) -> List[FamilyMember]:
+        raise NotImplementedError
+
+    async def update_member(self, member_id: Identifier, updates: UpdateFamilyMemberRequest) -> FamilyMember:
         raise NotImplementedError
 
     async def delete_member(self, member_id: Identifier) -> FamilyMember:
@@ -44,6 +54,9 @@ class FamilyService(IFamilyService):
 
     async def get_by_project(self, project_id: Identifier) -> List[FamilyMember]:
         return await self.repo.get_by_project(project_id)
+
+    async def update_member(self, member_id: Identifier, updates: UpdateFamilyMemberRequest) -> FamilyMember:
+        return await self.repo.update_member(member_id, UpdateFamilyMember(**updates.dict()))
 
     async def delete_member(self, member_id: Identifier) -> FamilyMember:
         return await self.repo.delete_member(member_id)
