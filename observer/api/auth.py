@@ -37,6 +37,7 @@ RefreshTokenKey: str = "refresh_token"
 @router.post(
     "/token",
     response_model=TokenResponse,
+    response_model_exclude={"refresh_token"},
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
         status.HTTP_404_NOT_FOUND,
@@ -82,8 +83,12 @@ async def token_login(
 @router.post(
     "/token/refresh",
     response_model=TokenResponse,
+    response_model_exclude={"refresh_token"},
     status_code=status.HTTP_200_OK,
-    responses=get_api_errors(status.HTTP_403_FORBIDDEN),
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+    ),
     tags=["auth"],
 )
 async def token_refresh(
@@ -138,6 +143,7 @@ async def token_refresh(
 @router.post(
     "/register",
     response_model=TokenResponse,
+    response_model_exclude={"refresh_token"},
     status_code=status.HTTP_201_CREATED,
     tags=["auth"],
 )
@@ -292,7 +298,8 @@ async def reset_password_request(
     "/reset-password/{code}",
     status_code=status.HTTP_204_NO_CONTENT,
     responses=get_api_errors(
-        status.HTTP_404_NOT_FOUND,
+        status.HTTP_400_BAD_REQUEST,
+        status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
