@@ -12,15 +12,15 @@ class BaseFamilyMember(ModelBase):
     notes: Optional[str]
     age_group: AgeGroup
     idp_id: Identifier
-    project_id: Identifier
 
 
 class FamilyMember(BaseFamilyMember):
     id: Identifier
+    project_id: Identifier
 
 
 class NewFamilyMember(BaseFamilyMember):
-    ...
+    project_id: Identifier
 
 
 class UpdateFamilyMember(BaseFamilyMember):

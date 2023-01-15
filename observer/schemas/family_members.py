@@ -14,15 +14,15 @@ class BaseFamilyMember(ModelBase):
     notes: Optional[str] = Field(None, description="Notes")
     age_group: AgeGroup = Field(..., description="Age group of family member")
     idp_id: Identifier = Field(..., description="Person ID")
-    project_id: Identifier = Field(..., description="Project ID")
 
 
 class FamilyMemberResponse(BaseFamilyMember):
     id: Identifier = Field(..., description="Family member ID")
+    project_id: Identifier = Field(..., description="Project ID")
 
 
 class NewFamilyMemberRequest(BaseFamilyMember):
-    ...
+    project_id: Identifier = Field(..., description="Project ID")
 
 
 class UpdateFamilyMemberRequest(BaseFamilyMember):
