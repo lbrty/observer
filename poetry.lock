@@ -2664,21 +2664,6 @@ anyio = ">=3.4.0,<5"
 full = ["itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests"]
 
 [[package]]
-name = "starlette-context"
-version = "0.3.5"
-description = "Access context in Starlette"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "starlette_context-0.3.5-py37-none-any.whl", hash = "sha256:d9eeccaafd4fad13abe662295b802c8a58a7e11a0d33f933f001212472619086"},
-    {file = "starlette_context-0.3.5.tar.gz", hash = "sha256:e6b9f905823860e9e36c013dbfcf770562f3b88bec21cb861fef2e0bd0615697"},
-]
-
-[package.dependencies]
-starlette = "*"
-
-[[package]]
 name = "structlog"
 version = "22.1.0"
 description = "Structured Logging for Python"
@@ -3169,4 +3154,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "5490dbbf40dda6f6469bf00180566ffda8af24852bfeb3a64a06dfca807f436b"
+content-hash = "1991da4ef6c150dc0ef7431da91bbb48c447e24cf8c61dfdc3f8d5b464d5df52"
