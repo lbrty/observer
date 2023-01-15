@@ -5765,8 +5765,8 @@
         "required": [
           "age_group",
           "idp_id",
-          "project_id",
-          "id"
+          "id",
+          "project_id"
         ],
         "type": "object",
         "properties": {
@@ -5815,19 +5815,6 @@
             ],
             "description": "Person ID"
           },
-          "project_id": {
-            "title": "Project Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Project ID"
-          },
           "id": {
             "title": "Id",
             "anyOf": [
@@ -5840,6 +5827,19 @@
               }
             ],
             "description": "Family member ID"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Project ID"
           }
         }
       },
@@ -7562,8 +7562,7 @@
         "title": "UpdateFamilyMemberRequest",
         "required": [
           "age_group",
-          "idp_id",
-          "project_id"
+          "idp_id"
         ],
         "type": "object",
         "properties": {
@@ -7611,19 +7610,6 @@
               }
             ],
             "description": "Person ID"
-          },
-          "project_id": {
-            "title": "Project Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Project ID"
           }
         }
       },
