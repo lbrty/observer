@@ -46,6 +46,9 @@ class IUsersService(Protocol):
     async def create_user(self, new_user: NewUserRequest, is_active: bool = True) -> User:
         raise NotImplementedError
 
+    async def delete_user(self, user_id: Identifier) -> User:
+        raise NotImplementedError
+
     async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
         raise NotImplementedError
 
@@ -122,6 +125,9 @@ class UsersService(IUsersService):
             is_confirmed=False,
         )
         return await self.repo.create_user(user)
+
+    async def delete_user(self, user_id: Identifier) -> User:
+        return await self.repo.delete_user(user_id)
 
     async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
         return await self.repo.update_password(user_id, new_password_hash)

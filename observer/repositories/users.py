@@ -30,6 +30,9 @@ class IUsersRepository(Protocol):
     async def create_user(self, new_user: NewUser) -> User:
         raise NotImplementedError
 
+    async def delete_user(self, user_id: Identifier) -> User:
+        raise NotImplementedError
+
     async def update_user(self, user_id: Identifier, updates: UserUpdate) -> User:
         raise NotImplementedError
 
@@ -91,6 +94,11 @@ class UsersRepository(IUsersRepository):
 
     async def create_user(self, new_user: NewUser) -> User:
         query = insert(users).values(**new_user.dict()).returning("*")
+        result = await self.db.fetchone(query)
+        return User(**result)
+
+    async def delete_user(self, user_id: Identifier) -> User:
+        query = delete(users).where(users.c.id == user_id).returning("*")
         result = await self.db.fetchone(query)
         return User(**result)
 
