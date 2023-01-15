@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from box import Box
+from fastapi import Header
 from fastapi.encoders import jsonable_encoder
 
 from observer.schemas.audit_logs import NewAuditLog
@@ -30,3 +31,7 @@ class Tracked:
 
     async def __call__(self) -> Props:
         return self.tracker
+
+
+async def client_ip(ip_address: str = Header("", alias="X-Forwarded-For")) -> str:
+    return ip_address

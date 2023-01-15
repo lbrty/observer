@@ -16,7 +16,7 @@ from observer.common.permissions import (
     assert_writable,
 )
 from observer.common.types import Identifier, Role
-from observer.components.audit import Props, Tracked
+from observer.components.audit import Props, Tracked, client_ip
 from observer.components.auth import RequiresRoles, authenticated_user
 from observer.components.services import (
     audit_service,
@@ -257,6 +257,7 @@ async def delete_idp(
     documents: IDocumentsService = Depends(documents_service),
     storage: IStorage = Depends(storage_service),
     audits: IAuditService = Depends(audit_service),
+    ip_address: str = Depends(client_ip),
     props: Props = Depends(
         Tracked(
             tag="endpoint=delete_idp,action=delete:idp",
@@ -274,10 +275,7 @@ async def delete_idp(
     document_ids = [str(doc.id) for doc in idp_documents]
     await documents.bulk_delete(document_ids)
     full_path = os.path.join(settings.documents_path, str(idp_id))
-    audit_log = props.new_event(
-        f"person_id={deleted_idp.id},ref_id={user.ref_id}",
-        jsonable_encoder(deleted_idp.dict(exclude_none=True)),
-    )
+    audit_log = props.new_event(f"person_id={deleted_idp.id},ref_id={user.ref_id}", dict(ip_address=ip_address))
     tasks.add_task(storage.delete_path, full_path)
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -514,6 +512,7 @@ async def delete_persons_family_member(
     family: IFamilyService = Depends(family_service),
     permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
+    ip_address: str = Depends(client_ip),
     props: Props = Depends(
         Tracked(
             tag="endpoint=delete_persons_family_member,action=delete:family_member",
@@ -530,7 +529,7 @@ async def delete_persons_family_member(
     member = await family.delete_member(member_id)
     audit_log = props.new_event(
         f"idp_id={idp_id},project_id={member.project_id},member_id={member.id},ref_id={user.ref_id}",
-        None,
+        dict(ip_address=ip_address),
     )
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
