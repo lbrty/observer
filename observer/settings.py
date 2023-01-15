@@ -48,6 +48,8 @@ class Settings(SettingsBase):
     password_reset_expiration_minutes: int = 15
     confirmation_expiration_minutes: int = 20
     invite_expiration_minutes: int = 15
+    invite_url: str = "/account/invites/{code}"
+    invite_subject: str = "You are invited to join Observer"
     confirmation_url: str = "/account/confirm/{code}"
 
     # Allow 10 seconds more for otp codes
