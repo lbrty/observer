@@ -1,6 +1,7 @@
 import asyncio
 import hashlib
 import os
+from datetime import date
 from io import BytesIO
 from itertools import chain
 from pathlib import Path
@@ -31,6 +32,7 @@ from observer.common.bcrypt import hash_password
 from observer.common.types import PetStatus, Role
 from observer.context import Context, Repositories, ctx
 from observer.db import Database, metadata
+from observer.entities.family_members import FamilyMember
 from observer.entities.idp import IDP
 from observer.entities.permissions import NewPermission
 from observer.entities.pets import Pet
@@ -50,6 +52,7 @@ from observer.repositories.support_records import SupportRecordsRepository
 from observer.repositories.users import UsersRepository
 from observer.repositories.world import WorldRepository
 from observer.schemas.crypto import PrivateKey
+from observer.schemas.family_members import NewFamilyMemberRequest
 from observer.services.audit_logs import AuditService
 from observer.services.auth import AuthService
 from observer.services.categories import CategoryService
@@ -74,6 +77,7 @@ from observer.services.world import WorldService
 from observer.settings import db_settings, settings
 from tests.e2e_tests.moto_server import MotoService
 from tests.helpers.crud import (
+    create_family_member,
     create_permission,
     create_person,
     create_pet,
@@ -503,7 +507,7 @@ async def new_pet(app_context: Context, default_project: Project, consultant_use
 
 
 @pytest.fixture(scope="function")
-async def default_idp(app_context: Context, default_project: Project, consultant_user: User) -> IDP:
+async def default_person(app_context: Context, default_project: Project, consultant_user: User) -> IDP:
     await create_permission(
         app_context,
         NewPermission(
@@ -522,6 +526,41 @@ async def default_idp(app_context: Context, default_project: Project, consultant
 
     person = await create_person(app_context, default_project.id)
     yield person
+
+
+@pytest.fixture(scope="function")
+async def default_family(
+    app_context: Context,
+    default_project: Project,
+    default_person: IDP,
+    consultant_user: User,
+) -> FamilyMember:
+    await create_permission(
+        app_context,
+        NewPermission(
+            can_create=True,
+            can_read=True,
+            can_update=True,
+            can_delete=True,
+            can_create_projects=True,
+            can_read_documents=True,
+            can_read_personal_info=True,
+            can_invite_members=True,
+            project_id=default_project.id,
+            user_id=consultant_user.id,
+        ),
+    )
+
+    await create_person(app_context, default_project.id)
+
+    member = await create_family_member(
+        NewFamilyMemberRequest(
+            idp_id=default_person.id,
+            project_id=default_project.id,
+            migration_date=date(year=2018, month=8, day=4),
+        )
+    )
+    yield member
 
 
 @pytest.fixture(scope="function")

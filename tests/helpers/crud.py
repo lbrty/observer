@@ -1,5 +1,6 @@
 from observer.common.types import Identifier, PetStatus, PlaceType, Sex
 from observer.context import Context
+from observer.entities.family_members import FamilyMember
 from observer.entities.idp import IDP, Category, NewCategory, NewIDP
 from observer.entities.permissions import NewPermission, Permission
 from observer.entities.pets import NewPet, Pet
@@ -13,6 +14,7 @@ from observer.entities.world import (
     Place,
     State,
 )
+from observer.schemas.family_members import NewFamilyMemberRequest
 from observer.schemas.support_records import NewSupportRecordRequest
 
 
@@ -153,3 +155,8 @@ async def create_pet(
 async def create_support_record(ctx: Context, request: NewSupportRecordRequest) -> SupportRecord:
     record = await ctx.repos.support.create_record(NewSupportRecord(**request.dict()))
     return record
+
+
+async def create_family_member(ctx: Context, request: NewFamilyMemberRequest) -> FamilyMember:
+    member = await ctx.family_service.add_member(request)
+    return member
