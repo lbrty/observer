@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta, timezone
-from typing import List, Protocol
+from typing import List, Optional, Protocol
 
 import shortuuid
 
 from observer.api.exceptions import (
     ConfirmationCodeExpiredError,
+    InviteExpiredError,
     NotFoundError,
     TOTPInvalidBackupCodeError,
 )
@@ -13,6 +14,7 @@ from observer.common.types import Identifier
 from observer.entities.base import SomeUser
 from observer.entities.users import (
     Confirmation,
+    Invite,
     NewUser,
     PasswordReset,
     User,
@@ -56,19 +58,28 @@ class IUsersService(Protocol):
     async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
         raise NotImplementedError
 
-    async def confirm_user(self, user_id: Identifier | None, code: str) -> User:
+    async def confirm_user(self, user_id: Optional[Identifier], code: str) -> User:
         raise NotImplementedError
 
     async def create_confirmation(self, user_id: Identifier) -> Confirmation:
         raise NotImplementedError
 
-    async def get_confirmation(self, code: str) -> Confirmation | None:
+    async def get_confirmation(self, code: str) -> Optional[Confirmation]:
         raise NotImplementedError
 
     async def reset_password(self, user_id: Identifier) -> PasswordReset:
         raise NotImplementedError
 
-    async def get_password_reset(self, code: str) -> PasswordReset | None:
+    async def get_password_reset(self, code: str) -> Optional[PasswordReset]:
+        raise NotImplementedError
+
+    async def create_invite(self, user_id: Identifier) -> Invite:
+        raise NotImplementedError
+
+    async def get_invite(self, code: str) -> Optional[Invite]:
+        raise NotImplementedError
+
+    async def delete_invite(self, code: str) -> Invite:
         raise NotImplementedError
 
     @staticmethod
@@ -161,13 +172,41 @@ class UsersService(IUsersService):
         confirmation_delta = timedelta(minutes=settings.confirmation_expiration_minutes)
         return await self.repo.create_confirmation(user_id, shortuuid.uuid(), now + confirmation_delta)
 
-    async def get_confirmation(self, code: str) -> Confirmation | None:
+    async def get_confirmation(self, code: str) -> Optional[Confirmation]:
         return await self.repo.get_confirmation(code)
+
+    async def create_invite(self, user_id: Identifier) -> Invite:
+        now = datetime.now(tz=timezone.utc)
+        delta = timedelta(minutes=settings.invite_expiration_minutes)
+        return await self.repo.create_invite(user_id, shortuuid.uuid(), now + delta)
+
+    async def get_invite(self, code: str) -> Optional[Invite]:
+        invite = await self.repo.get_invite(code)
+
+        # If user is authenticated then we need to check
+        # if invite code belongs to this user
+        # and if not so then we need to return not found error.
+        if not invite:
+            raise NotFoundError(message="Invite not found")
+
+        if invite.expires_at < datetime.now(tz=timezone.utc):
+            raise InviteExpiredError(message="Invite has already expired")
+
+        # For the case if confirmation code has not expired, and yet we still
+        # get requests we just need to return original confirmation instance.
+        user = await self.get_by_id(invite.user_id)
+        if not user:
+            raise NotFoundError(message="Unknown user")
+
+        return invite
+
+    async def delete_invite(self, code: str) -> Invite:
+        return await self.repo.delete_invite(code)
 
     async def reset_password(self, user_id: Identifier) -> PasswordReset:
         return await self.repo.create_password_reset_code(user_id, shortuuid.uuid())
 
-    async def get_password_reset(self, code: str) -> PasswordReset | None:
+    async def get_password_reset(self, code: str) -> Optional[PasswordReset]:
         return await self.repo.get_password_reset(code)
 
     @staticmethod

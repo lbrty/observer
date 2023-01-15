@@ -21,6 +21,7 @@ class ErrorCode(str, Enum):
     document_is_too_large_error = "document_is_too_large_error"
     unsupported_document_format = "unsupported_document_format"
     confirmation_code_expired_error = "confirmation_code_expired_error"
+    invite_expired_error = "invite_expired_error"
     internal_error = "internal_error"
     bad_request = "bad_request"
 
@@ -123,6 +124,12 @@ class ConfirmationCodeExpiredError(BaseAPIException):
     default_code = ErrorCode.confirmation_code_expired_error
     default_status = status.HTTP_409_CONFLICT
     default_message = "confirmation code has expired"
+
+
+class InviteExpiredError(BaseAPIException):
+    default_code = ErrorCode.invalid_password_error
+    default_status = status.HTTP_409_CONFLICT
+    default_message = "invite has expired"
 
 
 class PasswordResetCodeExpiredError(BaseAPIException):

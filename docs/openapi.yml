@@ -5774,6 +5774,7 @@
           "document_is_too_large_error",
           "unsupported_document_format",
           "confirmation_code_expired_error",
+          "invite_expired_error",
           "internal_error",
           "bad_request"
         ],

@@ -49,3 +49,9 @@ class Confirmation(BaseModel):
     code: str
     user_id: Identifier
     expires_at: datetime
+
+
+class Invite(BaseModel):
+    code: str
+    user_id: Identifier
+    expires_at: datetime

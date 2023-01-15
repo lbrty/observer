@@ -1,14 +1,15 @@
 from datetime import datetime, timezone
-from typing import Protocol
+from typing import Optional, Protocol
 
-from sqlalchemy import insert, select, update
+from sqlalchemy import delete, insert, select, update
 
 from observer.common.types import Identifier
 from observer.db import Database
-from observer.db.tables.users import confirmations, password_resets, users
+from observer.db.tables.users import confirmations, invites, password_resets, users
 from observer.entities.base import SomeUser
 from observer.entities.users import (
     Confirmation,
+    Invite,
     NewUser,
     PasswordReset,
     User,
@@ -41,16 +42,25 @@ class IUsersRepository(Protocol):
     async def create_password_reset_code(self, user_id: Identifier, code: str) -> PasswordReset:
         raise NotImplementedError
 
-    async def get_password_reset(self, code: str) -> PasswordReset | None:
+    async def get_password_reset(self, code: str) -> Optional[PasswordReset]:
         raise NotImplementedError
 
     async def create_confirmation(self, user_id: Identifier, code: str, expires_at: datetime) -> Confirmation:
         raise NotImplementedError
 
-    async def get_confirmation(self, code: str) -> Confirmation | None:
+    async def get_confirmation(self, code: str) -> Optional[Confirmation]:
         raise NotImplementedError
 
     async def confirm_user(self, user_id: Identifier) -> User:
+        raise NotImplementedError
+
+    async def create_invite(self, user_id: Identifier, code: str, expires_at: datetime) -> Invite:
+        raise NotImplementedError
+
+    async def get_invite(self, code: str) -> Optional[Invite]:
+        raise NotImplementedError
+
+    async def delete_invite(self, code: str) -> Invite:
         raise NotImplementedError
 
 
@@ -94,12 +104,34 @@ class UsersRepository(IUsersRepository):
         result = await self.db.fetchone(query)
         return Confirmation(**result)
 
-    async def get_confirmation(self, code: str) -> Confirmation | None:
+    async def get_confirmation(self, code: str) -> Optional[Confirmation]:
         query = select(confirmations).where(confirmations.c.code == code)
         if result := await self.db.fetchone(query):
             return Confirmation(**result)
 
         return None
+
+    async def create_invite(self, user_id: Identifier, code: str, expires_at: datetime) -> Invite:
+        values = dict(
+            code=code,
+            user_id=str(user_id),
+            expires_at=expires_at,
+        )
+        query = insert(invites).values(**values).returning("*")
+        result = await self.db.fetchone(query)
+        return Invite(**result)
+
+    async def get_invite(self, code: str) -> Optional[Invite]:
+        query = select(invites).where(invites.c.code == code)
+        if result := await self.db.fetchone(query):
+            return Invite(**result)
+
+        return None
+
+    async def delete_invite(self, code: str) -> Invite:
+        query = delete(invites).where(invites.c.code == code).returning("*")
+        result = await self.db.fetchone(query)
+        return Invite(**result)
 
     async def confirm_user(self, user_id: Identifier) -> User:
         query = update(users).values(dict(is_confirmed=True)).where(users.c.id == str(user_id)).returning("*")
@@ -156,7 +188,7 @@ class UsersRepository(IUsersRepository):
         result = await self.db.fetchone(query)
         return PasswordReset(**result)
 
-    async def get_password_reset(self, code: str) -> PasswordReset | None:
+    async def get_password_reset(self, code: str) -> Optional[PasswordReset]:
         query = select(password_resets).where(password_resets.c.code == code)
         if result := await self.db.fetchone(query):
             return PasswordReset(**result)
