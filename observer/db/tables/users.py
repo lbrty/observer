@@ -54,3 +54,13 @@ confirmations = Table(
     Index("ux_confirmations_code", "code", unique=True),
     Index("ix_confirmations_user_id", "user_id"),
 )
+
+invites = Table(
+    "invites",
+    metadata,
+    Column("code", Text()),
+    Column("user_id", UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+    Column("expires_at", DateTime(timezone=True), server_default=text("now()"), nullable=False),
+    Index("ux_invites_code", "code", unique=True),
+    Index("ix_invites_user_id", "user_id"),
+)
