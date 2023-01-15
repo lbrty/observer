@@ -34,7 +34,7 @@ async def test_add_migration_history_works_as_expected(authorized_client, app_co
         phone_number_additional="+18181818",
         tags=["one", "two"],
     )
-    resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
+    resp = await authorized_client.post("/people", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_201_CREATED
     person_id = resp.json()["id"]
     payload = NewMigrationHistoryRequest(
@@ -75,7 +75,7 @@ async def test_get_migration_history_works_as_expected(authorized_client, app_co
         phone_number_additional="+18181818",
         tags=["one", "two"],
     )
-    resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
+    resp = await authorized_client.post("/people", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_201_CREATED
     person_id = resp.json()["id"]
     payload = NewMigrationHistoryRequest(
@@ -118,7 +118,7 @@ async def test_delete_migration_history_works_as_expected(authorized_client, app
         phone_number_additional="+18181818",
         tags=["one", "two"],
     )
-    resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
+    resp = await authorized_client.post("/people", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_201_CREATED
     person_id = resp.json()["id"]
     payload = NewMigrationHistoryRequest(

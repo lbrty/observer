@@ -20,7 +20,7 @@ support_records = Table(
     Column("description", Text(), nullable=True),
     Column("type", Text(), nullable=False),
     Column("consultant_id", UUID(as_uuid=True), nullable=False),
-    Column("beneficiary_age", Text(), nullable=True),
+    Column("age_group", Text(), nullable=True),
     Column("record_for", Text(), nullable=False),
     Column("owner_id", UUID(as_uuid=True), nullable=False),
     Column(
@@ -33,18 +33,18 @@ support_records = Table(
     Index("ix_support_records_type", "type"),
     Index("ix_support_records_description", "description"),
     Index("ix_support_records_consultant_id", "consultant_id"),
-    Index("ix_support_records_beneficiary_age", "beneficiary_age"),
+    Index("ix_support_records_age_group", "age_group"),
     Index("ix_support_records_owner_id", "owner_id"),
     Index("ix_support_records_project_id", "project_id"),
     CheckConstraint("type IN ('humanitarian', 'legal', 'medical', 'general')", name="support_records_types"),
     CheckConstraint("record_for IN ('person', 'pet')", name="support_records_record_for"),
     CheckConstraint(
-        "beneficiary_age IN ("
+        "age_group IN ("
         "'infant', 'toddler', 'pre_school', "
         "'middle_childhood', 'young_teen', "
         "'teenager', 'young_adult', 'early_adult', "
         "'middle_aged_adult', 'old_adult'"
         ")",
-        name="support_records_beneficiary_ages",
+        name="support_records_age_group",
     ),
 )

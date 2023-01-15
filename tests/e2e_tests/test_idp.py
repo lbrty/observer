@@ -52,7 +52,7 @@ async def test_create_idp_works_as_expected(
         pronoun="she/her/hers",
         tags=["one", "two"],
     )
-    resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
+    resp = await authorized_client.post("/people", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_201_CREATED
 
 
@@ -88,7 +88,7 @@ async def test_get_idp_works_as_expected(
         phone_number_additional="+18181818",
         tags=["one", "two"],
     )
-    resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
+    resp = await authorized_client.post("/people", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
@@ -96,7 +96,7 @@ async def test_get_idp_works_as_expected(
     resp_json["phone_number"] = "********"
     resp_json["phone_number_additional"] = "********"
     idp_id = resp_json["id"]
-    resp = await authorized_client.get(f"/idp/people/{idp_id}")
+    resp = await authorized_client.get(f"/people/{idp_id}")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == resp_json
 
@@ -132,12 +132,12 @@ async def test_get_idp_personal_info_works_as_expected(
         phone_number_additional="+18181818",
         tags=["one", "two"],
     )
-    resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
+    resp = await authorized_client.post("/people", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
     idp_id = resp_json["id"]
-    resp = await authorized_client.get(f"/idp/people/{idp_id}/personal-info")
+    resp = await authorized_client.get(f"/people/{idp_id}/personal-info")
     assert resp.status_code == status.HTTP_200_OK
     print(resp.json())
     assert resp.json() == {
@@ -181,7 +181,7 @@ async def test_update_idp_works_as_expected(
         phone_number_additional="+18181818",
         tags=["one", "two"],
     )
-    resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
+    resp = await authorized_client.post("/people", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
@@ -196,10 +196,10 @@ async def test_update_idp_works_as_expected(
         phone_number_additional="+48186818",
         tags=["one", "two", "three"],
     )
-    resp = await authorized_client.put(f"/idp/people/{idp_id}", json=jsonable_encoder(payload))
+    resp = await authorized_client.put(f"/people/{idp_id}", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_200_OK
 
-    resp = await authorized_client.get(f"/idp/people/{idp_id}/personal-info")
+    resp = await authorized_client.get(f"/people/{idp_id}/personal-info")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == {
         "email": "Full_Name@examples.com",
@@ -220,10 +220,10 @@ async def test_update_idp_works_as_expected(
         phone_number_additional="+48186818",
         tags=["one", "two", "three"],
     )
-    resp = await authorized_client.put(f"/idp/people/{idp_id}", json=jsonable_encoder(payload))
+    resp = await authorized_client.put(f"/people/{idp_id}", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_200_OK
 
-    resp = await authorized_client.get(f"/idp/people/{idp_id}/personal-info")
+    resp = await authorized_client.get(f"/people/{idp_id}/personal-info")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == {
         "email": "updated@email.com",
@@ -232,7 +232,7 @@ async def test_update_idp_works_as_expected(
         "phone_number_additional": "+48186818",
     }
 
-    resp = await authorized_client.get(f"/idp/people/{idp_id}")
+    resp = await authorized_client.get(f"/people/{idp_id}")
     assert resp.status_code == status.HTTP_200_OK
 
     resp_json = resp.json()
@@ -262,6 +262,7 @@ async def test_delete_idp_works_as_expected(
     authorized_client,
     app_context,
     consultant_user,
+    fs_storage,
 ):
     project = await create_project(app_context, "test project", "test description")
     await create_permission(
@@ -289,15 +290,15 @@ async def test_delete_idp_works_as_expected(
         phone_number_additional="+18181818",
         tags=["one", "two"],
     )
-    resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
+    resp = await authorized_client.post("/people", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
     idp_id = resp_json["id"]
-    resp = await authorized_client.delete(f"/idp/people/{idp_id}")
+    resp = await authorized_client.delete(f"/people/{idp_id}")
     assert resp.status_code == status.HTTP_204_NO_CONTENT
 
-    resp = await authorized_client.get(f"/idp/people/{idp_id}")
+    resp = await authorized_client.get(f"/people/{idp_id}")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -328,7 +329,7 @@ async def test_get_idp_migration_history_works_as_expected(authorized_client, ap
         phone_number_additional="+18181818",
         tags=["one", "two"],
     )
-    resp = await authorized_client.post("/idp/people", json=jsonable_encoder(payload))
+    resp = await authorized_client.post("/people", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_201_CREATED
     person_id = resp.json()["id"]
     country = await create_country(app_context, "Country 1", "c1")
@@ -348,7 +349,7 @@ async def test_get_idp_migration_history_works_as_expected(authorized_client, ap
     expected_response.from_place = city_1
     expected_response.current_place = city_2
 
-    resp = await authorized_client.get(f"/idp/people/{person_id}/migration-records")
+    resp = await authorized_client.get(f"/people/{person_id}/migration-records")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == [jsonable_encoder(expected_response)]
 
@@ -362,7 +363,7 @@ async def test_upload_document_for_idp_works(
     fs_storage,
 ):
     files = {"file": ("readme.md", markdown_file, "text/markdown")}
-    resp = await authorized_client.post(f"/idp/people/{default_idp.id}/document", files=files)
+    resp = await authorized_client.post(f"/people/{default_idp.id}/document", files=files)
     assert resp.status_code == status.HTTP_201_CREATED
     document = await app_context.documents_service.get_document(resp.json()["id"])
     assert os.path.exists(document.path)
@@ -379,7 +380,7 @@ async def test_get_persons_documents_works(
 ):
     documents = []
     files = {"file": ("readme.md", markdown_file, "text/markdown")}
-    resp = await authorized_client.post(f"/idp/people/{default_idp.id}/document", files=files)
+    resp = await authorized_client.post(f"/people/{default_idp.id}/document", files=files)
     assert resp.status_code == status.HTTP_201_CREATED
     document = await app_context.documents_service.get_document(resp.json()["id"])
     assert os.path.exists(document.path)
@@ -389,7 +390,7 @@ async def test_get_persons_documents_works(
     assert os.path.exists(document.path)
 
     resp = await authorized_client.post(
-        f"/idp/people/{default_idp.id}/document",
+        f"/people/{default_idp.id}/document",
         files={"file": ("notes.txt", textfile, "text/plain")},
     )
     assert resp.status_code == status.HTTP_201_CREATED
@@ -398,7 +399,7 @@ async def test_get_persons_documents_works(
     document = await app_context.documents_service.get_document(documents[1]["id"])
     assert os.path.exists(document.path)
 
-    resp = await authorized_client.get(f"/idp/people/{default_idp.id}/documents")
+    resp = await authorized_client.get(f"/people/{default_idp.id}/documents")
     assert resp.json() == documents
 
 
@@ -412,13 +413,13 @@ async def test_delete_person_deletes_documents_and_files(
     fs_storage,
 ):
     resp = await authorized_client.post(
-        f"/idp/people/{default_idp.id}/document",
+        f"/people/{default_idp.id}/document",
         files={"file": ("readme.md", markdown_file, "text/markdown")},
     )
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp = await authorized_client.post(
-        f"/idp/people/{default_idp.id}/document",
+        f"/people/{default_idp.id}/document",
         files={"file": ("notes.txt", textfile, "text/plain")},
     )
     assert resp.status_code == status.HTTP_201_CREATED
@@ -427,10 +428,10 @@ async def test_delete_person_deletes_documents_and_files(
     documents = await app_context.storage.ls(folder_path)
     assert len(documents) == 2
 
-    resp = await authorized_client.delete(f"/idp/people/{default_idp.id}")
+    resp = await authorized_client.delete(f"/people/{default_idp.id}")
     assert resp.status_code == status.HTTP_204_NO_CONTENT
 
-    resp = await authorized_client.get(f"/idp/people/{default_idp.id}/documents")
+    resp = await authorized_client.get(f"/people/{default_idp.id}/documents")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
     folder_path = os.path.join(env_settings.documents_path, str(default_idp.id))

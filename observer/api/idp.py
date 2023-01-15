@@ -58,11 +58,11 @@ from observer.services.uploads import UploadHandler
 from observer.services.world import IWorldService
 from observer.settings import settings
 
-router = APIRouter(prefix="/idp")
+router = APIRouter(prefix="/people")
 
 
 @router.post(
-    "/people",
+    "",
     response_model=IDPResponse,
     status_code=status.HTTP_201_CREATED,
     responses=get_api_errors(
@@ -95,7 +95,7 @@ async def create_idp(
 
 
 @router.get(
-    "/people/{idp_id}",
+    "/{idp_id}",
     response_model=IDPResponse,
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
@@ -120,7 +120,7 @@ async def get_idp(
 
 
 @router.get(
-    "/people/{idp_id}/personal-info",
+    "/{idp_id}/personal-info",
     response_model=PersonalInfoResponse,
     response_model_exclude_none=True,
     status_code=status.HTTP_200_OK,
@@ -155,7 +155,7 @@ async def get_personal_info(
 
 
 @router.get(
-    "/people/{idp_id}/migration-records",
+    "/{idp_id}/migration-records",
     response_model=List[FullMigrationHistoryResponse],
     response_model_exclude_none=True,
     status_code=status.HTTP_200_OK,
@@ -195,7 +195,7 @@ async def get_person_migration_records(
 
 
 @router.put(
-    "/people/{idp_id}",
+    "/{idp_id}",
     response_model=IDPResponse,
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
@@ -239,7 +239,7 @@ async def update_idp(
 
 
 @router.delete(
-    "/people/{idp_id}",
+    "/{idp_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
@@ -284,7 +284,7 @@ async def delete_idp(
 
 
 @router.post(
-    "/people/{idp_id}/document",
+    "/{idp_id}/document",
     response_model=DocumentResponse,
     status_code=status.HTTP_201_CREATED,
     responses=get_api_errors(
@@ -344,7 +344,7 @@ async def idp_upload_document(
 
 
 @router.get(
-    "/people/{idp_id}/documents",
+    "/{idp_id}/documents",
     response_model=List[DocumentResponse],
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
@@ -372,7 +372,7 @@ async def idp_get_documents(
 
 
 @router.post(
-    "/people/{idp_id}/family-members",
+    "/{idp_id}/family-members",
     response_model=FamilyMemberResponse,
     status_code=status.HTTP_201_CREATED,
     responses=get_api_errors(
@@ -422,7 +422,7 @@ async def add_persons_family_member(
 
 
 @router.get(
-    "/people/{idp_id}/family-members",
+    "/{idp_id}/family-members",
     response_model=List[FamilyMemberResponse],
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
@@ -449,7 +449,7 @@ async def get_persons_family_members(
 
 
 @router.put(
-    "/people/{idp_id}/family-members/{member_id}",
+    "/{idp_id}/family-members/{member_id}",
     response_model=FamilyMemberResponse,
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
@@ -496,7 +496,7 @@ async def update_persons_family_member(
 
 
 @router.delete(
-    "/people/{idp_id}/family-members/{member_id}",
+    "/{idp_id}/family-members/{member_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
