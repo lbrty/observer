@@ -1,7 +1,6 @@
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, BackgroundTasks, Depends
-from fastapi.encoders import jsonable_encoder
 from starlette import status
 
 from observer.api.exceptions import WeakPasswordError
@@ -31,6 +30,7 @@ router = APIRouter(prefix="/invites")
     response_model=TokenResponse,
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
+        status.HTTP_400_BAD_REQUEST,
         status.HTTP_404_NOT_FOUND,
         status.HTTP_409_CONFLICT,
     ),
@@ -76,16 +76,9 @@ async def join_with_invite(
             body=f"Your password has been updated at {datetime.now(tz=timezone.utc).strftime('%m/%d/%Y, %H:%M:%S')}.",
         ),
     )
+
     await users.just_confirm_user(user.id)
     await users.delete_invite(code)
-    audit_log = props.new_event(
-        f"action=delete:invite,ref_id={user.ref_id}",
-        data=dict(
-            invite=jsonable_encoder(invite),
-            ip_address=ip_address,
-        ),
-    )
-    tasks.add_task(audits.add_event, audit_log)
     user, auth_token = await auth.token_login(
         LoginPayload(
             email=user.email,
