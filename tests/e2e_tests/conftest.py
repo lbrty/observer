@@ -29,7 +29,7 @@ from sqlalchemy.pool import NullPool
 
 from observer.app import create_app
 from observer.common.bcrypt import hash_password
-from observer.common.types import PetStatus, Role
+from observer.common.types import AgeGroup, PetStatus, Role
 from observer.context import Context, Repositories, ctx
 from observer.db import Database, metadata
 from observer.entities.family_members import FamilyMember
@@ -554,11 +554,13 @@ async def default_family(
     await create_person(app_context, default_project.id)
 
     member = await create_family_member(
+        ctx,
         NewFamilyMemberRequest(
             idp_id=default_person.id,
+            age_group=AgeGroup.young_teen,
             project_id=default_project.id,
             migration_date=date(year=2018, month=8, day=4),
-        )
+        ),
     )
     yield member
 
