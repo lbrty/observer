@@ -19,6 +19,7 @@ from observer.api import (
     support_records,
     world,
 )
+from observer.api.admin import admin
 from observer.api.exceptions import BaseAPIException
 from observer.common.exceptions import handle_api_exception
 from observer.settings import Settings
@@ -39,6 +40,7 @@ def init_integrations(env: Environment) -> Environment:
 
 def init_routes(env: Environment) -> Environment:
     env.app.include_router(account.router)
+    env.app.include_router(admin.router)
     env.app.include_router(auth.router)
     env.app.include_router(categories.router)
     env.app.include_router(documents.router)

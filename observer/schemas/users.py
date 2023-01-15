@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from pydantic import EmailStr, Field, SecretStr
@@ -43,3 +44,13 @@ class UserResponse(BaseUser):
 class UsersResponse(SchemaBase):
     total: int = Field(..., description="Total count of users")
     items: List[UserResponse] = Field(..., description="List of users")
+
+
+class UserInviteRequest(SchemaBase):
+    email: EmailStr = Field(..., description="User email to send a new invite")
+
+
+class UserInviteResponse(SchemaBase):
+    code: str = Field(..., description="Invite code")
+    user_id: Identifier = Field(..., description="User ID")
+    expires_at: datetime = Field(..., description="Expiration datetime")
