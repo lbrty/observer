@@ -48,6 +48,7 @@ class UsersResponse(SchemaBase):
 
 class UserInviteRequest(SchemaBase):
     email: EmailStr = Field(..., description="User email to send a new invite")
+    role: Role = Field(..., description="Role of a user")
 
 
 class UserInviteResponse(SchemaBase):
