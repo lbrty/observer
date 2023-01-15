@@ -1365,6 +1365,16 @@
           {
             "required": false,
             "schema": {
+              "title": "X-Forwarded-For",
+              "type": "string",
+              "default": ""
+            },
+            "name": "X-Forwarded-For",
+            "in": "header"
+          },
+          {
+            "required": false,
+            "schema": {
               "title": "Access Token",
               "type": "string"
             },
@@ -2167,6 +2177,16 @@
             },
             "name": "member_id",
             "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "X-Forwarded-For",
+              "type": "string",
+              "default": ""
+            },
+            "name": "X-Forwarded-For",
+            "in": "header"
           },
           {
             "required": false,
