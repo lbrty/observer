@@ -1,3 +1,5 @@
+from http.cookies import SimpleCookie
+
 from pyotp import TOTP
 from starlette import status
 
@@ -133,8 +135,8 @@ async def test_configured_mfa_works_as_expected_when_correct_credentials_given(
     )
     assert resp.status_code == status.HTTP_200_OK
 
-    resp_json = resp.json()
-    token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])
+    cookies = SimpleCookie(resp.headers["set-cookie"])
+    token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
     assert token_data.ref_id == consultant_user.ref_id
 
 

@@ -4,6 +4,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
 from observer.api.exceptions import ForbiddenError
+from observer.common.auth import AccessTokenKey, RefreshTokenKey
 from observer.common.exceptions import get_api_errors
 from observer.components.audit import Props, Tracked
 from observer.components.auth import authenticated_user, refresh_token_cookie
@@ -23,15 +24,16 @@ from observer.schemas.auth import (
     TokenResponse,
 )
 from observer.services.audit_logs import IAuditService
-from observer.services.auth import IAuthService
+from observer.services.auth import (
+    AccessTokenExpirationDelta,
+    IAuthService,
+    RefreshTokenExpirationDelta,
+)
 from observer.services.mailer import EmailMessage, IMailer
 from observer.services.users import IUsersService
 from observer.settings import settings
 
 router = APIRouter(prefix="/auth")
-
-AccessTokenKey: str = "access_token"
-RefreshTokenKey: str = "refresh_token"
 
 
 @router.post(
@@ -64,14 +66,14 @@ async def token_login(
     response.set_cookie(
         key=AccessTokenKey,
         value=auth_token.access_token,
-        expires=int(auth.access_token_expiration.timestamp()),
+        expires=int(AccessTokenExpirationDelta.total_seconds()),
         domain=settings.app_domain,
     )
     response.set_cookie(
         key=RefreshTokenKey,
         value=auth_token.refresh_token,
         httponly=True,
-        expires=int(auth.refresh_token_expiration.timestamp()),
+        expires=int(RefreshTokenExpirationDelta.total_seconds()),
         domain=settings.app_domain,
     )
     # Now we need to save login event
@@ -112,7 +114,7 @@ async def token_refresh(
         response.set_cookie(
             key=AccessTokenKey,
             value=result.access_token,
-            expires=int(auth.access_token_expiration.timestamp()),
+            expires=int(AccessTokenExpirationDelta.total_seconds()),
             domain=settings.app_domain,
         )
 
@@ -120,7 +122,7 @@ async def token_refresh(
             key=RefreshTokenKey,
             value=result.refresh_token,
             httponly=True,
-            expires=int(auth.refresh_token_expiration.timestamp()),
+            expires=int(RefreshTokenExpirationDelta.total_seconds()),
             domain=settings.app_domain,
         )
 
@@ -184,7 +186,7 @@ async def token_register(
     response.set_cookie(
         key=AccessTokenKey,
         value=token_response.access_token,
-        expires=int(auth.access_token_expiration.timestamp()),
+        expires=int(AccessTokenExpirationDelta.total_seconds()),
         domain=settings.app_domain,
     )
 
@@ -192,7 +194,7 @@ async def token_register(
         key=RefreshTokenKey,
         value=token_response.refresh_token,
         httponly=True,
-        expires=int(auth.refresh_token_expiration.timestamp()),
+        expires=int(RefreshTokenExpirationDelta.total_seconds()),
         domain=settings.app_domain,
     )
     audit_log = props.new_event(

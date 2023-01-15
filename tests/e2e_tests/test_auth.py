@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from http.cookies import SimpleCookie
 
 from sqlalchemy import select, update
 from starlette import status
@@ -20,7 +21,11 @@ async def test_token_login_works_as_expected(client, ensure_db, app_context, con
     assert resp.status_code == status.HTTP_200_OK
 
     resp_json = resp.json()
-    token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])
+    token_data, _ = await app_context.jwt_service.decode(resp_json["access_token"])
+    assert token_data.ref_id == consultant_user.ref_id
+
+    cookies = SimpleCookie(resp.headers["set-cookie"])
+    token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
     assert token_data.ref_id == consultant_user.ref_id
 
     audit_log = await app_context.audit_service.find_by_ref(
@@ -53,9 +58,11 @@ async def test_token_refresh_works_as_expected(
 ):
     resp = await authorized_client.post("/auth/token/refresh")
     assert resp.status_code == status.HTTP_200_OK
-    resp_json = resp.json()
-    token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])
+
+    cookies = SimpleCookie(resp.headers["set-cookie"])
+    token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
     assert token_data.ref_id == consultant_user.ref_id
+
     audit_log = await app_context.audit_service.find_by_ref(
         f"endpoint=token_refresh,action=token:refresh,ref_id={consultant_user.ref_id}"
     )
@@ -84,8 +91,9 @@ async def test_registration_works_as_expected(client, ensure_db, app_context):
         ),
     )
     assert resp.status_code == status.HTTP_201_CREATED
-    resp_json = resp.json()
-    token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])
+
+    cookies = SimpleCookie(resp.headers["set-cookie"])
+    token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
     user = await app_context.users_service.get_by_email("email@example.com")
     assert token_data.ref_id == user.ref_id
 
@@ -213,8 +221,8 @@ async def test_password_change_works_as_expected(
     )
     assert resp.status_code == status.HTTP_200_OK
 
-    resp_json = resp.json()
-    token_data, _ = await app_context.jwt_service.decode(resp_json["refresh_token"])
+    cookies = SimpleCookie(resp.headers["set-cookie"])
+    token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
     assert token_data.ref_id == consultant_user.ref_id
 
 

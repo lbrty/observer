@@ -1,10 +1,11 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, BackgroundTasks, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
 from observer.api.exceptions import WeakPasswordError
 from observer.common import bcrypt
+from observer.common.auth import AccessTokenKey, RefreshTokenKey
 from observer.common.bcrypt import is_strong_password
 from observer.common.exceptions import get_api_errors
 from observer.components.audit import Props, Tracked, client_ip
@@ -17,7 +18,11 @@ from observer.components.services import (
 from observer.schemas.auth import LoginPayload, TokenResponse
 from observer.schemas.users import InviteJoinRequest
 from observer.services.audit_logs import IAuditService
-from observer.services.auth import IAuthService
+from observer.services.auth import (
+    AccessTokenExpirationDelta,
+    IAuthService,
+    RefreshTokenExpirationDelta,
+)
 from observer.services.mailer import EmailMessage, IMailer
 from observer.services.users import IUsersService
 from observer.settings import settings
@@ -28,6 +33,7 @@ router = APIRouter(prefix="/invites")
 @router.post(
     "/join/{code}",
     response_model=TokenResponse,
+    response_model_exclude={"refresh_token"},
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
         status.HTTP_400_BAD_REQUEST,
@@ -37,6 +43,7 @@ router = APIRouter(prefix="/invites")
     tags=["invites"],
 )
 async def join_with_invite(
+    response: Response,
     tasks: BackgroundTasks,
     code: str,
     join_request: InviteJoinRequest,
@@ -85,7 +92,19 @@ async def join_with_invite(
             password=join_request.password,
         )
     )
-
+    response.set_cookie(
+        key=AccessTokenKey,
+        value=auth_token.access_token,
+        expires=int(AccessTokenExpirationDelta.total_seconds()),
+        domain=settings.app_domain,
+    )
+    response.set_cookie(
+        key=RefreshTokenKey,
+        value=auth_token.refresh_token,
+        httponly=True,
+        expires=int(RefreshTokenExpirationDelta.total_seconds()),
+        domain=settings.app_domain,
+    )
     # Mark an event of first registration datetime
     audit_log = props.new_event(
         f"action=token:register,ref_id={user.ref_id}",

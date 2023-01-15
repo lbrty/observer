@@ -18,6 +18,7 @@ from observer.api.exceptions import (
     WeakPasswordError,
 )
 from observer.common import bcrypt
+from observer.common.auth import AccessTokenExpirationDelta, RefreshTokenExpirationDelta
 from observer.common.bcrypt import is_strong_password
 from observer.common.types import Identifier, Role, SomeStr
 from observer.entities.users import PasswordReset, User
@@ -34,11 +35,6 @@ from observer.services.jwt import JWTService, TokenData
 from observer.services.mfa import IMFAService
 from observer.services.users import IUsersService
 from observer.settings import settings
-
-AccessTokenExpirationMinutes = 15
-RefreshTokenExpirationMinutes = 10 * 60 * 24
-AccessTokenExpirationDelta = timedelta(minutes=AccessTokenExpirationMinutes)
-RefreshTokenExpirationDelta = timedelta(minutes=RefreshTokenExpirationMinutes)
 
 
 class IAuthService(Protocol):
@@ -219,4 +215,4 @@ class AuthService(IAuthService):
     @property
     def refresh_token_expiration(self) -> datetime:
         now = datetime.now(tz=timezone.utc)
-        return now + AccessTokenExpirationDelta
+        return now + RefreshTokenExpirationDelta
