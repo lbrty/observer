@@ -24,8 +24,8 @@ from observer.schemas.migration_history import (
     NewMigrationHistoryRequest,
 )
 from observer.services.audit_logs import IAuditService
-from observer.services.people import IIDPService
 from observer.services.migration_history import IMigrationService
+from observer.services.people import IIDPService
 from observer.services.permissions import IPermissionsService
 
 router = APIRouter(prefix="/migrations")

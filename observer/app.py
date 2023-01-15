@@ -11,7 +11,6 @@ from observer.api import (
     categories,
     documents,
     health,
-    people,
     invites,
     mfa,
     migration_history,

@@ -75,7 +75,7 @@ async def resend_confirmation(
     ),
 ):
     confirmation = await users.create_confirmation(user.id)
-    link = f"{settings.app_domain}{settings.confirmation_url.format(code=confirmation.code)}"
+    link = f"https://{settings.app_domain}{settings.confirmation_url.format(code=confirmation.code)}"
     tasks.add_task(
         mail.send,
         EmailMessage(

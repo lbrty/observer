@@ -64,7 +64,7 @@ async def create_invite(
         is_active=False,
     )
     invite = await users.create_invite(new_user.id)
-    link = f"{settings.app_domain}{settings.invite_url.format(code=invite.code)}"
+    link = f"https://{settings.app_domain}{settings.invite_url.format(code=invite.code)}"
     tasks.add_task(
         mail.send,
         EmailMessage(

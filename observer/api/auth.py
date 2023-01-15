@@ -30,6 +30,9 @@ from observer.settings import settings
 
 router = APIRouter(prefix="/auth")
 
+AccessTokenKey: str = "access_token"
+RefreshTokenKey: str = "refresh_token"
+
 
 @router.post(
     "/token",
@@ -42,6 +45,7 @@ router = APIRouter(prefix="/auth")
     tags=["auth"],
 )
 async def token_login(
+    response: Response,
     tasks: BackgroundTasks,
     login_payload: LoginPayload,
     audits: IAuditService = Depends(audit_service),
@@ -56,7 +60,19 @@ async def token_login(
 ) -> TokenResponse:
     """Login using email and password"""
     user, auth_token = await auth.token_login(login_payload)
-
+    response.set_cookie(
+        key=AccessTokenKey,
+        value=auth_token.access_token,
+        expires=int(auth.access_token_expiration.timestamp()),
+        domain=settings.app_domain,
+    )
+    response.set_cookie(
+        key=RefreshTokenKey,
+        value=auth_token.refresh_token,
+        httponly=True,
+        expires=int(auth.refresh_token_expiration.timestamp()),
+        domain=settings.app_domain,
+    )
     # Now we need to save login event
     audit_log = props.new_event(f"ref_id={user.ref_id}", data=dict(ref_id=user.ref_id))
     tasks.add_task(audits.add_event, audit_log)
@@ -71,6 +87,7 @@ async def token_login(
     tags=["auth"],
 )
 async def token_refresh(
+    response: Response,
     tasks: BackgroundTasks,
     refresh_token: str = Depends(refresh_token_cookie),
     audits: IAuditService = Depends(audit_service),
@@ -86,6 +103,22 @@ async def token_refresh(
     """Refresh access token using refresh token"""
     try:
         token_data, result = await auth.refresh_token(refresh_token)
+
+        response.set_cookie(
+            key=AccessTokenKey,
+            value=result.access_token,
+            expires=int(auth.access_token_expiration.timestamp()),
+            domain=settings.app_domain,
+        )
+
+        response.set_cookie(
+            key=RefreshTokenKey,
+            value=result.refresh_token,
+            httponly=True,
+            expires=int(auth.refresh_token_expiration.timestamp()),
+            domain=settings.app_domain,
+        )
+
         audit_log = props.new_event(
             f"ref_id={token_data.ref_id}",
             data=dict(ref_id=token_data.ref_id),
@@ -109,6 +142,7 @@ async def token_refresh(
     tags=["auth"],
 )
 async def token_register(
+    response: Response,
     tasks: BackgroundTasks,
     registration_payload: RegistrationPayload,
     audits: IAuditService = Depends(audit_service),
@@ -131,7 +165,7 @@ async def token_register(
     )
     tasks.add_task(audits.add_event, audit_log)
     confirmation = await users.create_confirmation(user.id)
-    link = f"{settings.app_domain}{settings.confirmation_url.format(code=confirmation.code)}"
+    link = f"https://{settings.app_domain}{settings.confirmation_url.format(code=confirmation.code)}"
     tasks.add_task(
         mail.send,
         EmailMessage(
@@ -140,6 +174,20 @@ async def token_register(
             subject=settings.mfa_reset_subject,
             body=f"To confirm your email please use the following link {link}",
         ),
+    )
+    response.set_cookie(
+        key=AccessTokenKey,
+        value=token_response.access_token,
+        expires=int(auth.access_token_expiration.timestamp()),
+        domain=settings.app_domain,
+    )
+
+    response.set_cookie(
+        key=RefreshTokenKey,
+        value=token_response.refresh_token,
+        httponly=True,
+        expires=int(auth.refresh_token_expiration.timestamp()),
+        domain=settings.app_domain,
     )
     audit_log = props.new_event(
         f"action=send:confirmation,ref_id={user.ref_id}",
@@ -218,7 +266,7 @@ async def reset_password_request(
 ) -> Response:
     """Reset password for user using email"""
     user, password_reset = await auth.reset_password_request(reset_password_payload.email)
-    reset_link = f"{settings.app_domain}/{settings.password_reset_url.format(code=password_reset.code)}"
+    reset_link = f"https://{settings.app_domain}/{settings.password_reset_url.format(code=password_reset.code)}"
     tasks.add_task(
         mail.send,
         EmailMessage(

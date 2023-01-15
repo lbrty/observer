@@ -6,11 +6,11 @@ from starlette import status
 
 from observer.common.types import Sex
 from observer.entities.permissions import NewPermission
-from observer.schemas.people import NewIDPRequest, UpdateIDPRequest
 from observer.schemas.migration_history import (
     FullMigrationHistoryResponse,
     NewMigrationHistoryRequest,
 )
+from observer.schemas.people import NewIDPRequest, UpdateIDPRequest
 from tests.helpers.crud import (
     create_city,
     create_country,

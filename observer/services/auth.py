@@ -72,6 +72,14 @@ class IAuthService(Protocol):
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
         raise NotImplementedError
 
+    @property
+    def access_token_expiration(self) -> datetime:
+        raise NotImplementedError
+
+    @property
+    def refresh_token_expiration(self) -> datetime:
+        raise NotImplementedError
+
 
 class AuthService(IAuthService):
     def __init__(
@@ -194,12 +202,21 @@ class AuthService(IAuthService):
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
         payload = TokenData(ref_id=ref_id)
-        now = datetime.now(tz=timezone.utc)
-        access_token = await self.jwt_service.encode(payload, now + AccessTokenExpirationDelta)
-        refresh_token = await self.jwt_service.encode(payload, now + RefreshTokenExpirationDelta)
+        access_token = await self.jwt_service.encode(payload, self.access_token_expiration)
+        refresh_token = await self.jwt_service.encode(payload, self.refresh_token_expiration)
         token = TokenResponse(
             access_token=access_token,
             refresh_token=refresh_token,
         )
 
         return token
+
+    @property
+    def access_token_expiration(self) -> datetime:
+        now = datetime.now(tz=timezone.utc)
+        return now + AccessTokenExpirationDelta
+
+    @property
+    def refresh_token_expiration(self) -> datetime:
+        now = datetime.now(tz=timezone.utc)
+        return now + AccessTokenExpirationDelta
