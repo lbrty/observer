@@ -71,20 +71,20 @@ class PeopleService(IPeopleService):
         return await self.repo.create_person(new_person)
 
     async def get_person(self, person_id: Identifier) -> Person:
-        if idp := await self.repo.get_person(person_id):
-            return idp
+        if person := await self.repo.get_person(person_id):
+            return person
 
         raise NotFoundError(message="Person not found")
 
     async def update_person(self, person_id: Identifier, updates: UpdatePersonRequest) -> Person:
-        """Update IDP record
+        """Update person
 
         NOTES:
-            Since we return IDP records with encrypted fields which contain `********`
+            Since we return person with encrypted fields which contain `********`
             instead of real encrypted value we need to check if field does not have
             the value above we can update these field otherwise we need to skip updating them.
             So for this reason we initialize `PersonalInfo` instance which is then populated
-            and encrypted and later assigned to relevant `idp_updates` fields.
+            and encrypted and later assigned to relevant `updates` fields.
         """
         person_updates = UpdatePerson(**updates.dict())
         pi = PersonalInfo()

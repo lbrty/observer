@@ -88,8 +88,8 @@ async def get_migration_record(
 ) -> MigrationHistoryResponse:
     """Get migration record"""
     migration_record = await migrations.get_record(record_id)
-    idp_record = await people.get_person(migration_record.person_id)
-    permission = await permissions.find(idp_record.project_id, user.id)
+    person = await people.get_person(migration_record.person_id)
+    permission = await permissions.find(person.project_id, user.id)
     assert_viewable(user, permission)
     return MigrationHistoryResponse(**migration_record.dict())
 

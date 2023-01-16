@@ -6215,7 +6215,7 @@
                 "type": "string"
               }
             ],
-            "description": "IDP ID"
+            "description": "Person ID"
           },
           "migration_date": {
             "title": "Migration Date",
@@ -6436,7 +6436,7 @@
                 "type": "string"
               }
             ],
-            "description": "IDP ID"
+            "description": "Person ID"
           },
           "migration_date": {
             "title": "Migration Date",
@@ -6468,7 +6468,7 @@
                 "type": "string"
               }
             ],
-            "description": "From place ID where IDP has moved"
+            "description": "From place ID where then person has moved"
           },
           "current_place_id": {
             "title": "Current Place Id",
@@ -6627,7 +6627,7 @@
                 "type": "string"
               }
             ],
-            "description": "IDP ID"
+            "description": "Person ID"
           },
           "migration_date": {
             "title": "Migration Date",
@@ -6659,7 +6659,7 @@
                 "type": "string"
               }
             ],
-            "description": "From place ID where IDP has moved"
+            "description": "From place ID where then person has moved"
           },
           "current_place_id": {
             "title": "Current Place Id",
@@ -6918,7 +6918,7 @@
                 "type": "string"
               }
             ],
-            "description": "Pet's owner ID (IDP ID)"
+            "description": "Pet's owner ID (Person ID)"
           },
           "project_id": {
             "title": "Project Id",
@@ -8162,7 +8162,7 @@
                 "type": "string"
               }
             ],
-            "description": "Pet's owner ID (IDP ID)"
+            "description": "Pet's owner ID (Person ID)"
           },
           "project_id": {
             "title": "Project Id",

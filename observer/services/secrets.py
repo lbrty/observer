@@ -19,7 +19,7 @@ class ISecretsService(Protocol):
     async def decrypt_document(self, secret: str, stream: IO[Any]) -> bytes:
         raise NotImplementedError
 
-    async def anonymize_person(self, idp: Person) -> Person:
+    async def anonymize_person(self, person: Person) -> Person:
         raise NotImplementedError
 
 
@@ -88,14 +88,14 @@ class SecretsService(ISecretsService):
     async def decrypt_document(self, secret: str, stream: IO[Any]) -> bytes:
         raise NotImplementedError
 
-    async def anonymize_person(self, idp: Person) -> Person:
-        if idp.email:
-            idp.email = "*" * 8
+    async def anonymize_person(self, person: Person) -> Person:
+        if person.email:
+            person.email = "*" * 8
 
-        if idp.phone_number:
-            idp.phone_number = "*" * 8
+        if person.phone_number:
+            person.phone_number = "*" * 8
 
-        if idp.phone_number_additional:
-            idp.phone_number_additional = "*" * 8
+        if person.phone_number_additional:
+            person.phone_number_additional = "*" * 8
 
-        return idp
+        return person

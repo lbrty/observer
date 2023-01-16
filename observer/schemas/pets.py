@@ -20,7 +20,7 @@ class BasePet(SchemaBase):
     notes: str | None = Field(None, description="Additional notes")
     status: PetStatus = Field(..., description="Pet status")
     registration_id: str | None = Field(None, description="Pet's registration ID, passport ID etc.")
-    owner_id: Identifier = Field(..., description="Pet's owner ID (IDP ID)")
+    owner_id: Identifier = Field(..., description="Pet's owner ID (Person ID)")
     project_id: Identifier = Field(..., description="Project owner ID")
 
 

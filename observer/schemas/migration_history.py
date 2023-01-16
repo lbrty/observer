@@ -9,10 +9,10 @@ from observer.schemas.world import PlaceResponse
 
 
 class BaseMigrationHistory(SchemaBase):
-    person_id: Identifier = Field(..., description="IDP ID")
+    person_id: Identifier = Field(..., description="Person ID")
     migration_date: Optional[date] = Field(..., description="Date of migration")
     project_id: Identifier = Field(..., description="Project ID to which it belongs")
-    from_place_id: Optional[Identifier] = Field(None, description="From place ID where IDP has moved")
+    from_place_id: Optional[Identifier] = Field(None, description="From place ID where then person has moved")
     current_place_id: Optional[Identifier] = Field(None, description="Current place of living")
 
 
@@ -23,7 +23,7 @@ class MigrationHistoryResponse(BaseMigrationHistory):
 
 class FullMigrationHistoryResponse(SchemaBase):
     id: Identifier = Field(..., description="Migration record ID")
-    person_id: Identifier = Field(..., description="IDP ID")
+    person_id: Identifier = Field(..., description="Person ID")
     migration_date: Optional[date] = Field(..., description="Date of migration")
     project_id: Identifier = Field(..., description="Project ID to which it belongs")
     from_place: Optional[PlaceResponse] = Field(None, description="Place where person has moved from")
