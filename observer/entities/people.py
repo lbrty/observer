@@ -23,7 +23,7 @@ class UpdateCategory(BaseCategory):
     ...
 
 
-class BaseIDP(BaseModel):
+class BasePerson(BaseModel):
     status: Optional[DisplacedPersonStatus]
     external_id: Optional[str]
     reference_id: Optional[str]
@@ -40,18 +40,18 @@ class BaseIDP(BaseModel):
     tags: Optional[List[str]]
 
 
-class IDP(BaseIDP):
+class Person(BasePerson):
     id: Identifier
     consultant_id: Optional[Identifier]
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
 
-class NewIDP(BaseIDP):
+class NewPerson(BasePerson):
     ...
 
 
-class UpdateIDP(BaseIDP):
+class UpdatePerson(BasePerson):
     full_name: Optional[str]
 
 
@@ -67,7 +67,7 @@ class PersonalInfo(BaseModel):
 
 
 class BaseMigrationHistory(BaseModel):
-    idp_id: Identifier
+    person_id: Identifier
     migration_date: Optional[date]
     from_place_id: Optional[Identifier]
     current_place_id: Optional[Identifier]

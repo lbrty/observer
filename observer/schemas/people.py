@@ -23,7 +23,7 @@ class UpdateCategoryRequest(BaseCategory):
     ...
 
 
-class BaseIDP(SchemaBase):
+class BasePerson(SchemaBase):
     status: Optional[DisplacedPersonStatus] = Field(DisplacedPersonStatus.registered, description="Current status")
     reference_id: Optional[str] = Field(None, description="Reference ID, maybe some of state issued IDs etc.")
     email: Optional[str] = Field(None, description="Contact email")
@@ -39,15 +39,15 @@ class BaseIDP(SchemaBase):
     tags: Optional[List[str]] = Field(None, description="List of tags")
 
 
-class NewIDPRequest(BaseIDP):
+class NewPersonRequest(BasePerson):
     ...
 
 
-class UpdateIDPRequest(BaseIDP):
+class UpdatePersonRequest(BasePerson):
     ...
 
 
-class IDPResponse(BaseIDP):
+class PersonResponse(BasePerson):
     id: Identifier = Field(..., description="Displaced person ID")
     external_id: Optional[str] = Field(None, description="External identifier")
     # User's id who registered

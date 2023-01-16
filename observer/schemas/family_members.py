@@ -13,7 +13,7 @@ class BaseFamilyMember(ModelBase):
     sex: Optional[Sex] = Field(None, description="Sex of family member")
     notes: Optional[str] = Field(None, description="Notes")
     age_group: AgeGroup = Field(..., description="Age group of family member")
-    idp_id: Identifier = Field(..., description="Person ID")
+    person_id: Identifier = Field(..., description="Person ID")
 
 
 class FamilyMemberResponse(BaseFamilyMember):

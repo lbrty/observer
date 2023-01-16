@@ -6,7 +6,7 @@ from observer.entities.base import ModelBase
 
 
 class BaseMigrationHistory(ModelBase):
-    idp_id: Identifier
+    person_id: Identifier
     migration_date: Optional[date]
     project_id: Identifier
     from_place_id: Optional[Identifier]

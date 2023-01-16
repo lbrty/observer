@@ -1,7 +1,7 @@
 from observer.common.types import Identifier, PetStatus, PlaceType, Sex
 from observer.context import Context
 from observer.entities.family_members import FamilyMember
-from observer.entities.people import IDP, Category, NewCategory, NewIDP
+from observer.entities.people import Category, NewCategory, NewPerson, Person
 from observer.entities.permissions import NewPermission, Permission
 from observer.entities.pets import NewPet, Pet
 from observer.entities.projects import NewProject, Project
@@ -116,9 +116,9 @@ async def create_person(
     project_id: Identifier,
     sex: Sex = Sex.female,
     pronoun: str = "she/her/hers",
-) -> IDP:
+) -> Person:
     person = await ctx.repos.people.create_person(
-        NewIDP(
+        NewPerson(
             project_id=project_id,
             email="Full_Name@examples.com",
             full_name="Full Name",

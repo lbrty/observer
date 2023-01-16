@@ -10,7 +10,7 @@ from observer.schemas.migration_history import (
     FullMigrationHistoryResponse,
     NewMigrationHistoryRequest,
 )
-from observer.schemas.people import NewIDPRequest, UpdateIDPRequest
+from observer.schemas.people import NewPersonRequest, UpdatePersonRequest
 from tests.helpers.crud import (
     create_city,
     create_country,
@@ -20,7 +20,7 @@ from tests.helpers.crud import (
 )
 
 
-async def test_create_idp_works_as_expected(
+async def test_create_person_works_as_expected(
     authorized_client,
     ensure_db,
     app_context,
@@ -43,7 +43,7 @@ async def test_create_idp_works_as_expected(
         ),
     )
 
-    payload = NewIDPRequest(
+    payload = NewPersonRequest(
         project_id=project.id,
         email="Full_Name@examples.com",
         full_name="Full Name",
@@ -56,7 +56,7 @@ async def test_create_idp_works_as_expected(
     assert resp.status_code == status.HTTP_201_CREATED
 
 
-async def test_get_idp_works_as_expected(
+async def test_get_person_works_as_expected(
     authorized_client,
     ensure_db,
     app_context,
@@ -78,7 +78,7 @@ async def test_get_idp_works_as_expected(
             user_id=consultant_user.id,
         ),
     )
-    payload = NewIDPRequest(
+    payload = NewPersonRequest(
         project_id=project.id,
         email="Full_Name@examples.com",
         full_name="Full Name",
@@ -95,13 +95,13 @@ async def test_get_idp_works_as_expected(
     resp_json["email"] = "********"
     resp_json["phone_number"] = "********"
     resp_json["phone_number_additional"] = "********"
-    idp_id = resp_json["id"]
-    resp = await authorized_client.get(f"/people/{idp_id}")
+    person_id = resp_json["id"]
+    resp = await authorized_client.get(f"/people/{person_id}")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == resp_json
 
 
-async def test_get_idp_personal_info_works_as_expected(
+async def test_get_person_personal_info_works_as_expected(
     authorized_client,
     app_context,
     consultant_user,
@@ -122,7 +122,7 @@ async def test_get_idp_personal_info_works_as_expected(
             user_id=consultant_user.id,
         ),
     )
-    payload = NewIDPRequest(
+    payload = NewPersonRequest(
         project_id=project.id,
         email="Full_Name@examples.com",
         full_name="Full Name",
@@ -136,8 +136,8 @@ async def test_get_idp_personal_info_works_as_expected(
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
-    idp_id = resp_json["id"]
-    resp = await authorized_client.get(f"/people/{idp_id}/personal-info")
+    person_id = resp_json["id"]
+    resp = await authorized_client.get(f"/people/{person_id}/personal-info")
     assert resp.status_code == status.HTTP_200_OK
     print(resp.json())
     assert resp.json() == {
@@ -150,7 +150,7 @@ async def test_get_idp_personal_info_works_as_expected(
     }
 
 
-async def test_update_idp_works_as_expected(
+async def test_update_person_works_as_expected(
     authorized_client,
     app_context,
     consultant_user,
@@ -171,7 +171,7 @@ async def test_update_idp_works_as_expected(
             user_id=consultant_user.id,
         ),
     )
-    payload = NewIDPRequest(
+    payload = NewPersonRequest(
         project_id=project.id,
         email="Full_Name@examples.com",
         full_name="Full Name",
@@ -185,8 +185,8 @@ async def test_update_idp_works_as_expected(
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
-    idp_id = resp_json["id"]
-    payload = UpdateIDPRequest(
+    person_id = resp_json["id"]
+    payload = UpdatePersonRequest(
         project_id=project.id,
         email="********",
         full_name="Full Name Updated",
@@ -196,10 +196,10 @@ async def test_update_idp_works_as_expected(
         phone_number_additional="+48186818",
         tags=["one", "two", "three"],
     )
-    resp = await authorized_client.put(f"/people/{idp_id}", json=jsonable_encoder(payload))
+    resp = await authorized_client.put(f"/people/{person_id}", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_200_OK
 
-    resp = await authorized_client.get(f"/people/{idp_id}/personal-info")
+    resp = await authorized_client.get(f"/people/{person_id}/personal-info")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == {
         "email": "Full_Name@examples.com",
@@ -210,7 +210,7 @@ async def test_update_idp_works_as_expected(
         "phone_number_additional": "+48186818",
     }
 
-    payload = UpdateIDPRequest(
+    payload = UpdatePersonRequest(
         project_id=project.id,
         email="updated@email.com",
         full_name="Full Name Updated",
@@ -220,10 +220,10 @@ async def test_update_idp_works_as_expected(
         phone_number_additional="+48186818",
         tags=["one", "two", "three"],
     )
-    resp = await authorized_client.put(f"/people/{idp_id}", json=jsonable_encoder(payload))
+    resp = await authorized_client.put(f"/people/{person_id}", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_200_OK
 
-    resp = await authorized_client.get(f"/people/{idp_id}/personal-info")
+    resp = await authorized_client.get(f"/people/{person_id}/personal-info")
     assert resp.status_code == status.HTTP_200_OK
     assert resp.json() == {
         "email": "updated@email.com",
@@ -234,7 +234,7 @@ async def test_update_idp_works_as_expected(
         "sex": "male",
     }
 
-    resp = await authorized_client.get(f"/people/{idp_id}")
+    resp = await authorized_client.get(f"/people/{person_id}")
     assert resp.status_code == status.HTTP_200_OK
 
     resp_json = resp.json()
@@ -254,13 +254,13 @@ async def test_update_idp_works_as_expected(
         "project_id": str(project.id),
         "category_id": None,
         "tags": ["one", "two", "three"],
-        "id": idp_id,
+        "id": person_id,
         "external_id": None,
         "consultant_id": None,
     }
 
 
-async def test_delete_idp_works_as_expected(
+async def test_delete_person_works_as_expected(
     authorized_client,
     app_context,
     consultant_user,
@@ -282,7 +282,7 @@ async def test_delete_idp_works_as_expected(
             user_id=consultant_user.id,
         ),
     )
-    payload = NewIDPRequest(
+    payload = NewPersonRequest(
         project_id=project.id,
         email="Full_Name@examples.com",
         full_name="Full Name",
@@ -296,15 +296,15 @@ async def test_delete_idp_works_as_expected(
     assert resp.status_code == status.HTTP_201_CREATED
 
     resp_json = resp.json()
-    idp_id = resp_json["id"]
-    resp = await authorized_client.delete(f"/people/{idp_id}")
+    person_id = resp_json["id"]
+    resp = await authorized_client.delete(f"/people/{person_id}")
     assert resp.status_code == status.HTTP_204_NO_CONTENT
 
-    resp = await authorized_client.get(f"/people/{idp_id}")
+    resp = await authorized_client.get(f"/people/{person_id}")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
 
-async def test_get_idp_migration_history_works_as_expected(authorized_client, app_context, consultant_user):
+async def test_get_person_migration_history_works_as_expected(authorized_client, app_context, consultant_user):
     project = await create_project(app_context, "test project", "test description")
     await create_permission(
         app_context,
@@ -321,7 +321,7 @@ async def test_get_idp_migration_history_works_as_expected(authorized_client, ap
             user_id=consultant_user.id,
         ),
     )
-    payload = NewIDPRequest(
+    payload = NewPersonRequest(
         project_id=project.id,
         email="Full_Name@examples.com",
         full_name="Full Name",
@@ -339,7 +339,7 @@ async def test_get_idp_migration_history_works_as_expected(authorized_client, ap
     city_1 = await create_city(app_context, "City 1", "cty1", country.id, state.id)
     city_2 = await create_city(app_context, "City 2", "cty2", country.id, state.id)
     payload = NewMigrationHistoryRequest(
-        idp_id=person_id,
+        person_id=person_id,
         project_id=project.id,
         migration_date=date(year=2018, month=8, day=4),
         from_place_id=city_1.id,
@@ -356,7 +356,7 @@ async def test_get_idp_migration_history_works_as_expected(authorized_client, ap
     assert resp.json() == [jsonable_encoder(expected_response)]
 
 
-async def test_upload_document_for_idp_works(
+async def test_upload_document_for_person_works(
     authorized_client,
     app_context,
     default_person,

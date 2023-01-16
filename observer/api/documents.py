@@ -122,7 +122,7 @@ async def delete_document(
     if not subject_key:
         try:
             await people.get_person(document.owner_id)
-            subject_key = "idp_id"
+            subject_key = "person_id"
         except NotFoundError:
             pass
 

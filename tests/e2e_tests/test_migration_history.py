@@ -14,7 +14,7 @@ async def test_add_migration_history_works_as_expected(
     default_project,
 ):
     payload = NewMigrationHistoryRequest(
-        idp_id=default_person.id,
+        person_id=default_person.id,
         project_id=default_project.id,
         migration_date=date(year=2018, month=8, day=4),
     )
@@ -34,7 +34,7 @@ async def test_get_migration_history_works_as_expected(
     default_project,
 ):
     payload = NewMigrationHistoryRequest(
-        idp_id=default_person.id,
+        person_id=default_person.id,
         project_id=default_project.id,
         migration_date=date(year=2018, month=8, day=4),
     )
@@ -56,7 +56,7 @@ async def test_delete_migration_history_works_as_expected(
     default_project,
 ):
     payload = NewMigrationHistoryRequest(
-        idp_id=default_person.id,
+        person_id=default_person.id,
         project_id=default_project.id,
         migration_date=date(year=2018, month=8, day=4),
     )

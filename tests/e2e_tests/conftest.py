@@ -33,7 +33,7 @@ from observer.common.types import AgeGroup, PetStatus, Role
 from observer.context import Context, Repositories, ctx
 from observer.db import Database, metadata
 from observer.entities.family_members import FamilyMember
-from observer.entities.people import IDP
+from observer.entities.people import Person
 from observer.entities.permissions import NewPermission
 from observer.entities.pets import Pet
 from observer.entities.projects import Project
@@ -507,7 +507,7 @@ async def new_pet(app_context: Context, default_project: Project, consultant_use
 
 
 @pytest.fixture(scope="function")
-async def default_person(app_context: Context, default_project: Project, consultant_user: User) -> IDP:
+async def default_person(app_context: Context, default_project: Project, consultant_user: User) -> Person:
     await create_permission(
         app_context,
         NewPermission(
@@ -532,7 +532,7 @@ async def default_person(app_context: Context, default_project: Project, consult
 async def default_family(
     app_context: Context,
     default_project: Project,
-    default_person: IDP,
+    default_person: Person,
     consultant_user: User,
 ) -> FamilyMember:
     await create_permission(
@@ -556,7 +556,7 @@ async def default_family(
     member = await create_family_member(
         ctx,
         NewFamilyMemberRequest(
-            idp_id=default_person.id,
+            person=default_person.id,
             age_group=AgeGroup.young_teen,
             project_id=default_project.id,
             migration_date=date(year=2018, month=8, day=4),

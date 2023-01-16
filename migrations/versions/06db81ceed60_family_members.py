@@ -24,10 +24,10 @@ def upgrade():
         sa.Column("sex", sa.Text(), nullable=True),
         sa.Column("notes", sa.Text(), nullable=True),
         sa.Column("age_group", sa.Text(), nullable=False),
-        sa.Column("idp_id", postgresql.UUID(as_uuid=True), nullable=True),
+        sa.Column("person_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("project_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.ForeignKeyConstraint(
-            ("idp_id",),
+            ("person_id",),
             ["people.id"],
             ondelete="CASCADE",
         ),
@@ -66,7 +66,7 @@ def upgrade():
     op.create_index(op.f("family_members_age_group"), "family_members", ["age_group"])
     op.create_index(op.f("family_members_birth_date"), "family_members", ["birth_date"])
     op.create_index(op.f("family_members_sex"), "family_members", ["sex"])
-    op.create_index(op.f("family_members_idp_id"), "family_members", ["idp_id"])
+    op.create_index(op.f("family_members_person_id"), "family_members", ["person_id"])
     op.create_index(op.f("family_members_project_id"), "family_members", ["project_id"])
 
 

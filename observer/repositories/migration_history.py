@@ -15,7 +15,7 @@ class IMigrationRepository(Protocol):
     async def get_record(self, record_id: Identifier) -> Optional[MigrationHistory]:
         raise NotImplementedError
 
-    async def get_idp_records(self, idp_id: Identifier) -> List[MigrationHistory]:
+    async def get_persons_records(self, person_id: Identifier) -> List[MigrationHistory]:
         raise NotImplementedError
 
     async def delete_record(self, record_id: Identifier) -> MigrationHistory:
@@ -38,10 +38,10 @@ class MigrationRepository(IMigrationRepository):
 
         return None
 
-    async def get_idp_records(self, idp_id: Identifier) -> List[MigrationHistory]:
+    async def get_persons_records(self, person_id: Identifier) -> List[MigrationHistory]:
         query = (
             select(migration_history)
-            .where(migration_history.c.idp_id == idp_id)
+            .where(migration_history.c.person_id == person_id)
             .order_by(desc(migration_history.c.created_at))
         )
         rows = await self.db.fetchall(query)

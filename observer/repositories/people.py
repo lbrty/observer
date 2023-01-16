@@ -5,20 +5,20 @@ from sqlalchemy import delete, insert, select, update
 from observer.common.types import EncryptedFieldValue, Identifier
 from observer.db import Database
 from observer.db.tables.people import people
-from observer.entities.people import IDP, NewIDP, UpdateIDP
+from observer.entities.people import NewPerson, Person, UpdatePerson
 
 
 class IPeopleRepository(Protocol):
-    async def create_person(self, new_person: NewIDP) -> IDP:
+    async def create_person(self, new_person: NewPerson) -> Person:
         raise NotImplementedError
 
-    async def get_person(self, person_id: Identifier) -> Optional[IDP]:
+    async def get_person(self, person_id: Identifier) -> Optional[Person]:
         raise NotImplementedError
 
-    async def update_person(self, person_id: Identifier, updates: UpdateIDP) -> IDP:
+    async def update_person(self, person_id: Identifier, updates: UpdatePerson) -> Person:
         raise NotImplementedError
 
-    async def delete_person(self, person_id: Identifier) -> Optional[IDP]:
+    async def delete_person(self, person_id: Identifier) -> Optional[Person]:
         raise NotImplementedError
 
 
@@ -26,19 +26,19 @@ class PeopleRepository(IPeopleRepository):
     def __init__(self, db: Database):
         self.db = db
 
-    async def create_person(self, new_person: NewIDP) -> IDP:
+    async def create_person(self, new_person: NewPerson) -> Person:
         query = insert(people).values(**new_person.dict()).returning("*")
         result = await self.db.fetchone(query)
-        return IDP(**result)
+        return Person(**result)
 
-    async def get_person(self, person_id: Identifier) -> Optional[IDP]:
+    async def get_person(self, person_id: Identifier) -> Optional[Person]:
         query = select(people).where(people.c.id == person_id)
         if result := await self.db.fetchone(query):
-            return IDP(**result)
+            return Person(**result)
 
         return None
 
-    async def update_person(self, person_id: Identifier, updates: UpdateIDP) -> IDP:
+    async def update_person(self, person_id: Identifier, updates: UpdatePerson) -> Person:
         values = updates.dict()
         if updates.email == EncryptedFieldValue:
             del values["email"]
@@ -57,11 +57,11 @@ class PeopleRepository(IPeopleRepository):
 
         query = update(people).values(values).where(people.c.id == person_id).returning("*")
         result = await self.db.fetchone(query)
-        return IDP(**result)
+        return Person(**result)
 
-    async def delete_person(self, person_id: Identifier) -> Optional[IDP]:
+    async def delete_person(self, person_id: Identifier) -> Optional[Person]:
         query = delete(people).where(people.c.id == person_id).returning("*")
         if result := await self.db.fetchone(query):
-            return IDP(**result)
+            return Person(**result)
 
         return None

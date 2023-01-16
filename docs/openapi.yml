@@ -1328,11 +1328,10 @@
     "/people": {
       "post": {
         "tags": [
-          "idp",
           "people"
         ],
-        "summary": "Create Idp",
-        "operationId": "create_idp_people_post",
+        "summary": "Create Person",
+        "operationId": "create_person_people_post",
         "parameters": [
           {
             "required": false,
@@ -1348,7 +1347,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewIDPRequest"
+                "$ref": "#/components/schemas/NewPersonRequest"
               }
             }
           },
@@ -1360,7 +1359,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/IDPResponse"
+                  "$ref": "#/components/schemas/PersonResponse"
                 }
               }
             }
@@ -1398,19 +1397,18 @@
         }
       }
     },
-    "/people/{idp_id}": {
+    "/people/{person_id}": {
       "get": {
         "tags": [
-          "idp",
           "people"
         ],
-        "summary": "Get Idp",
-        "operationId": "get_idp_people__idp_id__get",
+        "summary": "Get Person",
+        "operationId": "get_person_people__person_id__get",
         "parameters": [
           {
             "required": true,
             "schema": {
-              "title": "Idp Id",
+              "title": "Person Id",
               "anyOf": [
                 {
                   "type": "string",
@@ -1421,7 +1419,7 @@
                 }
               ]
             },
-            "name": "idp_id",
+            "name": "person_id",
             "in": "path"
           },
           {
@@ -1440,7 +1438,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/IDPResponse"
+                  "$ref": "#/components/schemas/PersonResponse"
                 }
               }
             }
@@ -1479,16 +1477,15 @@
       },
       "put": {
         "tags": [
-          "idp",
           "people"
         ],
-        "summary": "Update Idp",
-        "operationId": "update_idp_people__idp_id__put",
+        "summary": "Update Person",
+        "operationId": "update_person_people__person_id__put",
         "parameters": [
           {
             "required": true,
             "schema": {
-              "title": "Idp Id",
+              "title": "Person Id",
               "anyOf": [
                 {
                   "type": "string",
@@ -1499,7 +1496,7 @@
                 }
               ]
             },
-            "name": "idp_id",
+            "name": "person_id",
             "in": "path"
           },
           {
@@ -1516,7 +1513,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateIDPRequest"
+                "$ref": "#/components/schemas/UpdatePersonRequest"
               }
             }
           },
@@ -1528,7 +1525,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/IDPResponse"
+                  "$ref": "#/components/schemas/PersonResponse"
                 }
               }
             }
@@ -1577,16 +1574,15 @@
       },
       "delete": {
         "tags": [
-          "idp",
           "people"
         ],
-        "summary": "Delete Idp",
-        "operationId": "delete_idp_people__idp_id__delete",
+        "summary": "Delete Person",
+        "operationId": "delete_person_people__person_id__delete",
         "parameters": [
           {
             "required": true,
             "schema": {
-              "title": "Idp Id",
+              "title": "Person Id",
               "anyOf": [
                 {
                   "type": "string",
@@ -1597,7 +1593,7 @@
                 }
               ]
             },
-            "name": "idp_id",
+            "name": "person_id",
             "in": "path"
           },
           {
@@ -1667,19 +1663,18 @@
         }
       }
     },
-    "/people/{idp_id}/personal-info": {
+    "/people/{person_id}/personal-info": {
       "get": {
         "tags": [
-          "idp",
           "people"
         ],
         "summary": "Get Personal Info",
-        "operationId": "get_personal_info_people__idp_id__personal_info_get",
+        "operationId": "get_personal_info_people__person_id__personal_info_get",
         "parameters": [
           {
             "required": true,
             "schema": {
-              "title": "Idp Id",
+              "title": "Person Id",
               "anyOf": [
                 {
                   "type": "string",
@@ -1690,7 +1685,7 @@
                 }
               ]
             },
-            "name": "idp_id",
+            "name": "person_id",
             "in": "path"
           },
           {
@@ -1757,22 +1752,21 @@
         }
       }
     },
-    "/people/{idp_id}/migration-records": {
+    "/people/{person_id}/migration-records": {
       "get": {
         "tags": [
-          "idp",
           "people",
           "migration",
           "history"
         ],
         "summary": "Get Person Migration Records",
         "description": "Get migration records for a person",
-        "operationId": "get_person_migration_records_people__idp_id__migration_records_get",
+        "operationId": "get_person_migration_records_people__person_id__migration_records_get",
         "parameters": [
           {
             "required": true,
             "schema": {
-              "title": "Idp Id",
+              "title": "Person Id",
               "anyOf": [
                 {
                   "type": "string",
@@ -1783,7 +1777,7 @@
                 }
               ]
             },
-            "name": "idp_id",
+            "name": "person_id",
             "in": "path"
           },
           {
@@ -1802,7 +1796,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Get Person Migration Records People  Idp Id  Migration Records Get",
+                  "title": "Response Get Person Migration Records People  Person Id  Migration Records Get",
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/FullMigrationHistoryResponse"
@@ -1854,19 +1848,18 @@
         }
       }
     },
-    "/people/{idp_id}/document": {
+    "/people/{person_id}/document": {
       "post": {
         "tags": [
-          "idp",
           "documents"
         ],
-        "summary": "Idp Upload Document",
-        "operationId": "idp_upload_document_people__idp_id__document_post",
+        "summary": "Person Upload Document",
+        "operationId": "person_upload_document_people__person_id__document_post",
         "parameters": [
           {
             "required": true,
             "schema": {
-              "title": "Idp Id",
+              "title": "Person Id",
               "anyOf": [
                 {
                   "type": "string",
@@ -1877,7 +1870,7 @@
                 }
               ]
             },
-            "name": "idp_id",
+            "name": "person_id",
             "in": "path"
           },
           {
@@ -1894,7 +1887,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/Body_idp_upload_document_people__idp_id__document_post"
+                "$ref": "#/components/schemas/Body_person_upload_document_people__person_id__document_post"
               }
             }
           },
@@ -1954,19 +1947,18 @@
         }
       }
     },
-    "/people/{idp_id}/documents": {
+    "/people/{person_id}/documents": {
       "get": {
         "tags": [
-          "idp",
           "documents"
         ],
-        "summary": "Idp Get Documents",
-        "operationId": "idp_get_documents_people__idp_id__documents_get",
+        "summary": "Person Get Documents",
+        "operationId": "person_get_documents_people__person_id__documents_get",
         "parameters": [
           {
             "required": true,
             "schema": {
-              "title": "Idp Id",
+              "title": "Person Id",
               "anyOf": [
                 {
                   "type": "string",
@@ -1977,7 +1969,7 @@
                 }
               ]
             },
-            "name": "idp_id",
+            "name": "person_id",
             "in": "path"
           },
           {
@@ -1996,7 +1988,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Idp Get Documents People  Idp Id  Documents Get",
+                  "title": "Response Person Get Documents People  Person Id  Documents Get",
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/DocumentResponse"
@@ -2048,21 +2040,20 @@
         }
       }
     },
-    "/people/{idp_id}/family-members": {
+    "/people/{person_id}/family-members": {
       "get": {
         "tags": [
-          "idp",
           "people",
           "family members"
         ],
         "summary": "Get Persons Family Members",
         "description": "Get family members for a person",
-        "operationId": "get_persons_family_members_people__idp_id__family_members_get",
+        "operationId": "get_persons_family_members_people__person_id__family_members_get",
         "parameters": [
           {
             "required": true,
             "schema": {
-              "title": "Idp Id",
+              "title": "Person Id",
               "anyOf": [
                 {
                   "type": "string",
@@ -2073,7 +2064,7 @@
                 }
               ]
             },
-            "name": "idp_id",
+            "name": "person_id",
             "in": "path"
           },
           {
@@ -2092,7 +2083,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "title": "Response Get Persons Family Members People  Idp Id  Family Members Get",
+                  "title": "Response Get Persons Family Members People  Person Id  Family Members Get",
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/FamilyMemberResponse"
@@ -2145,18 +2136,17 @@
       },
       "post": {
         "tags": [
-          "idp",
           "people",
           "family members"
         ],
         "summary": "Add Persons Family Member",
         "description": "Add family member for a person",
-        "operationId": "add_persons_family_member_people__idp_id__family_members_post",
+        "operationId": "add_persons_family_member_people__person_id__family_members_post",
         "parameters": [
           {
             "required": true,
             "schema": {
-              "title": "Idp Id",
+              "title": "Person Id",
               "anyOf": [
                 {
                   "type": "string",
@@ -2167,7 +2157,7 @@
                 }
               ]
             },
-            "name": "idp_id",
+            "name": "person_id",
             "in": "path"
           },
           {
@@ -2254,21 +2244,20 @@
         }
       }
     },
-    "/people/{idp_id}/family-members/{member_id}": {
+    "/people/{person_id}/family-members/{member_id}": {
       "put": {
         "tags": [
-          "idp",
           "people",
           "family members"
         ],
         "summary": "Update Persons Family Member",
         "description": "Add family member for a person",
-        "operationId": "update_persons_family_member_people__idp_id__family_members__member_id__put",
+        "operationId": "update_persons_family_member_people__person_id__family_members__member_id__put",
         "parameters": [
           {
             "required": true,
             "schema": {
-              "title": "Idp Id",
+              "title": "Person Id",
               "anyOf": [
                 {
                   "type": "string",
@@ -2279,7 +2268,7 @@
                 }
               ]
             },
-            "name": "idp_id",
+            "name": "person_id",
             "in": "path"
           },
           {
@@ -2374,18 +2363,17 @@
       },
       "delete": {
         "tags": [
-          "idp",
           "people",
           "family members"
         ],
         "summary": "Delete Persons Family Member",
         "description": "Delete family member for a person",
-        "operationId": "delete_persons_family_member_people__idp_id__family_members__member_id__delete",
+        "operationId": "delete_persons_family_member_people__person_id__family_members__member_id__delete",
         "parameters": [
           {
             "required": true,
             "schema": {
-              "title": "Idp Id",
+              "title": "Person Id",
               "anyOf": [
                 {
                   "type": "string",
@@ -2396,7 +2384,7 @@
                 }
               ]
             },
-            "name": "idp_id",
+            "name": "person_id",
             "in": "path"
           },
           {
@@ -5876,8 +5864,8 @@
         "type": "string",
         "description": "An enumeration."
       },
-      "Body_idp_upload_document_people__idp_id__document_post": {
-        "title": "Body_idp_upload_document_people__idp_id__document_post",
+      "Body_person_upload_document_people__person_id__document_post": {
+        "title": "Body_person_upload_document_people__person_id__document_post",
         "required": [
           "file"
         ],
@@ -6113,7 +6101,7 @@
         "title": "FamilyMemberResponse",
         "required": [
           "age_group",
-          "idp_id",
+          "person_id",
           "id",
           "project_id"
         ],
@@ -6151,8 +6139,8 @@
             ],
             "description": "Age group of family member"
           },
-          "idp_id": {
-            "title": "Idp Id",
+          "person_id": {
+            "title": "Person Id",
             "anyOf": [
               {
                 "type": "string",
@@ -6196,7 +6184,7 @@
         "title": "FullMigrationHistoryResponse",
         "required": [
           "id",
-          "idp_id",
+          "person_id",
           "migration_date",
           "project_id",
           "created_at"
@@ -6216,8 +6204,8 @@
             ],
             "description": "Migration record ID"
           },
-          "idp_id": {
-            "title": "Idp Id",
+          "person_id": {
+            "title": "Person Id",
             "anyOf": [
               {
                 "type": "string",
@@ -6297,151 +6285,6 @@
           "status": {
             "title": "Status",
             "type": "string"
-          }
-        }
-      },
-      "IDPResponse": {
-        "title": "IDPResponse",
-        "required": [
-          "id",
-          "consultant_id"
-        ],
-        "type": "object",
-        "properties": {
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/DisplacedPersonStatus"
-              }
-            ],
-            "description": "Current status",
-            "default": "registered"
-          },
-          "reference_id": {
-            "title": "Reference Id",
-            "type": "string",
-            "description": "Reference ID, maybe some of state issued IDs etc."
-          },
-          "email": {
-            "title": "Email",
-            "type": "string",
-            "description": "Contact email"
-          },
-          "full_name": {
-            "title": "Full Name",
-            "type": "string",
-            "description": "Full name"
-          },
-          "sex": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Sex"
-              }
-            ],
-            "description": "Person's sex"
-          },
-          "pronoun": {
-            "title": "Pronoun",
-            "type": "string",
-            "description": "Person's pronouns"
-          },
-          "birth_date": {
-            "title": "Birth Date",
-            "type": "string",
-            "description": "Birth date",
-            "format": "date-time"
-          },
-          "notes": {
-            "title": "Notes",
-            "type": "string",
-            "description": "Additional notes"
-          },
-          "phone_number": {
-            "title": "Phone Number",
-            "type": "string",
-            "description": "Primary phone number"
-          },
-          "phone_number_additional": {
-            "title": "Phone Number Additional",
-            "type": "string",
-            "description": "Displaced person ID"
-          },
-          "project_id": {
-            "title": "Project Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Related project ID"
-          },
-          "category_id": {
-            "title": "Category Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Vulnerability category ID"
-          },
-          "tags": {
-            "title": "Tags",
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of tags"
-          },
-          "id": {
-            "title": "Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Displaced person ID"
-          },
-          "external_id": {
-            "title": "External Id",
-            "type": "string",
-            "description": "External identifier"
-          },
-          "consultant_id": {
-            "title": "Consultant Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Consultant ID"
-          },
-          "created_at": {
-            "title": "Created At",
-            "type": "string",
-            "description": "Creation date",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "title": "Updated At",
-            "type": "string",
-            "description": "Update date",
-            "format": "date-time"
           }
         }
       },
@@ -6574,7 +6417,7 @@
       "MigrationHistoryResponse": {
         "title": "MigrationHistoryResponse",
         "required": [
-          "idp_id",
+          "person_id",
           "migration_date",
           "project_id",
           "id",
@@ -6582,8 +6425,8 @@
         ],
         "type": "object",
         "properties": {
-          "idp_id": {
-            "title": "Idp Id",
+          "person_id": {
+            "title": "Person Id",
             "anyOf": [
               {
                 "type": "string",
@@ -6699,7 +6542,7 @@
         "title": "NewFamilyMemberRequest",
         "required": [
           "age_group",
-          "idp_id",
+          "person_id",
           "project_id"
         ],
         "type": "object",
@@ -6736,8 +6579,8 @@
             ],
             "description": "Age group of family member"
           },
-          "idp_id": {
-            "title": "Idp Id",
+          "person_id": {
+            "title": "Person Id",
             "anyOf": [
               {
                 "type": "string",
@@ -6764,115 +6607,17 @@
           }
         }
       },
-      "NewIDPRequest": {
-        "title": "NewIDPRequest",
-        "type": "object",
-        "properties": {
-          "status": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/DisplacedPersonStatus"
-              }
-            ],
-            "description": "Current status",
-            "default": "registered"
-          },
-          "reference_id": {
-            "title": "Reference Id",
-            "type": "string",
-            "description": "Reference ID, maybe some of state issued IDs etc."
-          },
-          "email": {
-            "title": "Email",
-            "type": "string",
-            "description": "Contact email"
-          },
-          "full_name": {
-            "title": "Full Name",
-            "type": "string",
-            "description": "Full name"
-          },
-          "sex": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Sex"
-              }
-            ],
-            "description": "Person's sex"
-          },
-          "pronoun": {
-            "title": "Pronoun",
-            "type": "string",
-            "description": "Person's pronouns"
-          },
-          "birth_date": {
-            "title": "Birth Date",
-            "type": "string",
-            "description": "Birth date",
-            "format": "date-time"
-          },
-          "notes": {
-            "title": "Notes",
-            "type": "string",
-            "description": "Additional notes"
-          },
-          "phone_number": {
-            "title": "Phone Number",
-            "type": "string",
-            "description": "Primary phone number"
-          },
-          "phone_number_additional": {
-            "title": "Phone Number Additional",
-            "type": "string",
-            "description": "Displaced person ID"
-          },
-          "project_id": {
-            "title": "Project Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Related project ID"
-          },
-          "category_id": {
-            "title": "Category Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Vulnerability category ID"
-          },
-          "tags": {
-            "title": "Tags",
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of tags"
-          }
-        }
-      },
       "NewMigrationHistoryRequest": {
         "title": "NewMigrationHistoryRequest",
         "required": [
-          "idp_id",
+          "person_id",
           "migration_date",
           "project_id"
         ],
         "type": "object",
         "properties": {
-          "idp_id": {
-            "title": "Idp Id",
+          "person_id": {
+            "title": "Person Id",
             "anyOf": [
               {
                 "type": "string",
@@ -7028,6 +6773,104 @@
               }
             ],
             "description": "User can create records"
+          }
+        }
+      },
+      "NewPersonRequest": {
+        "title": "NewPersonRequest",
+        "type": "object",
+        "properties": {
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DisplacedPersonStatus"
+              }
+            ],
+            "description": "Current status",
+            "default": "registered"
+          },
+          "reference_id": {
+            "title": "Reference Id",
+            "type": "string",
+            "description": "Reference ID, maybe some of state issued IDs etc."
+          },
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "Contact email"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string",
+            "description": "Full name"
+          },
+          "sex": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Sex"
+              }
+            ],
+            "description": "Person's sex"
+          },
+          "pronoun": {
+            "title": "Pronoun",
+            "type": "string",
+            "description": "Person's pronouns"
+          },
+          "birth_date": {
+            "title": "Birth Date",
+            "type": "string",
+            "description": "Birth date",
+            "format": "date-time"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string",
+            "description": "Additional notes"
+          },
+          "phone_number": {
+            "title": "Phone Number",
+            "type": "string",
+            "description": "Primary phone number"
+          },
+          "phone_number_additional": {
+            "title": "Phone Number Additional",
+            "type": "string",
+            "description": "Displaced person ID"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Related project ID"
+          },
+          "category_id": {
+            "title": "Category Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Vulnerability category ID"
+          },
+          "tags": {
+            "title": "Tags",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of tags"
           }
         }
       },
@@ -7383,6 +7226,151 @@
               }
             ],
             "description": "User can create records"
+          }
+        }
+      },
+      "PersonResponse": {
+        "title": "PersonResponse",
+        "required": [
+          "id",
+          "consultant_id"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DisplacedPersonStatus"
+              }
+            ],
+            "description": "Current status",
+            "default": "registered"
+          },
+          "reference_id": {
+            "title": "Reference Id",
+            "type": "string",
+            "description": "Reference ID, maybe some of state issued IDs etc."
+          },
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "Contact email"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string",
+            "description": "Full name"
+          },
+          "sex": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Sex"
+              }
+            ],
+            "description": "Person's sex"
+          },
+          "pronoun": {
+            "title": "Pronoun",
+            "type": "string",
+            "description": "Person's pronouns"
+          },
+          "birth_date": {
+            "title": "Birth Date",
+            "type": "string",
+            "description": "Birth date",
+            "format": "date-time"
+          },
+          "notes": {
+            "title": "Notes",
+            "type": "string",
+            "description": "Additional notes"
+          },
+          "phone_number": {
+            "title": "Phone Number",
+            "type": "string",
+            "description": "Primary phone number"
+          },
+          "phone_number_additional": {
+            "title": "Phone Number Additional",
+            "type": "string",
+            "description": "Displaced person ID"
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Related project ID"
+          },
+          "category_id": {
+            "title": "Category Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Vulnerability category ID"
+          },
+          "tags": {
+            "title": "Tags",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of tags"
+          },
+          "id": {
+            "title": "Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Displaced person ID"
+          },
+          "external_id": {
+            "title": "External Id",
+            "type": "string",
+            "description": "External identifier"
+          },
+          "consultant_id": {
+            "title": "Consultant Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Consultant ID"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string",
+            "description": "Creation date",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string",
+            "description": "Update date",
+            "format": "date-time"
           }
         }
       },
@@ -7927,7 +7915,7 @@
         "title": "UpdateFamilyMemberRequest",
         "required": [
           "age_group",
-          "idp_id"
+          "person_id"
         ],
         "type": "object",
         "properties": {
@@ -7963,8 +7951,8 @@
             ],
             "description": "Age group of family member"
           },
-          "idp_id": {
-            "title": "Idp Id",
+          "person_id": {
+            "title": "Person Id",
             "anyOf": [
               {
                 "type": "string",
@@ -7978,8 +7966,62 @@
           }
         }
       },
-      "UpdateIDPRequest": {
-        "title": "UpdateIDPRequest",
+      "UpdatePermissionRequest": {
+        "title": "UpdatePermissionRequest",
+        "type": "object",
+        "properties": {
+          "can_create": {
+            "title": "Can Create",
+            "type": "boolean",
+            "description": "User can create records",
+            "default": false
+          },
+          "can_read": {
+            "title": "Can Read",
+            "type": "boolean",
+            "description": "User can create records",
+            "default": true
+          },
+          "can_update": {
+            "title": "Can Update",
+            "type": "boolean",
+            "description": "User can update records",
+            "default": false
+          },
+          "can_delete": {
+            "title": "Can Delete",
+            "type": "boolean",
+            "description": "User can delete records",
+            "default": false
+          },
+          "can_create_projects": {
+            "title": "Can Create Projects",
+            "type": "boolean",
+            "description": "User can create projects",
+            "default": false
+          },
+          "can_read_documents": {
+            "title": "Can Read Documents",
+            "type": "boolean",
+            "description": "User can read documents",
+            "default": false
+          },
+          "can_read_personal_info": {
+            "title": "Can Read Personal Info",
+            "type": "boolean",
+            "description": "User can read personal info",
+            "default": false
+          },
+          "can_invite_members": {
+            "title": "Can Invite Members",
+            "type": "boolean",
+            "description": "User can invite new members to projects",
+            "default": false
+          }
+        }
+      },
+      "UpdatePersonRequest": {
+        "title": "UpdatePersonRequest",
         "type": "object",
         "properties": {
           "status": {
@@ -8073,60 +8115,6 @@
               "type": "string"
             },
             "description": "List of tags"
-          }
-        }
-      },
-      "UpdatePermissionRequest": {
-        "title": "UpdatePermissionRequest",
-        "type": "object",
-        "properties": {
-          "can_create": {
-            "title": "Can Create",
-            "type": "boolean",
-            "description": "User can create records",
-            "default": false
-          },
-          "can_read": {
-            "title": "Can Read",
-            "type": "boolean",
-            "description": "User can create records",
-            "default": true
-          },
-          "can_update": {
-            "title": "Can Update",
-            "type": "boolean",
-            "description": "User can update records",
-            "default": false
-          },
-          "can_delete": {
-            "title": "Can Delete",
-            "type": "boolean",
-            "description": "User can delete records",
-            "default": false
-          },
-          "can_create_projects": {
-            "title": "Can Create Projects",
-            "type": "boolean",
-            "description": "User can create projects",
-            "default": false
-          },
-          "can_read_documents": {
-            "title": "Can Read Documents",
-            "type": "boolean",
-            "description": "User can read documents",
-            "default": false
-          },
-          "can_read_personal_info": {
-            "title": "Can Read Personal Info",
-            "type": "boolean",
-            "description": "User can read personal info",
-            "default": false
-          },
-          "can_invite_members": {
-            "title": "Can Invite Members",
-            "type": "boolean",
-            "description": "User can invite new members to projects",
-            "default": false
           }
         }
       },

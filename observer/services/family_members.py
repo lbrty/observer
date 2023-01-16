@@ -23,7 +23,7 @@ class IFamilyService(Protocol):
     async def get_member(self, member_id: Identifier) -> FamilyMember:
         raise NotImplementedError
 
-    async def get_by_person(self, idp_id: Identifier) -> List[FamilyMember]:
+    async def get_by_person(self, person_id: Identifier) -> List[FamilyMember]:
         raise NotImplementedError
 
     async def get_by_project(self, project_id: Identifier) -> List[FamilyMember]:
@@ -49,8 +49,8 @@ class FamilyService(IFamilyService):
 
         raise NotFoundError(message="Family member not found")
 
-    async def get_by_person(self, idp_id: Identifier) -> List[FamilyMember]:
-        return await self.repo.get_by_person(idp_id)
+    async def get_by_person(self, person_id: Identifier) -> List[FamilyMember]:
+        return await self.repo.get_by_person(person_id)
 
     async def get_by_project(self, project_id: Identifier) -> List[FamilyMember]:
         return await self.repo.get_by_project(project_id)

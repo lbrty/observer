@@ -86,7 +86,7 @@ family_members = Table(
     Column("sex", Text(), nullable=True),
     Column("notes", Text(), nullable=True),
     Column("age_group", Text(), nullable=False),
-    Column("idp_id", UUID(as_uuid=True), ForeignKey("people.id", ondelete="CASCADE"), nullable=True),
+    Column("person_id", UUID(as_uuid=True), ForeignKey("people.id", ondelete="CASCADE"), nullable=True),
     Column("project_id", UUID(as_uuid=True), ForeignKey("projects.id", ondelete="SET NULL"), nullable=True),
     CheckConstraint(
         """age_group IN (
@@ -116,6 +116,6 @@ family_members = Table(
     Index("family_members_age_group", "age_group"),
     Index("family_members_birth_date", "birth_date"),
     Index("family_members_sex", "sex"),
-    Index("family_members_idp_id", "idp_id"),
+    Index("family_members_person_id", "person_id"),
     Index("family_members_project_id", "project_id"),
 )

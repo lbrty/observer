@@ -114,7 +114,7 @@ async def people_service() -> IPeopleService:
     if ctx.people_service:
         return ctx.people_service
 
-    raise RuntimeError("IDPService is None")
+    raise RuntimeError("IPeopleService is None")
 
 
 async def family_service() -> IFamilyService:

@@ -11,7 +11,7 @@ class BaseFamilyMember(ModelBase):
     sex: Optional[Sex]
     notes: Optional[str]
     age_group: AgeGroup
-    idp_id: Identifier
+    person_id: Identifier
 
 
 class FamilyMember(BaseFamilyMember):

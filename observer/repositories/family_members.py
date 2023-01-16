@@ -19,7 +19,7 @@ class IFamilyRepository(Protocol):
     async def get_member(self, member_id: Identifier) -> Optional[FamilyMember]:
         raise NotImplementedError
 
-    async def get_by_person(self, idp_id: Identifier) -> List[FamilyMember]:
+    async def get_by_person(self, person_id: Identifier) -> List[FamilyMember]:
         raise NotImplementedError
 
     async def get_by_project(self, project_id: Identifier) -> List[FamilyMember]:
@@ -48,8 +48,8 @@ class FamilyRepository(IFamilyRepository):
 
         return None
 
-    async def get_by_person(self, idp_id: Identifier) -> List[FamilyMember]:
-        query = select(family_members).where(family_members.c.idp_id == idp_id)
+    async def get_by_person(self, person_id: Identifier) -> List[FamilyMember]:
+        query = select(family_members).where(family_members.c.person_id == person_id)
         rows = await self.db.fetchall(query)
         return [FamilyMember(**row) for row in rows]
 

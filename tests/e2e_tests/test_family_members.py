@@ -15,7 +15,7 @@ async def test_add_family_member_works(
     default_project,
 ):
     payload = NewFamilyMemberRequest(
-        idp_id=default_person.id,
+        person_id=default_person.id,
         age_group=AgeGroup.young_teen,
         project_id=default_project.id,
         migration_date=date(year=2018, month=8, day=4),

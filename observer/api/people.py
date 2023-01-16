@@ -40,10 +40,10 @@ from observer.schemas.family_members import (
 )
 from observer.schemas.migration_history import FullMigrationHistoryResponse
 from observer.schemas.people import (
-    IDPResponse,
-    NewIDPRequest,
+    NewPersonRequest,
     PersonalInfoResponse,
-    UpdateIDPRequest,
+    PersonResponse,
+    UpdatePersonRequest,
 )
 from observer.schemas.world import PlaceResponse
 from observer.services.audit_logs import IAuditService
@@ -63,64 +63,64 @@ router = APIRouter(prefix="/people")
 
 @router.post(
     "",
-    response_model=IDPResponse,
+    response_model=PersonResponse,
     status_code=status.HTTP_201_CREATED,
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
     ),
-    tags=["idp", "people"],
+    tags=["people"],
 )
-async def create_idp(
+async def create_person(
     tasks: BackgroundTasks,
-    new_idp: NewIDPRequest,
+    new_person: NewPersonRequest,
     user: SomeUser = Depends(authenticated_user),
     audits: IAuditService = Depends(audit_service),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     props: Props = Depends(
         Tracked(
-            tag="endpoint=create_idp,action=create:idp",
+            tag="endpoint=create_person,action=create:person",
             expires_in=None,
         ),
         use_cache=False,
     ),
-) -> IDPResponse:
-    permission = await permissions.find(new_idp.project_id, user.id)
+) -> PersonResponse:
+    permission = await permissions.find(new_person.project_id, user.id)
     assert_writable(user, permission)
-    person = await people.create_person(new_idp)
+    person = await people.create_person(new_person)
     audit_log = props.new_event(f"person_id={person.id},ref_id={user.ref_id}", None)
     tasks.add_task(audits.add_event, audit_log)
-    return IDPResponse(**person.dict())
+    return PersonResponse(**person.dict())
 
 
 @router.get(
-    "/{idp_id}",
-    response_model=IDPResponse,
+    "/{person_id}",
+    response_model=PersonResponse,
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "people"],
+    tags=["people"],
 )
-async def get_idp(
-    idp_id: Identifier,
+async def get_person(
+    person_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     secrets: ISecretsService = Depends(secrets_service),
-) -> IDPResponse:
-    idp_record = await people.get_person(idp_id)
-    permission = await permissions.find(idp_record.project_id, user.id)
+) -> PersonResponse:
+    person = await people.get_person(person_id)
+    permission = await permissions.find(person.project_id, user.id)
     assert_viewable(user, permission)
-    idp_record = await secrets.anonymize_idp(idp_record)
-    return IDPResponse(**idp_record.dict())
+    person = await secrets.anonymize_person(person)
+    return PersonResponse(**person.dict())
 
 
 @router.get(
-    "/{idp_id}/personal-info",
+    "/{person_id}/personal-info",
     response_model=PersonalInfoResponse,
     response_model_exclude_none=True,
     status_code=status.HTTP_200_OK,
@@ -129,33 +129,33 @@ async def get_idp(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "people"],
+    tags=["people"],
 )
 async def get_personal_info(
-    idp_id: Identifier,
+    person_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     secrets: ISecretsService = Depends(secrets_service),
 ) -> PersonalInfoResponse:
-    idp_record = await people.get_person(idp_id)
-    permission = await permissions.find(idp_record.project_id, user.id)
+    person = await people.get_person(person_id)
+    permission = await permissions.find(person.project_id, user.id)
     assert_can_see_private_info(user, permission)
     pi = await secrets.decrypt_personal_info(
         PersonalInfo(
-            email=idp_record.email,
-            phone_number=idp_record.phone_number,
-            phone_number_additional=idp_record.phone_number_additional,
+            email=person.email,
+            phone_number=person.phone_number,
+            phone_number_additional=person.phone_number_additional,
         ),
     )
-    pi.full_name = idp_record.full_name
-    pi.sex = idp_record.sex
-    pi.pronoun = idp_record.pronoun
+    pi.full_name = person.full_name
+    pi.sex = person.sex
+    pi.pronoun = person.pronoun
     return PersonalInfoResponse(**pi.dict())
 
 
 @router.get(
-    "/{idp_id}/migration-records",
+    "/{person_id}/migration-records",
     response_model=List[FullMigrationHistoryResponse],
     response_model_exclude_none=True,
     status_code=status.HTTP_200_OK,
@@ -164,10 +164,10 @@ async def get_personal_info(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "people", "migration", "history"],
+    tags=["people", "migration", "history"],
 )
 async def get_person_migration_records(
-    idp_id: Identifier,
+    person_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -175,10 +175,10 @@ async def get_person_migration_records(
     world: IWorldService = Depends(world_service),
 ) -> List[FullMigrationHistoryResponse]:
     """Get migration records for a person"""
-    idp_record = await people.get_person(idp_id)
-    permission = await permissions.find(idp_record.project_id, user.id)
+    person = await people.get_person(person_id)
+    permission = await permissions.find(person.project_id, user.id)
     assert_can_see_private_info(user, permission)
-    records = await migrations.get_idp_records(idp_id)
+    records = await migrations.get_persons_records(person_id)
     result = []
     for record in records:
         migration_record = FullMigrationHistoryResponse(**record.dict())
@@ -195,62 +195,62 @@ async def get_person_migration_records(
 
 
 @router.put(
-    "/{idp_id}",
-    response_model=IDPResponse,
+    "/{person_id}",
+    response_model=PersonResponse,
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "people"],
+    tags=["people"],
 )
-async def update_idp(
+async def update_person(
     tasks: BackgroundTasks,
-    idp_id: Identifier,
-    idp_updates: UpdateIDPRequest,
+    person_id: Identifier,
+    person_updates: UpdatePersonRequest,
     user: SomeUser = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
-            tag="endpoint=update_idp,action=update:idp",
+            tag="endpoint=update_person,action=update:person",
             expires_in=None,
         ),
         use_cache=False,
     ),
-) -> IDPResponse:
-    idp_record = await people.get_person(idp_id)
-    permission = await permissions.find(idp_record.project_id, user.id)
+) -> PersonResponse:
+    person = await people.get_person(person_id)
+    permission = await permissions.find(person.project_id, user.id)
     assert_updatable(user, permission)
-    updated_idp = await people.update_person(idp_id, idp_updates)
+    updated_person = await people.update_person(person_id, person_updates)
     audit_log = props.new_event(
-        f"person_id={updated_idp.id},ref_id={user.ref_id}",
+        f"person_id={updated_person.id},ref_id={user.ref_id}",
         jsonable_encoder(
-            updated_idp.dict(
+            updated_person.dict(
                 exclude_none=True,
                 exclude={"email", "phone_number", "phone_number_additional"},
             )
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return IDPResponse(**updated_idp.dict())
+    return PersonResponse(**updated_person.dict())
 
 
 @router.delete(
-    "/{idp_id}",
+    "/{person_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "people"],
+    tags=["people"],
 )
-async def delete_idp(
+async def delete_person(
     tasks: BackgroundTasks,
-    idp_id: Identifier,
+    person_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -260,29 +260,29 @@ async def delete_idp(
     ip_address: str = Depends(client_ip),
     props: Props = Depends(
         Tracked(
-            tag="endpoint=delete_idp,action=delete:idp",
+            tag="endpoint=delete_person,action=delete:person",
             expires_in=None,
         ),
         use_cache=False,
     ),
 ) -> Response:
-    idp_record = await people.get_person(idp_id)
-    permission = await permissions.find(idp_record.project_id, user.id)
+    person = await people.get_person(person_id)
+    permission = await permissions.find(person.project_id, user.id)
     assert_deletable(user, permission)
     assert_docs_readable(user, permission)
-    deleted_idp = await people.delete_person(idp_id)
-    idp_documents = await documents.get_by_owner_id(idp_id)
-    document_ids = [str(doc.id) for doc in idp_documents]
+    deleted_person = await people.delete_person(person_id)
+    person_documents = await documents.get_by_owner_id(person_id)
+    document_ids = [str(doc.id) for doc in person_documents]
     await documents.bulk_delete(document_ids)
-    full_path = os.path.join(settings.documents_path, str(idp_id))
-    audit_log = props.new_event(f"person_id={deleted_idp.id},ref_id={user.ref_id}", dict(ip_address=ip_address))
+    full_path = os.path.join(settings.documents_path, str(person_id))
+    audit_log = props.new_event(f"person_id={deleted_person.id},ref_id={user.ref_id}", dict(ip_address=ip_address))
     tasks.add_task(storage.delete_path, full_path)
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.post(
-    "/{idp_id}/document",
+    "/{person_id}/document",
     response_model=DocumentResponse,
     status_code=status.HTTP_201_CREATED,
     responses=get_api_errors(
@@ -290,11 +290,11 @@ async def delete_idp(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "documents"],
+    tags=["documents"],
 )
-async def idp_upload_document(
+async def person_upload_document(
     tasks: BackgroundTasks,
-    idp_id: Identifier,
+    person_id: Identifier,
     file: UploadFile,
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
@@ -306,17 +306,17 @@ async def idp_upload_document(
     audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
-            tag="endpoint=idp_upload_document,action=create:document",
+            tag="endpoint=person_upload_document,action=create:document",
             expires_in=None,
         ),
         use_cache=False,
     ),
 ) -> DocumentResponse:
-    pet = await people.get_person(idp_id)
+    pet = await people.get_person(person_id)
     permission = await permissions.find(pet.project_id, user.id)
     assert_deletable(user, permission)
     assert_docs_readable(user, permission)
-    save_to = os.path.join(settings.documents_path, str(idp_id))
+    save_to = os.path.join(settings.documents_path, str(person_id))
     size, sealed_file = await uploads.process_upload(file, save_to)
     document = await documents.create_document(
         sealed_file.encryption_key,
@@ -325,7 +325,7 @@ async def idp_upload_document(
             size=size,
             path=sealed_file.path,
             mimetype=file.content_type,
-            owner_id=idp_id,
+            owner_id=person_id,
             project_id=pet.project_id,
         ),
     )
@@ -342,7 +342,7 @@ async def idp_upload_document(
 
 
 @router.get(
-    "/{idp_id}/documents",
+    "/{person_id}/documents",
     response_model=List[DocumentResponse],
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
@@ -350,10 +350,10 @@ async def idp_upload_document(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "documents"],
+    tags=["documents"],
 )
-async def idp_get_documents(
-    idp_id: Identifier,
+async def person_get_documents(
+    person_id: Identifier,
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
@@ -361,16 +361,16 @@ async def idp_get_documents(
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
 ) -> List[DocumentResponse]:
-    pet = await people.get_person(idp_id)
+    pet = await people.get_person(person_id)
     permission = await permissions.find(pet.project_id, user.id)
     assert_viewable(user, permission)
     assert_docs_readable(user, permission)
-    docs = await documents.get_by_owner_id(idp_id)
+    docs = await documents.get_by_owner_id(person_id)
     return [DocumentResponse(**doc.dict()) for doc in docs]
 
 
 @router.post(
-    "/{idp_id}/family-members",
+    "/{person_id}/family-members",
     response_model=FamilyMemberResponse,
     status_code=status.HTTP_201_CREATED,
     responses=get_api_errors(
@@ -379,11 +379,11 @@ async def idp_get_documents(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_409_CONFLICT,
     ),
-    tags=["idp", "people", "family members"],
+    tags=["people", "family members"],
 )
 async def add_persons_family_member(
     tasks: BackgroundTasks,
-    idp_id: Identifier,
+    person_id: Identifier,
     new_member: NewFamilyMemberRequest,
     user: SomeUser = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
@@ -399,16 +399,16 @@ async def add_persons_family_member(
     ),
 ) -> FamilyMemberResponse:
     """Add family member for a person"""
-    idp_record = await people.get_person(idp_id)
-    permission = await permissions.find(idp_record.project_id, user.id)
-    if idp_record.project_id != new_member.project_id:
+    person = await people.get_person(person_id)
+    permission = await permissions.find(person.project_id, user.id)
+    if person.project_id != new_member.project_id:
         raise ConflictError(message="Project ID is not the same as in request body")
 
     assert_viewable(user, permission)
     assert_can_see_private_info(user, permission)
     member = await family.add_member(new_member)
     audit_log = props.new_event(
-        f"person_id={idp_id},project_id={new_member.project_id},member_id={member.id},ref_id={user.ref_id}",
+        f"person_id={person_id},project_id={new_member.project_id},member_id={member.id},ref_id={user.ref_id}",
         jsonable_encoder(
             member,
             exclude={"id"},
@@ -420,7 +420,7 @@ async def add_persons_family_member(
 
 
 @router.get(
-    "/{idp_id}/family-members",
+    "/{person_id}/family-members",
     response_model=List[FamilyMemberResponse],
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
@@ -428,26 +428,26 @@ async def add_persons_family_member(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "people", "family members"],
+    tags=["people", "family members"],
 )
 async def get_persons_family_members(
-    idp_id: Identifier,
+    person_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
     permissions: IPermissionsService = Depends(permissions_service),
 ) -> List[FamilyMemberResponse]:
     """Get family members for a person"""
-    idp_record = await people.get_person(idp_id)
-    permission = await permissions.find(idp_record.project_id, user.id)
+    person = await people.get_person(person_id)
+    permission = await permissions.find(person.project_id, user.id)
     assert_viewable(user, permission)
     assert_can_see_private_info(user, permission)
-    members = await family.get_by_person(idp_id)
+    members = await family.get_by_person(person_id)
     return [FamilyMemberResponse(**member.dict()) for member in members]
 
 
 @router.put(
-    "/{idp_id}/family-members/{member_id}",
+    "/{person_id}/family-members/{member_id}",
     response_model=FamilyMemberResponse,
     status_code=status.HTTP_200_OK,
     responses=get_api_errors(
@@ -455,11 +455,11 @@ async def get_persons_family_members(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "people", "family members"],
+    tags=["people", "family members"],
 )
 async def update_persons_family_member(
     tasks: BackgroundTasks,
-    idp_id: Identifier,
+    person_id: Identifier,
     member_id: Identifier,
     updates: UpdateFamilyMemberRequest,
     user: SomeUser = Depends(authenticated_user),
@@ -476,13 +476,13 @@ async def update_persons_family_member(
     ),
 ) -> FamilyMemberResponse:
     """Add family member for a person"""
-    idp_record = await people.get_person(idp_id)
-    permission = await permissions.find(idp_record.project_id, user.id)
+    person = await people.get_person(person_id)
+    permission = await permissions.find(person.project_id, user.id)
     assert_viewable(user, permission)
     assert_can_see_private_info(user, permission)
     member = await family.update_member(member_id, updates)
     audit_log = props.new_event(
-        f"person_id={idp_id},project_id={member.project_id},member_id={member.id},ref_id={user.ref_id}",
+        f"person_id={person_id},project_id={member.project_id},member_id={member.id},ref_id={user.ref_id}",
         jsonable_encoder(
             member,
             exclude={"id"},
@@ -494,18 +494,18 @@ async def update_persons_family_member(
 
 
 @router.delete(
-    "/{idp_id}/family-members/{member_id}",
+    "/{person_id}/family-members/{member_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "people", "family members"],
+    tags=["people", "family members"],
 )
 async def delete_persons_family_member(
     tasks: BackgroundTasks,
-    idp_id: Identifier,
+    person_id: Identifier,
     member_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
@@ -522,13 +522,13 @@ async def delete_persons_family_member(
     ),
 ) -> Response:
     """Delete family member for a person"""
-    idp_record = await people.get_person(idp_id)
-    permission = await permissions.find(idp_record.project_id, user.id)
+    person = await people.get_person(person_id)
+    permission = await permissions.find(person.project_id, user.id)
     assert_viewable(user, permission)
     assert_can_see_private_info(user, permission)
     member = await family.delete_member(member_id)
     audit_log = props.new_event(
-        f"person_id={idp_id},project_id={member.project_id},member_id={member.id},ref_id={user.ref_id}",
+        f"person_id={person_id},project_id={member.project_id},member_id={member.id},ref_id={user.ref_id}",
         dict(ip_address=ip_address),
     )
     tasks.add_task(audits.add_event, audit_log)

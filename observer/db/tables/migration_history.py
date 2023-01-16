@@ -13,7 +13,7 @@ migration_history = Table(
         server_default=text("gen_random_uuid()"),
     ),
     Column(
-        "idp_id",
+        "person_id",
         UUID(as_uuid=True),
         ForeignKey("people.id", ondelete="CASCADE"),
         nullable=False,
@@ -43,7 +43,7 @@ migration_history = Table(
         server_default=func.now(),
         nullable=True,
     ),
-    Index("ix_migration_history_idp_id", "idp_id"),
+    Index("ix_migration_history_person_id", "person_id"),
     Index("ix_migration_history_project_id", "project_id"),
     Index("ix_migration_history_migration_date", "migration_date"),
     Index("ix_migration_history_from_place_id", "from_place_id"),

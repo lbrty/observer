@@ -24,7 +24,7 @@ def upgrade():
             server_default=sa.text("gen_random_uuid()"),
             nullable=False,
         ),
-        sa.Column("idp_id", postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column("person_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column("migration_date", sa.DATE(), nullable=True),
         sa.Column("project_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("from_place_id", postgresql.UUID(as_uuid=True), nullable=True),
@@ -38,7 +38,7 @@ def upgrade():
         sa.PrimaryKeyConstraint("id"),
         # If person deleted we no longer need to keep migration info
         sa.ForeignKeyConstraint(
-            ("idp_id",),
+            ("person_id",),
             ["people.id"],
             ondelete="CASCADE",
         ),
@@ -61,7 +61,7 @@ def upgrade():
         ),
     )
 
-    op.create_index(op.f("ix_migration_history_idp_id"), "migration_history", ["idp_id"])
+    op.create_index(op.f("ix_migration_history_person_id"), "migration_history", ["person_id"])
     op.create_index(op.f("ix_migration_history_project_id"), "migration_history", ["project_id"])
     op.create_index(op.f("ix_migration_history_migration_date"), "migration_history", ["migration_date"])
     op.create_index(op.f("ix_migration_history_from_place_id"), "migration_history", ["from_place_id"])
