@@ -556,7 +556,7 @@ async def default_family(
     member = await create_family_member(
         ctx,
         NewFamilyMemberRequest(
-            person=default_person.id,
+            person_id=default_person.id,
             age_group=AgeGroup.young_teen,
             project_id=default_project.id,
             migration_date=date(year=2018, month=8, day=4),
