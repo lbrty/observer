@@ -88,7 +88,7 @@ async def create_idp(
 ) -> IDPResponse:
     permission = await permissions.find(new_idp.project_id, user.id)
     assert_writable(user, permission)
-    person = await people.create_idp(new_idp)
+    person = await people.create_person(new_idp)
     audit_log = props.new_event(f"person_id={person.id},ref_id={user.ref_id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return IDPResponse(**person.dict())
@@ -112,7 +112,7 @@ async def get_idp(
     permissions: IPermissionsService = Depends(permissions_service),
     secrets: ISecretsService = Depends(secrets_service),
 ) -> IDPResponse:
-    idp_record = await people.get_idp(idp_id)
+    idp_record = await people.get_person(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_viewable(user, permission)
     idp_record = await secrets.anonymize_idp(idp_record)
@@ -138,7 +138,7 @@ async def get_personal_info(
     permissions: IPermissionsService = Depends(permissions_service),
     secrets: ISecretsService = Depends(secrets_service),
 ) -> PersonalInfoResponse:
-    idp_record = await people.get_idp(idp_id)
+    idp_record = await people.get_person(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_can_see_private_info(user, permission)
     pi = await secrets.decrypt_personal_info(
@@ -175,7 +175,7 @@ async def get_person_migration_records(
     world: IWorldService = Depends(world_service),
 ) -> List[FullMigrationHistoryResponse]:
     """Get migration records for a person"""
-    idp_record = await people.get_idp(idp_id)
+    idp_record = await people.get_person(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_can_see_private_info(user, permission)
     records = await migrations.get_idp_records(idp_id)
@@ -221,10 +221,10 @@ async def update_idp(
         use_cache=False,
     ),
 ) -> IDPResponse:
-    idp_record = await people.get_idp(idp_id)
+    idp_record = await people.get_person(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_updatable(user, permission)
-    updated_idp = await people.update_idp(idp_id, idp_updates)
+    updated_idp = await people.update_person(idp_id, idp_updates)
     audit_log = props.new_event(
         f"person_id={updated_idp.id},ref_id={user.ref_id}",
         jsonable_encoder(
@@ -266,11 +266,11 @@ async def delete_idp(
         use_cache=False,
     ),
 ) -> Response:
-    idp_record = await people.get_idp(idp_id)
+    idp_record = await people.get_person(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_deletable(user, permission)
     assert_docs_readable(user, permission)
-    deleted_idp = await people.delete_idp(idp_id)
+    deleted_idp = await people.delete_person(idp_id)
     idp_documents = await documents.get_by_owner_id(idp_id)
     document_ids = [str(doc.id) for doc in idp_documents]
     await documents.bulk_delete(document_ids)
@@ -312,7 +312,7 @@ async def idp_upload_document(
         use_cache=False,
     ),
 ) -> DocumentResponse:
-    pet = await people.get_idp(idp_id)
+    pet = await people.get_person(idp_id)
     permission = await permissions.find(pet.project_id, user.id)
     assert_deletable(user, permission)
     assert_docs_readable(user, permission)
@@ -361,7 +361,7 @@ async def idp_get_documents(
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
 ) -> List[DocumentResponse]:
-    pet = await people.get_idp(idp_id)
+    pet = await people.get_person(idp_id)
     permission = await permissions.find(pet.project_id, user.id)
     assert_viewable(user, permission)
     assert_docs_readable(user, permission)
@@ -399,7 +399,7 @@ async def add_persons_family_member(
     ),
 ) -> FamilyMemberResponse:
     """Add family member for a person"""
-    idp_record = await people.get_idp(idp_id)
+    idp_record = await people.get_person(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     if idp_record.project_id != new_member.project_id:
         raise ConflictError(message="Project ID is not the same as in request body")
@@ -438,7 +438,7 @@ async def get_persons_family_members(
     permissions: IPermissionsService = Depends(permissions_service),
 ) -> List[FamilyMemberResponse]:
     """Get family members for a person"""
-    idp_record = await people.get_idp(idp_id)
+    idp_record = await people.get_person(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_viewable(user, permission)
     assert_can_see_private_info(user, permission)
@@ -476,7 +476,7 @@ async def update_persons_family_member(
     ),
 ) -> FamilyMemberResponse:
     """Add family member for a person"""
-    idp_record = await people.get_idp(idp_id)
+    idp_record = await people.get_person(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_viewable(user, permission)
     assert_can_see_private_info(user, permission)
@@ -522,7 +522,7 @@ async def delete_persons_family_member(
     ),
 ) -> Response:
     """Delete family member for a person"""
-    idp_record = await people.get_idp(idp_id)
+    idp_record = await people.get_person(idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_viewable(user, permission)
     assert_can_see_private_info(user, permission)

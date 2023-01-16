@@ -9,16 +9,16 @@ from observer.entities.people import IDP, NewIDP, UpdateIDP
 
 
 class IPeopleRepository(Protocol):
-    async def create_idp(self, new_idp: NewIDP) -> IDP:
+    async def create_person(self, new_person: NewIDP) -> IDP:
         raise NotImplementedError
 
-    async def get_idp(self, idp_id: Identifier) -> Optional[IDP]:
+    async def get_person(self, person_id: Identifier) -> Optional[IDP]:
         raise NotImplementedError
 
-    async def update_idp(self, idp_id: Identifier, updates: UpdateIDP) -> IDP:
+    async def update_person(self, person_id: Identifier, updates: UpdateIDP) -> IDP:
         raise NotImplementedError
 
-    async def delete_idp(self, idp_id: Identifier) -> Optional[IDP]:
+    async def delete_person(self, person_id: Identifier) -> Optional[IDP]:
         raise NotImplementedError
 
 
@@ -26,19 +26,19 @@ class PeopleRepository(IPeopleRepository):
     def __init__(self, db: Database):
         self.db = db
 
-    async def create_idp(self, new_idp: NewIDP) -> IDP:
-        query = insert(people).values(**new_idp.dict()).returning("*")
+    async def create_person(self, new_person: NewIDP) -> IDP:
+        query = insert(people).values(**new_person.dict()).returning("*")
         result = await self.db.fetchone(query)
         return IDP(**result)
 
-    async def get_idp(self, idp_id: Identifier) -> Optional[IDP]:
-        query = select(people).where(people.c.id == idp_id)
+    async def get_person(self, person_id: Identifier) -> Optional[IDP]:
+        query = select(people).where(people.c.id == person_id)
         if result := await self.db.fetchone(query):
             return IDP(**result)
 
         return None
 
-    async def update_idp(self, idp_id: Identifier, updates: UpdateIDP) -> IDP:
+    async def update_person(self, person_id: Identifier, updates: UpdateIDP) -> IDP:
         values = updates.dict()
         if updates.email == EncryptedFieldValue:
             del values["email"]
@@ -55,12 +55,12 @@ class PeopleRepository(IPeopleRepository):
         else:
             values["phone_number_additional"] = updates.phone_number_additional
 
-        query = update(people).values(values).where(people.c.id == idp_id).returning("*")
+        query = update(people).values(values).where(people.c.id == person_id).returning("*")
         result = await self.db.fetchone(query)
         return IDP(**result)
 
-    async def delete_idp(self, idp_id: Identifier) -> Optional[IDP]:
-        query = delete(people).where(people.c.id == idp_id).returning("*")
+    async def delete_person(self, person_id: Identifier) -> Optional[IDP]:
+        query = delete(people).where(people.c.id == person_id).returning("*")
         if result := await self.db.fetchone(query):
             return IDP(**result)
 

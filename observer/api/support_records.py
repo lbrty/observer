@@ -64,7 +64,7 @@ async def create_support_record(
 
     if new_record.record_for == SupportRecordSubject.person:
         subject_key = "person_id"
-        await people.get_idp(new_record.owner_id)
+        await people.get_person(new_record.owner_id)
     else:
         subject_key = "pet_id"
         await pets.get_pet(new_record.owner_id)
@@ -141,7 +141,7 @@ async def update_support_record(
 
     if updates.record_for == SupportRecordSubject.person:
         subject_key = "person_id"
-        await people.get_idp(updates.owner_id)
+        await people.get_person(updates.owner_id)
     else:
         subject_key = "pet_id"
         await pets.get_pet(updates.owner_id)
@@ -190,7 +190,7 @@ async def delete_support_record(
 
     if support_record.record_for == SupportRecordSubject.person:
         subject_key = "person_id"
-        await people.get_idp(support_record.owner_id)
+        await people.get_person(support_record.owner_id)
     else:
         subject_key = "pet_id"
         await pets.get_pet(support_record.owner_id)

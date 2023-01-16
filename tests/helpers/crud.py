@@ -117,7 +117,7 @@ async def create_person(
     sex: Sex = Sex.female,
     pronoun: str = "she/her/hers",
 ) -> IDP:
-    person = await ctx.repos.people.create_idp(
+    person = await ctx.repos.people.create_person(
         NewIDP(
             project_id=project_id,
             email="Full_Name@examples.com",

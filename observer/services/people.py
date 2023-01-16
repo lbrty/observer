@@ -20,63 +20,63 @@ class IPeopleService(Protocol):
     world_service: IWorldService
     secrets_service: ISecretsService
 
-    async def create_idp(self, new_idp: NewIDPRequest) -> IDP:
+    async def create_person(self, new_person: NewIDPRequest) -> IDP:
         raise NotImplementedError
 
-    async def get_idp(self, idp_id: Identifier) -> IDP:
+    async def get_person(self, person_id: Identifier) -> IDP:
         raise NotImplementedError
 
-    async def update_idp(self, idp_id: Identifier, updates: UpdateIDPRequest) -> IDP:
+    async def update_person(self, person_id: Identifier, updates: UpdateIDPRequest) -> IDP:
         raise NotImplementedError
 
-    async def delete_idp(self, idp_id: Identifier) -> Optional[IDP]:
+    async def delete_person(self, person_id: Identifier) -> Optional[IDP]:
         raise NotImplementedError
 
 
 class PeopleService(IPeopleService):
     def __init__(
         self,
-        idp_repository: IPeopleRepository,
+        people_repository: IPeopleRepository,
         crypto_service: ICryptoService,
         categories: ICategoryService,
         projects: IProjectsService,
         world: IWorldService,
         secrets: ISecretsService,
     ):
-        self.repo = idp_repository
+        self.repo = people_repository
         self.crypto_service = crypto_service
         self.categories_service = categories
         self.projects_service = projects
         self.world_service = world
         self.secrets_service = secrets
 
-    async def create_idp(self, new_idp: NewIDPRequest) -> IDP:
-        new_idp = NewIDP(**new_idp.dict())
-        if new_idp.project_id:
-            await self.projects_service.get_by_id(new_idp.project_id)
+    async def create_person(self, new_person: NewIDPRequest) -> IDP:
+        new_person = NewIDP(**new_person.dict())
+        if new_person.project_id:
+            await self.projects_service.get_by_id(new_person.project_id)
 
-        if new_idp.category_id:
-            await self.categories_service.get_category(new_idp.category_id)
+        if new_person.category_id:
+            await self.categories_service.get_category(new_person.category_id)
 
         pi = PersonalInfo(
-            email=new_idp.email,
-            phone_number=new_idp.phone_number,
-            phone_number_additional=new_idp.phone_number_additional,
+            email=new_person.email,
+            phone_number=new_person.phone_number,
+            phone_number_additional=new_person.phone_number_additional,
         )
 
         pi = await self.secrets_service.encrypt_personal_info(pi)
-        new_idp.email = pi.email
-        new_idp.phone_number = pi.phone_number
-        new_idp.phone_number_additional = pi.phone_number_additional
-        return await self.repo.create_idp(new_idp)
+        new_person.email = pi.email
+        new_person.phone_number = pi.phone_number
+        new_person.phone_number_additional = pi.phone_number_additional
+        return await self.repo.create_person(new_person)
 
-    async def get_idp(self, idp_id: Identifier) -> IDP:
-        if idp := await self.repo.get_idp(idp_id):
+    async def get_person(self, person_id: Identifier) -> IDP:
+        if idp := await self.repo.get_person(person_id):
             return idp
 
-        raise NotFoundError(message="IDP record not found")
+        raise NotFoundError(message="Person not found")
 
-    async def update_idp(self, idp_id: Identifier, updates: UpdateIDPRequest) -> IDP:
+    async def update_person(self, person_id: Identifier, updates: UpdateIDPRequest) -> IDP:
         """Update IDP record
 
         NOTES:
@@ -86,7 +86,7 @@ class PeopleService(IPeopleService):
             So for this reason we initialize `PersonalInfo` instance which is then populated
             and encrypted and later assigned to relevant `idp_updates` fields.
         """
-        idp_updates = UpdateIDP(**updates.dict())
+        person_updates = UpdateIDP(**updates.dict())
         pi = PersonalInfo()
         if updates.email != EncryptedFieldValue:
             pi.email = updates.email
@@ -99,16 +99,16 @@ class PeopleService(IPeopleService):
 
         pi = await self.secrets_service.encrypt_personal_info(pi)
         if pi.email:
-            idp_updates.email = pi.email
+            person_updates.email = pi.email
 
         if pi.phone_number:
-            idp_updates.phone_number = pi.phone_number
+            person_updates.phone_number = pi.phone_number
 
         if pi.phone_number_additional:
-            idp_updates.phone_number_additional = pi.phone_number_additional
+            person_updates.phone_number_additional = pi.phone_number_additional
 
-        updated = await self.repo.update_idp(idp_id, idp_updates)
+        updated = await self.repo.update_person(person_id, person_updates)
         return updated
 
-    async def delete_idp(self, idp_id: Identifier) -> Optional[IDP]:
-        return await self.repo.delete_idp(idp_id)
+    async def delete_person(self, person_id: Identifier) -> Optional[IDP]:
+        return await self.repo.delete_person(person_id)
