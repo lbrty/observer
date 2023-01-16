@@ -14,8 +14,8 @@ from observer.components.audit import Props, Tracked
 from observer.components.auth import authenticated_user
 from observer.components.services import (
     audit_service,
-    idp_service,
     migrations_service,
+    people_service,
     permissions_service,
 )
 from observer.entities.base import SomeUser
@@ -25,7 +25,7 @@ from observer.schemas.migration_history import (
 )
 from observer.services.audit_logs import IAuditService
 from observer.services.migration_history import IMigrationService
-from observer.services.people import IIDPService
+from observer.services.people import IPeopleService
 from observer.services.permissions import IPermissionsService
 
 router = APIRouter(prefix="/migrations")
@@ -82,7 +82,7 @@ async def create_migration_record(
 async def get_migration_record(
     record_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     migrations: IMigrationService = Depends(migrations_service),
     permissions: IPermissionsService = Depends(permissions_service),
 ) -> MigrationHistoryResponse:

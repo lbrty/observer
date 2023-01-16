@@ -7,7 +7,7 @@ from observer.repositories.categories import ICategoryRepository
 from observer.repositories.documents import IDocumentsRepository
 from observer.repositories.family_members import IFamilyRepository
 from observer.repositories.migration_history import IMigrationRepository
-from observer.repositories.people import IIDPRepository
+from observer.repositories.people import IPeopleRepository
 from observer.repositories.permissions import IPermissionsRepository
 from observer.repositories.pets import IPetsRepository
 from observer.repositories.projects import IProjectsRepository
@@ -25,7 +25,7 @@ from observer.services.jwt import JWTService
 from observer.services.mailer import IMailer
 from observer.services.mfa import IMFAService
 from observer.services.migration_history import IMigrationService
-from observer.services.people import IIDPService
+from observer.services.people import IPeopleService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
 from observer.services.projects import IProjectsService
@@ -45,7 +45,7 @@ class Repositories:
     permissions: Optional[IPermissionsRepository] = None
     world: Optional[IWorldRepository] = None
     category: Optional[ICategoryRepository] = None
-    idp: Optional[IIDPRepository] = None
+    people: Optional[IPeopleRepository] = None
     family: Optional[IFamilyRepository] = None
     pets: Optional[IPetsRepository] = None
     documents: Optional[IDocumentsRepository] = None
@@ -72,7 +72,7 @@ class Context:
     permissions_service: Optional[IPermissionsService] = None
     world_service: Optional[IWorldService] = None
     category_service: Optional[ICategoryService] = None
-    idp_service: Optional[IIDPService] = None
+    people_service: Optional[IPeopleService] = None
     family_service: Optional[IFamilyService] = None
     pets_service: Optional[IPetsService] = None
     documents_service: Optional[IDocumentsService] = None

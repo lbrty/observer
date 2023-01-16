@@ -18,7 +18,7 @@ from observer.components.services import (
     audit_service,
     documents_download,
     documents_service,
-    idp_service,
+    people_service,
     permissions_service,
     pets_service,
     storage_service,
@@ -28,7 +28,7 @@ from observer.schemas.documents import DocumentResponse
 from observer.services.audit_logs import IAuditService
 from observer.services.documents import IDocumentsService
 from observer.services.downloads import DownloadHandler
-from observer.services.people import IIDPService
+from observer.services.people import IPeopleService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
 from observer.services.storage import IStorage
@@ -96,7 +96,7 @@ async def delete_document(
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
     pets: IPetsService = Depends(pets_service),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     storage: IStorage = Depends(storage_service),
     audits: IAuditService = Depends(audit_service),
     props: Props = Depends(

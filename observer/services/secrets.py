@@ -5,7 +5,6 @@ from observer.services.crypto import ICryptoService
 
 
 class ISecretsService(Protocol):
-    tag: str
     crypto_service: ICryptoService
 
     async def encrypt_personal_info(self, pi: PersonalInfo) -> PersonalInfo:
@@ -34,7 +33,6 @@ class ISecretsService(Protocol):
 
 
 class SecretsService(ISecretsService):
-    tag: str = "service=secrets"
     crypto_service: ICryptoService
 
     def __init__(self, crypto_service: ICryptoService):

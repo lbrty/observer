@@ -16,7 +16,6 @@ from observer.schemas.projects import (
 
 
 class IProjectsService(Protocol):
-    tag: str
     repo: IProjectsRepository
 
     async def get_by_id(self, project_id: Identifier) -> Project:

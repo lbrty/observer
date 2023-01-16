@@ -9,7 +9,7 @@ from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles
 from observer.components.services import (
     audit_service,
-    idp_service,
+    people_service,
     permissions_service,
     pets_service,
     support_records_service,
@@ -21,7 +21,7 @@ from observer.schemas.support_records import (
     UpdateSupportRecordRequest,
 )
 from observer.services.audit_logs import IAuditService
-from observer.services.people import IIDPService
+from observer.services.people import IPeopleService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
 from observer.services.support_records import ISupportRecordsService
@@ -48,7 +48,7 @@ async def create_support_record(
     ),
     support_records: ISupportRecordsService = Depends(support_records_service),
     pets: IPetsService = Depends(pets_service),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
@@ -121,7 +121,7 @@ async def update_support_record(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     pets: IPetsService = Depends(pets_service),
     support_records: ISupportRecordsService = Depends(support_records_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -170,7 +170,7 @@ async def delete_support_record(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     pets: IPetsService = Depends(pets_service),
     support_records: ISupportRecordsService = Depends(support_records_service),
     permissions: IPermissionsService = Depends(permissions_service),

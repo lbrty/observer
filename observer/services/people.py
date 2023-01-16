@@ -3,7 +3,7 @@ from typing import Optional, Protocol
 from observer.api.exceptions import NotFoundError
 from observer.common.types import EncryptedFieldValue, Identifier
 from observer.entities.people import IDP, NewIDP, PersonalInfo, UpdateIDP
-from observer.repositories.people import IIDPRepository
+from observer.repositories.people import IPeopleRepository
 from observer.schemas.people import NewIDPRequest, UpdateIDPRequest
 from observer.services.categories import ICategoryService
 from observer.services.crypto import ICryptoService
@@ -12,9 +12,8 @@ from observer.services.secrets import ISecretsService
 from observer.services.world import IWorldService
 
 
-class IIDPService(Protocol):
-    tag: str
-    repo: IIDPRepository
+class IPeopleService(Protocol):
+    repo: IPeopleRepository
     crypto_service: ICryptoService
     categories_service: ICategoryService
     projects_service: IProjectsService
@@ -34,12 +33,10 @@ class IIDPService(Protocol):
         raise NotImplementedError
 
 
-class IDPService(IIDPService):
-    tag: str = "source=service:idp"
-
+class PeopleService(IPeopleService):
     def __init__(
         self,
-        idp_repository: IIDPRepository,
+        idp_repository: IPeopleRepository,
         crypto_service: ICryptoService,
         categories: ICategoryService,
         projects: IProjectsService,

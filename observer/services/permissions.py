@@ -13,7 +13,6 @@ from observer.schemas.permissions import (
 
 
 class IPermissionsService(Protocol):
-    tag: str
     repo: IPermissionsRepository
 
     async def get_by_id(self, permission_id: Identifier) -> SomePermission:
@@ -46,8 +45,6 @@ class IPermissionsService(Protocol):
 
 
 class PermissionsService(IPermissionsService):
-    tag: str = "source=service:permissions"
-
     def __init__(self, repo: IPermissionsRepository):
         self.repo = repo
 

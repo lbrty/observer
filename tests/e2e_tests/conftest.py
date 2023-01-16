@@ -44,7 +44,7 @@ from observer.repositories.categories import CategoryRepository
 from observer.repositories.documents import DocumentsRepository
 from observer.repositories.family_members import FamilyRepository
 from observer.repositories.migration_history import MigrationRepository
-from observer.repositories.people import IDPRepository
+from observer.repositories.people import PeopleRepository
 from observer.repositories.permissions import PermissionsRepository
 from observer.repositories.pets import PetsRepository
 from observer.repositories.projects import ProjectsRepository
@@ -64,7 +64,7 @@ from observer.services.jwt import JWTService
 from observer.services.keychain import Keychain
 from observer.services.mfa import MFAService
 from observer.services.migration_history import MigrationService
-from observer.services.people import IDPService
+from observer.services.people import PeopleService
 from observer.services.permissions import PermissionsService
 from observer.services.pets import PetsService
 from observer.services.projects import ProjectsService
@@ -280,7 +280,7 @@ async def app_context(db_engine):
         permissions=PermissionsRepository(ctx.db),
         world=WorldRepository(ctx.db),
         category=CategoryRepository(ctx.db),
-        idp=IDPRepository(ctx.db),
+        people=PeopleRepository(ctx.db),
         family=FamilyRepository(ctx.db),
         pets=PetsRepository(ctx.db),
         documents=DocumentsRepository(ctx.db),
@@ -328,8 +328,8 @@ async def app_context(db_engine):
     ctx.permissions_service = PermissionsService(ctx.repos.permissions)
     ctx.world_service = WorldService(ctx.repos.world)
     ctx.category_service = CategoryService(ctx.repos.category)
-    ctx.idp_service = IDPService(
-        ctx.repos.idp,
+    ctx.people_service = PeopleService(
+        ctx.repos.people,
         ctx.crypto_service,
         ctx.category_service,
         ctx.projects_service,

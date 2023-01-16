@@ -23,8 +23,8 @@ from observer.components.services import (
     documents_service,
     documents_upload,
     family_service,
-    idp_service,
     migrations_service,
+    people_service,
     permissions_service,
     secrets_service,
     storage_service,
@@ -50,7 +50,7 @@ from observer.services.audit_logs import IAuditService
 from observer.services.documents import IDocumentsService
 from observer.services.family_members import IFamilyService
 from observer.services.migration_history import IMigrationService
-from observer.services.people import IIDPService
+from observer.services.people import IPeopleService
 from observer.services.permissions import IPermissionsService
 from observer.services.secrets import ISecretsService
 from observer.services.storage import IStorage
@@ -76,7 +76,7 @@ async def create_idp(
     new_idp: NewIDPRequest,
     user: SomeUser = Depends(authenticated_user),
     audits: IAuditService = Depends(audit_service),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     props: Props = Depends(
         Tracked(
@@ -108,7 +108,7 @@ async def create_idp(
 async def get_idp(
     idp_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     secrets: ISecretsService = Depends(secrets_service),
 ) -> IDPResponse:
@@ -134,7 +134,7 @@ async def get_idp(
 async def get_personal_info(
     idp_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     secrets: ISecretsService = Depends(secrets_service),
 ) -> PersonalInfoResponse:
@@ -169,7 +169,7 @@ async def get_personal_info(
 async def get_person_migration_records(
     idp_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     migrations: IMigrationService = Depends(migrations_service),
     world: IWorldService = Depends(world_service),
@@ -210,7 +210,7 @@ async def update_idp(
     idp_id: Identifier,
     idp_updates: UpdateIDPRequest,
     user: SomeUser = Depends(authenticated_user),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
@@ -252,7 +252,7 @@ async def delete_idp(
     tasks: BackgroundTasks,
     idp_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
     storage: IStorage = Depends(storage_service),
@@ -299,7 +299,7 @@ async def idp_upload_document(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
     uploads: UploadHandler = Depends(documents_upload),
@@ -357,7 +357,7 @@ async def idp_get_documents(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
 ) -> List[DocumentResponse]:
@@ -386,7 +386,7 @@ async def add_persons_family_member(
     idp_id: Identifier,
     new_member: NewFamilyMemberRequest,
     user: SomeUser = Depends(authenticated_user),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
     permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
@@ -433,7 +433,7 @@ async def add_persons_family_member(
 async def get_persons_family_members(
     idp_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
     permissions: IPermissionsService = Depends(permissions_service),
 ) -> List[FamilyMemberResponse]:
@@ -463,7 +463,7 @@ async def update_persons_family_member(
     member_id: Identifier,
     updates: UpdateFamilyMemberRequest,
     user: SomeUser = Depends(authenticated_user),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
     permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
@@ -508,7 +508,7 @@ async def delete_persons_family_member(
     idp_id: Identifier,
     member_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
-    idp: IIDPService = Depends(idp_service),
+    idp: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
     permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),

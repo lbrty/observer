@@ -11,7 +11,7 @@ from observer.services.jwt import JWTService
 from observer.services.keychain import IKeychain
 from observer.services.mailer import IMailer
 from observer.services.migration_history import IMigrationService
-from observer.services.people import IIDPService
+from observer.services.people import IPeopleService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
 from observer.services.projects import IProjectsService
@@ -110,9 +110,9 @@ async def world_service() -> IWorldService:
     raise RuntimeError("PlacesService is None")
 
 
-async def idp_service() -> IIDPService:
-    if ctx.idp_service:
-        return ctx.idp_service
+async def people_service() -> IPeopleService:
+    if ctx.people_service:
+        return ctx.people_service
 
     raise RuntimeError("IDPService is None")
 

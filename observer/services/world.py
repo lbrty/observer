@@ -29,7 +29,6 @@ from observer.schemas.world import (
 
 
 class IWorldService(Protocol):
-    tag: str
     repo: IWorldRepository
 
     # Countries
@@ -106,8 +105,6 @@ class IWorldService(Protocol):
 
 
 class WorldService(IWorldService):
-    tag: str = "source=service:world"
-
     def __init__(self, places_repository: IWorldRepository):
         self.repo = places_repository
 

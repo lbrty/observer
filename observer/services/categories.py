@@ -1,16 +1,13 @@
-from datetime import datetime, timedelta, timezone
 from typing import List, Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier, SomeStr
 from observer.entities.people import Category, NewCategory, UpdateCategory
 from observer.repositories.categories import ICategoryRepository
-from observer.schemas.audit_logs import NewAuditLog
 from observer.schemas.people import NewCategoryRequest, UpdateCategoryRequest
 
 
 class ICategoryService(Protocol):
-    tag: str
     repo: ICategoryRepository
 
     # Categories
@@ -29,13 +26,8 @@ class ICategoryService(Protocol):
     async def delete_category(self, category_id: Identifier) -> Category:
         raise NotImplementedError
 
-    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
-        raise NotImplementedError
-
 
 class CategoryService(ICategoryService):
-    tag: str = "source=service:categories"
-
     def __init__(self, categories_repository: ICategoryRepository):
         self.repo = categories_repository
 
@@ -59,15 +51,3 @@ class CategoryService(ICategoryService):
     async def delete_category(self, category_id: Identifier) -> Category:
         await self.get_category(category_id)
         return await self.repo.delete_category(category_id)
-
-    async def create_log(self, ref: str, expires_in: timedelta | None, data: dict | None = None) -> NewAuditLog:
-        now = datetime.now(tz=timezone.utc)
-        expires_at = None
-        if expires_in:
-            expires_at = now + expires_in
-
-        return NewAuditLog(
-            ref=f"{self.tag},{ref}",
-            data=data,
-            expires_at=expires_at,
-        )

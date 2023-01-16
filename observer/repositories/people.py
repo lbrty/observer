@@ -8,7 +8,7 @@ from observer.db.tables.people import people
 from observer.entities.people import IDP, NewIDP, UpdateIDP
 
 
-class IIDPRepository(Protocol):
+class IPeopleRepository(Protocol):
     async def create_idp(self, new_idp: NewIDP) -> IDP:
         raise NotImplementedError
 
@@ -22,7 +22,7 @@ class IIDPRepository(Protocol):
         raise NotImplementedError
 
 
-class IDPRepository(IIDPRepository):
+class PeopleRepository(IPeopleRepository):
     def __init__(self, db: Database):
         self.db = db
 
