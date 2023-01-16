@@ -48,7 +48,7 @@ async def create_support_record(
     ),
     support_records: ISupportRecordsService = Depends(support_records_service),
     pets: IPetsService = Depends(pets_service),
-    idp: IPeopleService = Depends(people_service),
+    people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
@@ -63,8 +63,8 @@ async def create_support_record(
     assert_writable(user, permission)
 
     if new_record.record_for == SupportRecordSubject.person:
-        subject_key = "idp_id"
-        await idp.get_idp(new_record.owner_id)
+        subject_key = "person_id"
+        await people.get_idp(new_record.owner_id)
     else:
         subject_key = "pet_id"
         await pets.get_pet(new_record.owner_id)
@@ -121,7 +121,7 @@ async def update_support_record(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    idp: IPeopleService = Depends(people_service),
+    people: IPeopleService = Depends(people_service),
     pets: IPetsService = Depends(pets_service),
     support_records: ISupportRecordsService = Depends(support_records_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -140,8 +140,8 @@ async def update_support_record(
     updated_support_record = await support_records.update_record(record_id, updates)
 
     if updates.record_for == SupportRecordSubject.person:
-        subject_key = "idp_id"
-        await idp.get_idp(updates.owner_id)
+        subject_key = "person_id"
+        await people.get_idp(updates.owner_id)
     else:
         subject_key = "pet_id"
         await pets.get_pet(updates.owner_id)
@@ -170,7 +170,7 @@ async def delete_support_record(
     user: SomeUser = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    idp: IPeopleService = Depends(people_service),
+    people: IPeopleService = Depends(people_service),
     pets: IPetsService = Depends(pets_service),
     support_records: ISupportRecordsService = Depends(support_records_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -189,8 +189,8 @@ async def delete_support_record(
     await support_records.delete_record(record_id)
 
     if support_record.record_for == SupportRecordSubject.person:
-        subject_key = "idp_id"
-        await idp.get_idp(support_record.owner_id)
+        subject_key = "person_id"
+        await people.get_idp(support_record.owner_id)
     else:
         subject_key = "pet_id"
         await pets.get_pet(support_record.owner_id)

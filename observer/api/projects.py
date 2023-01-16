@@ -109,9 +109,7 @@ async def create_project(
     status_code=status.HTTP_200_OK,
     tags=["projects"],
 )
-async def get_project(
-    project: Project = Depends(viewable_project),
-) -> ProjectResponse:
+async def get_project(project: Project = Depends(viewable_project)) -> ProjectResponse:
     return ProjectResponse(**project.dict())
 
 

@@ -96,7 +96,7 @@ async def delete_document(
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
     pets: IPetsService = Depends(pets_service),
-    idp: IPeopleService = Depends(people_service),
+    people: IPeopleService = Depends(people_service),
     storage: IStorage = Depends(storage_service),
     audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
@@ -121,7 +121,7 @@ async def delete_document(
 
     if not subject_key:
         try:
-            await idp.get_idp(document.owner_id)
+            await people.get_idp(document.owner_id)
             subject_key = "idp_id"
         except NotFoundError:
             pass

@@ -39,7 +39,7 @@ router = APIRouter(prefix="/migrations")
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
     ),
-    tags=["idp", "migration", "history"],
+    tags=["people", "migration history"],
 )
 async def create_migration_record(
     tasks: BackgroundTasks,
@@ -77,18 +77,18 @@ async def create_migration_record(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "migration", "history"],
+    tags=["people", "migration history"],
 )
 async def get_migration_record(
     record_id: Identifier,
     user: SomeUser = Depends(authenticated_user),
-    idp: IPeopleService = Depends(people_service),
+    people: IPeopleService = Depends(people_service),
     migrations: IMigrationService = Depends(migrations_service),
     permissions: IPermissionsService = Depends(permissions_service),
 ) -> MigrationHistoryResponse:
     """Get migration record"""
     migration_record = await migrations.get_record(record_id)
-    idp_record = await idp.get_idp(migration_record.idp_id)
+    idp_record = await people.get_idp(migration_record.idp_id)
     permission = await permissions.find(idp_record.project_id, user.id)
     assert_viewable(user, permission)
     return MigrationHistoryResponse(**migration_record.dict())
@@ -102,7 +102,7 @@ async def get_migration_record(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "migration", "history"],
+    tags=["people", "migration history"],
 )
 async def delete_migration_record(
     tasks: BackgroundTasks,

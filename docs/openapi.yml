@@ -724,7 +724,7 @@
     "/categories": {
       "get": {
         "tags": [
-          "idp",
+          "people",
           "categories"
         ],
         "summary": "Get Categories",
@@ -800,7 +800,7 @@
       },
       "post": {
         "tags": [
-          "idp",
+          "people",
           "categories"
         ],
         "summary": "Create Category",
@@ -873,7 +873,7 @@
     "/categories/{category_id}": {
       "get": {
         "tags": [
-          "idp",
+          "people",
           "categories"
         ],
         "summary": "Get Category",
@@ -961,7 +961,7 @@
       },
       "put": {
         "tags": [
-          "idp",
+          "people",
           "categories"
         ],
         "summary": "Update Category",
@@ -1059,7 +1059,7 @@
       },
       "delete": {
         "tags": [
-          "idp",
+          "people",
           "categories"
         ],
         "summary": "Delete Category",
@@ -2601,9 +2601,8 @@
     "/migrations": {
       "post": {
         "tags": [
-          "idp",
-          "migration",
-          "history"
+          "people",
+          "migration history"
         ],
         "summary": "Create Migration Record",
         "description": "Create migration record",
@@ -2676,9 +2675,8 @@
     "/migrations/{record_id}": {
       "get": {
         "tags": [
-          "idp",
-          "migration",
-          "history"
+          "people",
+          "migration history"
         ],
         "summary": "Get Migration Record",
         "description": "Get migration record",
@@ -2766,9 +2764,8 @@
       },
       "delete": {
         "tags": [
-          "idp",
-          "migration",
-          "history"
+          "people",
+          "migration history"
         ],
         "summary": "Delete Migration Record",
         "description": "Delete migration record",

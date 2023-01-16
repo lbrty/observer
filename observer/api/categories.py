@@ -28,7 +28,7 @@ router = APIRouter(prefix="/categories")
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
     ),
-    tags=["idp", "categories"],
+    tags=["people", "categories"],
 )
 async def create_category(
     tasks: BackgroundTasks,
@@ -68,7 +68,7 @@ async def create_category(
             RequiresRoles([Role.admin, Role.consultant, Role.staff]),
         )
     ],
-    tags=["idp", "categories"],
+    tags=["people", "categories"],
 )
 async def get_categories(
     name: SomeStr = Query(None, description="Lookup by name"),
@@ -92,7 +92,7 @@ async def get_categories(
             RequiresRoles([Role.admin, Role.consultant, Role.staff]),
         )
     ],
-    tags=["idp", "categories"],
+    tags=["people", "categories"],
 )
 async def get_category(
     category_id: Identifier,
@@ -111,7 +111,7 @@ async def get_category(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "categories"],
+    tags=["people", "categories"],
 )
 async def update_category(
     tasks: BackgroundTasks,
@@ -151,7 +151,7 @@ async def update_category(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["idp", "categories"],
+    tags=["people", "categories"],
 )
 async def delete_category(
     tasks: BackgroundTasks,
