@@ -72,7 +72,7 @@ class UsersRepository(IUsersRepository):
         self.db = db
 
     async def get_by_id(self, user_id: Identifier) -> SomeUser:
-        query = select(users).where(users.c.id == str(user_id))
+        query = select(users).where(users.c.id == user_id)
         if result := await self.db.fetchone(query):
             return User(**result)
 
@@ -105,7 +105,7 @@ class UsersRepository(IUsersRepository):
     async def create_confirmation(self, user_id: Identifier, code: str, expires_at: datetime) -> Confirmation:
         values = dict(
             code=code,
-            user_id=str(user_id),
+            user_id=user_id,
             expires_at=expires_at,
         )
         query = insert(confirmations).values(**values).returning("*")
@@ -122,7 +122,7 @@ class UsersRepository(IUsersRepository):
     async def create_invite(self, user_id: Identifier, code: str, expires_at: datetime) -> Invite:
         values = dict(
             code=code,
-            user_id=str(user_id),
+            user_id=user_id,
             expires_at=expires_at,
         )
         query = insert(invites).values(**values).returning("*")
@@ -142,7 +142,7 @@ class UsersRepository(IUsersRepository):
         return Invite(**result)
 
     async def confirm_user(self, user_id: Identifier) -> User:
-        query = update(users).values(dict(is_confirmed=True)).where(users.c.id == str(user_id)).returning("*")
+        query = update(users).values(dict(is_confirmed=True)).where(users.c.id == user_id).returning("*")
         result = await self.db.fetchone(query)
         return User(**result)
 
@@ -165,13 +165,13 @@ class UsersRepository(IUsersRepository):
             update_values["mfa_encrypted_secret"] = updates.mfa_encrypted_secret  # type:ignore
             update_values["mfa_encrypted_backup_codes"] = updates.mfa_encrypted_backup_codes  # type:ignore
 
-        query = update(users).values(update_values).where(users.c.id == str(user_id)).returning("*")
+        query = update(users).values(update_values).where(users.c.id == user_id).returning("*")
         result = await self.db.fetchone(query)
         return User(**result)
 
     async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
         update_values = dict(password_hash=new_password_hash)
-        query = update(users).values(update_values).where(users.c.id == str(user_id)).returning("*")
+        query = update(users).values(update_values).where(users.c.id == user_id).returning("*")
         result = await self.db.fetchone(query)
         return User(**result)
 
@@ -182,14 +182,14 @@ class UsersRepository(IUsersRepository):
             mfa_encrypted_backup_codes=None,
         )
 
-        query = update(users).values(update_values).where(users.c.id == str(user_id)).returning("*")
+        query = update(users).values(update_values).where(users.c.id == user_id).returning("*")
         result = await self.db.fetchone(query)
         return User(**result)
 
     async def create_password_reset_code(self, user_id: Identifier, code: str) -> PasswordReset:
         values = dict(
             code=code,
-            user_id=str(user_id),
+            user_id=user_id,
             created_at=datetime.now(tz=timezone.utc),
         )
         query = insert(password_resets).values(**values).returning("*")

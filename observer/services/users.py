@@ -52,6 +52,9 @@ class IUsersService(Protocol):
     async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
         raise NotImplementedError
 
+    async def deactivate_user(self, user_id: Identifier) -> User:
+        raise NotImplementedError
+
     async def update_mfa(self, user_id: Identifier, updates: UserMFAUpdateRequest):
         raise NotImplementedError
 
@@ -134,6 +137,9 @@ class UsersService(IUsersService):
 
     async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
         return await self.repo.update_password(user_id, new_password_hash)
+
+    async def deactivate_user(self, user_id: Identifier) -> User:
+        return await self.repo.update_user(user_id, UserUpdate(is_active=False))
 
     async def update_mfa(self, user_id: Identifier, updates: UserMFAUpdateRequest):
         user_update = UserUpdate(
