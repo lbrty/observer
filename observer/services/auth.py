@@ -92,6 +92,9 @@ class AuthService(IAuthService):
 
     async def token_login(self, login_payload: LoginPayload) -> Tuple[User, TokenResponse]:
         if user := await self.users_service.get_by_email(login_payload.email):
+            if not user.is_active:
+                raise ForbiddenError
+
             await self.check_totp(user, login_payload.totp_code)
             if bcrypt.check_password(login_payload.password.get_secret_value(), user.password_hash):
                 token_response = await self.create_token(user.ref_id)
