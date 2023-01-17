@@ -14,6 +14,7 @@ class ErrorCode(str, Enum):
     totp_required_error = "totp_required_error"
     totp_exists_error = "totp_exists_error"
     registration_error = "registration_error"
+    registrations_closed_error = "registrations_closed_error"
     password_reset_code_expired_error = "password_reset_code_expired_error"
     weak_password_error = "weak_password_error"
     invalid_password_error = "invalid_password_error"
@@ -118,6 +119,12 @@ class RegistrationError(BaseAPIException):
     default_code = ErrorCode.registration_error
     default_status = status.HTTP_409_CONFLICT
     default_message = "registration error"
+
+
+class RegistrationsClosedError(BaseAPIException):
+    default_code = ErrorCode.registrations_closed_error
+    default_status = status.HTTP_400_BAD_REQUEST
+    default_message = "registrations closed"
 
 
 class ConfirmationCodeExpiredError(BaseAPIException):

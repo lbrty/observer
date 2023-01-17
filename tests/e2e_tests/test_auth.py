@@ -103,6 +103,28 @@ async def test_registration_works_as_expected(client, ensure_db, app_context):
     assert audit_log.data == dict(ref_id=user.ref_id, role=user.role.value)
 
 
+async def test_registration_returns_error_when_system_works_in_invite_only_mode(
+    client,
+    ensure_db,
+    app_context,
+    env_settings,
+):
+    env_settings.invite_only = True
+    resp = await client.post(
+        "/auth/register",
+        json=dict(
+            email="email@example.com",
+            password=SECURE_PASSWORD,
+        ),
+    )
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
+    assert resp.json() == {
+        "code": "registrations_closed_error",
+        "message": "Registrations are not allowed",
+        "status_code": 400,
+    }
+
+
 async def test_password_reset_request_works_as_expected(
     client,
     ensure_db,

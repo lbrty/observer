@@ -7,7 +7,11 @@ from observer.api.exceptions import ForbiddenError
 from observer.common.auth import AccessTokenKey, RefreshTokenKey
 from observer.common.exceptions import get_api_errors
 from observer.components.audit import Props, Tracked
-from observer.components.auth import authenticated_user, refresh_token_cookie
+from observer.components.auth import (
+    allow_registrations,
+    authenticated_user,
+    refresh_token_cookie,
+)
 from observer.components.services import (
     audit_service,
     auth_service,
@@ -146,7 +150,13 @@ async def token_refresh(
     "/register",
     response_model=TokenResponse,
     response_model_exclude={"refresh_token"},
+    responses=get_api_errors(
+        status.HTTP_400_BAD_REQUEST,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_409_CONFLICT,
+    ),
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(allow_registrations)],
     tags=["auth"],
 )
 async def token_register(

@@ -2,7 +2,11 @@ from typing import List
 
 from fastapi import Cookie, Depends
 
-from observer.api.exceptions import ForbiddenError, UnauthorizedError
+from observer.api.exceptions import (
+    ForbiddenError,
+    RegistrationsClosedError,
+    UnauthorizedError,
+)
 from observer.common.types import Role, SomeStr
 from observer.components import services
 from observer.components.services import jwt_service
@@ -10,6 +14,7 @@ from observer.entities.base import SomeUser
 from observer.entities.users import User
 from observer.services.jwt import JWTService
 from observer.services.users import IUsersService
+from observer.settings import settings
 
 
 async def current_user(
@@ -59,3 +64,8 @@ async def refresh_token_cookie(refresh_token: str = Cookie(None, description="Re
         return refresh_token
 
     raise UnauthorizedError(message="Refresh token cookie is not set")
+
+
+async def allow_registrations():
+    if settings.invite_only:
+        raise RegistrationsClosedError(message="Registrations are not allowed")
