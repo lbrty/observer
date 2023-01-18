@@ -1,16 +1,12 @@
-from datetime import date, datetime
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, TypeAlias
+from typing import Dict, Optional, Tuple, TypeAlias
 from uuid import UUID
 
 from pydantic import BaseModel
 
 Identifier: TypeAlias = UUID | str
-SomeDate: TypeAlias = Optional[date]
-SomeIdentifier: TypeAlias = Optional[Identifier]
-SomeList: TypeAlias = Optional[List]
-
 EncryptedFieldValue: str = "*" * 8
 
 
@@ -94,15 +90,15 @@ class PlaceType(str, Enum):
 class StateFilters(BaseModel):
     name: Optional[str]
     code: Optional[str]
-    country_id: SomeIdentifier
+    country_id: Optional[Identifier]
 
 
 class PlaceFilters(BaseModel):
     name: Optional[str]
     code: Optional[str]
     place_type: PlaceType | None
-    country_id: SomeIdentifier
-    state_id: SomeIdentifier
+    country_id: Optional[Identifier]
+    state_id: Optional[Identifier]
 
 
 class StorageKind(str, Enum):

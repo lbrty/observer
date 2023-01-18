@@ -2,13 +2,13 @@ from typing import List, Optional
 
 from pydantic import Field
 
-from observer.common.types import Identifier, Role, SomeIdentifier
+from observer.common.types import Identifier, Role
 from observer.schemas.base import SchemaBase
 from observer.schemas.permissions import PermissionResponse
 
 
 class ProjectFilters(SchemaBase):
-    id: SomeIdentifier = Field(None, description="ID of project")
+    id: Optional[Identifier] = Field(None, description="ID of project")
     name: Optional[str] = Field(None, description="Name of project")
     description: Optional[str] = Field(None, description="Description of project")
 
