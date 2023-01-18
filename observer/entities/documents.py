@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, Optional
 
-from observer.common.types import Identifier, SomeStr
+from observer.common.types import Identifier
 from observer.entities.base import ModelBase
 
 AllowedDocumentTypes: Dict[str, str] = {
@@ -26,7 +26,7 @@ AllowedDocumentTypes: Dict[str, str] = {
 
 
 class BaseDocument(ModelBase):
-    encryption_key: SomeStr
+    encryption_key: Optional[str]
     name: str
     size: int
     path: str

@@ -1,17 +1,13 @@
+from typing import Optional
+
 from fastapi import Query
 
-from observer.common.types import (
-    PlaceFilters,
-    PlaceType,
-    SomeIdentifier,
-    SomeStr,
-    StateFilters,
-)
+from observer.common.types import PlaceFilters, PlaceType, SomeIdentifier, StateFilters
 
 
 async def state_filters(
-    name: SomeStr = Query(None, description="Name of state"),
-    code: SomeStr = Query(None, description="Code of state"),
+    name: Optional[str] = Query(None, description="Name of state"),
+    code: Optional[str] = Query(None, description="Code of state"),
     country_id: SomeIdentifier = Query(None, description="ID of country"),
 ) -> StateFilters:
     return StateFilters(
@@ -22,8 +18,8 @@ async def state_filters(
 
 
 async def place_filters(
-    name: SomeStr = Query(None, description="Name of place"),
-    code: SomeStr = Query(None, description="Code of place"),
+    name: Optional[str] = Query(None, description="Name of place"),
+    code: Optional[str] = Query(None, description="Code of place"),
     place_type: PlaceType | None = Query(None, description="Type of place"),
     state_id: SomeIdentifier = Query(None, description="ID of state"),
     country_id: SomeIdentifier = Query(None, description="ID of country"),

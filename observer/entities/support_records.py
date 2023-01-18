@@ -4,7 +4,6 @@ from typing import Optional
 from observer.common.types import (
     AgeGroup,
     Identifier,
-    SomeStr,
     SupportRecordSubject,
     SupportType,
 )
@@ -12,7 +11,7 @@ from observer.entities.base import ModelBase
 
 
 class BaseSupportRecord(ModelBase):
-    description: SomeStr
+    description: Optional[str]
     type: SupportType
     consultant_id: Identifier
     age_group: Optional[AgeGroup]

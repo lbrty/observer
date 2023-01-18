@@ -1,10 +1,10 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
 from starlette import status
 
 from observer.common.exceptions import get_api_errors
-from observer.common.types import Identifier, Role, SomeStr
+from observer.common.types import Identifier, Role
 from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles
 from observer.components.services import audit_service, category_service
@@ -71,7 +71,7 @@ async def create_category(
     tags=["people", "categories"],
 )
 async def get_categories(
-    name: SomeStr = Query(None, description="Lookup by name"),
+    name: Optional[str] = Query(None, description="Lookup by name"),
     categories: ICategoryService = Depends(category_service),
 ) -> List[CategoryResponse]:
     category_list = await categories.get_categories(name)

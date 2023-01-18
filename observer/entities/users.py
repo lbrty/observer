@@ -3,27 +3,27 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
-from observer.common.types import Identifier, Role, SomeBool, SomeStr
+from observer.common.types import Identifier, Role
 
 
 class User(BaseModel):
     id: Identifier
     ref_id: Identifier
     email: EmailStr
-    full_name: SomeStr
+    full_name: Optional[str]
     password_hash: str
     role: Role
     is_active: bool
     is_confirmed: bool
     mfa_enabled: bool
-    mfa_encrypted_secret: SomeStr
-    mfa_encrypted_backup_codes: SomeStr
+    mfa_encrypted_secret: Optional[str]
+    mfa_encrypted_backup_codes: Optional[str]
 
 
 class NewUser(BaseModel):
     ref_id: Identifier
     email: EmailStr
-    full_name: SomeStr
+    full_name: Optional[str]
     password_hash: str
     role: Role
     is_active: bool
@@ -32,12 +32,12 @@ class NewUser(BaseModel):
 
 class UserUpdate(BaseModel):
     email: Optional[EmailStr]
-    full_name: SomeStr
+    full_name: Optional[str]
     role: Optional[Role]
-    is_active: SomeBool
-    mfa_enabled: SomeBool
-    mfa_encrypted_secret: SomeStr
-    mfa_encrypted_backup_codes: SomeStr
+    is_active: Optional[bool]
+    mfa_enabled: Optional[bool]
+    mfa_encrypted_secret: Optional[str]
+    mfa_encrypted_backup_codes: Optional[str]
 
 
 class PasswordReset(BaseModel):

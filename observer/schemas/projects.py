@@ -1,32 +1,32 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import Field
 
-from observer.common.types import Identifier, Role, SomeIdentifier, SomeStr
+from observer.common.types import Identifier, Role, SomeIdentifier
 from observer.schemas.base import SchemaBase
 from observer.schemas.permissions import PermissionResponse
 
 
 class ProjectFilters(SchemaBase):
     id: SomeIdentifier = Field(None, description="ID of project")
-    name: SomeStr = Field(None, description="Name of project")
-    description: SomeStr = Field(None, description="Description of project")
+    name: Optional[str] = Field(None, description="Name of project")
+    description: Optional[str] = Field(None, description="Description of project")
 
 
 class BaseProject(SchemaBase):
     name: str = Field(..., description="Name of project")
-    description: SomeStr = Field(None, description="Description of project")
+    description: Optional[str] = Field(None, description="Description of project")
 
 
 class ProjectResponse(SchemaBase):
     id: Identifier = Field(..., description="ID of project")
     name: str = Field(..., description="Name of project")
-    description: SomeStr = Field(None, description="Description of project")
-    owner_id: SomeStr = Field(None, description="ID of creator")
+    description: Optional[str] = Field(None, description="Description of project")
+    owner_id: Optional[str] = Field(None, description="ID of creator")
 
 
 class NewProjectRequest(BaseProject):
-    owner_id: SomeStr = Field(None, description="ID of creator it overridden currently active user")
+    owner_id: Optional[str] = Field(None, description="ID of creator it overridden currently active user")
 
 
 class UpdateProjectRequest(BaseProject):
@@ -41,7 +41,7 @@ class ProjectsResponse(SchemaBase):
 class ProjectMemberResponse(SchemaBase):
     ref_id: Identifier
     is_active: bool
-    full_name: SomeStr
+    full_name: Optional[str]
     role: Role
     permissions: PermissionResponse
 

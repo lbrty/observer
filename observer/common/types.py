@@ -7,10 +7,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 Identifier: TypeAlias = UUID | str
-SomeStr: TypeAlias = Optional[str]
 SomeDate: TypeAlias = Optional[date]
-SomeBool: TypeAlias = Optional[bool]
-SomeDatetime: TypeAlias = Optional[datetime]
 SomeIdentifier: TypeAlias = Optional[Identifier]
 SomeList: TypeAlias = Optional[List]
 
@@ -95,14 +92,14 @@ class PlaceType(str, Enum):
 
 
 class StateFilters(BaseModel):
-    name: SomeStr
-    code: SomeStr
+    name: Optional[str]
+    code: Optional[str]
     country_id: SomeIdentifier
 
 
 class PlaceFilters(BaseModel):
-    name: SomeStr
-    code: SomeStr
+    name: Optional[str]
+    code: Optional[str]
     place_type: PlaceType | None
     country_id: SomeIdentifier
     state_id: SomeIdentifier

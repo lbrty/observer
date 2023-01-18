@@ -1,30 +1,32 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
-from observer.common.types import Identifier, Role, SomeStr
+from observer.common.types import Identifier, Role
 from observer.entities.permissions import Permission
 
 
 class Project(BaseModel):
     id: Identifier
     name: str
-    description: SomeStr
-    owner_id: SomeStr
+    description: Optional[str]
+    owner_id: Optional[str]
 
 
 class NewProject(BaseModel):
     name: str
-    description: SomeStr
-    owner_id: SomeStr
+    description: Optional[str]
+    owner_id: Optional[str]
 
 
 class ProjectUpdate(BaseModel):
-    name: SomeStr
-    description: SomeStr
+    name: Optional[str]
+    description: Optional[str]
 
 
 class ProjectMember(BaseModel):
     ref_id: Identifier
     is_active: bool
-    full_name: SomeStr
+    full_name: Optional[str]
     role: Role
     permissions: Permission

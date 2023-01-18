@@ -1,15 +1,15 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from pydantic import EmailStr, Field, SecretStr
 
-from observer.common.types import Identifier, Role, SomeStr
+from observer.common.types import Identifier, Role
 from observer.schemas.base import SchemaBase
 
 
 class BaseUser(SchemaBase):
     email: EmailStr = Field(..., description="E-mail address of a user")
-    full_name: SomeStr = Field(None, description="Full name of a user")
+    full_name: Optional[str] = Field(None, description="Full name of a user")
     role: Role = Field(..., description="Role of a user")
 
 
@@ -29,8 +29,8 @@ class UserPasswordUpdate(BaseUser):
 
 class UserMFAUpdateRequest(SchemaBase):
     mfa_enabled: bool = Field(False, description="Is MFA enabled for user?")
-    mfa_encrypted_secret: SomeStr = Field(None, description="Secret value for MFA")
-    mfa_encrypted_backup_codes: SomeStr = Field(None, description="Backup codes for MFA")
+    mfa_encrypted_secret: Optional[str] = Field(None, description="Secret value for MFA")
+    mfa_encrypted_backup_codes: Optional[str] = Field(None, description="Backup codes for MFA")
 
 
 class UserResponse(BaseUser):

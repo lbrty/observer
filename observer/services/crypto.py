@@ -1,14 +1,13 @@
 import base64
 import os
 from dataclasses import dataclass
-from typing import Protocol, Tuple
+from typing import Optional, Protocol, Tuple
 
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.hashes import SHA256
 from structlog import get_logger
 
-from observer.common.types import SomeStr
 from observer.services.keychain import IKeychain
 
 logger = get_logger(service="crypto")
@@ -25,11 +24,11 @@ class ICryptoService(Protocol):
     keychain: IKeychain | None
     padding: padding.OAEP | None
 
-    async def encrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
+    async def encrypt(self, key_hash: Optional[str], data: bytes) -> bytes:
         """Encrypt data and return in Base64 representation"""
         raise NotImplementedError
 
-    async def decrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
+    async def decrypt(self, key_hash: Optional[str], data: bytes) -> bytes:
         """Decrypt data, encrypted data should have Base64 representation"""
         raise NotImplementedError
 
@@ -65,11 +64,11 @@ class CryptoService(ICryptoService):
             label=None,
         )
 
-    async def encrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
+    async def encrypt(self, key_hash: Optional[str], data: bytes) -> bytes:
         key = await self.keychain.find(key_hash)
         return base64.b64encode(key.private_key.public_key().encrypt(data, self.padding))
 
-    async def decrypt(self, key_hash: SomeStr, data: bytes) -> bytes:
+    async def decrypt(self, key_hash: Optional[str], data: bytes) -> bytes:
         key = await self.keychain.find(key_hash)
         return key.private_key.decrypt(base64.b64decode(data), self.padding)
 

@@ -1,6 +1,7 @@
+from typing import Optional
+
 from pydantic import EmailStr, Field, SecretStr
 
-from observer.common.types import SomeStr
 from observer.schemas.base import SchemaBase
 
 
@@ -12,7 +13,7 @@ class TokenResponse(SchemaBase):
 class LoginPayload(SchemaBase):
     email: EmailStr = Field(..., description="E-mail address to login")
     password: SecretStr = Field(..., description="Password to login")
-    totp_code: SomeStr = Field(None, description="TOTP code if MFA is active for a given user")
+    totp_code: Optional[str] = Field(None, description="TOTP code if MFA is active for a given user")
 
 
 class RegistrationPayload(SchemaBase):
@@ -31,4 +32,4 @@ class NewPasswordRequest(SchemaBase):
 class ChangePasswordRequest(SchemaBase):
     old_password: SecretStr = Field(..., description="Old password which user has provided")
     new_password: SecretStr = Field(..., description="New password which user has provided")
-    totp_code: SomeStr = Field(None, description="TOTP code if MFA is active for a given user")
+    totp_code: Optional[str] = Field(None, description="TOTP code if MFA is active for a given user")

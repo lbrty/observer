@@ -1,6 +1,6 @@
 import base64
 from datetime import datetime, timedelta, timezone
-from typing import Protocol, Tuple
+from typing import Optional, Protocol, Tuple
 
 from jarowinkler import jarowinkler_similarity
 from jwt.exceptions import DecodeError, InvalidAlgorithmError, InvalidSignatureError
@@ -20,7 +20,7 @@ from observer.api.exceptions import (
 from observer.common import bcrypt
 from observer.common.auth import AccessTokenExpirationDelta, RefreshTokenExpirationDelta
 from observer.common.bcrypt import is_strong_password
-from observer.common.types import Identifier, Role, SomeStr
+from observer.common.types import Identifier, Role
 from observer.entities.users import PasswordReset, User
 from observer.schemas.auth import (
     ChangePasswordRequest,
@@ -171,7 +171,7 @@ class AuthService(IAuthService):
 
         raise NotFoundError
 
-    async def check_totp(self, user: User, totp_code: SomeStr):
+    async def check_totp(self, user: User, totp_code: Optional[str]):
         # If MFA is enabled and no TOTP code provided
         # then we need to return HTTP 417 so clients
         # resend auth credentials and TOTP code.

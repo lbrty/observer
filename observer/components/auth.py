@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import Cookie, Depends
 
@@ -7,7 +7,7 @@ from observer.api.exceptions import (
     RegistrationsClosedError,
     UnauthorizedError,
 )
-from observer.common.types import Role, SomeStr
+from observer.common.types import Role
 from observer.components import services
 from observer.components.services import jwt_service
 from observer.entities.base import SomeUser
@@ -18,7 +18,7 @@ from observer.settings import settings
 
 
 async def current_user(
-    access_token: SomeStr = Cookie(None),
+    access_token: Optional[str] = Cookie(None),
     jwt: JWTService = Depends(jwt_service),
     users_service: IUsersService = Depends(services.users_service),
 ) -> SomeUser:

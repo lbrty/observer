@@ -1,7 +1,7 @@
-from typing import List, Protocol
+from typing import List, Optional, Protocol
 
 from observer.api.exceptions import NotFoundError
-from observer.common.types import Identifier, SomeStr
+from observer.common.types import Identifier
 from observer.entities.people import Category, NewCategory, UpdateCategory
 from observer.repositories.categories import ICategoryRepository
 from observer.schemas.people import NewCategoryRequest, UpdateCategoryRequest
@@ -14,7 +14,7 @@ class ICategoryService(Protocol):
     async def create_category(self, new_category: NewCategoryRequest) -> Category:
         raise NotImplementedError
 
-    async def get_categories(self, name: SomeStr = None) -> List[Category]:
+    async def get_categories(self, name: Optional[str] = None) -> List[Category]:
         raise NotImplementedError
 
     async def get_category(self, category_id: Identifier) -> Category:
@@ -35,7 +35,7 @@ class CategoryService(ICategoryService):
     async def create_category(self, new_category: NewCategoryRequest) -> Category:
         return await self.repo.create_category(NewCategory(**new_category.dict()))
 
-    async def get_categories(self, name: SomeStr = None) -> List[Category]:
+    async def get_categories(self, name: Optional[str] = None) -> List[Category]:
         return await self.repo.get_categories(name)
 
     async def get_category(self, category_id: Identifier) -> Category:

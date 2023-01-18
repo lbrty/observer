@@ -2,7 +2,7 @@ from typing import List, Optional, Protocol
 
 from sqlalchemy import delete, insert, select, update
 
-from observer.common.types import Identifier, SomeStr
+from observer.common.types import Identifier
 from observer.db import Database
 from observer.db.tables.people import categories
 from observer.entities.people import Category, NewCategory, UpdateCategory
@@ -12,7 +12,7 @@ class ICategoryRepository(Protocol):
     async def create_category(self, new_category: NewCategory) -> Category:
         raise NotImplementedError
 
-    async def get_categories(self, name: SomeStr = None) -> List[Category]:
+    async def get_categories(self, name: Optional[str] = None) -> List[Category]:
         raise NotImplementedError
 
     async def get_category(self, category_id: Identifier) -> Optional[Category]:
@@ -36,7 +36,7 @@ class CategoryRepository(ICategoryRepository):
         result = await self.db.fetchone(query)
         return Category(**result)
 
-    async def get_categories(self, name: SomeStr = None) -> List[Category]:
+    async def get_categories(self, name: Optional[str] = None) -> List[Category]:
         query = select(categories)
         if name:
             query = query.where(categories.c.name.ilike(f"%{name}%"))
