@@ -1,10 +1,12 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, Sequence, Tuple, TypeAlias
 
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from pydantic.main import BaseModel
 
 from observer.api.exceptions import BaseAPIException, ErrorCode
+
+AdditionalResponses: TypeAlias = Sequence[int | Tuple[int, str]]
 
 
 class APIError(BaseModel):
@@ -21,5 +23,20 @@ async def handle_api_exception(_: Request, exc: BaseAPIException) -> JSONRespons
     )
 
 
-def get_api_errors(*status_codes: List[int]) -> Dict[int, Dict[str, APIError]]:
-    return {status_code: dict(model=APIError) for status_code in status_codes}
+def get_api_errors(*additional_responses: AdditionalResponses) -> Dict[int, Dict]:
+    """Creates additional responses to swagger schema
+
+    https://fastapi.tiangolo.com/advanced/additional-responses/?h=responses
+    """
+    responses = {}
+    for resp in additional_responses:
+        response = dict(model=APIError)
+        status_code = resp
+
+        if isinstance(resp, tuple):
+            status_code, description = resp
+            response["description"] = description
+
+        responses[status_code] = response
+
+    return responses
