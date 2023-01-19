@@ -102,9 +102,9 @@ async def create_project(
     "/{project_id}",
     response_model=ProjectResponse,
     responses=get_api_errors(
-        status.HTTP_404_NOT_FOUND,
+        status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
-        status.HTTP_404_NOT_FOUND,
+        (status.HTTP_404_NOT_FOUND, "Project not found"),
     ),
     status_code=status.HTTP_200_OK,
     tags=["projects"],
@@ -119,7 +119,7 @@ async def get_project(project: Project = Depends(viewable_project)) -> ProjectRe
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
-        status.HTTP_404_NOT_FOUND,
+        (status.HTTP_404_NOT_FOUND, "Project not found"),
     ),
     status_code=status.HTTP_200_OK,
     tags=["projects"],
@@ -151,9 +151,9 @@ async def update_project(
 @router.delete(
     "/{project_id}",
     responses=get_api_errors(
-        status.HTTP_404_NOT_FOUND,
+        status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
-        status.HTTP_404_NOT_FOUND,
+        (status.HTTP_404_NOT_FOUND, "Project not found"),
     ),
     status_code=status.HTTP_204_NO_CONTENT,
     tags=["projects"],
@@ -182,9 +182,9 @@ async def delete_project(
     "/{project_id}/members",
     response_model=ProjectMembersResponse,
     responses=get_api_errors(
-        status.HTTP_404_NOT_FOUND,
+        status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
-        status.HTTP_404_NOT_FOUND,
+        (status.HTTP_404_NOT_FOUND, "Project not found"),
     ),
     status_code=status.HTTP_200_OK,
     tags=["projects"],
@@ -202,9 +202,9 @@ async def get_project_members(
     "/{project_id}/members",
     response_model=ProjectMemberResponse,
     responses=get_api_errors(
-        status.HTTP_404_NOT_FOUND,
+        status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
-        status.HTTP_404_NOT_FOUND,
+        (status.HTTP_404_NOT_FOUND, "Project not found"),
     ),
     status_code=status.HTTP_200_OK,
     tags=["projects"],
@@ -252,9 +252,9 @@ async def add_project_member(
     "/{project_id}/members/{user_id}",
     response_model=ProjectMemberResponse,
     responses=get_api_errors(
-        status.HTTP_404_NOT_FOUND,
+        status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
-        status.HTTP_404_NOT_FOUND,
+        (status.HTTP_404_NOT_FOUND, "Project or member not found"),
     ),
     status_code=status.HTTP_200_OK,
     tags=["projects"],
@@ -295,9 +295,9 @@ async def update_project_member(
 @router.delete(
     "/{project_id}/members/{user_id}",
     responses=get_api_errors(
-        status.HTTP_404_NOT_FOUND,
+        status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
-        status.HTTP_404_NOT_FOUND,
+        (status.HTTP_404_NOT_FOUND, "Project or member not found"),
     ),
     status_code=status.HTTP_204_NO_CONTENT,
     tags=["projects"],
