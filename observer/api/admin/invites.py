@@ -92,7 +92,7 @@ async def create_invite(
 
 
 @router.delete(
-    "{code}",
+    "/{code}",
     status_code=status.HTTP_204_NO_CONTENT,
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,

@@ -2,7 +2,7 @@ import asyncio
 import logging
 from pathlib import Path
 
-import structlog as slog
+import structlog
 from cryptography.hazmat.primitives.asymmetric.rsa import generate_private_key
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
@@ -20,8 +20,8 @@ from observer.settings import settings
 keys = Typer()
 console = Console()
 
-slog.configure(
-    wrapper_class=slog.make_filtering_bound_logger(logging.WARNING),
+structlog.configure(
+    wrapper_class=structlog.make_filtering_bound_logger(logging.WARNING),
 )
 
 

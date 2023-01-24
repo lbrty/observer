@@ -230,14 +230,14 @@
         }
       }
     },
-    "/admin/invites{code}": {
+    "/admin/invites/{code}": {
       "delete": {
         "tags": [
           "admin",
           "invites"
         ],
         "summary": "Delete Invite",
-        "operationId": "delete_invite_admin_invites_code__delete",
+        "operationId": "delete_invite_admin_invites__code__delete",
         "parameters": [
           {
             "required": true,
@@ -8465,7 +8465,8 @@
         "title": "UserInviteRequest",
         "required": [
           "email",
-          "role"
+          "role",
+          "permissions"
         ],
         "type": "object",
         "properties": {
@@ -8482,6 +8483,14 @@
               }
             ],
             "description": "Role of a user"
+          },
+          "permissions": {
+            "title": "Permissions",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewPermissionRequest"
+            },
+            "description": "List of permissions to different projects"
           }
         }
       },
