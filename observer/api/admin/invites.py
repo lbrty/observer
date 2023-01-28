@@ -15,7 +15,12 @@ from observer.components.services import (
 )
 from observer.entities.base import SomeUser
 from observer.schemas.pagination import Pagination
-from observer.schemas.users import NewUserRequest, UserInviteRequest, UserInviteResponse, UserInvitesResponse
+from observer.schemas.users import (
+    NewUserRequest,
+    UserInviteRequest,
+    UserInviteResponse,
+    UserInvitesResponse,
+)
 from observer.services.audit_logs import IAuditService
 from observer.services.auth import IAuthService
 from observer.services.mailer import EmailMessage, IMailer
@@ -101,9 +106,11 @@ async def create_invite(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
     ),
-    dependencies=[Depends(
-        RequiresRoles([Role.admin, Role.staff]),
-    )],
+    dependencies=[
+        Depends(
+            RequiresRoles([Role.admin, Role.staff]),
+        )
+    ],
     tags=["admin", "invites"],
 )
 async def get_invites(
