@@ -11,6 +11,8 @@ from observer.components.services import (
     audit_service,
     auth_service,
     mailer,
+    permissions_service,
+    projects_service,
     users_service,
 )
 from observer.entities.base import SomeUser
@@ -24,6 +26,8 @@ from observer.schemas.users import (
 from observer.services.audit_logs import IAuditService
 from observer.services.auth import IAuthService
 from observer.services.mailer import EmailMessage, IMailer
+from observer.services.permissions import IPermissionsService
+from observer.services.projects import IProjectsService
 from observer.services.users import IUsersService
 from observer.settings import settings
 
@@ -51,6 +55,8 @@ async def create_invite(
     users: IUsersService = Depends(users_service),
     auth: IAuthService = Depends(auth_service),
     audits: IAuditService = Depends(audit_service),
+    permissions: IPermissionsService = Depends(permissions_service),
+    projects: IProjectsService = Depends(projects_service),
     ip_address: str = Depends(client_ip),
     mail: IMailer = Depends(mailer),
     props: Props = Depends(
@@ -72,13 +78,26 @@ async def create_invite(
     )
     invite = await users.create_invite(new_user.id)
     link = f"https://{settings.app_domain}{settings.invite_url.format(code=invite.code)}"
+    project_names = []
+    if invite_request.permissions:
+        for permission in invite_request.permissions:
+            project = await projects.get_by_id(permission.project_id)
+            project_names.append(project.name)
+            await permissions.create_permission(permission)
+
+    invited_projects = ""
+    if project_names:
+        invited_projects = "\nYou can access the following projects: " + ", ".join(project_names)
+
     tasks.add_task(
         mail.send,
         EmailMessage(
             to_email=new_user.email,
             from_email=settings.from_email,
             subject=settings.mfa_reset_subject,
-            body=f"You are invited to join {settings.invite_subject} please use the following {link}",
+            body=(
+                f"You are invited to join {settings.invite_subject} please use the following {link}.{invited_projects}"
+            ),
         ),
     )
     audit_log = props.new_event(
