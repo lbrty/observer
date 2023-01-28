@@ -39,12 +39,14 @@ support_records = Table(
     CheckConstraint("type IN ('humanitarian', 'legal', 'medical', 'general')", name="support_records_types"),
     CheckConstraint("record_for IN ('person', 'pet')", name="support_records_record_for"),
     CheckConstraint(
-        "age_group IN ("
-        "'infant', 'toddler', 'pre_school', "
-        "'middle_childhood', 'young_teen', "
-        "'teenager', 'young_adult', 'early_adult', "
-        "'middle_aged_adult', 'old_adult'"
-        ")",
+        (
+            "age_group IN ("
+            "'infant', 'toddler', 'pre_school', "
+            "'middle_childhood', 'young_teen', "
+            "'teenager', 'young_adult', 'early_adult', "
+            "'middle_aged_adult', 'old_adult'"
+            ")"
+        ),
         name="support_records_age_group",
     ),
 )

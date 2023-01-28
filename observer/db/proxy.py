@@ -27,11 +27,11 @@ class Database(DbProxyInterface):
 
     async def fetchone(self, statement):
         result = await self.execute(statement)
-        return result.fetchone()
+        return result.mappings().fetchone()
 
     async def fetchall(self, statement):
         result = await self.execute(statement)
-        return result.fetchall()
+        return result.mappings().fetchall()
 
     async def execute(self, statement):
         async with self.session.begin() as conn:
