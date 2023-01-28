@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
-from typing import Optional, Protocol
+from typing import Optional, Protocol, List, Tuple
 
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, insert, select, update, func, desc
 
 from observer.common.types import Identifier
 from observer.db import Database
@@ -15,6 +15,7 @@ from observer.entities.users import (
     User,
     UserUpdate,
 )
+from observer.schemas.pagination import Pagination
 
 
 class IUsersRepository(Protocol):
@@ -61,6 +62,9 @@ class IUsersRepository(Protocol):
         raise NotImplementedError
 
     async def get_invite(self, code: str) -> Optional[Invite]:
+        raise NotImplementedError
+
+    async def get_invites(self, page: Pagination) -> Tuple[int, List[Invite]]:
         raise NotImplementedError
 
     async def delete_invite(self, code: str) -> Invite:
@@ -135,6 +139,14 @@ class UsersRepository(IUsersRepository):
             return Invite(**result)
 
         return None
+
+    async def get_invites(self, page: Pagination) -> Tuple[int, List[Invite]]:
+        count_query = select([func.count()]).select_from(invites)
+        query = select(invites).offset(page.offset).limit(page.limit).order_by(desc(invites.c.expires_at))
+        rows = await self.db.fetchall(query)
+        items = [Invite(**row.dict()) for row in rows]
+        invites_count = await self.db.fetchone(count_query)
+        return invites_count[0], items
 
     async def delete_invite(self, code: str) -> Invite:
         query = delete(invites).where(invites.c.code == code).returning("*")

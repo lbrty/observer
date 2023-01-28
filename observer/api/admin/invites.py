@@ -6,6 +6,7 @@ from observer.common.exceptions import get_api_errors
 from observer.common.types import Identifier, Role
 from observer.components.audit import Props, Tracked, client_ip
 from observer.components.auth import RequiresRoles
+from observer.components.pagination import pagination
 from observer.components.services import (
     audit_service,
     auth_service,
@@ -13,7 +14,8 @@ from observer.components.services import (
     users_service,
 )
 from observer.entities.base import SomeUser
-from observer.schemas.users import NewUserRequest, UserInviteRequest, UserInviteResponse
+from observer.schemas.pagination import Pagination
+from observer.schemas.users import NewUserRequest, UserInviteRequest, UserInviteResponse, UserInvitesResponse
 from observer.services.audit_logs import IAuditService
 from observer.services.auth import IAuthService
 from observer.services.mailer import EmailMessage, IMailer
@@ -89,6 +91,27 @@ async def create_invite(
     )
     tasks.add_task(audits.add_event, audit_log)
     return UserInviteResponse(**invite.dict())
+
+
+@router.get(
+    "",
+    response_model=UserInvitesResponse,
+    status_code=status.HTTP_200_OK,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+    ),
+    dependencies=[Depends(
+        RequiresRoles([Role.admin, Role.staff]),
+    )],
+    tags=["admin", "invites"],
+)
+async def get_invites(
+    users: IUsersService = Depends(users_service),
+    pages: Pagination = Depends(pagination),
+) -> UserInvitesResponse:
+    count, invites = await users.get_invites(pages)
+    return UserInvitesResponse(total=count, items=invites)
 
 
 @router.delete(

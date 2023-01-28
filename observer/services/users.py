@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional, Protocol
+from typing import List, Optional, Protocol, Tuple
 
 import shortuuid
 
@@ -21,6 +21,7 @@ from observer.entities.users import (
     UserUpdate,
 )
 from observer.repositories.users import IUsersRepository
+from observer.schemas.pagination import Pagination
 from observer.schemas.users import (
     NewUserRequest,
     UserMFAUpdateRequest,
@@ -86,6 +87,9 @@ class IUsersService(Protocol):
         raise NotImplementedError
 
     async def get_invite(self, code: str, validate: bool = True) -> Optional[Invite]:
+        raise NotImplementedError
+
+    async def get_invites(self, page: Pagination) -> Tuple[int, List[Invite]]:
         raise NotImplementedError
 
     async def delete_invite(self, code: str) -> Invite:
@@ -220,6 +224,9 @@ class UsersService(IUsersService):
             raise NotFoundError(message="Unknown user")
 
         return invite
+
+    async def get_invites(self, page: Pagination) -> Tuple[int, List[Invite]]:
+        return await self.repo.get_invites(page)
 
     async def delete_invite(self, code: str) -> Invite:
         return await self.repo.delete_invite(code)

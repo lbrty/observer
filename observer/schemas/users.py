@@ -61,5 +61,10 @@ class UserInviteResponse(SchemaBase):
     expires_at: datetime = Field(..., description="Expiration datetime")
 
 
+class UserInvitesResponse(SchemaBase):
+    total: int = Field(..., description="Total amount of invites")
+    items: List[UserInviteResponse] = Field(..., description="List of invites DESC ordered by expiration date")
+
+
 class InviteJoinRequest(SchemaBase):
     password: SecretStr = Field(..., description="Password which user has provided")
