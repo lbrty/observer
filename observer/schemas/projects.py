@@ -1,4 +1,5 @@
 from typing import List, Optional
+from uuid import UUID
 
 from pydantic import Field
 
@@ -22,11 +23,11 @@ class ProjectResponse(SchemaBase):
     id: Identifier = Field(..., description="ID of project")
     name: str = Field(..., description="Name of project")
     description: Optional[str] = Field(None, description="Description of project")
-    owner_id: Optional[str] = Field(None, description="ID of creator")
+    owner_id: Optional[UUID] = Field(None, description="ID of creator")
 
 
 class NewProjectRequest(BaseProject):
-    owner_id: Optional[str] = Field(None, description="ID of creator it overridden currently active user")
+    owner_id: Optional[UUID] = Field(None, description="ID of creator it overridden currently active user")
 
 
 class UpdateProjectRequest(BaseProject):

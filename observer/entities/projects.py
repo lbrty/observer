@@ -1,4 +1,5 @@
 from typing import Optional
+from uuid import UUID
 
 from pydantic import BaseModel
 
@@ -10,13 +11,13 @@ class Project(BaseModel):
     id: Identifier
     name: str
     description: Optional[str]
-    owner_id: Optional[str]
+    owner_id: Optional[UUID]
 
 
 class NewProject(BaseModel):
     name: str
     description: Optional[str]
-    owner_id: Optional[str]
+    owner_id: Optional[UUID]
 
 
 class ProjectUpdate(BaseModel):
