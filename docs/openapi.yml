@@ -5313,6 +5313,7 @@
         "operationId": "get_project_projects__project_id__get",
         "parameters": [
           {
+            "description": "Project ID path param",
             "required": true,
             "schema": {
               "title": "Project Id",
@@ -5324,7 +5325,8 @@
                 {
                   "type": "string"
                 }
-              ]
+              ],
+              "description": "Project ID path param"
             },
             "name": "project_id",
             "in": "path"
@@ -5400,6 +5402,7 @@
         "operationId": "update_project_projects__project_id__put",
         "parameters": [
           {
+            "description": "Project ID path param",
             "required": true,
             "schema": {
               "title": "Project Id",
@@ -5411,7 +5414,8 @@
                 {
                   "type": "string"
                 }
-              ]
+              ],
+              "description": "Project ID path param"
             },
             "name": "project_id",
             "in": "path"
@@ -5497,6 +5501,7 @@
         "operationId": "delete_project_projects__project_id__delete",
         "parameters": [
           {
+            "description": "Project ID path param",
             "required": true,
             "schema": {
               "title": "Project Id",
@@ -5508,7 +5513,8 @@
                 {
                   "type": "string"
                 }
-              ]
+              ],
+              "description": "Project ID path param"
             },
             "name": "project_id",
             "in": "path"
@@ -5579,6 +5585,7 @@
         "operationId": "get_project_members_projects__project_id__members_get",
         "parameters": [
           {
+            "description": "Project ID path param",
             "required": true,
             "schema": {
               "title": "Project Id",
@@ -5590,7 +5597,8 @@
                 {
                   "type": "string"
                 }
-              ]
+              ],
+              "description": "Project ID path param"
             },
             "name": "project_id",
             "in": "path"
@@ -5690,6 +5698,7 @@
         "operationId": "add_project_member_projects__project_id__members_post",
         "parameters": [
           {
+            "description": "Project ID path param",
             "required": true,
             "schema": {
               "title": "Project Id",
@@ -5701,7 +5710,8 @@
                 {
                   "type": "string"
                 }
-              ]
+              ],
+              "description": "Project ID path param"
             },
             "name": "project_id",
             "in": "path"
@@ -5806,6 +5816,7 @@
             "in": "path"
           },
           {
+            "description": "Project ID path param",
             "required": true,
             "schema": {
               "title": "Project Id",
@@ -5817,7 +5828,8 @@
                 {
                   "type": "string"
                 }
-              ]
+              ],
+              "description": "Project ID path param"
             },
             "name": "project_id",
             "in": "path"
@@ -5920,6 +5932,7 @@
             "in": "path"
           },
           {
+            "description": "Project ID path param",
             "required": true,
             "schema": {
               "title": "Project Id",
@@ -5931,7 +5944,8 @@
                 {
                   "type": "string"
                 }
-              ]
+              ],
+              "description": "Project ID path param"
             },
             "name": "project_id",
             "in": "path"
@@ -7258,7 +7272,8 @@
           "owner_id": {
             "title": "Owner Id",
             "type": "string",
-            "description": "ID of creator it overridden currently active user"
+            "description": "ID of creator it overridden currently active user",
+            "format": "uuid"
           }
         }
       },
@@ -7870,7 +7885,8 @@
           "owner_id": {
             "title": "Owner Id",
             "type": "string",
-            "description": "ID of creator"
+            "description": "ID of creator",
+            "format": "uuid"
           }
         }
       },
