@@ -196,7 +196,7 @@ class AuthService(IAuthService):
                 raise TOTPError(message="Invalid totp code")
 
     async def gen_password(self) -> str:
-        random_bytes = self.crypto_service.gen_key(settings.aes_key_bits)
+        random_bytes = await self.crypto_service.gen_key(settings.aes_key_bits)
         return base64.b64encode(random_bytes).decode()
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:

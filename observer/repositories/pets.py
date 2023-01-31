@@ -43,15 +43,37 @@ class PetsRepository(IPetsRepository):
         return None
 
     async def get_pets_by_project(self, project_id: Identifier, page: Pagination) -> Tuple[int, List[Pet]]:
-        count_query = select([func.count()]).select_from(pets).where(pets.c.project_id == project_id)
-        query = select(pets).where(pets.c.project_id == project_id).offset(page.offset).limit(page.limit)
+        count_query = (
+            select(
+                func.count().label("count"),
+            )
+            .select_from(pets)
+            .where(
+                pets.c.project_id == project_id,
+            )
+        )
+        query = (
+            select(pets)
+            .where(
+                pets.c.project_id == project_id,
+            )
+            .offset(page.offset)
+            .limit(page.limit)
+        )
         rows = await self.db.fetchall(query)
-        items = [Pet(**row.dict()) for row in rows]
+        items = [Pet(**row) for row in rows]
         pets_count = await self.db.fetchone(count_query)
-        return pets_count[0], items
+        return pets_count["count"], items
 
     async def update_pet(self, pet_id: Identifier, updates: UpdatePet) -> Pet:
-        query = update(pets).values(**updates.dict()).where(pets.c.id == pet_id).returning("*")
+        query = (
+            update(pets)
+            .values(**updates.dict())
+            .where(
+                pets.c.id == pet_id,
+            )
+            .returning("*")
+        )
         row = await self.db.fetchone(query)
         return Pet(**row)
 

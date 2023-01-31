@@ -140,12 +140,12 @@ class UsersRepository(IUsersRepository):
         return None
 
     async def get_invites(self, offset: int, limit: int) -> Tuple[int, List[Invite]]:
-        count_query = select([func.count()]).select_from(invites)
+        count_query = select(func.count().label("count")).select_from(invites)
         query = select(invites).offset(offset).limit(limit).order_by(desc(invites.c.expires_at))
         rows = await self.db.fetchall(query)
-        items = [Invite(**row.dict()) for row in rows]
+        items = [Invite(**row) for row in rows]
         invites_count = await self.db.fetchone(count_query)
-        return invites_count[0], items
+        return invites_count["count"], items
 
     async def delete_invite(self, code: str) -> Invite:
         query = delete(invites).where(invites.c.code == code).returning("*")
@@ -153,7 +153,14 @@ class UsersRepository(IUsersRepository):
         return Invite(**result)
 
     async def confirm_user(self, user_id: Identifier) -> User:
-        query = update(users).values(dict(is_confirmed=True)).where(users.c.id == user_id).returning("*")
+        query = (
+            update(users)
+            .values(dict(is_confirmed=True))
+            .where(
+                users.c.id == user_id,
+            )
+            .returning("*")
+        )
         result = await self.db.fetchone(query)
         return User(**result)
 

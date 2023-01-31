@@ -26,6 +26,10 @@ class NewPermissionRequest(BasePermission):
     project_id: Identifier = Field(..., description="User can create records")
 
 
+class InvitePermissionRequest(BasePermission):
+    project_id: Identifier = Field(..., description="User can create records")
+
+
 class UpdatePermissionRequest(BasePermission):
     ...
 

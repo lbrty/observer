@@ -6480,6 +6480,76 @@
           }
         }
       },
+      "InvitePermissionRequest": {
+        "title": "InvitePermissionRequest",
+        "required": [
+          "project_id"
+        ],
+        "type": "object",
+        "properties": {
+          "can_create": {
+            "title": "Can Create",
+            "type": "boolean",
+            "description": "User can create records",
+            "default": false
+          },
+          "can_read": {
+            "title": "Can Read",
+            "type": "boolean",
+            "description": "User can create records",
+            "default": true
+          },
+          "can_update": {
+            "title": "Can Update",
+            "type": "boolean",
+            "description": "User can update records",
+            "default": false
+          },
+          "can_delete": {
+            "title": "Can Delete",
+            "type": "boolean",
+            "description": "User can delete records",
+            "default": false
+          },
+          "can_create_projects": {
+            "title": "Can Create Projects",
+            "type": "boolean",
+            "description": "User can create projects",
+            "default": false
+          },
+          "can_read_documents": {
+            "title": "Can Read Documents",
+            "type": "boolean",
+            "description": "User can read documents",
+            "default": false
+          },
+          "can_read_personal_info": {
+            "title": "Can Read Personal Info",
+            "type": "boolean",
+            "description": "User can read personal info",
+            "default": false
+          },
+          "can_invite_members": {
+            "title": "Can Invite Members",
+            "type": "boolean",
+            "description": "User can invite new members to projects",
+            "default": false
+          },
+          "project_id": {
+            "title": "Project Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "User can create records"
+          }
+        }
+      },
       "LoginPayload": {
         "title": "LoginPayload",
         "required": [
@@ -8573,7 +8643,7 @@
             "title": "Permissions",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NewPermissionRequest"
+              "$ref": "#/components/schemas/InvitePermissionRequest"
             },
             "description": "List of permissions to different projects"
           }

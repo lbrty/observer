@@ -17,6 +17,7 @@ from observer.components.services import (
 )
 from observer.entities.base import SomeUser
 from observer.schemas.pagination import Pagination
+from observer.schemas.permissions import NewPermissionRequest
 from observer.schemas.users import (
     NewUserRequest,
     UserInviteRequest,
@@ -83,7 +84,9 @@ async def create_invite(
         for permission in invite_request.permissions:
             project = await projects.get_by_id(permission.project_id)
             project_names.append(project.name)
-            await permissions.create_permission(permission)
+            permission_params = permission.dict()
+            permission_params["user_id"] = new_user.id
+            await permissions.create_permission(NewPermissionRequest(**permission_params))
 
     invited_projects = ""
     if project_names:
@@ -171,7 +174,7 @@ async def delete_invite(
     invite = await users.get_invite(code, validate=False)
     await users.delete_invite(code)
     if delete_user:
-        deleted_user = await users.delete_user(user.id)
+        deleted_user = await users.delete_user(invite.user_id)
         audit_log = props.new_event(
             f"action=delete:user,ref_id={user.ref_id}",
             data=dict(

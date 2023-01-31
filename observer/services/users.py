@@ -226,7 +226,7 @@ class UsersService(IUsersService):
         return invite
 
     async def get_invites(self, page: Pagination) -> Tuple[int, List[Invite]]:
-        return await self.repo.get_invites(page)
+        return await self.repo.get_invites(page.offset, page.limit)
 
     async def delete_invite(self, code: str) -> Invite:
         return await self.repo.delete_invite(code)

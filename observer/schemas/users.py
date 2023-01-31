@@ -5,7 +5,7 @@ from pydantic import EmailStr, Field, SecretStr
 
 from observer.common.types import Identifier, Role
 from observer.schemas.base import SchemaBase
-from observer.schemas.permissions import NewPermissionRequest
+from observer.schemas.permissions import InvitePermissionRequest
 
 
 class BaseUser(SchemaBase):
@@ -50,7 +50,7 @@ class UsersResponse(SchemaBase):
 class UserInviteRequest(SchemaBase):
     email: EmailStr = Field(..., description="User email to send a new invite")
     role: Role = Field(..., description="Role of a user")
-    permissions: Optional[List[NewPermissionRequest]] = Field(
+    permissions: Optional[List[InvitePermissionRequest]] = Field(
         ..., description="List of permissions to different projects"
     )
 
