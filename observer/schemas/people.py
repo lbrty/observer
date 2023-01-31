@@ -36,6 +36,7 @@ class BasePerson(SchemaBase):
     phone_number_additional: Optional[str] = Field(None, description="Displaced person ID")
     project_id: Optional[Identifier] = Field(None, description="Related project ID")
     category_id: Optional[Identifier] = Field(None, description="Vulnerability category ID")
+    office_id: Optional[Identifier] = Field(None, description="Registration office ID")
     tags: Optional[List[str]] = Field(None, description="List of tags")
 
 
@@ -52,6 +53,7 @@ class PersonResponse(BasePerson):
     external_id: Optional[str] = Field(None, description="External identifier")
     # User's id who registered
     consultant_id: Optional[Identifier] = Field(..., description="Consultant ID")
+    office_id: Optional[Identifier] = Field(None, description="Registration office ID")
     created_at: Optional[datetime] = Field(None, description="Creation date")
     updated_at: Optional[datetime] = Field(None, description="Update date")
 

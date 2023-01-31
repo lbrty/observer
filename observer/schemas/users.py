@@ -12,6 +12,7 @@ class BaseUser(SchemaBase):
     email: EmailStr = Field(..., description="E-mail address of a user")
     full_name: Optional[str] = Field(None, description="Full name of a user")
     role: Role = Field(..., description="Role of a user")
+    office_id: Optional[Identifier] = Field(None, description="Office ID to which user belongs")
 
 
 class NewUserRequest(BaseUser):

@@ -15,6 +15,7 @@ class User(BaseModel):
     role: Role
     is_active: bool
     is_confirmed: bool
+    office_id: Optional[Identifier]
     mfa_enabled: bool
     mfa_encrypted_secret: Optional[str]
     mfa_encrypted_backup_codes: Optional[str]
@@ -28,6 +29,7 @@ class NewUser(BaseModel):
     role: Role
     is_active: bool
     is_confirmed: bool
+    office_id: Optional[Identifier]
 
 
 class UserUpdate(BaseModel):
@@ -35,6 +37,7 @@ class UserUpdate(BaseModel):
     full_name: Optional[str]
     role: Optional[Role]
     is_active: Optional[bool]
+    office_id: Optional[Identifier]
     mfa_enabled: Optional[bool]
     mfa_encrypted_secret: Optional[str]
     mfa_encrypted_backup_codes: Optional[str]

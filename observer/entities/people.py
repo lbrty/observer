@@ -37,6 +37,7 @@ class BasePerson(BaseModel):
     phone_number_additional: Optional[str]
     project_id: Optional[Identifier]
     category_id: Optional[Identifier]
+    office_id: Optional[Identifier]
     tags: Optional[List[str]]
 
 
