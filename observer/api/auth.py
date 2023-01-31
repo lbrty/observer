@@ -3,12 +3,13 @@ from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
-from observer.api.exceptions import ForbiddenError
+from observer.api.exceptions import ForbiddenError, RegistrationsClosedError
 from observer.common.auth import AccessTokenKey, RefreshTokenKey
 from observer.common.exceptions import get_api_errors
 from observer.components.audit import Props, Tracked
 from observer.components.auth import (
     allow_registrations,
+    allowed_admin_emails,
     authenticated_user,
     refresh_token_cookie,
 )
@@ -163,6 +164,8 @@ async def token_register(
     response: Response,
     tasks: BackgroundTasks,
     registration_payload: RegistrationPayload,
+    invite_only=Depends(allow_registrations),
+    allowed_admins=Depends(allowed_admin_emails),
     audits: IAuditService = Depends(audit_service),
     auth: IAuthService = Depends(auth_service),
     users: IUsersService = Depends(users_service),
@@ -176,6 +179,9 @@ async def token_register(
     ),
 ) -> TokenResponse:
     """Register using email and password"""
+    if invite_only and registration_payload.email not in allowed_admins:
+        raise RegistrationsClosedError(message="Registrations are not allowed")
+
     user, token_response = await auth.register(registration_payload)
     audit_log = props.new_event(
         f"action=token:register,ref_id={user.ref_id}",

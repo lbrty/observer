@@ -82,7 +82,7 @@ async def test_token_refresh_works_as_expected_when_refresh_token_is_invalid(cli
     assert audit_log.data == dict(refresh_token="INVALID-TOKEN", notice="invalid refresh token")
 
 
-async def test_registration_works_as_expected(client, ensure_db, app_context):
+async def test_registration_works_as_expected(client, app_context):
     resp = await client.post(
         "/auth/register",
         json=dict(
@@ -289,4 +289,36 @@ async def test_password_change_works_as_expected_when_old_password_is_invalid(
         "code": "invalid_password_error",
         "message": "Invalid password",
         "status_code": 403,
+    }
+
+
+async def test_invite_only_mode_works(client, ensure_db, env_settings, app_context):
+    env_settings.invite_only = True
+    email = "email-admin-user@examples.com"
+    env_settings.admin_emails = [email]
+    resp = await client.post(
+        "/auth/register",
+        json=dict(email=email, password=SECURE_PASSWORD),
+    )
+    assert resp.status_code == status.HTTP_201_CREATED
+
+    cookies = SimpleCookie(resp.headers["set-cookie"])
+    token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
+    user = await app_context.users_service.get_by_email(email)
+    assert token_data.ref_id == user.ref_id
+
+    audit_log = await app_context.audit_service.find_by_ref(
+        f"endpoint=token_register,action=token:register,ref_id={user.ref_id}"
+    )
+    assert audit_log.data == dict(ref_id=user.ref_id, role=user.role.value)
+
+    resp = await client.post(
+        "/auth/register",
+        json=dict(email="random-admiin@examples.com", password=SECURE_PASSWORD),
+    )
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
+    assert resp.json() == {
+        "code": "registrations_closed_error",
+        "status_code": 400,
+        "message": "Registrations are not allowed",
     }
