@@ -193,7 +193,11 @@ async def test_update_project_works_as_expected_for_users_without_permissions(
     )
 
     assert resp.status_code == status.HTTP_403_FORBIDDEN
-    assert resp.json() == {"code": "unauthorized", "status_code": 403, "message": "You can not update this project"}
+    assert resp.json() == {
+        "code": "unauthorized",
+        "status_code": 403,
+        "message": "Permission denied",
+    }
 
 
 async def test_get_project_members_works_as_expected(authorized_client, ensure_db, app_context, consultant_user):
@@ -455,7 +459,7 @@ async def test_add_project_member_works_as_expected_for_users_without_permission
     assert resp.json() == {
         "code": "unauthorized",
         "status_code": 403,
-        "message": "You can not invite members in this project",
+        "message": "Permission denied",
     }
 
 
@@ -488,7 +492,11 @@ async def test_add_project_member_works_as_expected_if_given_user_does_not_exist
         ),
     )
     assert resp.status_code == status.HTTP_404_NOT_FOUND
-    assert resp.json() == {"code": "not_found", "status_code": 404, "message": "User not found"}
+    assert resp.json() == {
+        "code": "not_found",
+        "status_code": 404,
+        "message": "User not found",
+    }
 
 
 async def test_add_project_member_works_as_expected_if_project_ids_mismatch(

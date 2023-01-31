@@ -73,7 +73,7 @@ async def create_project(
         use_cache=False,
     ),
 ) -> ProjectResponse:
-    new_project.owner_id = str(user.id)
+    new_project.owner_id = user.id
     project = await projects.create_project(new_project)
     audit_log = props.new_event(
         f"action=create:project,project_id={project.id},ref_id={user.ref_id}",
@@ -195,7 +195,9 @@ async def get_project_members(
     pages: Pagination = Depends(pagination),
 ) -> ProjectMembersResponse:
     members = await projects.get_members(project.id, pages.offset, pages.limit)
-    return ProjectMembersResponse(items=[ProjectMemberResponse(**member.dict()) for member in members])
+    return ProjectMembersResponse(
+        items=[ProjectMemberResponse(**member.dict()) for member in members],
+    )
 
 
 @router.post(

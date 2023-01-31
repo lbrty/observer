@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from observer.api.exceptions import ForbiddenError
 from observer.common.types import Role
@@ -43,28 +43,28 @@ permission_matrix: Dict[Role, BasePermission] = {
 }
 
 
-def assert_viewable(user: User, permission: Permission | None):
+def assert_viewable(user: User, permission: Optional[Permission]):
     if user.role != Role.admin:
         can_do = permission and permission.can_read
         if not can_do:
             raise ForbiddenError(message="Permission denied")
 
 
-def assert_writable(user: User, permission: Permission | None):
+def assert_writable(user: User, permission: Optional[Permission]):
     if user.role != Role.admin:
         can_do = permission and permission.can_create
         if not can_do:
             raise ForbiddenError(message="Permission denied")
 
 
-def assert_deletable(user: User, permission: Permission | None):
+def assert_deletable(user: User, permission: Optional[Permission]):
     if user.role != Role.admin:
         can_do = permission and permission.can_delete
         if not can_do:
             raise ForbiddenError(message="Permission denied")
 
 
-def assert_updatable(user: User, permission: Permission | None):
+def assert_updatable(user: User, permission: Optional[Permission]):
     if user.role != Role.admin:
         # TODO: Maybe add separate endpoint to update personal info?
         can_do = permission and permission.can_update and permission.can_read_personal_info
@@ -72,28 +72,28 @@ def assert_updatable(user: User, permission: Permission | None):
             raise ForbiddenError(message="Permission denied")
 
 
-def assert_docs_readable(user: User, permission: Permission | None):
+def assert_docs_readable(user: User, permission: Optional[Permission]):
     if user.role != Role.admin:
         can_do = permission and permission.can_read_documents
         if not can_do:
             raise ForbiddenError(message="Permission denied")
 
 
-def assert_can_invite(user: User, permission: Permission | None):
+def assert_can_invite(user: User, permission: Optional[Permission]):
     if user.role != Role.admin:
         can_invite = permission and permission.can_invite_members
         if not can_invite:
             raise ForbiddenError(message="Permission denied")
 
 
-def assert_can_see_private_info(user: User, permission: Permission | None):
+def assert_can_see_private_info(user: User, permission: Optional[Permission]):
     if user.role != Role.admin:
         can_do = permission and permission.can_read_personal_info
         if not can_do:
             raise ForbiddenError(message="Permission denied")
 
 
-def assert_can_create_projects(user: User, permission: Permission | None):
+def assert_can_create_projects(user: User, permission: Optional[Permission]):
     if user.role != Role.admin:
         can_do = permission and permission.can_create_projects
         if not can_do:
