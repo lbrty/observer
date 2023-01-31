@@ -33,6 +33,7 @@ def upgrade():
         sa.Column("project_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("category_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("consultant_id", postgresql.UUID(as_uuid=True), nullable=True),
+        sa.Column("office_id", postgresql.UUID(as_uuid=True), nullable=True),
         sa.Column("tags", postgresql.ARRAY(sa.Text()), nullable=True),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=True),
         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=True),
@@ -44,6 +45,11 @@ def upgrade():
         sa.ForeignKeyConstraint(
             ("consultant_id",),
             ["users.id"],
+            ondelete="SET NULL",
+        ),
+        sa.ForeignKeyConstraint(
+            ("office_id",),
+            ["offices.id"],
             ondelete="SET NULL",
         ),
         sa.ForeignKeyConstraint(

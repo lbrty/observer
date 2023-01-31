@@ -41,6 +41,7 @@ people = Table(
     Column("category_id", UUID(as_uuid=True), ForeignKey("categories.id", ondelete="SET NULL"), nullable=True),
     # User's id who registered
     Column("consultant_id", UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True),
+    Column("office_id", UUID(as_uuid=True), ForeignKey("offices.id", ondelete="SET NULL"), nullable=True),
     Column("tags", ARRAY(Text()), nullable=True),
     Column("created_at", DateTime(timezone=True), server_default=func.now()),
     Column("updated_at", DateTime(timezone=True), server_default=func.now(), onupdate=func.now()),
@@ -73,6 +74,7 @@ people = Table(
     Index("ix_people_birth_date", "birth_date"),
     Index("ix_people_category_id", "category_id"),
     Index("ix_people_consultant_id", "consultant_id"),
+    Index("ix_people_office_id", "office_id"),
     Index("ix_people_project_id", "project_id"),
     Index("ix_people_tags", "tags"),
 )
