@@ -7124,6 +7124,19 @@
             ],
             "description": "Vulnerability category ID"
           },
+          "office_id": {
+            "title": "Office Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Registration office ID"
+          },
           "tags": {
             "title": "Tags",
             "type": "array",
@@ -7581,6 +7594,19 @@
               }
             ],
             "description": "Vulnerability category ID"
+          },
+          "office_id": {
+            "title": "Office Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Registration office ID"
           },
           "tags": {
             "title": "Tags",
@@ -8370,6 +8396,19 @@
             ],
             "description": "Vulnerability category ID"
           },
+          "office_id": {
+            "title": "Office Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Registration office ID"
+          },
           "tags": {
             "title": "Tags",
             "type": "array",
@@ -8751,6 +8790,19 @@
               }
             ],
             "description": "Role of a user"
+          },
+          "office_id": {
+            "title": "Office Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Office ID to which user belongs"
           },
           "id": {
             "title": "Id",
