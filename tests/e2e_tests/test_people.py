@@ -249,6 +249,7 @@ async def test_update_person_works_as_expected(
         "pronoun": "he/him/his",
         "birth_date": None,
         "notes": None,
+        "office_id": None,
         "phone_number": "********",
         "phone_number_additional": "********",
         "project_id": str(project.id),
