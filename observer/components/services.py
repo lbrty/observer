@@ -11,6 +11,7 @@ from observer.services.jwt import JWTService
 from observer.services.keychain import IKeychain
 from observer.services.mailer import IMailer
 from observer.services.migration_history import IMigrationService
+from observer.services.offices import IOfficesService
 from observer.services.people import IPeopleService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
@@ -94,6 +95,13 @@ async def audit_service() -> IAuditService:
         return ctx.audit_service
 
     raise RuntimeError("AuditService is None")
+
+
+async def office_service() -> IOfficesService:
+    if ctx.offices_service:
+        return ctx.offices_service
+
+    raise RuntimeError("OfficesService is None")
 
 
 async def storage_service() -> IStorage:

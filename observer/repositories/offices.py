@@ -1,6 +1,6 @@
-from typing import List, Optional, Protocol
+from typing import List, Optional, Protocol, Tuple
 
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, func, insert, select, update
 
 from observer.common.types import Identifier
 from observer.db import Database
@@ -15,7 +15,7 @@ class IOfficesRepository(Protocol):
     async def get_office(self, office_id: Identifier) -> Optional[Office]:
         raise NotImplementedError
 
-    async def get_offices(self, name: Optional[str], offset: int, limit: int) -> List[Office]:
+    async def get_offices(self, name: Optional[str], offset: int, limit: int) -> Tuple[int, List[Office]]:
         raise NotImplementedError
 
     async def update_office(self, office_id: Identifier, new_name: str) -> Office:
@@ -41,14 +41,17 @@ class OfficesRepository(IOfficesRepository):
 
         return None
 
-    async def get_offices(self, name: Optional[str], offset: int, limit: int) -> List[Office]:
+    async def get_offices(self, name: Optional[str], offset: int, limit: int) -> Tuple[int, List[Office]]:
+        count_query = select(func.count().label("count")).select_from(offices)
         query = select(offices)
         if name:
             query = query.where(offices.c.name.ilike(f"%{name}%"))
 
+        offices_count = await self.db.fetchone(count_query)
         query = query.offset(offset).limit(limit)
         result = await self.db.fetchall(query)
-        return [Office(**row) for row in result]
+        items = [Office(**row) for row in result]
+        return offices_count["count"], items
 
     async def update_office(self, office_id: Identifier, new_name: str) -> Office:
         query = (

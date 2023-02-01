@@ -14,6 +14,7 @@ from observer.api import (
     invites,
     mfa,
     migration_history,
+    offices,
     people,
     pets,
     projects,
@@ -50,6 +51,7 @@ def init_routes(env: Environment) -> Environment:
     env.app.include_router(health.router)
     env.app.include_router(migration_history.router)
     env.app.include_router(mfa.router)
+    env.app.include_router(offices.router)
     env.app.include_router(world.router)
     env.app.include_router(pets.router)
     env.app.include_router(support_records.router)
