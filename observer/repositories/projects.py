@@ -78,23 +78,21 @@ class ProjectsRepository(IProjectsRepository):
         )
         query = (
             select(
-                *[
-                    users.c.ref_id,
-                    users.c.full_name,
-                    users.c.is_active,
-                    users.c.role,
-                    permissions.c.id,
-                    permissions.c.can_create,
-                    permissions.c.can_read,
-                    permissions.c.can_update,
-                    permissions.c.can_delete,
-                    permissions.c.can_create_projects,
-                    permissions.c.can_read_documents,
-                    permissions.c.can_read_personal_info,
-                    permissions.c.can_invite_members,
-                    permissions.c.user_id,
-                    permissions.c.project_id,
-                ]
+                users.c.ref_id,
+                users.c.full_name,
+                users.c.is_active,
+                users.c.role,
+                permissions.c.id,
+                permissions.c.can_create,
+                permissions.c.can_read,
+                permissions.c.can_update,
+                permissions.c.can_delete,
+                permissions.c.can_create_projects,
+                permissions.c.can_read_documents,
+                permissions.c.can_read_personal_info,
+                permissions.c.can_invite_members,
+                permissions.c.user_id,
+                permissions.c.project_id,
             )
             .select_from(join_stmt)
             .offset(offset)
