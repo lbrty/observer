@@ -44,6 +44,7 @@ from observer.repositories.categories import CategoryRepository
 from observer.repositories.documents import DocumentsRepository
 from observer.repositories.family_members import FamilyRepository
 from observer.repositories.migration_history import MigrationRepository
+from observer.repositories.offices import OfficesRepository
 from observer.repositories.people import PeopleRepository
 from observer.repositories.permissions import PermissionsRepository
 from observer.repositories.pets import PetsRepository
@@ -64,6 +65,7 @@ from observer.services.jwt import JWTService
 from observer.services.keychain import Keychain
 from observer.services.mfa import MFAService
 from observer.services.migration_history import MigrationService
+from observer.services.offices import OfficesService
 from observer.services.people import PeopleService
 from observer.services.permissions import PermissionsService
 from observer.services.pets import PetsService
@@ -147,7 +149,12 @@ async def s3_server():
 
 @pytest.fixture(scope="function")
 async def s3_client(region, aio_session, aio_config, s3_server):
-    async with aio_session.create_client("s3", region_name=region, endpoint_url=s3_server, config=aio_config) as client:
+    async with aio_session.create_client(
+        "s3",
+        region_name=region,
+        endpoint_url=s3_server,
+        config=aio_config,
+    ) as client:
         yield client
 
 
@@ -277,6 +284,7 @@ async def app_context(db_engine):
         audit=AuditRepository(ctx.db),
         users=UsersRepository(ctx.db),
         projects=ProjectsRepository(ctx.db),
+        offices=OfficesRepository(ctx.db),
         permissions=PermissionsRepository(ctx.db),
         world=WorldRepository(ctx.db),
         category=CategoryRepository(ctx.db),
@@ -316,6 +324,7 @@ async def app_context(db_engine):
     ctx.audit_service = AuditService(ctx.repos.audit)
     ctx.crypto_service = CryptoService(ctx.keychain)
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)
+    ctx.offices_service = OfficesService(ctx.repos.offices)
     ctx.users_service = UsersService(ctx.repos.users, ctx.crypto_service)
     ctx.auth_service = AuthService(
         ctx.crypto_service,

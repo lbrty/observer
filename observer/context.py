@@ -7,6 +7,7 @@ from observer.repositories.categories import ICategoryRepository
 from observer.repositories.documents import IDocumentsRepository
 from observer.repositories.family_members import IFamilyRepository
 from observer.repositories.migration_history import IMigrationRepository
+from observer.repositories.offices import IOfficesRepository
 from observer.repositories.people import IPeopleRepository
 from observer.repositories.permissions import IPermissionsRepository
 from observer.repositories.pets import IPetsRepository
@@ -25,6 +26,7 @@ from observer.services.jwt import JWTService
 from observer.services.mailer import IMailer
 from observer.services.mfa import IMFAService
 from observer.services.migration_history import IMigrationService
+from observer.services.offices import IOfficesService
 from observer.services.people import IPeopleService
 from observer.services.permissions import IPermissionsService
 from observer.services.pets import IPetsService
@@ -42,6 +44,7 @@ class Repositories:
     audit: Optional[IAuditRepository] = None
     users: Optional[IUsersRepository] = None
     projects: Optional[IProjectsRepository] = None
+    offices: Optional[IOfficesRepository] = None
     permissions: Optional[IPermissionsRepository] = None
     world: Optional[IWorldRepository] = None
     category: Optional[ICategoryRepository] = None
@@ -68,6 +71,7 @@ class Context:
     crypto_service: Optional[ICryptoService] = None
     mfa_service: Optional[IMFAService] = None
     users_service: Optional[IUsersService] = None
+    offices_service: Optional[IOfficesService] = None
     projects_service: Optional[IProjectsService] = None
     permissions_service: Optional[IPermissionsService] = None
     world_service: Optional[IWorldService] = None

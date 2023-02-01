@@ -8,6 +8,7 @@ from observer.repositories.categories import CategoryRepository
 from observer.repositories.documents import DocumentsRepository
 from observer.repositories.family_members import FamilyRepository
 from observer.repositories.migration_history import MigrationRepository
+from observer.repositories.offices import OfficesRepository
 from observer.repositories.people import PeopleRepository
 from observer.repositories.permissions import PermissionsRepository
 from observer.repositories.pets import PetsRepository
@@ -27,6 +28,7 @@ from observer.services.keychain import Keychain
 from observer.services.mailer import get_mailer
 from observer.services.mfa import MFAService
 from observer.services.migration_history import MigrationService
+from observer.services.offices import OfficesService
 from observer.services.people import PeopleService
 from observer.services.permissions import PermissionsService
 from observer.services.pets import PetsService
@@ -59,6 +61,7 @@ async def on_startup():
         audit=AuditRepository(ctx.db),
         users=UsersRepository(ctx.db),
         projects=ProjectsRepository(ctx.db),
+        offices=OfficesRepository(ctx.db),
         permissions=PermissionsRepository(ctx.db),
         world=WorldRepository(ctx.db),
         category=CategoryRepository(ctx.db),
@@ -83,6 +86,7 @@ async def on_startup():
     ctx.audit_service = AuditService(ctx.repos.audit)
     ctx.crypto_service = CryptoService(ctx.keychain)
     ctx.mfa_service = MFAService(settings.totp_leeway, ctx.crypto_service)
+    ctx.offices_service = OfficesService(ctx.repos.offices)
     ctx.users_service = UsersService(ctx.repos.users, ctx.crypto_service)
     ctx.auth_service = AuthService(
         ctx.crypto_service,

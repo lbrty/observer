@@ -82,7 +82,7 @@ async def test_token_refresh_works_as_expected_when_refresh_token_is_invalid(cli
     assert audit_log.data == dict(refresh_token="INVALID-TOKEN", notice="invalid refresh token")
 
 
-async def test_registration_works_as_expected(client, app_context):
+async def test_registration_works_as_expected(client, ensure_db, app_context):
     resp = await client.post(
         "/auth/register",
         json=dict(
