@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
@@ -146,3 +146,40 @@ async def update_office(
         )
         tasks.add_task(audits.add_event, audit_log)
     return OfficeResponse(**office.dict())
+
+
+@router.delete(
+    "/{office_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        status.HTTP_404_NOT_FOUND,
+    ),
+    dependencies=[
+        Depends(
+            RequiresRoles([Role.admin, Role.staff, Role.consultant]),
+        ),
+    ],
+    tags=["offices"],
+)
+async def delete_office(
+    tasks: BackgroundTasks,
+    office_id: Identifier,
+    user: SomeUser = Depends(
+        RequiresRoles([Role.admin, Role.staff]),
+    ),
+    offices: IOfficesService = Depends(office_service),
+    audits: IAuditService = Depends(audit_service),
+    props: Props = Depends(
+        Tracked(
+            tag="endpoint=delete_office,action=delete:office",
+            expires_in=None,
+        ),
+        use_cache=False,
+    ),
+) -> Response:
+    office = await offices.delete_office(office_id)
+    audit_log = props.new_event(f"office_id={office.id},ref_id={user.ref_id}", None)
+    tasks.add_task(audits.add_event, audit_log)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
