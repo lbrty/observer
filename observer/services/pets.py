@@ -14,7 +14,7 @@ class IPetsService(Protocol):
     async def create_pet(self, new_pet: NewPetRequest) -> Pet:
         raise NotImplementedError
 
-    async def get_pet(self, pet_id: Identifier) -> Optional[Pet]:
+    async def get_pet(self, pet_id: Identifier) -> Pet:
         raise NotImplementedError
 
     async def get_pets_by_project(self, project_id: Identifier, page: Pagination) -> Tuple[int, List[Pet]]:
