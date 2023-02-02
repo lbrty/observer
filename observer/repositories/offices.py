@@ -21,7 +21,7 @@ class IOfficesRepository(Protocol):
     async def update_office(self, office_id: Identifier, new_name: str) -> Office:
         raise NotImplementedError
 
-    async def delete_office(self, office_id: Identifier) -> Office:
+    async def delete_office(self, office_id: Identifier) -> Optional[Office]:
         raise NotImplementedError
 
 
@@ -65,7 +65,7 @@ class OfficesRepository(IOfficesRepository):
         result = await self.db.fetchone(query)
         return Office(**result)
 
-    async def delete_office(self, office_id: Identifier) -> Office:
+    async def delete_office(self, office_id: Identifier) -> Optional[Office]:
         query = (
             delete(offices)
             .where(
@@ -73,5 +73,7 @@ class OfficesRepository(IOfficesRepository):
             )
             .returning("*")
         )
-        result = await self.db.fetchone(query)
-        return Office(**result)
+        if result := await self.db.fetchone(query):
+            return Office(**result)
+
+        return None

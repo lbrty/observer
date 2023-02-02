@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi.encoders import jsonable_encoder
 from pytest import mark
 from starlette import status
@@ -89,4 +91,7 @@ async def test_delete_offices_works(app_context, client, admin_user):
     assert resp.status_code == status.HTTP_204_NO_CONTENT
 
     resp = await client.get(f"/offices/{office_id}", cookies=cookies)
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+    resp = await client.delete(f"/offices/{uuid.uuid4()}", cookies=cookies)
     assert resp.status_code == status.HTTP_404_NOT_FOUND

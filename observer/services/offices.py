@@ -1,4 +1,4 @@
-from typing import List, Optional, Protocol
+from typing import List, Optional, Protocol, Tuple
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier
@@ -13,7 +13,7 @@ class IOfficesService(Protocol):
     async def get_office(self, office_id: Identifier) -> Optional[Office]:
         raise NotImplementedError
 
-    async def get_offices(self, name: Optional[str], offset: int, limit: int) -> List[Office]:
+    async def get_offices(self, name: Optional[str], offset: int, limit: int) -> Tuple[int, List[Office]]:
         raise NotImplementedError
 
     async def update_office(self, office_id: Identifier, new_name: str) -> Office:
@@ -36,11 +36,14 @@ class OfficesService(IOfficesService):
 
         raise NotFoundError(message="Office not found")
 
-    async def get_offices(self, name: Optional[str], offset: int, limit: int) -> List[Office]:
+    async def get_offices(self, name: Optional[str], offset: int, limit: int) -> Tuple[int, List[Office]]:
         return await self.repo.get_offices(name, offset, limit)
 
     async def update_office(self, office_id: Identifier, new_name: str) -> Office:
         return await self.repo.update_office(office_id, new_name)
 
     async def delete_office(self, office_id: Identifier) -> Office:
-        return await self.repo.delete_office(office_id)
+        if office := await self.repo.delete_office(office_id):
+            return office
+
+        raise NotFoundError(message="Office not found")
