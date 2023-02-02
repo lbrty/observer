@@ -1,6 +1,8 @@
 from typing import List, Optional, Protocol
 
-from observer.api.exceptions import NotFoundError
+from sqlalchemy.exc import IntegrityError
+
+from observer.api.exceptions import ConflictError, NotFoundError
 from observer.common.types import Identifier
 from observer.entities.people import Category, NewCategory, UpdateCategory
 from observer.repositories.categories import ICategoryRepository
@@ -33,7 +35,10 @@ class CategoryService(ICategoryService):
 
     # Categories
     async def create_category(self, new_category: NewCategoryRequest) -> Category:
-        return await self.repo.create_category(NewCategory(**new_category.dict()))
+        try:
+            return await self.repo.create_category(NewCategory(**new_category.dict()))
+        except IntegrityError:
+            raise ConflictError(message="Category already exists")
 
     async def get_categories(self, name: Optional[str] = None) -> List[Category]:
         return await self.repo.get_categories(name)

@@ -27,6 +27,7 @@ router = APIRouter(prefix="/categories")
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
+        (status.HTTP_409_CONFLICT, "Category already exists"),
     ),
     tags=["people", "categories"],
 )

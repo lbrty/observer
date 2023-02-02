@@ -31,7 +31,6 @@ class CategoryRepository(ICategoryRepository):
 
     # Categories
     async def create_category(self, new_category: NewCategory) -> Category:
-        # TODO: Handle IntegrityError for unique category names
         query = insert(categories).values(**new_category.dict()).returning("*")
         result = await self.db.fetchone(query)
         return Category(**result)

@@ -11,6 +11,7 @@ async def test_create_vulnerability_category_works_as_expected(
 ):
     resp = await authorized_client.post("/categories", json=dict(name="Vuln category"))
     assert resp.status_code == status.HTTP_201_CREATED
+    resp = await authorized_client.post("/categories", json=dict(name="Vuln category"))
 
 
 async def test_get_vulnerability_category_works_as_expected(
