@@ -115,7 +115,7 @@ async def get_office(
     ),
     dependencies=[
         Depends(
-            RequiresRoles([Role.admin, Role.staff, Role.consultant]),
+            RequiresRoles([Role.admin, Role.staff]),
         ),
     ],
     tags=["offices"],
@@ -158,7 +158,7 @@ async def update_office(
     ),
     dependencies=[
         Depends(
-            RequiresRoles([Role.admin, Role.staff, Role.consultant]),
+            RequiresRoles([Role.admin, Role.staff]),
         ),
     ],
     tags=["offices"],
