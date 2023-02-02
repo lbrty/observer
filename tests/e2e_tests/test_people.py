@@ -1,4 +1,5 @@
 import os
+import uuid
 from datetime import date
 
 from fastapi.encoders import jsonable_encoder
@@ -54,6 +55,15 @@ async def test_create_person_works_as_expected(
     )
     resp = await authorized_client.post("/people", json=jsonable_encoder(payload))
     assert resp.status_code == status.HTTP_201_CREATED
+
+    payload.office_id = uuid.uuid4()
+    resp = await authorized_client.post("/people", json=jsonable_encoder(payload))
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+    assert resp.json() == {
+        "code": "not_found",
+        "message": "Office not found",
+        "status_code": 404,
+    }
 
 
 async def test_get_person_works_as_expected(

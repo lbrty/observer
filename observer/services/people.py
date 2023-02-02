@@ -7,6 +7,7 @@ from observer.repositories.people import IPeopleRepository
 from observer.schemas.people import NewPersonRequest, UpdatePersonRequest
 from observer.services.categories import ICategoryService
 from observer.services.crypto import ICryptoService
+from observer.services.offices import IOfficesService
 from observer.services.projects import IProjectsService
 from observer.services.secrets import ISecretsService
 from observer.services.world import IWorldService
@@ -42,6 +43,7 @@ class PeopleService(IPeopleService):
         projects: IProjectsService,
         world: IWorldService,
         secrets: ISecretsService,
+        offices: IOfficesService,
     ):
         self.repo = people_repository
         self.crypto_service = crypto_service
@@ -49,6 +51,7 @@ class PeopleService(IPeopleService):
         self.projects_service = projects
         self.world_service = world
         self.secrets_service = secrets
+        self.offices_service = offices
 
     async def create_person(self, new_person: NewPersonRequest) -> Person:
         new_person = NewPerson(**new_person.dict())
@@ -57,6 +60,9 @@ class PeopleService(IPeopleService):
 
         if new_person.category_id:
             await self.categories_service.get_category(new_person.category_id)
+
+        if new_person.office_id:
+            await self.offices_service.get_office(new_person.office_id)
 
         pi = PersonalInfo(
             email=new_person.email,

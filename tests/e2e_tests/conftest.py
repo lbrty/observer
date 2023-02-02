@@ -344,6 +344,7 @@ async def app_context(db_engine):
         ctx.projects_service,
         ctx.world_service,
         ctx.secrets_service,
+        ctx.offices_service,
     )
     ctx.family_service = FamilyService(ctx.repos.family)
     ctx.pets_service = PetsService(ctx.repos.pets)
