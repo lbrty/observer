@@ -1,4 +1,4 @@
-from typing import List, Protocol
+from typing import List, Optional, Protocol
 
 from sqlalchemy import and_, delete, insert, select, update
 
@@ -7,22 +7,21 @@ from observer.db import Database
 from observer.db.tables.permissions import permissions
 from observer.db.tables.projects import projects
 from observer.db.tables.users import users
-from observer.entities.base import SomeProject
 from observer.entities.permissions import NewPermission, Permission
 from observer.entities.projects import NewProject, Project, ProjectMember, ProjectUpdate
 
 
 class IProjectsRepository(Protocol):
-    async def get_by_id(self, project_id: Identifier) -> SomeProject:
+    async def get_by_id(self, project_id: Identifier) -> Optional[Project]:
         raise NotImplementedError
 
     async def create_project(self, new_project: NewProject) -> Project:
         raise NotImplementedError
 
-    async def update_project(self, project_id: Identifier, updates: ProjectUpdate) -> Project:
+    async def update_project(self, project_id: Identifier, updates: ProjectUpdate) -> Optional[Project]:
         raise NotImplementedError
 
-    async def delete_project(self, project_id: Identifier) -> Project:
+    async def delete_project(self, project_id: Identifier) -> Optional[Project]:
         raise NotImplementedError
 
     async def get_members(self, project_id: Identifier, offset: int, limit: int) -> List[ProjectMember]:
@@ -31,7 +30,7 @@ class IProjectsRepository(Protocol):
     async def add_member(self, project_id: Identifier, new_permission: NewPermission) -> Permission:
         raise NotImplementedError
 
-    async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Permission:
+    async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Optional[Permission]:
         raise NotImplementedError
 
 
@@ -39,7 +38,7 @@ class ProjectsRepository(IProjectsRepository):
     def __init__(self, db: Database):
         self.db = db
 
-    async def get_by_id(self, project_id: Identifier) -> SomeProject:
+    async def get_by_id(self, project_id: Identifier) -> Optional[Project]:
         query = select(projects).where(projects.c.id == str(project_id))
         if result := await self.db.fetchone(query):
             return Project(**result)
@@ -51,7 +50,7 @@ class ProjectsRepository(IProjectsRepository):
         result = await self.db.fetchone(query)
         return Project(**result)
 
-    async def update_project(self, project_id: Identifier, updates: ProjectUpdate) -> Project:
+    async def update_project(self, project_id: Identifier, updates: ProjectUpdate) -> Optional[Project]:
         update_values = {}
         if updates.name:
             update_values["name"] = updates.name
@@ -60,13 +59,17 @@ class ProjectsRepository(IProjectsRepository):
             update_values["description"] = updates.description  # type:ignore
 
         query = update(projects).values(update_values).where(projects.c.id == project_id).returning("*")
-        result = await self.db.fetchone(query)
-        return Project(**result)
+        if result := await self.db.fetchone(query):
+            return Project(**result)
 
-    async def delete_project(self, project_id: Identifier) -> Project:
+        return None
+
+    async def delete_project(self, project_id: Identifier) -> Optional[Project]:
         query = delete(projects).where(projects.c.id == project_id).returning("*")
-        result = await self.db.fetchone(query)
-        return Project(**result)
+        if result := await self.db.fetchone(query):
+            return Project(**result)
+
+        return None
 
     async def get_members(self, project_id: Identifier, offset: int, limit: int) -> List[ProjectMember]:
         join_stmt = permissions.join(
@@ -107,7 +110,7 @@ class ProjectsRepository(IProjectsRepository):
         result = await self.db.fetchone(query)
         return Permission(**result)
 
-    async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Permission:
+    async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Optional[Permission]:
         query = (
             delete(permissions)
             .where(
@@ -118,8 +121,10 @@ class ProjectsRepository(IProjectsRepository):
             )
             .returning("*")
         )
-        result = await self.db.fetchone(query)
-        return Permission(**result)
+        if result := await self.db.fetchone(query):
+            return Permission(**result)
+
+        return None
 
     def row_to_member(self, data: dict) -> ProjectMember:
         permission = Permission(**data)

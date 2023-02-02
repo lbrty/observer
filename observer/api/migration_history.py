@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
@@ -18,7 +20,7 @@ from observer.components.services import (
     people_service,
     permissions_service,
 )
-from observer.entities.base import SomeUser
+from observer.entities.users import User
 from observer.schemas.migration_history import (
     MigrationHistoryResponse,
     NewMigrationHistoryRequest,
@@ -44,7 +46,7 @@ router = APIRouter(prefix="/migrations")
 async def create_migration_record(
     tasks: BackgroundTasks,
     new_record: NewMigrationHistoryRequest,
-    user: SomeUser = Depends(authenticated_user),
+    user: Optional[User] = Depends(authenticated_user),
     migrations: IMigrationService = Depends(migrations_service),
     audits: IAuditService = Depends(audit_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -81,7 +83,7 @@ async def create_migration_record(
 )
 async def get_migration_record(
     record_id: Identifier,
-    user: SomeUser = Depends(authenticated_user),
+    user: Optional[User] = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     migrations: IMigrationService = Depends(migrations_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -107,7 +109,7 @@ async def get_migration_record(
 async def delete_migration_record(
     tasks: BackgroundTasks,
     record_id: Identifier,
-    user: SomeUser = Depends(authenticated_user),
+    user: Optional[User] = Depends(authenticated_user),
     migrations: IMigrationService = Depends(migrations_service),
     audits: IAuditService = Depends(audit_service),
     permissions: IPermissionsService = Depends(permissions_service),

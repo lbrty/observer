@@ -63,12 +63,16 @@ class ProjectsService(IProjectsService):
         return project
 
     async def update_project(self, project_id: Identifier, updates: UpdateProjectRequest) -> Project:
-        project = await self.repo.update_project(project_id, ProjectUpdate(**updates.dict()))
-        return project
+        if project := await self.repo.update_project(project_id, ProjectUpdate(**updates.dict())):
+            return project
+
+        raise NotFoundError(message="Project not found")
 
     async def delete_project(self, project_id: Identifier) -> Project:
-        project = await self.repo.delete_project(project_id)
-        return project
+        if project := await self.repo.delete_project(project_id):
+            return project
+
+        raise NotFoundError(message="Project not found")
 
     async def get_members(self, project_id: Identifier, offset: int, limit: int) -> List[ProjectMember]:
         members = await self.repo.get_members(project_id, offset, limit)
@@ -79,8 +83,10 @@ class ProjectsService(IProjectsService):
         return permission
 
     async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Permission:
-        permission = await self.repo.delete_member(project_id, user_id)
-        return permission
+        if permission := await self.repo.delete_member(project_id, user_id):
+            return permission
+
+        raise NotFoundError(message="Permission not found")
 
     @staticmethod
     async def to_response(project: Project) -> ProjectResponse:

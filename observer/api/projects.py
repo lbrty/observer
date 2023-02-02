@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
@@ -22,7 +24,6 @@ from observer.components.services import (
     projects_service,
     users_service,
 )
-from observer.entities.base import SomeUser
 from observer.entities.projects import Project
 from observer.entities.users import User
 from observer.schemas.pagination import Pagination
@@ -59,7 +60,7 @@ router = APIRouter(prefix="/projects")
 async def create_project(
     tasks: BackgroundTasks,
     new_project: NewProjectRequest,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant]),
     ),
     projects: IProjectsService = Depends(projects_service),

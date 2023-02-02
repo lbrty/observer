@@ -15,7 +15,7 @@ class IPeopleRepository(Protocol):
     async def get_person(self, person_id: Identifier) -> Optional[Person]:
         raise NotImplementedError
 
-    async def update_person(self, person_id: Identifier, updates: UpdatePerson) -> Person:
+    async def update_person(self, person_id: Identifier, updates: UpdatePerson) -> Optional[Person]:
         raise NotImplementedError
 
     async def delete_person(self, person_id: Identifier) -> Optional[Person]:
@@ -38,7 +38,7 @@ class PeopleRepository(IPeopleRepository):
 
         return None
 
-    async def update_person(self, person_id: Identifier, updates: UpdatePerson) -> Person:
+    async def update_person(self, person_id: Identifier, updates: UpdatePerson) -> Optional[Person]:
         values = updates.dict()
         if updates.email == EncryptedFieldValue:
             del values["email"]
@@ -56,8 +56,10 @@ class PeopleRepository(IPeopleRepository):
             values["phone_number_additional"] = updates.phone_number_additional
 
         query = update(people).values(values).where(people.c.id == person_id).returning("*")
-        result = await self.db.fetchone(query)
-        return Person(**result)
+        if result := await self.db.fetchone(query):
+            return Person(**result)
+
+        return None
 
     async def delete_person(self, person_id: Identifier) -> Optional[Person]:
         query = delete(people).where(people.c.id == person_id).returning("*")

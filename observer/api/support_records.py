@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
@@ -14,7 +16,7 @@ from observer.components.services import (
     pets_service,
     support_records_service,
 )
-from observer.entities.base import SomeUser
+from observer.entities.users import User
 from observer.schemas.support_records import (
     NewSupportRecordRequest,
     SupportRecordResponse,
@@ -43,7 +45,7 @@ router = APIRouter(prefix="/support-records")
 async def create_support_record(
     tasks: BackgroundTasks,
     new_record: NewSupportRecordRequest,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     support_records: ISupportRecordsService = Depends(support_records_service),
@@ -91,7 +93,7 @@ async def create_support_record(
 )
 async def get_support_record(
     record_id: Identifier,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     support_records: ISupportRecordsService = Depends(support_records_service),
@@ -118,7 +120,7 @@ async def update_support_record(
     tasks: BackgroundTasks,
     record_id: Identifier,
     updates: UpdateSupportRecordRequest,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     people: IPeopleService = Depends(people_service),
@@ -167,7 +169,7 @@ async def update_support_record(
 async def delete_support_record(
     tasks: BackgroundTasks,
     record_id: Identifier,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     people: IPeopleService = Depends(people_service),

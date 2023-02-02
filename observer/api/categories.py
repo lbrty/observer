@@ -8,7 +8,7 @@ from observer.common.types import Identifier, Role
 from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles
 from observer.components.services import audit_service, category_service
-from observer.entities.base import SomeUser
+from observer.entities.users import User
 from observer.schemas.people import (
     CategoryResponse,
     NewCategoryRequest,
@@ -33,7 +33,7 @@ router = APIRouter(prefix="/categories")
 async def create_category(
     tasks: BackgroundTasks,
     new_category: NewCategoryRequest,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     categories: ICategoryService = Depends(category_service),
@@ -117,7 +117,7 @@ async def update_category(
     tasks: BackgroundTasks,
     category_id: Identifier,
     updates: UpdateCategoryRequest,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     categories: ICategoryService = Depends(category_service),
@@ -156,7 +156,7 @@ async def update_category(
 async def delete_category(
     tasks: BackgroundTasks,
     category_id: Identifier,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     categories: ICategoryService = Depends(category_service),

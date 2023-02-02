@@ -40,7 +40,10 @@ class OfficesService(IOfficesService):
         return await self.repo.get_offices(name, offset, limit)
 
     async def update_office(self, office_id: Identifier, new_name: str) -> Office:
-        return await self.repo.update_office(office_id, new_name)
+        if office := await self.repo.update_office(office_id, new_name):
+            return office
+
+        raise NotFoundError(message="Office not found")
 
     async def delete_office(self, office_id: Identifier) -> Office:
         if office := await self.repo.delete_office(office_id):

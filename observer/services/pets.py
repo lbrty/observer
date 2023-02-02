@@ -1,4 +1,4 @@
-from typing import List, Optional, Protocol, Tuple
+from typing import List, Protocol, Tuple
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier

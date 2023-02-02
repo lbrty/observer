@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
@@ -15,7 +17,7 @@ from observer.components.services import (
     projects_service,
     users_service,
 )
-from observer.entities.base import SomeUser
+from observer.entities.users import User
 from observer.schemas.pagination import Pagination
 from observer.schemas.permissions import NewPermissionRequest
 from observer.schemas.users import (
@@ -50,7 +52,7 @@ router = APIRouter(prefix="/invites")
 async def create_invite(
     tasks: BackgroundTasks,
     invite_request: UserInviteRequest,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.staff]),
     ),
     users: IUsersService = Depends(users_service),
@@ -157,7 +159,7 @@ async def delete_invite(
     code: Identifier,
     tasks: BackgroundTasks,
     delete_user: bool = Query(False, description="If set then related user will be deleted"),
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.staff]),
     ),
     users: IUsersService = Depends(users_service),

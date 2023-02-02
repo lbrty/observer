@@ -2,7 +2,6 @@ from typing import List, Optional, Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier, PlaceFilters, StateFilters
-from observer.entities.base import SomeCountry, SomePlace, SomeState
 from observer.entities.world import (
     Country,
     NewCountry,
@@ -38,13 +37,13 @@ class IWorldService(Protocol):
     async def get_countries(self) -> List[Country]:
         raise NotImplementedError
 
-    async def get_country(self, country_id: Identifier) -> SomeCountry:
+    async def get_country(self, country_id: Identifier) -> Country:
         raise NotImplementedError
 
-    async def update_country(self, country_id: Identifier, updates: UpdateCountryRequest) -> SomeCountry:
+    async def update_country(self, country_id: Identifier, updates: UpdateCountryRequest) -> Country:
         raise NotImplementedError
 
-    async def delete_country(self, country_id: Identifier) -> SomeCountry:
+    async def delete_country(self, country_id: Identifier) -> Country:
         raise NotImplementedError
 
     @staticmethod
@@ -62,13 +61,13 @@ class IWorldService(Protocol):
     async def get_states(self, filters: Optional[StateFilters]) -> List[State]:
         raise NotImplementedError
 
-    async def get_state(self, state_id: Identifier) -> SomeState:
+    async def get_state(self, state_id: Identifier) -> State:
         raise NotImplementedError
 
-    async def update_state(self, state_id: Identifier, updates: UpdateStateRequest) -> SomeState:
+    async def update_state(self, state_id: Identifier, updates: UpdateStateRequest) -> State:
         raise NotImplementedError
 
-    async def delete_state(self, state_id: Identifier) -> SomeState:
+    async def delete_state(self, state_id: Identifier) -> State:
         raise NotImplementedError
 
     @staticmethod
@@ -86,13 +85,13 @@ class IWorldService(Protocol):
     async def get_places(self, filters: Optional[PlaceFilters]) -> List[Place]:
         raise NotImplementedError
 
-    async def get_place(self, place_id: Identifier) -> SomePlace:
+    async def get_place(self, place_id: Identifier) -> Place:
         raise NotImplementedError
 
-    async def update_place(self, place_id: Identifier, updates: UpdatePlaceRequest) -> SomePlace:
+    async def update_place(self, place_id: Identifier, updates: UpdatePlaceRequest) -> Place:
         raise NotImplementedError
 
-    async def delete_place(self, place_id: Identifier) -> SomePlace:
+    async def delete_place(self, place_id: Identifier) -> Place:
         raise NotImplementedError
 
     @staticmethod
@@ -122,12 +121,16 @@ class WorldService(IWorldService):
         raise NotFoundError(message="Country not found")
 
     async def update_country(self, country_id: Identifier, updates: UpdateCountryRequest) -> Country:
-        await self.get_country(country_id)
-        return await self.repo.update_country(country_id, UpdateCountry(**updates.dict()))
+        if country := await self.repo.update_country(country_id, UpdateCountry(**updates.dict())):
+            return country
+
+        raise NotFoundError(message="Country not found")
 
     async def delete_country(self, country_id: Identifier) -> Country:
-        await self.get_country(country_id)
-        return await self.repo.delete_country(country_id)
+        if country := await self.repo.delete_country(country_id):
+            return country
+
+        raise NotFoundError(message="Country not found")
 
     @staticmethod
     async def country_to_response(country: Country) -> CountryResponse:
@@ -144,19 +147,23 @@ class WorldService(IWorldService):
     async def get_states(self, filters: Optional[StateFilters]) -> List[State]:
         return await self.repo.get_states(filters)
 
-    async def get_state(self, state_id: Identifier) -> SomeState:
+    async def get_state(self, state_id: Identifier) -> State:
         if state := await self.repo.get_state(state_id):
             return state
 
         raise NotFoundError(message="State not found")
 
-    async def update_state(self, state_id: Identifier, updates: UpdateStateRequest) -> SomeState:
-        await self.get_state(state_id)
-        return await self.repo.update_state(state_id, UpdateState(**updates.dict()))
+    async def update_state(self, state_id: Identifier, updates: UpdateStateRequest) -> State:
+        if state := await self.repo.update_state(state_id, UpdateState(**updates.dict())):
+            return state
 
-    async def delete_state(self, state_id: Identifier) -> SomeState:
-        await self.get_state(state_id)
-        return await self.repo.delete_state(state_id)
+        raise NotFoundError(message="State not found")
+
+    async def delete_state(self, state_id: Identifier) -> State:
+        if state := await self.repo.delete_state(state_id):
+            return state
+
+        raise NotFoundError(message="State not found")
 
     @staticmethod
     async def state_to_response(state: State) -> StateResponse:
@@ -173,19 +180,23 @@ class WorldService(IWorldService):
     async def get_places(self, filters: Optional[PlaceFilters]) -> List[Place]:
         return await self.repo.get_places(filters)
 
-    async def get_place(self, place_id: Identifier) -> SomePlace:
+    async def get_place(self, place_id: Identifier) -> Place:
         if place := await self.repo.get_place(place_id):
             return place
 
         raise NotFoundError(message="Place not found")
 
-    async def update_place(self, place_id: Identifier, updates: UpdatePlaceRequest) -> SomePlace:
-        await self.get_place(place_id)
-        return await self.repo.update_place(place_id, UpdatePlace(**updates.dict()))
+    async def update_place(self, place_id: Identifier, updates: UpdatePlaceRequest) -> Place:
+        if place := await self.repo.update_place(place_id, UpdatePlace(**updates.dict())):
+            return place
 
-    async def delete_place(self, place_id: Identifier) -> SomePlace:
-        await self.get_place(place_id)
-        return await self.repo.delete_place(place_id)
+        raise NotFoundError(message="Place not found")
+
+    async def delete_place(self, place_id: Identifier) -> Place:
+        if place := await self.repo.delete_place(place_id):
+            return place
+
+        raise NotFoundError(message="Place not found")
 
     @staticmethod
     async def place_to_response(place: Place) -> PlaceResponse:

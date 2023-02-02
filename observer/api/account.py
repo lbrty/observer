@@ -1,10 +1,11 @@
+from typing import Optional
+
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from starlette import status
 
 from observer.components.audit import Props, Tracked
 from observer.components.auth import authenticated_user, current_user
 from observer.components.services import audit_service, mailer, users_service
-from observer.entities.base import SomeUser
 from observer.entities.users import User
 from observer.schemas.users import UserResponse
 from observer.services.audit_logs import IAuditService
@@ -35,7 +36,7 @@ async def get_me(
 async def confirm_account(
     tasks: BackgroundTasks,
     code: str,
-    user: SomeUser = Depends(current_user),
+    user: Optional[User] = Depends(current_user),
     audits: IAuditService = Depends(audit_service),
     users: IUsersService = Depends(users_service),
     props: Props = Depends(

@@ -11,7 +11,6 @@ from observer.api.exceptions import (
 )
 from observer.common import bcrypt
 from observer.common.types import Identifier
-from observer.entities.base import SomeUser
 from observer.entities.users import (
     Confirmation,
     Invite,
@@ -35,13 +34,13 @@ from observer.settings import settings
 class IUsersService(Protocol):
     repo: IUsersRepository
 
-    async def get_by_id(self, user_id: Identifier) -> SomeUser:
+    async def get_by_id(self, user_id: Identifier) -> User:
         raise NotImplementedError
 
-    async def get_by_ref_id(self, ref_id: Identifier) -> SomeUser:
+    async def get_by_ref_id(self, ref_id: Identifier) -> Optional[User]:
         raise NotImplementedError
 
-    async def get_by_email(self, email: str) -> SomeUser:
+    async def get_by_email(self, email: str) -> Optional[User]:
         raise NotImplementedError
 
     async def create_user(self, new_user: NewUserRequest, is_active: bool = True) -> User:
@@ -109,17 +108,16 @@ class UsersService(IUsersService):
         self.repo = users_repository
         self.crypto_service = crypto_service
 
-    async def get_by_id(self, user_id: Identifier) -> SomeUser:
-        user = await self.repo.get_by_id(user_id)
-        if not user:
-            raise NotFoundError(message="User not found")
+    async def get_by_id(self, user_id: Identifier) -> User:
+        if user := await self.repo.get_by_id(user_id):
+            return user
 
-        return user
+        raise NotFoundError(message="User not found")
 
-    async def get_by_ref_id(self, ref_id: Identifier) -> SomeUser:
+    async def get_by_ref_id(self, ref_id: Identifier) -> Optional[User]:
         return await self.repo.get_by_ref_id(ref_id)
 
-    async def get_by_email(self, email: str) -> SomeUser:
+    async def get_by_email(self, email: str) -> Optional[User]:
         return await self.repo.get_by_email(email)
 
     async def create_user(self, new_user: NewUserRequest, is_active: bool = True) -> User:
@@ -137,13 +135,22 @@ class UsersService(IUsersService):
         return await self.repo.create_user(user)
 
     async def delete_user(self, user_id: Identifier) -> User:
-        return await self.repo.delete_user(user_id)
+        if user := await self.repo.delete_user(user_id):
+            return user
+
+        raise NotFoundError(message="User not found")
 
     async def update_password(self, user_id: Identifier, new_password_hash: str) -> User:
-        return await self.repo.update_password(user_id, new_password_hash)
+        if user := await self.repo.update_password(user_id, new_password_hash):
+            return user
+
+        raise NotFoundError(message="User not found")
 
     async def deactivate_user(self, user_id: Identifier) -> User:
-        return await self.repo.update_user(user_id, UserUpdate(is_active=False))
+        if user := await self.repo.update_user(user_id, UserUpdate(is_active=False)):
+            return user
+
+        raise NotFoundError(message="User not found")
 
     async def update_mfa(self, user_id: Identifier, updates: UserMFAUpdateRequest):
         user_update = UserUpdate(
@@ -151,10 +158,14 @@ class UsersService(IUsersService):
             mfa_encrypted_secret=updates.mfa_encrypted_secret,
             mfa_encrypted_backup_codes=updates.mfa_encrypted_backup_codes,
         )
-        await self.repo.update_user(user_id, user_update)
+        user = await self.repo.update_user(user_id, user_update)
+        if not user:
+            raise NotFoundError(message="User not found")
 
     async def reset_mfa(self, user_id: Identifier):
-        await self.repo.reset_mfa(user_id)
+        user = await self.repo.reset_mfa(user_id)
+        if not user:
+            raise NotFoundError(message="User not found")
 
     async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
         keys_hash, encrypted_backup_codes = user_backup_codes.split(":", maxsplit=1)
@@ -187,7 +198,10 @@ class UsersService(IUsersService):
         return user
 
     async def just_confirm_user(self, user_id: Optional[Identifier]) -> User:
-        return await self.repo.confirm_user(user_id)
+        if user := await self.repo.confirm_user(user_id):
+            return user
+
+        raise NotFoundError(message="User not found")
 
     async def create_confirmation(self, user_id: Identifier) -> Confirmation:
         now = datetime.now(tz=timezone.utc)

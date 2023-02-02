@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Response, UploadFile
 from fastapi.encoders import jsonable_encoder
@@ -25,7 +25,7 @@ from observer.components.services import (
     storage_service,
 )
 from observer.components.validate import ContentLengthLimit
-from observer.entities.base import SomeUser
+from observer.entities.users import User
 from observer.schemas.documents import DocumentResponse, NewDocumentRequest
 from observer.schemas.pets import NewPetRequest, PetResponse, UpdatePetRequest
 from observer.services.audit_logs import IAuditService
@@ -53,7 +53,7 @@ router = APIRouter(prefix="/pets")
 async def create_pet(
     tasks: BackgroundTasks,
     new_pet: NewPetRequest,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     audits: IAuditService = Depends(audit_service),
@@ -88,7 +88,7 @@ async def create_pet(
 )
 async def get_pet(
     pet_id: Identifier,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     pets: IPetsService = Depends(pets_service),
@@ -115,7 +115,7 @@ async def update_pet(
     tasks: BackgroundTasks,
     pet_id: Identifier,
     updates: UpdatePetRequest,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     audits: IAuditService = Depends(audit_service),
@@ -154,7 +154,7 @@ async def update_pet(
 async def delete_pet(
     tasks: BackgroundTasks,
     pet_id: Identifier,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     audits: IAuditService = Depends(audit_service),
@@ -206,7 +206,7 @@ async def pet_upload_document(
     tasks: BackgroundTasks,
     pet_id: Identifier,
     file: UploadFile,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     audits: IAuditService = Depends(audit_service),
@@ -264,7 +264,7 @@ async def pet_upload_document(
 )
 async def pet_get_documents(
     pet_id: Identifier,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     pets: IPetsService = Depends(pets_service),

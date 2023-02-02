@@ -5,7 +5,6 @@ from sqlalchemy import and_, delete, insert, select, update
 from observer.common.types import Identifier, PlaceFilters, StateFilters
 from observer.db import Database
 from observer.db.tables.world import countries, places, states
-from observer.entities.base import SomeCountry, SomePlace, SomeState
 from observer.entities.world import (
     Country,
     NewCountry,
@@ -27,13 +26,13 @@ class IWorldRepository(Protocol):
     async def get_countries(self) -> List[Country]:
         raise NotImplementedError
 
-    async def get_country(self, country_id: Identifier) -> SomeCountry:
+    async def get_country(self, country_id: Identifier) -> Optional[Country]:
         raise NotImplementedError
 
-    async def update_country(self, country_id: Identifier, updates: UpdateCountry) -> SomeCountry:
+    async def update_country(self, country_id: Identifier, updates: UpdateCountry) -> Optional[Country]:
         raise NotImplementedError
 
-    async def delete_country(self, country_id: Identifier) -> SomeCountry:
+    async def delete_country(self, country_id: Identifier) -> Optional[Country]:
         raise NotImplementedError
 
     # States
@@ -43,13 +42,13 @@ class IWorldRepository(Protocol):
     async def get_states(self, filters: Optional[StateFilters]) -> List[State]:
         raise NotImplementedError
 
-    async def get_state(self, country_id: Identifier) -> SomeState:
+    async def get_state(self, country_id: Identifier) -> Optional[State]:
         raise NotImplementedError
 
-    async def update_state(self, country_id: Identifier, updates: UpdateState) -> SomeState:
+    async def update_state(self, country_id: Identifier, updates: UpdateState) -> Optional[State]:
         raise NotImplementedError
 
-    async def delete_state(self, country_id: Identifier) -> SomeState:
+    async def delete_state(self, country_id: Identifier) -> Optional[State]:
         raise NotImplementedError
 
     # Places
@@ -59,13 +58,13 @@ class IWorldRepository(Protocol):
     async def get_places(self, filters: Optional[PlaceFilters]) -> List[Place]:
         raise NotImplementedError
 
-    async def get_place(self, place_id: Identifier) -> SomePlace:
+    async def get_place(self, place_id: Identifier) -> Optional[Place]:
         raise NotImplementedError
 
-    async def update_place(self, place_id: Identifier, updates: UpdatePlace) -> SomePlace:
+    async def update_place(self, place_id: Identifier, updates: UpdatePlace) -> Optional[Place]:
         raise NotImplementedError
 
-    async def delete_place(self, place_id: Identifier) -> SomePlace:
+    async def delete_place(self, place_id: Identifier) -> Optional[Place]:
         raise NotImplementedError
 
 
@@ -84,21 +83,21 @@ class WorldRepository(IWorldRepository):
         rows = await self.db.fetchall(query)
         return [Country(**row) for row in rows]
 
-    async def get_country(self, country_id: Identifier) -> SomeCountry:
+    async def get_country(self, country_id: Identifier) -> Optional[Country]:
         query = select(countries).where(countries.c.id == country_id)
         if row := await self.db.fetchone(query):
             return Country(**row)
 
         return None
 
-    async def update_country(self, country_id: Identifier, updates: UpdateCountry) -> SomeCountry:
+    async def update_country(self, country_id: Identifier, updates: UpdateCountry) -> Optional[Country]:
         query = update(countries).values(**updates.dict()).where(countries.c.id == country_id).returning("*")
         if row := await self.db.fetchone(query):
             return Country(**row)
 
         return None
 
-    async def delete_country(self, country_id: Identifier) -> SomeCountry:
+    async def delete_country(self, country_id: Identifier) -> Optional[Country]:
         query = delete(countries).where(countries.c.id == country_id).returning("*")
         if row := await self.db.fetchone(query):
             return Country(**row)
@@ -129,21 +128,21 @@ class WorldRepository(IWorldRepository):
         rows = await self.db.fetchall(query)
         return [State(**row) for row in rows]
 
-    async def get_state(self, state_id: Identifier) -> SomeState:
+    async def get_state(self, state_id: Identifier) -> Optional[State]:
         query = select(states).where(states.c.id == state_id)
         if row := await self.db.fetchone(query):
             return State(**row)
 
         return None
 
-    async def update_state(self, state_id: Identifier, updates: UpdateState) -> SomeState:
+    async def update_state(self, state_id: Identifier, updates: UpdateState) -> Optional[State]:
         query = update(states).values(**updates.dict()).where(states.c.id == state_id).returning("*")
         if row := await self.db.fetchone(query):
             return State(**row)
 
         return None
 
-    async def delete_state(self, state_id: Identifier) -> SomeState:
+    async def delete_state(self, state_id: Identifier) -> Optional[State]:
         query = delete(states).where(states.c.id == state_id).returning("*")
         if row := await self.db.fetchone(query):
             return State(**row)
@@ -180,21 +179,21 @@ class WorldRepository(IWorldRepository):
         rows = await self.db.fetchall(query)
         return [Place(**row) for row in rows]
 
-    async def get_place(self, place_id: Identifier) -> SomePlace:
+    async def get_place(self, place_id: Identifier) -> Optional[Place]:
         query = select(places).where(places.c.id == place_id)
         if row := await self.db.fetchone(query):
             return Place(**row)
 
         return None
 
-    async def update_place(self, place_id: Identifier, updates: UpdatePlace) -> SomePlace:
+    async def update_place(self, place_id: Identifier, updates: UpdatePlace) -> Optional[Place]:
         query = update(places).values(**updates.dict()).where(places.c.id == place_id).returning("*")
         if row := await self.db.fetchone(query):
             return Place(**row)
 
         return None
 
-    async def delete_place(self, place_id: Identifier) -> SomePlace:
+    async def delete_place(self, place_id: Identifier) -> Optional[Place]:
         query = delete(places).where(places.c.id == place_id).returning("*")
         if row := await self.db.fetchone(query):
             return Place(**row)

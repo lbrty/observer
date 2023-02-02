@@ -6,7 +6,6 @@ from observer.api.exceptions import ForbiddenError, UnauthorizedError
 from observer.common.types import Role
 from observer.components import services
 from observer.components.services import jwt_service
-from observer.entities.base import SomeUser
 from observer.entities.users import User
 from observer.services.jwt import JWTService
 from observer.services.users import IUsersService
@@ -17,7 +16,7 @@ async def current_user(
     access_token: Optional[str] = Cookie(None),
     jwt: JWTService = Depends(jwt_service),
     users_service: IUsersService = Depends(services.users_service),
-) -> SomeUser:
+) -> Optional[User]:
     if access_token:
         token_data, _ = await jwt.decode(access_token)
         return await users_service.get_by_ref_id(token_data.ref_id)
@@ -25,7 +24,7 @@ async def current_user(
         return None
 
 
-async def authenticated_user(user: SomeUser = Depends(current_user)) -> User:
+async def authenticated_user(user: Optional[User] = Depends(current_user)) -> User:
     if not user:
         raise UnauthorizedError(message="Please authenticate")
 
@@ -38,7 +37,7 @@ class RequiresRoles:
     def __init__(self, roles: List[Role]):
         self.roles = roles
 
-    async def __call__(self, user: SomeUser = Depends(authenticated_user)) -> User:
+    async def __call__(self, user: Optional[User] = Depends(authenticated_user)) -> User:
         if user is None:
             raise ForbiddenError(message="Access forbidden")
 
@@ -48,7 +47,7 @@ class RequiresRoles:
         return user
 
 
-async def admin_user(user: SomeUser = Depends(RequiresRoles([Role.admin]))) -> User:
+async def admin_user(user: Optional[User] = Depends(RequiresRoles([Role.admin]))) -> User:
     if not user:
         raise ForbiddenError(message="Access forbidden")
 

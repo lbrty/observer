@@ -26,7 +26,7 @@ class IPeopleService(Protocol):
     async def get_person(self, person_id: Identifier) -> Person:
         raise NotImplementedError
 
-    async def update_person(self, person_id: Identifier, updates: UpdatePersonRequest) -> Person:
+    async def update_person(self, person_id: Identifier, updates: UpdatePersonRequest) -> Optional[Person]:
         raise NotImplementedError
 
     async def delete_person(self, person_id: Identifier) -> Optional[Person]:
@@ -76,7 +76,7 @@ class PeopleService(IPeopleService):
 
         raise NotFoundError(message="Person not found")
 
-    async def update_person(self, person_id: Identifier, updates: UpdatePersonRequest) -> Person:
+    async def update_person(self, person_id: Identifier, updates: UpdatePersonRequest) -> Optional[Person]:
         """Update person
 
         NOTES:
@@ -107,8 +107,10 @@ class PeopleService(IPeopleService):
         if pi.phone_number_additional:
             person_updates.phone_number_additional = pi.phone_number_additional
 
-        updated = await self.repo.update_person(person_id, person_updates)
-        return updated
+        if updated := await self.repo.update_person(person_id, person_updates):
+            return updated
+
+        raise NotFoundError(message="Person not found")
 
     async def delete_person(self, person_id: Identifier) -> Optional[Person]:
         return await self.repo.delete_person(person_id)

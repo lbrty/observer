@@ -45,9 +45,14 @@ class CategoryService(ICategoryService):
         raise NotFoundError(message="Category not found")
 
     async def update_category(self, category_id: Identifier, updates: UpdateCategoryRequest) -> Category:
-        await self.get_category(category_id)
-        return await self.repo.update_category(category_id, UpdateCategory(**updates.dict()))
+        category = await self.repo.update_category(category_id, UpdateCategory(**updates.dict()))
+        if category:
+            return category
+
+        raise NotFoundError(message="Category not found")
 
     async def delete_category(self, category_id: Identifier) -> Category:
-        await self.get_category(category_id)
-        return await self.repo.delete_category(category_id)
+        if category := await self.repo.delete_category(category_id):
+            return category
+
+        raise NotFoundError(message="Category not found")

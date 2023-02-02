@@ -49,4 +49,7 @@ class MigrationService(IMigrationService):
         return await self.repo.get_persons_records(person_id)
 
     async def delete_record(self, record_id: Identifier) -> MigrationHistory:
-        return await self.repo.delete_record(record_id)
+        if migration_history := await self.repo.delete_record(record_id):
+            return migration_history
+
+        raise NotFoundError(message="Migration record not found")

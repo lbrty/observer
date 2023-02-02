@@ -19,10 +19,10 @@ class ISupportRecordsRepository(Protocol):
     async def get_record(self, record_id: Identifier) -> Optional[SupportRecord]:
         raise NotImplementedError
 
-    async def update_record(self, record_id: Identifier, updates: UpdateSupportRecord) -> SupportRecord:
+    async def update_record(self, record_id: Identifier, updates: UpdateSupportRecord) -> Optional[SupportRecord]:
         raise NotImplementedError
 
-    async def delete_record(self, record_id: Identifier) -> SupportRecord:
+    async def delete_record(self, record_id: Identifier) -> Optional[SupportRecord]:
         raise NotImplementedError
 
 
@@ -42,12 +42,16 @@ class SupportRecordsRepository(ISupportRecordsRepository):
 
         return None
 
-    async def update_record(self, record_id: Identifier, updates: UpdateSupportRecord) -> SupportRecord:
+    async def update_record(self, record_id: Identifier, updates: UpdateSupportRecord) -> Optional[SupportRecord]:
         query = update(support_records).values(**updates.dict()).returning("*")
-        row = await self.db.fetchone(query)
-        return SupportRecord(**row)
+        if row := await self.db.fetchone(query):
+            return SupportRecord(**row)
 
-    async def delete_record(self, record_id: Identifier) -> SupportRecord:
+        return None
+
+    async def delete_record(self, record_id: Identifier) -> Optional[SupportRecord]:
         query = delete(support_records).where(support_records.c.id == record_id).returning("*")
-        row = await self.db.fetchone(query)
-        return SupportRecord(**row)
+        if row := await self.db.fetchone(query):
+            return SupportRecord(**row)
+
+        return None

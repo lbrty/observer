@@ -21,7 +21,7 @@ class IDocumentsRepository(Protocol):
     async def get_by_project_id(self, project_id: Identifier) -> List[Document]:
         raise NotImplementedError
 
-    async def delete_document(self, doc_id: Identifier) -> Document:
+    async def delete_document(self, doc_id: Identifier) -> Optional[Document]:
         raise NotImplementedError
 
     async def bulk_delete(self, doc_ids: List[Identifier]) -> List[Identifier]:
@@ -56,10 +56,12 @@ class DocumentsRepository(IDocumentsRepository):
         rows = await self.db.fetchall(query)
         return [Document(**row) for row in rows]
 
-    async def delete_document(self, doc_id: Identifier) -> Document:
+    async def delete_document(self, doc_id: Identifier) -> Optional[Document]:
         query = delete(documents).where(documents.c.id == doc_id).returning("*")
-        row = await self.db.fetchone(query)
-        return Document(**row)
+        if row := await self.db.fetchone(query):
+            return Document(**row)
+
+        return None
 
     async def bulk_delete(self, doc_ids: List[Identifier]) -> List[Identifier]:
         query = delete(documents).where(documents.c.id.in_(doc_ids)).returning(text("id"))

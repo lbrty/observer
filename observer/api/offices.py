@@ -10,7 +10,7 @@ from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles
 from observer.components.pagination import pagination
 from observer.components.services import audit_service, office_service
-from observer.entities.base import SomeUser
+from observer.entities.users import User
 from observer.schemas.offices import (
     NewOfficeRequest,
     OfficeResponse,
@@ -37,7 +37,7 @@ router = APIRouter(prefix="/offices")
 async def create_office(
     tasks: BackgroundTasks,
     new_office: NewOfficeRequest,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.staff]),
     ),
     offices: IOfficesService = Depends(office_service),
@@ -124,7 +124,7 @@ async def update_office(
     tasks: BackgroundTasks,
     office_id: Identifier,
     updates: UpdateOfficeRequest,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.staff]),
     ),
     offices: IOfficesService = Depends(office_service),
@@ -166,7 +166,7 @@ async def update_office(
 async def delete_office(
     tasks: BackgroundTasks,
     office_id: Identifier,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.staff]),
     ),
     offices: IOfficesService = Depends(office_service),

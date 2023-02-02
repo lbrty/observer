@@ -18,7 +18,7 @@ class IOfficesRepository(Protocol):
     async def get_offices(self, name: Optional[str], offset: int, limit: int) -> Tuple[int, List[Office]]:
         raise NotImplementedError
 
-    async def update_office(self, office_id: Identifier, new_name: str) -> Office:
+    async def update_office(self, office_id: Identifier, new_name: str) -> Optional[Office]:
         raise NotImplementedError
 
     async def delete_office(self, office_id: Identifier) -> Optional[Office]:
@@ -53,7 +53,7 @@ class OfficesRepository(IOfficesRepository):
         items = [Office(**row) for row in result]
         return offices_count["count"], items
 
-    async def update_office(self, office_id: Identifier, new_name: str) -> Office:
+    async def update_office(self, office_id: Identifier, new_name: str) -> Optional[Office]:
         query = (
             update(offices)
             .values(name=new_name)

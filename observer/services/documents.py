@@ -56,7 +56,10 @@ class DocumentsService(IDocumentsService):
         raise NotFoundError(message="Document not found")
 
     async def delete_document(self, doc_id: Identifier) -> Document:
-        return await self.repo.delete_document(doc_id)
+        if document := await self.repo.delete_document(doc_id):
+            return document
+
+        raise NotFoundError(message="Document not found")
 
     async def bulk_delete(self, doc_ids: List[Identifier]) -> List[Identifier]:
         return await self.repo.bulk_delete(doc_ids)

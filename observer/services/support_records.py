@@ -1,4 +1,4 @@
-from typing import Optional, Protocol
+from typing import Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier
@@ -20,7 +20,7 @@ class ISupportRecordsService(Protocol):
     async def create_record(self, new_record: NewSupportRecordRequest) -> SupportRecord:
         raise NotImplementedError
 
-    async def get_record(self, record_id: Identifier) -> Optional[SupportRecord]:
+    async def get_record(self, record_id: Identifier) -> SupportRecord:
         raise NotImplementedError
 
     async def update_record(self, record_id: Identifier, updates: UpdateSupportRecordRequest) -> SupportRecord:
@@ -37,14 +37,20 @@ class SupportRecordsService(ISupportRecordsService):
     async def create_record(self, new_record: NewSupportRecordRequest) -> SupportRecord:
         return await self.repo.create_record(NewSupportRecord(**new_record.dict()))
 
-    async def get_record(self, record_id: Identifier) -> Optional[SupportRecord]:
+    async def get_record(self, record_id: Identifier) -> SupportRecord:
         if record := await self.repo.get_record(record_id):
             return record
 
         raise NotFoundError(message="Support record not found")
 
     async def update_record(self, record_id: Identifier, updates: UpdateSupportRecordRequest) -> SupportRecord:
-        return await self.repo.update_record(record_id, UpdateSupportRecord(**updates.dict()))
+        if record := await self.repo.update_record(record_id, UpdateSupportRecord(**updates.dict())):
+            return record
+
+        raise NotFoundError(message="Support record not found")
 
     async def delete_record(self, record_id: Identifier) -> SupportRecord:
-        return await self.repo.delete_record(record_id)
+        if record := await self.repo.delete_record(record_id):
+            return record
+
+        raise NotFoundError(message="Support record not found")

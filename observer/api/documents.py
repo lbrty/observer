@@ -1,3 +1,4 @@
+from typing import Optional
 from urllib.parse import quote
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
@@ -23,7 +24,7 @@ from observer.components.services import (
     pets_service,
     storage_service,
 )
-from observer.entities.base import SomeUser
+from observer.entities.users import User
 from observer.schemas.documents import DocumentResponse
 from observer.services.audit_logs import IAuditService
 from observer.services.documents import IDocumentsService
@@ -53,7 +54,7 @@ async def get_document() -> DocumentResponse:
 )
 async def stream_document(
     doc_id: Identifier,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -90,7 +91,7 @@ async def stream_document(
 async def delete_document(
     tasks: BackgroundTasks,
     doc_id: Identifier,
-    user: SomeUser = Depends(
+    user: Optional[User] = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     permissions: IPermissionsService = Depends(permissions_service),
