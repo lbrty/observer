@@ -19,10 +19,10 @@ class IPetsRepository(Protocol):
     async def get_pets_by_project(self, project_id: Identifier, page: Pagination) -> Tuple[int, List[Pet]]:
         raise NotImplementedError
 
-    async def update_pet(self, pet_id: Identifier, updates: UpdatePet) -> Pet:
+    async def update_pet(self, pet_id: Identifier, updates: UpdatePet) -> Optional[Pet]:
         raise NotImplementedError
 
-    async def delete_pet(self, pet_id: Identifier) -> Pet:
+    async def delete_pet(self, pet_id: Identifier) -> Optional[Pet]:
         raise NotImplementedError
 
 
@@ -65,7 +65,7 @@ class PetsRepository(IPetsRepository):
         pets_count = await self.db.fetchone(count_query)
         return pets_count["count"], items
 
-    async def update_pet(self, pet_id: Identifier, updates: UpdatePet) -> Pet:
+    async def update_pet(self, pet_id: Identifier, updates: UpdatePet) -> Optional[Pet]:
         query = (
             update(pets)
             .values(**updates.dict())
@@ -74,10 +74,14 @@ class PetsRepository(IPetsRepository):
             )
             .returning("*")
         )
-        row = await self.db.fetchone(query)
-        return Pet(**row)
+        if row := await self.db.fetchone(query):
+            return Pet(**row)
 
-    async def delete_pet(self, pet_id: Identifier) -> Pet:
+        return None
+
+    async def delete_pet(self, pet_id: Identifier) -> Optional[Pet]:
         query = delete(pets).where(pets.c.id == pet_id).returning("*")
-        row = await self.db.fetchone(query)
-        return Pet(**row)
+        if row := await self.db.fetchone(query):
+            return Pet(**row)
+
+        return None

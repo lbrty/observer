@@ -1,9 +1,12 @@
 import asyncio
 import os.path
+import uuid
 
+import pytest
 from fastapi.encoders import jsonable_encoder
 from starlette import status
 
+from observer.api.exceptions import NotFoundError
 from observer.common.types import PetStatus
 from observer.entities.permissions import NewPermission
 from observer.schemas.pets import NewPetRequest, UpdatePetRequest
@@ -148,6 +151,12 @@ async def test_update_pets_works(
     resp_json = resp.json()
     resp_json["name"] = updates.name
     resp_json["status"] = PetStatus.owner_found.value
+
+    resp = await authorized_client.put(f"/pets/{uuid.uuid4()}", json=jsonable_encoder(updates, exclude={"id"}))
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
+
+    with pytest.raises(NotFoundError):
+        await app_context.pets_service.update_pet(uuid.uuid4(), updates)
 
 
 async def test_delete_pets_deletes_all_related_documents_from_remote_storage(

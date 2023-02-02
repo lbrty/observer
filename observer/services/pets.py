@@ -45,11 +45,13 @@ class PetsService(IPetsService):
         return await self.repo.get_pets_by_project(project_id, page)
 
     async def update_pet(self, pet_id: Identifier, updates: UpdatePetRequest) -> Pet:
-        await self.get_pet(pet_id)
-        pet = await self.repo.update_pet(pet_id, UpdatePet(**updates.dict()))
-        return pet
+        if pet := await self.repo.update_pet(pet_id, UpdatePet(**updates.dict())):
+            return pet
+
+        raise NotFoundError(message="Pet not found")
 
     async def delete_pet(self, pet_id: Identifier) -> Pet:
-        await self.get_pet(pet_id)
-        pet = await self.repo.delete_pet(pet_id)
-        return pet
+        if pet := await self.repo.delete_pet(pet_id):
+            return pet
+
+        raise NotFoundError(message="Pet not found")
