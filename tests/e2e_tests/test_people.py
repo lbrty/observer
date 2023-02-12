@@ -437,7 +437,7 @@ async def test_delete_person_deletes_documents_and_files(
     )
     assert resp.status_code == status.HTTP_201_CREATED
 
-    folder_path = os.path.join(env_settings.documents_path, str(default_person.id))
+    folder_path = os.path.join(app_context.storage.root, env_settings.documents_path, str(default_person.id))
     documents = await app_context.storage.ls(folder_path)
     assert len(documents) == 2
 
@@ -447,6 +447,5 @@ async def test_delete_person_deletes_documents_and_files(
     resp = await authorized_client.get(f"/people/{default_person.id}/documents")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
 
-    folder_path = os.path.join(env_settings.documents_path, str(default_person.id))
     documents = await app_context.storage.ls(folder_path)
     assert len(documents) == 0
