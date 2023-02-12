@@ -57,6 +57,7 @@ async def on_startup():
         ),
     )
 
+    ctx.storage = init_storage(settings.storage_kind, settings)
     ctx.repos = Repositories(
         audit=AuditRepository(ctx.db),
         users=UsersRepository(ctx.db),
@@ -74,13 +75,18 @@ async def on_startup():
     )
 
     ctx.keychain = Keychain()
-    await ctx.keychain.load(settings.keystore_path, ctx.storage)
+    await ctx.keychain.load(
+        settings.keystore_path,
+        # TODO: Create isolated key loader
+        init_storage(settings.storage_kind, settings, settings.keystore_path),
+    )
+
     num_keys = len(ctx.keychain.keys)
     if num_keys == 0:
         print(f"No keys found, please generate new keys and move to {settings.keystore_path}")
         sys.exit(1)
 
-    print(f"Key loader: {settings.key_loader_type}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
+    print(f"Key loader: {settings.storage_kind}, Keystore: {settings.keystore_path}, Keys loaded: {num_keys}")
     ctx.jwt_service = JWTService(ctx.keychain.keys[0])
     ctx.mailer = get_mailer(settings.mailer_type)
     ctx.audit_service = AuditService(ctx.repos.audit)
@@ -113,7 +119,6 @@ async def on_startup():
     ctx.documents_service = DocumentsService(ctx.repos.documents, ctx.crypto_service)
     ctx.support_service = SupportRecordsService(ctx.repos.support)
     ctx.migrations_service = MigrationService(ctx.repos.migrations, ctx.world_service)
-    ctx.storage = init_storage(settings.storage_kind, settings)
     ctx.uploads = UploadHandler(ctx.storage, ctx.crypto_service)
     ctx.downloads = DownloadHandler(ctx.storage, ctx.crypto_service)
 
