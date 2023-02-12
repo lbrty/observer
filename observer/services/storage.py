@@ -113,8 +113,7 @@ class S3Storage(IStorage):
 
     async def ls(self, path: str | Path) -> List[FileInfo]:
         async with self.s3_client as client:
-            full_path = os.path.join(self.root, path)
-            result = await client.list_objects_v2(Bucket=self.bucket, Prefix=full_path)
+            result = await client.list_objects_v2(Bucket=self.bucket, Prefix=path)
             if result.get("KeyCount", 0) == 0:
                 return []
 
