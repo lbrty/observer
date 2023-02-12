@@ -37,7 +37,7 @@ router = APIRouter(prefix="/world")
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
     ),
-    tags=["world", "places"],
+    tags=["countries"],
 )
 async def create_country(
     tasks: BackgroundTasks,
@@ -73,7 +73,7 @@ async def create_country(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
     ),
-    tags=["world", "places"],
+    tags=["countries"],
 )
 async def get_countries(world: IWorldService = Depends(world_service)) -> List[CountryResponse]:
     countries = await world.get_countries()
@@ -90,7 +90,7 @@ async def get_countries(world: IWorldService = Depends(world_service)) -> List[C
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["world", "places"],
+    tags=["countries"],
 )
 async def get_country(
     country_id: Identifier,
@@ -109,7 +109,7 @@ async def get_country(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["world", "places"],
+    tags=["countries"],
 )
 async def update_country(
     tasks: BackgroundTasks,
@@ -151,7 +151,7 @@ async def update_country(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["world", "places"],
+    tags=["countries"],
 )
 async def delete_country(
     tasks: BackgroundTasks,
@@ -187,7 +187,7 @@ async def delete_country(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
     ),
-    tags=["world", "states"],
+    tags=["states"],
 )
 async def create_state(
     tasks: BackgroundTasks,
@@ -223,7 +223,7 @@ async def create_state(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
     ),
-    tags=["world", "states"],
+    tags=["states"],
 )
 async def get_states(
     filters: StateFilters = Depends(state_filters),
@@ -243,7 +243,7 @@ async def get_states(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["world", "states"],
+    tags=["states"],
 )
 async def get_state(
     state_id: Identifier,
@@ -262,7 +262,7 @@ async def get_state(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["world", "states"],
+    tags=["states"],
 )
 async def update_state(
     tasks: BackgroundTasks,
@@ -302,7 +302,7 @@ async def update_state(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["world", "states"],
+    tags=["states"],
 )
 async def delete_state(
     tasks: BackgroundTasks,
@@ -338,7 +338,7 @@ async def delete_state(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
     ),
-    tags=["world", "places"],
+    tags=["places"],
 )
 async def create_place(
     tasks: BackgroundTasks,
@@ -374,7 +374,7 @@ async def create_place(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
     ),
-    tags=["world", "places"],
+    tags=["places"],
 )
 async def get_places(
     filters: PlaceFilters = Depends(place_filters),
@@ -394,7 +394,7 @@ async def get_places(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["world", "places"],
+    tags=["places"],
 )
 async def get_place(
     place_id: Identifier,
@@ -413,7 +413,7 @@ async def get_place(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["world", "places"],
+    tags=["places"],
 )
 async def update_place(
     tasks: BackgroundTasks,
@@ -456,7 +456,7 @@ async def update_place(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["world", "places"],
+    tags=["places"],
 )
 async def delete_place(
     tasks: BackgroundTasks,

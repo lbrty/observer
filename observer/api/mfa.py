@@ -30,7 +30,7 @@ router = APIRouter(prefix="/mfa")
     "/configure",
     response_model=MFAActivationResponse,
     status_code=status.HTTP_200_OK,
-    tags=["mfa", "otp", "totp"],
+    tags=["mfa"],
 )
 async def configure_mfa(
     user: User = Depends(user_with_no_mfa),
@@ -49,7 +49,7 @@ async def configure_mfa(
     "/setup",
     response_model=MFABackupCodesResponse,
     status_code=status.HTTP_201_CREATED,
-    tags=["mfa", "otp", "totp"],
+    tags=["mfa"],
 )
 async def setup_mfa(
     activation_request: MFAActivationRequest,
@@ -101,7 +101,7 @@ async def setup_mfa(
 @router.post(
     "/reset",
     status_code=status.HTTP_204_NO_CONTENT,
-    tags=["mfa", "otp", "totp"],
+    tags=["mfa"],
 )
 async def reset_mfa(
     reset_request: MFAAResetRequest,

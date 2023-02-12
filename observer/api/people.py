@@ -164,7 +164,7 @@ async def get_personal_info(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["people", "migration", "history"],
+    tags=["people", "migration history"],
 )
 async def get_person_migration_records(
     person_id: Identifier,

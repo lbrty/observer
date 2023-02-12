@@ -41,7 +41,7 @@ router = APIRouter(prefix="/migrations")
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
     ),
-    tags=["people", "migration history"],
+    tags=["migration history"],
 )
 async def create_migration_record(
     tasks: BackgroundTasks,
@@ -79,7 +79,7 @@ async def create_migration_record(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["people", "migration history"],
+    tags=["migration history"],
 )
 async def get_migration_record(
     record_id: Identifier,
@@ -104,7 +104,7 @@ async def get_migration_record(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
-    tags=["people", "migration history"],
+    tags=["migration history"],
 )
 async def delete_migration_record(
     tasks: BackgroundTasks,
