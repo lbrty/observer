@@ -132,7 +132,7 @@ async def test_get_pets_documents_with_remote_storage_works(
     resp = await authorized_client.get(f"/pets/{new_pet.id}/documents")
     assert resp.json() == documents
 
-    folder_path = os.path.join(env_settings.documents_path, str(new_pet.id))
+    folder_path = os.path.join(env_settings.storage_root, env_settings.documents_path, str(new_pet.id))
     documents = await app_context.storage.ls(folder_path)
     assert len(documents) == 2
 

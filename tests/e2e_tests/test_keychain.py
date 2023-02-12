@@ -34,7 +34,7 @@ async def test_keychain_can_load_keys_from_remote_store(
 
         await s3_client.put_object(Bucket=bucket_name, Key=f"uploads/keys/key{n}.pem", Body=private_key_bytes)
 
-    await keychain.load("keys", app_context.storage)
+    await keychain.load("uploads/keys", app_context.storage)
     assert len(keychain.keys) == 2
 
 

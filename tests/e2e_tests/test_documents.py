@@ -43,7 +43,7 @@ async def test_delete_document_works_as_expected(
     assert resp.status_code == status.HTTP_201_CREATED
 
     doc_id = resp.json()["id"]
-    folder_path = os.path.join(env_settings.documents_path, str(new_pet.id))
+    folder_path = os.path.join(env_settings.storage_root, env_settings.documents_path, str(new_pet.id))
     documents = await app_context.storage.ls(folder_path)
     assert len(documents) == 1
 
