@@ -3,7 +3,7 @@ import os
 import shutil
 from datetime import datetime
 from pathlib import Path
-from typing import IO, Any, List, Protocol
+from typing import IO, Any, List, Optional, Protocol
 
 import aiofiles as af
 from aiobotocore.session import AioSession, ClientCreatorContext
@@ -64,7 +64,7 @@ class FSStorage(IStorage):
 
     async def ls(self, path: str | Path) -> List[FileInfo]:
         items = []
-        for root, _, files in os.walk(Path(self.root) / path):
+        for root, _, files in os.walk(path):
             for filename in files:
                 full_path = os.path.join(root, filename)
                 stats = await stat(full_path)
@@ -186,16 +186,27 @@ class S3Storage(IStorage):
         return self.storage_root
 
 
-def init_storage(kind: StorageKind, settings: Settings) -> IStorage:
-    match kind:
-        case StorageKind.fs:
-            return FSStorage(str(settings.documents_path))
-        case StorageKind.s3:
-            return S3Storage(
-                str(settings.documents_path),
-                settings.s3_bucket,
-                settings.s3_region,
-                settings.s3_endpoint,
-            )
-        case _ as v:
-            raise ValueError(f"Unknown storage type: {v}")
+def init_storage(kind: StorageKind, settings: Settings, another_root: Optional[str] = None) -> IStorage:
+    """Initialize storage
+
+    Args:
+        kind(StorageKind): storage type
+        settings(Settings): settings instance
+        another_root(Optional[str]): Different storage root atm is used by keychain to load keys.
+    """
+
+    def get_storage(root: str):
+        match kind:
+            case StorageKind.fs:
+                return FSStorage(root)
+            case StorageKind.s3:
+                return S3Storage(
+                    root,
+                    settings.s3_bucket,
+                    settings.s3_region,
+                    settings.s3_endpoint,
+                )
+            case _ as v:
+                raise ValueError(f"Unknown storage type: {v}")
+
+    return get_storage(another_root or settings.storage_root)
