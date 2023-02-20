@@ -74,10 +74,10 @@ class Settings(SettingsBase):
     auth_password_change_subject: str = "Your password has been updated"
 
     # Audit log settings
-    mfa_audit_event_lifetime_days: int = 365
-    auth_audit_event_lifetime_days: int = 365
-    auth_audit_event_login_days: int = 7
-    auth_audit_event_refresh_days: int = 7
+    mfa_event_expiration_days: int = 365
+    audit_event_expiration_days: int = 365
+    login_event_expiration_days: int = 7
+    token_refresh_event_expiration_days: int = 7
 
     # Storage options
     # Values below are optional exception

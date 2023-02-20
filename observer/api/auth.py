@@ -61,7 +61,7 @@ async def token_login(
     props: Props = Depends(
         Tracked(
             tag="endpoint=token_login,action=token:login",
-            expires_in=timedelta(days=settings.auth_audit_event_login_days),
+            expires_in=timedelta(days=settings.login_event_expiration_days),
         ),
         use_cache=False,
     ),
@@ -107,7 +107,7 @@ async def token_refresh(
     props: Props = Depends(
         Tracked(
             tag="endpoint=token_refresh,action=token:refresh",
-            expires_in=timedelta(days=settings.auth_audit_event_refresh_days),
+            expires_in=timedelta(days=settings.token_refresh_event_expiration_days),
         ),
         use_cache=False,
     ),
@@ -241,7 +241,7 @@ async def change_password(
     props: Props = Depends(
         Tracked(
             tag="endpoint=change_password,action=change:password",
-            expires_in=timedelta(days=settings.auth_audit_event_lifetime_days),
+            expires_in=timedelta(days=settings.audit_event_expiration_days),
         ),
         use_cache=False,
     ),
@@ -283,7 +283,7 @@ async def reset_password_request(
     props: Props = Depends(
         Tracked(
             tag="endpoint=reset_password_request,action=reset:password",
-            expires_in=timedelta(days=settings.auth_audit_event_lifetime_days),
+            expires_in=timedelta(days=settings.audit_event_expiration_days),
         ),
         use_cache=False,
     ),
@@ -333,7 +333,7 @@ async def reset_password_with_code(
     props: Props = Depends(
         Tracked(
             tag="endpoint=reset_password_with_code,action=reset:password",
-            expires_in=timedelta(days=settings.auth_audit_event_lifetime_days),
+            expires_in=timedelta(days=settings.audit_event_expiration_days),
         ),
         use_cache=False,
     ),

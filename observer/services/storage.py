@@ -192,6 +192,8 @@ def init_storage(kind: StorageKind, settings: Settings, another_root: Optional[s
         kind(StorageKind): storage type
         settings(Settings): settings instance
         another_root(Optional[str]): Different storage root atm is used by keychain to load keys.
+
+    Returns: IStorage
     """
 
     def get_storage(root: str):

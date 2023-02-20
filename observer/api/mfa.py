@@ -62,7 +62,7 @@ async def setup_mfa(
     props: Props = Depends(
         Tracked(
             tag="endpoint=setup_mfa,action=setup:mfa",
-            expires_in=timedelta(days=settings.mfa_audit_event_lifetime_days),
+            expires_in=timedelta(days=settings.mfa_event_expiration_days),
         ),
         use_cache=False,
     ),
@@ -112,7 +112,7 @@ async def reset_mfa(
     props: Props = Depends(
         Tracked(
             tag="endpoint=reset_mfa,action=reset:mfa",
-            expires_in=timedelta(days=settings.mfa_audit_event_lifetime_days),
+            expires_in=timedelta(days=settings.mfa_event_expiration_days),
         ),
         use_cache=False,
     ),
