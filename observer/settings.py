@@ -36,14 +36,8 @@ class Settings(SettingsBase):
     key_passwords: Optional[str] = None
     public_exponent: int = 65537
     aes_key_bits: int = 32
-    # Password strength constraints
-    password_policy: PasswordPolicy = PasswordPolicy.from_names(
-        length=8,
-        uppercase=1,
-        numbers=1,
-        nonletters=1,
-        strength=0.68,
-    )
+
+    # User management related settings
     password_reset_url: str = "/reset-password/{code}"
     password_reset_expiration_minutes: int = 15
     confirmation_expiration_minutes: int = 20
@@ -93,6 +87,17 @@ class Settings(SettingsBase):
     s3_endpoint: Optional[str] = "https://s3.aws.amazon.com/observer"
     s3_region: Optional[str] = "eu-central-1"
     s3_bucket: Optional[str] = "observer-keys"
+
+    @property
+    def password_policy(self) -> PasswordPolicy:
+        """Password strength constraints"""
+        return PasswordPolicy.from_names(
+            length=8,
+            uppercase=1,
+            numbers=1,
+            nonletters=1,
+            strength=0.68,
+        )
 
 
 class DatabaseSettings(SettingsBase):
