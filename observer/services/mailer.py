@@ -47,7 +47,7 @@ class GmailMailer(IMailer):
         if not self.password:
             raise InternalError(message="GMAIL_PASSWORD is not set")
 
-        self.port = int(os.getenv("GMAIL_HOSTNAME", 465))
+        self.port = int(os.getenv("GMAIL_PORT", 465))
         self.hostname = os.getenv("GMAIL_HOSTNAME", "smtp.gmail.com")
 
     async def send(self, message: EmailMessage):
