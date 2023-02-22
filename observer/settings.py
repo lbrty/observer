@@ -33,7 +33,6 @@ class Settings(SettingsBase):
     # Keystore and RSA key settings
     keystore_path: str = "keys"
     key_size: int = 2048
-    key_passwords: Optional[str] = None
     public_exponent: int = 65537
     aes_key_bits: int = 32
 
@@ -65,7 +64,7 @@ class Settings(SettingsBase):
     mailer_type: str = "dummy"
     from_email: str = "no-reply@email.com"
     mfa_reset_subject: str = "MFA has been reset"
-    auth_password_change_subject: str = "Your password has been updated"
+    password_change_subject: str = "Your password has been updated"
 
     # Audit log settings
     mfa_event_expiration_days: int = 365

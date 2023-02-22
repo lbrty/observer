@@ -253,7 +253,7 @@ async def change_password(
         EmailMessage(
             to_email=user.email,
             from_email=settings.from_email,
-            subject=settings.auth_password_change_subject,
+            subject=settings.password_change_subject,
             body=f"Your password has been updated at {datetime.now(tz=timezone.utc).strftime('%m/%d/%Y, %H:%M:%S')}.",
         ),
     )
