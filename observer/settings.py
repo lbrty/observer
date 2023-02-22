@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from password_strength import PasswordPolicy
+from pydantic import validator
 from pydantic.env_settings import BaseSettings
 from pydantic.networks import PostgresDsn
 
@@ -97,6 +98,17 @@ class Settings(SettingsBase):
             nonletters=1,
             strength=0.68,
         )
+
+    @validator("admin_emails", pre=True)
+    def validate(cls, val):  # noqa
+        return val.split(",")
+
+    @validator("cors_origins", pre=True)
+    def validate(cls, val):  # noqa
+        if val:
+            return val.split(",")
+
+        return ["*"]
 
 
 class DatabaseSettings(SettingsBase):
