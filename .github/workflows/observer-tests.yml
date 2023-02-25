@@ -24,6 +24,9 @@ jobs:
         # Provide the password for postgres
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: observer_test
+        ports:
+          - 5432:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -45,5 +48,4 @@ jobs:
       run: |
         poetry run pytest tests
       env:
-        DB_URI: postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
-
+        DB_URI: postgresql+asyncpg://postgres:postgres@localhost:5432/observer_test
