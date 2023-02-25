@@ -116,6 +116,10 @@ class CryptoService(ICryptoService):
         )
 
     async def format_aes_secrets(self, secrets: AESCipherOptions) -> str:
+        """Returns AES secrets in the following format
+
+            `<secret>:<iv>:<tag>`
+        """
         secret = base64.b64encode(secrets.secret).decode()
         iv = base64.b64encode(secrets.iv).decode()
         tag = base64.b64encode(secrets.tag).decode()
