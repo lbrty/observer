@@ -137,7 +137,7 @@ async def test_configured_mfa_works_as_expected_when_correct_credentials_given(
 
     cookies = SimpleCookie(resp.headers["set-cookie"])
     token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
-    assert token_data.user_id == consultant_user.id
+    assert token_data.user_id == str(consultant_user.id)
 
 
 async def test_configure_mfa_works_as_expected_when_incorrect_totp_code_given(

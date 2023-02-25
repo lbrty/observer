@@ -65,7 +65,7 @@ class IAuthService(Protocol):
     async def gen_password(self) -> str:
         raise NotImplementedError
 
-    async def create_token(self, ref_id: Identifier) -> TokenResponse:
+    async def create_token(self, user_id: Identifier) -> TokenResponse:
         raise NotImplementedError
 
     @property
@@ -199,8 +199,8 @@ class AuthService(IAuthService):
         random_bytes = await self.crypto_service.gen_key(settings.aes_key_bits)
         return base64.b64encode(random_bytes).decode()
 
-    async def create_token(self, ref_id: Identifier) -> TokenResponse:
-        payload = TokenData(user_id=ref_id)
+    async def create_token(self, user_id: Identifier) -> TokenResponse:
+        payload = TokenData(user_id=user_id)
         access_token = await self.jwt_service.encode(payload, self.access_token_expiration)
         refresh_token = await self.jwt_service.encode(payload, self.refresh_token_expiration)
         token = TokenResponse(

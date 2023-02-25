@@ -1,8 +1,9 @@
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime, timezone
 
 import jwt
 from cryptography.hazmat.primitives import serialization
+from fastapi.encoders import jsonable_encoder
 
 from observer.common.types import Identifier
 from observer.schemas.crypto import PrivateKey
@@ -34,7 +35,7 @@ class JWTService:
             str: encoded token
         """
         return jwt.encode(
-            asdict(payload),
+            jsonable_encoder(payload),
             self.private_key.private_key.private_bytes(
                 encoding=serialization.Encoding.PEM,
                 format=serialization.PrivateFormat.PKCS8,

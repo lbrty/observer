@@ -19,7 +19,7 @@ async def current_user(
 ) -> Optional[User]:
     if access_token:
         token_data, _ = await jwt.decode(access_token)
-        return await users_service.get_by_ref_id(token_data.user_id)
+        return await users_service.get_by_id(token_data.user_id)
     else:
         return None
 

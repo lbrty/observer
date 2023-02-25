@@ -40,7 +40,6 @@ class ProjectsResponse(SchemaBase):
 
 
 class ProjectMemberResponse(SchemaBase):
-    ref_id: Identifier
     is_active: bool
     full_name: Optional[str]
     role: Role

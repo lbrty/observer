@@ -217,7 +217,6 @@ async def test_get_project_members_works_as_expected(authorized_client, ensure_d
     assert resp.json() == {
         "items": [
             {
-                "ref_id": "ref-consultant-1",
                 "is_active": True,
                 "full_name": "full name",
                 "role": "consultant",
@@ -282,7 +281,6 @@ async def test_add_project_member_works_as_expected(
     assert resp.json() == {
         "items": [
             {
-                "ref_id": "ref-consultant-1",
                 "is_active": True,
                 "full_name": "full name",
                 "role": "consultant",
@@ -301,7 +299,6 @@ async def test_add_project_member_works_as_expected(
                 },
             },
             {
-                "ref_id": "ref-guest-1",
                 "is_active": True,
                 "full_name": "full name",
                 "role": "guest",
@@ -378,7 +375,6 @@ async def test_add_project_member_pagination_works_as_expected(
     assert resp.json() == {
         "items": [
             {
-                "ref_id": "ref-consultant-1",
                 "is_active": True,
                 "full_name": "full name",
                 "role": "consultant",
@@ -403,7 +399,6 @@ async def test_add_project_member_pagination_works_as_expected(
     assert resp.json() == {
         "items": [
             {
-                "ref_id": "ref-guest-1",
                 "is_active": True,
                 "full_name": "full name",
                 "role": "guest",
@@ -574,7 +569,6 @@ async def test_delete_project_member_works_as_expected(
     assert resp.json() == {
         "items": [
             {
-                "ref_id": "ref-consultant-1",
                 "is_active": True,
                 "full_name": "full name",
                 "role": "consultant",
@@ -631,7 +625,6 @@ async def test_update_project_member_permissions_works_as_expected(
     assert resp.json() == {
         "items": [
             {
-                "ref_id": "ref-consultant-1",
                 "is_active": True,
                 "full_name": "full name",
                 "role": "consultant",

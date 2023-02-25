@@ -20,7 +20,6 @@ async def test_get_current_user_works_as_expected(authorized_client, ensure_db, 
         "is_confirmed": True,
         "office_id": None,
         "mfa_enabled": False,
-        "ref_id": "ref-consultant-1",
         "role": "consultant",
     }
 

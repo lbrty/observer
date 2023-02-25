@@ -8308,25 +8308,12 @@
       "ProjectMemberResponse": {
         "title": "ProjectMemberResponse",
         "required": [
-          "ref_id",
           "is_active",
           "role",
           "permissions"
         ],
         "type": "object",
         "properties": {
-          "ref_id": {
-            "title": "Ref Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ]
-          },
           "is_active": {
             "title": "Is Active",
             "type": "boolean"

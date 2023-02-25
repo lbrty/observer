@@ -26,7 +26,7 @@ class ProjectUpdate(BaseModel):
 
 
 class ProjectMember(BaseModel):
-    ref_id: Identifier
+    user_id: Identifier
     is_active: bool
     full_name: Optional[str]
     role: Role

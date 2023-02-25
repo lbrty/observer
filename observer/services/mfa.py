@@ -36,7 +36,7 @@ class IMFAService(Protocol):
     async def into_qr(self, secret: MFASecret) -> bytes:
         raise NotImplementedError
 
-    async def create(self, app_name: str, ref_id: Identifier) -> MFASecret:
+    async def create(self, app_name: str, user_id: Identifier) -> MFASecret:
         raise NotImplementedError
 
     async def valid(self, totp_code: str, secret: str) -> bool:
@@ -69,9 +69,9 @@ class MFAService(IMFAService):
         image.save(img_bytes, format="jpeg")
         return img_bytes.getvalue()
 
-    async def create(self, app_name: str, ref_id: Identifier) -> MFASecret:
+    async def create(self, app_name: str, user_id: Identifier) -> MFASecret:
         secret = random_base32()
-        totp_uri = TOTP(secret).provisioning_uri(str(ref_id), app_name)
+        totp_uri = TOTP(secret).provisioning_uri(str(user_id), app_name)
         return MFASecret(
             secret=secret,
             totp_uri=totp_uri,
