@@ -15,12 +15,9 @@ from observer.entities.world import (
 )
 from observer.repositories.world import IWorldRepository
 from observer.schemas.world import (
-    CountryResponse,
     NewCountryRequest,
     NewPlaceRequest,
     NewStateRequest,
-    PlaceResponse,
-    StateResponse,
     UpdateCountryRequest,
     UpdatePlaceRequest,
     UpdateStateRequest,
@@ -46,14 +43,6 @@ class IWorldService(Protocol):
     async def delete_country(self, country_id: Identifier) -> Country:
         raise NotImplementedError
 
-    @staticmethod
-    async def country_to_response(country: Country) -> CountryResponse:
-        raise NotImplementedError
-
-    @staticmethod
-    async def countries_to_response(country_list: List[Country]) -> List[CountryResponse]:
-        raise NotImplementedError
-
     # States
     async def create_state(self, new_state: NewStateRequest) -> State:
         raise NotImplementedError
@@ -70,14 +59,6 @@ class IWorldService(Protocol):
     async def delete_state(self, state_id: Identifier) -> State:
         raise NotImplementedError
 
-    @staticmethod
-    async def state_to_response(state: State) -> StateResponse:
-        raise NotImplementedError
-
-    @staticmethod
-    async def states_to_response(state_list: List[State]) -> List[StateResponse]:
-        raise NotImplementedError
-
     # Places
     async def create_place(self, new_place: NewPlaceRequest) -> Place:
         raise NotImplementedError
@@ -92,14 +73,6 @@ class IWorldService(Protocol):
         raise NotImplementedError
 
     async def delete_place(self, place_id: Identifier) -> Place:
-        raise NotImplementedError
-
-    @staticmethod
-    async def place_to_response(place: Place) -> PlaceResponse:
-        raise NotImplementedError
-
-    @staticmethod
-    async def places_to_response(place_list: List[Place]) -> List[PlaceResponse]:
         raise NotImplementedError
 
 
@@ -132,14 +105,6 @@ class WorldService(IWorldService):
 
         raise NotFoundError(message="Country not found")
 
-    @staticmethod
-    async def country_to_response(country: Country) -> CountryResponse:
-        return CountryResponse(**country.dict())
-
-    @staticmethod
-    async def countries_to_response(country_list: List[Country]) -> List[CountryResponse]:
-        return [CountryResponse(**country.dict()) for country in country_list]
-
     # States
     async def create_state(self, new_state: NewStateRequest) -> State:
         return await self.repo.create_state(NewState(**new_state.dict()))
@@ -165,14 +130,6 @@ class WorldService(IWorldService):
 
         raise NotFoundError(message="State not found")
 
-    @staticmethod
-    async def state_to_response(state: State) -> StateResponse:
-        return StateResponse(**state.dict())
-
-    @staticmethod
-    async def states_to_response(state_list: List[State]) -> List[StateResponse]:
-        return [StateResponse(**state.dict()) for state in state_list]
-
     # Places
     async def create_place(self, new_place: NewPlaceRequest) -> Place:
         return await self.repo.create_place(NewPlace(**new_place.dict()))
@@ -197,11 +154,3 @@ class WorldService(IWorldService):
             return place
 
         raise NotFoundError(message="Place not found")
-
-    @staticmethod
-    async def place_to_response(place: Place) -> PlaceResponse:
-        return PlaceResponse(**place.dict())
-
-    @staticmethod
-    async def places_to_response(place_list: List[Place]) -> List[PlaceResponse]:
-        return [PlaceResponse(**place.dict()) for place in place_list]

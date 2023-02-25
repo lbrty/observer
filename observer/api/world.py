@@ -61,7 +61,7 @@ async def create_country(
         jsonable_encoder(country.dict(exclude={"id"})),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return await world.country_to_response(country)
+    return CountryResponse(**country.dict())
 
 
 @router.get(
@@ -77,7 +77,7 @@ async def create_country(
 )
 async def get_countries(world: IWorldService = Depends(world_service)) -> List[CountryResponse]:
     countries = await world.get_countries()
-    return await world.countries_to_response(countries)
+    return [CountryResponse(**country.dict()) for country in countries]
 
 
 @router.get(
@@ -97,7 +97,7 @@ async def get_country(
     world: IWorldService = Depends(world_service),
 ) -> CountryResponse:
     country = await world.get_country(country_id)
-    return await world.country_to_response(country)
+    return CountryResponse(**country.dict())
 
 
 @router.put(
@@ -140,7 +140,7 @@ async def update_country(
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return await world.country_to_response(updated_country)
+    return CountryResponse(**updated_country.dict())
 
 
 @router.delete(
@@ -211,7 +211,7 @@ async def create_state(
         jsonable_encoder(state),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return await world.state_to_response(state)
+    return StateResponse(**state.dict())
 
 
 @router.get(
@@ -230,7 +230,7 @@ async def get_states(
     world: IWorldService = Depends(world_service),
 ) -> List[StateResponse]:
     states = await world.get_states(filters)
-    return await world.states_to_response(states)
+    return [StateResponse(**state.dict()) for state in states]
 
 
 @router.get(
@@ -250,7 +250,7 @@ async def get_state(
     world: IWorldService = Depends(world_service),
 ) -> StateResponse:
     state = await world.get_state(state_id)
-    return await world.state_to_response(state)
+    return StateResponse(**state.dict())
 
 
 @router.put(
@@ -291,7 +291,7 @@ async def update_state(
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return await world.state_to_response(updated_state)
+    return StateResponse(**updated_state.dict())
 
 
 @router.delete(
@@ -362,7 +362,7 @@ async def create_place(
         jsonable_encoder(place),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return await world.place_to_response(place)
+    return PlaceResponse(**place.dict())
 
 
 @router.get(
@@ -381,7 +381,7 @@ async def get_places(
     world: IWorldService = Depends(world_service),
 ) -> List[PlaceResponse]:
     places = await world.get_places(filters)
-    return await world.places_to_response(places)
+    return [PlaceResponse(**place.dict()) for place in places]
 
 
 @router.get(
@@ -401,7 +401,7 @@ async def get_place(
     world: IWorldService = Depends(world_service),
 ) -> PlaceResponse:
     place = await world.get_place(place_id)
-    return await world.place_to_response(place)
+    return PlaceResponse(**place.dict())
 
 
 @router.put(
@@ -445,7 +445,7 @@ async def update_place(
         ),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return await world.place_to_response(updated_place)
+    return PlaceResponse(**updated_place.dict())
 
 
 @router.delete(

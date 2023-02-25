@@ -3,12 +3,7 @@ from typing import List, Optional, Protocol
 from observer.common.types import Identifier
 from observer.entities.permissions import NewPermission, Permission, UpdatePermission
 from observer.repositories.permissions import IPermissionsRepository
-from observer.schemas.permissions import (
-    NewPermissionRequest,
-    PermissionResponse,
-    PermissionsResponse,
-    UpdatePermissionRequest,
-)
+from observer.schemas.permissions import NewPermissionRequest, UpdatePermissionRequest
 
 
 class IPermissionsService(Protocol):
@@ -36,14 +31,6 @@ class IPermissionsService(Protocol):
         permission_id: Identifier,
         updates: UpdatePermissionRequest,
     ) -> Optional[Permission]:
-        raise NotImplementedError
-
-    @staticmethod
-    async def to_response(permission: Permission) -> PermissionResponse:
-        raise NotImplementedError
-
-    @staticmethod
-    async def list_to_response(total: int, permission_list: List[Permission]) -> PermissionsResponse:
         raise NotImplementedError
 
 
@@ -74,14 +61,3 @@ class PermissionsService(IPermissionsService):
     ) -> Optional[Permission]:
         permission = await self.repo.update_permission(permission_id, UpdatePermission(**updates.dict()))
         return permission
-
-    @staticmethod
-    async def to_response(permission: Permission) -> PermissionResponse:
-        return PermissionResponse(**permission.dict())
-
-    @staticmethod
-    async def list_to_response(total: int, permission_list: List[Permission]) -> PermissionsResponse:
-        return PermissionsResponse(
-            total=total,
-            items=[PermissionResponse(**user.dict()) for user in permission_list],
-        )

@@ -21,12 +21,7 @@ from observer.entities.users import (
 )
 from observer.repositories.users import IUsersRepository
 from observer.schemas.pagination import Pagination
-from observer.schemas.users import (
-    NewUserRequest,
-    UserMFAUpdateRequest,
-    UserResponse,
-    UsersResponse,
-)
+from observer.schemas.users import NewUserRequest, UserMFAUpdateRequest
 from observer.services.crypto import ICryptoService
 from observer.settings import settings
 
@@ -89,14 +84,6 @@ class IUsersService(Protocol):
         raise NotImplementedError
 
     async def delete_invite(self, code: str) -> Invite:
-        raise NotImplementedError
-
-    @staticmethod
-    async def to_response(user: User) -> UserResponse:
-        raise NotImplementedError
-
-    @staticmethod
-    async def list_to_response(total: int, user_list: List[User]) -> UsersResponse:
         raise NotImplementedError
 
 
@@ -242,14 +229,3 @@ class UsersService(IUsersService):
 
     async def get_password_reset(self, code: str) -> Optional[PasswordReset]:
         return await self.repo.get_password_reset(code)
-
-    @staticmethod
-    async def to_response(user: User) -> UserResponse:
-        return UserResponse(**user.dict())
-
-    @staticmethod
-    async def list_to_response(total: int, user_list: List[User]) -> UsersResponse:
-        return UsersResponse(
-            total=total,
-            items=[UserResponse(**user.dict()) for user in user_list],
-        )
