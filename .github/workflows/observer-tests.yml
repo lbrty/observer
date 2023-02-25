@@ -39,6 +39,6 @@ jobs:
         poetry install
     - name: Test
       run: |
-        poetry run pytest --trace tests
+        poetry run pytest --trace tests -vvv
       env:
         DB_URI: postgresql+asyncpg://postgres:postgres@localhost:5432/observer_test
