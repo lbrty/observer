@@ -235,7 +235,7 @@ async def test_password_change_works_as_expected(
     )
     assert resp.status_code == status.HTTP_204_NO_CONTENT
     audit_log = await app_context.audit_service.find_by_ref(
-        f"endpoint=change_password,action=change:password,ref_id={consultant_user.id}"
+        f"endpoint=change_password,action=update:password,ref_id={consultant_user.id}"
     )
     assert audit_log is not None
     resp = await client.post(

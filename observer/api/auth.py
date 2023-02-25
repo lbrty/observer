@@ -237,7 +237,7 @@ async def change_password(
     mail: IMailer = Depends(mailer),
     props: Props = Depends(
         Tracked(
-            tag="endpoint=change_password,action=change:password",
+            tag="endpoint=change_password,action=update:password",
             expires_in=timedelta(days=settings.audit_event_expiration_days),
         ),
         use_cache=False,
