@@ -82,7 +82,7 @@ async def token_login(
         domain=settings.app_domain,
     )
     # Now we need to save login event
-    audit_log = props.new_event(f"ref_id={user.ref_id}", data=dict(ref_id=user.ref_id))
+    audit_log = props.new_event(f"ref_id={user.id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return auth_token
 
@@ -132,8 +132,8 @@ async def token_refresh(
         )
 
         audit_log = props.new_event(
-            f"ref_id={token_data.ref_id}",
-            data=dict(ref_id=token_data.ref_id),
+            f"ref_id={token_data.user_id}",
+            data=dict(ref_id=token_data.user_id),
         )
         tasks.add_task(audits.add_event, audit_log)
         return result
@@ -184,8 +184,8 @@ async def token_register(
 
     user, token_response = await auth.register(registration_payload)
     audit_log = props.new_event(
-        f"action=token:register,ref_id={user.ref_id}",
-        data=dict(ref_id=user.ref_id, role=user.role.value),
+        f"action=token:register,ref_id={user.id}",
+        data=dict(role=user.role.value),
     )
     tasks.add_task(audits.add_event, audit_log)
     confirmation = await users.create_confirmation(user.id)
@@ -213,10 +213,7 @@ async def token_register(
         expires=int(RefreshTokenExpirationDelta.total_seconds()),
         domain=settings.app_domain,
     )
-    audit_log = props.new_event(
-        f"action=send:confirmation,ref_id={user.ref_id}",
-        data=dict(ref_id=user.ref_id),
-    )
+    audit_log = props.new_event(f"action=send:confirmation,ref_id={user.id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return token_response
 
@@ -257,10 +254,7 @@ async def change_password(
             body=f"Your password has been updated at {datetime.now(tz=timezone.utc).strftime('%m/%d/%Y, %H:%M:%S')}.",
         ),
     )
-    audit_log = props.new_event(
-        f"ref_id={user.ref_id}",
-        data=dict(ref_id=user.ref_id),
-    )
+    audit_log = props.new_event(f"ref_id={user.id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -301,10 +295,9 @@ async def reset_password_request(
         ),
     )
     audit_log = props.new_event(
-        f"ref_id={user.ref_id}",
+        f"ref_id={user.id}",
         data=dict(
             email=reset_password_payload.email,
-            ref_id=user.ref_id,
             role=user.role.value,
         ),
     )
@@ -350,8 +343,8 @@ async def reset_password_with_code(
         ),
     )
     audit_log = props.new_event(
-        f"ref_id={user.ref_id}",
-        data=dict(code=code, ref_id=user.ref_id),
+        f"ref_id={user.id}",
+        data=dict(code=code),
     )
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

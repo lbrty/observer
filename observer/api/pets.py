@@ -70,7 +70,7 @@ async def create_pet(
     permission = await permissions.find(new_pet.project_id, user.id)
     assert_writable(user, permission)
     pet = await pets.create_pet(new_pet)
-    audit_log = props.new_event(f"pet_id={pet.id},ref_id={user.ref_id}", None)
+    audit_log = props.new_event(f"pet_id={pet.id},ref_id={user.id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return PetResponse(**pet.dict())
 
@@ -134,7 +134,7 @@ async def update_pet(
     assert_updatable(user, permission)
     updated_pet = await pets.update_pet(pet_id, updates)
     audit_log = props.new_event(
-        f"pet_id={pet.id},ref_id={user.ref_id}",
+        f"pet_id={pet.id},ref_id={user.id}",
         jsonable_encoder(updated_pet, exclude={"id"}, exclude_none=True),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -180,7 +180,7 @@ async def delete_pet(
     full_path = os.path.join(settings.documents_path, str(pet_id))
     deleted_pet = await pets.delete_pet(pet_id)
     audit_log = props.new_event(
-        f"pet_id={pet.id},ref_id={user.ref_id}",
+        f"pet_id={pet.id},ref_id={user.id}",
         jsonable_encoder(deleted_pet, exclude={"id"}, exclude_none=True),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -240,7 +240,7 @@ async def pet_upload_document(
         ),
     )
     audit_log = props.new_event(
-        f"pet_id={pet.id},ref_id={user.ref_id}",
+        f"pet_id={pet.id},ref_id={user.id}",
         jsonable_encoder(
             document,
             exclude={"id", "encryption_key"},

@@ -471,7 +471,7 @@ async def client(test_app):
 
 @pytest.fixture(scope="function")
 async def authorized_client(test_app, app_context, consultant_user):
-    token = await app_context.auth_service.create_token(consultant_user.ref_id)  # noqa
+    token = await app_context.auth_service.create_token(consultant_user.id)  # noqa
     app_client = httpx.AsyncClient(
         app=test_app,
         base_url="http://test",

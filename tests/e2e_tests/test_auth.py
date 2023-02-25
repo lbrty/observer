@@ -22,16 +22,16 @@ async def test_token_login_works_as_expected(client, ensure_db, app_context, con
 
     resp_json = resp.json()
     token_data, _ = await app_context.jwt_service.decode(resp_json["access_token"])
-    assert token_data.ref_id == consultant_user.ref_id
+    assert token_data.user_id == consultant_user.id
 
     cookies = SimpleCookie(resp.headers["set-cookie"])
     token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
-    assert token_data.ref_id == consultant_user.ref_id
+    assert token_data.user_id == consultant_user.id
 
     audit_log = await app_context.audit_service.find_by_ref(
-        f"endpoint=token_login,action=token:login,ref_id={consultant_user.ref_id}"
+        f"endpoint=token_login,action=token:login,ref_id={consultant_user.id}"
     )
-    assert audit_log.data["ref_id"] == consultant_user.ref_id
+    assert audit_log.data["user_id"] == consultant_user.id
 
 
 async def test_token_login_fails_if_credentials_are_wrong(client, ensure_db, consultant_user):
@@ -61,12 +61,12 @@ async def test_token_refresh_works_as_expected(
 
     cookies = SimpleCookie(resp.headers["set-cookie"])
     token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
-    assert token_data.ref_id == consultant_user.ref_id
+    assert token_data.user_id == consultant_user.id
 
     audit_log = await app_context.audit_service.find_by_ref(
-        f"endpoint=token_refresh,action=token:refresh,ref_id={consultant_user.ref_id}"
+        f"endpoint=token_refresh,action=token:refresh,ref_id={consultant_user.id}"
     )
-    assert audit_log.data["ref_id"] == consultant_user.ref_id
+    assert audit_log.data["user_id"] == consultant_user.id
 
 
 async def test_token_refresh_works_as_expected_when_refresh_token_is_invalid(client, ensure_db, app_context):
@@ -95,12 +95,12 @@ async def test_registration_works_as_expected(client, ensure_db, app_context):
     cookies = SimpleCookie(resp.headers["set-cookie"])
     token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
     user = await app_context.users_service.get_by_email("email@example.com")
-    assert token_data.ref_id == user.ref_id
+    assert token_data.user_id == user.id
 
     audit_log = await app_context.audit_service.find_by_ref(
-        f"endpoint=token_register,action=token:register,ref_id={user.ref_id}"
+        f"endpoint=token_register,action=token:register,ref_id={user.id}"
     )
-    assert audit_log.data == dict(ref_id=user.ref_id, role=user.role.value)
+    assert audit_log.data == dict(role=user.role.value)
 
 
 async def test_registration_returns_error_when_system_works_in_invite_only_mode(
@@ -160,9 +160,9 @@ async def test_password_reset_with_valid_code_works_as_expected(
     )
     assert resp.status_code == status.HTTP_204_NO_CONTENT
     audit_log = await app_context.audit_service.find_by_ref(
-        f"endpoint=reset_password_with_code,action=reset:password,ref_id={consultant_user.ref_id}"
+        f"endpoint=reset_password_with_code,action=reset:password,ref_id={consultant_user.id}"
     )
-    assert audit_log.data == dict(code=password_reset.code, ref_id=consultant_user.ref_id)
+    assert audit_log.data == dict(code=password_reset.code)
 
 
 async def test_password_reset_works_as_expected_when_expired_reset_code_is_used(
@@ -231,9 +231,9 @@ async def test_password_change_works_as_expected(
     )
     assert resp.status_code == status.HTTP_204_NO_CONTENT
     audit_log = await app_context.audit_service.find_by_ref(
-        f"endpoint=change_password,action=change:password,ref_id={consultant_user.ref_id}"
+        f"endpoint=change_password,action=change:password,ref_id={consultant_user.id}"
     )
-    assert audit_log.data["ref_id"] == consultant_user.ref_id
+    assert audit_log.data["user_id"] == consultant_user.id
     resp = await client.post(
         "/auth/token",
         json=dict(
@@ -245,7 +245,7 @@ async def test_password_change_works_as_expected(
 
     cookies = SimpleCookie(resp.headers["set-cookie"])
     token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
-    assert token_data.ref_id == consultant_user.ref_id
+    assert token_data.user_id == consultant_user.id
 
 
 async def test_password_change_works_as_expected_when_new_password_is_weak(
@@ -305,12 +305,12 @@ async def test_invite_only_mode_works(client, ensure_db, env_settings, app_conte
     cookies = SimpleCookie(resp.headers["set-cookie"])
     token_data, _ = await app_context.jwt_service.decode(cookies["refresh_token"].value)
     user = await app_context.users_service.get_by_email(email)
-    assert token_data.ref_id == user.ref_id
+    assert token_data.user_id == user.id
 
     audit_log = await app_context.audit_service.find_by_ref(
-        f"endpoint=token_register,action=token:register,ref_id={user.ref_id}"
+        f"endpoint=token_register,action=token:register,ref_id={user.id}"
     )
-    assert audit_log.data == dict(ref_id=user.ref_id, role=user.role.value)
+    assert audit_log.data == dict(role=user.role.value)
 
     resp = await client.post(
         "/auth/register",

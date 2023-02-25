@@ -73,7 +73,7 @@ async def create_support_record(
 
     support_record = await support_records.create_record(new_record)
     audit_log = props.new_event(
-        f"{subject_key}={new_record.owner_id},ref_id={user.ref_id}",
+        f"{subject_key}={new_record.owner_id},ref_id={user.id}",
         jsonable_encoder(support_record),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -149,7 +149,7 @@ async def update_support_record(
         await pets.get_pet(updates.owner_id)
 
     audit_log = props.new_event(
-        f"{subject_key}={updates.owner_id},ref_id={user.ref_id}",
+        f"{subject_key}={updates.owner_id},ref_id={user.id}",
         jsonable_encoder(support_record),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -197,6 +197,6 @@ async def delete_support_record(
         subject_key = "pet_id"
         await pets.get_pet(support_record.owner_id)
 
-    audit_log = props.new_event(f"{subject_key}={support_record.owner_id},ref_id={user.ref_id}", None)
+    audit_log = props.new_event(f"{subject_key}={support_record.owner_id},ref_id={user.id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -85,7 +85,7 @@ async def test_update_project_works_as_expected_for_members(
         owner_id=str(consultant_user.id),
     )
     audit_log = await app_context.audit_service.find_by_ref(
-        f"endpoint=update_project,action=update:project,project_id={project_id},ref_id={consultant_user.ref_id}",
+        f"endpoint=update_project,action=update:project,project_id={project_id},ref_id={consultant_user.id}",
     )
     assert audit_log.data == {
         "id": project_id,
@@ -132,7 +132,7 @@ async def test_update_project_works_as_expected_for_admins(
         owner_id=str(consultant_user.id),
     )
     audit_log = await app_context.audit_service.find_by_ref(
-        f"endpoint=update_project,action=update:project,project_id={project_id},ref_id={admin_user.ref_id}",
+        f"endpoint=update_project,action=update:project,project_id={project_id},ref_id={admin_user.id}",
     )
     assert audit_log.data == {
         "id": project_id,
@@ -159,7 +159,7 @@ async def test_delete_project_works_as_expected_for_members(authorized_client, e
 
     project_id = resp_json["id"]
     audit_log = await app_context.audit_service.find_by_ref(
-        f"endpoint=delete_project,action=delete:project,project_id={project_id},ref_id={consultant_user.ref_id}",
+        f"endpoint=delete_project,action=delete:project,project_id={project_id},ref_id={consultant_user.id}",
     )
 
     assert audit_log.data is None

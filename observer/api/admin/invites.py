@@ -106,14 +106,14 @@ async def create_invite(
         ),
     )
     audit_log = props.new_event(
-        f"action=send:invite,ref_id={user.ref_id}",
-        data=dict(ref_id=new_user.ref_id),
+        f"action=send:invite,ref_id={user.id}",
+        data=dict(new_user_id=new_user.id),
     )
     tasks.add_task(audits.add_event, audit_log)
     audit_log = props.new_event(
-        f"ref_id={user.ref_id}",
+        f"ref_id={user.id}",
         data=dict(
-            ref_id=new_user.ref_id,
+            new_user_id=new_user.id,
             role=new_user.role.value,
             ip_address=ip_address,
         ),
@@ -178,7 +178,7 @@ async def delete_invite(
     if delete_user:
         deleted_user = await users.delete_user(invite.user_id)
         audit_log = props.new_event(
-            f"action=delete:user,ref_id={user.ref_id}",
+            f"action=delete:user,ref_id={user.id}",
             data=dict(
                 invite=jsonable_encoder(deleted_user),
                 ip_address=ip_address,
@@ -187,7 +187,7 @@ async def delete_invite(
         tasks.add_task(audits.add_event, audit_log)
 
     audit_log = props.new_event(
-        f"action=delete:invite,ref_id={user.ref_id}",
+        f"action=delete:invite,ref_id={user.id}",
         data=dict(
             invite=jsonable_encoder(invite),
             ip_address=ip_address,

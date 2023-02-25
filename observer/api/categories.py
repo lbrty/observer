@@ -49,7 +49,7 @@ async def create_category(
 ) -> CategoryResponse:
     category = await categories.create_category(new_category)
     audit_log = props.new_event(
-        f"category_id={category.id},ref_id={user.ref_id}",
+        f"category_id={category.id},ref_id={user.id}",
         category,
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -134,7 +134,7 @@ async def update_category(
     category = await categories.get_category(category_id)
     updated_category = await categories.update_category(category_id, updates)
     audit_log = props.new_event(
-        f"category_id={category.id},ref_id={user.ref_id}",
+        f"category_id={category.id},ref_id={user.id}",
         dict(
             old_category=category,
             new_category=updated_category,
@@ -172,7 +172,7 @@ async def delete_category(
 ) -> Response:
     category = await categories.delete_category(category_id)
     audit_log = props.new_event(
-        f"category_id={category.id},ref_id={user.ref_id}",
+        f"category_id={category.id},ref_id={user.id}",
         category,
     )
     tasks.add_task(audits.add_event, audit_log)

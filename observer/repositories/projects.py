@@ -81,7 +81,6 @@ class ProjectsRepository(IProjectsRepository):
         )
         query = (
             select(
-                users.c.ref_id,
                 users.c.full_name,
                 users.c.is_active,
                 users.c.role,

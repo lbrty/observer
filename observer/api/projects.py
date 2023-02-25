@@ -77,7 +77,7 @@ async def create_project(
     new_project.owner_id = user.id
     project = await projects.create_project(new_project)
     audit_log = props.new_event(
-        f"action=create:project,project_id={project.id},ref_id={user.ref_id}",
+        f"action=create:project,project_id={project.id},ref_id={user.id}",
         jsonable_encoder(project),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -92,7 +92,7 @@ async def create_project(
         )
     )
     audit_log = props.new_event(
-        f"action=create:permission,permission_id={permission.id},ref_id={user.ref_id}",
+        f"action=create:permission,permission_id={permission.id},ref_id={user.id}",
         jsonable_encoder(project),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -142,7 +142,7 @@ async def update_project(
 ) -> ProjectResponse:
     updated_project = await projects.update_project(project.id, updates)
     audit_log = props.new_event(
-        f"project_id={updated_project.id},ref_id={user.ref_id}",
+        f"project_id={updated_project.id},ref_id={user.id}",
         jsonable_encoder(updated_project),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -174,7 +174,7 @@ async def delete_project(
     ),
 ) -> Response:
     await projects.delete_project(project.id)
-    audit_log = props.new_event(f"project_id={project.id},ref_id={user.ref_id}", None)
+    audit_log = props.new_event(f"project_id={project.id},ref_id={user.id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -239,7 +239,7 @@ async def add_project_member(
         NewPermissionRequest(**new_permission.dict()),
     )
     audit_log = props.new_event(
-        f"permission_id={permission.id},ref_id={user.ref_id}",
+        f"permission_id={permission.id},ref_id={user.id}",
         jsonable_encoder(permission),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -283,7 +283,7 @@ async def update_project_member(
     old_permission = await permissions.find(project.id, user_id)
     permission = await permissions.update_permission(old_permission.id, updated_permission)
     audit_log = props.new_event(
-        f"permission_id={permission.id},ref_id={user.ref_id}",
+        f"permission_id={permission.id},ref_id={user.id}",
         jsonable_encoder(permission),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -322,7 +322,7 @@ async def delete_project_member(
 ) -> Response:
     deleted_permission = await projects.delete_member(project.id, user_id)
     audit_log = props.new_event(
-        f"permission_id={deleted_permission.id},ref_id={user.ref_id}",
+        f"permission_id={deleted_permission.id},ref_id={user.id}",
         jsonable_encoder(deleted_permission),
     )
     tasks.add_task(audits.add_event, audit_log)

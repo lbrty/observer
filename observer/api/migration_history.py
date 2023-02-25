@@ -63,7 +63,7 @@ async def create_migration_record(
     assert_writable(user, permission)
     new_record = await migrations.add_record(new_record)
     audit_log = props.new_event(
-        f"record_id={new_record.id},project_id={new_record.project_id},ref_id={user.ref_id}",
+        f"record_id={new_record.id},project_id={new_record.project_id},ref_id={user.id}",
         jsonable_encoder(new_record),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -128,7 +128,7 @@ async def delete_migration_record(
     assert_can_see_private_info(user, permission)
     new_record = await migrations.delete_record(record_id)
     audit_log = props.new_event(
-        f"record_id={new_record.id},project_id={new_record.project_id},ref_id={user.ref_id}",
+        f"record_id={new_record.id},project_id={new_record.project_id},ref_id={user.id}",
         None,
     )
     tasks.add_task(audits.add_event, audit_log)

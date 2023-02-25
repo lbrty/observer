@@ -10,7 +10,7 @@ from observer.schemas.crypto import PrivateKey
 
 @dataclass
 class TokenData:
-    ref_id: Identifier
+    user_id: Identifier
 
 
 class JWTService:

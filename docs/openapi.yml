@@ -9264,8 +9264,7 @@
         "required": [
           "email",
           "role",
-          "id",
-          "ref_id"
+          "id"
         ],
         "type": "object",
         "properties": {
@@ -9313,19 +9312,6 @@
               }
             ],
             "description": "ID of user"
-          },
-          "ref_id": {
-            "title": "Ref Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Reference ID generated using short uuid format"
           },
           "is_active": {
             "title": "Is Active",

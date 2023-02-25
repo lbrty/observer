@@ -20,9 +20,6 @@ class IUsersRepository(Protocol):
     async def get_by_id(self, user_id: Identifier) -> Optional[User]:
         raise NotImplementedError
 
-    async def get_by_ref_id(self, ref_id: Identifier) -> Optional[User]:
-        raise NotImplementedError
-
     async def get_by_email(self, email: str) -> Optional[User]:
         raise NotImplementedError
 
@@ -75,13 +72,6 @@ class UsersRepository(IUsersRepository):
 
     async def get_by_id(self, user_id: Identifier) -> Optional[User]:
         query = select(users).where(users.c.id == user_id)
-        if result := await self.db.fetchone(query):
-            return User(**result)
-
-        return None
-
-    async def get_by_ref_id(self, ref_id: Identifier) -> Optional[User]:
-        query = select(users).where(users.c.ref_id == ref_id)
         if result := await self.db.fetchone(query):
             return User(**result)
 

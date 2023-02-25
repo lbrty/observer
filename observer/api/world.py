@@ -57,7 +57,7 @@ async def create_country(
 ) -> CountryResponse:
     country = await world.create_country(new_country)
     audit_log = props.new_event(
-        f"country_id={country.id},ref_id={user.ref_id}",
+        f"country_id={country.id},ref_id={user.id}",
         jsonable_encoder(country.dict(exclude={"id"})),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -131,7 +131,7 @@ async def update_country(
     country = await world.get_country(country_id)
     updated_country = await world.update_country(country_id, updates)
     audit_log = props.new_event(
-        f"country_id={country.id},ref_id={user.ref_id}",
+        f"country_id={country.id},ref_id={user.id}",
         jsonable_encoder(
             dict(
                 old_country=country.dict(exclude={"id"}),
@@ -171,7 +171,7 @@ async def delete_country(
 ) -> Response:
     deleted_country = await world.delete_country(country_id)
     audit_log = props.new_event(
-        f"country_id={deleted_country.id},ref_id={user.ref_id}",
+        f"country_id={deleted_country.id},ref_id={user.id}",
         None,
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -207,7 +207,7 @@ async def create_state(
 ) -> StateResponse:
     state = await world.create_state(new_state)
     audit_log = props.new_event(
-        f"state_id={state.id},ref_id={user.ref_id}",
+        f"state_id={state.id},ref_id={user.id}",
         jsonable_encoder(state),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -284,7 +284,7 @@ async def update_state(
     state = await world.get_state(state_id)
     updated_state = await world.update_state(state_id, updates)
     audit_log = props.new_event(
-        f"state_id={updated_state.id},ref_id={user.ref_id}",
+        f"state_id={updated_state.id},ref_id={user.id}",
         dict(
             old_state=jsonable_encoder(state),
             new_state=jsonable_encoder(updated_state),
@@ -322,7 +322,7 @@ async def delete_state(
 ) -> Response:
     deleted_state = await world.delete_state(state_id)
     audit_log = props.new_event(
-        f"state_id={deleted_state.id},ref_id={user.ref_id}",
+        f"state_id={deleted_state.id},ref_id={user.id}",
         None,
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -358,7 +358,7 @@ async def create_place(
 ) -> PlaceResponse:
     place = await world.create_place(new_place)
     audit_log = props.new_event(
-        f"place_id={place.id},ref_id={user.ref_id}",
+        f"place_id={place.id},ref_id={user.id}",
         jsonable_encoder(place),
     )
     tasks.add_task(audits.add_event, audit_log)
@@ -438,7 +438,7 @@ async def update_place(
     place = await world.get_place(place_id)
     updated_place = await world.update_place(place_id, updates)
     audit_log = props.new_event(
-        f"place_id={updated_place.id},ref_id={user.ref_id}",
+        f"place_id={updated_place.id},ref_id={user.id}",
         dict(
             old_place=jsonable_encoder(place),
             new_place=jsonable_encoder(updated_place),
@@ -476,7 +476,7 @@ async def delete_place(
 ) -> Response:
     deleted_place = await world.delete_place(place_id)
     audit_log = props.new_event(
-        f"place_id={deleted_place.id},ref_id={user.ref_id}",
+        f"place_id={deleted_place.id},ref_id={user.id}",
         None,
     )
     tasks.add_task(audits.add_event, audit_log)

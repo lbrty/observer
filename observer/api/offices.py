@@ -51,7 +51,7 @@ async def create_office(
     ),
 ) -> OfficeResponse:
     office = await offices.create_office(new_office.name)
-    audit_log = props.new_event(f"office_id={office.id},ref_id={user.ref_id}", None)
+    audit_log = props.new_event(f"office_id={office.id},ref_id={user.id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return OfficeResponse(**office.dict())
 
@@ -141,7 +141,7 @@ async def update_office(
     if office.name != updates.name:
         office = await offices.update_office(office_id, updates.name)
         audit_log = props.new_event(
-            f"office_id={office.id},ref_id={user.ref_id}",
+            f"office_id={office.id},ref_id={user.id}",
             jsonable_encoder(office),
         )
         tasks.add_task(audits.add_event, audit_log)
@@ -180,6 +180,6 @@ async def delete_office(
     ),
 ) -> Response:
     office = await offices.delete_office(office_id)
-    audit_log = props.new_event(f"office_id={office.id},ref_id={user.ref_id}", None)
+    audit_log = props.new_event(f"office_id={office.id},ref_id={user.id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

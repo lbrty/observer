@@ -18,7 +18,6 @@ users = Table(
     "users",
     metadata,
     Column("id", UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()")),
-    Column("ref_id", Text(), nullable=False),
     Column("email", Text(), nullable=False),
     Column("full_name", Text(), nullable=True),
     Column("password_hash", Text(), nullable=False),
@@ -32,7 +31,6 @@ users = Table(
     Index("ix_users_full_name", text("lower(full_name)")),
     Index("ix_users_office_id", text("office_id")),
     Index("ux_users_email", text("lower(email)"), unique=True),
-    Index("ux_users_ref_id", "ref_id", unique=True),
     Index("ix_users_is_active", "is_active"),
     CheckConstraint("role IN ('admin', 'consultant', 'guest', 'staff')", name="users_role_type_check"),
 )

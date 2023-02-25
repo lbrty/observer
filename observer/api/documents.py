@@ -128,6 +128,6 @@ async def delete_document(
             pass
 
     tasks.add_task(storage.delete_path, document.path)
-    audit_log = props.new_event(f"{subject_key}={document.owner_id},ref_id={user.ref_id}", None)
+    audit_log = props.new_event(f"{subject_key}={document.owner_id},ref_id={user.id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

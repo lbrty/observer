@@ -19,7 +19,6 @@ def upgrade():
     op.create_table(
         "users",
         sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("ref_id", sa.Text(), nullable=False),
         sa.Column("email", sa.Text(), nullable=False),
         sa.Column("full_name", sa.Text(), nullable=True),
         sa.Column("password_hash", sa.Text(), nullable=False),
@@ -42,7 +41,6 @@ def upgrade():
     op.create_index(op.f("ix_users_full_name"), "users", [sa.text("lower(full_name)")])
     op.create_index(op.f("ix_users_is_active"), "users", ["is_active"])
     op.create_index(op.f("ix_users_office_id"), "users", ["office_id"]),
-    op.create_index(op.f("ux_users_ref_id"), "users", ["ref_id"], unique=True)
     op.create_index(op.f("ux_users_email"), "users", [sa.text("lower(email)")], unique=True)
 
 

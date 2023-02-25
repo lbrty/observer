@@ -37,7 +37,7 @@ async def configure_mfa(
     mfa: IMFAService = Depends(mfa_service),
 ) -> MFAActivationResponse:
     """Setup MFA authentication"""
-    mfa_secret = await mfa.create(settings.title, user.ref_id)
+    mfa_secret = await mfa.create(settings.title, user.id)
     qr_image = await mfa.into_qr(mfa_secret)
     return MFAActivationResponse(
         secret=mfa_secret.secret,

@@ -37,9 +37,6 @@ class IUsersService(Protocol):
     async def get_by_id(self, user_id: Identifier) -> User:
         raise NotImplementedError
 
-    async def get_by_ref_id(self, ref_id: Identifier) -> Optional[User]:
-        raise NotImplementedError
-
     async def get_by_email(self, email: str) -> Optional[User]:
         raise NotImplementedError
 
@@ -114,17 +111,12 @@ class UsersService(IUsersService):
 
         raise NotFoundError(message="User not found")
 
-    async def get_by_ref_id(self, ref_id: Identifier) -> Optional[User]:
-        return await self.repo.get_by_ref_id(ref_id)
-
     async def get_by_email(self, email: str) -> Optional[User]:
         return await self.repo.get_by_email(email)
 
     async def create_user(self, new_user: NewUserRequest, is_active: bool = True) -> User:
-        ref_id = shortuuid.uuid(name=new_user.email)
         password_hash = bcrypt.hash_password(new_user.password.get_secret_value())
         user = NewUser(
-            ref_id=ref_id,
             email=new_user.email,
             full_name=new_user.full_name,
             password_hash=password_hash,

@@ -89,7 +89,7 @@ async def create_person(
     permission = await permissions.find(new_person.project_id, user.id)
     assert_writable(user, permission)
     person = await people.create_person(new_person)
-    audit_log = props.new_event(f"person_id={person.id},ref_id={user.ref_id}", None)
+    audit_log = props.new_event(f"person_id={person.id},ref_id={user.id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return PersonResponse(**person.dict())
 
@@ -226,7 +226,7 @@ async def update_person(
     assert_updatable(user, permission)
     updated_person = await people.update_person(person_id, person_updates)
     audit_log = props.new_event(
-        f"person_id={updated_person.id},ref_id={user.ref_id}",
+        f"person_id={updated_person.id},ref_id={user.id}",
         jsonable_encoder(
             updated_person.dict(
                 exclude_none=True,
@@ -275,7 +275,7 @@ async def delete_person(
     document_ids = [str(doc.id) for doc in person_documents]
     await documents.bulk_delete(document_ids)
     full_path = os.path.join(settings.documents_path, str(person_id))
-    audit_log = props.new_event(f"person_id={deleted_person.id},ref_id={user.ref_id}", dict(ip_address=ip_address))
+    audit_log = props.new_event(f"person_id={deleted_person.id},ref_id={user.id}", dict(ip_address=ip_address))
     tasks.add_task(storage.delete_path, full_path)
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -330,7 +330,7 @@ async def person_upload_document(
         ),
     )
     audit_log = props.new_event(
-        f"person_id={pet.id},ref_id={user.ref_id}",
+        f"person_id={pet.id},ref_id={user.id}",
         jsonable_encoder(
             document,
             exclude={"id", "encryption_key"},
@@ -408,7 +408,7 @@ async def add_persons_family_member(
     assert_can_see_private_info(user, permission)
     member = await family.add_member(new_member)
     audit_log = props.new_event(
-        f"person_id={person_id},project_id={new_member.project_id},member_id={member.id},ref_id={user.ref_id}",
+        f"person_id={person_id},project_id={new_member.project_id},member_id={member.id},ref_id={user.id}",
         jsonable_encoder(
             member,
             exclude={"id"},
@@ -482,7 +482,7 @@ async def update_persons_family_member(
     assert_can_see_private_info(user, permission)
     member = await family.update_member(member_id, updates)
     audit_log = props.new_event(
-        f"person_id={person_id},project_id={member.project_id},member_id={member.id},ref_id={user.ref_id}",
+        f"person_id={person_id},project_id={member.project_id},member_id={member.id},ref_id={user.id}",
         jsonable_encoder(
             member,
             exclude={"id"},
@@ -528,7 +528,7 @@ async def delete_persons_family_member(
     assert_can_see_private_info(user, permission)
     member = await family.delete_member(member_id)
     audit_log = props.new_event(
-        f"person_id={person_id},project_id={member.project_id},member_id={member.id},ref_id={user.ref_id}",
+        f"person_id={person_id},project_id={member.project_id},member_id={member.id},ref_id={user.id}",
         dict(ip_address=ip_address),
     )
     tasks.add_task(audits.add_event, audit_log)

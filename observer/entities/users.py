@@ -8,7 +8,6 @@ from observer.common.types import Identifier, Role
 
 class User(BaseModel):
     id: Identifier
-    ref_id: Identifier
     email: EmailStr
     full_name: Optional[str]
     password_hash: str
@@ -22,7 +21,6 @@ class User(BaseModel):
 
 
 class NewUser(BaseModel):
-    ref_id: Identifier
     email: EmailStr
     full_name: Optional[str]
     password_hash: str

@@ -97,7 +97,7 @@ class AuthService(IAuthService):
 
             await self.check_totp(user, login_payload.totp_code)
             if bcrypt.check_password(login_payload.password.get_secret_value(), user.password_hash):
-                token_response = await self.create_token(user.ref_id)
+                token_response = await self.create_token(user.id)
                 return user, token_response
 
         raise UnauthorizedError(message="Wrong email or password")
@@ -118,13 +118,13 @@ class AuthService(IAuthService):
             )
         )
 
-        token_response = await self.create_token(user.ref_id)
+        token_response = await self.create_token(user.id)
         return user, token_response
 
     async def refresh_token(self, refresh_token: str) -> Tuple[TokenData, TokenResponse]:
         try:
             token_data, _ = await self.jwt_service.decode(refresh_token)
-            token_response = await self.create_token(token_data.ref_id)
+            token_response = await self.create_token(token_data.user_id)
             return token_data, token_response
         except (DecodeError, InvalidAlgorithmError, InvalidSignatureError):
             raise ForbiddenError(message="Invalid refresh token")
@@ -200,7 +200,7 @@ class AuthService(IAuthService):
         return base64.b64encode(random_bytes).decode()
 
     async def create_token(self, ref_id: Identifier) -> TokenResponse:
-        payload = TokenData(ref_id=ref_id)
+        payload = TokenData(user_id=ref_id)
         access_token = await self.jwt_service.encode(payload, self.access_token_expiration)
         refresh_token = await self.jwt_service.encode(payload, self.refresh_token_expiration)
         token = TokenResponse(

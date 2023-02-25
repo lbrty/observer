@@ -49,8 +49,8 @@ async def confirm_account(
 ):
     user = await users.confirm_user(user.id if user else None, code)
     audit_log = props.new_event(
-        f"ref_id={user.ref_id}",
-        data=dict(code=code, ref_id=user.ref_id),
+        f"ref_id={user.id}",
+        data=dict(code=code),
     )
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -86,6 +86,6 @@ async def resend_confirmation(
             body=f"To confirm your email please use the following link {link}",
         ),
     )
-    audit_log = props.new_event(f"ref_id={user.ref_id}", data=dict(ref_id=user.ref_id))
+    audit_log = props.new_event(f"ref_id={user.id}", None)
     tasks.add_task(audits.add_event, audit_log)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
