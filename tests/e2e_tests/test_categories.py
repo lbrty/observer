@@ -3,7 +3,7 @@ import uuid
 from starlette import status
 
 
-async def test_create_vulnerability_category_works_as_expected(authorized_client, consultant_user):
+async def test_create_vulnerability_category_works_as_expected(authorized_client, ensure_db, consultant_user):
     resp = await authorized_client.post("/categories", json=dict(name="Vuln category"))
     assert resp.status_code == status.HTTP_201_CREATED
 
@@ -11,7 +11,7 @@ async def test_create_vulnerability_category_works_as_expected(authorized_client
     assert resp.status_code == status.HTTP_409_CONFLICT
 
 
-async def test_get_vulnerability_category_works_as_expected(authorized_client, consultant_user):
+async def test_get_vulnerability_category_works_as_expected(authorized_client, ensure_db, consultant_user):
     resp = await authorized_client.post("/categories", json=dict(name="Vuln category"))
     assert resp.status_code == status.HTTP_201_CREATED
 
@@ -22,7 +22,7 @@ async def test_get_vulnerability_category_works_as_expected(authorized_client, c
     assert resp.json() == resp_json
 
 
-async def test_get_unknown_vulnerability_category_works_as_expected(authorized_client, consultant_user):
+async def test_get_unknown_vulnerability_category_works_as_expected(authorized_client, ensure_db, consultant_user):
     resp = await authorized_client.get(f"/categories/{uuid.uuid4()}")
     assert resp.status_code == status.HTTP_404_NOT_FOUND
     assert resp.json() == {
@@ -32,7 +32,7 @@ async def test_get_unknown_vulnerability_category_works_as_expected(authorized_c
     }
 
 
-async def test_get_vulnerability_categories_works_as_expected(authorized_client, consultant_user):
+async def test_get_vulnerability_categories_works_as_expected(authorized_client, ensure_db, consultant_user):
     categories = []
     for n in range(10):
         resp = await authorized_client.post("/categories", json=dict(name=f"Vuln category #{n + 1}"))
@@ -44,7 +44,7 @@ async def test_get_vulnerability_categories_works_as_expected(authorized_client,
     assert resp.json() == categories
 
 
-async def test_filter_vulnerability_categories_works_as_expected(authorized_client, consultant_user):
+async def test_filter_vulnerability_categories_works_as_expected(authorized_client, ensure_db, consultant_user):
     for n in range(10):
         if n % 2 == 0:
             name = f"Catsegory #{n + 1}"
@@ -67,7 +67,7 @@ async def test_filter_vulnerability_categories_works_as_expected(authorized_clie
     assert len(resp.json()) == 5
 
 
-async def test_update_vulnerability_category_works_as_expected(authorized_client, consultant_user):
+async def test_update_vulnerability_category_works_as_expected(authorized_client, ensure_db, consultant_user):
     resp = await authorized_client.post("/categories", json=dict(name="Vulnerability category"))
     assert resp.status_code == status.HTTP_201_CREATED
 
@@ -78,7 +78,7 @@ async def test_update_vulnerability_category_works_as_expected(authorized_client
     assert resp.json() == resp_json
 
 
-async def test_delete_vulnerability_category_works_as_expected(authorized_client, consultant_user):
+async def test_delete_vulnerability_category_works_as_expected(authorized_client, ensure_db, consultant_user):
     resp = await authorized_client.post("/categories", json=dict(name="Vulnerability category"))
     assert resp.status_code == status.HTTP_201_CREATED
 
