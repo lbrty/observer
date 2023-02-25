@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "observer"
 version = "0.1.0"
-description = "Collection of useful types to use with mypy or for typehints"
+description = "Observer API"
 authors = ["Sultan Iman <sultan.imanhodjaev[at]gmail.com>"]
 
 [tool.poetry.dependencies]
@@ -37,6 +37,7 @@ aiosmtplib = "^2.0.1"
 rich = "^13.3.1"
 
 [tool.poetry.group.dev.dependencies]
+pytest = "^7.2.1"
 pytest-asyncio = "^0.20.3"
 pytest-cov = "^4.0.0"
 pytest-pretty = "^1.1.0"
@@ -45,7 +46,6 @@ ruff = "^0.0.252"
 httpx = "^0.23.3"
 flask = "^2.2.3"
 flask-cors = "^3.0.10"
-pytest = "^7.2.1"
 black = "^23.1.0"
 flake8 = "^6.0.0"
 isort = "^5.12.0"
