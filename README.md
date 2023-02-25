@@ -1,3 +1,5 @@
+[![Tests](https://github.com/lbrty/observer/actions/workflows/observer-tests.yml/badge.svg)](https://github.com/lbrty/observer/actions/workflows/observer-tests.yml)
+
 # 🎩 Observer
 
 This project seeks to bridge the gap in tools and systems to support and help internally displaced persons
