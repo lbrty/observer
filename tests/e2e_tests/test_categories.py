@@ -5,18 +5,18 @@ from starlette import status
 
 async def test_create_vulnerability_category_works_as_expected(
     authorized_client,
-    ensure_db,
     app_context,
     consultant_user,
 ):
     resp = await authorized_client.post("/categories", json=dict(name="Vuln category"))
     assert resp.status_code == status.HTTP_201_CREATED
+
     resp = await authorized_client.post("/categories", json=dict(name="Vuln category"))
+    assert resp.status_code == status.HTTP_409_CONFLICT
 
 
 async def test_get_vulnerability_category_works_as_expected(
     authorized_client,
-    ensure_db,
     app_context,
     consultant_user,
 ):
@@ -32,7 +32,6 @@ async def test_get_vulnerability_category_works_as_expected(
 
 async def test_get_unknown_vulnerability_category_works_as_expected(
     authorized_client,
-    ensure_db,
     app_context,
     consultant_user,
 ):
@@ -47,7 +46,6 @@ async def test_get_unknown_vulnerability_category_works_as_expected(
 
 async def test_get_vulnerability_categories_works_as_expected(
     authorized_client,
-    ensure_db,
     app_context,
     consultant_user,
 ):
@@ -64,7 +62,6 @@ async def test_get_vulnerability_categories_works_as_expected(
 
 async def test_filter_vulnerability_categories_works_as_expected(
     authorized_client,
-    ensure_db,
     app_context,
     consultant_user,
 ):
@@ -92,7 +89,6 @@ async def test_filter_vulnerability_categories_works_as_expected(
 
 async def test_update_vulnerability_category_works_as_expected(
     authorized_client,
-    ensure_db,
     app_context,
     consultant_user,
 ):
@@ -108,7 +104,6 @@ async def test_update_vulnerability_category_works_as_expected(
 
 async def test_delete_vulnerability_category_works_as_expected(
     authorized_client,
-    ensure_db,
     app_context,
     consultant_user,
 ):
