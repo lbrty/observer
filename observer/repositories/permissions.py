@@ -82,9 +82,6 @@ class PermissionsRepository(IPermissionsRepository):
         if updates.can_delete is not None:
             update_values["can_delete"] = updates.can_delete
 
-        if updates.can_create_projects is not None:
-            update_values["can_create_projects"] = updates.can_create_projects
-
         if updates.can_read_documents is not None:
             update_values["can_read_documents"] = updates.can_read_documents
 

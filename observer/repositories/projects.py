@@ -89,7 +89,6 @@ class ProjectsRepository(IProjectsRepository):
                 permissions.c.can_read,
                 permissions.c.can_update,
                 permissions.c.can_delete,
-                permissions.c.can_create_projects,
                 permissions.c.can_read_documents,
                 permissions.c.can_read_personal_info,
                 permissions.c.can_invite_members,

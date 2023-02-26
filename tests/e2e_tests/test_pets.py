@@ -26,7 +26,6 @@ async def test_create_pet_works(
             can_read=True,
             can_update=True,
             can_delete=True,
-            can_create_projects=True,
             can_read_documents=True,
             can_read_personal_info=True,
             can_invite_members=True,

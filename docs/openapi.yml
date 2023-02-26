@@ -6945,12 +6945,6 @@
             "description": "User can delete records",
             "default": false
           },
-          "can_create_projects": {
-            "title": "Can Create Projects",
-            "type": "boolean",
-            "description": "User can create projects",
-            "default": false
-          },
           "can_read_documents": {
             "title": "Can Read Documents",
             "type": "boolean",
@@ -7416,12 +7410,6 @@
             "title": "Can Delete",
             "type": "boolean",
             "description": "User can delete records",
-            "default": false
-          },
-          "can_create_projects": {
-            "title": "Can Create Projects",
-            "type": "boolean",
-            "description": "User can create projects",
             "default": false
           },
           "can_read_documents": {
@@ -7921,12 +7909,6 @@
             "title": "Can Delete",
             "type": "boolean",
             "description": "User can delete records",
-            "default": false
-          },
-          "can_create_projects": {
-            "title": "Can Create Projects",
-            "type": "boolean",
-            "description": "User can create projects",
             "default": false
           },
           "can_read_documents": {
@@ -8766,12 +8748,6 @@
             "title": "Can Delete",
             "type": "boolean",
             "description": "User can delete records",
-            "default": false
-          },
-          "can_create_projects": {
-            "title": "Can Create Projects",
-            "type": "boolean",
-            "description": "User can create projects",
             "default": false
           },
           "can_read_documents": {

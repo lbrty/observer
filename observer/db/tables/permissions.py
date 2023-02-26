@@ -11,7 +11,6 @@ permissions = Table(
     Column("can_read", Boolean(), default=False, nullable=False),
     Column("can_update", Boolean(), default=False, nullable=False),
     Column("can_delete", Boolean(), default=False, nullable=False),
-    Column("can_create_projects", Boolean(), default=False, nullable=False),
     Column("can_read_documents", Boolean(), default=False, nullable=False),
     Column("can_read_personal_info", Boolean(), default=False, nullable=False),
     Column("can_invite_members", Boolean(), default=False, nullable=False),

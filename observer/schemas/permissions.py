@@ -9,7 +9,6 @@ class BasePermission(SchemaBase):
     can_read: bool = Field(True, description="User can create records")
     can_update: bool = Field(False, description="User can update records")
     can_delete: bool = Field(False, description="User can delete records")
-    can_create_projects: bool = Field(False, description="User can create projects")
     can_read_documents: bool = Field(False, description="User can read documents")
     can_read_personal_info: bool = Field(False, description="User can read personal info")
     can_invite_members: bool = Field(False, description="User can invite new members to projects")
