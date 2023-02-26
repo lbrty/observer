@@ -30,7 +30,9 @@ class Settings(SettingsBase):
 
     # Invite only mode
     invite_only: bool = False
-    admin_emails: Optional[List[str]] = "admin@examples.com"
+
+    # Looks something like "admin@examples.com,email2@example.com"
+    admin_emails: Optional[List[str]] = None
     # Keystore and RSA key settings
     keystore_path: str = "keys"
     key_size: int = 2048
@@ -55,7 +57,7 @@ class Settings(SettingsBase):
     num_backup_codes: int = 6
 
     # CORS settings
-    cors_origins: Optional[List[str]] = "*"
+    cors_origins: Optional[List[str]] = None
     cors_allow_credentials: bool = True
 
     # gzip settings
@@ -105,7 +107,7 @@ class Settings(SettingsBase):
 
     @validator("admin_emails", pre=True)
     def validate_admin_emails(cls, val):  # noqa
-        return val.split(",")
+        return (val or "").split(",")
 
     @validator("cors_origins", pre=True)
     def validate_cors_origins(cls, val):  # noqa
