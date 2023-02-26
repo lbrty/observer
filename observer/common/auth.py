@@ -1,9 +1,9 @@
 from datetime import timedelta
 
+from observer.settings import settings
+
 AccessTokenKey: str = "access_token"
 RefreshTokenKey: str = "refresh_token"
 
-AccessTokenExpirationMinutes: int = 15
-RefreshTokenExpirationMinutes: int = 180
-AccessTokenExpirationDelta = timedelta(minutes=AccessTokenExpirationMinutes)
-RefreshTokenExpirationDelta = timedelta(days=RefreshTokenExpirationMinutes)
+AccessTokenExpirationDelta = timedelta(minutes=settings.access_token_expiration_minutes)
+RefreshTokenExpirationDelta = timedelta(days=settings.refresh_token_expiration_days)

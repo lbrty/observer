@@ -46,6 +46,10 @@ class Settings(SettingsBase):
     invite_subject: str = "You are invited to join Observer"
     confirmation_url: str = "/account/confirm/{code}"
 
+    # JWT token expiration durations
+    access_token_expiration_minutes: int = 15
+    refresh_token_expiration_days: int = 180
+
     # Allow 10 seconds more for otp codes
     totp_leeway: int = 10
     num_backup_codes: int = 6
