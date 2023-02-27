@@ -1,9 +1,9 @@
-image := "sultaniman/observer"
+image := sultaniman/observer
 vsn := $(shell git log -1 --pretty=%h)
 
 .PHONY: docker-image
 docker-image:
-	docker build .  -t $(image):latest -t $(image):$(vsn)
+	docker build . -t $(image):latest -t $(image):$(vsn)
 
 .PHONY: fmt
 fmt:
