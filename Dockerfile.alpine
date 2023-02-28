@@ -1,7 +1,10 @@
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
 EXPOSE 8000
 WORKDIR /observer
+
+RUN apk add --update --no-cache --virtual .tmp-build-deps gcc libc-dev linux-headers postgresql-dev \
+    && apk add libffi-dev
 
 COPY alembic.ini pyproject.toml poetry.lock poetry.toml ./
 COPY migrations/ ./migrations

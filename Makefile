@@ -4,6 +4,7 @@ vsn := $(shell git log -1 --pretty=%h)
 .PHONY: docker-image
 docker-image:
 	docker build . -t $(image):latest-slim -t $(image):$(vsn)-slim
+	docker build . -f Dockerfile.alpine -t $(image):latest-alpine -t $(image):$(vsn)-alpine
 
 .PHONY: fmt
 fmt:
