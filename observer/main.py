@@ -77,7 +77,6 @@ async def on_startup():
     ctx.keychain = Keychain()
     await ctx.keychain.load(
         settings.keystore_path,
-        # TODO: Create isolated key loader
         init_storage(settings.storage_kind, settings, settings.keystore_path),
     )
 
