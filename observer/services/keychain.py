@@ -18,7 +18,7 @@ class IKeychain(Protocol):
     async def load(self, path: str, storage: IStorage):
         raise NotImplementedError
 
-    async def find(self, key_hash: str) -> PrivateKey | None:
+    async def find(self, key_hash: str) -> PrivateKey:
         raise NotImplementedError
 
 

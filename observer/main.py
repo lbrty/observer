@@ -74,6 +74,9 @@ async def on_startup():
         migrations=MigrationRepository(ctx.db),
     )
 
+    # For keychain, we specify another root
+    # with different storage instance because we
+    # want to keep it isolated from main storage.
     ctx.keychain = Keychain()
     await ctx.keychain.load(
         settings.keystore_path,

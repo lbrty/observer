@@ -21,8 +21,8 @@ class AESCipherOptions:
 
 
 class ICryptoService(Protocol):
-    keychain: IKeychain | None
-    padding: padding.OAEP | None
+    keychain: IKeychain
+    padding: padding.OAEP
 
     async def encrypt(self, key_hash: Optional[str], data: bytes) -> bytes:
         """Encrypt data and return in Base64 representation"""
