@@ -91,7 +91,7 @@ BUCKET_NAME = "test-buck"
 
 
 @pytest.fixture(scope="session")
-def event_loop():
+def event_loop():  # type: ignore
     policy = asyncio.get_event_loop_policy()
     loop = policy.new_event_loop()
     yield loop
@@ -142,13 +142,13 @@ def aio_config(signature_version) -> AioConfig:
 
 
 @pytest.fixture(scope="function")
-async def s3_server():
+async def s3_server():  # type: ignore
     async with MotoService("s3", ssl=False) as svc:
         yield svc.endpoint_url
 
 
 @pytest.fixture(scope="function")
-async def s3_client(region, aio_session, aio_config, s3_server):
+async def s3_client(region, aio_session, aio_config, s3_server):  # type: ignore
     async with aio_session.create_client(
         "s3",
         region_name=region,
@@ -179,7 +179,7 @@ async def recursive_delete(s3_client):
 
 
 @pytest.fixture(scope="function")
-async def create_bucket(s3_client):
+async def create_bucket(s3_client):  # type: ignore
     try:
         region_name = "eu-central-1"
         bucket_kwargs = {"Bucket": BUCKET_NAME}
@@ -199,13 +199,13 @@ async def create_bucket(s3_client):
 
 
 @pytest.fixture(scope="function")
-async def temp_dir(env_settings):
+async def temp_dir(env_settings):  # type: ignore
     async with TemporaryDirectory() as temp_dir:
         yield temp_dir
 
 
 @pytest.fixture(scope="function")
-async def temp_keystore(env_settings, temp_dir):
+async def temp_keystore(env_settings, temp_dir):  # type: ignore
     pth = Path(temp_dir) / "keys"
     pth.mkdir(parents=True, exist_ok=True)
     for n in range(5):
@@ -250,19 +250,19 @@ async def s3_storage(app_context, env_settings, s3_server, create_bucket):
 
 
 @pytest.fixture(scope="function")
-async def markdown_file():
+async def markdown_file():  # type: ignore
     fp = BytesIO(b"BABA BLACK SHEEP")
     yield fp
 
 
 @pytest.fixture(scope="function")
-async def textfile():
+async def textfile():  # type: ignore
     fp = BytesIO(b"Some plain text contents")
     yield fp
 
 
 @pytest.fixture(scope="session")
-async def db_engine(env_settings):
+async def db_engine(env_settings):  # type: ignore
     opts = dict(
         echo=False,
         echo_pool=False,
@@ -275,7 +275,7 @@ async def db_engine(env_settings):
 
 
 @pytest.fixture(scope="session")
-async def app_context(db_engine):
+async def app_context(db_engine):  # type: ignore
     ctx.db = Database(
         engine=db_engine,
         session=sessionmaker(db_engine, class_=AsyncSession),
@@ -464,14 +464,14 @@ async def default_state(ensure_db, app_context, default_country):  # type:ignore
 
 
 @pytest.fixture(scope="session")
-async def client(test_app):
+async def client(test_app):  # type: ignore
     app_client = httpx.AsyncClient(app=test_app, base_url="http://test")
     yield app_client
 
 
 @pytest.fixture(scope="function")
 async def authorized_client(test_app, app_context, consultant_user):
-    token = await app_context.auth_service.create_token(consultant_user.id)  # noqa
+    token = await app_context.auth_service.create_token(consultant_user.id)  # type: ignore
     app_client = httpx.AsyncClient(
         app=test_app,
         base_url="http://test",
@@ -481,13 +481,17 @@ async def authorized_client(test_app, app_context, consultant_user):
 
 
 @pytest.fixture(scope="function")
-async def default_project(app_context: Context) -> Project:
+async def default_project(app_context: Context) -> Project:  # type: ignore
     project = await create_project(app_context, "default test project", "default project description")
     yield project
 
 
 @pytest.fixture(scope="function")
-async def new_pet(app_context: Context, default_project: Project, consultant_user: User) -> Pet:
+async def new_pet(  # type: ignore
+    app_context: Context,
+    default_project: Project,
+    consultant_user: User,
+) -> Pet:
     await create_permission(
         app_context,
         NewPermission(
@@ -516,7 +520,7 @@ async def new_pet(app_context: Context, default_project: Project, consultant_use
 
 
 @pytest.fixture(scope="function")
-async def default_person(
+async def default_person(  # type: ignore
     app_context: Context,
     default_project: Project,
     consultant_user: User,
@@ -541,7 +545,7 @@ async def default_person(
 
 
 @pytest.fixture(scope="function")
-async def default_family(
+async def default_family(  # type: ignore
     app_context: Context,
     default_project: Project,
     default_person: Person,

@@ -94,7 +94,7 @@ async def create_project(
         jsonable_encoder(project),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return await projects.to_response(project)
+    return ProjectResponse(**project.dict())
 
 
 @router.get(
@@ -126,7 +126,7 @@ async def get_project(project: Project = Depends(viewable_project)) -> ProjectRe
 async def update_project(
     tasks: BackgroundTasks,
     updates: UpdateProjectRequest,
-    user: User = Depends(current_user),
+    user: User = Depends(authenticated_user),
     project: Project = Depends(updatable_project),
     projects: IProjectsService = Depends(projects_service),
     audits: IAuditService = Depends(audit_service),
@@ -144,7 +144,7 @@ async def update_project(
         jsonable_encoder(updated_project),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return await projects.to_response(updated_project)
+    return ProjectResponse(**updated_project.dict())
 
 
 @router.delete(

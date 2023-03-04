@@ -122,8 +122,8 @@ async def test_update_project_works_as_expected_for_admins(
         ),
         cookies=auth_token.dict(),
     )
-
     assert resp.status_code == status.HTTP_200_OK
+
     project_id = resp_json["id"]
     assert resp.json() == dict(
         id=project_id,

@@ -31,8 +31,11 @@ async def viewable_project(
     """Returns project instance if user is admin or has `can_read=True` permission"""
     is_owner = project.owner_id == user.id
     if not is_owner:
-        permission = await permissions.find(project.id, user.id)
-        assert_viewable(user, permission)
+        try:
+            permission = await permissions.find(project.id, user.id)
+            assert_viewable(user, permission)
+        except NotFoundError:
+            assert_viewable(user, None)
 
     return project
 
@@ -45,13 +48,11 @@ async def updatable_project(
     """Returns project instance if user is admin or has `can_update=True` permission"""
     is_owner = project.owner_id == user.id
     if not is_owner:
-        permission = None
         try:
             permission = await permissions.find(project.id, user.id)
+            assert_updatable(user, permission)
         except NotFoundError:
-            pass
-
-        assert_updatable(user, permission)
+            assert_updatable(user, None)
 
     return project
 
@@ -64,8 +65,11 @@ async def deletable_project(
     """Returns project instance if user is admin or has `can_delete=True` permission"""
     is_owner = project.owner_id == user.id
     if not is_owner:
-        permission = await permissions.find(project.id, user.id)
-        assert_deletable(user, permission)
+        try:
+            permission = await permissions.find(project.id, user.id)
+            assert_deletable(user, permission)
+        except NotFoundError:
+            assert_deletable(user, None)
 
     return project
 
@@ -78,13 +82,11 @@ async def invitable_project(
     """Returns project instance if user is admin or has `can_invite_members=True` permission"""
     is_owner = project.owner_id == user.id
     if not is_owner:
-        permission = None
         try:
             permission = await permissions.find(project.id, user.id)
+            assert_can_invite(user, permission)
         except NotFoundError:
-            pass
-
-        assert_can_invite(user, permission)
+            assert_can_invite(user, None)
 
     return project
 

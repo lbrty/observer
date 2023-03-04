@@ -1,4 +1,4 @@
-from typing import List, Optional, Protocol
+from typing import List, Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier
@@ -15,7 +15,7 @@ class IDocumentsService(Protocol):
     async def create_document(self, encryption_key: str, new_document: NewDocumentRequest) -> Document:
         raise NotImplementedError
 
-    async def get_document(self, doc_id: Identifier) -> Optional[Document]:
+    async def get_document(self, doc_id: Identifier) -> Document:
         raise NotImplementedError
 
     async def get_by_owner_id(self, owner_id: Identifier) -> List[Document]:
@@ -49,7 +49,7 @@ class DocumentsService(IDocumentsService):
     async def get_by_project_id(self, project_id: Identifier) -> List[Document]:
         return await self.repo.get_by_project_id(project_id)
 
-    async def get_document(self, doc_id: Identifier) -> Optional[Document]:
+    async def get_document(self, doc_id: Identifier) -> Document:
         if document := await self.repo.get_document(doc_id):
             return document
 

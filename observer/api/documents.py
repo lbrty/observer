@@ -1,4 +1,3 @@
-from typing import Optional
 from urllib.parse import quote
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
@@ -38,8 +37,23 @@ router = APIRouter(prefix="/documents")
 
 
 @router.get("/{doc_id}", tags=["documents"])
-async def get_document() -> DocumentResponse:
-    pass
+async def get_document(
+    doc_id: Identifier,
+    user: User = Depends(
+        RequiresRoles([Role.admin, Role.consultant, Role.staff]),
+    ),
+    permissions: IPermissionsService = Depends(permissions_service),
+    documents: IDocumentsService = Depends(documents_service),
+) -> DocumentResponse:
+    document = await documents.get_document(doc_id)
+    permission = None
+    try:
+        permission = await permissions.find(document.project_id, user.id)
+    finally:
+        assert_viewable(user, permission)
+        assert_docs_readable(user, permission)
+
+    return DocumentResponse(**document.dict())
 
 
 @router.get(
@@ -54,7 +68,7 @@ async def get_document() -> DocumentResponse:
 )
 async def stream_document(
     doc_id: Identifier,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -91,7 +105,7 @@ async def stream_document(
 async def delete_document(
     tasks: BackgroundTasks,
     doc_id: Identifier,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     permissions: IPermissionsService = Depends(permissions_service),

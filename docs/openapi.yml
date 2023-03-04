@@ -1661,6 +1661,34 @@
         ],
         "summary": "Get Document",
         "operationId": "get_document_documents__doc_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Doc Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "name": "doc_id",
+            "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -1668,6 +1696,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DocumentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }

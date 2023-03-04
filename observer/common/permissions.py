@@ -63,7 +63,6 @@ def assert_deletable(user: User, permission: Optional[Permission]):
 
 def assert_updatable(user: User, permission: Optional[Permission]):
     if user.role != Role.admin:
-        # TODO: Maybe add separate endpoint to update personal info?
         can_do = permission and permission.can_update and permission.can_read_personal_info
         if not can_do:
             raise ForbiddenError(message="Permission denied")

@@ -4,15 +4,9 @@ from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier
 from observer.entities.permissions import NewPermission, Permission
 from observer.entities.projects import NewProject, Project, ProjectMember, ProjectUpdate
-from observer.entities.users import User
 from observer.repositories.projects import IProjectsRepository
 from observer.schemas.permissions import NewPermissionRequest
-from observer.schemas.projects import (
-    NewProjectRequest,
-    ProjectResponse,
-    ProjectsResponse,
-    UpdateProjectRequest,
-)
+from observer.schemas.projects import NewProjectRequest, UpdateProjectRequest
 
 
 class IProjectsService(Protocol):
@@ -37,14 +31,6 @@ class IProjectsService(Protocol):
         raise NotImplementedError
 
     async def delete_member(self, project_id: Identifier, user_id: Identifier) -> Permission:
-        raise NotImplementedError
-
-    @staticmethod
-    async def to_response(project: Project) -> ProjectResponse:
-        raise NotImplementedError
-
-    @staticmethod
-    async def list_to_response(total: int, user_list: list[User]) -> ProjectsResponse:
         raise NotImplementedError
 
 
@@ -87,14 +73,3 @@ class ProjectsService(IProjectsService):
             return permission
 
         raise NotFoundError(message="Permission not found")
-
-    @staticmethod
-    async def to_response(project: Project) -> ProjectResponse:
-        return ProjectResponse(**project.dict())
-
-    @staticmethod
-    async def list_to_response(total: int, user_list: list[User]) -> ProjectsResponse:
-        return ProjectsResponse(
-            total=total,
-            items=[ProjectResponse(**user.dict()) for user in user_list],
-        )
