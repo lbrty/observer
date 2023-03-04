@@ -68,3 +68,10 @@ class UserInvitesResponse(SchemaBase):
 
 class InviteJoinRequest(SchemaBase):
     password: SecretStr = Field(..., description="Password which user has provided")
+
+
+# Admin schemas
+class CreateUserRequest(BaseUser):
+    password: SecretStr = Field(..., description="Password which user has provided")
+    is_active: bool = Field(True, description="Is user active?")
+    is_confirmed: bool = Field(False, description="Is user confirmed?")
