@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
@@ -52,7 +50,7 @@ router = APIRouter(prefix="/invites")
 async def create_invite(
     tasks: BackgroundTasks,
     invite_request: UserInviteRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.staff]),
     ),
     users: IUsersService = Depends(users_service),
@@ -159,7 +157,7 @@ async def delete_invite(
     code: Identifier,
     tasks: BackgroundTasks,
     delete_user: bool = Query(False, description="If set then related user will be deleted"),
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.staff]),
     ),
     users: IUsersService = Depends(users_service),
@@ -173,8 +171,8 @@ async def delete_invite(
         use_cache=False,
     ),
 ) -> Response:
-    invite = await users.get_invite(code, validate=False)
-    await users.delete_invite(code)
+    invite = await users.get_invite(str(code), validate=False)
+    await users.delete_invite(str(code))
     if delete_user:
         deleted_user = await users.delete_user(invite.user_id)
         audit_log = props.new_event(

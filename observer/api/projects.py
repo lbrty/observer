@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
@@ -9,7 +7,7 @@ from observer.common.exceptions import get_api_errors
 from observer.common.permissions import permission_matrix
 from observer.common.types import Identifier, Role
 from observer.components.audit import Props, Tracked
-from observer.components.auth import RequiresRoles, current_user
+from observer.components.auth import RequiresRoles, authenticated_user, current_user
 from observer.components.pagination import pagination
 from observer.components.projects import (
     deletable_project,
@@ -60,7 +58,7 @@ router = APIRouter(prefix="/projects")
 async def create_project(
     tasks: BackgroundTasks,
     new_project: NewProjectRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant]),
     ),
     projects: IProjectsService = Depends(projects_service),
@@ -266,7 +264,7 @@ async def update_project_member(
     tasks: BackgroundTasks,
     user_id: Identifier,
     updated_permission: UpdatePermissionRequest,
-    user: User = Depends(current_user),
+    user: User = Depends(authenticated_user),
     project: Project = Depends(invitable_project),
     permissions: IPermissionsService = Depends(permissions_service),
     users: IUsersService = Depends(users_service),
@@ -308,7 +306,7 @@ async def update_project_member(
 async def delete_project_member(
     tasks: BackgroundTasks,
     user_id: Identifier,
-    user: User = Depends(current_user),
+    user: User = Depends(authenticated_user),
     project: Project = Depends(deletable_project),
     projects: IProjectsService = Depends(projects_service),
     audits: IAuditService = Depends(audit_service),

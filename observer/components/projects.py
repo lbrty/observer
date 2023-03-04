@@ -8,7 +8,7 @@ from observer.common.permissions import (
     assert_viewable,
 )
 from observer.common.types import Identifier
-from observer.components.auth import current_user
+from observer.components.auth import authenticated_user
 from observer.components.services import permissions_service, projects_service
 from observer.entities.projects import Project
 from observer.entities.users import User
@@ -24,7 +24,7 @@ async def current_project(
 
 
 async def viewable_project(
-    user: User = Depends(current_user),
+    user: User = Depends(authenticated_user),
     project: Project = Depends(current_project),
     permissions: IPermissionsService = Depends(permissions_service),
 ) -> Project:
@@ -38,7 +38,7 @@ async def viewable_project(
 
 
 async def updatable_project(
-    user: User = Depends(current_user),
+    user: User = Depends(authenticated_user),
     project: Project = Depends(current_project),
     permissions: IPermissionsService = Depends(permissions_service),
 ) -> Project:
@@ -52,7 +52,7 @@ async def updatable_project(
 
 
 async def deletable_project(
-    user: User = Depends(current_user),
+    user: User = Depends(authenticated_user),
     project: Project = Depends(current_project),
     permissions: IPermissionsService = Depends(permissions_service),
 ) -> Project:
@@ -66,7 +66,7 @@ async def deletable_project(
 
 
 async def invitable_project(
-    user: User = Depends(current_user),
+    user: User = Depends(authenticated_user),
     project: Project = Depends(current_project),
     permissions: IPermissionsService = Depends(permissions_service),
 ) -> Project:
@@ -80,7 +80,7 @@ async def invitable_project(
 
 
 async def owned_project(
-    user: User = Depends(current_user),
+    user: User = Depends(authenticated_user),
     project: Project = Depends(current_project),
 ) -> Project:
     """Returns project instance if user is admin or has `can_delete=True` permission"""

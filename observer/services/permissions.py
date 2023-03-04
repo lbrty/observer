@@ -20,7 +20,7 @@ class IPermissionsService(Protocol):
     async def get_by_user_id(self, user_id: Identifier) -> List[Permission]:
         raise NotImplementedError
 
-    async def find(self, project_id: Identifier, user_id: Identifier) -> Optional[Permission]:
+    async def find(self, project_id: Optional[Identifier], user_id: Identifier) -> Optional[Permission]:
         raise NotImplementedError
 
     async def create_permission(self, new_permission: NewPermissionRequest) -> Permission:
@@ -47,7 +47,10 @@ class PermissionsService(IPermissionsService):
     async def get_by_user_id(self, user_id: Identifier) -> List[Permission]:
         return await self.repo.get_by_user_id(user_id)
 
-    async def find(self, project_id: Identifier, user_id: Identifier) -> Optional[Permission]:
+    async def find(self, project_id: Optional[Identifier], user_id: Identifier) -> Optional[Permission]:
+        if not project_id:
+            return None
+
         return await self.repo.find(project_id, user_id)
 
     async def create_permission(self, new_permission: NewPermissionRequest) -> Permission:

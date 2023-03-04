@@ -77,7 +77,7 @@ class IUsersService(Protocol):
     async def create_invite(self, user_id: Identifier) -> Invite:
         raise NotImplementedError
 
-    async def get_invite(self, code: str, validate: bool = True) -> Optional[Invite]:
+    async def get_invite(self, code: str, validate: bool = True) -> Invite:
         raise NotImplementedError
 
     async def get_invites(self, page: Pagination) -> Tuple[int, List[Invite]]:
@@ -195,7 +195,7 @@ class UsersService(IUsersService):
         delta = timedelta(minutes=settings.invite_expiration_minutes)
         return await self.repo.create_invite(user_id, shortuuid.uuid(), now + delta)
 
-    async def get_invite(self, code: str, validate: bool = True) -> Optional[Invite]:
+    async def get_invite(self, code: str, validate: bool = True) -> Invite:
         invite = await self.repo.get_invite(code)
 
         # If user is authenticated then we need to check

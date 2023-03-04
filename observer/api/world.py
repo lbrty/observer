@@ -7,7 +7,7 @@ from starlette import status
 from observer.common.exceptions import get_api_errors
 from observer.common.types import Identifier, PlaceFilters, Role, StateFilters
 from observer.components.audit import Props, Tracked
-from observer.components.auth import RequiresRoles, current_user
+from observer.components.auth import RequiresRoles, authenticated_user
 from observer.components.filters import place_filters, state_filters
 from observer.components.services import audit_service, world_service
 from observer.entities.users import User
@@ -68,7 +68,7 @@ async def create_country(
     "/countries",
     response_model=List[CountryResponse],
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(current_user)],
+    dependencies=[Depends(authenticated_user)],
     responses=get_api_errors(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
@@ -84,7 +84,7 @@ async def get_countries(world: IWorldService = Depends(world_service)) -> List[C
     "/countries/{country_id}",
     response_model=CountryResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(current_user)],
+    dependencies=[Depends(authenticated_user)],
     responses=get_api_errors(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
@@ -218,7 +218,7 @@ async def create_state(
     "/states",
     response_model=List[StateResponse],
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(current_user)],
+    dependencies=[Depends(authenticated_user)],
     responses=get_api_errors(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
@@ -237,7 +237,7 @@ async def get_states(
     "/states/{state_id}",
     response_model=StateResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(current_user)],
+    dependencies=[Depends(authenticated_user)],
     responses=get_api_errors(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
@@ -369,7 +369,7 @@ async def create_place(
     "/places",
     response_model=List[PlaceResponse],
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(current_user)],
+    dependencies=[Depends(authenticated_user)],
     responses=get_api_errors(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,
@@ -388,7 +388,7 @@ async def get_places(
     "/places/{place_id}",
     response_model=PlaceResponse,
     status_code=status.HTTP_200_OK,
-    dependencies=[Depends(current_user)],
+    dependencies=[Depends(authenticated_user)],
     responses=get_api_errors(
         status.HTTP_404_NOT_FOUND,
         status.HTTP_403_FORBIDDEN,

@@ -74,7 +74,7 @@ router = APIRouter(prefix="/people")
 async def create_person(
     tasks: BackgroundTasks,
     new_person: NewPersonRequest,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     audits: IAuditService = Depends(audit_service),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -107,7 +107,7 @@ async def create_person(
 )
 async def get_person(
     person_id: Identifier,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     secrets: ISecretsService = Depends(secrets_service),
@@ -133,7 +133,7 @@ async def get_person(
 )
 async def get_personal_info(
     person_id: Identifier,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     secrets: ISecretsService = Depends(secrets_service),
@@ -168,7 +168,7 @@ async def get_personal_info(
 )
 async def get_person_migration_records(
     person_id: Identifier,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     migrations: IMigrationService = Depends(migrations_service),
@@ -209,7 +209,7 @@ async def update_person(
     tasks: BackgroundTasks,
     person_id: Identifier,
     person_updates: UpdatePersonRequest,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
@@ -251,7 +251,7 @@ async def update_person(
 async def delete_person(
     tasks: BackgroundTasks,
     person_id: Identifier,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
@@ -385,7 +385,7 @@ async def add_persons_family_member(
     tasks: BackgroundTasks,
     person_id: Identifier,
     new_member: NewFamilyMemberRequest,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -432,7 +432,7 @@ async def add_persons_family_member(
 )
 async def get_persons_family_members(
     person_id: Identifier,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -462,7 +462,7 @@ async def update_persons_family_member(
     person_id: Identifier,
     member_id: Identifier,
     updates: UpdateFamilyMemberRequest,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -507,7 +507,7 @@ async def delete_persons_family_member(
     tasks: BackgroundTasks,
     person_id: Identifier,
     member_id: Identifier,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
     permissions: IPermissionsService = Depends(permissions_service),
