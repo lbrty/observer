@@ -213,7 +213,7 @@ async def get_project_members(
 async def add_project_member(
     tasks: BackgroundTasks,
     new_permission: NewPermissionRequest,
-    user: User = Depends(current_user),
+    user: User = Depends(authenticated_user),
     project: Project = Depends(invitable_project),
     permissions: IPermissionsService = Depends(permissions_service),
     users: IUsersService = Depends(users_service),

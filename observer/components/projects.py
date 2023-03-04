@@ -1,6 +1,6 @@
 from fastapi import Depends, Path
 
-from observer.api.exceptions import ForbiddenError
+from observer.api.exceptions import ForbiddenError, NotFoundError
 from observer.common.permissions import (
     assert_can_invite,
     assert_deletable,
@@ -45,7 +45,12 @@ async def updatable_project(
     """Returns project instance if user is admin or has `can_update=True` permission"""
     is_owner = project.owner_id == user.id
     if not is_owner:
-        permission = await permissions.find(project.id, user.id)
+        permission = None
+        try:
+            permission = await permissions.find(project.id, user.id)
+        except NotFoundError:
+            pass
+
         assert_updatable(user, permission)
 
     return project
@@ -73,7 +78,12 @@ async def invitable_project(
     """Returns project instance if user is admin or has `can_invite_members=True` permission"""
     is_owner = project.owner_id == user.id
     if not is_owner:
-        permission = await permissions.find(project.id, user.id)
+        permission = None
+        try:
+            permission = await permissions.find(project.id, user.id)
+        except NotFoundError:
+            pass
+
         assert_can_invite(user, permission)
 
     return project

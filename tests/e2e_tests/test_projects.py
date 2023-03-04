@@ -439,6 +439,7 @@ async def test_add_project_member_works_as_expected_for_users_without_permission
         ),
         cookies=auth_token.dict(),
     )
+
     assert resp.status_code == status.HTTP_403_FORBIDDEN
     assert resp.json() == {
         "code": "unauthorized",
