@@ -5,6 +5,7 @@ from datetime import date
 from io import BytesIO
 from itertools import chain
 from pathlib import Path
+from typing import AsyncGenerator
 
 import aiofiles
 import httpx
@@ -481,13 +482,13 @@ async def authorized_client(test_app, app_context, consultant_user):
 
 
 @pytest.fixture(scope="function")
-async def default_project(app_context: Context) -> Project:
+async def default_project(app_context: Context) -> AsyncGenerator[Project, None]:
     project = await create_project(app_context, "default test project", "default project description")
     yield project
 
 
 @pytest.fixture(scope="function")
-async def new_pet(app_context: Context, default_project: Project, consultant_user: User) -> Pet:
+async def new_pet(app_context: Context, default_project: Project, consultant_user: User) -> AsyncGenerator[Pet, None]:
     await create_permission(
         app_context,
         NewPermission(
@@ -516,7 +517,11 @@ async def new_pet(app_context: Context, default_project: Project, consultant_use
 
 
 @pytest.fixture(scope="function")
-async def default_person(app_context: Context, default_project: Project, consultant_user: User) -> Person:
+async def default_person(
+    app_context: Context,
+    default_project: Project,
+    consultant_user: User,
+) -> AsyncGenerator[Person, None]:
     await create_permission(
         app_context,
         NewPermission(
@@ -542,7 +547,7 @@ async def default_family(
     default_project: Project,
     default_person: Person,
     consultant_user: User,
-) -> FamilyMember:
+) -> AsyncGenerator[FamilyMember, None]:
     await create_permission(
         app_context,
         NewPermission(

@@ -67,7 +67,7 @@ class SendgridMailer(IMailer):
             raise InternalError(message="SENDGRID_API_KEY is not configured")
 
     async def send(self, message: EmailMessage):
-        @asyncio.coroutine
+        @asyncio.coroutine  # type: ignore
         def dispatch(msg: EmailMessage):
             try:
                 from_email = From(msg.from_email)

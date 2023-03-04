@@ -112,14 +112,15 @@ class WorldRepository(IWorldRepository):
 
     async def get_states(self, filters: Optional[StateFilters]) -> List[State]:
         conditions = []
-        if filters.name:
-            conditions.append(states.c.name.ilike(f"%{filters.name}%"))
+        if filters:
+            if filters.name:
+                conditions.append(states.c.name.ilike(f"%{filters.name}%"))
 
-        if filters.code:
-            conditions.append(states.c.code.ilike(f"%{filters.code}%"))
+            if filters.code:
+                conditions.append(states.c.code.ilike(f"%{filters.code}%"))
 
-        if filters.country_id:
-            conditions.append(states.c.country_id == filters.country_id)
+            if filters.country_id:
+                conditions.append(states.c.country_id == filters.country_id)
 
         query = select(states)
         if len(conditions) > 0:

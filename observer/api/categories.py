@@ -34,7 +34,7 @@ router = APIRouter(prefix="/categories")
 async def create_category(
     tasks: BackgroundTasks,
     new_category: NewCategoryRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     categories: ICategoryService = Depends(category_service),
@@ -118,7 +118,7 @@ async def update_category(
     tasks: BackgroundTasks,
     category_id: Identifier,
     updates: UpdateCategoryRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     categories: ICategoryService = Depends(category_service),
@@ -157,7 +157,7 @@ async def update_category(
 async def delete_category(
     tasks: BackgroundTasks,
     category_id: Identifier,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     categories: ICategoryService = Depends(category_service),

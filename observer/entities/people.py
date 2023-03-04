@@ -53,7 +53,7 @@ class NewPerson(BasePerson):
 
 
 class UpdatePerson(BasePerson):
-    full_name: Optional[str]
+    full_name: Optional[str]  # type: ignore
 
 
 class PersonalInfo(BaseModel):

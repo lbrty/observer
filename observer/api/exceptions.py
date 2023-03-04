@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any
+from typing import Any, Optional
 
 from starlette import status
 
@@ -33,7 +33,13 @@ class BaseAPIException(Exception):
     default_status: int = status.HTTP_500_INTERNAL_SERVER_ERROR
     default_data: Any = None
 
-    def __init__(self, code: ErrorCode = None, status_code: int = None, message: str = None, data: Any = None):
+    def __init__(
+        self,
+        code: Optional[ErrorCode] = None,
+        status_code: Optional[int] = None,
+        message: Optional[str] = None,
+        data: Optional[Any] = None,
+    ):
         self.code = code or self.default_code
         self.status = status_code or self.default_status
         self.message = message or self.default_message

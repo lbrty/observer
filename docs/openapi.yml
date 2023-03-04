@@ -8158,9 +8158,16 @@
           },
           "owner_id": {
             "title": "Owner Id",
-            "type": "string",
-            "description": "ID of creator it overridden currently active user",
-            "format": "uuid"
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "ID of creator it overridden currently active user"
           }
         }
       },
@@ -8816,9 +8823,16 @@
           },
           "owner_id": {
             "title": "Owner Id",
-            "type": "string",
-            "description": "ID of creator",
-            "format": "uuid"
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "ID of creator"
           }
         }
       },
