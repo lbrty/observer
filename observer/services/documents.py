@@ -1,4 +1,4 @@
-from typing import List, Protocol
+from typing import List, Protocol, Sequence
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import Identifier
@@ -27,7 +27,7 @@ class IDocumentsService(Protocol):
     async def delete_document(self, doc_id: Identifier) -> Document:
         raise NotImplementedError
 
-    async def bulk_delete(self, doc_ids: List[Identifier]) -> List[Identifier]:
+    async def bulk_delete(self, doc_ids: Sequence[Identifier]) -> List[Identifier]:
         raise NotImplementedError
 
 
@@ -61,5 +61,5 @@ class DocumentsService(IDocumentsService):
 
         raise NotFoundError(message="Document not found")
 
-    async def bulk_delete(self, doc_ids: List[Identifier]) -> List[Identifier]:
+    async def bulk_delete(self, doc_ids: Sequence[Identifier]) -> List[Identifier]:
         return await self.repo.bulk_delete(doc_ids)

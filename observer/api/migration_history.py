@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
@@ -46,7 +44,7 @@ router = APIRouter(prefix="/migrations")
 async def create_migration_record(
     tasks: BackgroundTasks,
     new_record: NewMigrationHistoryRequest,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     migrations: IMigrationService = Depends(migrations_service),
     audits: IAuditService = Depends(audit_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -61,13 +59,13 @@ async def create_migration_record(
     """Create migration record"""
     permission = await permissions.find(new_record.project_id, user.id)
     assert_writable(user, permission)
-    new_record = await migrations.add_record(new_record)
+    record = await migrations.add_record(new_record)
     audit_log = props.new_event(
-        f"record_id={new_record.id},project_id={new_record.project_id},ref_id={user.id}",
-        jsonable_encoder(new_record),
+        f"record_id={record.id},project_id={record.project_id},ref_id={user.id}",
+        jsonable_encoder(record),
     )
     tasks.add_task(audits.add_event, audit_log)
-    return MigrationHistoryResponse(**new_record.dict())
+    return MigrationHistoryResponse(**record.dict())
 
 
 @router.get(
@@ -83,7 +81,7 @@ async def create_migration_record(
 )
 async def get_migration_record(
     record_id: Identifier,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
     migrations: IMigrationService = Depends(migrations_service),
     permissions: IPermissionsService = Depends(permissions_service),
@@ -91,7 +89,11 @@ async def get_migration_record(
     """Get migration record"""
     migration_record = await migrations.get_record(record_id)
     person = await people.get_person(migration_record.person_id)
-    permission = await permissions.find(person.project_id, user.id)
+
+    permission = None
+    if person.project_id:
+        permission = await permissions.find(person.project_id, user.id)
+
     assert_viewable(user, permission)
     return MigrationHistoryResponse(**migration_record.dict())
 
@@ -109,7 +111,7 @@ async def get_migration_record(
 async def delete_migration_record(
     tasks: BackgroundTasks,
     record_id: Identifier,
-    user: Optional[User] = Depends(authenticated_user),
+    user: User = Depends(authenticated_user),
     migrations: IMigrationService = Depends(migrations_service),
     audits: IAuditService = Depends(audit_service),
     permissions: IPermissionsService = Depends(permissions_service),

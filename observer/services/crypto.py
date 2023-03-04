@@ -1,7 +1,7 @@
 import base64
 import os
 from dataclasses import dataclass
-from typing import Optional, Protocol, Tuple
+from typing import Protocol, Tuple
 
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -24,11 +24,11 @@ class ICryptoService(Protocol):
     keychain: IKeychain
     padding: padding.OAEP
 
-    async def encrypt(self, key_hash: Optional[str], data: bytes) -> bytes:
+    async def encrypt(self, key_hash: str, data: bytes) -> bytes:
         """Encrypt data and return in Base64 representation"""
         raise NotImplementedError
 
-    async def decrypt(self, key_hash: Optional[str], data: bytes) -> bytes:
+    async def decrypt(self, key_hash: str, data: bytes) -> bytes:
         """Decrypt data, encrypted data should have Base64 representation"""
         raise NotImplementedError
 
@@ -64,11 +64,11 @@ class CryptoService(ICryptoService):
             label=None,
         )
 
-    async def encrypt(self, key_hash: Optional[str], data: bytes) -> bytes:
+    async def encrypt(self, key_hash: str, data: bytes) -> bytes:
         key = await self.keychain.find(key_hash)
         return base64.b64encode(key.private_key.public_key().encrypt(data, self.padding))
 
-    async def decrypt(self, key_hash: Optional[str], data: bytes) -> bytes:
+    async def decrypt(self, key_hash: str, data: bytes) -> bytes:
         key = await self.keychain.find(key_hash)
         return key.private_key.decrypt(base64.b64decode(data), self.padding)
 

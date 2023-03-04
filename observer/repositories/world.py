@@ -158,20 +158,21 @@ class WorldRepository(IWorldRepository):
 
     async def get_places(self, filters: Optional[PlaceFilters]) -> List[Place]:
         conditions = []
-        if filters.name:
-            conditions.append(places.c.name.ilike(f"%{filters.name}%"))
+        if filters:
+            if filters.name:
+                conditions.append(places.c.name.ilike(f"%{filters.name}%"))
 
-        if filters.code:
-            conditions.append(places.c.code.ilike(f"%{filters.code}%"))
+            if filters.code:
+                conditions.append(places.c.code.ilike(f"%{filters.code}%"))
 
-        if filters.place_type:
-            conditions.append(places.c.place_type == filters.place_type)
+            if filters.place_type:
+                conditions.append(places.c.place_type == filters.place_type)
 
-        if filters.state_id:
-            conditions.append(places.c.state_id == filters.state_id)
+            if filters.state_id:
+                conditions.append(places.c.state_id == filters.state_id)
 
-        if filters.country_id:
-            conditions.append(places.c.country_id == filters.country_id)
+            if filters.country_id:
+                conditions.append(places.c.country_id == filters.country_id)
 
         query = select(places)
         if len(conditions) > 0:

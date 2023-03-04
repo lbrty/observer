@@ -27,12 +27,12 @@ class Keychain(IKeychain):
         keys = []
         files = await storage.ls(path)
         for creation_time, filename in files:
-            if not fnmatch.fnmatch(filename, "*.pem"):
+            if not fnmatch.fnmatch(str(filename), "*.pem"):
                 continue
 
             fp = await storage.open(filename)
             file_bytes = await fp.read()
-            private_key = await self.parse_key(file_bytes, filename)
+            private_key = await self.parse_key(file_bytes, str(filename))
             keys.append((creation_time, private_key))
 
             logger.info("Loaded RSAPrivateKey", SHA256=private_key.hash)

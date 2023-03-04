@@ -10,7 +10,7 @@ class IOfficesService(Protocol):
     async def create_office(self, name: str) -> Office:
         raise NotImplementedError
 
-    async def get_office(self, office_id: Identifier) -> Optional[Office]:
+    async def get_office(self, office_id: Identifier) -> Office:
         raise NotImplementedError
 
     async def get_offices(self, name: Optional[str], offset: int, limit: int) -> Tuple[int, List[Office]]:
@@ -30,7 +30,7 @@ class OfficesService(IOfficesService):
     async def create_office(self, name: str) -> Office:
         return await self.repo.create_office(name)
 
-    async def get_office(self, office_id: Identifier) -> Optional[Office]:
+    async def get_office(self, office_id: Identifier) -> Office:
         if office := await self.repo.get_office(office_id):
             return office
 

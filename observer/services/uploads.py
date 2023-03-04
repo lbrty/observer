@@ -51,7 +51,8 @@ class UploadHandler:
 
         # Save file with hashed name and extension
         extension = AllowedDocumentTypes[file.content_type]
-        filename = f"{hashlib.md5(file.filename.encode()).hexdigest()}.{extension}"
+        realname = file.filename.encode() if file.filename else os.urandom(settings.aes_key_bits)
+        filename = f"{hashlib.md5(realname).hexdigest()}.{extension}"
         file_path = os.path.join(path, filename)
         await self.storage.save(file_path, encrypted_contents)
         full_path = os.path.join(self.storage.root, file_path)

@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional
+from typing import List
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Response, UploadFile
 from fastapi.encoders import jsonable_encoder
@@ -18,6 +18,7 @@ from observer.common.permissions import (
 from observer.common.types import Identifier, Role
 from observer.components.audit import Props, Tracked, client_ip
 from observer.components.auth import RequiresRoles, authenticated_user
+from observer.components.people import PersonWithTests
 from observer.components.services import (
     audit_service,
     documents_service,
@@ -30,7 +31,7 @@ from observer.components.services import (
     storage_service,
     world_service,
 )
-from observer.entities.people import PersonalInfo
+from observer.entities.people import Person, PersonalInfo
 from observer.entities.users import User
 from observer.schemas.documents import DocumentResponse, NewDocumentRequest
 from observer.schemas.family_members import (
@@ -86,7 +87,10 @@ async def create_person(
         use_cache=False,
     ),
 ) -> PersonResponse:
-    permission = await permissions.find(new_person.project_id, user.id)
+    permission = None
+    if new_person.project_id:
+        permission = await permissions.find(new_person.project_id, user.id)
+
     assert_writable(user, permission)
     person = await people.create_person(new_person)
     audit_log = props.new_event(f"person_id={person.id},ref_id={user.id}", None)
@@ -106,17 +110,11 @@ async def create_person(
     tags=["people"],
 )
 async def get_person(
-    person_id: Identifier,
-    user: User = Depends(authenticated_user),
-    people: IPeopleService = Depends(people_service),
-    permissions: IPermissionsService = Depends(permissions_service),
+    person: Person = Depends(PersonWithTests(assert_viewable)),
     secrets: ISecretsService = Depends(secrets_service),
 ) -> PersonResponse:
-    person = await people.get_person(person_id)
-    permission = await permissions.find(person.project_id, user.id)
-    assert_viewable(user, permission)
-    person = await secrets.anonymize_person(person)
-    return PersonResponse(**person.dict())
+    anonymized_person = await secrets.anonymize_person(person)
+    return PersonResponse(**anonymized_person.dict())
 
 
 @router.get(
@@ -132,15 +130,9 @@ async def get_person(
     tags=["people"],
 )
 async def get_personal_info(
-    person_id: Identifier,
-    user: User = Depends(authenticated_user),
-    people: IPeopleService = Depends(people_service),
-    permissions: IPermissionsService = Depends(permissions_service),
+    person: Person = Depends(PersonWithTests(assert_can_see_private_info)),
     secrets: ISecretsService = Depends(secrets_service),
 ) -> PersonalInfoResponse:
-    person = await people.get_person(person_id)
-    permission = await permissions.find(person.project_id, user.id)
-    assert_can_see_private_info(user, permission)
     pi = await secrets.decrypt_personal_info(
         PersonalInfo(
             email=person.email,
@@ -167,18 +159,12 @@ async def get_personal_info(
     tags=["people", "migration history"],
 )
 async def get_person_migration_records(
-    person_id: Identifier,
-    user: User = Depends(authenticated_user),
-    people: IPeopleService = Depends(people_service),
-    permissions: IPermissionsService = Depends(permissions_service),
+    person: Person = Depends(PersonWithTests(assert_can_see_private_info)),
     migrations: IMigrationService = Depends(migrations_service),
     world: IWorldService = Depends(world_service),
 ) -> List[FullMigrationHistoryResponse]:
     """Get migration records for a person"""
-    person = await people.get_person(person_id)
-    permission = await permissions.find(person.project_id, user.id)
-    assert_can_see_private_info(user, permission)
-    records = await migrations.get_persons_records(person_id)
+    records = await migrations.get_persons_records(person.id)
     result = []
     for record in records:
         migration_record = FullMigrationHistoryResponse(**record.dict())
@@ -203,6 +189,11 @@ async def get_person_migration_records(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
+    dependencies=[
+        Depends(
+            PersonWithTests(assert_updatable),
+        )
+    ],
     tags=["people"],
 )
 async def update_person(
@@ -211,7 +202,6 @@ async def update_person(
     person_updates: UpdatePersonRequest,
     user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
-    permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
@@ -221,9 +211,6 @@ async def update_person(
         use_cache=False,
     ),
 ) -> PersonResponse:
-    person = await people.get_person(person_id)
-    permission = await permissions.find(person.project_id, user.id)
-    assert_updatable(user, permission)
     updated_person = await people.update_person(person_id, person_updates)
     audit_log = props.new_event(
         f"person_id={updated_person.id},ref_id={user.id}",
@@ -246,6 +233,14 @@ async def update_person(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
+    dependencies=[
+        Depends(
+            PersonWithTests(
+                assert_deletable,
+                assert_docs_readable,
+            )
+        )
+    ],
     tags=["people"],
 )
 async def delete_person(
@@ -253,7 +248,6 @@ async def delete_person(
     person_id: Identifier,
     user: User = Depends(authenticated_user),
     people: IPeopleService = Depends(people_service),
-    permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
     storage: IStorage = Depends(storage_service),
     audits: IAuditService = Depends(audit_service),
@@ -266,10 +260,6 @@ async def delete_person(
         use_cache=False,
     ),
 ) -> Response:
-    person = await people.get_person(person_id)
-    permission = await permissions.find(person.project_id, user.id)
-    assert_deletable(user, permission)
-    assert_docs_readable(user, permission)
     deleted_person = await people.delete_person(person_id)
     person_documents = await documents.get_by_owner_id(person_id)
     document_ids = [str(doc.id) for doc in person_documents]
@@ -296,11 +286,16 @@ async def person_upload_document(
     tasks: BackgroundTasks,
     person_id: Identifier,
     file: UploadFile,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
-    people: IPeopleService = Depends(people_service),
-    permissions: IPermissionsService = Depends(permissions_service),
+    person: Person = Depends(
+        PersonWithTests(
+            assert_viewable,
+            assert_deletable,
+            assert_docs_readable,
+        )
+    ),
     documents: IDocumentsService = Depends(documents_service),
     uploads: UploadHandler = Depends(documents_upload),
     audits: IAuditService = Depends(audit_service),
@@ -312,25 +307,21 @@ async def person_upload_document(
         use_cache=False,
     ),
 ) -> DocumentResponse:
-    pet = await people.get_person(person_id)
-    permission = await permissions.find(pet.project_id, user.id)
-    assert_deletable(user, permission)
-    assert_docs_readable(user, permission)
     save_to = os.path.join(settings.documents_path, str(person_id))
     size, sealed_file = await uploads.process_upload(file, save_to)
     document = await documents.create_document(
         sealed_file.encryption_key,
         NewDocumentRequest(
-            name=file.filename,
+            name=str(file.filename),
             size=size,
             path=sealed_file.path,
             mimetype=file.content_type,
             owner_id=person_id,
-            project_id=pet.project_id,
+            project_id=person.project_id,
         ),
     )
     audit_log = props.new_event(
-        f"person_id={pet.id},ref_id={user.id}",
+        f"person_id={person.id},ref_id={user.id}",
         jsonable_encoder(
             document,
             exclude={"id", "encryption_key"},
@@ -350,21 +341,23 @@ async def person_upload_document(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
+    dependencies=[
+        Depends(
+            PersonWithTests(
+                assert_viewable,
+                assert_docs_readable,
+            )
+        ),
+        Depends(
+            RequiresRoles([Role.admin, Role.consultant, Role.staff]),
+        ),
+    ],
     tags=["documents"],
 )
 async def person_get_documents(
     person_id: Identifier,
-    user: Optional[User] = Depends(
-        RequiresRoles([Role.admin, Role.consultant, Role.staff]),
-    ),
-    people: IPeopleService = Depends(people_service),
-    permissions: IPermissionsService = Depends(permissions_service),
     documents: IDocumentsService = Depends(documents_service),
 ) -> List[DocumentResponse]:
-    pet = await people.get_person(person_id)
-    permission = await permissions.find(pet.project_id, user.id)
-    assert_viewable(user, permission)
-    assert_docs_readable(user, permission)
     docs = await documents.get_by_owner_id(person_id)
     return [DocumentResponse(**doc.dict()) for doc in docs]
 
@@ -386,9 +379,13 @@ async def add_persons_family_member(
     person_id: Identifier,
     new_member: NewFamilyMemberRequest,
     user: User = Depends(authenticated_user),
-    people: IPeopleService = Depends(people_service),
+    person: Person = Depends(
+        PersonWithTests(
+            assert_viewable,
+            assert_can_see_private_info,
+        )
+    ),
     family: IFamilyService = Depends(family_service),
-    permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
@@ -399,13 +396,9 @@ async def add_persons_family_member(
     ),
 ) -> FamilyMemberResponse:
     """Add family member for a person"""
-    person = await people.get_person(person_id)
-    permission = await permissions.find(person.project_id, user.id)
     if person.project_id != new_member.project_id:
         raise ConflictError(message="Project ID is not the same as in request body")
 
-    assert_viewable(user, permission)
-    assert_can_see_private_info(user, permission)
     member = await family.add_member(new_member)
     audit_log = props.new_event(
         f"person_id={person_id},project_id={new_member.project_id},member_id={member.id},ref_id={user.id}",
@@ -428,20 +421,21 @@ async def add_persons_family_member(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
+    dependencies=[
+        Depends(
+            PersonWithTests(
+                assert_viewable,
+                assert_can_see_private_info,
+            )
+        )
+    ],
     tags=["people", "family members"],
 )
 async def get_persons_family_members(
     person_id: Identifier,
-    user: User = Depends(authenticated_user),
-    people: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
-    permissions: IPermissionsService = Depends(permissions_service),
 ) -> List[FamilyMemberResponse]:
     """Get family members for a person"""
-    person = await people.get_person(person_id)
-    permission = await permissions.find(person.project_id, user.id)
-    assert_viewable(user, permission)
-    assert_can_see_private_info(user, permission)
     members = await family.get_by_person(person_id)
     return [FamilyMemberResponse(**member.dict()) for member in members]
 
@@ -455,6 +449,14 @@ async def get_persons_family_members(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
+    dependencies=[
+        Depends(
+            PersonWithTests(
+                assert_viewable,
+                assert_can_see_private_info,
+            )
+        )
+    ],
     tags=["people", "family members"],
 )
 async def update_persons_family_member(
@@ -463,9 +465,7 @@ async def update_persons_family_member(
     member_id: Identifier,
     updates: UpdateFamilyMemberRequest,
     user: User = Depends(authenticated_user),
-    people: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
-    permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
     props: Props = Depends(
         Tracked(
@@ -476,10 +476,6 @@ async def update_persons_family_member(
     ),
 ) -> FamilyMemberResponse:
     """Add family member for a person"""
-    person = await people.get_person(person_id)
-    permission = await permissions.find(person.project_id, user.id)
-    assert_viewable(user, permission)
-    assert_can_see_private_info(user, permission)
     member = await family.update_member(member_id, updates)
     audit_log = props.new_event(
         f"person_id={person_id},project_id={member.project_id},member_id={member.id},ref_id={user.id}",
@@ -501,6 +497,14 @@ async def update_persons_family_member(
         status.HTTP_403_FORBIDDEN,
         status.HTTP_404_NOT_FOUND,
     ),
+    dependencies=[
+        Depends(
+            PersonWithTests(
+                assert_viewable,
+                assert_can_see_private_info,
+            )
+        )
+    ],
     tags=["people", "family members"],
 )
 async def delete_persons_family_member(
@@ -508,9 +512,7 @@ async def delete_persons_family_member(
     person_id: Identifier,
     member_id: Identifier,
     user: User = Depends(authenticated_user),
-    people: IPeopleService = Depends(people_service),
     family: IFamilyService = Depends(family_service),
-    permissions: IPermissionsService = Depends(permissions_service),
     audits: IAuditService = Depends(audit_service),
     ip_address: str = Depends(client_ip),
     props: Props = Depends(
@@ -522,10 +524,6 @@ async def delete_persons_family_member(
     ),
 ) -> Response:
     """Delete family member for a person"""
-    person = await people.get_person(person_id)
-    permission = await permissions.find(person.project_id, user.id)
-    assert_viewable(user, permission)
-    assert_can_see_private_info(user, permission)
     member = await family.delete_member(member_id)
     audit_log = props.new_event(
         f"person_id={person_id},project_id={member.project_id},member_id={member.id},ref_id={user.id}",

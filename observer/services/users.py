@@ -59,7 +59,7 @@ class IUsersService(Protocol):
     async def confirm_user(self, user_id: Optional[Identifier], code: str) -> User:
         raise NotImplementedError
 
-    async def just_confirm_user(self, user_id: Optional[Identifier]) -> User:
+    async def just_confirm_user(self, user_id: Identifier) -> User:
         raise NotImplementedError
 
     async def create_confirmation(self, user_id: Identifier) -> Confirmation:
@@ -176,7 +176,7 @@ class UsersService(IUsersService):
         await self.repo.confirm_user(confirmation.user_id)
         return user
 
-    async def just_confirm_user(self, user_id: Optional[Identifier]) -> User:
+    async def just_confirm_user(self, user_id: Identifier) -> User:
         if user := await self.repo.confirm_user(user_id):
             return user
 
@@ -222,7 +222,10 @@ class UsersService(IUsersService):
         return await self.repo.get_invites(page.offset, page.limit)
 
     async def delete_invite(self, code: str) -> Invite:
-        return await self.repo.delete_invite(code)
+        if invite := await self.repo.delete_invite(code):
+            return invite
+
+        raise NotFoundError(message="Invite not found")
 
     async def reset_password(self, user_id: Identifier) -> PasswordReset:
         return await self.repo.create_password_reset_code(user_id, shortuuid.uuid())

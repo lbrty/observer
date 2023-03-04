@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional
+from typing import List
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Response, UploadFile
 from fastapi.encoders import jsonable_encoder
@@ -53,7 +53,7 @@ router = APIRouter(prefix="/pets")
 async def create_pet(
     tasks: BackgroundTasks,
     new_pet: NewPetRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     audits: IAuditService = Depends(audit_service),
@@ -88,7 +88,7 @@ async def create_pet(
 )
 async def get_pet(
     pet_id: Identifier,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     pets: IPetsService = Depends(pets_service),
@@ -115,7 +115,7 @@ async def update_pet(
     tasks: BackgroundTasks,
     pet_id: Identifier,
     updates: UpdatePetRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     audits: IAuditService = Depends(audit_service),
@@ -154,7 +154,7 @@ async def update_pet(
 async def delete_pet(
     tasks: BackgroundTasks,
     pet_id: Identifier,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     audits: IAuditService = Depends(audit_service),
@@ -206,7 +206,7 @@ async def pet_upload_document(
     tasks: BackgroundTasks,
     pet_id: Identifier,
     file: UploadFile,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     audits: IAuditService = Depends(audit_service),
@@ -264,7 +264,7 @@ async def pet_upload_document(
 )
 async def pet_get_documents(
     pet_id: Identifier,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     pets: IPetsService = Depends(pets_service),

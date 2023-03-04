@@ -66,4 +66,7 @@ async def allow_registrations() -> bool:
 
 
 async def allowed_admin_emails() -> List[str]:
-    return settings.admin_emails
+    if settings.admin_emails:
+        return settings.admin_emails
+
+    return []

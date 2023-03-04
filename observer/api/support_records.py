@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.encoders import jsonable_encoder
 from starlette import status
@@ -45,7 +43,7 @@ router = APIRouter(prefix="/support-records")
 async def create_support_record(
     tasks: BackgroundTasks,
     new_record: NewSupportRecordRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     support_records: ISupportRecordsService = Depends(support_records_service),
@@ -93,7 +91,7 @@ async def create_support_record(
 )
 async def get_support_record(
     record_id: Identifier,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     support_records: ISupportRecordsService = Depends(support_records_service),
@@ -120,7 +118,7 @@ async def update_support_record(
     tasks: BackgroundTasks,
     record_id: Identifier,
     updates: UpdateSupportRecordRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     people: IPeopleService = Depends(people_service),
@@ -169,7 +167,7 @@ async def update_support_record(
 async def delete_support_record(
     tasks: BackgroundTasks,
     record_id: Identifier,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     people: IPeopleService = Depends(people_service),

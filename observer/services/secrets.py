@@ -56,7 +56,7 @@ class SecretsService(ISecretsService):
         return personal_info
 
     async def decrypt_personal_info(self, pi: PersonalInfo) -> PersonalInfo:
-        if ":" in str(pi.email):
+        if pi.email and ":" in str(pi.email):
             key_hash, data = pi.email.split(":", maxsplit=1)
             decrypted_email = await self.crypto_service.decrypt(
                 key_hash,
@@ -64,7 +64,7 @@ class SecretsService(ISecretsService):
             )
             pi.email = decrypted_email.decode()
 
-        if ":" in str(pi.phone_number):
+        if pi.phone_number and ":" in str(pi.phone_number):
             key_hash, data = pi.phone_number.split(":", maxsplit=1)
             decrypted_phone_number = await self.crypto_service.decrypt(
                 key_hash,
@@ -72,7 +72,7 @@ class SecretsService(ISecretsService):
             )
             pi.phone_number = decrypted_phone_number.decode()
 
-        if ":" in str(pi.phone_number_additional):
+        if pi.phone_number_additional and ":" in str(pi.phone_number_additional):
             key_hash, data = pi.phone_number_additional.split(":", maxsplit=1)
             decrypted_phone_number_additional = await self.crypto_service.decrypt(
                 key_hash,

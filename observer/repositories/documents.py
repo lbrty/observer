@@ -1,4 +1,4 @@
-from typing import List, Optional, Protocol
+from typing import List, Optional, Protocol, Sequence
 
 from sqlalchemy import delete, insert, select, text
 
@@ -24,7 +24,7 @@ class IDocumentsRepository(Protocol):
     async def delete_document(self, doc_id: Identifier) -> Optional[Document]:
         raise NotImplementedError
 
-    async def bulk_delete(self, doc_ids: List[Identifier]) -> List[Identifier]:
+    async def bulk_delete(self, doc_ids: Sequence[Identifier]) -> List[Identifier]:
         raise NotImplementedError
 
 
@@ -63,7 +63,7 @@ class DocumentsRepository(IDocumentsRepository):
 
         return None
 
-    async def bulk_delete(self, doc_ids: List[Identifier]) -> List[Identifier]:
+    async def bulk_delete(self, doc_ids: Sequence[Identifier]) -> List[Identifier]:
         query = delete(documents).where(documents.c.id.in_(doc_ids)).returning(text("id"))
         rows = await self.db.fetchall(query)
         return [row["id"] for row in rows]

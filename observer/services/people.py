@@ -1,4 +1,4 @@
-from typing import Optional, Protocol
+from typing import Protocol
 
 from observer.api.exceptions import NotFoundError
 from observer.common.types import EncryptedFieldValue, Identifier
@@ -27,10 +27,10 @@ class IPeopleService(Protocol):
     async def get_person(self, person_id: Identifier) -> Person:
         raise NotImplementedError
 
-    async def update_person(self, person_id: Identifier, updates: UpdatePersonRequest) -> Optional[Person]:
+    async def update_person(self, person_id: Identifier, updates: UpdatePersonRequest) -> Person:
         raise NotImplementedError
 
-    async def delete_person(self, person_id: Identifier) -> Optional[Person]:
+    async def delete_person(self, person_id: Identifier) -> Person:
         raise NotImplementedError
 
 
@@ -54,27 +54,27 @@ class PeopleService(IPeopleService):
         self.offices_service = offices
 
     async def create_person(self, new_person: NewPersonRequest) -> Person:
-        new_person = NewPerson(**new_person.dict())
-        if new_person.project_id:
-            await self.projects_service.get_by_id(new_person.project_id)
+        person = NewPerson(**new_person.dict())
+        if person.project_id:
+            await self.projects_service.get_by_id(person.project_id)
 
-        if new_person.category_id:
-            await self.categories_service.get_category(new_person.category_id)
+        if person.category_id:
+            await self.categories_service.get_category(person.category_id)
 
-        if new_person.office_id:
-            await self.offices_service.get_office(new_person.office_id)
+        if person.office_id:
+            await self.offices_service.get_office(person.office_id)
 
         pi = PersonalInfo(
-            email=new_person.email,
-            phone_number=new_person.phone_number,
-            phone_number_additional=new_person.phone_number_additional,
+            email=person.email,
+            phone_number=person.phone_number,
+            phone_number_additional=person.phone_number_additional,
         )
 
         pi = await self.secrets_service.encrypt_personal_info(pi)
-        new_person.email = pi.email
-        new_person.phone_number = pi.phone_number
-        new_person.phone_number_additional = pi.phone_number_additional
-        return await self.repo.create_person(new_person)
+        person.email = pi.email
+        person.phone_number = pi.phone_number
+        person.phone_number_additional = pi.phone_number_additional
+        return await self.repo.create_person(person)
 
     async def get_person(self, person_id: Identifier) -> Person:
         if person := await self.repo.get_person(person_id):
@@ -82,7 +82,7 @@ class PeopleService(IPeopleService):
 
         raise NotFoundError(message="Person not found")
 
-    async def update_person(self, person_id: Identifier, updates: UpdatePersonRequest) -> Optional[Person]:
+    async def update_person(self, person_id: Identifier, updates: UpdatePersonRequest) -> Person:
         """Update person
 
         NOTES:
@@ -118,5 +118,8 @@ class PeopleService(IPeopleService):
 
         raise NotFoundError(message="Person not found")
 
-    async def delete_person(self, person_id: Identifier) -> Optional[Person]:
-        return await self.repo.delete_person(person_id)
+    async def delete_person(self, person_id: Identifier) -> Person:
+        if person := await self.repo.delete_person(person_id):
+            return person
+
+        raise NotFoundError(message="Person not found")

@@ -26,7 +26,7 @@ class DownloadHandler:
                 break
 
     async def get_encryption_secrets(self, document: Document) -> AESCipherOptions:
-        key_hash, secrets = document.encryption_key.split(":", maxsplit=1)
+        key_hash, secrets = (document.encryption_key or "").split(":", maxsplit=1)
         decrypted_secrets = await self.crypto.decrypt(key_hash, secrets.encode())
         encoded_secrets = decrypted_secrets.decode()
         aes_cipher_options = await self.crypto.parse_aes_secrets(encoded_secrets)
