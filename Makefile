@@ -21,7 +21,7 @@ lint:
 
 .PHONY: test
 test:
-	poetry run pytest tests
+	poetry run pytest tests --durations=0
 
 .PHONY: serve
 serve:
