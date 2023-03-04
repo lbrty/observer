@@ -103,7 +103,8 @@ addopts = """
     --cov-report=xml:reports/coverage.xml \
     --cov-report=html:reports/html \
     --junit-xml=reports/tests.xml \
-    --no-cov-on-fail
+    --no-cov-on-fail \
+    --durations=0
 """
 
 filterwarnings = [
