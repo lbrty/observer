@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.encoders import jsonable_encoder
@@ -42,7 +42,7 @@ router = APIRouter(prefix="/world")
 async def create_country(
     tasks: BackgroundTasks,
     new_country: NewCountryRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     world: IWorldService = Depends(world_service),
@@ -115,7 +115,7 @@ async def update_country(
     tasks: BackgroundTasks,
     country_id: Identifier,
     updates: UpdateCountryRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     world: IWorldService = Depends(world_service),
@@ -156,7 +156,7 @@ async def update_country(
 async def delete_country(
     tasks: BackgroundTasks,
     country_id: Identifier,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     world: IWorldService = Depends(world_service),
@@ -192,7 +192,7 @@ async def delete_country(
 async def create_state(
     tasks: BackgroundTasks,
     new_state: NewStateRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     world: IWorldService = Depends(world_service),
@@ -268,7 +268,7 @@ async def update_state(
     tasks: BackgroundTasks,
     state_id: Identifier,
     updates: UpdateStateRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     world: IWorldService = Depends(world_service),
@@ -307,7 +307,7 @@ async def update_state(
 async def delete_state(
     tasks: BackgroundTasks,
     state_id: Identifier,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     world: IWorldService = Depends(world_service),
@@ -343,7 +343,7 @@ async def delete_state(
 async def create_place(
     tasks: BackgroundTasks,
     new_place: NewPlaceRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     world: IWorldService = Depends(world_service),
@@ -419,7 +419,7 @@ async def update_place(
     tasks: BackgroundTasks,
     place_id: Identifier,
     updates: UpdatePlaceRequest,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     world: IWorldService = Depends(world_service),
@@ -461,7 +461,7 @@ async def update_place(
 async def delete_place(
     tasks: BackgroundTasks,
     place_id: Identifier,
-    user: Optional[User] = Depends(
+    user: User = Depends(
         RequiresRoles([Role.admin, Role.consultant, Role.staff]),
     ),
     world: IWorldService = Depends(world_service),

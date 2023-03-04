@@ -1,12 +1,10 @@
-from typing import Any, Dict, Sequence, Tuple, TypeAlias
+from typing import Any, Dict, Union
 
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 from pydantic.main import BaseModel
 
 from observer.api.exceptions import BaseAPIException, ErrorCode
-
-AdditionalResponses: TypeAlias = Sequence[int | Tuple[int, str]]
 
 
 class APIError(BaseModel):
@@ -23,10 +21,18 @@ async def handle_api_exception(_: Request, exc: BaseAPIException) -> JSONRespons
     )
 
 
-def get_api_errors(*additional_responses: AdditionalResponses) -> Dict[int, Dict]:
+def get_api_errors(*additional_responses) -> Dict[Union[int, str], Dict[str, Any]]:
     """Creates additional responses to swagger schema
-
     https://fastapi.tiangolo.com/advanced/additional-responses/?h=responses
+
+    When called it expects `*additional_responses: tuple[int | str | tuple[Any, str]]` in the following format
+    ```
+    get_api_errors(
+        status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_403_FORBIDDEN,
+        (status.HTTP_404_NOT_FOUND, "Project or member not found"),
+    )
+    ```
     """
     responses = {}
     for resp in additional_responses:
