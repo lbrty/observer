@@ -22,6 +22,7 @@ router = APIRouter(prefix="/users")
     responses=get_api_errors(
         status.HTTP_401_UNAUTHORIZED,
         status.HTTP_403_FORBIDDEN,
+        status.HTTP_409_CONFLICT,
     ),
     tags=["admin", "users"],
 )
