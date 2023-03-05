@@ -431,7 +431,7 @@
         "parameters": [
           {
             "description": "Email to filter by",
-            "required": true,
+            "required": false,
             "schema": {
               "title": "Email",
               "type": "string",
@@ -442,7 +442,7 @@
           },
           {
             "description": "Full name of user",
-            "required": true,
+            "required": false,
             "schema": {
               "title": "Full Name",
               "type": "string",
@@ -453,7 +453,7 @@
           },
           {
             "description": "Role of user",
-            "required": true,
+            "required": false,
             "schema": {
               "allOf": [
                 {
@@ -467,7 +467,7 @@
           },
           {
             "description": "Office users belongs to",
-            "required": true,
+            "required": false,
             "schema": {
               "title": "Office Id",
               "anyOf": [
@@ -486,7 +486,7 @@
           },
           {
             "description": "Active status of user",
-            "required": true,
+            "required": false,
             "schema": {
               "title": "Is Active",
               "type": "boolean",

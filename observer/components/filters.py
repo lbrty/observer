@@ -41,11 +41,11 @@ async def place_filters(
 
 
 async def user_filters(
-    email: Optional[str] = Query(..., description="Email to filter by"),
-    full_name: Optional[str] = Query(..., description="Full name of user"),
-    role: Optional[Role] = Query(..., description="Role of user"),
-    office_id: Optional[Identifier] = Query(..., description="Office users belongs to"),
-    is_active: Optional[bool] = Query(..., description="Active status of user"),
+    email: Optional[str] = Query(None, description="Email to filter by"),
+    full_name: Optional[str] = Query(None, description="Full name of user"),
+    role: Optional[Role] = Query(None, description="Role of user"),
+    office_id: Optional[Identifier] = Query(None, description="Office users belongs to"),
+    is_active: Optional[bool] = Query(None, description="Active status of user"),
 ) -> UserFilters:
     return UserFilters(
         email=email,
