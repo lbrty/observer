@@ -65,7 +65,7 @@ async def test_admins_can_filter_users(
     }
 
     resp = await client.get(
-        f"/admin/users?offset=2&limit=2",
+        "/admin/users?offset=2&limit=2",
         cookies=tokens.dict(),
     )
 
