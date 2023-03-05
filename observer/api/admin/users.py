@@ -78,8 +78,8 @@ async def admin_get_users(
     filters: UserFilters = Depends(user_filters),
     pages: Pagination = Depends(pagination),
 ) -> UsersResponse:
-    count, users = await users.filter_users(filters, pages)
-    return UsersResponse(total=count, items=users)
+    count, items = await users.filter_users(filters, pages)
+    return UsersResponse(total=count, items=items)
 
 
 @router.get(
