@@ -37,6 +37,9 @@ jobs:
       run: |
         pip install --upgrade pip poetry
         poetry install
+    - name: Lint
+      run: |
+        poetry run make lint
     - name: Test
       run: |
         poetry run pytest --trace tests -vvv
