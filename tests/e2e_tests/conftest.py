@@ -370,6 +370,11 @@ def test_app(env_settings) -> FastAPI:
     return create_app(env_settings)
 
 
+@pytest.fixture(scope="session")
+def secure_password() -> str:
+    return "!@1StronKPassw0rd#"
+
+
 @pytest.fixture(scope="function")
 async def consultant_user(ensure_db, app_context):  # type:ignore
     user = await app_context.users_service.repo.create_user(

@@ -502,8 +502,19 @@
           "admin",
           "users"
         ],
-        "summary": "Create User",
-        "operationId": "create_user_admin_users_post",
+        "summary": "Admin Create User",
+        "operationId": "admin_create_user_admin_users_post",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -515,15 +526,8 @@
           "required": true
         },
         "responses": {
-          "201": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UsersResponse"
-                }
-              }
-            }
+          "204": {
+            "description": "Successful Response"
           },
           "401": {
             "description": "Unauthorized",

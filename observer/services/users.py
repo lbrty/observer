@@ -53,6 +53,9 @@ class IUsersService(Protocol):
     async def reset_mfa(self, user_id: Identifier):
         raise NotImplementedError
 
+    async def update_user(self, user_id: Identifier, updates: UserUpdate):
+        raise NotImplementedError
+
     async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
         raise NotImplementedError
 
@@ -145,6 +148,9 @@ class UsersService(IUsersService):
         user = await self.repo.reset_mfa(user_id)
         if not user:
             raise NotFoundError(message="User not found")
+
+    async def update_user(self, user_id: Identifier, updates: UserUpdate):
+        await self.repo.update_user(user_id, updates)
 
     async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
         keys_hash, encrypted_backup_codes = user_backup_codes.split(":", maxsplit=1)
