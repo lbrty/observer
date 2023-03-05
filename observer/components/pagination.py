@@ -1,6 +1,6 @@
 from fastapi import Query
 
-from observer.schemas.pagination import Pagination
+from observer.common.types import Pagination
 
 DEFAULT_LIMIT = 100
 MAX_LIMIT = 200

@@ -20,8 +20,8 @@ class NewUserRequest(BaseUser):
 
 
 class UpdateUserRequest(BaseUser):
-    is_active: bool = Field(True, description="Is user active?")
-    is_confirmed: bool = Field(False, description="Is user confirmed?")
+    is_active: Optional[bool] = Field(..., description="Is user active?")
+    is_confirmed: Optional[bool] = Field(..., description="Is user confirmed?")
 
 
 class UserPasswordUpdate(BaseUser):
@@ -74,4 +74,7 @@ class InviteJoinRequest(SchemaBase):
 class CreateUserRequest(BaseUser):
     password: SecretStr = Field(..., description="Password which user has provided")
     is_active: bool = Field(True, description="Is user active?")
-    is_confirmed: bool = Field(False, description="Is user confirmed?")
+
+
+class AdminUpdateUserRequest(BaseUser):
+    is_active: Optional[bool] = Field(..., description="Is user active?")

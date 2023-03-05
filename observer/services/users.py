@@ -10,7 +10,7 @@ from observer.api.exceptions import (
     TOTPInvalidBackupCodeError,
 )
 from observer.common import bcrypt
-from observer.common.types import Identifier
+from observer.common.types import Identifier, Pagination, UserFilters
 from observer.entities.users import (
     Confirmation,
     Invite,
@@ -20,7 +20,6 @@ from observer.entities.users import (
     UserUpdate,
 )
 from observer.repositories.users import IUsersRepository
-from observer.schemas.pagination import Pagination
 from observer.schemas.users import NewUserRequest, UserMFAUpdateRequest
 from observer.services.crypto import ICryptoService
 from observer.settings import settings
@@ -53,7 +52,10 @@ class IUsersService(Protocol):
     async def reset_mfa(self, user_id: Identifier):
         raise NotImplementedError
 
-    async def update_user(self, user_id: Identifier, updates: UserUpdate):
+    async def update_user(self, user_id: Identifier, updates: UserUpdate) -> User:
+        raise NotImplementedError
+
+    async def filter_users(self, filters: UserFilters, pages: Pagination) -> Tuple[int, List[User]]:
         raise NotImplementedError
 
     async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
@@ -140,17 +142,25 @@ class UsersService(IUsersService):
             mfa_encrypted_secret=updates.mfa_encrypted_secret,
             mfa_encrypted_backup_codes=updates.mfa_encrypted_backup_codes,
         )
-        user = await self.repo.update_user(user_id, user_update)
-        if not user:
-            raise NotFoundError(message="User not found")
+        if user := await self.repo.update_user(user_id, user_update):
+            return user
+
+        raise NotFoundError(message="User not found")
 
     async def reset_mfa(self, user_id: Identifier):
-        user = await self.repo.reset_mfa(user_id)
-        if not user:
-            raise NotFoundError(message="User not found")
+        if user := await self.repo.reset_mfa(user_id):
+            return user
 
-    async def update_user(self, user_id: Identifier, updates: UserUpdate):
-        await self.repo.update_user(user_id, updates)
+        raise NotFoundError(message="User not found")
+
+    async def update_user(self, user_id: Identifier, updates: UserUpdate) -> User:
+        if user := await self.repo.update_user(user_id, updates):
+            return user
+
+        raise NotFoundError(message="User not found")
+
+    async def filter_users(self, filters: UserFilters, pages: Pagination) -> Tuple[int, List[User]]:
+        return await self.repo.filter_users(filters, pages)
 
     async def check_backup_code(self, user_backup_codes: str, given_backup_code: str):
         keys_hash, encrypted_backup_codes = user_backup_codes.split(":", maxsplit=1)

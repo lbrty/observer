@@ -5,7 +5,7 @@ from starlette import status
 from observer.api.exceptions import ConflictError, NotFoundError
 from observer.common.exceptions import get_api_errors
 from observer.common.permissions import permission_matrix
-from observer.common.types import Identifier, Role
+from observer.common.types import Identifier, Pagination, Role
 from observer.components.audit import Props, Tracked
 from observer.components.auth import RequiresRoles, authenticated_user, current_user
 from observer.components.pagination import pagination
@@ -24,7 +24,6 @@ from observer.components.services import (
 )
 from observer.entities.projects import Project
 from observer.entities.users import User
-from observer.schemas.pagination import Pagination
 from observer.schemas.permissions import (
     NewPermissionRequest,
     PermissionResponse,

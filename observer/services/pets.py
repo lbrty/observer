@@ -1,10 +1,9 @@
 from typing import List, Protocol, Tuple
 
 from observer.api.exceptions import NotFoundError
-from observer.common.types import Identifier
+from observer.common.types import Identifier, Pagination
 from observer.entities.pets import NewPet, Pet, UpdatePet
 from observer.repositories.pets import IPetsRepository
-from observer.schemas.pagination import Pagination
 from observer.schemas.pets import NewPetRequest, UpdatePetRequest
 
 

@@ -21,7 +21,6 @@ async def test_admins_can_create_users(
         password=secure_password,
         role=Role.guest,
         is_active=True,
-        is_confirmed=True,
     )
     payload = jsonable_encoder(create_user_request)
     payload["password"] = secure_password

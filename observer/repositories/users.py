@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
 from typing import List, Optional, Protocol, Tuple
 
-from sqlalchemy import delete, desc, func, insert, select, update
+from sqlalchemy import and_, delete, desc, func, insert, select, update
 
-from observer.common.types import Identifier
+from observer.common.types import Identifier, Pagination, UserFilters
 from observer.db import Database
 from observer.db.tables.users import confirmations, invites, password_resets, users
 from observer.entities.users import (
@@ -30,6 +30,9 @@ class IUsersRepository(Protocol):
         raise NotImplementedError
 
     async def update_user(self, user_id: Identifier, updates: UserUpdate) -> Optional[User]:
+        raise NotImplementedError
+
+    async def filter_users(self, filters: UserFilters, pages: Pagination) -> Tuple[int, List[User]]:
         raise NotImplementedError
 
     async def update_password(self, user_id: Identifier, new_password_hash: str) -> Optional[User]:
@@ -183,6 +186,41 @@ class UsersRepository(IUsersRepository):
             return User(**result)
 
         return None
+
+    async def filter_users(self, filters: Optional[UserFilters], pages: Pagination) -> Tuple[int, List[User]]:
+        conditions = []
+        if filters:
+            if filters.email:
+                conditions.append(users.c.email.ilike(f"%{filters.email}%"))
+
+            if filters.full_name:
+                conditions.append(users.c.full_name.ilike(f"%{filters.full_name}%"))
+
+            if filters.role:
+                conditions.append(users.c.role == filters.role)
+
+            if filters.office_id:
+                conditions.append(users.c.office_id == filters.office_id)
+
+            if filters.is_active is not None:
+                conditions.append(users.c.is_active == filters.is_active)
+
+        query = select(users)
+        if len(conditions) > 0:
+            query = query.where(and_(*conditions))
+        query = query.offset(pages.offset).limit(pages.limit)
+
+        count_query = (
+            select(
+                func.count().label("count"),
+            )
+            .select_from(users)
+            .where(and_(*conditions))
+        )
+        rows = await self.db.fetchall(query)
+        items = [User(**row) for row in rows]
+        users_count = await self.db.fetchone(count_query)
+        return users_count["count"], items
 
     async def update_password(self, user_id: Identifier, new_password_hash: str) -> Optional[User]:
         update_values = dict(password_hash=new_password_hash)

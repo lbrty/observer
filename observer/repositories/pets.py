@@ -2,11 +2,10 @@ from typing import List, Optional, Protocol, Tuple
 
 from sqlalchemy import delete, func, insert, select, update
 
-from observer.common.types import Identifier
+from observer.common.types import Identifier, Pagination
 from observer.db import Database
 from observer.db.tables.pets import pets
 from observer.entities.pets import NewPet, Pet, UpdatePet
-from observer.schemas.pagination import Pagination
 
 
 class IPetsRepository(Protocol):

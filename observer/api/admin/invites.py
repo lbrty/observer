@@ -3,7 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from starlette import status
 
 from observer.common.exceptions import get_api_errors
-from observer.common.types import Identifier, Role
+from observer.common.types import Identifier, Pagination, Role
 from observer.components.audit import Props, Tracked, client_ip
 from observer.components.auth import RequiresRoles
 from observer.components.pagination import pagination
@@ -16,7 +16,6 @@ from observer.components.services import (
     users_service,
 )
 from observer.entities.users import User
-from observer.schemas.pagination import Pagination
 from observer.schemas.permissions import NewPermissionRequest
 from observer.schemas.users import (
     NewUserRequest,

@@ -426,9 +426,75 @@
           "admin",
           "users"
         ],
-        "summary": "Get Users",
-        "operationId": "get_users_admin_users_get",
+        "summary": "Admin Get Users",
+        "operationId": "admin_get_users_admin_users_get",
         "parameters": [
+          {
+            "description": "Email to filter by",
+            "required": true,
+            "schema": {
+              "title": "Email",
+              "type": "string",
+              "description": "Email to filter by"
+            },
+            "name": "email",
+            "in": "query"
+          },
+          {
+            "description": "Full name of user",
+            "required": true,
+            "schema": {
+              "title": "Full Name",
+              "type": "string",
+              "description": "Full name of user"
+            },
+            "name": "full_name",
+            "in": "query"
+          },
+          {
+            "description": "Role of user",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Role"
+                }
+              ],
+              "description": "Role of user"
+            },
+            "name": "role",
+            "in": "query"
+          },
+          {
+            "description": "Office users belongs to",
+            "required": true,
+            "schema": {
+              "title": "Office Id",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "Office users belongs to"
+            },
+            "name": "office_id",
+            "in": "query"
+          },
+          {
+            "description": "Active status of user",
+            "required": true,
+            "schema": {
+              "title": "Is Active",
+              "type": "boolean",
+              "description": "Active status of user"
+            },
+            "name": "is_active",
+            "in": "query"
+          },
           {
             "description": "How many items to return?",
             "required": false,
@@ -452,6 +518,15 @@
             },
             "name": "offset",
             "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
           }
         ],
         "responses": {
@@ -578,8 +653,8 @@
           "admin",
           "users"
         ],
-        "summary": "Get User",
-        "operationId": "get_user_admin_users__user_id__get",
+        "summary": "Admin Get User",
+        "operationId": "admin_get_user_admin_users__user_id__get",
         "parameters": [
           {
             "required": true,
@@ -597,6 +672,15 @@
             },
             "name": "user_id",
             "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
           }
         ],
         "responses": {
@@ -657,8 +741,8 @@
           "admin",
           "users"
         ],
-        "summary": "Update User",
-        "operationId": "update_user_admin_users__user_id__put",
+        "summary": "Admin Update User",
+        "operationId": "admin_update_user_admin_users__user_id__put",
         "parameters": [
           {
             "required": true,
@@ -676,13 +760,22 @@
             },
             "name": "user_id",
             "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateUserRequest"
+                "$ref": "#/components/schemas/AdminUpdateUserRequest"
               }
             }
           },
@@ -746,8 +839,8 @@
           "admin",
           "users"
         ],
-        "summary": "Delete User",
-        "operationId": "delete_user_admin_users__user_id__delete",
+        "summary": "Admin Delete User",
+        "operationId": "admin_delete_user_admin_users__user_id__delete",
         "parameters": [
           {
             "required": true,
@@ -765,6 +858,15 @@
             },
             "name": "user_id",
             "in": "path"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Access Token",
+              "type": "string"
+            },
+            "name": "access_token",
+            "in": "cookie"
           }
         ],
         "responses": {
@@ -6917,6 +7019,54 @@
           }
         }
       },
+      "AdminUpdateUserRequest": {
+        "title": "AdminUpdateUserRequest",
+        "required": [
+          "email",
+          "role",
+          "is_active"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "title": "Email",
+            "type": "string",
+            "description": "E-mail address of a user",
+            "format": "email"
+          },
+          "full_name": {
+            "title": "Full Name",
+            "type": "string",
+            "description": "Full name of a user"
+          },
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Role"
+              }
+            ],
+            "description": "Role of a user"
+          },
+          "office_id": {
+            "title": "Office Id",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "description": "Office ID to which user belongs"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean",
+            "description": "Is user active?"
+          }
+        }
+      },
       "AgeGroup": {
         "title": "AgeGroup",
         "enum": [
@@ -7106,12 +7256,6 @@
             "type": "boolean",
             "description": "Is user active?",
             "default": true
-          },
-          "is_confirmed": {
-            "title": "Is Confirmed",
-            "type": "boolean",
-            "description": "Is user confirmed?",
-            "default": false
           }
         }
       },
@@ -9668,60 +9812,6 @@
               }
             ],
             "description": "Project ID"
-          }
-        }
-      },
-      "UpdateUserRequest": {
-        "title": "UpdateUserRequest",
-        "required": [
-          "email",
-          "role"
-        ],
-        "type": "object",
-        "properties": {
-          "email": {
-            "title": "Email",
-            "type": "string",
-            "description": "E-mail address of a user",
-            "format": "email"
-          },
-          "full_name": {
-            "title": "Full Name",
-            "type": "string",
-            "description": "Full name of a user"
-          },
-          "role": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Role"
-              }
-            ],
-            "description": "Role of a user"
-          },
-          "office_id": {
-            "title": "Office Id",
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "description": "Office ID to which user belongs"
-          },
-          "is_active": {
-            "title": "Is Active",
-            "type": "boolean",
-            "description": "Is user active?",
-            "default": true
-          },
-          "is_confirmed": {
-            "title": "Is Confirmed",
-            "type": "boolean",
-            "description": "Is user confirmed?",
-            "default": false
           }
         }
       },
