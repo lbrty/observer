@@ -78,6 +78,8 @@ preview = true
 [tool.mypy]
 exclude = [".venv", ".git", ".idea", "tests"]
 ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+follow_imports = "silent"
 
 [tool.isort]
 profile = "black"
