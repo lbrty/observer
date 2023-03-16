@@ -367,7 +367,7 @@ async def ensure_db(env_settings, db_engine):
 
 @pytest.fixture(scope="session")
 def test_app(env_settings) -> FastAPI:
-    return create_app(env_settings)
+    return create_app(env_settings, None)
 
 
 @pytest.fixture(scope="session")

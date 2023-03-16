@@ -86,7 +86,7 @@ class Settings(SettingsBase):
     storage_kind: str = StorageKind.fs
     storage_root: str = str(here / "uploads")
     # Maximum upload file size is 5Mb
-    max_upload_size = 1024 * 1024 * 5
+    max_upload_size: int = 1024 * 1024 * 5
     # Local storage uses the same path
     documents_path: str = "documents"
     # Block storage

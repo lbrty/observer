@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any, AsyncContextManager, Callable, Optional
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -82,7 +83,7 @@ def init_exception_handlers(env: Environment) -> Environment:
     return env
 
 
-def create_app(settings: Settings) -> FastAPI:
+def create_app(settings: Settings, lifespan: Optional[Callable[[FastAPI], AsyncContextManager[Any]]]) -> FastAPI:
     env: Environment = pipe(
         [
             init_integrations,
@@ -95,6 +96,7 @@ def create_app(settings: Settings) -> FastAPI:
             app=FastAPI(
                 debug=settings.debug,
                 title=settings.title,
+                lifespan=lifespan,
                 description=settings.description,
                 version=settings.version,
                 docs_url=None,

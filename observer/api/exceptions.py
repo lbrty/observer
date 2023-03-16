@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 from starlette import status
 
@@ -45,7 +45,7 @@ class BaseAPIException(Exception):
         self.message = message or self.default_message
         self.data = data or self.default_data
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[Any, Any]:
         result = dict(
             code=self.code.value,
             status_code=self.status,

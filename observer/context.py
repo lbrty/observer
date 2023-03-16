@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 from observer.db import Database
 from observer.repositories.audit_logs import IAuditRepository
@@ -41,48 +40,48 @@ from observer.services.world import IWorldService
 
 @dataclass
 class Repositories:
-    audit: Optional[IAuditRepository] = None
-    users: Optional[IUsersRepository] = None
-    projects: Optional[IProjectsRepository] = None
-    offices: Optional[IOfficesRepository] = None
-    permissions: Optional[IPermissionsRepository] = None
-    world: Optional[IWorldRepository] = None
-    category: Optional[ICategoryRepository] = None
-    people: Optional[IPeopleRepository] = None
-    family: Optional[IFamilyRepository] = None
-    pets: Optional[IPetsRepository] = None
-    documents: Optional[IDocumentsRepository] = None
-    support: Optional[ISupportRecordsRepository] = None
-    migrations: Optional[IMigrationRepository] = None
+    audit: IAuditRepository = None
+    users: IUsersRepository = None
+    projects: IProjectsRepository = None
+    offices: IOfficesRepository = None
+    permissions: IPermissionsRepository = None
+    world: IWorldRepository = None
+    category: ICategoryRepository = None
+    people: IPeopleRepository = None
+    family: IFamilyRepository = None
+    pets: IPetsRepository = None
+    documents: IDocumentsRepository = None
+    support: ISupportRecordsRepository = None
+    migrations: IMigrationRepository = None
 
 
 @dataclass
 class Context:
-    db: Optional[Database] = None
-    uploads: Optional[UploadHandler] = None
-    downloads: Optional[DownloadHandler] = None
-    repos: Optional[Repositories] = None
-    storage: Optional[IStorage] = None
-    keychain: Optional[IKeychain] = None
-    mailer: Optional[IMailer] = None
-    audit_service: Optional[IAuditService] = None
-    jwt_service: Optional[JWTService] = None
-    auth_service: Optional[IAuthService] = None
-    crypto_service: Optional[ICryptoService] = None
-    mfa_service: Optional[IMFAService] = None
-    users_service: Optional[IUsersService] = None
-    offices_service: Optional[IOfficesService] = None
-    projects_service: Optional[IProjectsService] = None
-    permissions_service: Optional[IPermissionsService] = None
-    world_service: Optional[IWorldService] = None
-    category_service: Optional[ICategoryService] = None
-    people_service: Optional[IPeopleService] = None
-    family_service: Optional[IFamilyService] = None
-    pets_service: Optional[IPetsService] = None
-    documents_service: Optional[IDocumentsService] = None
-    support_service: Optional[ISupportRecordsService] = None
-    migrations_service: Optional[IMigrationService] = None
-    secrets_service: Optional[ISecretsService] = None
+    db: Database = None
+    uploads: UploadHandler = None
+    downloads: DownloadHandler = None
+    repos: Repositories = None
+    storage: IStorage = None
+    keychain: IKeychain = None
+    mailer: IMailer = None
+    audit_service: IAuditService = None
+    jwt_service: JWTService = None
+    auth_service: IAuthService = None
+    crypto_service: ICryptoService = None
+    mfa_service: IMFAService = None
+    users_service: IUsersService = None
+    offices_service: IOfficesService = None
+    projects_service: IProjectsService = None
+    permissions_service: IPermissionsService = None
+    world_service: IWorldService = None
+    category_service: ICategoryService = None
+    people_service: IPeopleService = None
+    family_service: IFamilyService = None
+    pets_service: IPetsService = None
+    documents_service: IDocumentsService = None
+    support_service: ISupportRecordsService = None
+    migrations_service: IMigrationService = None
+    secrets_service: ISecretsService = None
 
 
 ctx = Context()

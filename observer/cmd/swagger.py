@@ -14,7 +14,7 @@ def generate(
     output_file: Path = Option(settings.swagger_output_file, help="Output file to save OpenAPI spec"),
 ):
     """Generate OpenAPI spec"""
-    app = create_app(settings)
+    app = create_app(settings, None)
     if not output_file.parent.exists():
         output_file.parent.mkdir(exist_ok=True)
 

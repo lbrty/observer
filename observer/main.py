@@ -1,4 +1,7 @@
 import sys
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
 
 from observer.app import create_app
 from observer.context import Repositories, ctx
@@ -41,11 +44,9 @@ from observer.services.users import UsersService
 from observer.services.world import WorldService
 from observer.settings import db_settings, settings
 
-app = create_app(settings)
 
-
-@app.on_event("startup")
-async def on_startup():
+@asynccontextmanager
+async def lifespan(_: FastAPI):
     ctx.db = await connect(
         db_settings.db_uri,
         PoolOptions(
@@ -124,7 +125,9 @@ async def on_startup():
     ctx.uploads = UploadHandler(ctx.storage, ctx.crypto_service)
     ctx.downloads = DownloadHandler(ctx.storage, ctx.crypto_service)
 
+    yield
 
-@app.on_event("shutdown")
-async def on_shutdown():
     await disconnect(ctx.db.engine)
+
+
+app = create_app(settings, lifespan)
