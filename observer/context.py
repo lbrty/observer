@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Type
 
 from observer.db import Database
 from observer.repositories.audit_logs import IAuditRepository
@@ -40,48 +41,48 @@ from observer.services.world import IWorldService
 
 @dataclass
 class Repositories:
-    audit: IAuditRepository = None
-    users: IUsersRepository = None
-    projects: IProjectsRepository = None
-    offices: IOfficesRepository = None
-    permissions: IPermissionsRepository = None
-    world: IWorldRepository = None
-    category: ICategoryRepository = None
-    people: IPeopleRepository = None
-    family: IFamilyRepository = None
-    pets: IPetsRepository = None
-    documents: IDocumentsRepository = None
-    support: ISupportRecordsRepository = None
-    migrations: IMigrationRepository = None
+    audit: Type[IAuditRepository] = field(init=False)
+    users: Type[IUsersRepository] = field(init=False)
+    projects: Type[IProjectsRepository] = field(init=False)
+    offices: Type[IOfficesRepository] = field(init=False)
+    permissions: Type[IPermissionsRepository] = field(init=False)
+    world: Type[IWorldRepository] = field(init=False)
+    category: Type[ICategoryRepository] = field(init=False)
+    people: Type[IPeopleRepository] = field(init=False)
+    family: Type[IFamilyRepository] = field(init=False)
+    pets: Type[IPetsRepository] = field(init=False)
+    documents: Type[IDocumentsRepository] = field(init=False)
+    support: Type[ISupportRecordsRepository] = field(init=False)
+    migrations: Type[IMigrationRepository] = field(init=False)
 
 
 @dataclass
 class Context:
-    db: Database = None
-    uploads: UploadHandler = None
-    downloads: DownloadHandler = None
-    repos: Repositories = None
-    storage: IStorage = None
-    keychain: IKeychain = None
-    mailer: IMailer = None
-    audit_service: IAuditService = None
-    jwt_service: JWTService = None
-    auth_service: IAuthService = None
-    crypto_service: ICryptoService = None
-    mfa_service: IMFAService = None
-    users_service: IUsersService = None
-    offices_service: IOfficesService = None
-    projects_service: IProjectsService = None
-    permissions_service: IPermissionsService = None
-    world_service: IWorldService = None
-    category_service: ICategoryService = None
-    people_service: IPeopleService = None
-    family_service: IFamilyService = None
-    pets_service: IPetsService = None
-    documents_service: IDocumentsService = None
-    support_service: ISupportRecordsService = None
-    migrations_service: IMigrationService = None
-    secrets_service: ISecretsService = None
+    db: Database = field(init=False)
+    uploads: UploadHandler = field(init=False)
+    downloads: DownloadHandler = field(init=False)
+    repos: Repositories = field(init=False)
+    storage: IStorage = field(init=False)
+    keychain: IKeychain = field(init=False)
+    mailer: IMailer = field(init=False)
+    audit_service: IAuditService = field(init=False)
+    jwt_service: JWTService = field(init=False)
+    auth_service: IAuthService = field(init=False)
+    crypto_service: ICryptoService = field(init=False)
+    mfa_service: IMFAService = field(init=False)
+    users_service: IUsersService = field(init=False)
+    offices_service: IOfficesService = field(init=False)
+    projects_service: IProjectsService = field(init=False)
+    permissions_service: IPermissionsService = field(init=False)
+    world_service: IWorldService = field(init=False)
+    category_service: ICategoryService = field(init=False)
+    people_service: IPeopleService = field(init=False)
+    family_service: IFamilyService = field(init=False)
+    pets_service: IPetsService = field(init=False)
+    documents_service: IDocumentsService = field(init=False)
+    support_service: ISupportRecordsService = field(init=False)
+    migrations_service: IMigrationService = field(init=False)
+    secrets_service: ISecretsService = field(init=False)
 
 
 ctx = Context()
