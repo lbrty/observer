@@ -8,15 +8,11 @@ docker-image:
 
 .PHONY: fmt
 fmt:
-	poetry run black .
-	poetry run isort .
-	poetry run autoflake .
+	poetry run ruff format .
 
 .PHONY: lint
 lint:
 	poetry run ruff . -q
-	poetry run black . --check -q
-	poetry run isort . -c -q
 	poetry run mypy . --pretty
 
 .PHONY: test
