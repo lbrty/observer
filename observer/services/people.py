@@ -71,9 +71,9 @@ class PeopleService(IPeopleService):
         )
 
         pi = await self.secrets_service.encrypt_personal_info(pi)
-        person.email = pi.email
-        person.phone_number = pi.phone_number
-        person.phone_number_additional = pi.phone_number_additional
+        person.email = pi.email  # type: ignore
+        person.phone_number = pi.phone_number  # type: ignore
+        person.phone_number_additional = pi.phone_number_additional  # type: ignore
         return await self.repo.create_person(person)
 
     async def get_person(self, person_id: Identifier) -> Person:
