@@ -54,7 +54,7 @@ class PeopleService(IPeopleService):
         self.offices_service = offices
 
     async def create_person(self, new_person: NewPersonRequest) -> Person:
-        person = NewPerson(**new_person.dict())
+        person = NewPerson(**new_person.model_dump())
         if person.project_id:
             await self.projects_service.get_by_id(person.project_id)
 
@@ -92,15 +92,15 @@ class PeopleService(IPeopleService):
             So for this reason we initialize `PersonalInfo` instance which is then populated
             and encrypted and later assigned to relevant `updates` fields.
         """
-        person_updates = UpdatePerson(**updates.dict())
+        person_updates = UpdatePerson(**updates.model_dump())
         pi = PersonalInfo()
-        if updates.email != EncryptedFieldValue:
+        if updates.email and updates.email != EncryptedFieldValue:
             pi.email = updates.email
 
-        if updates.phone_number != EncryptedFieldValue:
+        if updates.phone_number and updates.phone_number != EncryptedFieldValue:
             pi.phone_number = updates.phone_number
 
-        if updates.phone_number_additional != EncryptedFieldValue:
+        if updates.phone_number_additional and updates.phone_number_additional != EncryptedFieldValue:
             pi.phone_number_additional = updates.phone_number_additional
 
         pi = await self.secrets_service.encrypt_personal_info(pi)
