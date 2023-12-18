@@ -83,7 +83,7 @@ class Settings(SettingsBase):
     # Values below are optional exception
     # is for storage backend type.
     # Other settings must be checked manually.
-    storage_kind: str = StorageKind.fs
+    storage_kind: StorageKind = StorageKind.fs
     storage_root: str = str(here / "uploads")
     # Maximum upload file size is 5Mb
     max_upload_size: int = 1024 * 1024 * 5

@@ -18,7 +18,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Set database URI from settings
-config.set_main_option("sqlalchemy.url", db_settings.db_uri)
+config.set_main_option("sqlalchemy.url", str(db_settings.db_uri))
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
