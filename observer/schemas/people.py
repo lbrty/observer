@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Optional
 
-from pydantic import Field
+from pydantic.fields import Field
 
 from observer.common.types import DisplacedPersonStatus, Identifier, Sex
 from observer.schemas.base import SchemaBase
@@ -52,14 +52,14 @@ class PersonResponse(BasePerson):
     id: Identifier = Field(..., description="Displaced person ID")
     external_id: Optional[str] = Field(None, description="External identifier")
     # User's id who registered
-    consultant_id: Optional[Identifier] = Field(..., description="Consultant ID")
+    consultant_id: Optional[Identifier] = Field(None, description="Consultant ID")
     office_id: Optional[Identifier] = Field(None, description="Registration office ID")
     created_at: Optional[datetime] = Field(None, description="Creation date")
     updated_at: Optional[datetime] = Field(None, description="Update date")
 
 
 class PersonalInfoResponse(SchemaBase):
-    full_name: str = Field(None, description="Full name")
+    full_name: str = Field(..., description="Full name")
     sex: Optional[Sex] = Field(None, description="Person's sex")
     pronoun: Optional[str] = Field(None, description="Person's pronouns")
     email: Optional[str] = Field(None, description="Contact email")
