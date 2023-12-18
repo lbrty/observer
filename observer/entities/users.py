@@ -9,36 +9,36 @@ from observer.common.types import Identifier, Role
 class User(BaseModel):
     id: Identifier
     email: EmailStr
-    full_name: Optional[str]
+    full_name: Optional[str] = None
     password_hash: str
     role: Role
     is_active: bool
     is_confirmed: bool
-    office_id: Optional[Identifier]
+    office_id: Optional[Identifier] = None
     mfa_enabled: bool
-    mfa_encrypted_secret: Optional[str]
-    mfa_encrypted_backup_codes: Optional[str]
+    mfa_encrypted_secret: Optional[str] = None
+    mfa_encrypted_backup_codes: Optional[str] = None
 
 
 class NewUser(BaseModel):
     email: EmailStr
-    full_name: Optional[str]
+    full_name: Optional[str] = None
     password_hash: str
     role: Role
     is_active: bool
     is_confirmed: bool
-    office_id: Optional[Identifier]
+    office_id: Optional[Identifier] = None
 
 
 class UserUpdate(BaseModel):
-    email: Optional[EmailStr]
-    full_name: Optional[str]
-    role: Optional[Role]
-    is_active: Optional[bool]
-    office_id: Optional[Identifier]
-    mfa_enabled: Optional[bool]
-    mfa_encrypted_secret: Optional[str]
-    mfa_encrypted_backup_codes: Optional[str]
+    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
+    role: Optional[Role] = None
+    is_active: Optional[bool] = None
+    office_id: Optional[Identifier] = None
+    mfa_enabled: Optional[bool] = None
+    mfa_encrypted_secret: Optional[str] = None
+    mfa_encrypted_backup_codes: Optional[str] = None
 
 
 class PasswordReset(BaseModel):
