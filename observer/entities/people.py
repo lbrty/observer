@@ -24,28 +24,28 @@ class UpdateCategory(BaseCategory):
 
 
 class BasePerson(BaseModel):
-    status: Optional[DisplacedPersonStatus]
-    external_id: Optional[str]
-    reference_id: Optional[str]
-    email: Optional[str]
+    status: Optional[DisplacedPersonStatus] = None
+    external_id: Optional[str] = None
+    reference_id: Optional[str] = None
+    email: Optional[str] = None
     full_name: str
-    sex: Optional[Sex]
-    pronoun: Optional[str]
-    birth_date: Optional[date]
-    notes: Optional[str]
-    phone_number: Optional[str]
-    phone_number_additional: Optional[str]
-    project_id: Optional[Identifier]
-    category_id: Optional[Identifier]
-    office_id: Optional[Identifier]
-    tags: Optional[List[str]]
+    sex: Optional[Sex] = None
+    pronoun: Optional[str] = None
+    birth_date: Optional[date] = None
+    notes: Optional[str] = None
+    phone_number: Optional[str] = None
+    phone_number_additional: Optional[str] = None
+    project_id: Optional[Identifier] = None
+    category_id: Optional[Identifier] = None
+    office_id: Optional[Identifier] = None
+    tags: Optional[List[str]] = None
 
 
 class Person(BasePerson):
     id: Identifier
-    consultant_id: Optional[Identifier]
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
+    consultant_id: Optional[Identifier] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
 
 class NewPerson(BasePerson):
@@ -53,7 +53,7 @@ class NewPerson(BasePerson):
 
 
 class UpdatePerson(BasePerson):
-    full_name: Optional[str]  # type: ignore
+    full_name: Optional[str] = None
 
 
 class PersonalInfo(BaseModel):
