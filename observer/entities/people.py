@@ -57,23 +57,23 @@ class UpdatePerson(BasePerson):
 
 
 class PersonalInfo(BaseModel):
-    full_name: Optional[str]
-    sex: Optional[Sex]
-    pronoun: Optional[str]
-    email: Optional[str]
-    phone_number: Optional[str]
-    phone_number_additional: Optional[str]
-    from_place: Optional[Place]
-    current_place: Optional[Place]
+    full_name: Optional[str] = None
+    sex: Optional[Sex] = None
+    pronoun: Optional[str] = None
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+    phone_number_additional: Optional[str] = None
+    from_place: Optional[Place] = None
+    current_place: Optional[Place] = None
 
 
 class BaseMigrationHistory(BaseModel):
     person_id: Identifier
-    migration_date: Optional[date]
-    from_place_id: Optional[Identifier]
-    current_place_id: Optional[Identifier]
+    migration_date: Optional[date] = None
+    from_place_id: Optional[Identifier] = None
+    current_place_id: Optional[Identifier] = None
 
 
 class MigrationHistory(BaseModel):
     id: Identifier
-    created_at: Optional[datetime]
+    created_at: Optional[datetime] = None
