@@ -27,7 +27,7 @@ class BasePerson(SchemaBase):
     status: Optional[DisplacedPersonStatus] = Field(DisplacedPersonStatus.registered, description="Current status")
     reference_id: Optional[str] = Field(None, description="Reference ID, maybe some of state issued IDs etc.")
     email: Optional[str] = Field(None, description="Contact email")
-    full_name: str = Field(None, description="Full name")
+    full_name: Optional[str] = Field(None, description="Full name")
     sex: Optional[Sex] = Field(None, description="Person's sex")
     pronoun: Optional[str] = Field(None, description="Person's pronouns")
     birth_date: Optional[datetime] = Field(None, description="Birth date")
