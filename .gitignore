@@ -136,3 +136,7 @@ cython_debug/
 # IDE
 .idea/
 .vscode/
+
+# pdm
+.pdm-python
+pdm.lock
