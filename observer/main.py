@@ -48,7 +48,7 @@ from observer.settings import db_settings, settings
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     ctx.db = await connect(
-        db_settings.db_uri,
+        str(db_settings.db_uri),
         PoolOptions(
             pool_size=db_settings.pool_size,
             pool_timeout=db_settings.pool_timeout,

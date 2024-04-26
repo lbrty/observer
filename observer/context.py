@@ -41,19 +41,19 @@ from observer.services.world import IWorldService
 
 @dataclass
 class Repositories:
-    audit: Type[IAuditRepository] = field(init=False)
-    users: Type[IUsersRepository] = field(init=False)
-    projects: Type[IProjectsRepository] = field(init=False)
-    offices: Type[IOfficesRepository] = field(init=False)
-    permissions: Type[IPermissionsRepository] = field(init=False)
-    world: Type[IWorldRepository] = field(init=False)
-    category: Type[ICategoryRepository] = field(init=False)
-    people: Type[IPeopleRepository] = field(init=False)
-    family: Type[IFamilyRepository] = field(init=False)
-    pets: Type[IPetsRepository] = field(init=False)
-    documents: Type[IDocumentsRepository] = field(init=False)
-    support: Type[ISupportRecordsRepository] = field(init=False)
-    migrations: Type[IMigrationRepository] = field(init=False)
+    audit: IAuditRepository = field(init=False)
+    users: IUsersRepository = field(init=False)
+    projects: IProjectsRepository = field(init=False)
+    offices: IOfficesRepository = field(init=False)
+    permissions: IPermissionsRepository = field(init=False)
+    world: IWorldRepository = field(init=False)
+    category: ICategoryRepository = field(init=False)
+    people: IPeopleRepository = field(init=False)
+    family: IFamilyRepository = field(init=False)
+    pets: IPetsRepository = field(init=False)
+    documents: IDocumentsRepository = field(init=False)
+    support: ISupportRecordsRepository = field(init=False)
+    migrations: IMigrationRepository = field(init=False)
 
 
 @dataclass
