@@ -1,6 +1,6 @@
 [project]
 name = "observer"
-version = "0.0.1"
+version = "0.5.0"
 description = """
 A backend system and database for supporting displaced people
 and animals, enabling custom UI development for legal and humane aid.
@@ -25,6 +25,8 @@ dependencies = [
     "qrcode>=7.4.2",
     "password-strength>=0.0.3.post2",
     "bcrypt>=4.1.2",
+    "pydantic-settings>=2.2.1",
+    "psycopg2-binary>=2.9.9",
 ]
 requires-python = ">=3.12"
 readme = "README.md"
@@ -48,3 +50,7 @@ build-backend = "pdm.backend"
 
 [tool.pdm]
 distribution = true
+
+[tool.pyright]
+venv = ".venv"
+venvPath = "."
