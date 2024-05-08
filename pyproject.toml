@@ -43,6 +43,10 @@ dev = [
     "types-aiofiles>=23.2.0.20240403",
     "types-SQLAlchemy>=1.4.53.38",
 ]
+docs = [
+    "sphinx>=7.2.6",
+    "sphinxawesome-theme>=5.1.4",
+]
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
