@@ -5,7 +5,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 
-from observer.db import metadata
+from observer.db.metadata import metadata
 
 # Fetch db_url from the environment
 db_url = os.environ["DATABASE_URL"]

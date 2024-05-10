@@ -41,7 +41,6 @@ dev = [
     "pytest-cov>=5.0.0",
     "httpx>=0.27.0",
     "types-aiofiles>=23.2.0.20240403",
-    "types-SQLAlchemy>=1.4.53.38",
 ]
 docs = [
     "sphinx>=7.2.6",
