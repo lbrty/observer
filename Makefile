@@ -8,21 +8,21 @@ docker-image:
 
 .PHONY: fmt
 fmt:
-	poetry run ruff format .
+	ruff format .
 
 .PHONY: lint
 lint:
-	poetry run ruff . -q
-	poetry run mypy . --pretty
+	ruff . -q
+	mypy . --pretty
 
 .PHONY: test
 test:
-	poetry run pytest tests
+	pytest tests
 
 .PHONY: serve
 serve:
-	poetry run python -m observer server start
+	python -m observer server start
 
 .PHONY: swagger
 swagger:
-	poetry run python -m observer swagger generate
+	python -m observer swagger generate
