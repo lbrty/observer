@@ -1,4 +1,4 @@
-from sqlalchemy import UUID, text, Text, TIMESTAMP, func, Index
+from sqlalchemy import UUID, text, Text, TIMESTAMP, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -8,12 +8,6 @@ from observer.db.models.base import ModelBase
 class AuditLog(ModelBase):
     __tablename__ = "audit_logs"
 
-    id: Mapped[UUID] = mapped_column(
-        "id",
-        UUID(as_uuid=True),
-        primary_key=True,
-        server_default=text("gen_random_uuid()"),
-    )
     ref: Mapped[str] = mapped_column(
         "ref",
         Text(),
