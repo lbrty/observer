@@ -5,11 +5,11 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 
-from observer.db.metadata import metadata
+from observer.db.models import ModelBase
 
 # Fetch db_url from the environment
 db_url = os.environ["DATABASE_URL"]
-
+target_metadata = ModelBase.metadata
 config = context.config
 
 # Set database URI from settings
@@ -36,7 +36,7 @@ def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
-        target_metadata=metadata,
+        target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
@@ -53,7 +53,7 @@ def run_migrations_online() -> None:
 
     """
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
+        config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
@@ -61,7 +61,7 @@ def run_migrations_online() -> None:
     with connectable.connect() as connection:
         context.configure(
             connection=connection,
-            target_metadata=metadata,
+            target_metadata=target_metadata,
         )
 
         with context.begin_transaction():
