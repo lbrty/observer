@@ -1,8 +1,8 @@
-"""categories
+"""offices
 
-Revision ID: 35830d41c820
-Revises: 0a7abb246c5a
-Create Date: 2024-05-11 12:41:01.983388
+Revision ID: c685c35f23b2
+Revises: 35830d41c820
+Create Date: 2024-05-11 13:07:09.097278
 """
 
 from typing import Sequence, Union
@@ -13,15 +13,15 @@ from alembic import op
 
 
 # revision identifiers, used by Alembic.
-revision: str = "35830d41c820"
-down_revision: Union[str, None] = "0a7abb246c5a"
+revision: str = "c685c35f23b2"
+down_revision: Union[str, None] = "35830d41c820"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
     op.create_table(
-        "categories",
+        "offices",
         sa.Column(
             "id",
             sa.UUID(),
@@ -29,10 +29,10 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("name", sa.Text(), nullable=False),
-        sa.PrimaryKeyConstraint("id", name=op.f("pk_categories")),
-        sa.UniqueConstraint("name", name=op.f("uq_categories_name_key")),
+        sa.PrimaryKeyConstraint("id", name=op.f("pk_offices")),
+        sa.UniqueConstraint("name", name=op.f("uq_offices_name_key")),
     )
 
 
 def downgrade() -> None:
-    op.drop_table("categories")
+    op.drop_table("offices")
