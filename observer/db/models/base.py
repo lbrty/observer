@@ -1,5 +1,6 @@
-from sqlalchemy import MetaData
+from sqlalchemy import MetaData, UUID, text
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import Mapped, mapped_column
 
 convention = {
     "ix": "ix_%(column_0_label)s",
@@ -15,3 +16,9 @@ metadata = MetaData(naming_convention=convention)
 class ModelBase(DeclarativeBase):
     __abstract__ = True
     metadata = metadata
+    id: Mapped[UUID] = mapped_column(
+        "id",
+        UUID(as_uuid=True),
+        primary_key=True,
+        server_default=text("gen_random_uuid()"),
+    )
