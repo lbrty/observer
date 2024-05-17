@@ -36,8 +36,7 @@ def upgrade() -> None:
     op.create_index(
         op.f("ix_countries_name"),
         "countries",
-        [sa.text("lower(name)")],
-        unique=False,
+        ["name"],
     )
     op.create_table(
         "states",
@@ -63,13 +62,11 @@ def upgrade() -> None:
         op.f("ix_states_country_id"),
         "states",
         ["country_id"],
-        unique=False,
     )
     op.create_index(
         op.f("ix_states_name"),
         "states",
-        [sa.text("lower(name)")],
-        unique=False,
+        ["name"],
     )
     op.create_table(
         "places",
@@ -102,19 +99,16 @@ def upgrade() -> None:
         op.f("ix_places_country_id"),
         "places",
         ["country_id"],
-        unique=False,
     )
     op.create_index(
         op.f("ix_places_name"),
         "places",
-        [sa.text("lower(name)")],
-        unique=False,
+        ["name"],
     )
     op.create_index(
         op.f("ix_places_state_id"),
         "places",
         ["state_id"],
-        unique=False,
     )
 
 
