@@ -1,15 +1,10 @@
 from typing import Literal
+
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
-    Column,
-    DateTime,
     ForeignKey,
-    Index,
-    Table,
     Text,
-    func,
-    text,
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, declared_attr, relationship
