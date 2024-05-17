@@ -22,6 +22,9 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.create_table(
         "users",
+        sa.Column(
+            "id", sa.UUID(), server_default=sa.text("gen_random_uuid()"), nullable=False
+        ),
         sa.Column("email", sa.Text(), nullable=False),
         sa.Column("full_name", sa.Text(), nullable=True),
         sa.Column("password_hash", sa.Text(), nullable=False),
@@ -32,9 +35,6 @@ def upgrade() -> None:
         sa.Column("mfa_enabled", sa.Boolean(), nullable=True),
         sa.Column("mfa_encrypted_secret", sa.Text(), nullable=True),
         sa.Column("mfa_encrypted_backup_codes", sa.Text(), nullable=True),
-        sa.Column(
-            "id", sa.UUID(), server_default=sa.text("gen_random_uuid()"), nullable=False
-        ),
         sa.CheckConstraint(
             "role IN ('admin', 'staff', 'consultant', 'guest')",
             name=op.f("ck_users_users_role_type_check"),

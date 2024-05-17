@@ -63,7 +63,7 @@ class User(ModelBase):
     )
 
     @declared_attr
-    def country(self) -> Mapped[Office]:
+    def office(self) -> Mapped[Office]:
         return relationship(
             Office,
             lazy="raise",

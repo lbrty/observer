@@ -8,5 +8,6 @@ class IAuditLogs:
 
 class AuditLogs(IAuditLogs):
     """Repo to manage audit logs."""
+
     def add(self, event: NewAuditLog) -> AuditLog:
         pass

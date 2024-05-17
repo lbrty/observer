@@ -22,15 +22,15 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.create_table(
         "confirmations",
-        sa.Column("code", sa.Text(), nullable=False),
-        sa.Column("user_id", sa.UUID(), nullable=False),
-        sa.Column("expires_at", sa.TIMESTAMP(timezone=True), nullable=True),
         sa.Column(
             "id",
             sa.UUID(),
             server_default=sa.text("gen_random_uuid()"),
             nullable=False,
         ),
+        sa.Column("code", sa.Text(), nullable=False),
+        sa.Column("user_id", sa.UUID(), nullable=False),
+        sa.Column("expires_at", sa.TIMESTAMP(timezone=True), nullable=True),
         sa.ForeignKeyConstraint(
             ["user_id"],
             ["users.id"],

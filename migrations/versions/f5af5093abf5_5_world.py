@@ -22,14 +22,14 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.create_table(
         "countries",
-        sa.Column("name", sa.Text(), nullable=False),
-        sa.Column("code", sa.Text(), nullable=False),
         sa.Column(
             "id",
             sa.UUID(),
             server_default=sa.text("gen_random_uuid()"),
             nullable=False,
         ),
+        sa.Column("name", sa.Text(), nullable=False),
+        sa.Column("code", sa.Text(), nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_countries")),
         sa.UniqueConstraint("code", name=op.f("uq_countries_code_key")),
     )
@@ -40,15 +40,15 @@ def upgrade() -> None:
     )
     op.create_table(
         "states",
-        sa.Column("country_id", sa.UUID(), nullable=False),
-        sa.Column("name", sa.Text(), nullable=False),
-        sa.Column("code", sa.Text(), nullable=False),
         sa.Column(
             "id",
             sa.UUID(),
             server_default=sa.text("gen_random_uuid()"),
             nullable=False,
         ),
+        sa.Column("name", sa.Text(), nullable=False),
+        sa.Column("code", sa.Text(), nullable=False),
+        sa.Column("country_id", sa.UUID(), nullable=False),
         sa.ForeignKeyConstraint(
             ["country_id"],
             ["countries.id"],
@@ -70,16 +70,16 @@ def upgrade() -> None:
     )
     op.create_table(
         "places",
-        sa.Column("state_id", sa.UUID(), nullable=False),
-        sa.Column("country_id", sa.UUID(), nullable=False),
-        sa.Column("name", sa.Text(), nullable=False),
-        sa.Column("code", sa.Text(), nullable=False),
         sa.Column(
             "id",
             sa.UUID(),
             server_default=sa.text("gen_random_uuid()"),
             nullable=False,
         ),
+        sa.Column("name", sa.Text(), nullable=False),
+        sa.Column("code", sa.Text(), nullable=False),
+        sa.Column("state_id", sa.UUID(), nullable=False),
+        sa.Column("country_id", sa.UUID(), nullable=False),
         sa.ForeignKeyConstraint(
             ["country_id"],
             ["countries.id"],
