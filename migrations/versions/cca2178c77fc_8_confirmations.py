@@ -40,12 +40,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id", name=op.f("pk_confirmations")),
         sa.UniqueConstraint("code", name=op.f("uq_confirmations_code_key")),
     )
-    op.create_index(
-        op.f("ix_confirmations_user_id"),
-        "confirmations",
-        ["user_id"],
-        unique=False,
-    )
+    op.create_index(op.f("ix_confirmations_user_id"), "confirmations", ["user_id"])
 
 
 def downgrade() -> None:

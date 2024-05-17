@@ -31,18 +31,8 @@ def upgrade() -> None:
         sa.Column("expires_at", sa.TIMESTAMP(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_audit_logs")),
     )
-    op.create_index(
-        op.f("ix_audit_logs_expires_at"),
-        "audit_logs",
-        ["expires_at"],
-        unique=False,
-    )
-    op.create_index(
-        op.f("ix_audit_logs_ref"),
-        "audit_logs",
-        ["ref"],
-        unique=False,
-    )
+    op.create_index(op.f("ix_audit_logs_expires_at"), "audit_logs", ["expires_at"])
+    op.create_index(op.f("ix_audit_logs_ref"), "audit_logs", ["ref"])
 
 
 def downgrade() -> None:

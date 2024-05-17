@@ -40,12 +40,7 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id", name=op.f("pk_password_resets")),
         sa.UniqueConstraint("code", name=op.f("uq_password_resets_code_key")),
     )
-    op.create_index(
-        op.f("ix_password_resets_user_id"),
-        "password_resets",
-        ["user_id"],
-        unique=False,
-    )
+    op.create_index(op.f("ix_password_resets_user_id"), "password_resets", ["user_id"])
 
 
 def downgrade() -> None:

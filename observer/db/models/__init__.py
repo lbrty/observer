@@ -5,4 +5,5 @@ from .categories import Category
 from .offices import Office
 from .projects import Project
 from .users import User
+from .documents import Document
 from .world import Country, State, Place
