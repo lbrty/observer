@@ -7,11 +7,10 @@ from observer.db.models import ModelBase, User, Project
 class Permission(ModelBase):
     __tablename__ = "permissions"
 
-    note: Mapped[str] = mapped_column(
-        "note",
+    notes: Mapped[str] = mapped_column(
+        "notes",
         Text(),
         nullable=False,
-        unique=True,
     )
 
     can_create: Mapped[bool] = mapped_column(

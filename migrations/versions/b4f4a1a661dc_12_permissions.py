@@ -25,7 +25,7 @@ def upgrade() -> None:
         sa.Column(
             "id", sa.UUID(), server_default=sa.text("gen_random_uuid()"), nullable=False
         ),
-        sa.Column("note", sa.Text(), nullable=False),
+        sa.Column("notes", sa.Text(), nullable=False),
         sa.Column("can_create", sa.Boolean(), nullable=False),
         sa.Column("can_read", sa.Boolean(), nullable=False),
         sa.Column("can_update", sa.Boolean(), nullable=False),
@@ -48,7 +48,6 @@ def upgrade() -> None:
             ondelete="CASCADE",
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_permissions")),
-        sa.UniqueConstraint("note", name=op.f("uq_permissions_note_key")),
     )
     op.create_index(op.f("ix_permissions_project_id"), "permissions", ["project_id"])
     op.create_index(op.f("ix_permissions_user_id"), "permissions", ["user_id"])
