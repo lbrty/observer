@@ -1,5 +1,5 @@
 from sqlalchemy import Text, Integer, UUID, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from observer.db.models import ModelBase, User, Project
 
@@ -39,21 +39,25 @@ class Document(ModelBase):
     )
 
     owner_id: Mapped[UUID] = mapped_column(
-        "owner_id", UUID(as_uuid=True), nullable=False, index=True
-    )
-
-    owner: Mapped[User] = mapped_column(
-        "owner",
+        UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
+    )
+
+    owner: Mapped[User] = relationship(
+        User,
+        back_populates="parent",
     )
 
     project_id: Mapped[UUID] = mapped_column(
-        "project_id", UUID(as_uuid=True), nullable=False, index=True
-    )
-
-    project: Mapped[Project] = mapped_column(
-        "project",
+        UUID(as_uuid=True),
         ForeignKey("projects.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
+    )
+
+    project: Mapped[Project] = relationship(
+        Project,
+        back_populates="parent",
     )
