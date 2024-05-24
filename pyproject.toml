@@ -8,7 +8,7 @@ and animals, enabling custom UI development for legal and humane aid.
 authors = [{ name = "Sultan Iman", email = "sultan_iman@icloud.com" }]
 dependencies = [
     "fastapi>=0.110.2",
-    "pydantic>=2.7.1",
+    "pydantic[email]>=2.7.1",
     "sqlalchemy[asyncio]>=2.0.29",
     "alembic>=1.13.1",
     "cryptography>=42.0.5",
