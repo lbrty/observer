@@ -7,4 +7,5 @@ from .projects import Project
 from .users import User
 from .documents import Document
 from .permissions import Permission
+from .pets import Pet
 from .world import Country, State, Place

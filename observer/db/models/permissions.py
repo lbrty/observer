@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Text, UUID, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from observer.db.models import ModelBase, User, Project
+from observer.db.models import ModelBase
 
 
 class Permission(ModelBase):

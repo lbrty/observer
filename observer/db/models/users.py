@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, get_args
 
 from sqlalchemy import (
     Boolean,
@@ -10,10 +10,9 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, declared_attr, relationship
 
 from observer.db.models import ModelBase, Office
-from observer.typing.inspect import unwrap_literal
 
 UserRole = Literal["admin", "staff", "consultant", "guest"]
-roles = ", ".join([f"'{role}'" for role in unwrap_literal(UserRole)])
+roles = ", ".join([f"'{role}'" for role in get_args(UserRole)])
 
 
 class User(ModelBase):

@@ -47,7 +47,7 @@ class Document(ModelBase):
 
     owner: Mapped[User] = relationship(
         User,
-        back_populates="parent",
+        back_populates="children",
     )
 
     project_id: Mapped[UUID] = mapped_column(
@@ -59,5 +59,5 @@ class Document(ModelBase):
 
     project: Mapped[Project] = relationship(
         Project,
-        back_populates="parent",
+        back_populates="children",
     )
