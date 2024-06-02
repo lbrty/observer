@@ -5,7 +5,7 @@ Revises: 1929581af139
 Create Date: 2024-05-17 18:39:39.423676
 """
 
-from typing import Sequence, Union
+from typing import Sequence
 
 import sqlalchemy as sa
 
@@ -14,17 +14,15 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "bcf9e218d4a0"
-down_revision: Union[str, None] = "1929581af139"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "1929581af139"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
     op.create_table(
         "documents",
-        sa.Column(
-            "id", sa.UUID(), server_default=sa.text("gen_random_uuid()"), nullable=False
-        ),
+        sa.Column("id", sa.UUID(), server_default=sa.text("gen_random_uuid()"), nullable=False),
         sa.Column("encryption_key", sa.Text(), nullable=True),
         sa.Column("name", sa.Text(), nullable=False),
         sa.Column("path", sa.Text(), nullable=False),
@@ -52,7 +50,4 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_index(op.f("ix_documents_project_id"), table_name="documents")
-    op.drop_index(op.f("ix_documents_owner_id"), table_name="documents")
-    op.drop_index(op.f("ix_documents_name"), table_name="documents")
     op.drop_table("documents")

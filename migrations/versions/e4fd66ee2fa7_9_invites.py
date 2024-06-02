@@ -5,7 +5,7 @@ Revises: cca2178c77fc
 Create Date: 2024-05-17 17:46:34.112773
 """
 
-from typing import Sequence, Union
+from typing import Sequence
 
 import sqlalchemy as sa
 
@@ -14,9 +14,9 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "e4fd66ee2fa7"
-down_revision: Union[str, None] = "cca2178c77fc"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = "cca2178c77fc"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -40,9 +40,9 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id", name=op.f("pk_invites")),
         sa.UniqueConstraint("code", name=op.f("uq_invites_code_key")),
     )
+
     op.create_index(op.f("ix_invites_user_id"), "invites", ["user_id"])
 
 
 def downgrade() -> None:
-    op.drop_index(op.f("ix_invites_user_id"), table_name="invites")
     op.drop_table("invites")
