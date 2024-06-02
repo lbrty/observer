@@ -3,7 +3,7 @@ import datetime
 today = datetime.date.today()
 
 project = "Observer"
-copyright = f"{today.year}, Sultan Iman"
+copyright = f"{today.year}, Sultan Iman"  # noqa: A001
 author = "Sultan Iman"
 release = "0.5.0"
 
