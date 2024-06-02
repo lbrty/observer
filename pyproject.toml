@@ -42,10 +42,8 @@ dev = [
     "httpx>=0.27.0",
     "types-aiofiles>=23.2.0.20240403",
 ]
-docs = [
-    "sphinx>=7.2.6",
-    "sphinxawesome-theme>=5.1.4",
-]
+
+docs = ["sphinx>=7.2.6", "sphinxawesome-theme>=5.1.4"]
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
@@ -57,3 +55,25 @@ distribution = true
 [tool.pyright]
 venv = ".venv"
 venvPath = "."
+
+[tool.ruff]
+line-length = 100
+src = ["observer", "tests"]
+
+[tool.ruff.format]
+exclude = ["*.pyi"]
+
+[tool.ruff.lint]
+select = ["A", "B", "Q", "F", "S", "UP"]
+
+# Allow ruff to fix the following cases
+fixable = [
+    "UP008", # Use super() instead of super(__class__, self)
+    "UP015", # Unnecessary open mode parameters
+    "UP028", # Replace yield over for loop with yield from
+    "UP031", # Use format specifiers instead of percent format
+    "UP032", # Use f-string instead of `format` call
+    "UP007", # Use union syntax
+]
+
+ignore = ["UP035"]
