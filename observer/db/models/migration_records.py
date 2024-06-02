@@ -49,3 +49,45 @@
 #     Index("ix_migration_history_from_place_id", "from_place_id"),
 #     Index("ix_migration_history_current_place_id", "current_place_id"),
 # )
+from sqlalchemy import (
+    Text,
+    Index,
+    text,
+    CheckConstraint,
+    TIMESTAMP,
+    func,
+    UUID,
+    ForeignKey,
+)
+from sqlalchemy.orm import Mapped, mapped_column
+
+from observer.common.reflect.inspect import unwrap_enum
+from observer.common.types import PetStatus
+from observer.db.models import ModelBase
+
+statuses = list(unwrap_enum(PetStatus).keys())
+
+
+class MigrationRecord(ModelBase):
+    __tablename__ = "migration_records"
+    __table_args__ = (
+        Index("ix_name_pets", text("lower(name)")),
+        CheckConstraint(f"status IN ({statuses})", name="ck_pets_status"),
+    )
+
+    name: Mapped[str] = mapped_column(
+        "name",
+        Text(),
+    )
+
+    notes: Mapped[str] = mapped_column(
+        "notes",
+        Text(),
+        nullable=True,
+    )
+
+    status: Mapped[str] = mapped_column(
+        "status",
+        Text(),
+        index=True,
+    )

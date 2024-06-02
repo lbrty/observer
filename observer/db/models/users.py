@@ -1,5 +1,3 @@
-from typing import Literal, get_args
-
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
@@ -10,16 +8,12 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, declared_attr, relationship
 
 from observer.db.models import ModelBase, Office
-
-UserRole = Literal["admin", "staff", "consultant", "guest"]
-roles = ", ".join([f"'{role}'" for role in get_args(UserRole)])
+from observer.db.choices import user_roles
 
 
 class User(ModelBase):
     __tablename__ = "users"
-    __table_args__ = (
-        CheckConstraint(f"role IN ({roles})", name="users_role_type_check"),
-    )
+    __table_args__ = (CheckConstraint(f"role IN ({', '.join(user_roles)})", name="role"),)
 
     email: Mapped[str] = mapped_column("email", Text(), nullable=False, unique=True)
     full_name: Mapped[str] = mapped_column("full_name", Text(), nullable=True)

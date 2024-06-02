@@ -1,6 +1,7 @@
-from sqlalchemy import Text, UUID, ForeignKey
+from sqlalchemy import TIMESTAMP, Text, UUID, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
+from observer.common.sqlalchemy import utc_now
 from observer.db.models import ModelBase
 
 
@@ -24,4 +25,10 @@ class Project(ModelBase):
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
+    )
+
+    created_at: Mapped[TIMESTAMP] = mapped_column(
+        "created_at",
+        TIMESTAMP(timezone=True),
+        default=utc_now,
     )

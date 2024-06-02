@@ -10,18 +10,15 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
-from observer.common.reflect.inspect import unwrap_enum
-from observer.common.types import PetStatus
 from observer.db.models import ModelBase
-
-statuses = list(unwrap_enum(PetStatus).keys())
+from observer.db.choices import pet_statuses
 
 
 class Pet(ModelBase):
     __tablename__ = "pets"
     __table_args__ = (
         Index("ix_name_pets", text("lower(name)")),
-        CheckConstraint(f"status IN ({statuses})", name="pets_status_check"),
+        CheckConstraint(f"status IN ({', '.join(pet_statuses)})", name="status"),
     )
 
     name: Mapped[str] = mapped_column(
