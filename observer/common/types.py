@@ -1,12 +1,11 @@
 from datetime import datetime
 from enum import Enum
 from pathlib import Path, PosixPath
-from typing import Dict, Optional, Tuple, TypeAlias
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field
 
-Identifier: TypeAlias = UUID | str
+Identifier = UUID | str
 EncryptedFieldValue: str = "*" * 8
 
 
@@ -55,7 +54,7 @@ class AgeGroup(str, Enum):
     unknown: str = "unknown"
 
 
-AgeGroupLabels: Dict[AgeGroup, str] = {
+AgeGroupLabels: dict[AgeGroup, str] = {
     AgeGroup.infant: "0-1",
     AgeGroup.toddler: "1-3",
     AgeGroup.pre_school: "4-5",
@@ -82,24 +81,24 @@ class SupportRecordSubject(str, Enum):
 
 
 class StateFilters(BaseModel):
-    name: Optional[str]
-    code: Optional[str]
-    country_id: Optional[Identifier]
+    name: str | None
+    code: str | None
+    country_id: Identifier | None
 
 
 class PlaceFilters(BaseModel):
-    name: Optional[str]
-    code: Optional[str]
-    country_id: Optional[Identifier]
-    state_id: Optional[Identifier]
+    name: str | None
+    code: str | None
+    country_id: Identifier | None
+    state_id: Identifier | None
 
 
 class UserFilters(BaseModel):
-    email: Optional[EmailStr]
-    full_name: Optional[str]
-    role: Optional[Role]
-    office_id: Optional[Identifier]
-    is_active: Optional[bool]
+    email: EmailStr | None
+    full_name: str | None
+    role: Role | None
+    office_id: Identifier | None
+    is_active: bool | None
 
 
 class StorageKind(str, Enum):
@@ -107,7 +106,7 @@ class StorageKind(str, Enum):
     s3: str = "s3"
 
 
-FileInfo: TypeAlias = Tuple[datetime, str | Path | PosixPath]
+FileInfo = tuple[datetime, str | Path | PosixPath]
 
 
 class Pagination(BaseModel):
