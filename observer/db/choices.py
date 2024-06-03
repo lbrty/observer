@@ -1,4 +1,14 @@
-from observer.common.types import AgeGroup, DisplacedPersonStatus, PetStatus, Role, Sex
+"""SQLAlchemy constraint choices"""
+
+from observer.common.types import (
+    AgeGroup,
+    DisplacedPersonStatus,
+    PetStatus,
+    Role,
+    Sex,
+    SupportType,
+)
+
 from observer.db.utils import choices_from_enum
 
 
@@ -7,3 +17,4 @@ person_statuses = choices_from_enum(DisplacedPersonStatus)
 pet_statuses = choices_from_enum(PetStatus)
 sex = choices_from_enum(Sex)
 user_roles = choices_from_enum(Role)
+support_types = choices_from_enum(SupportType)

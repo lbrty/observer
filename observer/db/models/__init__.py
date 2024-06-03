@@ -10,6 +10,7 @@ from .permissions import Permission
 from .pets import Pet
 from .people import People
 from .migration_records import MigrationRecord
+from .support_records import SupportRecord
 
 from .world import Country, State, Place
 
@@ -20,6 +21,7 @@ __all__ = (
     "AuditLog",
     "PasswordReset",
     "Category",
+    "Country",
     "MigrationRecord",
     "Office",
     "Project",
@@ -28,7 +30,7 @@ __all__ = (
     "Permission",
     "Pet",
     "People",
-    "Country",
     "State",
+    "SupportRecord",
     "Place",
 )
