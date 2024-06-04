@@ -9,11 +9,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
-
-@dataclass
-class Database:
-    engine: AsyncEngine
-    session: async_sessionmaker[AsyncSession]
+from observer.db.base import Database
 
 
 @dataclass
@@ -27,6 +23,15 @@ class PoolOptions:
 
 
 async def connect(uri: str, pool_options: PoolOptions) -> Database:
+    """Creates database connection
+
+    Args:
+        uri (str): connection uri
+        pool_options (PoolOptions): connection pooling options
+
+    Returns:
+        Database: instance of Database class with engine and sessionmaker
+    """
     engine = create_async_engine(
         uri,
         echo=pool_options.echo,

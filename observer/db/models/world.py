@@ -41,7 +41,7 @@ class State(BaseLocation):
         return relationship(
             Country,
             lazy="raise",
-            back_populates="states",
+            back_populates="children",
             foreign_keys="[states.country_id]",
         )
 
@@ -67,7 +67,7 @@ class Place(BaseLocation):
         return relationship(
             State,
             lazy="raise",
-            back_populates="places",
+            back_populates="children",
             foreign_keys="[places.state_id]",
         )
 
@@ -76,6 +76,6 @@ class Place(BaseLocation):
         return relationship(
             Country,
             lazy="raise",
-            back_populates="places",
+            back_populates="children",
             foreign_keys="[places.country_id]",
         )
