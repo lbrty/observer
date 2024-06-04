@@ -1,0 +1,5 @@
+[tools]
+python = { version="3.12", virtualenv=".venv" }
+
+[env]
+_.file = ".env.local"

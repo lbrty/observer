@@ -1,14 +1,10 @@
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
-
-from pydantic import BaseModel
-
-from observer.common.types import Identifier
+from typing import Any
 
 
-class AuditLog(BaseModel):
-    id: Identifier
-    ref: str  # format - origin=<user_id...>;source=services:users;action=create:user;
-    data: dict | None
-    created_at: datetime
-    expires_at: Optional[datetime]
+@dataclass
+class NewAuditLog:
+    ref: str
+    data: dict[str, Any]
+    expires_at: datetime
