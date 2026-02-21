@@ -31,19 +31,26 @@ CREATE TYPE support_sphere AS ENUM (
     'other'                 -- unlisted or cross-cutting topics
 );
 
+-- referral_status: when set, this record represents an outbound referral rather than
+-- direct service delivery. NULL means direct delivery.
+-- referred_to_office: the office the client was referred to (may differ from office_id).
 CREATE TABLE support_records (
-    id            TEXT           PRIMARY KEY,
-    person_id     TEXT           NOT NULL REFERENCES people (id) ON DELETE CASCADE,
-    project_id    TEXT           NOT NULL REFERENCES projects (id) ON DELETE RESTRICT,
-    consultant_id TEXT           REFERENCES users (id) ON DELETE SET NULL,
-    recorded_by   TEXT           REFERENCES users (id) ON DELETE SET NULL,
-    office_id     TEXT           REFERENCES offices (id) ON DELETE SET NULL,
-    type          support_type   NOT NULL DEFAULT 'general',
-    sphere        support_sphere,
-    provided_at   DATE,
-    notes         TEXT,
-    created_at    TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
-    updated_at    TIMESTAMPTZ    NOT NULL DEFAULT NOW()
+    id                  TEXT           PRIMARY KEY,
+    person_id           TEXT           NOT NULL REFERENCES people (id) ON DELETE CASCADE,
+    project_id          TEXT           NOT NULL REFERENCES projects (id) ON DELETE RESTRICT,
+    consultant_id       TEXT           REFERENCES users (id) ON DELETE SET NULL,
+    recorded_by         TEXT           REFERENCES users (id) ON DELETE SET NULL,
+    office_id           TEXT           REFERENCES offices (id) ON DELETE SET NULL,
+    referred_to_office  TEXT           REFERENCES offices (id) ON DELETE SET NULL,
+    type                support_type   NOT NULL DEFAULT 'general',
+    sphere              support_sphere,
+    referral_status     TEXT           CHECK (referral_status IN (
+                                           'pending', 'accepted', 'completed', 'declined', 'no_response'
+                                       )),
+    provided_at         DATE,
+    notes               TEXT,
+    created_at          TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ    NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX ix_support_records_person_id     ON support_records (person_id);

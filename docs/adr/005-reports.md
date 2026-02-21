@@ -78,11 +78,24 @@ All requirements are translated from Ukrainian and reorganised by theme.
 | 10  | People from Eastern Ukraine who received **social** consultations  | People     |
 | 11  | **Non-IDPs** registered in a given period                          | People     |
 
-**Schema:** `people.idp_status` (`'crimea'` / `'east_ukraine'` / `'non_idp'`).
+**Schema:** IDP classification is derived via `people.origin_place_id → places.state_id → states.conflict_zone`. The `conflict_zone` column on `states` is a free-text label; values such as `'crimea'` and `'east_ukraine'` are seeded into the states table rather than stored on the person record.
 Registration window uses `people.registered_at`.
 Consultation window uses `support_records.provided_at` joined via `person_id`.
 
-> Records with `idp_status IS NULL` are excluded from reports 5–10 and 11. Report 4 includes all records regardless of IDP status.
+> Records where `origin_place_id IS NULL` or the resolved `conflict_zone IS NULL` are excluded from reports 5–10. Report 11 selects people whose `conflict_zone IS NULL` (no conflict-origin designation). Report 4 includes all records regardless of origin.
+
+**Pattern B (updated) — People count by conflict zone:**
+
+```sql
+SELECT st.conflict_zone, COUNT(DISTINCT p.id) AS total
+FROM   people p
+JOIN   places pl ON pl.id = p.origin_place_id
+JOIN   states st ON st.id = pl.state_id
+WHERE  p.project_id    = :project_id
+  AND  p.registered_at BETWEEN :start AND :end
+  AND  st.conflict_zone IS NOT NULL
+GROUP  BY st.conflict_zone;
+```
 
 ---
 
@@ -212,26 +225,26 @@ When `birth_date` is set and `age_group` is NULL, the application layer computes
 | 38  | People and their family members who received **social** consultations | People + Units |
 | 39  | People and their family members registered in a given period          | People + Units |
 
-**Schema:** `people.parent_id` self-reference. A family unit is a head (`parent_id IS NULL`) plus all members whose `parent_id` equals that head's `id`. The schema supports only one level of nesting (head → members); grandchildren are not modelled.
+**Schema:** `households` + `household_members`. A family unit is one `households` row; members are all rows in `household_members` with that `household_id`. Use `household_members.relationship = 'head'` to identify the nominated head. The `people.parent_id` self-reference has been replaced by this model (see ADR-003 migration 000023).
 
 ---
 
 ## Schema Implications
 
-| Schema element                                   | Reports enabled                                     |
-| ------------------------------------------------ | --------------------------------------------------- |
-| `people.registered_at`                           | 4–6, 11–13, 18, 21, 36, 39                          |
-| `people.idp_status`                              | 4–11                                                |
-| `people.sex`                                     | 12–17                                               |
-| `people.category_id → categories`                | 18–20                                               |
-| `people.current_place_id → places → states`      | 21–23                                               |
-| `support_records.type`                           | 1–3, 7–10, 14–17, 19–20, 22–25, 28–30, 32–34, 37–38 |
-| `support_records.provided_at`                    | All consultation date-range filtering               |
-| `support_records.sphere` (`support_sphere` enum) | 24, 25, 29, 30                                      |
-| `support_records.office_id → offices`            | 28, 32, 33                                          |
-| `people.age_group` / `people.birth_date`         | 26, 27, 31, 34                                      |
-| `person_tags` + `tags` (project-scoped)          | 35, 36                                              |
-| `people.parent_id`                               | 37, 38, 39                                          |
+| Schema element                                              | Reports enabled                                      |
+| ----------------------------------------------------------- | ---------------------------------------------------- |
+| `people.registered_at`                                      | 4–6, 11–13, 18, 21, 36, 39                           |
+| `people.origin_place_id → places → states.conflict_zone`   | 4–11                                                 |
+| `people.sex`                                                | 12–17                                                |
+| `person_categories → categories`                            | 18–20                                                |
+| `people.current_place_id → places → states`                 | 21–23                                                |
+| `support_records.type`                                      | 1–3, 7–10, 14–17, 19–20, 22–25, 28–30, 32–34, 37–38 |
+| `support_records.provided_at`                               | All consultation date-range filtering                |
+| `support_records.sphere` (`support_sphere` enum)            | 24, 25, 29, 30                                       |
+| `support_records.office_id → offices`                       | 28, 32, 33                                           |
+| `people.age_group` / `people.birth_date`                    | 26, 27, 31, 34                                       |
+| `person_tags` + `tags` (project-scoped)                     | 35, 36                                               |
+| `households` + `household_members`                          | 37, 38, 39                                           |
 
 ---
 
@@ -334,30 +347,19 @@ GROUP BY age_bucket;
 ### Pattern G — Family units
 
 ```sql
--- Family head: parent_id IS NULL within a project
--- Members: parent_id = head.id (one level only)
-WITH families AS (
-    SELECT id AS person_id, id AS head_id
-    FROM   people
-    WHERE  project_id = :project_id
-      AND  parent_id  IS NULL
-    UNION ALL
-    SELECT m.id AS person_id, m.parent_id AS head_id
-    FROM   people m
-    WHERE  m.project_id = :project_id
-      AND  m.parent_id  IS NOT NULL
-)
 SELECT
-    COUNT(DISTINCT f.head_id)   AS family_units,
-    COUNT(DISTINCT f.person_id) AS total_individuals
-FROM   families f
-JOIN   support_records sr ON sr.person_id = f.person_id
-WHERE  sr.project_id  = :project_id
+    COUNT(DISTINCT hm.household_id) AS family_units,
+    COUNT(DISTINCT hm.person_id)    AS total_individuals
+FROM   household_members hm
+JOIN   households h        ON h.id  = hm.household_id
+JOIN   support_records sr  ON sr.person_id = hm.person_id
+WHERE  h.project_id   = :project_id
+  AND  sr.project_id  = :project_id
   AND  sr.type        = 'legal'
   AND  sr.provided_at BETWEEN :start AND :end;
 ```
 
-> Non-recursive: the schema supports only head → member (one level). No recursive CTE needed.
+> Uses `households` + `household_members`. No recursive CTE needed — the household entity is explicit and flat.
 
 ---
 

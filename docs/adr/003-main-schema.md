@@ -27,20 +27,21 @@ This ADR defines the main application database schema for Observer — an IDP (I
 
 Migrations are **forward-only** (see ADR-004). Only `.up.sql` files exist.
 
-ADR-002 migrations occupy 000002–000006. This ADR's migrations start at **000007** and end at **000022**.
+ADR-002 migrations occupy 000002–000006. This ADR's migrations start at **000007** and end at **000024**.
 
 ---
 
 ## Domain Overview
 
 ```text
-Geography:  countries → states → places (cities/towns/villages)
+Geography:  countries → states (conflict_zone) → places
 Org:        offices
-Taxonomy:   categories, tags (project-scoped)
+Taxonomy:   categories (multi-code via person_categories), tags (project-scoped)
 Projects:   projects, project_permissions
-People:     people, person_tags, person_notes, documents
-Movement:   migration_records
-Support:    support_records
+People:     people, person_tags, person_categories, person_notes, documents
+Household:  households, household_members
+Movement:   migration_records (movement_reason, housing_at_destination)
+Support:    support_records (referral_status, referred_to_office)
 Animals:    pets
 ```
 
@@ -60,14 +61,18 @@ erDiagram
     project_permissions }o--|| users : "granted_to"
     projects }o--|| users : "owned_by"
 
-    categories ||--o{ people : "classifies"
+    categories }o--o{ people : "classifies (person_categories)"
     people }o--o{ tags : "tagged_with (person_tags)"
-    people }o--o| people : "parent (family head)"
     people }o--o| places : "current_place"
     people }o--o| places : "origin_place"
     people }o--|| projects : "belongs_to"
     people }o--o| users : "consultant"
     people }o--o| offices : "office"
+
+    households }o--|| projects : "in"
+    households }o--o| people : "head"
+    household_members }o--|| households : "in"
+    household_members }o--|| people : "member"
 
     people ||--o{ migration_records : "has"
     migration_records }o--o| places : "destination_place"
@@ -77,6 +82,8 @@ erDiagram
     support_records }o--o| users : "consultant"
     support_records }o--o| users : "recorded_by"
     support_records }o--|| projects : "in"
+    support_records }o--o| offices : "providing_office"
+    support_records }o--o| offices : "referred_to_office"
 
     people ||--o{ person_notes : "has"
     person_notes }o--o| users : "author"
@@ -147,14 +154,17 @@ CREATE INDEX        ix_countries_name ON countries (name);
 
 ### 000008 — States
 
+`conflict_zone` tags an oblast/state with its conflict zone designation. IDP classification is derived at query time via `origin_place_id → places.state_id → states.conflict_zone` rather than being hardcoded on the person record. This is a free-text field — no enum constraint — so new zones can be added by seeding the states table without a schema migration.
+
 ```sql
 CREATE TABLE states (
-    id         TEXT        PRIMARY KEY,
-    country_id TEXT        NOT NULL REFERENCES countries (id) ON DELETE CASCADE,
-    name       TEXT        NOT NULL,
-    code       CITEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    id            TEXT        PRIMARY KEY,
+    country_id    TEXT        NOT NULL REFERENCES countries (id) ON DELETE CASCADE,
+    name          TEXT        NOT NULL,
+    code          CITEXT,
+    conflict_zone TEXT,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX        ix_states_country_id   ON states (country_id);
@@ -205,8 +215,7 @@ CREATE INDEX ix_offices_place_id ON offices (place_id);
 
 ### 000011 — Categories
 
-Structured vulnerability categories for classifying people (e.g. elderly, disabled, single parent).
-Distinct from tags: categories are predefined and a person has exactly one; tags are free-form and many.
+Structured vulnerability categories (e.g. elderly, disabled, single parent). A person may hold multiple concurrent categories — see migration 000024 (`person_categories` junction). The `categories` table itself is a global lookup; project-specific vocabulary can be achieved at the application layer.
 
 ```sql
 CREATE TABLE categories (
@@ -305,11 +314,16 @@ CREATE INDEX        ix_project_permissions_user_id      ON project_permissions (
 Core IDP case entity.
 
 - `first_name` / `last_name` / `patronymic` — split from the archive's `full_name`; enables per-field GIN search and proper surname sorting
-- `idp_status` — IDP geographic origin; required for Crimea / East Ukraine / non-IDP report breakdowns
 - `case_status` — clean lifecycle enum replacing the archive's mixed-concern `status` field
-- `registered_at DATE` — the actual date a person was registered with the office (distinct from `created_at`, which is the DB insertion timestamp; see ADR-005 §registered_at)
-- `origin_place_id` — permanent hometown; movement history is in `migration_records`
+- `registered_at DATE` — actual registration date, distinct from `created_at` (DB insertion); see ADR-005 §registered_at
+- `origin_place_id` — permanent hometown; IDP classification is derived via `origin_place_id → places.state_id → states.conflict_zone`; movement history in `migration_records`
 - `birth_date` and `age_group` are mutually exclusive (XOR constraint); age group ranges defined in ADR-005
+- `primary_phone` — canonical contact number for SMS/deduplication; `phone_numbers JSONB` retains additional numbers
+- `consent_given / consent_date` — GDPR opt-in; default `FALSE` enforces explicit consent; `consent_date` requires `consent_given = TRUE` (enforced by constraint)
+- `external_id` — uniqueness enforced per-project via partial unique index (see `uq_people_project_external_id`)
+- `parent_id` removed — replaced by `households` + `household_members` (migration 000023)
+- `category_id` removed — replaced by `person_categories` junction (migration 000024)
+- `idp_status` removed — IDP classification derived from `origin_place_id → states.conflict_zone`
 
 ```sql
 CREATE TYPE person_case_status AS ENUM ('new', 'active', 'closed', 'archived');
@@ -323,8 +337,6 @@ CREATE TYPE person_age_group AS ENUM (
 CREATE TABLE people (
     id               TEXT               PRIMARY KEY,
     project_id       TEXT               NOT NULL REFERENCES projects (id) ON DELETE RESTRICT,
-    parent_id        TEXT               REFERENCES people (id) ON DELETE SET NULL,
-    category_id      TEXT               REFERENCES categories (id) ON DELETE SET NULL,
     consultant_id    TEXT               REFERENCES users (id) ON DELETE SET NULL,
     office_id        TEXT               REFERENCES offices (id) ON DELETE SET NULL,
     current_place_id TEXT               REFERENCES places (id) ON DELETE SET NULL,
@@ -337,14 +349,19 @@ CREATE TABLE people (
     birth_date       DATE,
     sex              person_sex         NOT NULL DEFAULT 'unknown',
     age_group        person_age_group,
+    primary_phone    VARCHAR(20),
     phone_numbers    JSONB              NOT NULL DEFAULT '[]',
-    idp_status       TEXT               CHECK (idp_status IN ('crimea', 'east_ukraine', 'non_idp')),
     case_status      person_case_status NOT NULL DEFAULT 'new',
+    consent_given    BOOLEAN            NOT NULL DEFAULT FALSE,
+    consent_date     DATE,
     registered_at    DATE,
     created_at       TIMESTAMPTZ        NOT NULL DEFAULT NOW(),
     updated_at       TIMESTAMPTZ        NOT NULL DEFAULT NOW(),
-    CONSTRAINT chk_people_age_xor CHECK (birth_date IS NULL OR age_group IS NULL)
+    CONSTRAINT chk_people_age_xor CHECK (birth_date IS NULL OR age_group IS NULL),
+    CONSTRAINT chk_people_consent CHECK (consent_given = TRUE OR consent_date IS NULL)
 );
+
+CREATE UNIQUE INDEX uq_people_project_external_id ON people (project_id, external_id) WHERE external_id IS NOT NULL;
 ```
 
 ---
@@ -371,18 +388,28 @@ Tracks a person's geographic movement over time. These are immutable historical 
 
 - `from_place_id` — where the person was before this move
 - `destination_place_id` — where the person moved to
+- `movement_reason` — why the movement occurred; distinguishes forced displacement from voluntary relocation (required for UNHCR return monitoring and DTM-aligned reporting)
+- `housing_at_destination` — housing situation on arrival; required for donor reporting and intentions surveys
 - `project_id` omitted — derivable via `person_id → people.project_id`
 - `updated_at` omitted — corrections are new records, not edits
 
 ```sql
 CREATE TABLE migration_records (
-    id                   TEXT        PRIMARY KEY,
-    person_id            TEXT        NOT NULL REFERENCES people (id) ON DELETE CASCADE,
-    destination_place_id TEXT        REFERENCES places (id) ON DELETE SET NULL,
-    from_place_id        TEXT        REFERENCES places (id) ON DELETE SET NULL,
-    migration_date       DATE,
-    notes                TEXT,
-    created_at           TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    id                      TEXT        PRIMARY KEY,
+    person_id               TEXT        NOT NULL REFERENCES people (id) ON DELETE CASCADE,
+    destination_place_id    TEXT        REFERENCES places (id) ON DELETE SET NULL,
+    from_place_id           TEXT        REFERENCES places (id) ON DELETE SET NULL,
+    migration_date          DATE,
+    movement_reason         TEXT        CHECK (movement_reason IN (
+                                            'conflict', 'security', 'service_access',
+                                            'return', 'relocation_program', 'economic', 'other'
+                                        )),
+    housing_at_destination  TEXT        CHECK (housing_at_destination IN (
+                                            'own_property', 'renting', 'with_relatives',
+                                            'collective_site', 'hotel', 'other', 'unknown'
+                                        )),
+    notes                   TEXT,
+    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX ix_migration_records_person_id            ON migration_records (person_id);
@@ -397,7 +424,9 @@ Tracks assistance provided to a person.
 
 - `recorded_by` — user who entered the record (was `owner_id` in archive, which had no FK)
 - `consultant_id` — consultant who delivered the service
-- `office_id` — the office that provided or coordinated this consultation (direct FK, not derived through the consultant's home office — see ADR-005 §office_id)
+- `office_id` — office that provided or coordinated this consultation (direct FK, not derived through the consultant's home office — see ADR-005 §office_id)
+- `referred_to_office` — the office the client was referred to; non-NULL together with `referral_status` indicates this record is a referral, not direct delivery
+- `referral_status` — lifecycle of an outbound referral; NULL means direct service delivery
 - `provided_at` — date service was delivered (distinct from `created_at`, the DB insertion time)
 - `sphere` — topic area for "by sphere of appeal" report breakdowns; constrained to `support_sphere` enum values (see ADR-005)
 
@@ -413,23 +442,28 @@ CREATE TYPE support_sphere AS ENUM (
 );
 
 CREATE TABLE support_records (
-    id            TEXT           PRIMARY KEY,
-    person_id     TEXT           NOT NULL REFERENCES people (id) ON DELETE CASCADE,
-    project_id    TEXT           NOT NULL REFERENCES projects (id) ON DELETE RESTRICT,
-    consultant_id TEXT           REFERENCES users (id) ON DELETE SET NULL,
-    recorded_by   TEXT           REFERENCES users (id) ON DELETE SET NULL,
-    office_id     TEXT           REFERENCES offices (id) ON DELETE SET NULL,
-    type          support_type   NOT NULL DEFAULT 'general',
-    sphere        support_sphere,
-    provided_at   DATE,
-    notes         TEXT,
-    created_at    TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
-    updated_at    TIMESTAMPTZ    NOT NULL DEFAULT NOW()
+    id                  TEXT           PRIMARY KEY,
+    person_id           TEXT           NOT NULL REFERENCES people (id) ON DELETE CASCADE,
+    project_id          TEXT           NOT NULL REFERENCES projects (id) ON DELETE RESTRICT,
+    consultant_id       TEXT           REFERENCES users (id) ON DELETE SET NULL,
+    recorded_by         TEXT           REFERENCES users (id) ON DELETE SET NULL,
+    office_id           TEXT           REFERENCES offices (id) ON DELETE SET NULL,
+    referred_to_office  TEXT           REFERENCES offices (id) ON DELETE SET NULL,
+    type                support_type   NOT NULL DEFAULT 'general',
+    sphere              support_sphere,
+    referral_status     TEXT           CHECK (referral_status IN (
+                                           'pending', 'accepted', 'completed', 'declined', 'no_response'
+                                       )),
+    provided_at         DATE,
+    notes               TEXT,
+    created_at          TIMESTAMPTZ    NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ    NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX ix_support_records_person_id     ON support_records (person_id);
 CREATE INDEX ix_support_records_project_id    ON support_records (project_id);
 CREATE INDEX ix_support_records_consultant_id ON support_records (consultant_id);
+CREATE INDEX ix_support_records_office_id     ON support_records (office_id);
 CREATE INDEX ix_support_records_type          ON support_records (type);
 CREATE INDEX ix_support_records_provided_at   ON support_records (provided_at);
 CREATE INDEX ix_support_records_sphere        ON support_records (sphere) WHERE sphere IS NOT NULL;
@@ -518,6 +552,56 @@ CREATE INDEX ix_person_notes_author_id ON person_notes (author_id);
 
 ---
 
+### 000023 — Households
+
+Replaces the `people.parent_id` self-reference with a first-class household entity.
+
+- `parent_id` could not represent peer relationships (e.g. a spouse is not a "child" of the head)
+- Relationship type (`spouse`, `child`, `sibling`, etc.) was not captured
+- A household with its own `reference_number` supports paper documents (ration cards, housing allocations) issued to the group
+- A person belongs to at most one household (enforced by PRIMARY KEY on `household_members`)
+
+```sql
+CREATE TABLE households (
+    id               TEXT        PRIMARY KEY,
+    project_id       TEXT        NOT NULL REFERENCES projects (id) ON DELETE RESTRICT,
+    reference_number TEXT,
+    head_person_id   TEXT        REFERENCES people (id) ON DELETE SET NULL,
+    created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE household_members (
+    household_id TEXT NOT NULL REFERENCES households (id) ON DELETE CASCADE,
+    person_id    TEXT NOT NULL REFERENCES people (id) ON DELETE CASCADE,
+    relationship TEXT NOT NULL CHECK (relationship IN (
+        'head', 'spouse', 'child', 'parent', 'sibling',
+        'grandchild', 'grandparent', 'other_relative', 'non_relative'
+    )),
+    PRIMARY KEY (household_id, person_id)
+);
+```
+
+Family-unit queries in ADR-005 (Group 10) use `household_members` grouped by `household_id` in place of the former `parent_id IS NULL` pattern.
+
+---
+
+### 000024 — Person Categories
+
+Replaces the single `people.category_id` FK with a many-to-many junction, mirroring UNHCR's PSN multi-code model. A person may hold multiple concurrent vulnerability classifications (e.g. single parent + mobility impairment).
+
+```sql
+CREATE TABLE person_categories (
+    person_id   TEXT NOT NULL REFERENCES people (id) ON DELETE CASCADE,
+    category_id TEXT NOT NULL REFERENCES categories (id) ON DELETE CASCADE,
+    PRIMARY KEY (person_id, category_id)
+);
+
+CREATE INDEX ix_person_categories_category_id ON person_categories (category_id);
+```
+
+---
+
 ## Design Decisions
 
 ### Forward-Only Migrations
@@ -554,9 +638,9 @@ Global tag namespaces cause tag vocabulary pollution across unrelated projects. 
 
 The archive's `person_status` enum mixed lifecycle states (`active/inactive`) with workflow milestones (`needs_help/consulted/helped`). The new `person_case_status` (`new/active/closed/archived`) models only the case lifecycle. Workflow progression is observable through the presence and content of `support_records` and `migration_records`.
 
-### People: `idp_status`
+### People: IDP classification via `states.conflict_zone`
 
-Report requirements (ADR-005) need breakdowns by IDP geographic origin (Crimea / East Ukraine ATO / non-IDP). This is not reliably inferrable from `origin_place_id` alone — the same city may have both IDP and local-resident records. An explicit `idp_status` field is unambiguous.
+IDP classification is derived at query time: `origin_place_id → places.state_id → states.conflict_zone`. The `conflict_zone` column is a free-text label on the `states` table (no enum constraint), so new conflict zones are added by seeding data rather than a schema migration. This approach mirrors the official Ukraine IDP register, which derives the category from the prior registered address rather than storing a hardcoded classification on the person record.
 
 ### People: Age XOR Constraint
 
@@ -598,9 +682,25 @@ Named `documents` rather than `person_documents` — the person context is alrea
 
 Audit logging is deferred: it adds operational complexity (retention, partitioning, volume) without a defined consumer today. When needed, implement as a separate append-only store rather than a general-purpose JSONB table.
 
+### People: Consent Fields
+
+`consent_given BOOLEAN NOT NULL DEFAULT FALSE` enforces opt-in by default, required for GDPR compliance when processing data of EU residents. `consent_date DATE` is only meaningful when consent has been given — enforced by `chk_people_consent`. Consent governs data sharing via referrals and exports.
+
+### People: `external_id` Uniqueness
+
+A partial unique index (`uq_people_project_external_id`) enforces that a given `external_id` (e.g. РНОКПП Ukrainian tax number) appears at most once per project. The partial condition (`WHERE external_id IS NOT NULL`) avoids conflicts for records where the national ID is not yet known. This is the primary deduplication mechanism without biometrics.
+
+### Households vs `parent_id`
+
+`people.parent_id` encoded family relationships as a single-level parent/child tree. This prevented representing peer relationships (a spouse is not a "child"), did not capture relationship type, and conflated "no family recorded" with "is the family head" (both had `parent_id IS NULL`). The `households` + `household_members` model is explicit: the household is a named entity, relationships are typed, and membership is a distinct record.
+
+### Multi-code Vulnerability (`person_categories`)
+
+Replacing `people.category_id` (single FK) with a junction table enables multiple concurrent vulnerability codes per person, consistent with UNHCR PSN practice. The categories table remains global; project-scoped taxonomies can be achieved by filtering on the category names used within a project.
+
 ### Phone Numbers as JSONB
 
-`JSONB` array handles multiple numbers per person without a join table. A dedicated `person_phones` table is a straightforward future normalisation if phone-level querying becomes a requirement.
+`JSONB` array handles multiple numbers per person without a join table. `primary_phone VARCHAR(20)` stores the canonical contact number for SMS integrations and deduplication queries. E.164 format is recommended at the application layer.
 
 ### CITEXT for Case-insensitive Lookups
 
@@ -614,22 +714,24 @@ Audit logging is deferred: it adds operational complexity (retention, partitioni
 
 ## Summary of Migration Numbers
 
-| Number | Table / Change                                              |
-| ------ | ----------------------------------------------------------- |
-| 000002 | users (role fix, profile columns)                           |
-| 000007 | countries                                                   |
-| 000008 | states                                                      |
-| 000009 | places                                                      |
-| 000010 | offices (no state_id, no global name unique)                |
-| 000011 | categories                                                  |
-| 000012 | tags (project-scoped)                                       |
-| 000013 | projects (+ status)                                         |
-| 000014 | project_permissions (project_role enum + sensitivity flags) |
-| 000015 | people (split name, idp_status, case_status, age XOR)       |
-| 000016 | person_tags                                                 |
-| 000017 | migration_records (destination_place_id, immutable)         |
-| 000018 | support_records (recorded_by, provided_at, sphere)          |
-| 000019 | pets (owner → people)                                       |
-| 000020 | documents (renamed from person_documents)                   |
-| 000021 | users office_id (alter)                                     |
-| 000022 | person_notes                                                |
+| Number | Table / Change                                                                        |
+| ------ | ------------------------------------------------------------------------------------- |
+| 000002 | users (role fix, profile columns)                                                     |
+| 000007 | countries                                                                             |
+| 000008 | states (+ conflict_zone)                                                              |
+| 000009 | places                                                                                |
+| 000010 | offices (no state_id, no global name unique)                                          |
+| 000011 | categories                                                                            |
+| 000012 | tags (project-scoped)                                                                 |
+| 000013 | projects (+ status)                                                                   |
+| 000014 | project_permissions (project_role enum + sensitivity flags)                           |
+| 000015 | people (split name, primary_phone, consent, age XOR, external_id unique, no idp_status/parent_id/category_id) |
+| 000016 | person_tags                                                                           |
+| 000017 | migration_records (movement_reason, housing_at_destination, immutable)                |
+| 000018 | support_records (recorded_by, provided_at, sphere, referral_status, referred_to_office) |
+| 000019 | pets (owner → people)                                                                 |
+| 000020 | documents (renamed from person_documents)                                             |
+| 000021 | users office_id (alter)                                                               |
+| 000022 | person_notes                                                                          |
+| 000023 | households + household_members (replaces people.parent_id)                            |
+| 000024 | person_categories junction (replaces people.category_id)                              |
