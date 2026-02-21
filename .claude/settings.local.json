@@ -6,20 +6,22 @@
       "Bash(go mod tidy:*)",
       "Bash(go test:*)",
       "Bash(go build:*)",
+      "Bash(go build ./... && go vet ./... && echo \"All clean\" 2>&1)",
+      "Bash(go mod:*)",
+      "Bash(mockgen:*)",
+      "Bash(which mockgen && mockgen --version 2>&1)",
       "Bash(./bin/observer:*)",
       "Bash(just fmt:*)",
+      "Bash(cat:*)",
+      "Bash(git:*)",
+      "Bash(cd:*)",
+      "Bash(ls:*)",
       "mcp__serena__list_dir",
       "mcp__serena__list_memories",
-      "Bash(go mod:*)",
-      "Bash(which mockgen && mockgen --version 2>&1)",
-      "Bash(mockgen:*)",
-      "Bash(go build ./... && go vet ./... && echo \"All clean\" 2>&1)",
       "mcp__serena__read_memory",
       "mcp__serena__find_symbol",
       "mcp__serena__replace_symbol_body",
-      "Bash(cat:*)",
-      "Bash(git:*)",
-      "Bash(cd:*)"
+      "WebSearch"
     ]
   }
 }

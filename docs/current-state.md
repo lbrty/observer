@@ -50,12 +50,13 @@ observer/
 | [ADR-002](adr/002-users-and-auth.md) | User domain, JWT auth with RSA signing, Argon2id passwords | Accepted |
 | [ADR-003](adr/003-main-schema.md) | Main database schema (geography, projects, people, support) | Accepted |
 | [ADR-004](adr/004-forward-only-migrations.md) | Forward-only migrations, no down files | Accepted |
+| [ADR-005](adr/005-reports.md) | Reports specification (39 report requirements from IDP archive) | Accepted |
 
 ---
 
 ## Migration Sequence
 
-All 21 migrations are forward-only `.up.sql` files. No `.down.sql` files exist.
+All 22 migrations are forward-only `.up.sql` files. No `.down.sql` files exist.
 
 | Number | Migration |
 |--------|-----------|
@@ -70,7 +71,7 @@ All 21 migrations are forward-only `.up.sql` files. No `.down.sql` files exist.
 | 000009 | places |
 | 000010 | offices |
 | 000011 | categories |
-| 000012 | tags |
+| 000012 | tags (project-scoped) |
 | 000013 | projects |
 | 000014 | project_permissions |
 | 000015 | people |
@@ -78,8 +79,9 @@ All 21 migrations are forward-only `.up.sql` files. No `.down.sql` files exist.
 | 000017 | migration_records |
 | 000018 | support_records |
 | 000019 | pets |
-| 000020 | person_documents |
+| 000020 | documents |
 | 000021 | add office_id column to users |
+| 000022 | person_notes |
 
 ---
 
