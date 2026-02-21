@@ -1,3 +1,5 @@
+-- state_id is omitted — derivable via place_id → places.state_id.
+-- No global name uniqueness: different cities legitimately share office names.
 CREATE TABLE offices (
     id         TEXT        PRIMARY KEY,
     name       TEXT        NOT NULL,
@@ -6,5 +8,4 @@ CREATE TABLE offices (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE UNIQUE INDEX uq_offices_name     ON offices (name);
-CREATE INDEX        ix_offices_place_id ON offices (place_id);
+CREATE INDEX ix_offices_place_id ON offices (place_id);
