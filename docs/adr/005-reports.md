@@ -2,7 +2,7 @@
 
 | Field      | Value                     |
 | ---------- | ------------------------- |
-| Status     | Accepted                  |
+| Status     | Proposed                  |
 | Date       | 2026-02-21                |
 | Supersedes | —                         |
 | Components | observer, reports, schema |
