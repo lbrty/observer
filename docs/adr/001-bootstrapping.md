@@ -53,7 +53,6 @@ Important: use variables defined in: `../variables.md`
 │       └── redis.go
 ├── migrations/
 │   ├── 000001_init_extensions.up.sql
-│   ├── 000002_init_schema.up.sql
 │   └── README.md
 ├── .env.example
 ├── .gitignore
@@ -289,17 +288,6 @@ CREATE EXTENSION IF NOT EXISTS unaccent;
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 ```
 
-### 5.3 `migrations/000002_init_schema.up.sql`
-
-```sql
-CREATE TABLE IF NOT EXISTS schema_health (
-    id VARCHAR(26) PRIMARY KEY,
-    checked_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE INDEX ix_schema_health_checked_at ON schema_health(checked_at);
-```
-
 **Index Naming Convention:**
 
 - Regular indexes: `ix_<table_name>_<column_name(s)>`
@@ -392,22 +380,13 @@ func (h *handler) Health(c *gin.Context)
 **Response format:**
 
 ```json
-{
-  "status": "healthy",
-  "database": "connected",
-  "timestamp": "2025-02-01T12:00:00Z"
-}
+{ "status": "ok" }
 ```
 
-**Error response:**
+**Error response (503):**
 
 ```json
-{
-  "status": "unhealthy",
-  "database": "disconnected",
-  "error": "connection refused",
-  "timestamp": "2025-02-01T12:00:00Z"
-}
+{ "status": "not ok" }
 ```
 
 ### 6.2 `internal/health/handler_test.go`
@@ -1139,7 +1118,6 @@ Private
 15. Implement `internal/database/database_test.go`
 16. Add gomock generation directive
 17. Create `migrations/000001_init_extensions.up.sql`
-18. Create `migrations/000002_init_schema.up.sql` (use VARCHAR(26))
 
 ### Step 7: Migrate Command
 

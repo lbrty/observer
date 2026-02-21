@@ -1,5 +1,13 @@
 # Coding Style & Preferences Guide
 
+## ADR definitions
+
+For architectural references always lookup `docs/adr`
+
+## Testing
+
+For testing guide follow `docs/testing-guide.md`
+
 ## Language & Naming
 
 - **Variable naming**: Prefer shorter, clear names
@@ -10,15 +18,12 @@
 
 ## Code Style
 
-
-## Code Style
-
 - **Comments**: Simple docstrings only.
-    - No decorative separators
-        - `//-----`
-        - `//=====`
-        - `/* ── Sidebar ────────── */`
-    - no ASCII art
+  - No decorative separators
+    - `//-----`
+    - `//=====`
+    - `/* ── Sidebar ────────── */`
+  - no ASCII art
 - **Complex logic**: Use mermaid diagrams over lengthy text explanations. Add a README in the module if needed.
 - **Architecture**: Domain-Driven Design + Clean Architecture. Manual dependency injection, no frameworks. Business logic in application layer, not database.
 - **Dependencies**: Prefer well-maintained, widely-known libraries. Leverage existing solutions over building custom.
@@ -90,7 +95,7 @@ Also actively suggest which variables can be added if there are variables which 
 
 ## Component implementation
 
-We have `base-ui` and `@phosphor-icons/react` first check if components and icons exist in both and try to take ready 
+We have `base-ui` and `@phosphor-icons/react` first check if components and icons exist in both and try to take ready
 to use options.
 
 ## React compiler

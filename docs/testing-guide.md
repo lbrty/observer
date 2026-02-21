@@ -457,7 +457,7 @@ func TestAuthFlow_E2E(t *testing.T) {
 
 ## 7. Test Organization
 
-```
+```text
 internal/
 ├── auth/
 │   ├── jwt.go

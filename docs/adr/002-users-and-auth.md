@@ -17,21 +17,21 @@ Important: use variables defined in: `../variables.md`
 
 ```text
 migrations/
-├── 000001_create_users_table.up.sql
-├── 000001_create_users_table.down.sql
-├── 000002_create_credentials_table.up.sql
-├── 000002_create_credentials_table.down.sql
-├── 000003_create_mfa_configs_table.up.sql
-├── 000003_create_mfa_configs_table.down.sql
-├── 000004_create_sessions_table.up.sql
-├── 000004_create_sessions_table.down.sql
-├── 000005_create_verification_tokens_table.up.sql
-└── 000005_create_verification_tokens_table.down.sql
+├── 000002_create_users_table.up.sql
+├── 000002_create_users_table.down.sql
+├── 000003_create_credentials_table.up.sql
+├── 000003_create_credentials_table.down.sql
+├── 000004_create_mfa_configs_table.up.sql
+├── 000004_create_mfa_configs_table.down.sql
+├── 000005_create_sessions_table.up.sql
+├── 000005_create_sessions_table.down.sql
+├── 000006_create_verification_tokens_table.up.sql
+└── 000006_create_verification_tokens_table.down.sql
 ```
 
 ### 1.2 Migration Content (PostgreSQL)
 
-**000001_create_users_table.up.sql:**
+**000002_create_users_table.up.sql:**
 
 ```sql
 CREATE TABLE users (
@@ -52,13 +52,13 @@ CREATE INDEX ix_users_phone ON users(phone);
 CREATE INDEX ix_users_role ON users(role);
 ```
 
-**000001_create_users_table.down.sql:**
+**000002_create_users_table.down.sql:**
 
 ```sql
 DROP TABLE IF EXISTS users;
 ```
 
-**000002_create_credentials_table.up.sql:**
+**000003_create_credentials_table.up.sql:**
 
 ```sql
 CREATE TABLE credentials (
@@ -69,13 +69,13 @@ CREATE TABLE credentials (
 );
 ```
 
-**000002_create_credentials_table.down.sql:**
+**000003_create_credentials_table.down.sql:**
 
 ```sql
 DROP TABLE IF EXISTS credentials;
 ```
 
-**000003_create_mfa_configs_table.up.sql:**
+**000004_create_mfa_configs_table.up.sql:**
 
 ```sql
 CREATE TABLE mfa_configs (
@@ -88,13 +88,13 @@ CREATE TABLE mfa_configs (
 );
 ```
 
-**000003_create_mfa_configs_table.down.sql:**
+**000004_create_mfa_configs_table.down.sql:**
 
 ```sql
 DROP TABLE IF EXISTS mfa_configs;
 ```
 
-**000004_create_sessions_table.up.sql:**
+**000005_create_sessions_table.up.sql:**
 
 ```sql
 CREATE TABLE sessions (
@@ -113,13 +113,13 @@ CREATE INDEX ix_sessions_refresh_token ON sessions(refresh_token);
 CREATE INDEX ix_sessions_expires_at ON sessions(expires_at);
 ```
 
-**000004_create_sessions_table.down.sql:**
+**000005_create_sessions_table.down.sql:**
 
 ```sql
 DROP TABLE IF EXISTS sessions;
 ```
 
-**000005_create_verification_tokens_table.up.sql:**
+**000006_create_verification_tokens_table.up.sql:**
 
 ```sql
 CREATE TABLE verification_tokens (
@@ -137,7 +137,7 @@ CREATE INDEX ix_verification_tokens_token ON verification_tokens(token);
 CREATE INDEX ix_verification_tokens_user_id ON verification_tokens(user_id);
 ```
 
-**000005_create_verification_tokens_table.down.sql:**
+**000006_create_verification_tokens_table.down.sql:**
 
 ```sql
 DROP TABLE IF EXISTS verification_tokens;
