@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go get:*)",
+      "Bash(go install:*)",
+      "Bash(go mod tidy:*)",
+      "Bash(go test:*)",
+      "Bash(go build:*)",
+      "Bash(./bin/gulbazar:*)",
+      "Bash(just fmt:*)"
+    ]
+  }
+}
