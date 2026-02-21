@@ -23,9 +23,10 @@ This ADR defines the main application database schema for Observer — an IDP (I
 - Add composite indexes for the most common query patterns
 - Add user profile fields (`first_name`, `last_name`, `office_id`)
 - Align naming conventions (`ix_` for indexes, `uq_` for unique constraints)
-- Migrations continue from ADR-002 numbering (000002–000006), starting at **000007**
 
-Migration files live in `migrations/` alongside those defined in ADR-001 and ADR-002.
+Migrations are **forward-only** (see ADR-004). Only `.up.sql` files exist.
+
+ADR-002 migrations occupy 000002–000006. This ADR's migrations start at **000007** and continue through **000021**.
 
 Note: ADR-002 migration 000002 (`users` table) is updated in-place to fix the role enum and add profile columns.
 
@@ -94,7 +95,7 @@ erDiagram
 ### Updated: 000002 — Users (role fix + profile columns)
 
 The ADR-002 users migration is updated to use the correct role enum and add profile fields.
-`office_id` is added in migration 000021 (after the `offices` table is created).
+`office_id` is added separately in migration 000021 (after the `offices` table is created in 000010).
 
 **`000002_create_users_table.up.sql`**
 
@@ -147,12 +148,6 @@ CREATE UNIQUE INDEX uq_countries_code ON countries (code);
 CREATE INDEX        ix_countries_name ON countries (name);
 ```
 
-**`000007_create_countries_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS countries;
-```
-
 ---
 
 ### 000008 — States
@@ -172,12 +167,6 @@ CREATE TABLE states (
 CREATE INDEX        ix_states_country_id   ON states (country_id);
 CREATE INDEX        ix_states_name         ON states (name);
 CREATE UNIQUE INDEX uq_states_country_code ON states (country_id, code) WHERE code IS NOT NULL;
-```
-
-**`000008_create_states_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS states;
 ```
 
 ---
@@ -203,12 +192,6 @@ CREATE INDEX ix_places_state_id ON places (state_id);
 CREATE INDEX ix_places_name     ON places (name);
 ```
 
-**`000009_create_places_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS places;
-```
-
 ---
 
 ### 000010 — Offices
@@ -228,12 +211,6 @@ CREATE TABLE offices (
 
 CREATE UNIQUE INDEX uq_offices_name     ON offices (name);
 CREATE INDEX        ix_offices_place_id ON offices (place_id);
-```
-
-**`000010_create_offices_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS offices;
 ```
 
 ---
@@ -256,12 +233,6 @@ CREATE TABLE categories (
 CREATE UNIQUE INDEX uq_categories_name ON categories (name);
 ```
 
-**`000011_create_categories_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS categories;
-```
-
 ---
 
 ### 000012 — Tags
@@ -276,12 +247,6 @@ CREATE TABLE tags (
 );
 
 CREATE UNIQUE INDEX uq_tags_name ON tags (name);
-```
-
-**`000012_create_tags_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS tags;
 ```
 
 ---
@@ -302,12 +267,6 @@ CREATE TABLE projects (
 
 CREATE INDEX ix_projects_owner_id ON projects (owner_id);
 CREATE INDEX ix_projects_name     ON projects (name);
-```
-
-**`000013_create_projects_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS projects;
 ```
 
 ---
@@ -336,13 +295,6 @@ CREATE TABLE project_permissions (
 CREATE UNIQUE INDEX uq_project_permissions_user_project ON project_permissions (user_id, project_id);
 CREATE INDEX        ix_project_permissions_project_id   ON project_permissions (project_id);
 CREATE INDEX        ix_project_permissions_user_id      ON project_permissions (user_id);
-```
-
-**`000014_create_project_permissions_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS project_permissions;
-DROP TYPE IF EXISTS project_role;
 ```
 
 **Project-role → implied action permissions (enforced in middleware):**
@@ -411,15 +363,6 @@ CREATE INDEX ix_people_full_name          ON people USING gin (full_name gin_trg
 CREATE INDEX ix_people_email              ON people (email) WHERE email IS NOT NULL;
 ```
 
-**`000015_create_people_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS people;
-DROP TYPE IF EXISTS person_age_group;
-DROP TYPE IF EXISTS person_sex;
-DROP TYPE IF EXISTS person_status;
-```
-
 ---
 
 ### 000016 — Person Tags
@@ -438,17 +381,11 @@ CREATE TABLE person_tags (
 CREATE INDEX ix_person_tags_tag_id ON person_tags (tag_id);
 ```
 
-**`000016_create_person_tags_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS person_tags;
-```
-
 ---
 
 ### 000017 — Migration Records
 
-Tracks a person's geographic movement over time. `from_place_id` here means the _previous_ location (not origin), complementing `people.origin_place_id`.
+Tracks a person's geographic movement over time. `from_place_id` here means the *previous* location (not origin), complementing `people.origin_place_id`.
 
 **`000017_create_migration_records_table.up.sql`**
 
@@ -468,12 +405,6 @@ CREATE TABLE migration_records (
 CREATE INDEX ix_migration_records_person_id        ON migration_records (person_id);
 CREATE INDEX ix_migration_records_project_id       ON migration_records (project_id);
 CREATE INDEX ix_migration_records_current_place_id ON migration_records (current_place_id);
-```
-
-**`000017_create_migration_records_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS migration_records;
 ```
 
 ---
@@ -503,13 +434,6 @@ CREATE INDEX ix_support_records_person_id     ON support_records (person_id);
 CREATE INDEX ix_support_records_project_id    ON support_records (project_id);
 CREATE INDEX ix_support_records_consultant_id ON support_records (consultant_id);
 CREATE INDEX ix_support_records_type          ON support_records (type);
-```
-
-**`000018_create_support_records_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS support_records;
-DROP TYPE IF EXISTS support_type;
 ```
 
 ---
@@ -542,13 +466,6 @@ CREATE INDEX ix_pets_owner_id   ON pets (owner_id);
 CREATE INDEX ix_pets_status     ON pets (status);
 ```
 
-**`000019_create_pets_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS pets;
-DROP TYPE IF EXISTS pet_status;
-```
-
 ---
 
 ### 000020 — Person Documents
@@ -575,17 +492,11 @@ CREATE INDEX ix_person_documents_person_id  ON person_documents (person_id);
 CREATE INDEX ix_person_documents_project_id ON person_documents (project_id);
 ```
 
-**`000020_create_person_documents_table.down.sql`**
-
-```sql
-DROP TABLE IF EXISTS person_documents;
-```
-
 ---
 
 ### 000021 — Add Office to Users
 
-Adds `office_id` to `users` after the `offices` table exists (000011).
+Adds `office_id` to `users` after the `offices` table exists (000010). Kept as a separate migration to avoid a circular dependency in the initial users table (000002).
 
 **`000021_add_office_to_users.up.sql`**
 
@@ -595,15 +506,13 @@ ALTER TABLE users ADD COLUMN office_id TEXT REFERENCES offices (id) ON DELETE SE
 CREATE INDEX ix_users_office_id ON users (office_id);
 ```
 
-**`000021_add_office_to_users.down.sql`**
-
-```sql
-ALTER TABLE users DROP COLUMN IF EXISTS office_id;
-```
-
 ---
 
 ## Design Decisions
+
+### Forward-Only Migrations
+
+Per ADR-004, no `.down.sql` files exist. All schema changes are expressed as new forward migrations.
 
 ### Role-based Project Permissions
 
@@ -629,7 +538,7 @@ Archive migration `15af2b04e333_16_support.py` declared `owner_id = Column(Text)
 
 ### `pets.owner_id` → `people`
 
-In an IDP context, the pet owner is a displaced person, not a platform user. Updated from the archive's `users` FK.
+In an IDP context the pet owner is a displaced person, not a platform user. Updated from the archive's `users` FK.
 
 ### `person_documents` Scoped to Person
 
@@ -658,18 +567,18 @@ Audit logging is deferred: it adds operational complexity (retention, partitioni
 | Number | Table / Change          |
 | ------ | ----------------------- |
 | 000002 | users (updated)         |
-| 000008 | countries               |
-| 000009 | states                  |
-| 000010 | places                  |
-| 000011 | offices                 |
-| 000012 | categories              |
-| 000013 | tags                    |
-| 000014 | projects                |
-| 000015 | project_permissions     |
-| 000016 | people                  |
-| 000017 | person_tags             |
-| 000018 | migration_records       |
-| 000019 | support_records         |
-| 000020 | pets                    |
+| 000007 | countries               |
+| 000008 | states                  |
+| 000009 | places                  |
+| 000010 | offices                 |
+| 000011 | categories              |
+| 000012 | tags                    |
+| 000013 | projects                |
+| 000014 | project_permissions     |
+| 000015 | people                  |
+| 000016 | person_tags             |
+| 000017 | migration_records       |
+| 000018 | support_records         |
+| 000019 | pets                    |
 | 000020 | person_documents        |
 | 000021 | users office_id (alter) |
