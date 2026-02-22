@@ -2,7 +2,7 @@
 
 | Field      | Value                               |
 | ---------- | ----------------------------------- |
-| Status     | Proposed                            |
+| Status     | Accepted                            |
 | Date       | 2026-02-22                          |
 | Supersedes | —                                   |
 | Components | observer, middleware, authorization |
