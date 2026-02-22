@@ -5,19 +5,19 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lbrty/observer/internal/crypto"
 	domainauth "github.com/lbrty/observer/internal/domain/auth"
-	infraauth "github.com/lbrty/observer/internal/infrastructure/auth"
 	"github.com/lbrty/observer/internal/ulid"
 )
 
 // RefreshTokenUseCase issues a new token pair from a valid refresh token.
 type RefreshTokenUseCase struct {
 	sessionRepo domainauth.SessionRepository
-	tokenGen    infraauth.TokenGenerator
+	tokenGen    crypto.TokenGenerator
 }
 
 // NewRefreshTokenUseCase creates a RefreshTokenUseCase.
-func NewRefreshTokenUseCase(sessionRepo domainauth.SessionRepository, tokenGen infraauth.TokenGenerator) *RefreshTokenUseCase {
+func NewRefreshTokenUseCase(sessionRepo domainauth.SessionRepository, tokenGen crypto.TokenGenerator) *RefreshTokenUseCase {
 	return &RefreshTokenUseCase{sessionRepo: sessionRepo, tokenGen: tokenGen}
 }
 

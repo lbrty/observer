@@ -3,36 +3,38 @@ package app
 import (
 	"fmt"
 
-	appauth "github.com/lbrty/observer/internal/application/auth"
 	"github.com/lbrty/observer/internal/config"
+	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/database"
 	domainauth "github.com/lbrty/observer/internal/domain/auth"
+	"github.com/lbrty/observer/internal/domain/project"
 	"github.com/lbrty/observer/internal/domain/user"
-	infraauth "github.com/lbrty/observer/internal/infrastructure/auth"
-	"github.com/lbrty/observer/internal/infrastructure/persistence/postgres"
+	"github.com/lbrty/observer/internal/postgres"
+	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 )
 
 // Container holds all application dependencies.
 type Container struct {
 	// Repositories
-	UserRepo    user.UserRepository
-	CredRepo    user.CredentialsRepository
-	SessionRepo domainauth.SessionRepository
+	UserRepo       user.UserRepository
+	CredRepo       user.CredentialsRepository
+	SessionRepo    domainauth.SessionRepository
+	PermissionRepo project.PermissionLoader
 
 	// Services
-	PasswordHasher infraauth.PasswordHasher
-	TokenGenerator infraauth.TokenGenerator
+	PasswordHasher crypto.PasswordHasher
+	TokenGenerator crypto.TokenGenerator
 
 	// Use Cases
-	RegisterUC     *appauth.RegisterUseCase
-	LoginUC        *appauth.LoginUseCase
-	RefreshTokenUC *appauth.RefreshTokenUseCase
-	LogoutUC       *appauth.LogoutUseCase
+	RegisterUC     *ucauth.RegisterUseCase
+	LoginUC        *ucauth.LoginUseCase
+	RefreshTokenUC *ucauth.RefreshTokenUseCase
+	LogoutUC       *ucauth.LogoutUseCase
 }
 
 // NewContainer wires all dependencies from config and database.
 func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
-	rsaKeys, err := infraauth.LoadRSAKeys(cfg.JWT.PrivateKeyPath, cfg.JWT.PublicKeyPath)
+	rsaKeys, err := crypto.LoadRSAKeys(cfg.JWT.PrivateKeyPath, cfg.JWT.PublicKeyPath)
 	if err != nil {
 		return nil, fmt.Errorf("load RSA keys: %w", err)
 	}
@@ -43,9 +45,10 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 	credRepo := postgres.NewCredentialsRepository(sqlxDB)
 	sessionRepo := postgres.NewSessionRepository(sqlxDB)
 	mfaRepo := postgres.NewMFARepository(sqlxDB)
+	permRepo := postgres.NewPermissionRepository(sqlxDB)
 
-	hasher := infraauth.NewArgonHasher()
-	tokenGen := infraauth.NewRSATokenGenerator(
+	hasher := crypto.NewArgonHasher()
+	tokenGen := crypto.NewRSATokenGenerator(
 		rsaKeys,
 		cfg.JWT.AccessTTL,
 		cfg.JWT.RefreshTTL,
@@ -53,15 +56,16 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 		cfg.JWT.Issuer,
 	)
 
-	registerUC := appauth.NewRegisterUseCase(userRepo, credRepo, hasher)
-	loginUC := appauth.NewLoginUseCase(userRepo, credRepo, sessionRepo, mfaRepo, hasher, tokenGen)
-	refreshUC := appauth.NewRefreshTokenUseCase(sessionRepo, tokenGen)
-	logoutUC := appauth.NewLogoutUseCase(sessionRepo)
+	registerUC := ucauth.NewRegisterUseCase(userRepo, credRepo, hasher)
+	loginUC := ucauth.NewLoginUseCase(userRepo, credRepo, sessionRepo, mfaRepo, hasher, tokenGen)
+	refreshUC := ucauth.NewRefreshTokenUseCase(sessionRepo, tokenGen)
+	logoutUC := ucauth.NewLogoutUseCase(sessionRepo)
 
 	return &Container{
 		UserRepo:       userRepo,
 		CredRepo:       credRepo,
 		SessionRepo:    sessionRepo,
+		PermissionRepo: permRepo,
 		PasswordHasher: hasher,
 		TokenGenerator: tokenGen,
 		RegisterUC:     registerUC,

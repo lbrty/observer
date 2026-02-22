@@ -8,10 +8,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
-	appauth "github.com/lbrty/observer/internal/application/auth"
+	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
 	mock_user "github.com/lbrty/observer/internal/domain/user/mock"
-	infraauth "github.com/lbrty/observer/internal/infrastructure/auth"
+	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 )
 
 func TestRegisterUseCase_Success(t *testing.T) {
@@ -20,12 +20,12 @@ func TestRegisterUseCase_Success(t *testing.T) {
 
 	mockUserRepo := mock_user.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_user.NewMockCredentialsRepository(ctrl)
-	hasher := infraauth.NewArgonHasher()
+	hasher := crypto.NewArgonHasher()
 
-	uc := appauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
+	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
 
 	ctx := context.Background()
-	input := appauth.RegisterInput{
+	input := ucauth.RegisterInput{
 		Email:    "test@example.com",
 		Phone:    "+49555000111",
 		Password: "securepassword",
@@ -60,15 +60,15 @@ func TestRegisterUseCase_EmailExists(t *testing.T) {
 
 	mockUserRepo := mock_user.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_user.NewMockCredentialsRepository(ctrl)
-	hasher := infraauth.NewArgonHasher()
+	hasher := crypto.NewArgonHasher()
 
-	uc := appauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
+	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
 
 	mockUserRepo.EXPECT().
 		GetByEmail(gomock.Any(), "taken@example.com").
 		Return(&user.User{}, nil)
 
-	_, err := uc.Execute(context.Background(), appauth.RegisterInput{
+	_, err := uc.Execute(context.Background(), ucauth.RegisterInput{
 		Email:    "taken@example.com",
 		Phone:    "+49555000222",
 		Password: "securepassword",
@@ -83,9 +83,9 @@ func TestRegisterUseCase_PhoneExists(t *testing.T) {
 
 	mockUserRepo := mock_user.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_user.NewMockCredentialsRepository(ctrl)
-	hasher := infraauth.NewArgonHasher()
+	hasher := crypto.NewArgonHasher()
 
-	uc := appauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
+	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
 
 	mockUserRepo.EXPECT().
 		GetByEmail(gomock.Any(), gomock.Any()).
@@ -95,7 +95,7 @@ func TestRegisterUseCase_PhoneExists(t *testing.T) {
 		GetByPhone(gomock.Any(), "+49555000333").
 		Return(&user.User{}, nil)
 
-	_, err := uc.Execute(context.Background(), appauth.RegisterInput{
+	_, err := uc.Execute(context.Background(), ucauth.RegisterInput{
 		Email:    "free@example.com",
 		Phone:    "+49555000333",
 		Password: "securepassword",
@@ -110,11 +110,11 @@ func TestRegisterUseCase_InvalidRole(t *testing.T) {
 
 	mockUserRepo := mock_user.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_user.NewMockCredentialsRepository(ctrl)
-	hasher := infraauth.NewArgonHasher()
+	hasher := crypto.NewArgonHasher()
 
-	uc := appauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
+	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
 
-	_, err := uc.Execute(context.Background(), appauth.RegisterInput{
+	_, err := uc.Execute(context.Background(), ucauth.RegisterInput{
 		Email:    "test@example.com",
 		Phone:    "+49555000444",
 		Password: "securepassword",

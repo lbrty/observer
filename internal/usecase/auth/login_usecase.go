@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lbrty/observer/internal/crypto"
 	domainauth "github.com/lbrty/observer/internal/domain/auth"
 	"github.com/lbrty/observer/internal/domain/user"
-	infraauth "github.com/lbrty/observer/internal/infrastructure/auth"
 	"github.com/lbrty/observer/internal/ulid"
 )
 
@@ -17,8 +17,8 @@ type LoginUseCase struct {
 	credRepo    user.CredentialsRepository
 	sessionRepo domainauth.SessionRepository
 	mfaRepo     user.MFARepository
-	hasher      infraauth.PasswordHasher
-	tokenGen    infraauth.TokenGenerator
+	hasher      crypto.PasswordHasher
+	tokenGen    crypto.TokenGenerator
 }
 
 // NewLoginUseCase creates a LoginUseCase.
@@ -27,8 +27,8 @@ func NewLoginUseCase(
 	credRepo user.CredentialsRepository,
 	sessionRepo domainauth.SessionRepository,
 	mfaRepo user.MFARepository,
-	hasher infraauth.PasswordHasher,
-	tokenGen infraauth.TokenGenerator,
+	hasher crypto.PasswordHasher,
+	tokenGen crypto.TokenGenerator,
 ) *LoginUseCase {
 	return &LoginUseCase{
 		userRepo:    userRepo,

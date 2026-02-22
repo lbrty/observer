@@ -1,4 +1,4 @@
-package auth_test
+package crypto_test
 
 import (
 	"testing"
@@ -6,11 +6,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	infraauth "github.com/lbrty/observer/internal/infrastructure/auth"
+	"github.com/lbrty/observer/internal/crypto"
 )
 
 func TestArgonHasher_HashAndVerify(t *testing.T) {
-	h := infraauth.NewArgonHasher()
+	h := crypto.NewArgonHasher()
 
 	hash, salt, err := h.Hash("mysecretpassword")
 	require.NoError(t, err)
@@ -22,7 +22,7 @@ func TestArgonHasher_HashAndVerify(t *testing.T) {
 }
 
 func TestArgonHasher_WrongPassword(t *testing.T) {
-	h := infraauth.NewArgonHasher()
+	h := crypto.NewArgonHasher()
 
 	hash, salt, err := h.Hash("correct")
 	require.NoError(t, err)
@@ -32,7 +32,7 @@ func TestArgonHasher_WrongPassword(t *testing.T) {
 }
 
 func TestArgonHasher_Uniqueness(t *testing.T) {
-	h := infraauth.NewArgonHasher()
+	h := crypto.NewArgonHasher()
 
 	hash1, salt1, _ := h.Hash("samepassword")
 	hash2, salt2, _ := h.Hash("samepassword")

@@ -1,4 +1,4 @@
-package auth_test
+package crypto_test
 
 import (
 	"crypto/rand"
@@ -13,11 +13,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	infraauth "github.com/lbrty/observer/internal/infrastructure/auth"
+	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/ulid"
 )
 
-func setupRSAKeys(t *testing.T) *infraauth.RSAKeys {
+func setupRSAKeys(t *testing.T) *crypto.RSAKeys {
 	t.Helper()
 	dir := t.TempDir()
 
@@ -36,14 +36,14 @@ func setupRSAKeys(t *testing.T) *infraauth.RSAKeys {
 	pem.Encode(pubFile, &pem.Block{Type: "PUBLIC KEY", Bytes: pubBytes})
 	pubFile.Close()
 
-	keys, err := infraauth.LoadRSAKeys(privPath, pubPath)
+	keys, err := crypto.LoadRSAKeys(privPath, pubPath)
 	require.NoError(t, err)
 	return keys
 }
 
 func TestRSATokenGenerator_AccessToken(t *testing.T) {
 	keys := setupRSAKeys(t)
-	gen := infraauth.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
+	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
 
 	uid := ulid.New()
 	token, expiresAt, err := gen.GenerateAccessToken(uid, "consultant")
@@ -60,7 +60,7 @@ func TestRSATokenGenerator_AccessToken(t *testing.T) {
 
 func TestRSATokenGenerator_MFAToken(t *testing.T) {
 	keys := setupRSAKeys(t)
-	gen := infraauth.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
+	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
 
 	uid := ulid.New()
 	token, err := gen.GenerateMFAToken(uid)
@@ -75,7 +75,7 @@ func TestRSATokenGenerator_MFAToken(t *testing.T) {
 
 func TestRSATokenGenerator_TypeMismatch(t *testing.T) {
 	keys := setupRSAKeys(t)
-	gen := infraauth.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
+	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
 
 	uid := ulid.New()
 	accessToken, _, err := gen.GenerateAccessToken(uid, "consultant")
@@ -88,7 +88,7 @@ func TestRSATokenGenerator_TypeMismatch(t *testing.T) {
 
 func TestRSATokenGenerator_RefreshToken(t *testing.T) {
 	keys := setupRSAKeys(t)
-	gen := infraauth.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
+	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
 
 	token1, err := gen.GenerateRefreshToken()
 	require.NoError(t, err)

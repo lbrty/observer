@@ -11,10 +11,10 @@ import (
 	"github.com/lbrty/observer/internal/app"
 	"github.com/lbrty/observer/internal/config"
 	"github.com/lbrty/observer/internal/database"
+	"github.com/lbrty/observer/internal/handler"
 	"github.com/lbrty/observer/internal/health"
-	"github.com/lbrty/observer/internal/interfaces/http/handlers"
-	"github.com/lbrty/observer/internal/interfaces/http/middleware"
 	"github.com/lbrty/observer/internal/logger"
+	"github.com/lbrty/observer/internal/middleware"
 	"github.com/lbrty/observer/internal/ulid"
 )
 
@@ -70,7 +70,9 @@ func (s *Server) setupRoutes(db database.DB, container *app.Container) {
 	s.router.GET("/health", healthHandler.Health)
 
 	authMW := middleware.NewAuthMiddleware(container.TokenGenerator)
-	authHandler := handlers.NewAuthHandler(
+	_ = middleware.NewProjectAuthMiddleware(container.PermissionRepo)
+
+	authHandler := handler.NewAuthHandler(
 		container.RegisterUC,
 		container.LoginUC,
 		container.RefreshTokenUC,

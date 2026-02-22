@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
-	infraauth "github.com/lbrty/observer/internal/infrastructure/auth"
 	"github.com/lbrty/observer/internal/ulid"
 )
 
@@ -14,14 +14,14 @@ import (
 type RegisterUseCase struct {
 	userRepo user.UserRepository
 	credRepo user.CredentialsRepository
-	hasher   infraauth.PasswordHasher
+	hasher   crypto.PasswordHasher
 }
 
 // NewRegisterUseCase creates a RegisterUseCase.
 func NewRegisterUseCase(
 	userRepo user.UserRepository,
 	credRepo user.CredentialsRepository,
-	hasher infraauth.PasswordHasher,
+	hasher crypto.PasswordHasher,
 ) *RegisterUseCase {
 	return &RegisterUseCase{
 		userRepo: userRepo,

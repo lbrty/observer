@@ -9,21 +9,21 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
-	appauth "github.com/lbrty/observer/internal/application/auth"
+	"github.com/lbrty/observer/internal/crypto"
 	mock_auth "github.com/lbrty/observer/internal/domain/auth/mock"
 	"github.com/lbrty/observer/internal/domain/user"
 	mock_user "github.com/lbrty/observer/internal/domain/user/mock"
-	infraauth "github.com/lbrty/observer/internal/infrastructure/auth"
 	"github.com/lbrty/observer/internal/ulid"
+	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 )
 
 func setupLoginUseCase(t *testing.T) (
-	*appauth.LoginUseCase,
+	*ucauth.LoginUseCase,
 	*mock_user.MockUserRepository,
 	*mock_user.MockCredentialsRepository,
 	*mock_auth.MockSessionRepository,
 	*mock_user.MockMFARepository,
-	infraauth.PasswordHasher,
+	crypto.PasswordHasher,
 ) {
 	t.Helper()
 	ctrl := gomock.NewController(t)
@@ -32,22 +32,22 @@ func setupLoginUseCase(t *testing.T) (
 	mockCredRepo := mock_user.NewMockCredentialsRepository(ctrl)
 	mockSessionRepo := mock_auth.NewMockSessionRepository(ctrl)
 	mockMFARepo := mock_user.NewMockMFARepository(ctrl)
-	hasher := infraauth.NewArgonHasher()
+	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
-	uc := appauth.NewLoginUseCase(
+	uc := ucauth.NewLoginUseCase(
 		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen,
 	)
 	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher
 }
 
-func newTestTokenGen(t *testing.T) infraauth.TokenGenerator {
+func newTestTokenGen(t *testing.T) crypto.TokenGenerator {
 	t.Helper()
 	tmpDir := t.TempDir()
 	privPath, pubPath := generateTestKeys(t, tmpDir)
-	keys, err := infraauth.LoadRSAKeys(privPath, pubPath)
+	keys, err := crypto.LoadRSAKeys(privPath, pubPath)
 	require.NoError(t, err)
-	return infraauth.NewRSATokenGenerator(keys, 0, 0, 0, "test")
+	return crypto.NewRSATokenGenerator(keys, 0, 0, 0, "test")
 }
 
 func TestLoginUseCase_Success(t *testing.T) {
@@ -67,7 +67,7 @@ func TestLoginUseCase_Success(t *testing.T) {
 	mockMFARepo.EXPECT().GetByUserID(ctx, uid).Return(nil, errors.New("not found"))
 	mockSessionRepo.EXPECT().Create(ctx, gomock.Any()).Return(nil)
 
-	out, err := uc.Execute(ctx, appauth.LoginInput{Email: u.Email, Password: password}, "agent", "1.2.3.4")
+	out, err := uc.Execute(ctx, ucauth.LoginInput{Email: u.Email, Password: password}, "agent", "1.2.3.4")
 	require.NoError(t, err)
 	assert.False(t, out.RequiresMFA)
 	assert.NotNil(t, out.Tokens)
@@ -82,7 +82,7 @@ func TestLoginUseCase_InvalidCredentials(t *testing.T) {
 		GetByEmail(gomock.Any(), "bad@example.com").
 		Return(nil, user.ErrUserNotFound)
 
-	_, err := uc.Execute(context.Background(), appauth.LoginInput{
+	_, err := uc.Execute(context.Background(), ucauth.LoginInput{
 		Email: "bad@example.com", Password: "pass",
 	}, "", "")
 	assert.ErrorIs(t, err, user.ErrInvalidCredentials)
@@ -96,7 +96,7 @@ func TestLoginUseCase_InactiveUser(t *testing.T) {
 
 	mockUserRepo.EXPECT().GetByEmail(gomock.Any(), u.Email).Return(u, nil)
 
-	_, err := uc.Execute(context.Background(), appauth.LoginInput{
+	_, err := uc.Execute(context.Background(), ucauth.LoginInput{
 		Email: u.Email, Password: "pass",
 	}, "", "")
 	assert.ErrorIs(t, err, user.ErrUserNotActive)

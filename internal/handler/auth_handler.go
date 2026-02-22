@@ -1,4 +1,4 @@
-package handlers
+package handler
 
 import (
 	"errors"
@@ -6,25 +6,25 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	appauth "github.com/lbrty/observer/internal/application/auth"
 	domainauth "github.com/lbrty/observer/internal/domain/auth"
 	"github.com/lbrty/observer/internal/domain/user"
+	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 )
 
 // AuthHandler exposes auth HTTP endpoints.
 type AuthHandler struct {
-	registerUC *appauth.RegisterUseCase
-	loginUC    *appauth.LoginUseCase
-	refreshUC  *appauth.RefreshTokenUseCase
-	logoutUC   *appauth.LogoutUseCase
+	registerUC *ucauth.RegisterUseCase
+	loginUC    *ucauth.LoginUseCase
+	refreshUC  *ucauth.RefreshTokenUseCase
+	logoutUC   *ucauth.LogoutUseCase
 }
 
 // NewAuthHandler creates an AuthHandler.
 func NewAuthHandler(
-	registerUC *appauth.RegisterUseCase,
-	loginUC *appauth.LoginUseCase,
-	refreshUC *appauth.RefreshTokenUseCase,
-	logoutUC *appauth.LogoutUseCase,
+	registerUC *ucauth.RegisterUseCase,
+	loginUC *ucauth.LoginUseCase,
+	refreshUC *ucauth.RefreshTokenUseCase,
+	logoutUC *ucauth.LogoutUseCase,
 ) *AuthHandler {
 	return &AuthHandler{
 		registerUC: registerUC,
@@ -36,7 +36,7 @@ func NewAuthHandler(
 
 // Register handles POST /auth/register.
 func (h *AuthHandler) Register(c *gin.Context) {
-	var input appauth.RegisterInput
+	var input ucauth.RegisterInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -53,7 +53,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 // Login handles POST /auth/login.
 func (h *AuthHandler) Login(c *gin.Context) {
-	var input appauth.LoginInput
+	var input ucauth.LoginInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -70,7 +70,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 // RefreshToken handles POST /auth/refresh.
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
-	var input appauth.RefreshTokenInput
+	var input ucauth.RefreshTokenInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -87,7 +87,7 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 
 // Logout handles POST /auth/logout.
 func (h *AuthHandler) Logout(c *gin.Context) {
-	var input appauth.LogoutInput
+	var input ucauth.LogoutInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
