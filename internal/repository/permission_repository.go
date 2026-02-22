@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -12,17 +12,17 @@ import (
 	"github.com/lbrty/observer/internal/domain/project"
 )
 
-// PermissionRepository is a PostgreSQL-backed project permission loader.
-type PermissionRepository struct {
+// permissionLoaderRepo is a PostgreSQL-backed project permission loader.
+type permissionLoaderRepo struct {
 	db *sqlx.DB
 }
 
 // NewPermissionRepository creates a PermissionRepository backed by the given DB.
-func NewPermissionRepository(db *sqlx.DB) *PermissionRepository {
-	return &PermissionRepository{db: db}
+func NewPermissionRepository(db *sqlx.DB) PermissionLoader {
+	return &permissionLoaderRepo{db: db}
 }
 
-func (r *PermissionRepository) IsProjectOwner(ctx context.Context, userID ulid.ULID, projectID string) (bool, error) {
+func (r *permissionLoaderRepo) IsProjectOwner(ctx context.Context, userID ulid.ULID, projectID string) (bool, error) {
 	const q = `SELECT owner_id FROM projects WHERE id = $1`
 	var ownerID string
 	err := r.db.QueryRowContext(ctx, q, projectID).Scan(&ownerID)
@@ -35,7 +35,7 @@ func (r *PermissionRepository) IsProjectOwner(ctx context.Context, userID ulid.U
 	return ownerID == userID.String(), nil
 }
 
-func (r *PermissionRepository) GetPermission(ctx context.Context, userID ulid.ULID, projectID string) (*project.Permission, error) {
+func (r *permissionLoaderRepo) GetPermission(ctx context.Context, userID ulid.ULID, projectID string) (*project.Permission, error) {
 	const q = `
 		SELECT role, can_view_contact, can_view_personal, can_view_documents
 		FROM project_permissions

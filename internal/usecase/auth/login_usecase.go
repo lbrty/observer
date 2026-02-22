@@ -8,25 +8,26 @@ import (
 	"github.com/lbrty/observer/internal/crypto"
 	domainauth "github.com/lbrty/observer/internal/domain/auth"
 	"github.com/lbrty/observer/internal/domain/user"
+	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
 )
 
 // LoginUseCase handles user login.
 type LoginUseCase struct {
-	userRepo    user.UserRepository
-	credRepo    user.CredentialsRepository
-	sessionRepo domainauth.SessionRepository
-	mfaRepo     user.MFARepository
+	userRepo    repository.UserRepository
+	credRepo    repository.CredentialsRepository
+	sessionRepo repository.SessionRepository
+	mfaRepo     repository.MFARepository
 	hasher      crypto.PasswordHasher
 	tokenGen    crypto.TokenGenerator
 }
 
 // NewLoginUseCase creates a LoginUseCase.
 func NewLoginUseCase(
-	userRepo user.UserRepository,
-	credRepo user.CredentialsRepository,
-	sessionRepo domainauth.SessionRepository,
-	mfaRepo user.MFARepository,
+	userRepo repository.UserRepository,
+	credRepo repository.CredentialsRepository,
+	sessionRepo repository.SessionRepository,
+	mfaRepo repository.MFARepository,
 	hasher crypto.PasswordHasher,
 	tokenGen crypto.TokenGenerator,
 ) *LoginUseCase {

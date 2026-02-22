@@ -11,6 +11,7 @@ import (
 	"github.com/lbrty/observer/internal/app"
 	"github.com/lbrty/observer/internal/config"
 	"github.com/lbrty/observer/internal/database"
+	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/handler"
 	"github.com/lbrty/observer/internal/health"
 	"github.com/lbrty/observer/internal/logger"
@@ -85,6 +86,57 @@ func (s *Server) setupRoutes(db database.DB, container *app.Container) {
 		auth.POST("/login", authHandler.Login)
 		auth.POST("/refresh", authHandler.RefreshToken)
 		auth.POST("/logout", authMW.Authenticate(), authHandler.Logout)
+	}
+
+	// Admin endpoints — requires authentication + admin role
+	adminHandler := handler.NewAdminHandler(container.ListUsersUC, container.GetUserUC, container.UpdateUserUC)
+	permHandler := handler.NewPermissionHandler(container.ListPermsUC, container.AssignPermUC, container.UpdatePermUC, container.RevokePermUC)
+	countryHandler := handler.NewCountryHandler(container.CountryUC)
+	stateHandler := handler.NewStateHandler(container.StateUC)
+	placeHandler := handler.NewPlaceHandler(container.PlaceUC)
+	officeHandler := handler.NewOfficeHandler(container.OfficeUC)
+	categoryHandler := handler.NewCategoryHandler(container.CategoryUC)
+
+	admin := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin))
+	{
+		admin.GET("/users", adminHandler.ListUsers)
+		admin.GET("/users/:id", adminHandler.GetUser)
+		admin.PATCH("/users/:id", adminHandler.UpdateUser)
+
+		admin.GET("/projects/:project_id/permissions", permHandler.ListPermissions)
+		admin.POST("/projects/:project_id/permissions", permHandler.AssignPermission)
+		admin.PATCH("/projects/:project_id/permissions/:id", permHandler.UpdatePermission)
+		admin.DELETE("/projects/:project_id/permissions/:id", permHandler.RevokePermission)
+
+		admin.GET("/countries", countryHandler.List)
+		admin.GET("/countries/:id", countryHandler.Get)
+		admin.POST("/countries", countryHandler.Create)
+		admin.PATCH("/countries/:id", countryHandler.Update)
+		admin.DELETE("/countries/:id", countryHandler.Delete)
+
+		admin.GET("/states", stateHandler.List)
+		admin.GET("/states/:id", stateHandler.Get)
+		admin.POST("/states", stateHandler.Create)
+		admin.PATCH("/states/:id", stateHandler.Update)
+		admin.DELETE("/states/:id", stateHandler.Delete)
+
+		admin.GET("/places", placeHandler.List)
+		admin.GET("/places/:id", placeHandler.Get)
+		admin.POST("/places", placeHandler.Create)
+		admin.PATCH("/places/:id", placeHandler.Update)
+		admin.DELETE("/places/:id", placeHandler.Delete)
+
+		admin.GET("/offices", officeHandler.List)
+		admin.GET("/offices/:id", officeHandler.Get)
+		admin.POST("/offices", officeHandler.Create)
+		admin.PATCH("/offices/:id", officeHandler.Update)
+		admin.DELETE("/offices/:id", officeHandler.Delete)
+
+		admin.GET("/categories", categoryHandler.List)
+		admin.GET("/categories/:id", categoryHandler.Get)
+		admin.POST("/categories", categoryHandler.Create)
+		admin.PATCH("/categories/:id", categoryHandler.Update)
+		admin.DELETE("/categories/:id", categoryHandler.Delete)
 	}
 }
 

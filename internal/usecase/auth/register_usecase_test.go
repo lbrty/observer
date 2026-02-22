@@ -10,7 +10,7 @@ import (
 
 	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
-	mock_user "github.com/lbrty/observer/internal/domain/user/mock"
+	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 )
 
@@ -18,8 +18,8 @@ func TestRegisterUseCase_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mock_user.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_user.NewMockCredentialsRepository(ctrl)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
 
 	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
@@ -58,8 +58,8 @@ func TestRegisterUseCase_EmailExists(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mock_user.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_user.NewMockCredentialsRepository(ctrl)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
 
 	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
@@ -81,8 +81,8 @@ func TestRegisterUseCase_PhoneExists(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mock_user.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_user.NewMockCredentialsRepository(ctrl)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
 
 	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
@@ -108,8 +108,8 @@ func TestRegisterUseCase_InvalidRole(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockUserRepo := mock_user.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_user.NewMockCredentialsRepository(ctrl)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
 
 	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)

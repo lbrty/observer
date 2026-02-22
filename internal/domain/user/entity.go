@@ -23,11 +23,21 @@ type User struct {
 	LastName   string
 	Email      string
 	Phone      string
+	OfficeID   *string
 	Role       Role
 	IsVerified bool
 	IsActive   bool
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
+}
+
+// UserListFilter controls pagination and filtering for user listing.
+type UserListFilter struct {
+	Page     int
+	PerPage  int
+	Search   string
+	Role     string
+	IsActive *bool
 }
 
 // CanLogin returns an error if the user is not allowed to log in.

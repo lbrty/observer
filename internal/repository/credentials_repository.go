@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -13,17 +13,17 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 )
 
-// CredentialsRepository is a PostgreSQL-backed credentials repository.
-type CredentialsRepository struct {
+// credentialsRepo is a PostgreSQL-backed credentials repository.
+type credentialsRepo struct {
 	db *sqlx.DB
 }
 
 // NewCredentialsRepository creates a CredentialsRepository backed by the given DB.
-func NewCredentialsRepository(db *sqlx.DB) *CredentialsRepository {
-	return &CredentialsRepository{db: db}
+func NewCredentialsRepository(db *sqlx.DB) CredentialsRepository {
+	return &credentialsRepo{db: db}
 }
 
-func (r *CredentialsRepository) Create(ctx context.Context, cred *user.Credentials) error {
+func (r *credentialsRepo) Create(ctx context.Context, cred *user.Credentials) error {
 	const q = `
 		INSERT INTO credentials (user_id, password_hash, salt, updated_at)
 		VALUES ($1, $2, $3, $4)
@@ -37,7 +37,7 @@ func (r *CredentialsRepository) Create(ctx context.Context, cred *user.Credentia
 	return nil
 }
 
-func (r *CredentialsRepository) GetByUserID(ctx context.Context, userID ulid.ULID) (*user.Credentials, error) {
+func (r *credentialsRepo) GetByUserID(ctx context.Context, userID ulid.ULID) (*user.Credentials, error) {
 	const q = `SELECT user_id, password_hash, salt, updated_at FROM credentials WHERE user_id=$1`
 
 	var cred user.Credentials

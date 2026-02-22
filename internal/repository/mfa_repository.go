@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -13,17 +13,17 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 )
 
-// MFARepository is a PostgreSQL-backed MFA config repository.
-type MFARepository struct {
+// mfaRepo is a PostgreSQL-backed MFA config repository.
+type mfaRepo struct {
 	db *sqlx.DB
 }
 
 // NewMFARepository creates an MFARepository backed by the given DB.
-func NewMFARepository(db *sqlx.DB) *MFARepository {
-	return &MFARepository{db: db}
+func NewMFARepository(db *sqlx.DB) MFARepository {
+	return &mfaRepo{db: db}
 }
 
-func (r *MFARepository) Create(ctx context.Context, cfg *user.MFAConfig) error {
+func (r *mfaRepo) Create(ctx context.Context, cfg *user.MFAConfig) error {
 	const q = `
 		INSERT INTO mfa_configs (user_id, method, secret, phone, is_enabled, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
@@ -37,7 +37,7 @@ func (r *MFARepository) Create(ctx context.Context, cfg *user.MFAConfig) error {
 	return nil
 }
 
-func (r *MFARepository) GetByUserID(ctx context.Context, userID ulid.ULID) (*user.MFAConfig, error) {
+func (r *mfaRepo) GetByUserID(ctx context.Context, userID ulid.ULID) (*user.MFAConfig, error) {
 	const q = `SELECT user_id, method, secret, phone, is_enabled, created_at FROM mfa_configs WHERE user_id=$1`
 
 	var cfg user.MFAConfig

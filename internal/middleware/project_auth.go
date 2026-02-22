@@ -7,15 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/lbrty/observer/internal/domain/project"
+	"github.com/lbrty/observer/internal/repository"
 )
 
 // ProjectAuthMiddleware provides project-scoped authorization.
 type ProjectAuthMiddleware struct {
-	permLoader project.PermissionLoader
+	permLoader repository.PermissionLoader
 }
 
 // NewProjectAuthMiddleware creates a ProjectAuthMiddleware.
-func NewProjectAuthMiddleware(permLoader project.PermissionLoader) *ProjectAuthMiddleware {
+func NewProjectAuthMiddleware(permLoader repository.PermissionLoader) *ProjectAuthMiddleware {
 	return &ProjectAuthMiddleware{permLoader: permLoader}
 }
 

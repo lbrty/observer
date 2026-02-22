@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -13,17 +13,17 @@ import (
 	"github.com/lbrty/observer/internal/domain/auth"
 )
 
-// SessionRepository is a PostgreSQL-backed session repository.
-type SessionRepository struct {
+// sessionRepo is a PostgreSQL-backed session repository.
+type sessionRepo struct {
 	db *sqlx.DB
 }
 
 // NewSessionRepository creates a SessionRepository backed by the given DB.
-func NewSessionRepository(db *sqlx.DB) *SessionRepository {
-	return &SessionRepository{db: db}
+func NewSessionRepository(db *sqlx.DB) SessionRepository {
+	return &sessionRepo{db: db}
 }
 
-func (r *SessionRepository) Create(ctx context.Context, s *auth.Session) error {
+func (r *sessionRepo) Create(ctx context.Context, s *auth.Session) error {
 	const q = `
 		INSERT INTO sessions (id, user_id, refresh_token, user_agent, ip, expires_at, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -38,7 +38,7 @@ func (r *SessionRepository) Create(ctx context.Context, s *auth.Session) error {
 	return nil
 }
 
-func (r *SessionRepository) GetByRefreshToken(ctx context.Context, token string) (*auth.Session, error) {
+func (r *sessionRepo) GetByRefreshToken(ctx context.Context, token string) (*auth.Session, error) {
 	const q = `
 		SELECT id, user_id, refresh_token, user_agent, ip, expires_at, created_at
 		FROM sessions WHERE refresh_token=$1
@@ -46,7 +46,7 @@ func (r *SessionRepository) GetByRefreshToken(ctx context.Context, token string)
 	return r.scanSession(r.db.QueryRowContext(ctx, q, token))
 }
 
-func (r *SessionRepository) Delete(ctx context.Context, id ulid.ULID) error {
+func (r *sessionRepo) Delete(ctx context.Context, id ulid.ULID) error {
 	const q = `DELETE FROM sessions WHERE id=$1`
 	_, err := r.db.ExecContext(ctx, q, id.String())
 	if err != nil {
@@ -55,7 +55,7 @@ func (r *SessionRepository) Delete(ctx context.Context, id ulid.ULID) error {
 	return nil
 }
 
-func (r *SessionRepository) DeleteByRefreshToken(ctx context.Context, token string) error {
+func (r *sessionRepo) DeleteByRefreshToken(ctx context.Context, token string) error {
 	const q = `DELETE FROM sessions WHERE refresh_token=$1`
 	_, err := r.db.ExecContext(ctx, q, token)
 	if err != nil {
@@ -64,7 +64,7 @@ func (r *SessionRepository) DeleteByRefreshToken(ctx context.Context, token stri
 	return nil
 }
 
-func (r *SessionRepository) scanSession(row *sql.Row) (*auth.Session, error) {
+func (r *sessionRepo) scanSession(row *sql.Row) (*auth.Session, error) {
 	var s auth.Session
 	var idStr, userIDStr string
 	var expiresAt, createdAt time.Time

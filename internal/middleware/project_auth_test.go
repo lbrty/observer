@@ -11,8 +11,8 @@ import (
 	"go.uber.org/mock/gomock"
 
 	"github.com/lbrty/observer/internal/domain/project"
-	mock_project "github.com/lbrty/observer/internal/domain/project/mock"
 	"github.com/lbrty/observer/internal/middleware"
+	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 )
 
 func newProjectRouter(
@@ -20,12 +20,12 @@ func newProjectRouter(
 	userID ulid.ULID,
 	role string,
 	action project.Action,
-	mockSetup func(*mock_project.MockPermissionLoader),
+	mockSetup func(*mock_repo.MockPermissionLoader),
 ) (*httptest.ResponseRecorder, *gin.Engine) {
 	t.Helper()
 	ctrl := gomock.NewController(t)
 
-	mockPerm := mock_project.NewMockPermissionLoader(ctrl)
+	mockPerm := mock_repo.NewMockPermissionLoader(ctrl)
 	if mockSetup != nil {
 		mockSetup(mockPerm)
 	}
@@ -68,7 +68,7 @@ func TestRequireProjectRole_OwnerBypass(t *testing.T) {
 	uid := ulid.Make()
 	projID := "01PROJ000000000000000002"
 
-	w, r := newProjectRouter(t, uid, "staff", project.ActionDelete, func(m *mock_project.MockPermissionLoader) {
+	w, r := newProjectRouter(t, uid, "staff", project.ActionDelete, func(m *mock_repo.MockPermissionLoader) {
 		m.EXPECT().IsProjectOwner(gomock.Any(), uid, projID).Return(true, nil)
 	})
 
@@ -83,7 +83,7 @@ func TestRequireProjectRole_Sufficient(t *testing.T) {
 	uid := ulid.Make()
 	projID := "01PROJ000000000000000003"
 
-	w, r := newProjectRouter(t, uid, "staff", project.ActionCreate, func(m *mock_project.MockPermissionLoader) {
+	w, r := newProjectRouter(t, uid, "staff", project.ActionCreate, func(m *mock_repo.MockPermissionLoader) {
 		m.EXPECT().IsProjectOwner(gomock.Any(), uid, projID).Return(false, nil)
 		m.EXPECT().GetPermission(gomock.Any(), uid, projID).Return(&project.Permission{
 			Role:             project.ProjectRoleConsultant,
@@ -107,7 +107,7 @@ func TestRequireProjectRole_Insufficient(t *testing.T) {
 	uid := ulid.Make()
 	projID := "01PROJ000000000000000004"
 
-	w, r := newProjectRouter(t, uid, "staff", project.ActionCreate, func(m *mock_project.MockPermissionLoader) {
+	w, r := newProjectRouter(t, uid, "staff", project.ActionCreate, func(m *mock_repo.MockPermissionLoader) {
 		m.EXPECT().IsProjectOwner(gomock.Any(), uid, projID).Return(false, nil)
 		m.EXPECT().GetPermission(gomock.Any(), uid, projID).Return(&project.Permission{
 			Role: project.ProjectRoleViewer,
@@ -125,7 +125,7 @@ func TestRequireProjectRole_NoPermission(t *testing.T) {
 	uid := ulid.Make()
 	projID := "01PROJ000000000000000005"
 
-	w, r := newProjectRouter(t, uid, "staff", project.ActionRead, func(m *mock_project.MockPermissionLoader) {
+	w, r := newProjectRouter(t, uid, "staff", project.ActionRead, func(m *mock_repo.MockPermissionLoader) {
 		m.EXPECT().IsProjectOwner(gomock.Any(), uid, projID).Return(false, nil)
 		m.EXPECT().GetPermission(gomock.Any(), uid, projID).Return(nil, project.ErrPermissionNotFound)
 	})
@@ -141,7 +141,7 @@ func TestRequireProjectRole_ProjectNotFound(t *testing.T) {
 	uid := ulid.Make()
 	projID := "01PROJ000000000000000006"
 
-	w, r := newProjectRouter(t, uid, "staff", project.ActionRead, func(m *mock_project.MockPermissionLoader) {
+	w, r := newProjectRouter(t, uid, "staff", project.ActionRead, func(m *mock_repo.MockPermissionLoader) {
 		m.EXPECT().IsProjectOwner(gomock.Any(), uid, projID).Return(false, project.ErrProjectNotFound)
 	})
 
@@ -156,7 +156,7 @@ func TestRequireProjectRole_SensitivityFlags(t *testing.T) {
 	uid := ulid.Make()
 	projID := "01PROJ000000000000000007"
 
-	w, r := newProjectRouter(t, uid, "staff", project.ActionRead, func(m *mock_project.MockPermissionLoader) {
+	w, r := newProjectRouter(t, uid, "staff", project.ActionRead, func(m *mock_repo.MockPermissionLoader) {
 		m.EXPECT().IsProjectOwner(gomock.Any(), uid, projID).Return(false, nil)
 		m.EXPECT().GetPermission(gomock.Any(), uid, projID).Return(&project.Permission{
 			Role:             project.ProjectRoleManager,

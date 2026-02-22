@@ -7,20 +7,21 @@ import (
 
 	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
+	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
 )
 
 // RegisterUseCase handles user registration.
 type RegisterUseCase struct {
-	userRepo user.UserRepository
-	credRepo user.CredentialsRepository
+	userRepo repository.UserRepository
+	credRepo repository.CredentialsRepository
 	hasher   crypto.PasswordHasher
 }
 
 // NewRegisterUseCase creates a RegisterUseCase.
 func NewRegisterUseCase(
-	userRepo user.UserRepository,
-	credRepo user.CredentialsRepository,
+	userRepo repository.UserRepository,
+	credRepo repository.CredentialsRepository,
 	hasher crypto.PasswordHasher,
 ) *RegisterUseCase {
 	return &RegisterUseCase{

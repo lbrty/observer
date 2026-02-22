@@ -3,16 +3,16 @@ package auth
 import (
 	"context"
 
-	domainauth "github.com/lbrty/observer/internal/domain/auth"
+	"github.com/lbrty/observer/internal/repository"
 )
 
 // LogoutUseCase invalidates a user session.
 type LogoutUseCase struct {
-	sessionRepo domainauth.SessionRepository
+	sessionRepo repository.SessionRepository
 }
 
 // NewLogoutUseCase creates a LogoutUseCase.
-func NewLogoutUseCase(sessionRepo domainauth.SessionRepository) *LogoutUseCase {
+func NewLogoutUseCase(sessionRepo repository.SessionRepository) *LogoutUseCase {
 	return &LogoutUseCase{sessionRepo: sessionRepo}
 }
 

@@ -10,28 +10,27 @@ import (
 	"go.uber.org/mock/gomock"
 
 	"github.com/lbrty/observer/internal/crypto"
-	mock_auth "github.com/lbrty/observer/internal/domain/auth/mock"
 	"github.com/lbrty/observer/internal/domain/user"
-	mock_user "github.com/lbrty/observer/internal/domain/user/mock"
+	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	"github.com/lbrty/observer/internal/ulid"
 	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 )
 
 func setupLoginUseCase(t *testing.T) (
 	*ucauth.LoginUseCase,
-	*mock_user.MockUserRepository,
-	*mock_user.MockCredentialsRepository,
-	*mock_auth.MockSessionRepository,
-	*mock_user.MockMFARepository,
+	*mock_repo.MockUserRepository,
+	*mock_repo.MockCredentialsRepository,
+	*mock_repo.MockSessionRepository,
+	*mock_repo.MockMFARepository,
 	crypto.PasswordHasher,
 ) {
 	t.Helper()
 	ctrl := gomock.NewController(t)
 
-	mockUserRepo := mock_user.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_user.NewMockCredentialsRepository(ctrl)
-	mockSessionRepo := mock_auth.NewMockSessionRepository(ctrl)
-	mockMFARepo := mock_user.NewMockMFARepository(ctrl)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
+	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
