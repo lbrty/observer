@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ErrProjectNotFound    = errors.New("project not found")
+	ErrProjectNameExists  = errors.New("project name already exists")
 	ErrPermissionDenied   = errors.New("permission denied")
 	ErrPermissionNotFound = errors.New("permission not found")
 	ErrInvalidProjectRole = errors.New("invalid project role")

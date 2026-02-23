@@ -6,12 +6,20 @@ import (
 	"github.com/oklog/ulid/v2"
 
 	"github.com/lbrty/observer/internal/domain/auth"
+	"github.com/lbrty/observer/internal/domain/document"
+	"github.com/lbrty/observer/internal/domain/household"
+	"github.com/lbrty/observer/internal/domain/migration"
+	"github.com/lbrty/observer/internal/domain/note"
+	"github.com/lbrty/observer/internal/domain/person"
+	"github.com/lbrty/observer/internal/domain/pet"
 	"github.com/lbrty/observer/internal/domain/project"
 	"github.com/lbrty/observer/internal/domain/reference"
+	"github.com/lbrty/observer/internal/domain/support"
+	"github.com/lbrty/observer/internal/domain/tag"
 	"github.com/lbrty/observer/internal/domain/user"
 )
 
-//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/repository UserRepository,CredentialsRepository,MFARepository,VerificationTokenRepository,SessionRepository,PermissionLoader,PermissionRepository,CountryRepository,StateRepository,PlaceRepository,OfficeRepository,CategoryRepository
+//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/repository UserRepository,CredentialsRepository,MFARepository,VerificationTokenRepository,SessionRepository,PermissionLoader,PermissionRepository,ProjectRepository,CountryRepository,StateRepository,PlaceRepository,OfficeRepository,CategoryRepository,TagRepository,PersonRepository,PersonCategoryRepository,PersonTagRepository,SupportRecordRepository,MigrationRecordRepository,HouseholdRepository,HouseholdMemberRepository,PersonNoteRepository,DocumentRepository,PetRepository
 
 // UserRepository defines persistence operations for users.
 type UserRepository interface {
@@ -108,5 +116,99 @@ type CategoryRepository interface {
 	GetByID(ctx context.Context, id string) (*reference.Category, error)
 	Create(ctx context.Context, c *reference.Category) error
 	Update(ctx context.Context, c *reference.Category) error
+	Delete(ctx context.Context, id string) error
+}
+
+// ProjectRepository defines persistence operations for projects.
+type ProjectRepository interface {
+	List(ctx context.Context, filter project.ProjectListFilter) ([]*project.Project, int, error)
+	GetByID(ctx context.Context, id string) (*project.Project, error)
+	Create(ctx context.Context, p *project.Project) error
+	Update(ctx context.Context, p *project.Project) error
+}
+
+// TagRepository defines persistence operations for tags.
+type TagRepository interface {
+	List(ctx context.Context, projectID string) ([]*tag.Tag, error)
+	GetByID(ctx context.Context, id string) (*tag.Tag, error)
+	Create(ctx context.Context, t *tag.Tag) error
+	Delete(ctx context.Context, id string) error
+}
+
+// PersonRepository defines persistence operations for people.
+type PersonRepository interface {
+	List(ctx context.Context, filter person.PersonListFilter) ([]*person.Person, int, error)
+	GetByID(ctx context.Context, id string) (*person.Person, error)
+	Create(ctx context.Context, p *person.Person) error
+	Update(ctx context.Context, p *person.Person) error
+	Delete(ctx context.Context, id string) error
+}
+
+// PersonCategoryRepository manages person-category associations.
+type PersonCategoryRepository interface {
+	List(ctx context.Context, personID string) ([]string, error)
+	ReplaceAll(ctx context.Context, personID string, categoryIDs []string) error
+}
+
+// PersonTagRepository manages person-tag associations.
+type PersonTagRepository interface {
+	List(ctx context.Context, personID string) ([]string, error)
+	ReplaceAll(ctx context.Context, personID string, tagIDs []string) error
+}
+
+// SupportRecordRepository defines persistence operations for support records.
+type SupportRecordRepository interface {
+	List(ctx context.Context, filter support.RecordListFilter) ([]*support.Record, int, error)
+	GetByID(ctx context.Context, id string) (*support.Record, error)
+	Create(ctx context.Context, r *support.Record) error
+	Update(ctx context.Context, r *support.Record) error
+	Delete(ctx context.Context, id string) error
+}
+
+// MigrationRecordRepository defines persistence operations for migration records (append-only).
+type MigrationRecordRepository interface {
+	ListByPerson(ctx context.Context, personID string) ([]*migration.Record, error)
+	GetByID(ctx context.Context, id string) (*migration.Record, error)
+	Create(ctx context.Context, r *migration.Record) error
+}
+
+// HouseholdRepository defines persistence operations for households.
+type HouseholdRepository interface {
+	List(ctx context.Context, projectID string, page, perPage int) ([]*household.Household, int, error)
+	GetByID(ctx context.Context, id string) (*household.Household, error)
+	Create(ctx context.Context, h *household.Household) error
+	Update(ctx context.Context, h *household.Household) error
+	Delete(ctx context.Context, id string) error
+}
+
+// HouseholdMemberRepository manages household membership.
+type HouseholdMemberRepository interface {
+	List(ctx context.Context, householdID string) ([]*household.Member, error)
+	Add(ctx context.Context, m *household.Member) error
+	Remove(ctx context.Context, householdID, personID string) error
+}
+
+// PersonNoteRepository defines persistence operations for person notes (append-only).
+type PersonNoteRepository interface {
+	List(ctx context.Context, personID string) ([]*note.Note, error)
+	GetByID(ctx context.Context, id string) (*note.Note, error)
+	Create(ctx context.Context, n *note.Note) error
+	Delete(ctx context.Context, id string) error
+}
+
+// DocumentRepository defines persistence operations for document metadata.
+type DocumentRepository interface {
+	List(ctx context.Context, personID string) ([]*document.Document, error)
+	GetByID(ctx context.Context, id string) (*document.Document, error)
+	Create(ctx context.Context, d *document.Document) error
+	Delete(ctx context.Context, id string) error
+}
+
+// PetRepository defines persistence operations for pets.
+type PetRepository interface {
+	List(ctx context.Context, projectID string, page, perPage int) ([]*pet.Pet, int, error)
+	GetByID(ctx context.Context, id string) (*pet.Pet, error)
+	Create(ctx context.Context, p *pet.Pet) error
+	Update(ctx context.Context, p *pet.Pet) error
 	Delete(ctx context.Context, id string) error
 }

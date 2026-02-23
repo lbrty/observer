@@ -11,6 +11,7 @@ import (
 	"github.com/lbrty/observer/internal/app"
 	"github.com/lbrty/observer/internal/config"
 	"github.com/lbrty/observer/internal/database"
+	"github.com/lbrty/observer/internal/domain/project"
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/handler"
 	"github.com/lbrty/observer/internal/health"
@@ -71,7 +72,7 @@ func (s *Server) setupRoutes(db database.DB, container *app.Container) {
 	s.router.GET("/health", healthHandler.Health)
 
 	authMW := middleware.NewAuthMiddleware(container.TokenGenerator)
-	_ = middleware.NewProjectAuthMiddleware(container.PermissionRepo)
+	projectAuthMW := middleware.NewProjectAuthMiddleware(container.PermissionRepo)
 
 	authHandler := handler.NewAuthHandler(
 		container.RegisterUC,
@@ -96,12 +97,18 @@ func (s *Server) setupRoutes(db database.DB, container *app.Container) {
 	placeHandler := handler.NewPlaceHandler(container.PlaceUC)
 	officeHandler := handler.NewOfficeHandler(container.OfficeUC)
 	categoryHandler := handler.NewCategoryHandler(container.CategoryUC)
+	projectHandler := handler.NewProjectHandler(container.ProjectUC)
 
 	admin := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin))
 	{
 		admin.GET("/users", adminHandler.ListUsers)
 		admin.GET("/users/:id", adminHandler.GetUser)
 		admin.PATCH("/users/:id", adminHandler.UpdateUser)
+
+		admin.GET("/projects", projectHandler.List)
+		admin.GET("/projects/:id", projectHandler.Get)
+		admin.POST("/projects", projectHandler.Create)
+		admin.PATCH("/projects/:id", projectHandler.Update)
 
 		admin.GET("/projects/:project_id/permissions", permHandler.ListPermissions)
 		admin.POST("/projects/:project_id/permissions", permHandler.AssignPermission)
@@ -137,6 +144,78 @@ func (s *Server) setupRoutes(db database.DB, container *app.Container) {
 		admin.POST("/categories", categoryHandler.Create)
 		admin.PATCH("/categories/:id", categoryHandler.Update)
 		admin.DELETE("/categories/:id", categoryHandler.Delete)
+	}
+
+	// Project-scoped endpoints — requires authentication + project role
+	tagHandler := handler.NewTagHandler(container.TagUC)
+	personHandler := handler.NewPersonHandler(container.PersonUC, container.PersonCategoryUC, container.PersonTagUC)
+	supportHandler := handler.NewSupportRecordHandler(container.SupportRecordUC)
+	migrationHandler := handler.NewMigrationRecordHandler(container.MigrationRecordUC)
+	householdHandler := handler.NewHouseholdHandler(container.HouseholdUC)
+	noteHandler := handler.NewNoteHandler(container.NoteUC)
+	documentHandler := handler.NewDocumentHandler(container.DocumentUC)
+	petHandler := handler.NewPetHandler(container.PetUC)
+
+	proj := s.router.Group("/projects/:project_id", authMW.Authenticate())
+	{
+		// Read-level access
+		read := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionRead))
+		{
+			read.GET("/tags", tagHandler.List)
+			read.GET("/people", personHandler.List)
+			read.GET("/people/:id", personHandler.Get)
+			read.GET("/people/:person_id/categories", personHandler.ListCategories)
+			read.GET("/people/:person_id/tags", personHandler.ListTags)
+			read.GET("/people/:person_id/migration-records", migrationHandler.List)
+			read.GET("/people/:person_id/migration-records/:id", migrationHandler.Get)
+			read.GET("/people/:person_id/notes", noteHandler.List)
+			read.GET("/people/:person_id/documents", documentHandler.List)
+			read.GET("/support-records", supportHandler.List)
+			read.GET("/support-records/:id", supportHandler.Get)
+			read.GET("/households", householdHandler.List)
+			read.GET("/households/:id", householdHandler.Get)
+			read.GET("/documents/:id", documentHandler.Get)
+			read.GET("/pets", petHandler.List)
+			read.GET("/pets/:id", petHandler.Get)
+		}
+
+		// Create-level access
+		create := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionCreate))
+		{
+			create.POST("/tags", tagHandler.Create)
+			create.POST("/people", personHandler.Create)
+			create.PUT("/people/:person_id/categories", personHandler.ReplaceCategories)
+			create.PUT("/people/:person_id/tags", personHandler.ReplaceTags)
+			create.POST("/people/:person_id/migration-records", migrationHandler.Create)
+			create.POST("/people/:person_id/notes", noteHandler.Create)
+			create.POST("/support-records", supportHandler.Create)
+			create.POST("/households", householdHandler.Create)
+			create.POST("/households/:id/members", householdHandler.AddMember)
+			create.POST("/documents", documentHandler.Create)
+			create.POST("/pets", petHandler.Create)
+		}
+
+		// Update-level access
+		update := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionUpdate))
+		{
+			update.PATCH("/people/:id", personHandler.Update)
+			update.PATCH("/support-records/:id", supportHandler.Update)
+			update.PATCH("/households/:id", householdHandler.Update)
+			update.PATCH("/pets/:id", petHandler.Update)
+		}
+
+		// Delete-level access
+		del := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionDelete))
+		{
+			del.DELETE("/tags/:id", tagHandler.Delete)
+			del.DELETE("/people/:id", personHandler.Delete)
+			del.DELETE("/people/:person_id/notes/:id", noteHandler.Delete)
+			del.DELETE("/support-records/:id", supportHandler.Delete)
+			del.DELETE("/households/:id", householdHandler.Delete)
+			del.DELETE("/households/:id/members/:person_id", householdHandler.RemoveMember)
+			del.DELETE("/documents/:id", documentHandler.Delete)
+			del.DELETE("/pets/:id", petHandler.Delete)
+		}
 	}
 }
 
