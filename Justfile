@@ -8,7 +8,7 @@ build:
 
 # Run the server
 run:
-    go run ./cmd/observer serve
+    SWAGGER_ENABLED=true go run ./cmd/observer serve
 
 # Create new migration
 migrate-create name:
