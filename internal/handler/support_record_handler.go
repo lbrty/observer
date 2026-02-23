@@ -22,6 +22,22 @@ func NewSupportRecordHandler(uc *ucproject.SupportRecordUseCase) *SupportRecordH
 }
 
 // List handles GET /projects/:project_id/support-records.
+// @Summary List support records in a project
+// @Tags project-support-records
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param person_id query string false "Filter by person ID"
+// @Param consultant_id query string false "Filter by consultant ID"
+// @Param office_id query string false "Filter by office ID"
+// @Param type query string false "Filter by support type"
+// @Param sphere query string false "Filter by support sphere"
+// @Param page query int false "Page number"
+// @Param per_page query int false "Items per page"
+// @Success 200 {object} ucproject.ListSupportRecordsOutput
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/support-records [get]
 func (h *SupportRecordHandler) List(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.ListSupportRecordsInput
@@ -38,6 +54,16 @@ func (h *SupportRecordHandler) List(c *gin.Context) {
 }
 
 // Get handles GET /projects/:project_id/support-records/:id.
+// @Summary Get a support record by ID
+// @Tags project-support-records
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Support record ID"
+// @Success 200 {object} ucproject.SupportRecordDTO
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/support-records/{id} [get]
 func (h *SupportRecordHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -48,6 +74,17 @@ func (h *SupportRecordHandler) Get(c *gin.Context) {
 }
 
 // Create handles POST /projects/:project_id/support-records.
+// @Summary Create a support record
+// @Tags project-support-records
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param input body ucproject.CreateSupportRecordInput true "Support record payload"
+// @Success 201 {object} ucproject.SupportRecordDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/support-records [post]
 func (h *SupportRecordHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.CreateSupportRecordInput
@@ -65,6 +102,19 @@ func (h *SupportRecordHandler) Create(c *gin.Context) {
 }
 
 // Update handles PATCH /projects/:project_id/support-records/:id.
+// @Summary Update a support record
+// @Tags project-support-records
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Support record ID"
+// @Param input body ucproject.UpdateSupportRecordInput true "Update payload"
+// @Success 200 {object} ucproject.SupportRecordDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/support-records/{id} [patch]
 func (h *SupportRecordHandler) Update(c *gin.Context) {
 	var input ucproject.UpdateSupportRecordInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -80,6 +130,16 @@ func (h *SupportRecordHandler) Update(c *gin.Context) {
 }
 
 // Delete handles DELETE /projects/:project_id/support-records/:id.
+// @Summary Delete a support record
+// @Tags project-support-records
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Support record ID"
+// @Success 200 {object} MessageResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/support-records/{id} [delete]
 func (h *SupportRecordHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
 		h.handleError(c, err)

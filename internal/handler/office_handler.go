@@ -21,6 +21,13 @@ func NewOfficeHandler(uc *ucadmin.OfficeUseCase) *OfficeHandler {
 }
 
 // List handles GET /admin/offices.
+// @Summary List all offices
+// @Tags admin-offices
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} object "List of offices"
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/offices [get]
 func (h *OfficeHandler) List(c *gin.Context) {
 	out, err := h.uc.List(c.Request.Context())
 	if err != nil {
@@ -31,6 +38,15 @@ func (h *OfficeHandler) List(c *gin.Context) {
 }
 
 // Get handles GET /admin/offices/:id.
+// @Summary Get an office by ID
+// @Tags admin-offices
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Office ID"
+// @Success 200 {object} ucadmin.OfficeDTO
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/offices/{id} [get]
 func (h *OfficeHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -41,6 +57,16 @@ func (h *OfficeHandler) Get(c *gin.Context) {
 }
 
 // Create handles POST /admin/offices.
+// @Summary Create a new office
+// @Tags admin-offices
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param input body ucadmin.CreateOfficeInput true "Office payload"
+// @Success 201 {object} ucadmin.OfficeDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/offices [post]
 func (h *OfficeHandler) Create(c *gin.Context) {
 	var input ucadmin.CreateOfficeInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -56,6 +82,18 @@ func (h *OfficeHandler) Create(c *gin.Context) {
 }
 
 // Update handles PATCH /admin/offices/:id.
+// @Summary Update an office
+// @Tags admin-offices
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Office ID"
+// @Param input body ucadmin.UpdateOfficeInput true "Update payload"
+// @Success 200 {object} ucadmin.OfficeDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/offices/{id} [patch]
 func (h *OfficeHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdateOfficeInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -71,6 +109,15 @@ func (h *OfficeHandler) Update(c *gin.Context) {
 }
 
 // Delete handles DELETE /admin/offices/:id.
+// @Summary Delete an office
+// @Tags admin-offices
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Office ID"
+// @Success 200 {object} MessageResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/offices/{id} [delete]
 func (h *OfficeHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
 		h.handleError(c, err)

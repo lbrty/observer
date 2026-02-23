@@ -21,6 +21,14 @@ func NewTagHandler(uc *ucproject.TagUseCase) *TagHandler {
 }
 
 // List handles GET /projects/:project_id/tags.
+// @Summary List tags in a project
+// @Tags project-tags
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Success 200 {object} object "Wrapper with tags array"
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/tags [get]
 func (h *TagHandler) List(c *gin.Context) {
 	projectID := c.Param("project_id")
 	out, err := h.uc.List(c.Request.Context(), projectID)
@@ -32,6 +40,19 @@ func (h *TagHandler) List(c *gin.Context) {
 }
 
 // Create handles POST /projects/:project_id/tags.
+// @Summary Create a tag in a project
+// @Tags project-tags
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param input body ucproject.CreateTagInput true "Tag payload"
+// @Success 201 {object} ucproject.TagDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/tags [post]
 func (h *TagHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.CreateTagInput
@@ -48,6 +69,16 @@ func (h *TagHandler) Create(c *gin.Context) {
 }
 
 // Delete handles DELETE /projects/:project_id/tags/:id.
+// @Summary Delete a tag
+// @Tags project-tags
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Tag ID"
+// @Success 200 {object} MessageResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/tags/{id} [delete]
 func (h *TagHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
 		h.handleError(c, err)

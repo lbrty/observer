@@ -35,6 +35,16 @@ func NewAuthHandler(
 }
 
 // Register handles POST /auth/register.
+// @Summary Register a new user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param input body ucauth.RegisterInput true "Registration payload"
+// @Success 201 {object} ucauth.RegisterOutput
+// @Failure 400 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /auth/register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
 	var input ucauth.RegisterInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -52,6 +62,16 @@ func (h *AuthHandler) Register(c *gin.Context) {
 }
 
 // Login handles POST /auth/login.
+// @Summary Log in with credentials
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param input body ucauth.LoginInput true "Login payload"
+// @Success 200 {object} ucauth.LoginOutput
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
 	var input ucauth.LoginInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -69,6 +89,16 @@ func (h *AuthHandler) Login(c *gin.Context) {
 }
 
 // RefreshToken handles POST /auth/refresh.
+// @Summary Refresh access and refresh tokens
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param input body ucauth.RefreshTokenInput true "Refresh token payload"
+// @Success 200 {object} ucauth.TokenPair
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /auth/refresh [post]
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
 	var input ucauth.RefreshTokenInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -86,6 +116,17 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 }
 
 // Logout handles POST /auth/logout.
+// @Summary Log out and invalidate refresh token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param input body ucauth.LogoutInput true "Logout payload"
+// @Success 200 {object} MessageResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 401 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /auth/logout [post]
 func (h *AuthHandler) Logout(c *gin.Context) {
 	var input ucauth.LogoutInput
 	if err := c.ShouldBindJSON(&input); err != nil {

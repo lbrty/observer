@@ -21,6 +21,13 @@ func NewCountryHandler(uc *ucadmin.CountryUseCase) *CountryHandler {
 }
 
 // List handles GET /admin/countries.
+// @Summary List all countries
+// @Tags admin-countries
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} object "List of countries"
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/countries [get]
 func (h *CountryHandler) List(c *gin.Context) {
 	out, err := h.uc.List(c.Request.Context())
 	if err != nil {
@@ -31,6 +38,15 @@ func (h *CountryHandler) List(c *gin.Context) {
 }
 
 // Get handles GET /admin/countries/:id.
+// @Summary Get a country by ID
+// @Tags admin-countries
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Country ID"
+// @Success 200 {object} ucadmin.CountryDTO
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/countries/{id} [get]
 func (h *CountryHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -41,6 +57,17 @@ func (h *CountryHandler) Get(c *gin.Context) {
 }
 
 // Create handles POST /admin/countries.
+// @Summary Create a new country
+// @Tags admin-countries
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param input body ucadmin.CreateCountryInput true "Country payload"
+// @Success 201 {object} ucadmin.CountryDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/countries [post]
 func (h *CountryHandler) Create(c *gin.Context) {
 	var input ucadmin.CreateCountryInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -56,6 +83,18 @@ func (h *CountryHandler) Create(c *gin.Context) {
 }
 
 // Update handles PATCH /admin/countries/:id.
+// @Summary Update a country
+// @Tags admin-countries
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Country ID"
+// @Param input body ucadmin.UpdateCountryInput true "Update payload"
+// @Success 200 {object} ucadmin.CountryDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/countries/{id} [patch]
 func (h *CountryHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdateCountryInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -71,6 +110,15 @@ func (h *CountryHandler) Update(c *gin.Context) {
 }
 
 // Delete handles DELETE /admin/countries/:id.
+// @Summary Delete a country
+// @Tags admin-countries
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Country ID"
+// @Success 200 {object} MessageResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/countries/{id} [delete]
 func (h *CountryHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
 		h.handleError(c, err)

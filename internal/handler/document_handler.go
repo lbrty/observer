@@ -22,6 +22,16 @@ func NewDocumentHandler(uc *ucproject.DocumentUseCase) *DocumentHandler {
 }
 
 // List handles GET /projects/:project_id/people/:person_id/documents.
+// @Summary List documents for a person
+// @Tags project-documents
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param person_id path string true "Person ID"
+// @Success 200 {object} object "Wrapper with documents array"
+// @Failure 403 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people/{person_id}/documents [get]
 func (h *DocumentHandler) List(c *gin.Context) {
 	if !middleware.CanViewDocumentsFrom(c) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "insufficient permissions to view documents"})
@@ -37,6 +47,17 @@ func (h *DocumentHandler) List(c *gin.Context) {
 }
 
 // Get handles GET /projects/:project_id/documents/:id.
+// @Summary Get a document by ID
+// @Tags project-documents
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Document ID"
+// @Success 200 {object} ucproject.DocumentDTO
+// @Failure 403 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/documents/{id} [get]
 func (h *DocumentHandler) Get(c *gin.Context) {
 	if !middleware.CanViewDocumentsFrom(c) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "insufficient permissions to view documents"})
@@ -51,6 +72,18 @@ func (h *DocumentHandler) Get(c *gin.Context) {
 }
 
 // Create handles POST /projects/:project_id/documents.
+// @Summary Create a document
+// @Tags project-documents
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param input body ucproject.CreateDocumentInput true "Document payload"
+// @Success 201 {object} ucproject.DocumentDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/documents [post]
 func (h *DocumentHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.CreateDocumentInput
@@ -68,6 +101,16 @@ func (h *DocumentHandler) Create(c *gin.Context) {
 }
 
 // Delete handles DELETE /projects/:project_id/documents/:id.
+// @Summary Delete a document
+// @Tags project-documents
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Document ID"
+// @Success 200 {object} MessageResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/documents/{id} [delete]
 func (h *DocumentHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
 		h.handleError(c, err)

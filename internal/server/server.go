@@ -7,7 +7,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
+	_ "github.com/lbrty/observer/api/swagger"
 	"github.com/lbrty/observer/internal/app"
 	"github.com/lbrty/observer/internal/config"
 	"github.com/lbrty/observer/internal/database"
@@ -35,6 +38,10 @@ func New(cfg *config.Config, db database.DB, log *slog.Logger, container *app.Co
 	s := &Server{router: router, cfg: &cfg.Server}
 	s.setupMiddleware(log)
 	s.setupRoutes(db, container)
+
+	if cfg.Swagger.Enabled {
+		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
 	s.srv = &http.Server{
 		Addr:         fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port),

@@ -21,6 +21,13 @@ func NewCategoryHandler(uc *ucadmin.CategoryUseCase) *CategoryHandler {
 }
 
 // List handles GET /admin/categories.
+// @Summary List all categories
+// @Tags admin-categories
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} object "List of categories"
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/categories [get]
 func (h *CategoryHandler) List(c *gin.Context) {
 	out, err := h.uc.List(c.Request.Context())
 	if err != nil {
@@ -31,6 +38,15 @@ func (h *CategoryHandler) List(c *gin.Context) {
 }
 
 // Get handles GET /admin/categories/:id.
+// @Summary Get a category by ID
+// @Tags admin-categories
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Category ID"
+// @Success 200 {object} ucadmin.CategoryDTO
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/categories/{id} [get]
 func (h *CategoryHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -41,6 +57,17 @@ func (h *CategoryHandler) Get(c *gin.Context) {
 }
 
 // Create handles POST /admin/categories.
+// @Summary Create a new category
+// @Tags admin-categories
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param input body ucadmin.CreateCategoryInput true "Category payload"
+// @Success 201 {object} ucadmin.CategoryDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/categories [post]
 func (h *CategoryHandler) Create(c *gin.Context) {
 	var input ucadmin.CreateCategoryInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -56,6 +83,18 @@ func (h *CategoryHandler) Create(c *gin.Context) {
 }
 
 // Update handles PATCH /admin/categories/:id.
+// @Summary Update a category
+// @Tags admin-categories
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Category ID"
+// @Param input body ucadmin.UpdateCategoryInput true "Update payload"
+// @Success 200 {object} ucadmin.CategoryDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/categories/{id} [patch]
 func (h *CategoryHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdateCategoryInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -71,6 +110,15 @@ func (h *CategoryHandler) Update(c *gin.Context) {
 }
 
 // Delete handles DELETE /admin/categories/:id.
+// @Summary Delete a category
+// @Tags admin-categories
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Category ID"
+// @Success 200 {object} MessageResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/categories/{id} [delete]
 func (h *CategoryHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
 		h.handleError(c, err)

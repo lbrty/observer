@@ -25,6 +25,11 @@ func NewHandler(db database.DB) Handler {
 }
 
 // Health responds with the current health status.
+// @Summary Health check
+// @Tags health
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /health [get]
 func (h *handler) Health(c *gin.Context) {
 	if err := h.db.Ping(c.Request.Context()); err != nil {
 		c.JSON(http.StatusServiceUnavailable, gin.H{"status": "not ok"})

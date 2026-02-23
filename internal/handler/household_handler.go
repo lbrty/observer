@@ -21,6 +21,17 @@ func NewHouseholdHandler(uc *ucproject.HouseholdUseCase) *HouseholdHandler {
 }
 
 // List handles GET /projects/:project_id/households.
+// @Summary List households in a project
+// @Tags project-households
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param page query int false "Page number"
+// @Param per_page query int false "Items per page"
+// @Success 200 {object} ucproject.ListHouseholdsOutput
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/households [get]
 func (h *HouseholdHandler) List(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.ListHouseholdsInput
@@ -37,6 +48,16 @@ func (h *HouseholdHandler) List(c *gin.Context) {
 }
 
 // Get handles GET /projects/:project_id/households/:id.
+// @Summary Get a household by ID
+// @Tags project-households
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Household ID"
+// @Success 200 {object} ucproject.HouseholdDTO
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/households/{id} [get]
 func (h *HouseholdHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -47,6 +68,17 @@ func (h *HouseholdHandler) Get(c *gin.Context) {
 }
 
 // Create handles POST /projects/:project_id/households.
+// @Summary Create a household in a project
+// @Tags project-households
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param input body ucproject.CreateHouseholdInput true "Household payload"
+// @Success 201 {object} ucproject.HouseholdDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/households [post]
 func (h *HouseholdHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.CreateHouseholdInput
@@ -63,6 +95,19 @@ func (h *HouseholdHandler) Create(c *gin.Context) {
 }
 
 // Update handles PATCH /projects/:project_id/households/:id.
+// @Summary Update a household
+// @Tags project-households
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Household ID"
+// @Param input body ucproject.UpdateHouseholdInput true "Update payload"
+// @Success 200 {object} ucproject.HouseholdDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/households/{id} [patch]
 func (h *HouseholdHandler) Update(c *gin.Context) {
 	var input ucproject.UpdateHouseholdInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -78,6 +123,16 @@ func (h *HouseholdHandler) Update(c *gin.Context) {
 }
 
 // Delete handles DELETE /projects/:project_id/households/:id.
+// @Summary Delete a household
+// @Tags project-households
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Household ID"
+// @Success 200 {object} MessageResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/households/{id} [delete]
 func (h *HouseholdHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
 		h.handleError(c, err)
@@ -87,6 +142,20 @@ func (h *HouseholdHandler) Delete(c *gin.Context) {
 }
 
 // AddMember handles POST /projects/:project_id/households/:id/members.
+// @Summary Add a member to a household
+// @Tags project-households
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Household ID"
+// @Param input body ucproject.AddMemberInput true "Member payload"
+// @Success 201 {object} ucproject.HouseholdMemberDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/households/{id}/members [post]
 func (h *HouseholdHandler) AddMember(c *gin.Context) {
 	householdID := c.Param("id")
 	var input ucproject.AddMemberInput
@@ -103,6 +172,17 @@ func (h *HouseholdHandler) AddMember(c *gin.Context) {
 }
 
 // RemoveMember handles DELETE /projects/:project_id/households/:id/members/:person_id.
+// @Summary Remove a member from a household
+// @Tags project-households
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Household ID"
+// @Param person_id path string true "Person ID"
+// @Success 200 {object} MessageResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/households/{id}/members/{person_id} [delete]
 func (h *HouseholdHandler) RemoveMember(c *gin.Context) {
 	householdID := c.Param("id")
 	personID := c.Param("person_id")

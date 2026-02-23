@@ -52,6 +52,10 @@ test-coverage:
     go test -v -coverprofile=coverage.out ./...
     go tool cover -html=coverage.out -o coverage.html
 
+# Generate OpenAPI spec from annotations
+openapi:
+    swag init -g cmd/observer/main.go -o api/swagger --parseDependency --parseInternal
+
 # Generate mocks
 generate-mocks:
     go generate ./...

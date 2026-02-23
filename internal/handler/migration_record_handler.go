@@ -21,6 +21,15 @@ func NewMigrationRecordHandler(uc *ucproject.MigrationRecordUseCase) *MigrationR
 }
 
 // List handles GET /projects/:project_id/people/:person_id/migration-records.
+// @Summary List migration records for a person
+// @Tags project-migration-records
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param person_id path string true "Person ID"
+// @Success 200 {object} object "Wrapper with records array"
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people/{person_id}/migration-records [get]
 func (h *MigrationRecordHandler) List(c *gin.Context) {
 	personID := c.Param("person_id")
 	out, err := h.uc.ListByPerson(c.Request.Context(), personID)
@@ -32,6 +41,17 @@ func (h *MigrationRecordHandler) List(c *gin.Context) {
 }
 
 // Get handles GET /projects/:project_id/people/:person_id/migration-records/:id.
+// @Summary Get a migration record by ID
+// @Tags project-migration-records
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param person_id path string true "Person ID"
+// @Param id path string true "Migration record ID"
+// @Success 200 {object} ucproject.MigrationRecordDTO
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people/{person_id}/migration-records/{id} [get]
 func (h *MigrationRecordHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -42,6 +62,19 @@ func (h *MigrationRecordHandler) Get(c *gin.Context) {
 }
 
 // Create handles POST /projects/:project_id/people/:person_id/migration-records.
+// @Summary Create a migration record for a person
+// @Tags project-migration-records
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param person_id path string true "Person ID"
+// @Param input body ucproject.CreateMigrationRecordInput true "Migration record payload"
+// @Success 201 {object} ucproject.MigrationRecordDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people/{person_id}/migration-records [post]
 func (h *MigrationRecordHandler) Create(c *gin.Context) {
 	personID := c.Param("person_id")
 	var input ucproject.CreateMigrationRecordInput

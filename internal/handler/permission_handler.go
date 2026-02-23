@@ -34,6 +34,15 @@ func NewPermissionHandler(
 }
 
 // ListPermissions handles GET /admin/projects/:project_id/permissions.
+// @Summary List project permissions
+// @Tags admin-permissions
+// @Accept json
+// @Produce json
+// @Param project_id path string true "Project ID"
+// @Success 200 {object} PermissionListResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /admin/projects/{project_id}/permissions [get]
 func (h *PermissionHandler) ListPermissions(c *gin.Context) {
 	projectID := c.Param("project_id")
 
@@ -47,6 +56,18 @@ func (h *PermissionHandler) ListPermissions(c *gin.Context) {
 }
 
 // AssignPermission handles POST /admin/projects/:project_id/permissions.
+// @Summary Assign a project permission
+// @Tags admin-permissions
+// @Accept json
+// @Produce json
+// @Param project_id path string true "Project ID"
+// @Param input body ucadmin.AssignPermissionInput true "Permission assignment payload"
+// @Success 201 {object} ucadmin.PermissionDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /admin/projects/{project_id}/permissions [post]
 func (h *PermissionHandler) AssignPermission(c *gin.Context) {
 	projectID := c.Param("project_id")
 
@@ -66,6 +87,20 @@ func (h *PermissionHandler) AssignPermission(c *gin.Context) {
 }
 
 // UpdatePermission handles PATCH /admin/projects/:project_id/permissions/:id.
+// @Summary Update a project permission
+// @Tags admin-permissions
+// @Accept json
+// @Produce json
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Permission ID"
+// @Param input body ucadmin.UpdatePermissionInput true "Permission update payload"
+// @Success 200 {object} ucadmin.PermissionDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /admin/projects/{project_id}/permissions/{id} [patch]
 func (h *PermissionHandler) UpdatePermission(c *gin.Context) {
 	id := c.Param("id")
 
@@ -85,6 +120,17 @@ func (h *PermissionHandler) UpdatePermission(c *gin.Context) {
 }
 
 // RevokePermission handles DELETE /admin/projects/:project_id/permissions/:id.
+// @Summary Revoke a project permission
+// @Tags admin-permissions
+// @Accept json
+// @Produce json
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Permission ID"
+// @Success 200 {object} MessageResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /admin/projects/{project_id}/permissions/{id} [delete]
 func (h *PermissionHandler) RevokePermission(c *gin.Context) {
 	id := c.Param("id")
 

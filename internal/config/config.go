@@ -20,6 +20,11 @@ type Config struct {
 	Log      LogConfig
 	JWT      JWTConfig
 	Redis    RedisConfig
+	Swagger  SwaggerConfig
+}
+
+type SwaggerConfig struct {
+	Enabled bool
 }
 
 type ServerConfig struct {
@@ -47,7 +52,7 @@ type JWTConfig struct {
 }
 
 type RedisConfig struct {
-	Addr string
+	URI string
 }
 
 func Load() (*Config, error) {
@@ -73,7 +78,10 @@ func Load() (*Config, error) {
 			Issuer:         getEnv("JWT_ISSUER", "observer"),
 		},
 		Redis: RedisConfig{
-			Addr: getEnv("REDIS_ADDR", "localhost:6379"),
+			URI: getEnv("REDIS_URI", "localhost:6379"),
+		},
+		Swagger: SwaggerConfig{
+			Enabled: getEnvBool("SWAGGER_ENABLED", false),
 		},
 	}, nil
 }
@@ -89,6 +97,15 @@ func getEnvInt(key string, def int) int {
 	if v := os.Getenv(key); v != "" {
 		if n, err := strconv.Atoi(v); err == nil {
 			return n
+		}
+	}
+	return def
+}
+
+func getEnvBool(key string, def bool) bool {
+	if v := os.Getenv(key); v != "" {
+		if b, err := strconv.ParseBool(v); err == nil {
+			return b
 		}
 	}
 	return def

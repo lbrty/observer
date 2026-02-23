@@ -22,6 +22,19 @@ func NewProjectHandler(uc *ucadmin.ProjectUseCase) *ProjectHandler {
 }
 
 // List handles GET /admin/projects.
+// @Summary List projects
+// @Tags admin-projects
+// @Accept json
+// @Produce json
+// @Param owner_id query string false "Filter by owner ID"
+// @Param status query string false "Filter by project status"
+// @Param page query int false "Page number"
+// @Param per_page query int false "Items per page"
+// @Success 200 {object} ucadmin.ListProjectsOutput
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /admin/projects [get]
 func (h *ProjectHandler) List(c *gin.Context) {
 	var input ucadmin.ListProjectsInput
 	if err := c.ShouldBindQuery(&input); err != nil {
@@ -37,6 +50,16 @@ func (h *ProjectHandler) List(c *gin.Context) {
 }
 
 // Get handles GET /admin/projects/:id.
+// @Summary Get project by ID
+// @Tags admin-projects
+// @Accept json
+// @Produce json
+// @Param id path string true "Project ID"
+// @Success 200 {object} ucadmin.ProjectDTO
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /admin/projects/{id} [get]
 func (h *ProjectHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -47,6 +70,17 @@ func (h *ProjectHandler) Get(c *gin.Context) {
 }
 
 // Create handles POST /admin/projects.
+// @Summary Create a project
+// @Tags admin-projects
+// @Accept json
+// @Produce json
+// @Param input body ucadmin.CreateProjectInput true "Project creation payload"
+// @Success 201 {object} ucadmin.ProjectDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /admin/projects [post]
 func (h *ProjectHandler) Create(c *gin.Context) {
 	var input ucadmin.CreateProjectInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -63,6 +97,19 @@ func (h *ProjectHandler) Create(c *gin.Context) {
 }
 
 // Update handles PATCH /admin/projects/:id.
+// @Summary Update a project
+// @Tags admin-projects
+// @Accept json
+// @Produce json
+// @Param id path string true "Project ID"
+// @Param input body ucadmin.UpdateProjectInput true "Project update payload"
+// @Success 200 {object} ucadmin.ProjectDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /admin/projects/{id} [patch]
 func (h *ProjectHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdateProjectInput
 	if err := c.ShouldBindJSON(&input); err != nil {

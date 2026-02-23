@@ -28,6 +28,21 @@ func NewPersonHandler(
 }
 
 // List handles GET /projects/:project_id/people.
+// @Summary List people in a project
+// @Tags project-people
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param consultant_id query string false "Filter by consultant ID"
+// @Param office_id query string false "Filter by office ID"
+// @Param case_status query string false "Filter by case status"
+// @Param search query string false "Search term"
+// @Param page query int false "Page number"
+// @Param per_page query int false "Items per page"
+// @Success 200 {object} ucproject.ListPeopleOutput
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people [get]
 func (h *PersonHandler) List(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.ListPeopleInput
@@ -46,6 +61,16 @@ func (h *PersonHandler) List(c *gin.Context) {
 }
 
 // Get handles GET /projects/:project_id/people/:id.
+// @Summary Get a person by ID
+// @Tags project-people
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Person ID"
+// @Success 200 {object} ucproject.PersonDTO
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people/{id} [get]
 func (h *PersonHandler) Get(c *gin.Context) {
 	canContact := middleware.CanViewContactFrom(c)
 	canPersonal := middleware.CanViewPersonalFrom(c)
@@ -58,6 +83,18 @@ func (h *PersonHandler) Get(c *gin.Context) {
 }
 
 // Create handles POST /projects/:project_id/people.
+// @Summary Create a person in a project
+// @Tags project-people
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param input body ucproject.CreatePersonInput true "Person payload"
+// @Success 201 {object} ucproject.PersonDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people [post]
 func (h *PersonHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.CreatePersonInput
@@ -74,6 +111,19 @@ func (h *PersonHandler) Create(c *gin.Context) {
 }
 
 // Update handles PATCH /projects/:project_id/people/:id.
+// @Summary Update a person
+// @Tags project-people
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Person ID"
+// @Param input body ucproject.UpdatePersonInput true "Update payload"
+// @Success 200 {object} ucproject.PersonDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people/{id} [patch]
 func (h *PersonHandler) Update(c *gin.Context) {
 	var input ucproject.UpdatePersonInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -89,6 +139,16 @@ func (h *PersonHandler) Update(c *gin.Context) {
 }
 
 // Delete handles DELETE /projects/:project_id/people/:id.
+// @Summary Delete a person
+// @Tags project-people
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Person ID"
+// @Success 200 {object} MessageResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people/{id} [delete]
 func (h *PersonHandler) Delete(c *gin.Context) {
 	if err := h.personUC.Delete(c.Request.Context(), c.Param("id")); err != nil {
 		h.handleError(c, err)
@@ -98,6 +158,15 @@ func (h *PersonHandler) Delete(c *gin.Context) {
 }
 
 // ListCategories handles GET /projects/:project_id/people/:person_id/categories.
+// @Summary List category IDs for a person
+// @Tags project-people
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param person_id path string true "Person ID"
+// @Success 200 {object} object "Wrapper with category_ids array"
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people/{person_id}/categories [get]
 func (h *PersonHandler) ListCategories(c *gin.Context) {
 	ids, err := h.categoryUC.List(c.Request.Context(), c.Param("person_id"))
 	if err != nil {
@@ -108,6 +177,18 @@ func (h *PersonHandler) ListCategories(c *gin.Context) {
 }
 
 // ReplaceCategories handles PUT /projects/:project_id/people/:person_id/categories.
+// @Summary Replace category IDs for a person
+// @Tags project-people
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param person_id path string true "Person ID"
+// @Param input body ucproject.ReplaceIDsInput true "Category IDs payload"
+// @Success 200 {object} object "Wrapper with category_ids array"
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people/{person_id}/categories [put]
 func (h *PersonHandler) ReplaceCategories(c *gin.Context) {
 	var input ucproject.ReplaceIDsInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -122,6 +203,15 @@ func (h *PersonHandler) ReplaceCategories(c *gin.Context) {
 }
 
 // ListTags handles GET /projects/:project_id/people/:person_id/tags.
+// @Summary List tag IDs for a person
+// @Tags project-people
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param person_id path string true "Person ID"
+// @Success 200 {object} object "Wrapper with tag_ids array"
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people/{person_id}/tags [get]
 func (h *PersonHandler) ListTags(c *gin.Context) {
 	ids, err := h.tagUC.List(c.Request.Context(), c.Param("person_id"))
 	if err != nil {
@@ -132,6 +222,18 @@ func (h *PersonHandler) ListTags(c *gin.Context) {
 }
 
 // ReplaceTags handles PUT /projects/:project_id/people/:person_id/tags.
+// @Summary Replace tag IDs for a person
+// @Tags project-people
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param person_id path string true "Person ID"
+// @Param input body ucproject.ReplaceIDsInput true "Tag IDs payload"
+// @Success 200 {object} object "Wrapper with tag_ids array"
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/people/{person_id}/tags [put]
 func (h *PersonHandler) ReplaceTags(c *gin.Context) {
 	var input ucproject.ReplaceIDsInput
 	if err := c.ShouldBindJSON(&input); err != nil {

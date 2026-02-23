@@ -21,6 +21,15 @@ func NewStateHandler(uc *ucadmin.StateUseCase) *StateHandler {
 }
 
 // List handles GET /admin/states.
+// @Summary List states by country
+// @Tags admin-states
+// @Produce json
+// @Security BearerAuth
+// @Param country_id query string true "Country ID"
+// @Success 200 {object} object "List of states"
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/states [get]
 func (h *StateHandler) List(c *gin.Context) {
 	countryID := c.Query("country_id")
 	if countryID == "" {
@@ -36,6 +45,15 @@ func (h *StateHandler) List(c *gin.Context) {
 }
 
 // Get handles GET /admin/states/:id.
+// @Summary Get a state by ID
+// @Tags admin-states
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "State ID"
+// @Success 200 {object} ucadmin.StateDTO
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/states/{id} [get]
 func (h *StateHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
@@ -46,6 +64,17 @@ func (h *StateHandler) Get(c *gin.Context) {
 }
 
 // Create handles POST /admin/states.
+// @Summary Create a new state
+// @Tags admin-states
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param country_id query string true "Country ID"
+// @Param input body ucadmin.CreateStateInput true "State payload"
+// @Success 201 {object} ucadmin.StateDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/states [post]
 func (h *StateHandler) Create(c *gin.Context) {
 	countryID := c.Query("country_id")
 	if countryID == "" {
@@ -66,6 +95,18 @@ func (h *StateHandler) Create(c *gin.Context) {
 }
 
 // Update handles PATCH /admin/states/:id.
+// @Summary Update a state
+// @Tags admin-states
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "State ID"
+// @Param input body ucadmin.UpdateStateInput true "Update payload"
+// @Success 200 {object} ucadmin.StateDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/states/{id} [patch]
 func (h *StateHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdateStateInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -81,6 +122,15 @@ func (h *StateHandler) Update(c *gin.Context) {
 }
 
 // Delete handles DELETE /admin/states/:id.
+// @Summary Delete a state
+// @Tags admin-states
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "State ID"
+// @Success 200 {object} MessageResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /admin/states/{id} [delete]
 func (h *StateHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
 		h.handleError(c, err)
