@@ -49,19 +49,19 @@ func (h *ProjectHandler) List(c *gin.Context) {
 	c.JSON(http.StatusOK, out)
 }
 
-// Get handles GET /admin/projects/:id.
+// Get handles GET /admin/projects/:project_id.
 // @Summary Get project by ID
 // @Tags admin-projects
 // @Accept json
 // @Produce json
-// @Param id path string true "Project ID"
+// @Param project_id path string true "Project ID"
 // @Success 200 {object} ucadmin.ProjectDTO
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Security BearerAuth
-// @Router /admin/projects/{id} [get]
+// @Router /admin/projects/{project_id} [get]
 func (h *ProjectHandler) Get(c *gin.Context) {
-	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
+	out, err := h.uc.Get(c.Request.Context(), c.Param("project_id"))
 	if err != nil {
 		h.handleError(c, err)
 		return
@@ -96,12 +96,12 @@ func (h *ProjectHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, out)
 }
 
-// Update handles PATCH /admin/projects/:id.
+// Update handles PATCH /admin/projects/:project_id.
 // @Summary Update a project
 // @Tags admin-projects
 // @Accept json
 // @Produce json
-// @Param id path string true "Project ID"
+// @Param project_id path string true "Project ID"
 // @Param input body ucadmin.UpdateProjectInput true "Project update payload"
 // @Success 200 {object} ucadmin.ProjectDTO
 // @Failure 400 {object} ErrorResponse
@@ -109,14 +109,14 @@ func (h *ProjectHandler) Create(c *gin.Context) {
 // @Failure 409 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Security BearerAuth
-// @Router /admin/projects/{id} [patch]
+// @Router /admin/projects/{project_id} [patch]
 func (h *ProjectHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdateProjectInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
+	out, err := h.uc.Update(c.Request.Context(), c.Param("project_id"), input)
 	if err != nil {
 		h.handleError(c, err)
 		return

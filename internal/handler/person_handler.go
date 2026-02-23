@@ -60,21 +60,21 @@ func (h *PersonHandler) List(c *gin.Context) {
 	c.JSON(http.StatusOK, out)
 }
 
-// Get handles GET /projects/:project_id/people/:id.
+// Get handles GET /projects/:project_id/people/:person_id.
 // @Summary Get a person by ID
 // @Tags project-people
 // @Produce json
 // @Security BearerAuth
 // @Param project_id path string true "Project ID"
-// @Param id path string true "Person ID"
+// @Param person_id path string true "Person ID"
 // @Success 200 {object} ucproject.PersonDTO
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /projects/{project_id}/people/{id} [get]
+// @Router /projects/{project_id}/people/{person_id} [get]
 func (h *PersonHandler) Get(c *gin.Context) {
 	canContact := middleware.CanViewContactFrom(c)
 	canPersonal := middleware.CanViewPersonalFrom(c)
-	out, err := h.personUC.Get(c.Request.Context(), c.Param("id"), canContact, canPersonal)
+	out, err := h.personUC.Get(c.Request.Context(), c.Param("person_id"), canContact, canPersonal)
 	if err != nil {
 		h.handleError(c, err)
 		return
@@ -110,27 +110,27 @@ func (h *PersonHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, out)
 }
 
-// Update handles PATCH /projects/:project_id/people/:id.
+// Update handles PATCH /projects/:project_id/people/:person_id.
 // @Summary Update a person
 // @Tags project-people
 // @Accept json
 // @Produce json
 // @Security BearerAuth
 // @Param project_id path string true "Project ID"
-// @Param id path string true "Person ID"
+// @Param person_id path string true "Person ID"
 // @Param input body ucproject.UpdatePersonInput true "Update payload"
 // @Success 200 {object} ucproject.PersonDTO
 // @Failure 400 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /projects/{project_id}/people/{id} [patch]
+// @Router /projects/{project_id}/people/{person_id} [patch]
 func (h *PersonHandler) Update(c *gin.Context) {
 	var input ucproject.UpdatePersonInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	out, err := h.personUC.Update(c.Request.Context(), c.Param("id"), input)
+	out, err := h.personUC.Update(c.Request.Context(), c.Param("person_id"), input)
 	if err != nil {
 		h.handleError(c, err)
 		return
@@ -138,19 +138,19 @@ func (h *PersonHandler) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, out)
 }
 
-// Delete handles DELETE /projects/:project_id/people/:id.
+// Delete handles DELETE /projects/:project_id/people/:person_id.
 // @Summary Delete a person
 // @Tags project-people
 // @Produce json
 // @Security BearerAuth
 // @Param project_id path string true "Project ID"
-// @Param id path string true "Person ID"
+// @Param person_id path string true "Person ID"
 // @Success 200 {object} MessageResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /projects/{project_id}/people/{id} [delete]
+// @Router /projects/{project_id}/people/{person_id} [delete]
 func (h *PersonHandler) Delete(c *gin.Context) {
-	if err := h.personUC.Delete(c.Request.Context(), c.Param("id")); err != nil {
+	if err := h.personUC.Delete(c.Request.Context(), c.Param("person_id")); err != nil {
 		h.handleError(c, err)
 		return
 	}

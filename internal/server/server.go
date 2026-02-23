@@ -113,9 +113,9 @@ func (s *Server) setupRoutes(db database.DB, container *app.Container) {
 		admin.PATCH("/users/:id", adminHandler.UpdateUser)
 
 		admin.GET("/projects", projectHandler.List)
-		admin.GET("/projects/:id", projectHandler.Get)
+		admin.GET("/projects/:project_id", projectHandler.Get)
 		admin.POST("/projects", projectHandler.Create)
-		admin.PATCH("/projects/:id", projectHandler.Update)
+		admin.PATCH("/projects/:project_id", projectHandler.Update)
 
 		admin.GET("/projects/:project_id/permissions", permHandler.ListPermissions)
 		admin.POST("/projects/:project_id/permissions", permHandler.AssignPermission)
@@ -170,7 +170,7 @@ func (s *Server) setupRoutes(db database.DB, container *app.Container) {
 		{
 			read.GET("/tags", tagHandler.List)
 			read.GET("/people", personHandler.List)
-			read.GET("/people/:id", personHandler.Get)
+			read.GET("/people/:person_id", personHandler.Get)
 			read.GET("/people/:person_id/categories", personHandler.ListCategories)
 			read.GET("/people/:person_id/tags", personHandler.ListTags)
 			read.GET("/people/:person_id/migration-records", migrationHandler.List)
@@ -205,7 +205,7 @@ func (s *Server) setupRoutes(db database.DB, container *app.Container) {
 		// Update-level access
 		update := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionUpdate))
 		{
-			update.PATCH("/people/:id", personHandler.Update)
+			update.PATCH("/people/:person_id", personHandler.Update)
 			update.PATCH("/support-records/:id", supportHandler.Update)
 			update.PATCH("/households/:id", householdHandler.Update)
 			update.PATCH("/pets/:id", petHandler.Update)
@@ -215,7 +215,7 @@ func (s *Server) setupRoutes(db database.DB, container *app.Container) {
 		del := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionDelete))
 		{
 			del.DELETE("/tags/:id", tagHandler.Delete)
-			del.DELETE("/people/:id", personHandler.Delete)
+			del.DELETE("/people/:person_id", personHandler.Delete)
 			del.DELETE("/people/:person_id/notes/:id", noteHandler.Delete)
 			del.DELETE("/support-records/:id", supportHandler.Delete)
 			del.DELETE("/households/:id", householdHandler.Delete)

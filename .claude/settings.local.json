@@ -11,7 +11,7 @@
       "Bash(mockgen:*)",
       "Bash(which mockgen && mockgen --version 2>&1)",
       "Bash(./bin/observer:*)",
-      "Bash(just fmt:*)",
+      "Bash(just: *)",
       "Bash(cat:*)",
       "Bash(git:*)",
       "Bash(cd:*)",
@@ -30,7 +30,8 @@
       "mcp__serena__find_file",
       "Bash(just generate-mocks:*)",
       "mcp__serena__initial_instructions",
-      "Bash(go generate:*)"
+      "Bash(go generate:*)",
+      "Bash(go run:*)"
     ]
   }
 }
