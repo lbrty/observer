@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { ApiRequestError } from "@/lib/api";
+import { HTTPError } from "@/lib/api";
 import { useAuth } from "@/stores/auth";
 
 export const Route = createFileRoute("/_auth/login")({
@@ -37,8 +37,9 @@ function LoginPage() {
 
       navigate({ to: "/" });
     } catch (err) {
-      if (err instanceof ApiRequestError) {
-        setError(err.message);
+      if (err instanceof HTTPError) {
+        const body = await err.response.json().catch(() => null);
+        setError(body?.error ?? err.message);
       } else {
         setError(t("common.unexpectedError"));
       }
