@@ -7,6 +7,13 @@ import type {
   UpdatePlaceInput,
 } from "@/types/reference";
 
+import { makeReferenceHooks } from "./make-reference-hooks";
+
+const { useUpdate: useUpdatePlace, useDelete: useDeletePlace } =
+  makeReferenceHooks<Place, CreatePlaceInput, UpdatePlaceInput>("places");
+
+export { useUpdatePlace, useDeletePlace };
+
 export function usePlaces(stateId?: string) {
   return useQuery({
     queryKey: ["places", stateId ?? "all"],
@@ -35,23 +42,6 @@ export function useCreatePlace() {
           searchParams: { state_id: stateId },
         })
         .json<Place>(),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["places"] }),
-  });
-}
-
-export function useUpdatePlace() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdatePlaceInput }) =>
-      api.patch(`admin/places/${id}`, { json: data }).json<Place>(),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["places"] }),
-  });
-}
-
-export function useDeletePlace() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => api.delete(`admin/places/${id}`).json(),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["places"] }),
   });
 }

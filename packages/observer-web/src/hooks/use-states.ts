@@ -7,6 +7,13 @@ import type {
   UpdateStateInput,
 } from "@/types/reference";
 
+import { makeReferenceHooks } from "./make-reference-hooks";
+
+const { useUpdate: useUpdateState, useDelete: useDeleteState } =
+  makeReferenceHooks<State, CreateStateInput, UpdateStateInput>("states");
+
+export { useUpdateState, useDeleteState };
+
 export function useStates(countryId?: string) {
   return useQuery({
     queryKey: ["states", countryId ?? "all"],
@@ -35,23 +42,6 @@ export function useCreateState() {
           searchParams: { country_id: countryId },
         })
         .json<State>(),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["states"] }),
-  });
-}
-
-export function useUpdateState() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateStateInput }) =>
-      api.patch(`admin/states/${id}`, { json: data }).json<State>(),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["states"] }),
-  });
-}
-
-export function useDeleteState() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => api.delete(`admin/states/${id}`).json(),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["states"] }),
   });
 }
