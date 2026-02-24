@@ -34,7 +34,8 @@
       "Bash(go run:*)",
       "Bash(bunx:*)",
       "Bash(tsc:*)",
-      "mcp__serena__insert_after_symbol"
+      "mcp__serena__insert_after_symbol",
+      "Bash(tail:*)"
     ]
   }
 }

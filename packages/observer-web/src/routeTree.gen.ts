@@ -14,6 +14,21 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AppAdminRouteImport } from './routes/_app/admin'
+import { Route as AppAdminIndexRouteImport } from './routes/_app/admin/index'
+import { Route as AppAdminUsersIndexRouteImport } from './routes/_app/admin/users/index'
+import { Route as AppAdminReferenceIndexRouteImport } from './routes/_app/admin/reference/index'
+import { Route as AppAdminProjectsIndexRouteImport } from './routes/_app/admin/projects/index'
+import { Route as AppAdminUsersUserIdRouteImport } from './routes/_app/admin/users/$userId'
+import { Route as AppAdminReferenceStatesRouteImport } from './routes/_app/admin/reference/states'
+import { Route as AppAdminReferencePlacesRouteImport } from './routes/_app/admin/reference/places'
+import { Route as AppAdminReferenceOfficesRouteImport } from './routes/_app/admin/reference/offices'
+import { Route as AppAdminReferenceCountriesRouteImport } from './routes/_app/admin/reference/countries'
+import { Route as AppAdminReferenceCategoriesRouteImport } from './routes/_app/admin/reference/categories'
+import { Route as AppAdminProjectsNewRouteImport } from './routes/_app/admin/projects/new'
+import { Route as AppAdminProjectsProjectIdRouteImport } from './routes/_app/admin/projects/$projectId'
+import { Route as AppAdminProjectsProjectIdIndexRouteImport } from './routes/_app/admin/projects/$projectId/index'
+import { Route as AppAdminProjectsProjectIdPermissionsRouteImport } from './routes/_app/admin/projects/$projectId/permissions'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -38,37 +53,210 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminUsersIndexRoute = AppAdminUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminReferenceIndexRoute = AppAdminReferenceIndexRouteImport.update({
+  id: '/reference/',
+  path: '/reference/',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminProjectsIndexRoute = AppAdminProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminUsersUserIdRoute = AppAdminUsersUserIdRouteImport.update({
+  id: '/users/$userId',
+  path: '/users/$userId',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminReferenceStatesRoute = AppAdminReferenceStatesRouteImport.update({
+  id: '/reference/states',
+  path: '/reference/states',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminReferencePlacesRoute = AppAdminReferencePlacesRouteImport.update({
+  id: '/reference/places',
+  path: '/reference/places',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminReferenceOfficesRoute =
+  AppAdminReferenceOfficesRouteImport.update({
+    id: '/reference/offices',
+    path: '/reference/offices',
+    getParentRoute: () => AppAdminRoute,
+  } as any)
+const AppAdminReferenceCountriesRoute =
+  AppAdminReferenceCountriesRouteImport.update({
+    id: '/reference/countries',
+    path: '/reference/countries',
+    getParentRoute: () => AppAdminRoute,
+  } as any)
+const AppAdminReferenceCategoriesRoute =
+  AppAdminReferenceCategoriesRouteImport.update({
+    id: '/reference/categories',
+    path: '/reference/categories',
+    getParentRoute: () => AppAdminRoute,
+  } as any)
+const AppAdminProjectsNewRoute = AppAdminProjectsNewRouteImport.update({
+  id: '/projects/new',
+  path: '/projects/new',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminProjectsProjectIdRoute =
+  AppAdminProjectsProjectIdRouteImport.update({
+    id: '/projects/$projectId',
+    path: '/projects/$projectId',
+    getParentRoute: () => AppAdminRoute,
+  } as any)
+const AppAdminProjectsProjectIdIndexRoute =
+  AppAdminProjectsProjectIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AppAdminProjectsProjectIdRoute,
+  } as any)
+const AppAdminProjectsProjectIdPermissionsRoute =
+  AppAdminProjectsProjectIdPermissionsRouteImport.update({
+    id: '/permissions',
+    path: '/permissions',
+    getParentRoute: () => AppAdminProjectsProjectIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
+  '/admin': typeof AppAdminRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/admin/': typeof AppAdminIndexRoute
+  '/admin/projects/$projectId': typeof AppAdminProjectsProjectIdRouteWithChildren
+  '/admin/projects/new': typeof AppAdminProjectsNewRoute
+  '/admin/reference/categories': typeof AppAdminReferenceCategoriesRoute
+  '/admin/reference/countries': typeof AppAdminReferenceCountriesRoute
+  '/admin/reference/offices': typeof AppAdminReferenceOfficesRoute
+  '/admin/reference/places': typeof AppAdminReferencePlacesRoute
+  '/admin/reference/states': typeof AppAdminReferenceStatesRoute
+  '/admin/users/$userId': typeof AppAdminUsersUserIdRoute
+  '/admin/projects/': typeof AppAdminProjectsIndexRoute
+  '/admin/reference/': typeof AppAdminReferenceIndexRoute
+  '/admin/users/': typeof AppAdminUsersIndexRoute
+  '/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
+  '/admin/projects/$projectId/': typeof AppAdminProjectsProjectIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/admin': typeof AppAdminIndexRoute
+  '/admin/projects/new': typeof AppAdminProjectsNewRoute
+  '/admin/reference/categories': typeof AppAdminReferenceCategoriesRoute
+  '/admin/reference/countries': typeof AppAdminReferenceCountriesRoute
+  '/admin/reference/offices': typeof AppAdminReferenceOfficesRoute
+  '/admin/reference/places': typeof AppAdminReferencePlacesRoute
+  '/admin/reference/states': typeof AppAdminReferenceStatesRoute
+  '/admin/users/$userId': typeof AppAdminUsersUserIdRoute
+  '/admin/projects': typeof AppAdminProjectsIndexRoute
+  '/admin/reference': typeof AppAdminReferenceIndexRoute
+  '/admin/users': typeof AppAdminUsersIndexRoute
+  '/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
+  '/admin/projects/$projectId': typeof AppAdminProjectsProjectIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
+  '/_app/admin': typeof AppAdminRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/admin/': typeof AppAdminIndexRoute
+  '/_app/admin/projects/$projectId': typeof AppAdminProjectsProjectIdRouteWithChildren
+  '/_app/admin/projects/new': typeof AppAdminProjectsNewRoute
+  '/_app/admin/reference/categories': typeof AppAdminReferenceCategoriesRoute
+  '/_app/admin/reference/countries': typeof AppAdminReferenceCountriesRoute
+  '/_app/admin/reference/offices': typeof AppAdminReferenceOfficesRoute
+  '/_app/admin/reference/places': typeof AppAdminReferencePlacesRoute
+  '/_app/admin/reference/states': typeof AppAdminReferenceStatesRoute
+  '/_app/admin/users/$userId': typeof AppAdminUsersUserIdRoute
+  '/_app/admin/projects/': typeof AppAdminProjectsIndexRoute
+  '/_app/admin/reference/': typeof AppAdminReferenceIndexRoute
+  '/_app/admin/users/': typeof AppAdminUsersIndexRoute
+  '/_app/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
+  '/_app/admin/projects/$projectId/': typeof AppAdminProjectsProjectIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/login'
+    | '/register'
+    | '/admin/'
+    | '/admin/projects/$projectId'
+    | '/admin/projects/new'
+    | '/admin/reference/categories'
+    | '/admin/reference/countries'
+    | '/admin/reference/offices'
+    | '/admin/reference/places'
+    | '/admin/reference/states'
+    | '/admin/users/$userId'
+    | '/admin/projects/'
+    | '/admin/reference/'
+    | '/admin/users/'
+    | '/admin/projects/$projectId/permissions'
+    | '/admin/projects/$projectId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/admin'
+    | '/admin/projects/new'
+    | '/admin/reference/categories'
+    | '/admin/reference/countries'
+    | '/admin/reference/offices'
+    | '/admin/reference/places'
+    | '/admin/reference/states'
+    | '/admin/users/$userId'
+    | '/admin/projects'
+    | '/admin/reference'
+    | '/admin/users'
+    | '/admin/projects/$projectId/permissions'
+    | '/admin/projects/$projectId'
   id:
     | '__root__'
     | '/_app'
     | '/_auth'
+    | '/_app/admin'
     | '/_auth/login'
     | '/_auth/register'
     | '/_app/'
+    | '/_app/admin/'
+    | '/_app/admin/projects/$projectId'
+    | '/_app/admin/projects/new'
+    | '/_app/admin/reference/categories'
+    | '/_app/admin/reference/countries'
+    | '/_app/admin/reference/offices'
+    | '/_app/admin/reference/places'
+    | '/_app/admin/reference/states'
+    | '/_app/admin/users/$userId'
+    | '/_app/admin/projects/'
+    | '/_app/admin/reference/'
+    | '/_app/admin/users/'
+    | '/_app/admin/projects/$projectId/permissions'
+    | '/_app/admin/projects/$projectId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -113,14 +301,172 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_app/admin': {
+      id: '/_app/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/admin/': {
+      id: '/_app/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AppAdminIndexRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/users/': {
+      id: '/_app/admin/users/'
+      path: '/users'
+      fullPath: '/admin/users/'
+      preLoaderRoute: typeof AppAdminUsersIndexRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/reference/': {
+      id: '/_app/admin/reference/'
+      path: '/reference'
+      fullPath: '/admin/reference/'
+      preLoaderRoute: typeof AppAdminReferenceIndexRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/projects/': {
+      id: '/_app/admin/projects/'
+      path: '/projects'
+      fullPath: '/admin/projects/'
+      preLoaderRoute: typeof AppAdminProjectsIndexRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/users/$userId': {
+      id: '/_app/admin/users/$userId'
+      path: '/users/$userId'
+      fullPath: '/admin/users/$userId'
+      preLoaderRoute: typeof AppAdminUsersUserIdRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/reference/states': {
+      id: '/_app/admin/reference/states'
+      path: '/reference/states'
+      fullPath: '/admin/reference/states'
+      preLoaderRoute: typeof AppAdminReferenceStatesRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/reference/places': {
+      id: '/_app/admin/reference/places'
+      path: '/reference/places'
+      fullPath: '/admin/reference/places'
+      preLoaderRoute: typeof AppAdminReferencePlacesRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/reference/offices': {
+      id: '/_app/admin/reference/offices'
+      path: '/reference/offices'
+      fullPath: '/admin/reference/offices'
+      preLoaderRoute: typeof AppAdminReferenceOfficesRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/reference/countries': {
+      id: '/_app/admin/reference/countries'
+      path: '/reference/countries'
+      fullPath: '/admin/reference/countries'
+      preLoaderRoute: typeof AppAdminReferenceCountriesRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/reference/categories': {
+      id: '/_app/admin/reference/categories'
+      path: '/reference/categories'
+      fullPath: '/admin/reference/categories'
+      preLoaderRoute: typeof AppAdminReferenceCategoriesRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/projects/new': {
+      id: '/_app/admin/projects/new'
+      path: '/projects/new'
+      fullPath: '/admin/projects/new'
+      preLoaderRoute: typeof AppAdminProjectsNewRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/projects/$projectId': {
+      id: '/_app/admin/projects/$projectId'
+      path: '/projects/$projectId'
+      fullPath: '/admin/projects/$projectId'
+      preLoaderRoute: typeof AppAdminProjectsProjectIdRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/_app/admin/projects/$projectId/': {
+      id: '/_app/admin/projects/$projectId/'
+      path: '/'
+      fullPath: '/admin/projects/$projectId/'
+      preLoaderRoute: typeof AppAdminProjectsProjectIdIndexRouteImport
+      parentRoute: typeof AppAdminProjectsProjectIdRoute
+    }
+    '/_app/admin/projects/$projectId/permissions': {
+      id: '/_app/admin/projects/$projectId/permissions'
+      path: '/permissions'
+      fullPath: '/admin/projects/$projectId/permissions'
+      preLoaderRoute: typeof AppAdminProjectsProjectIdPermissionsRouteImport
+      parentRoute: typeof AppAdminProjectsProjectIdRoute
+    }
   }
 }
 
+interface AppAdminProjectsProjectIdRouteChildren {
+  AppAdminProjectsProjectIdPermissionsRoute: typeof AppAdminProjectsProjectIdPermissionsRoute
+  AppAdminProjectsProjectIdIndexRoute: typeof AppAdminProjectsProjectIdIndexRoute
+}
+
+const AppAdminProjectsProjectIdRouteChildren: AppAdminProjectsProjectIdRouteChildren =
+  {
+    AppAdminProjectsProjectIdPermissionsRoute:
+      AppAdminProjectsProjectIdPermissionsRoute,
+    AppAdminProjectsProjectIdIndexRoute: AppAdminProjectsProjectIdIndexRoute,
+  }
+
+const AppAdminProjectsProjectIdRouteWithChildren =
+  AppAdminProjectsProjectIdRoute._addFileChildren(
+    AppAdminProjectsProjectIdRouteChildren,
+  )
+
+interface AppAdminRouteChildren {
+  AppAdminIndexRoute: typeof AppAdminIndexRoute
+  AppAdminProjectsProjectIdRoute: typeof AppAdminProjectsProjectIdRouteWithChildren
+  AppAdminProjectsNewRoute: typeof AppAdminProjectsNewRoute
+  AppAdminReferenceCategoriesRoute: typeof AppAdminReferenceCategoriesRoute
+  AppAdminReferenceCountriesRoute: typeof AppAdminReferenceCountriesRoute
+  AppAdminReferenceOfficesRoute: typeof AppAdminReferenceOfficesRoute
+  AppAdminReferencePlacesRoute: typeof AppAdminReferencePlacesRoute
+  AppAdminReferenceStatesRoute: typeof AppAdminReferenceStatesRoute
+  AppAdminUsersUserIdRoute: typeof AppAdminUsersUserIdRoute
+  AppAdminProjectsIndexRoute: typeof AppAdminProjectsIndexRoute
+  AppAdminReferenceIndexRoute: typeof AppAdminReferenceIndexRoute
+  AppAdminUsersIndexRoute: typeof AppAdminUsersIndexRoute
+}
+
+const AppAdminRouteChildren: AppAdminRouteChildren = {
+  AppAdminIndexRoute: AppAdminIndexRoute,
+  AppAdminProjectsProjectIdRoute: AppAdminProjectsProjectIdRouteWithChildren,
+  AppAdminProjectsNewRoute: AppAdminProjectsNewRoute,
+  AppAdminReferenceCategoriesRoute: AppAdminReferenceCategoriesRoute,
+  AppAdminReferenceCountriesRoute: AppAdminReferenceCountriesRoute,
+  AppAdminReferenceOfficesRoute: AppAdminReferenceOfficesRoute,
+  AppAdminReferencePlacesRoute: AppAdminReferencePlacesRoute,
+  AppAdminReferenceStatesRoute: AppAdminReferenceStatesRoute,
+  AppAdminUsersUserIdRoute: AppAdminUsersUserIdRoute,
+  AppAdminProjectsIndexRoute: AppAdminProjectsIndexRoute,
+  AppAdminReferenceIndexRoute: AppAdminReferenceIndexRoute,
+  AppAdminUsersIndexRoute: AppAdminUsersIndexRoute,
+}
+
+const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(
+  AppAdminRouteChildren,
+)
+
 interface AppRouteChildren {
+  AppAdminRoute: typeof AppAdminRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAdminRoute: AppAdminRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
 }
 

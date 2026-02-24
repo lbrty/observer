@@ -7,7 +7,7 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 
-import { api, ApiRequestError } from "@/lib/api";
+import { api, HTTPError } from "@/lib/api";
 import type {
   LoginInput,
   LoginOutput,
@@ -40,17 +40,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAuthenticated = user !== null;
 
   useEffect(() => {
-    api<User>("/auth/me")
+    api
+      .get("auth/me")
+      .json<User>()
       .then(setUser)
       .catch(() => {})
       .finally(() => setIsLoading(false));
   }, []);
 
   const login = useCallback(async (input: LoginInput): Promise<LoginOutput> => {
-    const data = await api<LoginOutput>("/auth/login", {
-      method: "POST",
-      body: JSON.stringify(input),
-    });
+    const data = await api
+      .post("auth/login", { json: input })
+      .json<LoginOutput>();
 
     if (!data.requires_mfa && data.user) {
       setUser(data.user);
@@ -61,19 +62,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = useCallback(
     async (input: RegisterInput): Promise<RegisterOutput> => {
-      return api<RegisterOutput>("/auth/register", {
-        method: "POST",
-        body: JSON.stringify(input),
-      });
+      return api.post("auth/register", { json: input }).json<RegisterOutput>();
     },
     [],
   );
 
   const logout = useCallback(async () => {
     try {
-      await api("/auth/logout", { method: "POST" });
+      await api.post("auth/logout");
     } catch (err) {
-      if (!(err instanceof ApiRequestError)) throw err;
+      if (!(err instanceof HTTPError)) throw err;
     }
     setUser(null);
   }, []);

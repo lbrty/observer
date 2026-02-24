@@ -52,7 +52,3 @@ export interface RefreshOutput {
 export interface LogoutInput {
   refresh_token: string;
 }
-
-export interface ApiError {
-  error: string;
-}

@@ -24,5 +24,134 @@
   "dashboard": {
     "greeting": "Salam, {{email}}",
     "role": "Rol: {{role}}"
+  },
+  "admin": {
+    "title": "Bashkaruu",
+    "nav": {
+      "users": "Koldoanuuchular",
+      "projects": "Dolboorlar",
+      "reference": "Malymat",
+      "countries": "Olukttar",
+      "states": "Oblusttar",
+      "places": "Jailer",
+      "offices": "Ofistter",
+      "categories": "Kategoriyalar"
+    },
+    "users": {
+      "title": "Koldoanuuchular",
+      "search": "Izdöö...",
+      "name": "Aty",
+      "email": "Email",
+      "role": "Rol",
+      "active": "Aktiv",
+      "verified": "Yrastalgan",
+      "created": "Tüzülgön",
+      "editTitle": "Koldoanuuchunu özgörtüü",
+      "firstName": "Aty",
+      "lastName": "Familiyasy",
+      "phone": "Telefon",
+      "office": "Ofis",
+      "save": "Sakta",
+      "saving": "Saktaluuda...",
+      "allRoles": "Baaryn roldar",
+      "allStatuses": "Baaryn statustar",
+      "yes": "Ooba",
+      "no": "Jok"
+    },
+    "projects": {
+      "title": "Dolboorlar",
+      "name": "Aty",
+      "status": "Status",
+      "created": "Tüzülgön",
+      "newProject": "Jany dolboor",
+      "createTitle": "Jany dolboor tüzüü",
+      "editTitle": "Dolboordu özgörtüü",
+      "description": "Süröttömö",
+      "save": "Sakta",
+      "saving": "Saktaluuda...",
+      "permissions": "Ukuktar",
+      "allStatuses": "Baaryn statustar"
+    },
+    "permissions": {
+      "title": "Dolboor ukuktary",
+      "userId": "Koldoanuuchu ID",
+      "role": "Rol",
+      "contact": "Bailanyshy",
+      "personal": "Jeke",
+      "documents": "Dokumentter",
+      "assign": "Ukuk berüü",
+      "assignTitle": "Ukuk berüü",
+      "editTitle": "Ukuktu özgörtüü",
+      "revoke": "Ukuktu aluu",
+      "revokeConfirm": "Bu ukuktu alganyzga isheneesizbi?",
+      "save": "Sakta",
+      "saving": "Saktaluuda..."
+    },
+    "reference": {
+      "countries": {
+        "title": "Olukttar",
+        "name": "Aty",
+        "code": "Kodu",
+        "add": "Koshuu",
+        "addTitle": "Olukttu koshuu",
+        "editTitle": "Olukttu özgörtüü",
+        "deleteConfirm": "Bu oluktu öchürösüzbü?"
+      },
+      "states": {
+        "title": "Oblusttar",
+        "name": "Aty",
+        "code": "Kodu",
+        "conflictZone": "Konflikt zonasy",
+        "country": "Olukt",
+        "add": "Koshuu",
+        "addTitle": "Oblast koshuu",
+        "editTitle": "Oblasty özgörtüü",
+        "deleteConfirm": "Bu oblasty öchürösüzbü?",
+        "selectCountry": "Oluktu tandanyz"
+      },
+      "places": {
+        "title": "Jailer",
+        "name": "Aty",
+        "lat": "Kengdik",
+        "lon": "Uzunduk",
+        "state": "Oblast",
+        "country": "Olukt",
+        "add": "Koshuu",
+        "addTitle": "Jainy koshuu",
+        "editTitle": "Jainy özgörtüü",
+        "deleteConfirm": "Bu jainy öchürösüzbü?",
+        "selectCountry": "Oluktu tandanyz",
+        "selectState": "Oblasty tandanyz"
+      },
+      "offices": {
+        "title": "Ofistter",
+        "name": "Aty",
+        "place": "Jaigy",
+        "add": "Koshuu",
+        "addTitle": "Ofis koshuu",
+        "editTitle": "Ofisti özgörtüü",
+        "deleteConfirm": "Bu ofisti öchürösüzbü?"
+      },
+      "categories": {
+        "title": "Kategoriyalar",
+        "name": "Aty",
+        "description": "Süröttömö",
+        "add": "Koshuu",
+        "addTitle": "Kategoriya koshuu",
+        "editTitle": "Kategoriyany özgörtüü",
+        "deleteConfirm": "Bu kategoriyany öchürösüzbü?"
+      }
+    },
+    "common": {
+      "save": "Sakta",
+      "saving": "Saktaluuda...",
+      "cancel": "Tokto",
+      "delete": "Öchürüü",
+      "edit": "Özgörtüü",
+      "add": "Koshuu",
+      "noData": "Malymat jok",
+      "pagination": "{{page}} / {{totalPages}}",
+      "actions": "Araketter"
+    }
   }
 }

@@ -24,5 +24,134 @@
   "dashboard": {
     "greeting": "Hello, {{email}}",
     "role": "Role: {{role}}"
+  },
+  "admin": {
+    "title": "Admin",
+    "nav": {
+      "users": "Users",
+      "projects": "Projects",
+      "reference": "Reference Data",
+      "countries": "Countries",
+      "states": "States",
+      "places": "Places",
+      "offices": "Offices",
+      "categories": "Categories"
+    },
+    "users": {
+      "title": "Users",
+      "search": "Search...",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "active": "Active",
+      "verified": "Verified",
+      "created": "Created",
+      "editTitle": "Edit user",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "phone": "Phone",
+      "office": "Office",
+      "save": "Save",
+      "saving": "Saving...",
+      "allRoles": "All roles",
+      "allStatuses": "All statuses",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "projects": {
+      "title": "Projects",
+      "name": "Name",
+      "status": "Status",
+      "created": "Created",
+      "newProject": "New project",
+      "createTitle": "Create project",
+      "editTitle": "Edit project",
+      "description": "Description",
+      "save": "Save",
+      "saving": "Saving...",
+      "permissions": "Permissions",
+      "allStatuses": "All statuses"
+    },
+    "permissions": {
+      "title": "Project permissions",
+      "userId": "User ID",
+      "role": "Role",
+      "contact": "Contact",
+      "personal": "Personal",
+      "documents": "Documents",
+      "assign": "Assign",
+      "assignTitle": "Assign permission",
+      "editTitle": "Edit permission",
+      "revoke": "Revoke",
+      "revokeConfirm": "Are you sure you want to revoke this permission?",
+      "save": "Save",
+      "saving": "Saving..."
+    },
+    "reference": {
+      "countries": {
+        "title": "Countries",
+        "name": "Name",
+        "code": "Code",
+        "add": "Add",
+        "addTitle": "Add country",
+        "editTitle": "Edit country",
+        "deleteConfirm": "Are you sure you want to delete this country?"
+      },
+      "states": {
+        "title": "States",
+        "name": "Name",
+        "code": "Code",
+        "conflictZone": "Conflict zone",
+        "country": "Country",
+        "add": "Add",
+        "addTitle": "Add state",
+        "editTitle": "Edit state",
+        "deleteConfirm": "Are you sure you want to delete this state?",
+        "selectCountry": "Select a country"
+      },
+      "places": {
+        "title": "Places",
+        "name": "Name",
+        "lat": "Latitude",
+        "lon": "Longitude",
+        "state": "State",
+        "country": "Country",
+        "add": "Add",
+        "addTitle": "Add place",
+        "editTitle": "Edit place",
+        "deleteConfirm": "Are you sure you want to delete this place?",
+        "selectCountry": "Select a country",
+        "selectState": "Select a state"
+      },
+      "offices": {
+        "title": "Offices",
+        "name": "Name",
+        "place": "Place",
+        "add": "Add",
+        "addTitle": "Add office",
+        "editTitle": "Edit office",
+        "deleteConfirm": "Are you sure you want to delete this office?"
+      },
+      "categories": {
+        "title": "Categories",
+        "name": "Name",
+        "description": "Description",
+        "add": "Add",
+        "addTitle": "Add category",
+        "editTitle": "Edit category",
+        "deleteConfirm": "Are you sure you want to delete this category?"
+      }
+    },
+    "common": {
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "add": "Add",
+      "noData": "No data",
+      "pagination": "{{page}} / {{totalPages}}",
+      "actions": "Actions"
+    }
   }
 }
