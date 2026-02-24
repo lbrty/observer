@@ -2,7 +2,7 @@
 
 ## Quick Ref
 
-- **Module**: `github.com/lbrty/observer` | **Go** 1.25.* | **Port**: 9000
+- **Module**: `github.com/lbrty/observer` | **Go** 1.25.\* | **Port**: 9000
 - **Architecture**: DDD + Clean Architecture, manual DI (no frameworks)
 - **Build**: `Justfile` (not Makefile) | **Frontend pkg manager**: `bun`
 - **ADRs**: `docs/adr/` | **Testing guide**: `docs/testing-guide.md` | **Variables**: `docs/variables.md`
@@ -68,6 +68,7 @@ just generate-mocks  # regenerate gomock mocks
 `@/` alias for all imports. Exception: colocated siblings use `./`.
 
 Order (blank line between groups):
+
 1. `react`, `react-dom`
 2. External libs (`@tanstack/*`, `@zxcvbn-ts/*`)
 3. Workspace packages (`@observer/*`)

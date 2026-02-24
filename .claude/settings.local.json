@@ -31,7 +31,10 @@
       "Bash(just generate-mocks:*)",
       "mcp__serena__initial_instructions",
       "Bash(go generate:*)",
-      "Bash(go run:*)"
+      "Bash(go run:*)",
+      "Bash(bunx:*)",
+      "Bash(tsc:*)",
+      "mcp__serena__insert_after_symbol"
     ]
   }
 }

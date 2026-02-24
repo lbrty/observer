@@ -1,8 +1,10 @@
 package config
 
 import (
+	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -12,6 +14,7 @@ const (
 	DefaultServerReadTimeout  = 30 * time.Second
 	DefaultServerWriteTimeout = 30 * time.Second
 	DefaultLogLevel           = "info"
+	DefaultCookieMaxAge       = 2 * time.Hour
 )
 
 type Config struct {
@@ -21,6 +24,31 @@ type Config struct {
 	JWT      JWTConfig
 	Redis    RedisConfig
 	Swagger  SwaggerConfig
+	CORS     CORSConfig
+	Cookie   CookieConfig
+}
+
+type CORSConfig struct {
+	Origins []string
+}
+
+type CookieConfig struct {
+	Domain   string
+	Secure   bool
+	SameSite string
+	MaxAge   time.Duration
+}
+
+// HTTPSameSite converts the string config to http.SameSite.
+func (c CookieConfig) HTTPSameSite() http.SameSite {
+	switch strings.ToLower(c.SameSite) {
+	case "strict":
+		return http.SameSiteStrictMode
+	case "none":
+		return http.SameSiteNoneMode
+	default:
+		return http.SameSiteLaxMode
+	}
 }
 
 type SwaggerConfig struct {
@@ -83,6 +111,15 @@ func Load() (*Config, error) {
 		Swagger: SwaggerConfig{
 			Enabled: getEnvBool("SWAGGER_ENABLED", false),
 		},
+		CORS: CORSConfig{
+			Origins: getEnvList("CORS_ORIGINS", []string{"http://localhost:5173"}),
+		},
+		Cookie: CookieConfig{
+			Domain:   getEnv("COOKIE_DOMAIN", ""),
+			Secure:   getEnvBool("COOKIE_SECURE", false),
+			SameSite: getEnv("COOKIE_SAME_SITE", "lax"),
+			MaxAge:   getEnvDuration("COOKIE_MAX_AGE", DefaultCookieMaxAge),
+		},
 	}, nil
 }
 
@@ -107,6 +144,13 @@ func getEnvBool(key string, def bool) bool {
 		if b, err := strconv.ParseBool(v); err == nil {
 			return b
 		}
+	}
+	return def
+}
+
+func getEnvList(key string, def []string) []string {
+	if v := os.Getenv(key); v != "" {
+		return strings.Split(v, ",")
 	}
 	return def
 }

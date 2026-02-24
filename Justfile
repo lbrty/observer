@@ -82,6 +82,22 @@ clean:
     rm -f *.pem
     rm -f coverage.out coverage.html
 
+# Start frontend dev server
+web-dev:
+    cd packages/observer-web && bun run dev
+
+# Build frontend
+web-build:
+    cd packages/observer-web && bun run build
+
+# Preview frontend production build
+web-preview:
+    cd packages/observer-web && bun run preview
+
+# Install frontend dependencies
+web-install:
+    bun install
+
 # Format code
 fmt:
     go fmt ./...

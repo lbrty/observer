@@ -34,24 +34,17 @@ func NewAuthMiddleware(tokenGen crypto.TokenGenerator) *AuthMiddleware {
 	return &AuthMiddleware{tokenGen: tokenGen}
 }
 
-// Authenticate validates the Bearer token and sets user_id / user_role in context.
+// Authenticate validates the Bearer token (header or cookie) and sets user_id / user_role in context.
 func (m *AuthMiddleware) Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "missing authorization header"})
+		token := extractAccessToken(c)
+		if token == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "missing authorization"})
 			c.Abort()
 			return
 		}
 
-		parts := strings.SplitN(authHeader, " ", 2)
-		if len(parts) != 2 || parts[0] != "Bearer" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid authorization format"})
-			c.Abort()
-			return
-		}
-
-		claims, err := m.tokenGen.ValidateAccessToken(parts[1])
+		claims, err := m.tokenGen.ValidateAccessToken(token)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 			c.Abort()
@@ -69,6 +62,23 @@ func (m *AuthMiddleware) Authenticate() gin.HandlerFunc {
 		c.Set(string(CtxUserRole), claims.Role)
 		c.Next()
 	}
+}
+
+// extractAccessToken reads the access token from the Authorization header,
+// falling back to the access_token cookie.
+func extractAccessToken(c *gin.Context) string {
+	if authHeader := c.GetHeader("Authorization"); authHeader != "" {
+		parts := strings.SplitN(authHeader, " ", 2)
+		if len(parts) == 2 && parts[0] == "Bearer" {
+			return parts[1]
+		}
+	}
+
+	if token, err := c.Cookie("access_token"); err == nil {
+		return token
+	}
+
+	return ""
 }
 
 // RequireRole checks that the authenticated user has one of the allowed platform roles.

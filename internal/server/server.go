@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -36,8 +37,8 @@ func New(cfg *config.Config, db database.DB, log *slog.Logger, container *app.Co
 	router := gin.New()
 
 	s := &Server{router: router, cfg: &cfg.Server}
-	s.setupMiddleware(log)
-	s.setupRoutes(db, container)
+	s.setupMiddleware(cfg, log)
+	s.setupRoutes(cfg, db, container)
 
 	if cfg.Swagger.Enabled {
 		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -68,13 +69,20 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	return s.srv.Shutdown(ctx)
 }
 
-func (s *Server) setupMiddleware(log *slog.Logger) {
+func (s *Server) setupMiddleware(cfg *config.Config, log *slog.Logger) {
 	s.router.Use(requestIDMiddleware())
 	s.router.Use(logger.GinMiddleware(log))
 	s.router.Use(gin.Recovery())
+	s.router.Use(cors.New(cors.Config{
+		AllowOrigins:     cfg.CORS.Origins,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"X-Request-ID"},
+		AllowCredentials: true,
+	}))
 }
 
-func (s *Server) setupRoutes(db database.DB, container *app.Container) {
+func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.Container) {
 	healthHandler := health.NewHandler(db)
 	s.router.GET("/health", healthHandler.Health)
 
@@ -86,6 +94,9 @@ func (s *Server) setupRoutes(db database.DB, container *app.Container) {
 		container.LoginUC,
 		container.RefreshTokenUC,
 		container.LogoutUC,
+		container.UserRepo,
+		cfg.Cookie,
+		cfg.JWT,
 	)
 
 	auth := s.router.Group("/auth")
@@ -93,6 +104,7 @@ func (s *Server) setupRoutes(db database.DB, container *app.Container) {
 		auth.POST("/register", authHandler.Register)
 		auth.POST("/login", authHandler.Login)
 		auth.POST("/refresh", authHandler.RefreshToken)
+		auth.GET("/me", authMW.Authenticate(), authHandler.Me)
 		auth.POST("/logout", authMW.Authenticate(), authHandler.Logout)
 	}
 
