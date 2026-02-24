@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { AppFooter } from "@/components/app-footer";
 import { useAuth } from "@/stores/auth";
 
 export const Route = createFileRoute("/_app")({
@@ -24,7 +25,7 @@ function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="flex min-h-screen flex-col bg-bg">
       <header className="border-b border-border-secondary bg-bg-secondary">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
           <div className="flex items-center gap-4">
@@ -57,9 +58,10 @@ function AppLayout() {
           </div>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-6">
+      <main className="mx-auto w-full max-w-5xl flex-grow px-4 py-6">
         <Outlet />
       </main>
+      <AppFooter />
     </div>
   );
 }

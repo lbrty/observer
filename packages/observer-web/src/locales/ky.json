@@ -3,7 +3,14 @@
     "appName": "Observer",
     "email": "Email",
     "logout": "Çyğuu",
-    "unexpectedError": "Kütülbögön kata ketty"
+    "unexpectedError": "Kütülbögön kata ketty",
+    "theme": "Tema",
+    "language": "Til",
+    "themeSystem": "Sistema",
+    "themeLight": "Jaryk",
+    "themeDark": "Karañğy",
+    "themeLightHc": "Jaryk (HC)",
+    "themeDarkHc": "Karañğy (HC)"
   },
   "auth": {
     "loginTitle": "Kirüü",

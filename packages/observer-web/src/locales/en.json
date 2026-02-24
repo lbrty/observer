@@ -3,7 +3,14 @@
     "appName": "Observer",
     "email": "Email",
     "logout": "Log out",
-    "unexpectedError": "An unexpected error occurred"
+    "unexpectedError": "An unexpected error occurred",
+    "theme": "Theme",
+    "language": "Language",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeLightHc": "Light (HC)",
+    "themeDarkHc": "Dark (HC)"
   },
   "auth": {
     "loginTitle": "Sign in",
