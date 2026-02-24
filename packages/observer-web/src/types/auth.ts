@@ -29,7 +29,6 @@ export interface LoginOutput {
 
 export interface RegisterInput {
   email: string;
-  phone: string;
   password: string;
   role: Role;
 }

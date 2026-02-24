@@ -40,6 +40,7 @@ type Container struct {
 	ListUsersUC  *ucadmin.ListUsersUseCase
 	GetUserUC    *ucadmin.GetUserUseCase
 	UpdateUserUC *ucadmin.UpdateUserUseCase
+	CreateUserUC *ucadmin.CreateUserUseCase
 
 	// Permission Use Cases
 	ListPermsUC  *ucadmin.ListPermissionsUseCase
@@ -118,8 +119,9 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 	listUsersUC := ucadmin.NewListUsersUseCase(userRepo)
 	getUserUC := ucadmin.NewGetUserUseCase(userRepo)
 	updateUserUC := ucadmin.NewUpdateUserUseCase(userRepo)
+	createUserUC := ucadmin.NewCreateUserUseCase(userRepo, credRepo, hasher)
 
-	listPermsUC := ucadmin.NewListPermissionsUseCase(permCRUDRepo)
+	listPermsUC := ucadmin.NewListPermissionsUseCase(permCRUDRepo, userRepo)
 	assignPermUC := ucadmin.NewAssignPermissionUseCase(permCRUDRepo)
 	updatePermUC := ucadmin.NewUpdatePermissionUseCase(permCRUDRepo)
 	revokePermUC := ucadmin.NewRevokePermissionUseCase(permCRUDRepo)
@@ -162,6 +164,7 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 		ListUsersUC:       listUsersUC,
 		GetUserUC:         getUserUC,
 		UpdateUserUC:      updateUserUC,
+		CreateUserUC:      createUserUC,
 		ListPermsUC:       listPermsUC,
 		AssignPermUC:      assignPermUC,
 		UpdatePermUC:      updatePermUC,

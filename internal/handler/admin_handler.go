@@ -16,6 +16,7 @@ type AdminHandler struct {
 	listUsersUC  *ucadmin.ListUsersUseCase
 	getUserUC    *ucadmin.GetUserUseCase
 	updateUserUC *ucadmin.UpdateUserUseCase
+	createUserUC *ucadmin.CreateUserUseCase
 }
 
 // NewAdminHandler creates an AdminHandler.
@@ -23,11 +24,13 @@ func NewAdminHandler(
 	listUsersUC *ucadmin.ListUsersUseCase,
 	getUserUC *ucadmin.GetUserUseCase,
 	updateUserUC *ucadmin.UpdateUserUseCase,
+	createUserUC *ucadmin.CreateUserUseCase,
 ) *AdminHandler {
 	return &AdminHandler{
 		listUsersUC:  listUsersUC,
 		getUserUC:    getUserUC,
 		updateUserUC: updateUserUC,
+		createUserUC: createUserUC,
 	}
 }
 
@@ -124,6 +127,34 @@ func (h *AdminHandler) UpdateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, out)
+}
+
+// CreateUser handles POST /admin/users.
+// @Summary Create a new user
+// @Tags admin-users
+// @Accept json
+// @Produce json
+// @Param input body ucadmin.CreateUserInput true "User creation payload"
+// @Success 201 {object} ucadmin.UserDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Security BearerAuth
+// @Router /admin/users [post]
+func (h *AdminHandler) CreateUser(c *gin.Context) {
+	var input ucadmin.CreateUserInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	out, err := h.createUserUC.Execute(c.Request.Context(), input)
+	if err != nil {
+		h.handleUserError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusCreated, out)
 }
 
 func (h *AdminHandler) handleUserError(c *gin.Context, err error) {

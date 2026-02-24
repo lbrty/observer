@@ -1,4 +1,4 @@
-package auth
+package admin
 
 import (
 	"context"
@@ -11,34 +11,40 @@ import (
 	"github.com/lbrty/observer/internal/ulid"
 )
 
-// RegisterUseCase handles user registration.
-type RegisterUseCase struct {
+// CreateUserUseCase handles admin user creation.
+type CreateUserUseCase struct {
 	userRepo repository.UserRepository
 	credRepo repository.CredentialsRepository
 	hasher   crypto.PasswordHasher
 }
 
-// NewRegisterUseCase creates a RegisterUseCase.
-func NewRegisterUseCase(
+// NewCreateUserUseCase creates a CreateUserUseCase.
+func NewCreateUserUseCase(
 	userRepo repository.UserRepository,
 	credRepo repository.CredentialsRepository,
 	hasher crypto.PasswordHasher,
-) *RegisterUseCase {
-	return &RegisterUseCase{
+) *CreateUserUseCase {
+	return &CreateUserUseCase{
 		userRepo: userRepo,
 		credRepo: credRepo,
 		hasher:   hasher,
 	}
 }
 
-// Execute registers a new user.
-func (uc *RegisterUseCase) Execute(ctx context.Context, input RegisterInput) (*RegisterOutput, error) {
+// Execute creates a new user with credentials.
+func (uc *CreateUserUseCase) Execute(ctx context.Context, input CreateUserInput) (*UserDTO, error) {
 	if _, err := user.ValidateRole(input.Role); err != nil {
 		return nil, err
 	}
 
 	if _, err := uc.userRepo.GetByEmail(ctx, input.Email); err == nil {
 		return nil, user.ErrEmailExists
+	}
+
+	if input.Phone != "" {
+		if _, err := uc.userRepo.GetByPhone(ctx, input.Phone); err == nil {
+			return nil, user.ErrPhoneExists
+		}
 	}
 
 	hash, salt, err := uc.hasher.Hash(input.Password)
@@ -51,10 +57,14 @@ func (uc *RegisterUseCase) Execute(ctx context.Context, input RegisterInput) (*R
 
 	newUser := &user.User{
 		ID:         userID,
+		FirstName:  input.FirstName,
+		LastName:   input.LastName,
 		Email:      input.Email,
+		Phone:      input.Phone,
+		OfficeID:   input.OfficeID,
 		Role:       user.Role(input.Role),
-		IsVerified: false,
-		IsActive:   true,
+		IsVerified: input.IsVerified,
+		IsActive:   input.IsActive,
 		CreatedAt:  now,
 		UpdatedAt:  now,
 	}
@@ -74,8 +84,17 @@ func (uc *RegisterUseCase) Execute(ctx context.Context, input RegisterInput) (*R
 		return nil, fmt.Errorf("create credentials: %w", err)
 	}
 
-	return &RegisterOutput{
-		UserID:  userID.String(),
-		Message: "Registration successful. Please check your email to verify your account.",
+	return &UserDTO{
+		ID:         userID.String(),
+		FirstName:  newUser.FirstName,
+		LastName:   newUser.LastName,
+		Email:      newUser.Email,
+		Phone:      newUser.Phone,
+		OfficeID:   newUser.OfficeID,
+		Role:       string(newUser.Role),
+		IsVerified: newUser.IsVerified,
+		IsActive:   newUser.IsActive,
+		CreatedAt:  newUser.CreatedAt,
+		UpdatedAt:  newUser.UpdatedAt,
 	}, nil
 }

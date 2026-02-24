@@ -109,7 +109,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	}
 
 	// Admin endpoints — requires authentication + admin role
-	adminHandler := handler.NewAdminHandler(container.ListUsersUC, container.GetUserUC, container.UpdateUserUC)
+	adminHandler := handler.NewAdminHandler(container.ListUsersUC, container.GetUserUC, container.UpdateUserUC, container.CreateUserUC)
 	permHandler := handler.NewPermissionHandler(container.ListPermsUC, container.AssignPermUC, container.UpdatePermUC, container.RevokePermUC)
 	countryHandler := handler.NewCountryHandler(container.CountryUC)
 	stateHandler := handler.NewStateHandler(container.StateUC)
@@ -139,6 +139,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	// Admin-only write endpoints
 	admin := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin))
 	{
+		admin.POST("/users", adminHandler.CreateUser)
 		admin.PATCH("/users/:id", adminHandler.UpdateUser)
 
 		admin.GET("/projects", projectHandler.List)

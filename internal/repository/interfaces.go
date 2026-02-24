@@ -25,6 +25,7 @@ import (
 type UserRepository interface {
 	Create(ctx context.Context, u *user.User) error
 	GetByID(ctx context.Context, id ulid.ULID) (*user.User, error)
+	GetByIDs(ctx context.Context, ids []ulid.ULID) ([]*user.User, error)
 	GetByEmail(ctx context.Context, email string) (*user.User, error)
 	GetByPhone(ctx context.Context, phone string) (*user.User, error)
 	Update(ctx context.Context, u *user.User) error

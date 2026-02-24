@@ -16,8 +16,10 @@
   --color-foam: var(--color-foam);
   --color-gold: var(--color-gold);
   --color-rose: var(--color-rose);
-  --shadow-card: 0 1px 3px var(--shadow-card);
-  --shadow-elevated: 0 4px 12px var(--shadow-elevated);
+  --shadow-card:
+    0 1px 2px var(--shadow-card), 0 0.5px 1px var(--shadow-overlay);
+  --shadow-elevated:
+    0 4px 24px var(--shadow-elevated), 0 1px 4px var(--shadow-card);
   --shadow-overlay: 0 0 0 1px var(--shadow-overlay);
 }
 
@@ -130,4 +132,27 @@
   --shadow-card: rgba(26, 25, 22, 0.12);
   --shadow-elevated: rgba(26, 25, 22, 0.3);
   --shadow-overlay: rgba(26, 25, 22, 0.08);
+}
+
+/* Glass surface */
+.glass {
+  background: color-mix(in srgb, var(--bg-secondary) 72%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* Gradient brand icon */
+.brand-icon {
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 70%, #f0c870)
+  );
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* View Transitions: instant swap, no animation */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
 }

@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
 import { api, HTTPError } from "@/lib/api";
@@ -48,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const login = useCallback(async (input: LoginInput): Promise<LoginOutput> => {
+  async function login(input: LoginInput): Promise<LoginOutput> {
     const data = await api
       .post("auth/login", { json: input })
       .json<LoginOutput>();
@@ -58,23 +52,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     return data;
-  }, []);
+  }
 
-  const register = useCallback(
-    async (input: RegisterInput): Promise<RegisterOutput> => {
-      return api.post("auth/register", { json: input }).json<RegisterOutput>();
-    },
-    [],
-  );
+  async function register(input: RegisterInput): Promise<RegisterOutput> {
+    return api.post("auth/register", { json: input }).json<RegisterOutput>();
+  }
 
-  const logout = useCallback(async () => {
+  async function logout() {
     try {
       await api.post("auth/logout");
     } catch (err) {
       if (!(err instanceof HTTPError)) throw err;
     }
     setUser(null);
-  }, []);
+  }
 
   return (
     <AuthContext

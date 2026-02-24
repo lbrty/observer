@@ -31,6 +31,19 @@ type UpdateUserInput struct {
 	IsVerified *bool   `json:"is_verified"`
 }
 
+// CreateUserInput holds fields for creating a new user.
+type CreateUserInput struct {
+	FirstName  string  `json:"first_name" binding:"required"`
+	LastName   string  `json:"last_name"`
+	Email      string  `json:"email" binding:"required,email"`
+	Phone      string  `json:"phone"`
+	Password   string  `json:"password" binding:"required,min=8"`
+	Role       string  `json:"role" binding:"required"`
+	OfficeID   *string `json:"office_id"`
+	IsActive   bool    `json:"is_active"`
+	IsVerified bool    `json:"is_verified"`
+}
+
 // UserDTO is the admin-facing user representation.
 type UserDTO struct {
 	ID         string    `json:"id"`

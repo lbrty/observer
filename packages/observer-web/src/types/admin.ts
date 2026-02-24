@@ -29,6 +29,18 @@ export interface ListUsersParams {
   is_active?: boolean;
 }
 
+export interface CreateUserInput {
+  first_name: string;
+  last_name?: string;
+  email: string;
+  phone?: string;
+  password: string;
+  role: string;
+  office_id?: string | null;
+  is_active: boolean;
+  is_verified: boolean;
+}
+
 export interface UpdateUserInput {
   first_name?: string;
   last_name?: string;

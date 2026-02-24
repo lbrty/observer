@@ -27,17 +27,12 @@ func TestRegisterUseCase_Success(t *testing.T) {
 	ctx := context.Background()
 	input := ucauth.RegisterInput{
 		Email:    "test@example.com",
-		Phone:    "+49555000111",
 		Password: "securepassword",
 		Role:     "consultant",
 	}
 
 	mockUserRepo.EXPECT().
 		GetByEmail(ctx, input.Email).
-		Return(nil, user.ErrUserNotFound)
-
-	mockUserRepo.EXPECT().
-		GetByPhone(ctx, input.Phone).
 		Return(nil, user.ErrUserNotFound)
 
 	mockUserRepo.EXPECT().
@@ -70,38 +65,10 @@ func TestRegisterUseCase_EmailExists(t *testing.T) {
 
 	_, err := uc.Execute(context.Background(), ucauth.RegisterInput{
 		Email:    "taken@example.com",
-		Phone:    "+49555000222",
 		Password: "securepassword",
 		Role:     "consultant",
 	})
 	assert.ErrorIs(t, err, user.ErrEmailExists)
-}
-
-func TestRegisterUseCase_PhoneExists(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	hasher := crypto.NewArgonHasher()
-
-	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
-
-	mockUserRepo.EXPECT().
-		GetByEmail(gomock.Any(), gomock.Any()).
-		Return(nil, user.ErrUserNotFound)
-
-	mockUserRepo.EXPECT().
-		GetByPhone(gomock.Any(), "+49555000333").
-		Return(&user.User{}, nil)
-
-	_, err := uc.Execute(context.Background(), ucauth.RegisterInput{
-		Email:    "free@example.com",
-		Phone:    "+49555000333",
-		Password: "securepassword",
-		Role:     "consultant",
-	})
-	assert.ErrorIs(t, err, user.ErrPhoneExists)
 }
 
 func TestRegisterUseCase_InvalidRole(t *testing.T) {
@@ -116,7 +83,6 @@ func TestRegisterUseCase_InvalidRole(t *testing.T) {
 
 	_, err := uc.Execute(context.Background(), ucauth.RegisterInput{
 		Email:    "test@example.com",
-		Phone:    "+49555000444",
 		Password: "securepassword",
 		Role:     "superadmin",
 	})

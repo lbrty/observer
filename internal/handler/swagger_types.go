@@ -19,5 +19,5 @@ type IDListResponse struct {
 
 // PermissionListResponse wraps a list of permissions.
 type PermissionListResponse struct {
-	Permissions []ucadmin.PermissionDTO `json:"permissions"`
+	Permissions []ucadmin.PermissionMemberDTO `json:"permissions"`
 }

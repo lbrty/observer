@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 	"github.com/oklog/ulid/v2"
 
 	"github.com/lbrty/observer/internal/domain/user"
@@ -44,6 +45,26 @@ func (r *userRepo) Create(ctx context.Context, u *user.User) error {
 func (r *userRepo) GetByID(ctx context.Context, id ulid.ULID) (*user.User, error) {
 	q := `SELECT ` + userColumns + ` FROM users WHERE id = $1`
 	return r.scanUser(r.db.QueryRowContext(ctx, q, id.String()))
+}
+
+func (r *userRepo) GetByIDs(ctx context.Context, ids []ulid.ULID) ([]*user.User, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
+	strs := make([]string, len(ids))
+	for i, id := range ids {
+		strs[i] = id.String()
+	}
+
+	q := `SELECT ` + userColumns + ` FROM users WHERE id = ANY($1)`
+	rows, err := r.db.QueryContext(ctx, q, pq.Array(strs))
+	if err != nil {
+		return nil, fmt.Errorf("get users by ids: %w", err)
+	}
+	defer rows.Close()
+
+	return r.scanUsers(rows)
 }
 
 func (r *userRepo) GetByEmail(ctx context.Context, email string) (*user.User, error) {
