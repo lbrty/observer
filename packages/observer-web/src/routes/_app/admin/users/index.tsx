@@ -104,7 +104,7 @@ function UsersPage() {
             setRole(e.target.value);
             setPage(1);
           }}
-          className="rounded-md border border-border-secondary bg-bg-secondary px-3 py-1.5 text-sm text-fg outline-none"
+          className="rounded-md border border-border-secondary bg-bg-secondary pl-3 pr-1 py-1.5 text-sm text-fg outline-none"
         >
           <option value="">{t("admin.users.allRoles")}</option>
           <option value="admin">admin</option>
@@ -118,7 +118,7 @@ function UsersPage() {
             setIsActive(e.target.value);
             setPage(1);
           }}
-          className="rounded-md border border-border-secondary bg-bg-secondary px-3 py-1.5 text-sm text-fg outline-none"
+          className="rounded-md border border-border-secondary bg-bg-secondary pl-3 pr-1 py-1.5 text-sm text-fg outline-none"
         >
           <option value="">{t("admin.users.allStatuses")}</option>
           <option value="true">{t("admin.users.active")}</option>

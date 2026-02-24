@@ -1,3 +1,4 @@
+import { PencilSimple, Trash } from "@phosphor-icons/react";
 import { Dialog } from "@base-ui/react/dialog";
 import { Field } from "@base-ui/react/field";
 import { createFileRoute } from "@tanstack/react-router";
@@ -45,22 +46,28 @@ function CategoriesPage() {
     },
     {
       key: "actions",
-      header: t("admin.common.actions"),
+      header: "",
       render: (c) => (
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={() => setEditTarget(c)}
-            className="cursor-pointer text-xs text-accent hover:underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              setEditTarget(c);
+            }}
+            className="cursor-pointer rounded p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg"
           >
-            {t("admin.common.edit")}
+            <PencilSimple size={16} />
           </button>
           <button
             type="button"
-            onClick={() => setDeleteTarget(c)}
-            className="cursor-pointer text-xs text-rose hover:underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              setDeleteTarget(c);
+            }}
+            className="cursor-pointer rounded p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
           >
-            {t("admin.common.delete")}
+            <Trash size={16} />
           </button>
         </div>
       ),

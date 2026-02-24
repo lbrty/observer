@@ -2,8 +2,6 @@ import {
   Buildings,
   FolderSimple,
   Globe,
-  MapPin,
-  MapPinArea,
   Tag,
   Users,
 } from "@phosphor-icons/react";
@@ -53,16 +51,6 @@ function AdminLayout() {
             to="/admin/reference/countries"
             label={t("admin.nav.countries")}
             icon={Globe}
-          />
-          <SidebarLink
-            to="/admin/reference/states"
-            label={t("admin.nav.states")}
-            icon={MapPin}
-          />
-          <SidebarLink
-            to="/admin/reference/places"
-            label={t("admin.nav.places")}
-            icon={MapPinArea}
           />
           <SidebarLink
             to="/admin/reference/offices"

@@ -1,7 +1,7 @@
 import { PencilSimple, Trash } from "@phosphor-icons/react";
 import { Dialog } from "@base-ui/react/dialog";
 import { Field } from "@base-ui/react/field";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -9,53 +9,50 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
 import { PageHeader } from "@/components/page-header";
 import {
-  useCreateOffice,
-  useDeleteOffice,
-  useOffices,
-  useUpdateOffice,
-} from "@/hooks/use-offices";
-import type { Office } from "@/types/reference";
+  useCountries,
+  useCreateCountry,
+  useDeleteCountry,
+  useUpdateCountry,
+} from "@/hooks/use-countries";
+import type { Country } from "@/types/reference";
 
-export const Route = createFileRoute("/_app/admin/reference/offices")({
-  component: OfficesPage,
+export const Route = createFileRoute("/_app/admin/reference/countries/")({
+  component: CountriesPage,
 });
 
-function OfficesPage() {
+function CountriesPage() {
   const { t } = useTranslation();
-  const { data, isLoading } = useOffices();
-  const createOffice = useCreateOffice();
-  const updateOffice = useUpdateOffice();
-  const deleteOffice = useDeleteOffice();
+  const navigate = useNavigate();
+  const { data, isLoading } = useCountries();
+  const createCountry = useCreateCountry();
+  const updateCountry = useUpdateCountry();
+  const deleteCountry = useDeleteCountry();
 
   const [createOpen, setCreateOpen] = useState(false);
-  const [editTarget, setEditTarget] = useState<Office | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<Office | null>(null);
+  const [editTarget, setEditTarget] = useState<Country | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Country | null>(null);
 
-  const columns: Column<Office>[] = [
+  const columns: Column<Country>[] = [
     {
       key: "name",
-      header: t("admin.reference.offices.name"),
-      render: (o) => <span className="font-medium text-fg">{o.name}</span>,
+      header: t("admin.reference.countries.name"),
+      render: (c) => <span className="font-medium text-fg">{c.name}</span>,
     },
     {
-      key: "place_id",
-      header: t("admin.reference.offices.place"),
-      render: (o) => (
-        <span className="font-mono text-xs text-fg-secondary">
-          {o.place_id ?? "—"}
-        </span>
-      ),
+      key: "code",
+      header: t("admin.reference.countries.code"),
+      render: (c) => <span className="text-fg-secondary">{c.code}</span>,
     },
     {
       key: "actions",
       header: "",
-      render: (o) => (
+      render: (c) => (
         <div className="flex gap-2">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setEditTarget(o);
+              setEditTarget(c);
             }}
             className="cursor-pointer rounded p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg"
           >
@@ -65,7 +62,7 @@ function OfficesPage() {
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setDeleteTarget(o);
+              setDeleteTarget(c);
             }}
             className="cursor-pointer rounded p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
           >
@@ -79,53 +76,56 @@ function OfficesPage() {
   return (
     <div>
       <PageHeader
-        title={t("admin.reference.offices.title")}
+        title={t("admin.reference.countries.title")}
         action={
           <button
             type="button"
             onClick={() => setCreateOpen(true)}
             className="cursor-pointer rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:opacity-90"
           >
-            {t("admin.reference.offices.add")}
+            {t("admin.reference.countries.add")}
           </button>
         }
       />
 
       <DataTable
         columns={columns}
-        data={data?.offices ?? []}
-        keyExtractor={(o) => o.id}
+        data={data?.countries ?? []}
+        keyExtractor={(c) => c.id}
+        onRowClick={(c) =>
+          navigate({
+            to: "/admin/reference/countries/$countryId",
+            params: { countryId: c.id },
+          })
+        }
         isLoading={isLoading}
       />
 
-      <OfficeFormDialog
+      <CountryFormDialog
         open={createOpen}
         onOpenChange={setCreateOpen}
-        title={t("admin.reference.offices.addTitle")}
-        onSubmit={async (name, placeId) => {
-          await createOffice.mutateAsync({
-            name,
-            place_id: placeId || undefined,
-          });
+        title={t("admin.reference.countries.addTitle")}
+        onSubmit={async (name, code) => {
+          await createCountry.mutateAsync({ name, code });
           setCreateOpen(false);
         }}
-        loading={createOffice.isPending}
+        loading={createCountry.isPending}
       />
 
       {editTarget && (
-        <OfficeFormDialog
+        <CountryFormDialog
           open={!!editTarget}
           onOpenChange={(open) => !open && setEditTarget(null)}
-          title={t("admin.reference.offices.editTitle")}
+          title={t("admin.reference.countries.editTitle")}
           initial={editTarget}
-          onSubmit={async (name, placeId) => {
-            await updateOffice.mutateAsync({
+          onSubmit={async (name, code) => {
+            await updateCountry.mutateAsync({
               id: editTarget.id,
-              data: { name, place_id: placeId || undefined },
+              data: { name, code },
             });
             setEditTarget(null);
           }}
-          loading={updateOffice.isPending}
+          loading={updateCountry.isPending}
         />
       )}
 
@@ -133,20 +133,20 @@ function OfficesPage() {
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
         title={t("admin.common.delete")}
-        description={t("admin.reference.offices.deleteConfirm")}
+        description={t("admin.reference.countries.deleteConfirm")}
         onConfirm={async () => {
           if (deleteTarget) {
-            await deleteOffice.mutateAsync(deleteTarget.id);
+            await deleteCountry.mutateAsync(deleteTarget.id);
             setDeleteTarget(null);
           }
         }}
-        loading={deleteOffice.isPending}
+        loading={deleteCountry.isPending}
       />
     </div>
   );
 }
 
-function OfficeFormDialog({
+function CountryFormDialog({
   open,
   onOpenChange,
   title,
@@ -157,20 +157,20 @@ function OfficeFormDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  initial?: Office;
-  onSubmit: (name: string, placeId: string) => Promise<void>;
+  initial?: Country;
+  onSubmit: (name: string, code: string) => Promise<void>;
   loading: boolean;
 }) {
   const { t } = useTranslation();
   const [name, setName] = useState(initial?.name ?? "");
-  const [placeId, setPlaceId] = useState(initial?.place_id ?? "");
+  const [code, setCode] = useState(initial?.code ?? "");
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    await onSubmit(name, placeId);
+    await onSubmit(name, code);
     if (!initial) {
       setName("");
-      setPlaceId("");
+      setCode("");
     }
   }
 
@@ -185,7 +185,7 @@ function OfficeFormDialog({
           <form onSubmit={handleSubmit} className="mt-4 space-y-3">
             <Field.Root>
               <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                {t("admin.reference.offices.name")}
+                {t("admin.reference.countries.name")}
               </Field.Label>
               <Field.Control
                 required
@@ -196,12 +196,12 @@ function OfficeFormDialog({
             </Field.Root>
             <Field.Root>
               <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                {t("admin.reference.offices.place")}
+                {t("admin.reference.countries.code")}
               </Field.Label>
               <Field.Control
-                value={placeId}
-                onChange={(e) => setPlaceId(e.target.value)}
-                placeholder="Place ID"
+                required
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
                 className="block w-full rounded-md border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
               />
             </Field.Root>

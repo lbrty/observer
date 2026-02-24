@@ -7,14 +7,15 @@ import type {
   UpdatePlaceInput,
 } from "@/types/reference";
 
-export function usePlaces(stateId: string) {
+export function usePlaces(stateId?: string) {
   return useQuery({
-    queryKey: ["places", stateId],
+    queryKey: ["places", stateId ?? "all"],
     queryFn: () =>
       api
-        .get("admin/places", { searchParams: { state_id: stateId } })
+        .get("admin/places", {
+          searchParams: stateId ? { state_id: stateId } : {},
+        })
         .json<{ places: Place[] }>(),
-    enabled: !!stateId,
   });
 }
 
@@ -34,8 +35,7 @@ export function useCreatePlace() {
           searchParams: { state_id: stateId },
         })
         .json<Place>(),
-    onSuccess: (_d, vars) =>
-      qc.invalidateQueries({ queryKey: ["places", vars.stateId] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["places"] }),
   });
 }
 

@@ -107,7 +107,8 @@
         "addTitle": "Add state",
         "editTitle": "Edit state",
         "deleteConfirm": "Are you sure you want to delete this state?",
-        "selectCountry": "Select a country"
+        "selectCountry": "Select a country",
+        "allCountries": "All countries"
       },
       "places": {
         "title": "Places",
@@ -121,7 +122,9 @@
         "editTitle": "Edit place",
         "deleteConfirm": "Are you sure you want to delete this place?",
         "selectCountry": "Select a country",
-        "selectState": "Select a state"
+        "selectState": "Select a state",
+        "allCountries": "All countries",
+        "allStates": "All states"
       },
       "offices": {
         "title": "Offices",

@@ -7,14 +7,15 @@ import type {
   UpdateStateInput,
 } from "@/types/reference";
 
-export function useStates(countryId: string) {
+export function useStates(countryId?: string) {
   return useQuery({
-    queryKey: ["states", countryId],
+    queryKey: ["states", countryId ?? "all"],
     queryFn: () =>
       api
-        .get("admin/states", { searchParams: { country_id: countryId } })
+        .get("admin/states", {
+          searchParams: countryId ? { country_id: countryId } : {},
+        })
         .json<{ states: State[] }>(),
-    enabled: !!countryId,
   });
 }
 
@@ -34,8 +35,7 @@ export function useCreateState() {
           searchParams: { country_id: countryId },
         })
         .json<State>(),
-    onSuccess: (_d, vars) =>
-      qc.invalidateQueries({ queryKey: ["states", vars.countryId] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["states"] }),
   });
 }
 

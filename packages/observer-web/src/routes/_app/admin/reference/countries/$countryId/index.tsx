@@ -1,6 +1,7 @@
+import { ArrowLeft, PencilSimple, Trash } from "@phosphor-icons/react";
 import { Dialog } from "@base-ui/react/dialog";
 import { Field } from "@base-ui/react/field";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -8,7 +9,6 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
-import { useCountries } from "@/hooks/use-countries";
 import {
   useCreateState,
   useDeleteState,
@@ -17,16 +17,16 @@ import {
 } from "@/hooks/use-states";
 import type { State } from "@/types/reference";
 
-export const Route = createFileRoute("/_app/admin/reference/states")({
+export const Route = createFileRoute(
+  "/_app/admin/reference/countries/$countryId/",
+)({
   component: StatesPage,
 });
 
 function StatesPage() {
   const { t } = useTranslation();
-  const { data: countriesData } = useCountries();
-  const countries = countriesData?.countries ?? [];
-
-  const [countryId, setCountryId] = useState("");
+  const navigate = useNavigate();
+  const { countryId } = Route.useParams();
   const { data, isLoading } = useStates(countryId);
   const createState = useCreateState();
   const updateState = useUpdateState();
@@ -45,7 +45,9 @@ function StatesPage() {
     {
       key: "code",
       header: t("admin.reference.states.code"),
-      render: (s) => <span className="text-fg-secondary">{s.code ?? "—"}</span>,
+      render: (s) => (
+        <span className="text-fg-secondary">{s.code ?? "\u2014"}</span>
+      ),
     },
     {
       key: "conflict_zone",
@@ -54,27 +56,33 @@ function StatesPage() {
         s.conflict_zone ? (
           <StatusBadge label={s.conflict_zone} variant="rose" />
         ) : (
-          <span className="text-fg-tertiary">—</span>
+          <span className="text-fg-tertiary">{"\u2014"}</span>
         ),
     },
     {
       key: "actions",
-      header: t("admin.common.actions"),
+      header: "",
       render: (s) => (
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={() => setEditTarget(s)}
-            className="cursor-pointer text-xs text-accent hover:underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              setEditTarget(s);
+            }}
+            className="cursor-pointer rounded p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg"
           >
-            {t("admin.common.edit")}
+            <PencilSimple size={16} />
           </button>
           <button
             type="button"
-            onClick={() => setDeleteTarget(s)}
-            className="cursor-pointer text-xs text-rose hover:underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              setDeleteTarget(s);
+            }}
+            className="cursor-pointer rounded p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
           >
-            {t("admin.common.delete")}
+            <Trash size={16} />
           </button>
         </div>
       ),
@@ -83,44 +91,39 @@ function StatesPage() {
 
   return (
     <div>
+      <Link
+        to="/admin/reference/countries"
+        className="mb-3 inline-flex items-center gap-1 text-sm text-fg-tertiary hover:text-fg"
+      >
+        <ArrowLeft size={14} />
+        {t("admin.reference.countries.title")}
+      </Link>
+
       <PageHeader
         title={t("admin.reference.states.title")}
         action={
-          countryId ? (
-            <button
-              type="button"
-              onClick={() => setCreateOpen(true)}
-              className="cursor-pointer rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:opacity-90"
-            >
-              {t("admin.reference.states.add")}
-            </button>
-          ) : undefined
+          <button
+            type="button"
+            onClick={() => setCreateOpen(true)}
+            className="cursor-pointer rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:opacity-90"
+          >
+            {t("admin.reference.states.add")}
+          </button>
         }
       />
 
-      <div className="mb-4">
-        <select
-          value={countryId}
-          onChange={(e) => setCountryId(e.target.value)}
-          className="rounded-md border border-border-secondary bg-bg-secondary px-3 py-1.5 text-sm text-fg outline-none"
-        >
-          <option value="">{t("admin.reference.states.selectCountry")}</option>
-          {countries.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {countryId && (
-        <DataTable
-          columns={columns}
-          data={data?.states ?? []}
-          keyExtractor={(s) => s.id}
-          isLoading={isLoading}
-        />
-      )}
+      <DataTable
+        columns={columns}
+        data={data?.states ?? []}
+        keyExtractor={(s) => s.id}
+        onRowClick={(s) =>
+          navigate({
+            to: "/admin/reference/countries/$countryId/states/$stateId",
+            params: { countryId, stateId: s.id },
+          })
+        }
+        isLoading={isLoading}
+      />
 
       <StateFormDialog
         open={createOpen}

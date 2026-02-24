@@ -1,37 +1,30 @@
+import { ArrowLeft, PencilSimple, Trash } from "@phosphor-icons/react";
 import { Dialog } from "@base-ui/react/dialog";
 import { Field } from "@base-ui/react/field";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
 import { PageHeader } from "@/components/page-header";
-import { useCountries } from "@/hooks/use-countries";
 import {
   useCreatePlace,
   useDeletePlace,
   usePlaces,
   useUpdatePlace,
 } from "@/hooks/use-places";
-import { useStates } from "@/hooks/use-states";
 import type { Place } from "@/types/reference";
 
-export const Route = createFileRoute("/_app/admin/reference/places")({
+export const Route = createFileRoute(
+  "/_app/admin/reference/countries/$countryId/states/$stateId",
+)({
   component: PlacesPage,
 });
 
 function PlacesPage() {
   const { t } = useTranslation();
-  const { data: countriesData } = useCountries();
-  const countries = countriesData?.countries ?? [];
-
-  const [countryId, setCountryId] = useState("");
-  const [stateId, setStateId] = useState("");
-
-  const { data: statesData } = useStates(countryId);
-  const states = statesData?.states ?? [];
-
+  const { countryId, stateId } = Route.useParams();
   const { data, isLoading } = usePlaces(stateId);
   const createPlace = useCreatePlace();
   const updatePlace = useUpdatePlace();
@@ -50,31 +43,41 @@ function PlacesPage() {
     {
       key: "lat",
       header: t("admin.reference.places.lat"),
-      render: (p) => <span className="text-fg-secondary">{p.lat ?? "—"}</span>,
+      render: (p) => (
+        <span className="text-fg-secondary">{p.lat ?? "\u2014"}</span>
+      ),
     },
     {
       key: "lon",
       header: t("admin.reference.places.lon"),
-      render: (p) => <span className="text-fg-secondary">{p.lon ?? "—"}</span>,
+      render: (p) => (
+        <span className="text-fg-secondary">{p.lon ?? "\u2014"}</span>
+      ),
     },
     {
       key: "actions",
-      header: t("admin.common.actions"),
+      header: "",
       render: (p) => (
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={() => setEditTarget(p)}
-            className="cursor-pointer text-xs text-accent hover:underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              setEditTarget(p);
+            }}
+            className="cursor-pointer rounded p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg"
           >
-            {t("admin.common.edit")}
+            <PencilSimple size={16} />
           </button>
           <button
             type="button"
-            onClick={() => setDeleteTarget(p)}
-            className="cursor-pointer text-xs text-rose hover:underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              setDeleteTarget(p);
+            }}
+            className="cursor-pointer rounded p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
           >
-            {t("admin.common.delete")}
+            <Trash size={16} />
           </button>
         </div>
       ),
@@ -83,60 +86,34 @@ function PlacesPage() {
 
   return (
     <div>
+      <Link
+        to="/admin/reference/countries/$countryId"
+        params={{ countryId }}
+        className="mb-3 inline-flex items-center gap-1 text-sm text-fg-tertiary hover:text-fg"
+      >
+        <ArrowLeft size={14} />
+        {t("admin.reference.states.title")}
+      </Link>
+
       <PageHeader
         title={t("admin.reference.places.title")}
         action={
-          stateId ? (
-            <button
-              type="button"
-              onClick={() => setCreateOpen(true)}
-              className="cursor-pointer rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:opacity-90"
-            >
-              {t("admin.reference.places.add")}
-            </button>
-          ) : undefined
+          <button
+            type="button"
+            onClick={() => setCreateOpen(true)}
+            className="cursor-pointer rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:opacity-90"
+          >
+            {t("admin.reference.places.add")}
+          </button>
         }
       />
 
-      <div className="mb-4 flex gap-3">
-        <select
-          value={countryId}
-          onChange={(e) => {
-            setCountryId(e.target.value);
-            setStateId("");
-          }}
-          className="rounded-md border border-border-secondary bg-bg-secondary px-3 py-1.5 text-sm text-fg outline-none"
-        >
-          <option value="">{t("admin.reference.places.selectCountry")}</option>
-          {countries.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-        <select
-          value={stateId}
-          onChange={(e) => setStateId(e.target.value)}
-          disabled={!countryId}
-          className="rounded-md border border-border-secondary bg-bg-secondary px-3 py-1.5 text-sm text-fg outline-none disabled:opacity-50"
-        >
-          <option value="">{t("admin.reference.places.selectState")}</option>
-          {states.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {stateId && (
-        <DataTable
-          columns={columns}
-          data={data?.places ?? []}
-          keyExtractor={(p) => p.id}
-          isLoading={isLoading}
-        />
-      )}
+      <DataTable
+        columns={columns}
+        data={data?.places ?? []}
+        keyExtractor={(p) => p.id}
+        isLoading={isLoading}
+      />
 
       <PlaceFormDialog
         open={createOpen}
