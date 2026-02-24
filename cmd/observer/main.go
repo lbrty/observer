@@ -32,6 +32,7 @@ func init() {
 	rootCmd.AddCommand(cmd.ServeCmd)
 	rootCmd.AddCommand(cmd.MigrateCmd)
 	rootCmd.AddCommand(cmd.KeygenCmd)
+	rootCmd.AddCommand(cmd.CreateAdminCmd)
 }
 
 func initConfig() {

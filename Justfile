@@ -39,6 +39,10 @@ generate-keys:
     chmod 644 keys/jwt_rsa.pub
     echo "RSA keys generated successfully in keys/ directory"
 
+# Create an admin user
+create-admin email password *args='':
+    go run ./cmd/observer create-admin --email {{email}} --password {{password}} {{args}}
+
 # Run unit tests only (fast, no Docker)
 test:
     go test -v -short ./...
