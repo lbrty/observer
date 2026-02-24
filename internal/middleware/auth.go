@@ -89,8 +89,8 @@ func (m *AuthMiddleware) RequireRole(roles ...user.Role) gin.HandlerFunc {
 	}
 	return func(c *gin.Context) {
 		roleVal, exists := c.Get(string(CtxUserRole))
-		if !exists {
-			c.JSON(http.StatusForbidden, gin.H{"error": "role not found"})
+		if !exists || roleVal.(string) == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 			c.Abort()
 			return
 		}
