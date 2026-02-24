@@ -1,0 +1,28 @@
+{
+  "common": {
+    "appName": "Observer",
+    "email": "Email",
+    "logout": "Chyguu",
+    "unexpectedError": "Kütülbögön kata ketty"
+  },
+  "auth": {
+    "loginTitle": "Kirüü",
+    "registerTitle": "Kattoo",
+    "password": "Syr söz",
+    "confirmPassword": "Syr sözdü yrasta",
+    "phone": "Telefon",
+    "login": "Kirüü",
+    "loggingIn": "Kirüüdö...",
+    "register": "Kattoo",
+    "registering": "Kattoodo...",
+    "noAccount": "Akkauntunuz jokpu?",
+    "hasAccount": "Akkauntunuz barby?",
+    "mfaRequired": "MFA talkap kylynat. Azyryncha koldonuuga jarabait.",
+    "passwordsMismatch": "Syr sözdör daal kelbeyt",
+    "passwordTooShort": "Syr söz 8 belgiden az bolbosun"
+  },
+  "dashboard": {
+    "greeting": "Salam, {{email}}",
+    "role": "Rol: {{role}}"
+  }
+}

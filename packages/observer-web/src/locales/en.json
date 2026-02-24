@@ -1,0 +1,28 @@
+{
+  "common": {
+    "appName": "Observer",
+    "email": "Email",
+    "logout": "Log out",
+    "unexpectedError": "An unexpected error occurred"
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "registerTitle": "Sign up",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "phone": "Phone",
+    "login": "Sign in",
+    "loggingIn": "Signing in...",
+    "register": "Sign up",
+    "registering": "Signing up...",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "mfaRequired": "MFA verification required. Not yet supported.",
+    "passwordsMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters"
+  },
+  "dashboard": {
+    "greeting": "Hello, {{email}}",
+    "role": "Role: {{role}}"
+  }
+}
