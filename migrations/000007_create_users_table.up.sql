@@ -4,6 +4,7 @@ CREATE TABLE users (
     last_name  TEXT,
     email      VARCHAR(255) NOT NULL,
     phone      VARCHAR(20)  NOT NULL,
+    office_id  TEXT         REFERENCES offices (id) ON DELETE SET NULL,
     role       VARCHAR(50)  NOT NULL CHECK (role IN ('admin', 'staff', 'consultant', 'guest')),
     is_verified BOOLEAN     NOT NULL DEFAULT FALSE,
     is_active   BOOLEAN     NOT NULL DEFAULT TRUE,
@@ -13,6 +14,7 @@ CREATE TABLE users (
     CONSTRAINT uq_users_phone UNIQUE (phone)
 );
 
-CREATE INDEX ix_users_email ON users (email);
-CREATE INDEX ix_users_phone ON users (phone);
-CREATE INDEX ix_users_role  ON users (role);
+CREATE INDEX ix_users_email     ON users (email);
+CREATE INDEX ix_users_phone     ON users (phone);
+CREATE INDEX ix_users_role      ON users (role);
+CREATE INDEX ix_users_office_id ON users (office_id);
