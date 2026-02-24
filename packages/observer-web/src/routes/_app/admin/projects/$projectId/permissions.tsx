@@ -1,3 +1,4 @@
+import { PencilSimple, Trash } from "@phosphor-icons/react";
 import { Dialog } from "@base-ui/react/dialog";
 import { Field } from "@base-ui/react/field";
 import { createFileRoute } from "@tanstack/react-router";
@@ -8,6 +9,8 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
+import { UICheckbox } from "@/components/ui-checkbox";
+import { UISelect } from "@/components/ui-select";
 import {
   useAssignPermission,
   usePermissions,
@@ -21,6 +24,13 @@ export const Route = createFileRoute(
 )({
   component: PermissionsPage,
 });
+
+const roleOptions = [
+  { label: "owner", value: "owner" },
+  { label: "manager", value: "manager" },
+  { label: "consultant", value: "consultant" },
+  { label: "viewer", value: "viewer" },
+];
 
 function PermissionsPage() {
   const { t } = useTranslation();
@@ -96,9 +106,9 @@ function PermissionsPage() {
               e.stopPropagation();
               setEditTarget(p);
             }}
-            className="cursor-pointer text-xs text-accent hover:underline"
+            className="cursor-pointer rounded p-1 text-fg-secondary hover:bg-bg-tertiary hover:text-accent"
           >
-            {t("admin.common.edit")}
+            <PencilSimple size={16} />
           </button>
           <button
             type="button"
@@ -106,9 +116,9 @@ function PermissionsPage() {
               e.stopPropagation();
               setRevokeTarget(p);
             }}
-            className="cursor-pointer text-xs text-rose hover:underline"
+            className="cursor-pointer rounded p-1 text-fg-secondary hover:bg-bg-tertiary hover:text-rose"
           >
-            {t("admin.permissions.revoke")}
+            <Trash size={16} />
           </button>
         </div>
       ),
@@ -250,45 +260,29 @@ function AssignDialog({
               <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
                 {t("admin.permissions.role")}
               </Field.Label>
-              <select
+              <UISelect
                 value={role}
-                onChange={(e) => setRole(e.target.value as ProjectRole)}
-                className="block w-full rounded-md border border-border-secondary bg-bg pl-3 pr-1 py-2 text-sm text-fg outline-none"
-              >
-                <option value="owner">owner</option>
-                <option value="manager">manager</option>
-                <option value="consultant">consultant</option>
-                <option value="viewer">viewer</option>
-              </select>
+                onValueChange={(v) => setRole(v as ProjectRole)}
+                options={roleOptions}
+                fullWidth
+              />
             </Field.Root>
             <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 text-sm text-fg-secondary">
-                <input
-                  type="checkbox"
-                  checked={contact}
-                  onChange={(e) => setContact(e.target.checked)}
-                  className="accent-accent"
-                />
-                {t("admin.permissions.contact")}
-              </label>
-              <label className="flex items-center gap-2 text-sm text-fg-secondary">
-                <input
-                  type="checkbox"
-                  checked={personal}
-                  onChange={(e) => setPersonal(e.target.checked)}
-                  className="accent-accent"
-                />
-                {t("admin.permissions.personal")}
-              </label>
-              <label className="flex items-center gap-2 text-sm text-fg-secondary">
-                <input
-                  type="checkbox"
-                  checked={documents}
-                  onChange={(e) => setDocuments(e.target.checked)}
-                  className="accent-accent"
-                />
-                {t("admin.permissions.documents")}
-              </label>
+              <UICheckbox
+                checked={contact}
+                onCheckedChange={setContact}
+                label={t("admin.permissions.contact")}
+              />
+              <UICheckbox
+                checked={personal}
+                onCheckedChange={setPersonal}
+                label={t("admin.permissions.personal")}
+              />
+              <UICheckbox
+                checked={documents}
+                onCheckedChange={setDocuments}
+                label={t("admin.permissions.documents")}
+              />
             </div>
             <div className="flex justify-end gap-3 pt-2">
               <Dialog.Close className="cursor-pointer rounded-md border border-border-secondary px-3 py-1.5 text-sm text-fg-secondary hover:bg-bg-tertiary">
@@ -358,45 +352,29 @@ function EditDialog({
               <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
                 {t("admin.permissions.role")}
               </Field.Label>
-              <select
+              <UISelect
                 value={role}
-                onChange={(e) => setRole(e.target.value as ProjectRole)}
-                className="block w-full rounded-md border border-border-secondary bg-bg pl-3 pr-1 py-2 text-sm text-fg outline-none"
-              >
-                <option value="owner">owner</option>
-                <option value="manager">manager</option>
-                <option value="consultant">consultant</option>
-                <option value="viewer">viewer</option>
-              </select>
+                onValueChange={(v) => setRole(v as ProjectRole)}
+                options={roleOptions}
+                fullWidth
+              />
             </Field.Root>
             <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 text-sm text-fg-secondary">
-                <input
-                  type="checkbox"
-                  checked={contact}
-                  onChange={(e) => setContact(e.target.checked)}
-                  className="accent-accent"
-                />
-                {t("admin.permissions.contact")}
-              </label>
-              <label className="flex items-center gap-2 text-sm text-fg-secondary">
-                <input
-                  type="checkbox"
-                  checked={personal}
-                  onChange={(e) => setPersonal(e.target.checked)}
-                  className="accent-accent"
-                />
-                {t("admin.permissions.personal")}
-              </label>
-              <label className="flex items-center gap-2 text-sm text-fg-secondary">
-                <input
-                  type="checkbox"
-                  checked={documents}
-                  onChange={(e) => setDocuments(e.target.checked)}
-                  className="accent-accent"
-                />
-                {t("admin.permissions.documents")}
-              </label>
+              <UICheckbox
+                checked={contact}
+                onCheckedChange={setContact}
+                label={t("admin.permissions.contact")}
+              />
+              <UICheckbox
+                checked={personal}
+                onCheckedChange={setPersonal}
+                label={t("admin.permissions.personal")}
+              />
+              <UICheckbox
+                checked={documents}
+                onCheckedChange={setDocuments}
+                label={t("admin.permissions.documents")}
+              />
             </div>
             <div className="flex justify-end gap-3 pt-2">
               <Dialog.Close className="cursor-pointer rounded-md border border-border-secondary px-3 py-1.5 text-sm text-fg-secondary hover:bg-bg-tertiary">

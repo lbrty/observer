@@ -1,3 +1,4 @@
+import { Field } from "@base-ui/react/field";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,6 +7,7 @@ import { DataTable, type Column } from "@/components/data-table";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { StatusBadge } from "@/components/status-badge";
+import { UISelect } from "@/components/ui-select";
 import { useUsers } from "@/hooks/use-users";
 import type { AdminUser } from "@/types/admin";
 
@@ -20,7 +22,7 @@ function UsersPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("");
-  const [isActive, setIsActive] = useState<string>("");
+  const [isActive, setIsActive] = useState("");
 
   const params = {
     page,
@@ -31,6 +33,20 @@ function UsersPage() {
   };
 
   const { data, isLoading } = useUsers(params);
+
+  const roleOptions = [
+    { label: t("admin.users.allRoles"), value: "" },
+    { label: "admin", value: "admin" },
+    { label: "staff", value: "staff" },
+    { label: "consultant", value: "consultant" },
+    { label: "guest", value: "guest" },
+  ];
+
+  const statusOptions = [
+    { label: t("admin.users.allStatuses"), value: "" },
+    { label: t("admin.users.active"), value: "true" },
+    { label: t("admin.users.no"), value: "false" },
+  ];
 
   const columns: Column<AdminUser>[] = [
     {
@@ -88,42 +104,35 @@ function UsersPage() {
       <PageHeader title={t("admin.users.title")} />
 
       <div className="mb-4 flex gap-3">
-        <input
-          type="text"
-          placeholder={t("admin.users.search")}
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
-          }}
-          className="rounded-md border border-border-secondary bg-bg-secondary px-3 py-1.5 text-sm text-fg outline-none focus:border-accent"
-        />
-        <select
+        <Field.Root>
+          <Field.Control
+            placeholder={t("admin.users.search")}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="rounded-md border border-border-secondary bg-bg-secondary px-3 py-1.5 text-sm text-fg outline-none focus:border-accent"
+          />
+        </Field.Root>
+        <UISelect
           value={role}
-          onChange={(e) => {
-            setRole(e.target.value);
+          onValueChange={(v) => {
+            setRole(v);
             setPage(1);
           }}
-          className="rounded-md border border-border-secondary bg-bg-secondary pl-3 pr-1 py-1.5 text-sm text-fg outline-none"
-        >
-          <option value="">{t("admin.users.allRoles")}</option>
-          <option value="admin">admin</option>
-          <option value="staff">staff</option>
-          <option value="consultant">consultant</option>
-          <option value="guest">guest</option>
-        </select>
-        <select
+          options={roleOptions}
+          placeholder={t("admin.users.allRoles")}
+        />
+        <UISelect
           value={isActive}
-          onChange={(e) => {
-            setIsActive(e.target.value);
+          onValueChange={(v) => {
+            setIsActive(v);
             setPage(1);
           }}
-          className="rounded-md border border-border-secondary bg-bg-secondary pl-3 pr-1 py-1.5 text-sm text-fg outline-none"
-        >
-          <option value="">{t("admin.users.allStatuses")}</option>
-          <option value="true">{t("admin.users.active")}</option>
-          <option value="false">{t("admin.users.no")}</option>
-        </select>
+          options={statusOptions}
+          placeholder={t("admin.users.allStatuses")}
+        />
       </div>
 
       <DataTable

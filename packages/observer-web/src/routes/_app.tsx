@@ -28,7 +28,10 @@ function AppLayout() {
       <header className="border-b border-border-secondary bg-bg-secondary">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
           <div className="flex items-center gap-4">
-            <Link to="/" className="text-sm font-semibold text-fg hover:text-fg">
+            <Link
+              to="/"
+              className="text-sm font-semibold text-fg hover:text-fg"
+            >
               {t("common.appName")}
             </Link>
             {(user?.role === "admin" || user?.role === "staff") && (

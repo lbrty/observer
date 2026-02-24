@@ -6,6 +6,7 @@ import { DataTable, type Column } from "@/components/data-table";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { StatusBadge } from "@/components/status-badge";
+import { UISelect } from "@/components/ui-select";
 import { useProjects } from "@/hooks/use-projects";
 import type { Project } from "@/types/project";
 
@@ -65,19 +66,20 @@ function ProjectsPage() {
       />
 
       <div className="mb-4">
-        <select
+        <UISelect
           value={status}
-          onChange={(e) => {
-            setStatus(e.target.value);
+          onValueChange={(v) => {
+            setStatus(v);
             setPage(1);
           }}
-          className="rounded-md border border-border-secondary bg-bg-secondary pl-3 pr-1 py-1.5 text-sm text-fg outline-none"
-        >
-          <option value="">{t("admin.projects.allStatuses")}</option>
-          <option value="active">active</option>
-          <option value="archived">archived</option>
-          <option value="closed">closed</option>
-        </select>
+          options={[
+            { label: t("admin.projects.allStatuses"), value: "" },
+            { label: "active", value: "active" },
+            { label: "archived", value: "archived" },
+            { label: "closed", value: "closed" },
+          ]}
+          placeholder={t("admin.projects.allStatuses")}
+        />
       </div>
 
       <DataTable

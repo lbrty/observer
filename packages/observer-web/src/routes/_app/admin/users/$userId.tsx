@@ -4,6 +4,8 @@ import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { PageHeader } from "@/components/page-header";
+import { UISelect } from "@/components/ui-select";
+import { UISwitch } from "@/components/ui-switch";
 import { useOffices } from "@/hooks/use-offices";
 import { useUpdateUser, useUser } from "@/hooks/use-users";
 
@@ -66,6 +68,18 @@ function UserDetailPage() {
 
   const offices = officesData?.offices ?? [];
 
+  const roleOptions = [
+    { label: "admin", value: "admin" },
+    { label: "staff", value: "staff" },
+    { label: "consultant", value: "consultant" },
+    { label: "guest", value: "guest" },
+  ];
+
+  const officeOptions = [
+    { label: "\u2014", value: "" },
+    ...offices.map((o) => ({ label: o.name, value: o.id })),
+  ];
+
   return (
     <div>
       <PageHeader title={t("admin.users.editTitle")} />
@@ -125,61 +139,38 @@ function UserDetailPage() {
           <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
             {t("admin.users.role")}
           </Field.Label>
-          <select
+          <UISelect
             value={form.role}
-            onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
-            className="block w-full rounded-md border border-border-secondary bg-bg-secondary pl-3 pr-1 py-2 text-sm text-fg outline-none focus:border-accent"
-          >
-            <option value="admin">admin</option>
-            <option value="staff">staff</option>
-            <option value="consultant">consultant</option>
-            <option value="guest">guest</option>
-          </select>
+            onValueChange={(v) => setForm((f) => ({ ...f, role: v }))}
+            options={roleOptions}
+            fullWidth
+          />
         </Field.Root>
 
         <Field.Root>
           <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
             {t("admin.users.office")}
           </Field.Label>
-          <select
+          <UISelect
             value={form.office_id}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, office_id: e.target.value }))
-            }
-            className="block w-full rounded-md border border-border-secondary bg-bg-secondary pl-3 pr-1 py-2 text-sm text-fg outline-none focus:border-accent"
-          >
-            <option value="">—</option>
-            {offices.map((o) => (
-              <option key={o.id} value={o.id}>
-                {o.name}
-              </option>
-            ))}
-          </select>
+            onValueChange={(v) => setForm((f) => ({ ...f, office_id: v }))}
+            options={officeOptions}
+            placeholder="\u2014"
+            fullWidth
+          />
         </Field.Root>
 
         <div className="flex gap-6">
-          <label className="flex items-center gap-2 text-sm text-fg-secondary">
-            <input
-              type="checkbox"
-              checked={form.is_active}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, is_active: e.target.checked }))
-              }
-              className="accent-accent"
-            />
-            {t("admin.users.active")}
-          </label>
-          <label className="flex items-center gap-2 text-sm text-fg-secondary">
-            <input
-              type="checkbox"
-              checked={form.is_verified}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, is_verified: e.target.checked }))
-              }
-              className="accent-accent"
-            />
-            {t("admin.users.verified")}
-          </label>
+          <UISwitch
+            checked={form.is_active}
+            onCheckedChange={(v) => setForm((f) => ({ ...f, is_active: v }))}
+            label={t("admin.users.active")}
+          />
+          <UISwitch
+            checked={form.is_verified}
+            onCheckedChange={(v) => setForm((f) => ({ ...f, is_verified: v }))}
+            label={t("admin.users.verified")}
+          />
         </div>
 
         <button

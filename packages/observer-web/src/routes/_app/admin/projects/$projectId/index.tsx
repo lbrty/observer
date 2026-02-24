@@ -4,6 +4,7 @@ import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { PageHeader } from "@/components/page-header";
+import { UISelect } from "@/components/ui-select";
 import { useProject, useUpdateProject } from "@/hooks/use-projects";
 
 export const Route = createFileRoute("/_app/admin/projects/$projectId/")({
@@ -93,15 +94,16 @@ function ProjectDetailPage() {
           <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
             {t("admin.projects.status")}
           </Field.Label>
-          <select
+          <UISelect
             value={form.status}
-            onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
-            className="block w-full rounded-md border border-border-secondary bg-bg-secondary pl-3 pr-1 py-2 text-sm text-fg outline-none focus:border-accent"
-          >
-            <option value="active">active</option>
-            <option value="archived">archived</option>
-            <option value="closed">closed</option>
-          </select>
+            onValueChange={(v) => setForm((f) => ({ ...f, status: v }))}
+            options={[
+              { label: "active", value: "active" },
+              { label: "archived", value: "archived" },
+              { label: "closed", value: "closed" },
+            ]}
+            fullWidth
+          />
         </Field.Root>
 
         <button
