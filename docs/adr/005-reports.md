@@ -231,20 +231,20 @@ When `birth_date` is set and `age_group` is NULL, the application layer computes
 
 ## Schema Implications
 
-| Schema element                                              | Reports enabled                                      |
-| ----------------------------------------------------------- | ---------------------------------------------------- |
-| `people.registered_at`                                      | 4–6, 11–13, 18, 21, 36, 39                           |
-| `people.origin_place_id → places → states.conflict_zone`   | 4–11                                                 |
-| `people.sex`                                                | 12–17                                                |
-| `person_categories → categories`                            | 18–20                                                |
-| `people.current_place_id → places → states`                 | 21–23                                                |
-| `support_records.type`                                      | 1–3, 7–10, 14–17, 19–20, 22–25, 28–30, 32–34, 37–38 |
-| `support_records.provided_at`                               | All consultation date-range filtering                |
-| `support_records.sphere` (`support_sphere` enum)            | 24, 25, 29, 30                                       |
-| `support_records.office_id → offices`                       | 28, 32, 33                                           |
-| `people.age_group` / `people.birth_date`                    | 26, 27, 31, 34                                       |
-| `person_tags` + `tags` (project-scoped)                     | 35, 36                                               |
-| `households` + `household_members`                          | 37, 38, 39                                           |
+| Schema element                                           | Reports enabled                                     |
+| -------------------------------------------------------- | --------------------------------------------------- |
+| `people.registered_at`                                   | 4–6, 11–13, 18, 21, 36, 39                          |
+| `people.origin_place_id → places → states.conflict_zone` | 4–11                                                |
+| `people.sex`                                             | 12–17                                               |
+| `person_categories → categories`                         | 18–20                                               |
+| `people.current_place_id → places → states`              | 21–23                                               |
+| `support_records.type`                                   | 1–3, 7–10, 14–17, 19–20, 22–25, 28–30, 32–34, 37–38 |
+| `support_records.provided_at`                            | All consultation date-range filtering               |
+| `support_records.sphere` (`support_sphere` enum)         | 24, 25, 29, 30                                      |
+| `support_records.office_id → offices`                    | 28, 32, 33                                          |
+| `people.age_group` / `people.birth_date`                 | 26, 27, 31, 34                                      |
+| `person_tags` + `tags` (project-scoped)                  | 35, 36                                              |
+| `households` + `household_members`                       | 37, 38, 39                                          |
 
 ---
 

@@ -17,25 +17,30 @@ observer/
 ├── cmd/observer/              # CLI entry point (serve, migrate, keygen)
 ├── internal/
 │   ├── app/                   # DI container
-│   ├── application/auth/      # Use cases: register, login, refresh, logout
 │   ├── config/                # Environment-based configuration
+│   ├── crypto/                # RSA JWT, Argon2id password hashing
 │   ├── database/              # DB interface + sqlx implementation
-│   ├── domain/
-│   │   ├── auth/              # Session entity + repository interface
-│   │   └── user/              # User, Credentials, MFAConfig, VerificationToken
+│   ├── domain/                # Entities + repository interfaces
+│   │   ├── auth/              # Session entity
+│   │   ├── user/              # User, Credentials, MFAConfig, VerificationToken
+│   │   ├── project/           # Project, Permission, ProjectRole
+│   │   ├── reference/         # Country, State, Place, Office, Category
+│   │   ├── person/            # Person, PersonListFilter
+│   │   └── ...                # tag, support, migration, household, note, document, pet
+│   ├── handler/               # HTTP handlers (thin adapters)
 │   ├── health/                # Health check handler
-│   ├── infrastructure/
-│   │   ├── auth/              # RSA JWT, Argon2id password hashing
-│   │   └── persistence/postgres/  # Repository implementations
-│   ├── interfaces/http/
-│   │   ├── handlers/          # Auth HTTP handlers
-│   │   └── middleware/        # JWT authentication middleware
+│   ├── middleware/             # JWT auth + project RBAC middleware
+│   ├── repository/            # Repository interfaces + implementations
+│   ├── usecase/               # Business logic (auth, admin, project)
 │   ├── logger/                # slog JSON logger + Gin middleware
-│   ├── server/                # Gin HTTP server setup
+│   ├── server/                # Gin HTTP server setup + CORS
 │   ├── testutil/              # Testcontainers helpers (Postgres, Redis)
 │   └── ulid/                  # Thread-safe ULID generator
-├── migrations/                # Forward-only .up.sql files (000001–000021)
+├── packages/
+│   └── observer-web/          # React 19 frontend (see docs/frontend.md)
+├── migrations/                # Forward-only .up.sql files
 ├── docs/adr/                  # Architecture Decision Records
+├── package.json               # Bun monorepo root
 ├── Justfile                   # Developer task runner
 └── docker-compose.yml         # Postgres + Redis for local dev
 ```
@@ -44,13 +49,13 @@ observer/
 
 ## ADR Index
 
-| ADR | Title | Status |
-|-----|-------|--------|
-| [ADR-001](adr/001-bootstrapping.md) | Basic project structure, CLI, database, health check, server | Accepted |
-| [ADR-002](adr/002-users-and-auth.md) | User domain, JWT auth with RSA signing, Argon2id passwords | Accepted |
-| [ADR-003](adr/003-main-schema.md) | Main database schema (geography, projects, people, support) | Accepted |
-| [ADR-004](adr/004-forward-only-migrations.md) | Forward-only migrations, no down files | Accepted |
-| [ADR-005](adr/005-reports.md) | Reports specification (39 report requirements from IDP archive) | Accepted |
+| ADR                                           | Title                                                           | Status   |
+| --------------------------------------------- | --------------------------------------------------------------- | -------- |
+| [ADR-001](adr/001-bootstrapping.md)           | Basic project structure, CLI, database, health check, server    | Accepted |
+| [ADR-002](adr/002-users-and-auth.md)          | User domain, JWT auth with RSA signing, Argon2id passwords      | Accepted |
+| [ADR-003](adr/003-main-schema.md)             | Main database schema (geography, projects, people, support)     | Accepted |
+| [ADR-004](adr/004-forward-only-migrations.md) | Forward-only migrations, no down files                          | Accepted |
+| [ADR-005](adr/005-reports.md)                 | Reports specification (39 report requirements from IDP archive) | Accepted |
 
 ---
 
@@ -58,30 +63,33 @@ observer/
 
 All 22 migrations are forward-only `.up.sql` files. No `.down.sql` files exist.
 
-| Number | Migration |
-|--------|-----------|
-| 000001 | Init PostgreSQL extensions (citext, pg_trgm, unaccent, pgcrypto) |
-| 000002 | users |
-| 000003 | credentials |
-| 000004 | mfa_configs |
-| 000005 | sessions |
-| 000006 | verification_tokens |
-| 000007 | countries |
-| 000008 | states |
-| 000009 | places |
-| 000010 | offices |
-| 000011 | categories |
-| 000012 | tags (project-scoped) |
-| 000013 | projects |
-| 000014 | project_permissions |
-| 000015 | people |
-| 000016 | person_tags |
-| 000017 | migration_records |
-| 000018 | support_records |
-| 000019 | pets |
-| 000020 | documents |
-| 000021 | add office_id column to users |
-| 000022 | person_notes |
+Migrations are ordered by dependency — reference data first, then users/auth, then projects, then core domain.
+
+| Number | Table               | Dependencies                     |
+| ------ | ------------------- | -------------------------------- |
+| 000001 | extensions          | —                                |
+| 000002 | countries           | —                                |
+| 000003 | categories          | —                                |
+| 000004 | states              | countries                        |
+| 000005 | places              | states                           |
+| 000006 | offices             | places                           |
+| 000007 | users               | offices                          |
+| 000008 | credentials         | users                            |
+| 000009 | mfa_configs         | users                            |
+| 000010 | sessions            | users                            |
+| 000011 | verification_tokens | users                            |
+| 000012 | projects            | users                            |
+| 000013 | tags                | projects                         |
+| 000014 | project_permissions | projects, users                  |
+| 000015 | people              | projects, users, offices, places |
+| 000016 | person_tags         | people, tags                     |
+| 000017 | migration_records   | people, places                   |
+| 000018 | support_records     | people, projects, users, offices |
+| 000019 | pets                | projects, people                 |
+| 000020 | documents           | people, projects, users          |
+| 000021 | person_notes        | people, users                    |
+| 000022 | households          | projects, people                 |
+| 000023 | person_categories   | people, categories               |
 
 ---
 
@@ -210,19 +218,19 @@ The normalized model handles all three and has no meaningful query overhead with
 
 ## Technology Choices
 
-| Concern | Choice | Reason |
-|---|---|---|
-| Language | Go 1.22+ | Strong concurrency, fast binaries, excellent stdlib |
-| HTTP | Gin | Low overhead, familiar middleware pattern |
-| Database | PostgreSQL | JSONB, CITEXT, pg_trgm, strong FK enforcement |
-| Migrations | golang-migrate (file source) | Simple, no magic, forward-only per ADR-004 |
-| Auth tokens | RS256 JWT | Asymmetric — public key can be shared with other services without exposing signing key |
-| Password hashing | Argon2id | Winner of Password Hashing Competition, memory-hard |
-| IDs | ULID (TEXT) | Sortable by time, no UUID extension dependency, human-readable |
-| CLI | Cobra + godotenv | Standard Go CLI pattern |
-| Mocks | go.uber.org/mock (mockgen) | Interface-based, generated, type-safe |
-| Tests | testify + testcontainers | Real database in integration tests, no manual setup |
-| Logging | slog (stdlib) | Structured JSON, no external dependency |
+| Concern          | Choice                       | Reason                                                                                 |
+| ---------------- | ---------------------------- | -------------------------------------------------------------------------------------- |
+| Language         | Go 1.22+                     | Strong concurrency, fast binaries, excellent stdlib                                    |
+| HTTP             | Gin                          | Low overhead, familiar middleware pattern                                              |
+| Database         | PostgreSQL                   | JSONB, CITEXT, pg_trgm, strong FK enforcement                                          |
+| Migrations       | golang-migrate (file source) | Simple, no magic, forward-only per ADR-004                                             |
+| Auth tokens      | RS256 JWT                    | Asymmetric — public key can be shared with other services without exposing signing key |
+| Password hashing | Argon2id                     | Winner of Password Hashing Competition, memory-hard                                    |
+| IDs              | ULID (TEXT)                  | Sortable by time, no UUID extension dependency, human-readable                         |
+| CLI              | Cobra + godotenv             | Standard Go CLI pattern                                                                |
+| Mocks            | go.uber.org/mock (mockgen)   | Interface-based, generated, type-safe                                                  |
+| Tests            | testify + testcontainers     | Real database in integration tests, no manual setup                                    |
+| Logging          | slog (stdlib)                | Structured JSON, no external dependency                                                |
 
 ---
 
@@ -230,9 +238,9 @@ The normalized model handles all three and has no meaningful query overhead with
 
 ```text
 POST /auth/register  → validate → check uniqueness → hash password → create user + credentials
-POST /auth/login     → verify credentials → check MFA → create session → return token pair
-POST /auth/refresh   → find session → delete old → create new session → return new token pair
-POST /auth/logout    → find session by refresh token → delete (no auth header required)
+POST /auth/login     → verify credentials → check MFA → create session → set cookies → return token pair + user
+POST /auth/refresh   → read refresh_token cookie → delete old session → create new → set cookies → return new pair
+POST /auth/logout    → read refresh_token cookie → delete session → clear cookies
 ```
 
 Token types:
@@ -240,6 +248,21 @@ Token types:
 - **Access token** (RS256 JWT, 15 min) — carries `uid`, `role`, `type=access`
 - **Refresh token** (ULID string, 7 days) — stored in `sessions` table, rotated on each refresh
 - **MFA pending token** (RS256 JWT, 5 min) — carries `type=mfa_pending`, used during MFA verification flow
+
+### Cookie-based transport
+
+Tokens are delivered via HttpOnly cookies, not stored client-side:
+
+| Cookie          | Path    | HttpOnly | Purpose                                            |
+| --------------- | ------- | -------- | -------------------------------------------------- |
+| `access_token`  | `/`     | yes      | Sent with every request, read by auth middleware   |
+| `refresh_token` | `/auth` | yes      | Sent only to `/auth/*` endpoints (refresh, logout) |
+
+Both cookies share the same `MaxAge` (default 2h, configurable via `COOKIE_MAX_AGE`).
+
+The auth middleware reads the access token from `Authorization: Bearer` header first, falling back to the `access_token` cookie. This supports both cookie-based (browser) and header-based (API) clients.
+
+The frontend sends `credentials: "include"` on all requests. On 401, it auto-retries via `POST /auth/refresh` (the refresh cookie is sent automatically), then retries the original request.
 
 ---
 

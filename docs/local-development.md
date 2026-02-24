@@ -5,6 +5,7 @@
 | Tool             | Version | Install                                                                 |
 | ---------------- | ------- | ----------------------------------------------------------------------- |
 | Go               | 1.25.\* | https://go.dev/dl/                                                      |
+| Bun              | latest  | https://bun.sh/                                                         |
 | Docker + Compose | latest  | https://docs.docker.com/get-docker/                                     |
 | Just             | latest  | https://github.com/casey/just#installation                              |
 | golangci-lint    | latest  | `go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest` |
@@ -23,6 +24,7 @@ Optional for OpenAPI generation:
 git clone https://github.com/lbrty/observer.git
 cd observer
 go mod download
+bun install
 ```
 
 ### 2. Configure environment
@@ -91,7 +93,7 @@ just run
 
 The server starts on `http://localhost:9000` with Swagger UI enabled at `http://localhost:9000/swagger/index.html`.
 
-### 7. Verify
+### 7. Verify the backend
 
 ```bash
 curl http://localhost:9000/health
@@ -102,6 +104,16 @@ Expected response:
 ```json
 { "status": "healthy", "database": "connected", "timestamp": "..." }
 ```
+
+### 8. Start the frontend
+
+```bash
+just web-dev
+```
+
+Opens at `http://localhost:5173`. The frontend proxies API requests to the backend at `:9000` via cookies (CORS is pre-configured for `localhost:5173`).
+
+See [docs/frontend.md](frontend.md) for full frontend documentation.
 
 ## Running Tests
 
@@ -124,6 +136,9 @@ just test-race     # run with Go race detector
 | Generate OpenAPI spec | `just openapi`               |
 | Create new migration  | `just migrate-create <name>` |
 | Stop Docker services  | `just docker-down`           |
+| Frontend dev server   | `just web-dev`               |
+| Frontend build        | `just web-build`             |
+| Frontend dependencies | `just web-install`           |
 | List all commands     | `just`                       |
 
 ## Troubleshooting

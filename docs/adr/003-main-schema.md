@@ -714,24 +714,24 @@ Replacing `people.category_id` (single FK) with a junction table enables multipl
 
 ## Summary of Migration Numbers
 
-| Number | Table / Change                                                                        |
-| ------ | ------------------------------------------------------------------------------------- |
-| 000002 | users (role fix, profile columns)                                                     |
-| 000007 | countries                                                                             |
-| 000008 | states (+ conflict_zone)                                                              |
-| 000009 | places                                                                                |
-| 000010 | offices (no state_id, no global name unique)                                          |
-| 000011 | categories                                                                            |
-| 000012 | tags (project-scoped)                                                                 |
-| 000013 | projects (+ status)                                                                   |
-| 000014 | project_permissions (project_role enum + sensitivity flags)                           |
+| Number | Table / Change                                                                                                |
+| ------ | ------------------------------------------------------------------------------------------------------------- |
+| 000002 | users (role fix, profile columns)                                                                             |
+| 000007 | countries                                                                                                     |
+| 000008 | states (+ conflict_zone)                                                                                      |
+| 000009 | places                                                                                                        |
+| 000010 | offices (no state_id, no global name unique)                                                                  |
+| 000011 | categories                                                                                                    |
+| 000012 | tags (project-scoped)                                                                                         |
+| 000013 | projects (+ status)                                                                                           |
+| 000014 | project_permissions (project_role enum + sensitivity flags)                                                   |
 | 000015 | people (split name, primary_phone, consent, age XOR, external_id unique, no idp_status/parent_id/category_id) |
-| 000016 | person_tags                                                                           |
-| 000017 | migration_records (movement_reason, housing_at_destination, immutable)                |
-| 000018 | support_records (recorded_by, provided_at, sphere, referral_status, referred_to_office) |
-| 000019 | pets (owner → people)                                                                 |
-| 000020 | documents (renamed from person_documents)                                             |
-| 000021 | users office_id (alter)                                                               |
-| 000022 | person_notes                                                                          |
-| 000023 | households + household_members (replaces people.parent_id)                            |
-| 000024 | person_categories junction (replaces people.category_id)                              |
+| 000016 | person_tags                                                                                                   |
+| 000017 | migration_records (movement_reason, housing_at_destination, immutable)                                        |
+| 000018 | support_records (recorded_by, provided_at, sphere, referral_status, referred_to_office)                       |
+| 000019 | pets (owner → people)                                                                                         |
+| 000020 | documents (renamed from person_documents)                                                                     |
+| 000021 | users office_id (alter)                                                                                       |
+| 000022 | person_notes                                                                                                  |
+| 000023 | households + household_members (replaces people.parent_id)                                                    |
+| 000024 | person_categories junction (replaces people.category_id)                                                      |

@@ -24,14 +24,14 @@ A Ukrainian or Ukraine-supporting NGO with:
 
 ## Why the Incumbents Do Not Serve This Market
 
-| System | Why it is unavailable to a small NGO |
-| --- | --- |
-| **proGres v4 / PRIMES** | Requires UNHCR operational partnership; not self-hostable; global system with country-level access governance |
-| **Primero** | Requires a UNICEF/IRC technical partner for deployment and configuration; server infrastructure managed by the partner, not the NGO |
-| **ActivityInfo** | SaaS with per-user pricing; designed for aggregate monitoring (5W/3W), not individual case management |
-| **KoBoToolbox** | Survey collection only; no persistent case entity between submissions |
-| **MiMOSA / DTM** | IOM internal system; not available to external organizations |
-| **Ukraine IDP Register** | Government system; NGOs can query but not contribute structured case data |
+| System                   | Why it is unavailable to a small NGO                                                                                                |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **proGres v4 / PRIMES**  | Requires UNHCR operational partnership; not self-hostable; global system with country-level access governance                       |
+| **Primero**              | Requires a UNICEF/IRC technical partner for deployment and configuration; server infrastructure managed by the partner, not the NGO |
+| **ActivityInfo**         | SaaS with per-user pricing; designed for aggregate monitoring (5W/3W), not individual case management                               |
+| **KoBoToolbox**          | Survey collection only; no persistent case entity between submissions                                                               |
+| **MiMOSA / DTM**         | IOM internal system; not available to external organizations                                                                        |
+| **Ukraine IDP Register** | Government system; NGOs can query but not contribute structured case data                                                           |
 
 ---
 
@@ -79,13 +79,13 @@ The `households` + `household_members` model (relationship types: head, spouse, 
 
 ## What Observer Does Not Compete On
 
-| Capability | Who owns it | Observer's stance |
-| --- | --- | --- |
-| Scale (10M+ registrations) | proGres v4 | Not a target; single-project deployments |
-| Inter-agency referral workflows | Primero | `referral_status` column is a lightweight tracker, not a full referral module |
-| Biometric deduplication | proGres + BIMS | `external_id` unique index is the deduplication anchor; national ID (РНОКПП) required |
-| Cluster / 5W / 3W aggregate reporting | ActivityInfo | Observer produces the raw query results; ActivityInfo is still the right tool for cluster-level dashboards |
-| Cross-country mandate reporting | proGres / UNHCR Dataport | Out of scope |
+| Capability                            | Who owns it              | Observer's stance                                                                                          |
+| ------------------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Scale (10M+ registrations)            | proGres v4               | Not a target; single-project deployments                                                                   |
+| Inter-agency referral workflows       | Primero                  | `referral_status` column is a lightweight tracker, not a full referral module                              |
+| Biometric deduplication               | proGres + BIMS           | `external_id` unique index is the deduplication anchor; national ID (РНОКПП) required                      |
+| Cluster / 5W / 3W aggregate reporting | ActivityInfo             | Observer produces the raw query results; ActivityInfo is still the right tool for cluster-level dashboards |
+| Cross-country mandate reporting       | proGres / UNHCR Dataport | Out of scope                                                                                               |
 
 ---
 
