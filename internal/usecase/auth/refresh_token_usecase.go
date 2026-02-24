@@ -13,13 +13,14 @@ import (
 
 // RefreshTokenUseCase issues a new token pair from a valid refresh token.
 type RefreshTokenUseCase struct {
+	userRepo    repository.UserRepository
 	sessionRepo repository.SessionRepository
 	tokenGen    crypto.TokenGenerator
 }
 
 // NewRefreshTokenUseCase creates a RefreshTokenUseCase.
-func NewRefreshTokenUseCase(sessionRepo repository.SessionRepository, tokenGen crypto.TokenGenerator) *RefreshTokenUseCase {
-	return &RefreshTokenUseCase{sessionRepo: sessionRepo, tokenGen: tokenGen}
+func NewRefreshTokenUseCase(userRepo repository.UserRepository, sessionRepo repository.SessionRepository, tokenGen crypto.TokenGenerator) *RefreshTokenUseCase {
+	return &RefreshTokenUseCase{userRepo: userRepo, sessionRepo: sessionRepo, tokenGen: tokenGen}
 }
 
 // Execute rotates the refresh token and issues a new access token.
@@ -38,7 +39,12 @@ func (uc *RefreshTokenUseCase) Execute(ctx context.Context, input RefreshTokenIn
 		return nil, fmt.Errorf("delete old session: %w", err)
 	}
 
-	accessToken, expiresAt, err := uc.tokenGen.GenerateAccessToken(session.UserID, "")
+	u, err := uc.userRepo.GetByID(ctx, session.UserID)
+	if err != nil {
+		return nil, fmt.Errorf("get user: %w", err)
+	}
+
+	accessToken, expiresAt, err := uc.tokenGen.GenerateAccessToken(u.ID, string(u.Role))
 	if err != nil {
 		return nil, fmt.Errorf("generate access token: %w", err)
 	}

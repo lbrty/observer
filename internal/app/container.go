@@ -112,7 +112,7 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 
 	registerUC := ucauth.NewRegisterUseCase(userRepo, credRepo, hasher)
 	loginUC := ucauth.NewLoginUseCase(userRepo, credRepo, sessionRepo, mfaRepo, hasher, tokenGen)
-	refreshUC := ucauth.NewRefreshTokenUseCase(sessionRepo, tokenGen)
+	refreshUC := ucauth.NewRefreshTokenUseCase(userRepo, sessionRepo, tokenGen)
 	logoutUC := ucauth.NewLogoutUseCase(sessionRepo)
 
 	listUsersUC := ucadmin.NewListUsersUseCase(userRepo)
