@@ -108,6 +108,13 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		auth.POST("/logout", authMW.Authenticate(), authHandler.Logout)
 	}
 
+	// My endpoints — authenticated user's own data
+	myHandler := handler.NewMyHandler(container.MyProjectsUC)
+	my := s.router.Group("/my", authMW.Authenticate())
+	{
+		my.GET("/projects", myHandler.Projects)
+	}
+
 	// Admin endpoints — requires authentication + admin role
 	adminHandler := handler.NewAdminHandler(container.ListUsersUC, container.GetUserUC, container.UpdateUserUC, container.CreateUserUC)
 	permHandler := handler.NewPermissionHandler(container.ListPermsUC, container.AssignPermUC, container.UpdatePermUC, container.RevokePermUC)

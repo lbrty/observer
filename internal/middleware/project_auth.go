@@ -31,14 +31,14 @@ func (m *ProjectAuthMiddleware) RequireProjectRole(action project.Action) gin.Ha
 	return func(c *gin.Context) {
 		projectID := c.Param("project_id")
 		if projectID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "missing project_id"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "missing project_id", "code": "errors.validation"})
 			c.Abort()
 			return
 		}
 
 		userID, ok := UserIDFrom(c)
 		if !ok {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "user not authenticated"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "user not authenticated", "code": "errors.auth.missingUser"})
 			c.Abort()
 			return
 		}
@@ -55,12 +55,12 @@ func (m *ProjectAuthMiddleware) RequireProjectRole(action project.Action) gin.Ha
 		// Project owner bypass.
 		isOwner, err := m.permLoader.IsProjectOwner(c.Request.Context(), userID, projectID)
 		if err != nil && !errors.Is(err, project.ErrProjectNotFound) {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "authorization check failed"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "authorization check failed", "code": "errors.internal"})
 			c.Abort()
 			return
 		}
 		if errors.Is(err, project.ErrProjectNotFound) {
-			c.JSON(http.StatusNotFound, gin.H{"error": "project not found"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "project not found", "code": "errors.project.notFound"})
 			c.Abort()
 			return
 		}
@@ -74,17 +74,17 @@ func (m *ProjectAuthMiddleware) RequireProjectRole(action project.Action) gin.Ha
 		perm, err := m.permLoader.GetPermission(c.Request.Context(), userID, projectID)
 		if err != nil {
 			if errors.Is(err, project.ErrPermissionNotFound) {
-				c.JSON(http.StatusForbidden, gin.H{"error": "no project access"})
+				c.JSON(http.StatusForbidden, gin.H{"error": "no project access", "code": "errors.project.permissionDenied"})
 				c.Abort()
 				return
 			}
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "authorization check failed"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "authorization check failed", "code": "errors.internal"})
 			c.Abort()
 			return
 		}
 
 		if perm.Role.Rank() < minRole.Rank() {
-			c.JSON(http.StatusForbidden, gin.H{"error": "insufficient project permissions"})
+			c.JSON(http.StatusForbidden, gin.H{"error": "insufficient project permissions", "code": "errors.project.permissionDenied"})
 			c.Abort()
 			return
 		}

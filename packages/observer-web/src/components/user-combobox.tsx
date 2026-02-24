@@ -1,5 +1,5 @@
 import { MagnifyingGlassIcon } from "@/components/icons";
-import { useDeferredValue, useState } from "react";
+import { useDeferredValue, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useSearchUsers } from "@/hooks/use-users";
@@ -13,11 +13,39 @@ interface UserComboboxProps {
 export function UserCombobox({ excludeIds = [], onSelect }: UserComboboxProps) {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const listRef = useRef<HTMLDivElement>(null);
   const deferred = useDeferredValue(search);
   const { data, isLoading } = useSearchUsers(deferred);
 
   const filtered = data?.users.filter((u) => !excludeIds.includes(u.id)) ?? [];
   const showDropdown = search.length >= 2;
+
+  function select(user: AdminUser) {
+    onSelect(user);
+    setSearch("");
+    setActiveIndex(-1);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (!showDropdown || filtered.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((i) => (i < filtered.length - 1 ? i + 1 : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((i) => (i > 0 ? i - 1 : filtered.length - 1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (activeIndex >= 0 && activeIndex < filtered.length) {
+        select(filtered[activeIndex]);
+      }
+    } else if (e.key === "Escape") {
+      setSearch("");
+      setActiveIndex(-1);
+    }
+  }
 
   return (
     <div className="relative">
@@ -28,14 +56,30 @@ export function UserCombobox({ excludeIds = [], onSelect }: UserComboboxProps) {
         />
         <input
           type="text"
+          role="combobox"
+          aria-expanded={showDropdown}
+          aria-activedescendant={
+            activeIndex >= 0 ? `user-option-${activeIndex}` : undefined
+          }
+          aria-autocomplete="list"
+          aria-controls="user-listbox"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setActiveIndex(-1);
+          }}
+          onKeyDown={handleKeyDown}
           placeholder={t("admin.permissions.searchUsers")}
-          className="block w-full rounded-md border border-border-secondary bg-bg py-2 pr-3 pl-9 text-sm text-fg outline-none focus:border-accent"
+          className="block w-full rounded-lg border border-border-secondary bg-bg py-2 pr-3 pl-9 text-sm text-fg outline-none focus:border-accent"
         />
       </div>
       {showDropdown && (
-        <div className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-md border border-border-secondary bg-bg-secondary shadow-elevated">
+        <div
+          ref={listRef}
+          id="user-listbox"
+          role="listbox"
+          className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-border-secondary bg-bg-secondary shadow-elevated"
+        >
           {isLoading && (
             <p className="px-3 py-2 text-sm text-fg-tertiary">...</p>
           )}
@@ -44,15 +88,17 @@ export function UserCombobox({ excludeIds = [], onSelect }: UserComboboxProps) {
               {t("admin.common.noData")}
             </p>
           )}
-          {filtered.map((u) => (
+          {filtered.map((u, i) => (
             <button
               key={u.id}
+              id={`user-option-${i}`}
+              role="option"
+              aria-selected={i === activeIndex}
               type="button"
-              onClick={() => {
-                onSelect(u);
-                setSearch("");
-              }}
-              className="flex w-full cursor-pointer flex-col px-3 py-2 text-left hover:bg-bg-tertiary"
+              onClick={() => select(u)}
+              className={`flex w-full cursor-pointer flex-col px-3 py-2 text-left ${
+                i === activeIndex ? "bg-bg-tertiary" : "hover:bg-bg-tertiary"
+              }`}
             >
               <span className="text-sm text-fg">
                 {u.first_name} {u.last_name}

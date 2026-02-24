@@ -33,7 +33,7 @@ export function FormDialog({
         <Dialog.Popup
           className={`fixed top-1/2 left-1/2 w-full -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border-secondary bg-bg-secondary p-6 shadow-elevated ${maxWidth === "md" ? "max-w-md" : "max-w-sm"}`}
         >
-          <Dialog.Title className="text-lg font-semibold text-fg">
+          <Dialog.Title className="font-serif text-lg font-semibold text-fg">
             {title}
           </Dialog.Title>
           {description && (

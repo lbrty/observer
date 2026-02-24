@@ -48,7 +48,7 @@ func (h *PermissionHandler) ListPermissions(c *gin.Context) {
 
 	out, err := h.listUC.Execute(c.Request.Context(), projectID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 
@@ -73,7 +73,7 @@ func (h *PermissionHandler) AssignPermission(c *gin.Context) {
 
 	var input ucadmin.AssignPermissionInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 
@@ -106,7 +106,7 @@ func (h *PermissionHandler) UpdatePermission(c *gin.Context) {
 
 	var input ucadmin.UpdatePermissionInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 
@@ -145,12 +145,12 @@ func (h *PermissionHandler) RevokePermission(c *gin.Context) {
 func (h *PermissionHandler) handlePermError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, project.ErrPermissionNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.project.permissionNotFound", err.Error()))
 	case errors.Is(err, project.ErrPermissionExists):
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, errJSON("errors.project.permissionExists", err.Error()))
 	case errors.Is(err, project.ErrInvalidProjectRole):
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.project.invalidRole", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

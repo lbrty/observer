@@ -94,7 +94,7 @@ function UserDetailPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, first_name: e.target.value }))
               }
-              className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+              className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
             />
           </Field.Root>
           <Field.Root>
@@ -106,7 +106,7 @@ function UserDetailPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, last_name: e.target.value }))
               }
-              className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+              className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
             />
           </Field.Root>
         </div>
@@ -119,7 +119,7 @@ function UserDetailPage() {
             type="email"
             value={form.email}
             onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 
@@ -131,7 +131,7 @@ function UserDetailPage() {
             type="tel"
             value={form.phone}
             onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 

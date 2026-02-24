@@ -54,7 +54,7 @@ function LoginPage() {
         <span className="brand-icon mb-4 inline-flex size-14 items-center justify-center rounded-2xl text-xl font-bold text-white">
           O
         </span>
-        <h1 className="text-xl font-semibold text-fg">
+        <h1 className="font-serif text-xl font-semibold text-fg">
           {t("auth.loginTitle")}
         </h1>
       </div>
@@ -74,7 +74,7 @@ function LoginPage() {
             type="email"
             required
             autoComplete="email"
-            className="block w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 
@@ -86,7 +86,7 @@ function LoginPage() {
             type="password"
             required
             autoComplete="current-password"
-            className="block w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 

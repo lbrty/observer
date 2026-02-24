@@ -42,12 +42,12 @@ func (h *SupportRecordHandler) List(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.ListSupportRecordsInput
 	if err := c.ShouldBindQuery(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.List(c.Request.Context(), projectID, input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -89,7 +89,7 @@ func (h *SupportRecordHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.CreateSupportRecordInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	userID, _ := middleware.UserIDFrom(c)
@@ -118,7 +118,7 @@ func (h *SupportRecordHandler) Create(c *gin.Context) {
 func (h *SupportRecordHandler) Update(c *gin.Context) {
 	var input ucproject.UpdateSupportRecordInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
@@ -151,8 +151,8 @@ func (h *SupportRecordHandler) Delete(c *gin.Context) {
 func (h *SupportRecordHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, support.ErrRecordNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.support.notFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

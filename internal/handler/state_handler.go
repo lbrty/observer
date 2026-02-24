@@ -42,7 +42,7 @@ func (h *StateHandler) List(c *gin.Context) {
 		out, err = h.uc.ListAll(c.Request.Context())
 	}
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"states": out})
@@ -82,12 +82,12 @@ func (h *StateHandler) Get(c *gin.Context) {
 func (h *StateHandler) Create(c *gin.Context) {
 	countryID := c.Query("country_id")
 	if countryID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "country_id is required"})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "country_id is required"))
 		return
 	}
 	var input ucadmin.CreateStateInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), countryID, input)
@@ -114,7 +114,7 @@ func (h *StateHandler) Create(c *gin.Context) {
 func (h *StateHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdateStateInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
@@ -146,8 +146,8 @@ func (h *StateHandler) Delete(c *gin.Context) {
 func (h *StateHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, reference.ErrStateNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.reference.stateNotFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

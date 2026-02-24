@@ -31,7 +31,7 @@ func NewOfficeHandler(uc *ucadmin.OfficeUseCase) *OfficeHandler {
 func (h *OfficeHandler) List(c *gin.Context) {
 	out, err := h.uc.List(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"offices": out})
@@ -70,7 +70,7 @@ func (h *OfficeHandler) Get(c *gin.Context) {
 func (h *OfficeHandler) Create(c *gin.Context) {
 	var input ucadmin.CreateOfficeInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), input)
@@ -97,7 +97,7 @@ func (h *OfficeHandler) Create(c *gin.Context) {
 func (h *OfficeHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdateOfficeInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
@@ -129,8 +129,8 @@ func (h *OfficeHandler) Delete(c *gin.Context) {
 func (h *OfficeHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, reference.ErrOfficeNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.reference.officeNotFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

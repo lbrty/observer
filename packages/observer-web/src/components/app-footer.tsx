@@ -6,8 +6,10 @@ const THEME_KEY = "observer-theme";
 const LANG_KEY = "observer-lang";
 
 const LANGUAGES = [
-  { value: "ky", label: "Kırgızça" },
+  { value: "ky", label: "Kyrgyzça" },
   { value: "en", label: "English" },
+  { value: "uk", label: "Українська" },
+  { value: "de", label: "Deutsch" },
 ];
 
 function getThemeValue(): string {

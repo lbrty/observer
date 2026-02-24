@@ -42,7 +42,7 @@ func (h *PlaceHandler) List(c *gin.Context) {
 		out, err = h.uc.ListAll(c.Request.Context())
 	}
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"places": out})
@@ -82,12 +82,12 @@ func (h *PlaceHandler) Get(c *gin.Context) {
 func (h *PlaceHandler) Create(c *gin.Context) {
 	stateID := c.Query("state_id")
 	if stateID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "state_id is required"})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "state_id is required"))
 		return
 	}
 	var input ucadmin.CreatePlaceInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), stateID, input)
@@ -114,7 +114,7 @@ func (h *PlaceHandler) Create(c *gin.Context) {
 func (h *PlaceHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdatePlaceInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
@@ -146,8 +146,8 @@ func (h *PlaceHandler) Delete(c *gin.Context) {
 func (h *PlaceHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, reference.ErrPlaceNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.reference.placeNotFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

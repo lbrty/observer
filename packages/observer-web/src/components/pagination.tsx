@@ -47,7 +47,7 @@ export function Pagination({
 
   return (
     <div className="flex items-center justify-between pt-4">
-      <span className="text-sm text-fg-tertiary">
+      <span className="font-mono text-sm tabular-nums text-fg-tertiary">
         {t("admin.common.paginationRange", { from, to, total })}
       </span>
       <div className="flex items-center gap-1">
@@ -72,7 +72,7 @@ export function Pagination({
               key={p}
               type="button"
               onClick={() => onChange(p)}
-              className={`inline-flex size-8 cursor-pointer items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+              className={`inline-flex size-8 cursor-pointer items-center justify-center rounded-lg font-mono text-sm font-medium tabular-nums transition-colors ${
                 p === page
                   ? "bg-accent text-accent-fg shadow-card"
                   : "text-fg-secondary hover:bg-bg-tertiary"

@@ -25,7 +25,7 @@ export function ConfirmDialog({
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 bg-black/25 backdrop-blur-xs" />
         <Dialog.Popup className="fixed top-1/2 left-1/2 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border-secondary bg-bg-secondary p-6 shadow-elevated">
-          <Dialog.Title className="text-lg font-semibold text-fg">
+          <Dialog.Title className="font-serif text-lg font-semibold text-fg">
             {title}
           </Dialog.Title>
           <Dialog.Description className="mt-2 text-sm text-fg-secondary">

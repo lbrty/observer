@@ -36,12 +36,12 @@ func (h *PetHandler) List(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.ListPetsInput
 	if err := c.ShouldBindQuery(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.List(c.Request.Context(), projectID, input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -84,7 +84,7 @@ func (h *PetHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.CreatePetInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), projectID, input)
@@ -112,7 +112,7 @@ func (h *PetHandler) Create(c *gin.Context) {
 func (h *PetHandler) Update(c *gin.Context) {
 	var input ucproject.UpdatePetInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
@@ -145,8 +145,8 @@ func (h *PetHandler) Delete(c *gin.Context) {
 func (h *PetHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, pet.ErrPetNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.pet.notFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

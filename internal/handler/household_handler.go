@@ -36,12 +36,12 @@ func (h *HouseholdHandler) List(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.ListHouseholdsInput
 	if err := c.ShouldBindQuery(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.List(c.Request.Context(), projectID, input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -83,7 +83,7 @@ func (h *HouseholdHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.CreateHouseholdInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), projectID, input)
@@ -111,7 +111,7 @@ func (h *HouseholdHandler) Create(c *gin.Context) {
 func (h *HouseholdHandler) Update(c *gin.Context) {
 	var input ucproject.UpdateHouseholdInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
@@ -160,7 +160,7 @@ func (h *HouseholdHandler) AddMember(c *gin.Context) {
 	householdID := c.Param("id")
 	var input ucproject.AddMemberInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.AddMember(c.Request.Context(), householdID, input)
@@ -196,12 +196,12 @@ func (h *HouseholdHandler) RemoveMember(c *gin.Context) {
 func (h *HouseholdHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, household.ErrHouseholdNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.household.notFound", err.Error()))
 	case errors.Is(err, household.ErrMemberNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.household.memberNotFound", err.Error()))
 	case errors.Is(err, household.ErrMemberExists):
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, errJSON("errors.household.memberExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

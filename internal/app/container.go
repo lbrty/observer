@@ -9,6 +9,7 @@ import (
 	"github.com/lbrty/observer/internal/repository"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 	ucauth "github.com/lbrty/observer/internal/usecase/auth"
+	ucmy "github.com/lbrty/observer/internal/usecase/my"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
 
@@ -54,6 +55,9 @@ type Container struct {
 	PlaceUC    *ucadmin.PlaceUseCase
 	OfficeUC   *ucadmin.OfficeUseCase
 	CategoryUC *ucadmin.CategoryUseCase
+
+	// My Use Cases
+	MyProjectsUC *ucmy.MyProjectsUseCase
 
 	// Project Use Cases
 	ProjectUC         *ucadmin.ProjectUseCase
@@ -132,6 +136,8 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 	officeUC := ucadmin.NewOfficeUseCase(officeRepo)
 	categoryUC := ucadmin.NewCategoryUseCase(categoryRepo)
 
+	myProjectsUC := ucmy.NewMyProjectsUseCase(permCRUDRepo, projectRepo)
+
 	projectUC := ucadmin.NewProjectUseCase(projectRepo)
 	tagUC := ucproject.NewTagUseCase(tagRepo)
 	personUC := ucproject.NewPersonUseCase(personRepo)
@@ -174,6 +180,7 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 		PlaceUC:           placeUC,
 		OfficeUC:          officeUC,
 		CategoryUC:        categoryUC,
+		MyProjectsUC:      myProjectsUC,
 		ProjectUC:         projectUC,
 		TagUC:             tagUC,
 		PersonUC:          personUC,

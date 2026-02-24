@@ -34,7 +34,7 @@ func (h *MigrationRecordHandler) List(c *gin.Context) {
 	personID := c.Param("person_id")
 	out, err := h.uc.ListByPerson(c.Request.Context(), personID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"records": out})
@@ -79,7 +79,7 @@ func (h *MigrationRecordHandler) Create(c *gin.Context) {
 	personID := c.Param("person_id")
 	var input ucproject.CreateMigrationRecordInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), personID, input)
@@ -93,8 +93,8 @@ func (h *MigrationRecordHandler) Create(c *gin.Context) {
 func (h *MigrationRecordHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, migration.ErrRecordNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.migration.notFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

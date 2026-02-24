@@ -65,7 +65,7 @@ func NewAuthHandler(
 func (h *AuthHandler) Register(c *gin.Context) {
 	var input ucauth.RegisterInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 
@@ -92,7 +92,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 func (h *AuthHandler) Login(c *gin.Context) {
 	var input ucauth.LoginInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 
@@ -121,7 +121,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 func (h *AuthHandler) Me(c *gin.Context) {
 	userID, ok := middleware.UserIDFrom(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing user identity"})
+		c.JSON(http.StatusUnauthorized, errJSON("errors.auth.missingUser", "missing user identity"))
 		return
 	}
 
@@ -155,7 +155,7 @@ func (h *AuthHandler) Me(c *gin.Context) {
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
 	refreshToken := h.readRefreshToken(c)
 	if refreshToken == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "refresh token is required"})
+		c.JSON(http.StatusBadRequest, errJSON("errors.auth.refreshTokenRequired", "refresh token is required"))
 		return
 	}
 
@@ -186,7 +186,7 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 func (h *AuthHandler) Logout(c *gin.Context) {
 	refreshToken := h.readRefreshToken(c)
 	if refreshToken == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "refresh token is required"})
+		c.JSON(http.StatusBadRequest, errJSON("errors.auth.refreshTokenRequired", "refresh token is required"))
 		return
 	}
 
@@ -269,19 +269,23 @@ func (h *AuthHandler) clearTokenCookies(c *gin.Context) {
 
 func (h *AuthHandler) handleError(c *gin.Context, err error) {
 	switch {
-	case errors.Is(err, user.ErrEmailExists), errors.Is(err, user.ErrPhoneExists):
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+	case errors.Is(err, user.ErrEmailExists):
+		c.JSON(http.StatusConflict, errJSON("errors.user.emailExists", err.Error()))
+	case errors.Is(err, user.ErrPhoneExists):
+		c.JSON(http.StatusConflict, errJSON("errors.user.phoneExists", err.Error()))
 	case errors.Is(err, user.ErrInvalidCredentials):
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, errJSON("errors.auth.invalidCredentials", err.Error()))
 	case errors.Is(err, user.ErrUserNotActive):
-		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+		c.JSON(http.StatusForbidden, errJSON("errors.user.notActive", err.Error()))
 	case errors.Is(err, user.ErrUserNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.user.notFound", err.Error()))
 	case errors.Is(err, user.ErrInvalidRole):
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	case errors.Is(err, domainauth.ErrSessionNotFound), errors.Is(err, domainauth.ErrSessionExpired):
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.user.invalidRole", err.Error()))
+	case errors.Is(err, domainauth.ErrSessionNotFound):
+		c.JSON(http.StatusUnauthorized, errJSON("errors.auth.sessionNotFound", err.Error()))
+	case errors.Is(err, domainauth.ErrSessionExpired):
+		c.JSON(http.StatusUnauthorized, errJSON("errors.auth.sessionExpired", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

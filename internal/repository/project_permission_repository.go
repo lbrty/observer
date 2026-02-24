@@ -47,6 +47,30 @@ func (r *projectPermissionRepo) List(ctx context.Context, projectID string) ([]*
 	return perms, rows.Err()
 }
 
+func (r *projectPermissionRepo) ListByUserID(ctx context.Context, userID string) ([]*project.ProjectPermission, error) {
+	const q = `
+		SELECT id, project_id, user_id, role, can_view_contact, can_view_personal, can_view_documents, created_at, updated_at
+		FROM project_permissions
+		WHERE user_id = $1
+		ORDER BY created_at
+	`
+	rows, err := r.db.QueryContext(ctx, q, userID)
+	if err != nil {
+		return nil, fmt.Errorf("list permissions by user: %w", err)
+	}
+	defer rows.Close()
+
+	var perms []*project.ProjectPermission
+	for rows.Next() {
+		p, err := r.scanPermissionRow(rows)
+		if err != nil {
+			return nil, err
+		}
+		perms = append(perms, p)
+	}
+	return perms, rows.Err()
+}
+
 func (r *projectPermissionRepo) GetByID(ctx context.Context, id string) (*project.ProjectPermission, error) {
 	const q = `
 		SELECT id, project_id, user_id, role, can_view_contact, can_view_personal, can_view_documents, created_at, updated_at

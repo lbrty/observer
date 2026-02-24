@@ -35,7 +35,7 @@ func (h *NoteHandler) List(c *gin.Context) {
 	personID := c.Param("person_id")
 	out, err := h.uc.List(c.Request.Context(), personID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"notes": out})
@@ -58,13 +58,13 @@ func (h *NoteHandler) Create(c *gin.Context) {
 	personID := c.Param("person_id")
 	var input ucproject.CreateNoteInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	userID, _ := middleware.UserIDFrom(c)
 	out, err := h.uc.Create(c.Request.Context(), personID, userID.String(), input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusCreated, out)
@@ -93,8 +93,8 @@ func (h *NoteHandler) Delete(c *gin.Context) {
 func (h *NoteHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, note.ErrNoteNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.note.notFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

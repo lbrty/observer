@@ -100,8 +100,8 @@ function UsersPage() {
       key: "created",
       header: t("admin.users.created"),
       render: (u) => (
-        <span className="text-fg-tertiary">
-          {new Date(u.created_at).toLocaleDateString()}
+        <span className="font-mono text-xs tabular-nums text-fg-tertiary">
+          {new Date(u.created_at).toLocaleDateString("en-CA")}
         </span>
       ),
     },
@@ -183,7 +183,7 @@ function UsersPage() {
 }
 
 const inputClass =
-  "block w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent";
+  "block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent";
 
 function CreateUserDialog({
   open,

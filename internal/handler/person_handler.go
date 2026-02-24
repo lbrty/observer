@@ -47,14 +47,14 @@ func (h *PersonHandler) List(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.ListPeopleInput
 	if err := c.ShouldBindQuery(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	canContact := middleware.CanViewContactFrom(c)
 	canPersonal := middleware.CanViewPersonalFrom(c)
 	out, err := h.personUC.List(c.Request.Context(), projectID, input, canContact, canPersonal)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -99,7 +99,7 @@ func (h *PersonHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.CreatePersonInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.personUC.Create(c.Request.Context(), projectID, input)
@@ -127,7 +127,7 @@ func (h *PersonHandler) Create(c *gin.Context) {
 func (h *PersonHandler) Update(c *gin.Context) {
 	var input ucproject.UpdatePersonInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.personUC.Update(c.Request.Context(), c.Param("person_id"), input)
@@ -170,7 +170,7 @@ func (h *PersonHandler) Delete(c *gin.Context) {
 func (h *PersonHandler) ListCategories(c *gin.Context) {
 	ids, err := h.categoryUC.List(c.Request.Context(), c.Param("person_id"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"category_ids": ids})
@@ -192,11 +192,11 @@ func (h *PersonHandler) ListCategories(c *gin.Context) {
 func (h *PersonHandler) ReplaceCategories(c *gin.Context) {
 	var input ucproject.ReplaceIDsInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	if err := h.categoryUC.Replace(c.Request.Context(), c.Param("person_id"), input.IDs); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"category_ids": input.IDs})
@@ -215,7 +215,7 @@ func (h *PersonHandler) ReplaceCategories(c *gin.Context) {
 func (h *PersonHandler) ListTags(c *gin.Context) {
 	ids, err := h.tagUC.List(c.Request.Context(), c.Param("person_id"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"tag_ids": ids})
@@ -237,11 +237,11 @@ func (h *PersonHandler) ListTags(c *gin.Context) {
 func (h *PersonHandler) ReplaceTags(c *gin.Context) {
 	var input ucproject.ReplaceIDsInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	if err := h.tagUC.Replace(c.Request.Context(), c.Param("person_id"), input.IDs); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"tag_ids": input.IDs})
@@ -250,13 +250,14 @@ func (h *PersonHandler) ReplaceTags(c *gin.Context) {
 func (h *PersonHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, person.ErrPersonNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.person.notFound", err.Error()))
 	case errors.Is(err, person.ErrExternalIDExists):
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-	case errors.Is(err, person.ErrConsentConstraint),
-		errors.Is(err, person.ErrAgeConstraint):
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, errJSON("errors.person.externalIdExists", err.Error()))
+	case errors.Is(err, person.ErrConsentConstraint):
+		c.JSON(http.StatusBadRequest, errJSON("errors.person.consentConstraint", err.Error()))
+	case errors.Is(err, person.ErrAgeConstraint):
+		c.JSON(http.StatusBadRequest, errJSON("errors.person.ageConstraint", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

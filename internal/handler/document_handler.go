@@ -34,13 +34,13 @@ func NewDocumentHandler(uc *ucproject.DocumentUseCase) *DocumentHandler {
 // @Router /projects/{project_id}/people/{person_id}/documents [get]
 func (h *DocumentHandler) List(c *gin.Context) {
 	if !middleware.CanViewDocumentsFrom(c) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "insufficient permissions to view documents"})
+		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
 		return
 	}
 	personID := c.Param("person_id")
 	out, err := h.uc.List(c.Request.Context(), personID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"documents": out})
@@ -60,7 +60,7 @@ func (h *DocumentHandler) List(c *gin.Context) {
 // @Router /projects/{project_id}/documents/{id} [get]
 func (h *DocumentHandler) Get(c *gin.Context) {
 	if !middleware.CanViewDocumentsFrom(c) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "insufficient permissions to view documents"})
+		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
 		return
 	}
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
@@ -88,7 +88,7 @@ func (h *DocumentHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.CreateDocumentInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	userID, _ := middleware.UserIDFrom(c)
@@ -122,8 +122,8 @@ func (h *DocumentHandler) Delete(c *gin.Context) {
 func (h *DocumentHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, document.ErrDocumentNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.document.notFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

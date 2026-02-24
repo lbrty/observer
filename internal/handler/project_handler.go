@@ -38,12 +38,12 @@ func NewProjectHandler(uc *ucadmin.ProjectUseCase) *ProjectHandler {
 func (h *ProjectHandler) List(c *gin.Context) {
 	var input ucadmin.ListProjectsInput
 	if err := c.ShouldBindQuery(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.List(c.Request.Context(), input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -84,7 +84,7 @@ func (h *ProjectHandler) Get(c *gin.Context) {
 func (h *ProjectHandler) Create(c *gin.Context) {
 	var input ucadmin.CreateProjectInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	userID, _ := middleware.UserIDFrom(c)
@@ -113,7 +113,7 @@ func (h *ProjectHandler) Create(c *gin.Context) {
 func (h *ProjectHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdateProjectInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("project_id"), input)
@@ -127,10 +127,10 @@ func (h *ProjectHandler) Update(c *gin.Context) {
 func (h *ProjectHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, project.ErrProjectNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.project.notFound", err.Error()))
 	case errors.Is(err, project.ErrProjectNameExists):
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, errJSON("errors.project.nameExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

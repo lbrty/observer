@@ -32,6 +32,7 @@ const roleVariants: Record<string, Variant> = {
 
 const statusVariants: Record<string, Variant> = {
   active: "foam",
+  new: "gold",
   archived: "neutral",
   closed: "rose",
   true: "foam",

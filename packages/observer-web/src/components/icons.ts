@@ -2,6 +2,7 @@ export type { Icon } from "@phosphor-icons/react";
 
 export {
   ArrowLeftIcon,
+  ArrowSquareOutIcon,
   BuildingsIcon,
   CaretLeftIcon,
   CaretRightIcon,
@@ -12,9 +13,12 @@ export {
   GlobeIcon,
   MagnifyingGlassIcon,
   PencilSimpleIcon,
+  PlusIcon,
   SignOutIcon,
   TagIcon,
   TrashIcon,
+  UserCircleIcon,
   UsersIcon,
+  WarningIcon,
   XIcon,
 } from "@phosphor-icons/react";

@@ -50,18 +50,7 @@ function ProjectDetailPage() {
 
   return (
     <div>
-      <PageHeader
-        title={t("admin.projects.editTitle")}
-        action={
-          <Link
-            to="/admin/projects/$projectId/permissions"
-            params={{ projectId }}
-            className="rounded-lg border border-border-secondary px-4 py-2 text-sm text-fg-secondary shadow-card hover:bg-bg-tertiary"
-          >
-            {t("admin.projects.permissions")}
-          </Link>
-        }
-      />
+      <PageHeader title={t("admin.projects.editTitle")} />
 
       <form onSubmit={handleSubmit} className="max-w-lg space-y-4">
         <Field.Root>
@@ -72,7 +61,7 @@ function ProjectDetailPage() {
             required
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 
@@ -98,23 +87,39 @@ function ProjectDetailPage() {
             value={form.status}
             onValueChange={(v) => setForm((f) => ({ ...f, status: v }))}
             options={[
-              { label: "active", value: "active" },
-              { label: "archived", value: "archived" },
-              { label: "closed", value: "closed" },
+              { label: t("admin.projects.statusActive"), value: "active" },
+              { label: t("admin.projects.statusArchived"), value: "archived" },
+              { label: t("admin.projects.statusClosed"), value: "closed" },
             ]}
             fullWidth
           />
         </Field.Root>
 
-        <button
-          type="submit"
-          disabled={updateProject.isPending}
-          className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
-        >
-          {updateProject.isPending
-            ? t("admin.projects.saving")
-            : t("admin.projects.save")}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="submit"
+            disabled={updateProject.isPending}
+            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
+          >
+            {updateProject.isPending
+              ? t("admin.projects.saving")
+              : t("admin.projects.save")}
+          </button>
+          <Link
+            to="/projects/$projectId/people"
+            params={{ projectId }}
+            className="rounded-lg border border-border-secondary px-4 py-2 text-sm text-fg-secondary hover:bg-bg-tertiary"
+          >
+            {t("admin.projects.browse")}
+          </Link>
+          <Link
+            to="/admin/projects/$projectId/permissions"
+            params={{ projectId }}
+            className="rounded-lg border border-border-secondary px-4 py-2 text-sm text-fg-secondary hover:bg-bg-tertiary"
+          >
+            {t("admin.projects.permissions")}
+          </Link>
+        </div>
       </form>
     </div>
   );

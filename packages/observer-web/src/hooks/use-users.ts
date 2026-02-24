@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
 import type {
@@ -16,6 +21,7 @@ export function useUsers(params: ListUsersParams = {}) {
       api
         .get("admin/users", { searchParams: params as Record<string, string> })
         .json<ListUsersOutput>(),
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -37,6 +43,7 @@ export function useSearchUsers(search: string) {
         })
         .json<ListUsersOutput>(),
     enabled: search.length >= 2,
+    placeholderData: keepPreviousData,
   });
 }
 

@@ -39,21 +39,21 @@ func (m *AuthMiddleware) Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := extractAccessToken(c)
 		if token == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "missing authorization"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "missing authorization", "code": "errors.auth.missingAuthorization"})
 			c.Abort()
 			return
 		}
 
 		claims, err := m.tokenGen.ValidateAccessToken(token)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token", "code": "errors.auth.invalidToken"})
 			c.Abort()
 			return
 		}
 
 		userID, err := ulid.Parse(claims.UserID)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user ID in token"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user ID in token", "code": "errors.auth.invalidToken"})
 			c.Abort()
 			return
 		}
@@ -90,13 +90,13 @@ func (m *AuthMiddleware) RequireRole(roles ...user.Role) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		roleVal, exists := c.Get(string(CtxUserRole))
 		if !exists || roleVal.(string) == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token", "code": "errors.auth.invalidToken"})
 			c.Abort()
 			return
 		}
 		role := user.Role(roleVal.(string))
 		if _, ok := allowed[role]; !ok {
-			c.JSON(http.StatusForbidden, gin.H{"error": "insufficient permissions"})
+			c.JSON(http.StatusForbidden, gin.H{"error": "insufficient permissions", "code": "errors.auth.insufficientPermissions"})
 			c.Abort()
 			return
 		}

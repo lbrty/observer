@@ -43,7 +43,9 @@
     "referenceData": "Reference data",
     "referenceDataDesc": "Countries, states, offices",
     "categories": "Categories",
-    "categoriesDesc": "Manage assistance categories"
+    "categoriesDesc": "Manage assistance categories",
+    "myProjects": "My projects",
+    "noProjects": "No projects assigned yet"
   },
   "admin": {
     "title": "Admin",
@@ -94,7 +96,11 @@
       "save": "Save",
       "saving": "Saving...",
       "permissions": "Manage members",
-      "allStatuses": "All statuses"
+      "browse": "Browse project",
+      "allStatuses": "All statuses",
+      "statusActive": "Active",
+      "statusArchived": "Archived",
+      "statusClosed": "Closed"
     },
     "permissions": {
       "title": "Manage members",
@@ -198,6 +204,138 @@
       "pagination": "{{page}} / {{totalPages}}",
       "paginationRange": "{{from}} – {{to}} of {{total}}",
       "actions": "Actions"
+    }
+  },
+  "project": {
+    "nav": {
+      "people": "People"
+    },
+    "people": {
+      "title": "People",
+      "name": "Name",
+      "sex": "Sex",
+      "caseStatus": "Case status",
+      "registered": "Registered",
+      "register": "Register person",
+      "search": "Search...",
+      "new": "New",
+      "active": "Active",
+      "closed": "Closed",
+      "archived": "Archived",
+      "all": "All",
+      "formTitle": "Register person",
+      "editTitle": "Edit person",
+      "identity": "Identity",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "patronymic": "Patronymic",
+      "sexLabel": "Sex",
+      "birthDate": "Date of birth",
+      "ageGroup": "Age group",
+      "contact": "Contact",
+      "phone": "Phone",
+      "email": "Email",
+      "location": "Location",
+      "originPlace": "Origin place",
+      "currentPlace": "Current place",
+      "selectCountry": "Select country",
+      "selectState": "Select state",
+      "selectPlace": "Select place",
+      "case": "Case",
+      "caseStatusLabel": "Case status",
+      "externalId": "External ID",
+      "office": "Office",
+      "consent": "Consent",
+      "consentGiven": "Consent given",
+      "consentDate": "Consent date",
+      "save": "Save",
+      "saving": "Saving...",
+      "back": "Back",
+      "deleteConfirm": "Are you sure you want to delete this person?",
+      "sexMale": "Male",
+      "sexFemale": "Female",
+      "sexOther": "Other",
+      "sexUnknown": "Unknown",
+      "saved": "Saved successfully",
+      "ageInfant": "Infant (0-1)",
+      "ageToddler": "Toddler (1-3)",
+      "agePreSchool": "Pre-school (3-5)",
+      "ageMiddleChildhood": "Middle childhood (6-11)",
+      "ageYoungTeen": "Young teen (12-14)",
+      "ageTeenager": "Teenager (15-17)",
+      "ageYoungAdult": "Young adult (18-24)",
+      "ageEarlyAdult": "Early adult (25-44)",
+      "ageMiddleAged": "Middle-aged (45-64)",
+      "ageOlderAdult": "Older adult (65+)"
+    }
+  },
+  "errors": {
+    "internal": "Internal server error",
+    "validation": "Invalid input",
+    "person": {
+      "notFound": "Person not found",
+      "externalIdExists": "External ID already exists in this project",
+      "consentConstraint": "Consent date requires consent to be given",
+      "ageConstraint": "Date of birth and age group are mutually exclusive"
+    },
+    "user": {
+      "notFound": "User not found",
+      "emailExists": "Email already exists",
+      "phoneExists": "Phone number already exists",
+      "invalidCredentials": "Invalid credentials",
+      "notActive": "User account is not active",
+      "invalidRole": "Invalid role"
+    },
+    "auth": {
+      "missingUser": "User not authenticated",
+      "missingAuthorization": "Missing authorization",
+      "invalidToken": "Invalid or expired token",
+      "sessionNotFound": "Session not found",
+      "sessionExpired": "Session expired",
+      "refreshTokenRequired": "Refresh token is required",
+      "insufficientPermissions": "Insufficient permissions"
+    },
+    "project": {
+      "notFound": "Project not found",
+      "nameExists": "Project name already exists",
+      "permissionDenied": "Access denied",
+      "permissionNotFound": "Permission not found",
+      "invalidRole": "Invalid project role",
+      "permissionExists": "Permission already exists for this user"
+    },
+    "reference": {
+      "countryNotFound": "Country not found",
+      "countryCodeExists": "Country code already exists",
+      "stateNotFound": "State not found",
+      "placeNotFound": "Place not found",
+      "officeNotFound": "Office not found",
+      "categoryNotFound": "Category not found",
+      "categoryNameExists": "Category name already exists"
+    },
+    "tag": {
+      "notFound": "Tag not found",
+      "nameExists": "Tag name already exists in this project"
+    },
+    "support": {
+      "notFound": "Support record not found"
+    },
+    "migration": {
+      "notFound": "Migration record not found"
+    },
+    "household": {
+      "notFound": "Household not found",
+      "memberNotFound": "Household member not found",
+      "memberExists": "Person is already a member of this household"
+    },
+    "note": {
+      "notFound": "Note not found"
+    },
+    "document": {
+      "notFound": "Document not found",
+      "insufficientPermissions": "Insufficient permissions to view documents"
+    },
+    "pet": {
+      "notFound": "Pet not found"
     }
   }
 }

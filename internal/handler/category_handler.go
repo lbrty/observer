@@ -31,7 +31,7 @@ func NewCategoryHandler(uc *ucadmin.CategoryUseCase) *CategoryHandler {
 func (h *CategoryHandler) List(c *gin.Context) {
 	out, err := h.uc.List(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"categories": out})
@@ -71,7 +71,7 @@ func (h *CategoryHandler) Get(c *gin.Context) {
 func (h *CategoryHandler) Create(c *gin.Context) {
 	var input ucadmin.CreateCategoryInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), input)
@@ -98,7 +98,7 @@ func (h *CategoryHandler) Create(c *gin.Context) {
 func (h *CategoryHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdateCategoryInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
@@ -130,10 +130,10 @@ func (h *CategoryHandler) Delete(c *gin.Context) {
 func (h *CategoryHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, reference.ErrCategoryNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.reference.categoryNotFound", err.Error()))
 	case errors.Is(err, reference.ErrCategoryNameExists):
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, errJSON("errors.reference.categoryNameExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

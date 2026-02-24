@@ -17,10 +17,10 @@ function AuthLayout() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-bg">
-      <div className="flex flex-1 items-center justify-center px-4">
-        <div className="w-full max-w-sm">
-          <div className="rounded-2xl border border-border-secondary bg-bg-secondary p-8 shadow-elevated">
+    <div className="auth-backdrop flex min-h-screen flex-col bg-bg">
+      <div className="relative flex flex-1 items-center justify-center px-4">
+        <div className="w-full max-w-md">
+          <div className="rounded-2xl border border-border-secondary bg-bg-secondary p-10 shadow-elevated">
             <Outlet />
           </div>
         </div>

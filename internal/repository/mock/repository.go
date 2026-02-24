@@ -561,6 +561,21 @@ func (mr *MockPermissionRepositoryMockRecorder) List(ctx, projectID any) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockPermissionRepository)(nil).List), ctx, projectID)
 }
 
+// ListByUserID mocks base method.
+func (m *MockPermissionRepository) ListByUserID(ctx context.Context, userID string) ([]*project.ProjectPermission, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListByUserID", ctx, userID)
+	ret0, _ := ret[0].([]*project.ProjectPermission)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListByUserID indicates an expected call of ListByUserID.
+func (mr *MockPermissionRepositoryMockRecorder) ListByUserID(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByUserID", reflect.TypeOf((*MockPermissionRepository)(nil).ListByUserID), ctx, userID)
+}
+
 // Update mocks base method.
 func (m *MockPermissionRepository) Update(ctx context.Context, p *project.ProjectPermission) error {
 	m.ctrl.T.Helper()

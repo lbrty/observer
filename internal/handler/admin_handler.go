@@ -52,13 +52,13 @@ func NewAdminHandler(
 func (h *AdminHandler) ListUsers(c *gin.Context) {
 	var input ucadmin.ListUsersInput
 	if err := c.ShouldBindQuery(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 
 	out, err := h.listUsersUC.Execute(c.Request.Context(), input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 
@@ -80,7 +80,7 @@ func (h *AdminHandler) ListUsers(c *gin.Context) {
 func (h *AdminHandler) GetUser(c *gin.Context) {
 	id, err := ulid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user ID"})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "invalid user ID"))
 		return
 	}
 
@@ -110,13 +110,13 @@ func (h *AdminHandler) GetUser(c *gin.Context) {
 func (h *AdminHandler) UpdateUser(c *gin.Context) {
 	id, err := ulid.Parse(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user ID"})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "invalid user ID"))
 		return
 	}
 
 	var input ucadmin.UpdateUserInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 
@@ -144,7 +144,7 @@ func (h *AdminHandler) UpdateUser(c *gin.Context) {
 func (h *AdminHandler) CreateUser(c *gin.Context) {
 	var input ucadmin.CreateUserInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 
@@ -160,14 +160,14 @@ func (h *AdminHandler) CreateUser(c *gin.Context) {
 func (h *AdminHandler) handleUserError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, user.ErrUserNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.user.notFound", err.Error()))
 	case errors.Is(err, user.ErrInvalidRole):
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.user.invalidRole", err.Error()))
 	case errors.Is(err, user.ErrEmailExists):
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, errJSON("errors.user.emailExists", err.Error()))
 	case errors.Is(err, user.ErrPhoneExists):
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, errJSON("errors.user.phoneExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

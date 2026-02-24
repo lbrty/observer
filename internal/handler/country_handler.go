@@ -31,7 +31,7 @@ func NewCountryHandler(uc *ucadmin.CountryUseCase) *CountryHandler {
 func (h *CountryHandler) List(c *gin.Context) {
 	out, err := h.uc.List(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"countries": out})
@@ -71,7 +71,7 @@ func (h *CountryHandler) Get(c *gin.Context) {
 func (h *CountryHandler) Create(c *gin.Context) {
 	var input ucadmin.CreateCountryInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), input)
@@ -98,7 +98,7 @@ func (h *CountryHandler) Create(c *gin.Context) {
 func (h *CountryHandler) Update(c *gin.Context) {
 	var input ucadmin.UpdateCountryInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
@@ -130,10 +130,10 @@ func (h *CountryHandler) Delete(c *gin.Context) {
 func (h *CountryHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, reference.ErrCountryNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.reference.countryNotFound", err.Error()))
 	case errors.Is(err, reference.ErrCountryCodeExists):
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, errJSON("errors.reference.countryCodeExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

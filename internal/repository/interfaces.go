@@ -69,6 +69,7 @@ type PermissionLoader interface {
 // PermissionRepository defines CRUD operations for project permissions (admin use).
 type PermissionRepository interface {
 	List(ctx context.Context, projectID string) ([]*project.ProjectPermission, error)
+	ListByUserID(ctx context.Context, userID string) ([]*project.ProjectPermission, error)
 	GetByID(ctx context.Context, id string) (*project.ProjectPermission, error)
 	Create(ctx context.Context, p *project.ProjectPermission) error
 	Update(ctx context.Context, p *project.ProjectPermission) error

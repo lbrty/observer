@@ -33,7 +33,7 @@ func (h *TagHandler) List(c *gin.Context) {
 	projectID := c.Param("project_id")
 	out, err := h.uc.List(c.Request.Context(), projectID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"tags": out})
@@ -57,7 +57,7 @@ func (h *TagHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	var input ucproject.CreateTagInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), projectID, input)
@@ -90,10 +90,10 @@ func (h *TagHandler) Delete(c *gin.Context) {
 func (h *TagHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, tag.ErrTagNotFound):
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, errJSON("errors.tag.notFound", err.Error()))
 	case errors.Is(err, tag.ErrTagNameExists):
-		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		c.JSON(http.StatusConflict, errJSON("errors.tag.nameExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 	}
 }

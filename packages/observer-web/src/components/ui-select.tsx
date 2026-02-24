@@ -32,7 +32,7 @@ export function UISelect({
       disabled={disabled}
     >
       <Select.Trigger
-        className={`inline-flex items-center justify-between gap-2 rounded-md border border-border-secondary bg-bg-secondary py-1.5 pr-2 pl-3 text-sm text-fg outline-none hover:border-border-primary focus:border-accent disabled:opacity-50 data-popup-open:border-accent ${fullWidth ? "w-full" : ""}`}
+        className={`inline-flex h-9 items-center justify-between gap-2 rounded-lg border border-border-secondary bg-bg-secondary pr-2 pl-3 text-sm text-fg outline-none hover:border-border-primary focus:border-accent disabled:opacity-50 data-popup-open:border-accent ${fullWidth ? "w-full" : ""}`}
       >
         <Select.Value placeholder={placeholder}>
           {value
@@ -45,7 +45,7 @@ export function UISelect({
       </Select.Trigger>
 
       <Select.Portal>
-        <Select.Positioner sideOffset={4} align="start">
+        <Select.Positioner sideOffset={4} align="start" className="z-[60]">
           <Select.Popup className="origin-(--transform-origin) rounded-lg border border-border-secondary bg-bg-secondary py-1 shadow-elevated transition-[transform,scale,opacity] data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0">
             <Select.List>
               {options.map((opt) => (
