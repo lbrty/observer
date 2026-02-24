@@ -146,7 +146,7 @@ function UserDetailPage() {
             onChange={(e) =>
               setForm((f) => ({ ...f, office_id: e.target.value }))
             }
-            className="block w-full rounded-md border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-md border border-border-secondary bg-bg-secondary pl-3 pr-1 py-2 text-sm text-fg outline-none focus:border-accent"
           >
             <option value="">—</option>
             {offices.map((o) => (

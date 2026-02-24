@@ -253,7 +253,7 @@ function AssignDialog({
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as ProjectRole)}
-                className="block w-full rounded-md border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none"
+                className="block w-full rounded-md border border-border-secondary bg-bg pl-3 pr-1 py-2 text-sm text-fg outline-none"
               >
                 <option value="owner">owner</option>
                 <option value="manager">manager</option>
@@ -361,7 +361,7 @@ function EditDialog({
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as ProjectRole)}
-                className="block w-full rounded-md border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none"
+                className="block w-full rounded-md border border-border-secondary bg-bg pl-3 pr-1 py-2 text-sm text-fg outline-none"
               >
                 <option value="owner">owner</option>
                 <option value="manager">manager</option>
