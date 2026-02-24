@@ -38,28 +38,28 @@ export function DataTable<T>({
   const { t } = useTranslation();
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-border-secondary">
+    <div className="overflow-hidden rounded-xl border border-border-secondary bg-bg-secondary shadow-card">
       <table className="w-full text-left text-sm">
         <thead>
-          <tr className="border-b border-border-secondary bg-bg-tertiary">
+          <tr className="border-b border-border-secondary bg-bg-tertiary/60">
             {columns.map((col) => (
               <th
                 key={col.key}
-                className={`px-4 py-2.5 font-medium text-fg-secondary ${col.className ?? ""}`}
+                className={`px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wide text-fg-tertiary ${col.className ?? ""}`}
               >
                 {col.header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-border-secondary">
+        <tbody className="divide-y divide-border-secondary/60">
           {isLoading ? (
             <SkeletonRows cols={columns.length} />
           ) : data.length === 0 ? (
             <tr>
               <td
                 colSpan={columns.length}
-                className="px-4 py-8 text-center text-fg-tertiary"
+                className="px-4 py-12 text-center text-fg-tertiary"
               >
                 {t("admin.common.noData")}
               </td>
@@ -69,7 +69,7 @@ export function DataTable<T>({
               <tr
                 key={keyExtractor(item)}
                 onClick={onRowClick ? () => onRowClick(item) : undefined}
-                className={`bg-bg-secondary ${onRowClick ? "cursor-pointer hover:bg-bg-tertiary" : ""}`}
+                className={`transition-colors ${onRowClick ? "cursor-pointer hover:bg-bg-tertiary/40" : ""}`}
               >
                 {columns.map((col) => (
                   <td

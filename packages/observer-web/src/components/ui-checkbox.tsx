@@ -1,4 +1,4 @@
-import { Check } from "@phosphor-icons/react";
+import { CheckIcon } from "@/components/icons";
 import { Checkbox } from "@base-ui/react/checkbox";
 
 interface UICheckboxProps {
@@ -20,10 +20,10 @@ export function UICheckbox({
         checked={checked}
         onCheckedChange={onCheckedChange}
         disabled={disabled}
-        className="flex size-4.5 shrink-0 items-center justify-center rounded border border-border-secondary bg-bg-secondary transition-colors data-[checked]:border-accent data-[checked]:bg-accent data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
+        className="flex size-4.5 shrink-0 items-center justify-center rounded border border-border-secondary bg-bg-secondary transition-colors data-checked:border-accent data-checked:bg-accent data-disabled:cursor-not-allowed data-disabled:opacity-50"
       >
         <Checkbox.Indicator className="flex items-center justify-center text-accent-fg">
-          <Check size={12} weight="bold" />
+          <CheckIcon size={12} weight="bold" />
         </Checkbox.Indicator>
       </Checkbox.Root>
       {label}

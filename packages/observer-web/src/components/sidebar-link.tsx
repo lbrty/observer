@@ -1,4 +1,4 @@
-import type { Icon } from "@phosphor-icons/react";
+import type { Icon } from "@/components/icons";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 
 interface SidebarLinkProps {
@@ -14,7 +14,7 @@ export function SidebarLink({ to, label, icon: Icon }: SidebarLinkProps) {
   return (
     <Link
       to={to}
-      className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors ${
+      className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
         isActive
           ? "bg-accent/10 font-medium text-accent"
           : "text-fg-secondary hover:bg-bg-tertiary hover:text-fg"
