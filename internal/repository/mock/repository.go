@@ -821,6 +821,21 @@ func (mr *MockStateRepositoryMockRecorder) List(ctx, countryID any) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockStateRepository)(nil).List), ctx, countryID)
 }
 
+// ListAll mocks base method.
+func (m *MockStateRepository) ListAll(ctx context.Context) ([]*reference.State, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListAll", ctx)
+	ret0, _ := ret[0].([]*reference.State)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListAll indicates an expected call of ListAll.
+func (mr *MockStateRepositoryMockRecorder) ListAll(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAll", reflect.TypeOf((*MockStateRepository)(nil).ListAll), ctx)
+}
+
 // Update mocks base method.
 func (m *MockStateRepository) Update(ctx context.Context, s *reference.State) error {
 	m.ctrl.T.Helper()
@@ -915,6 +930,21 @@ func (m *MockPlaceRepository) List(ctx context.Context, stateID string) ([]*refe
 func (mr *MockPlaceRepositoryMockRecorder) List(ctx, stateID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockPlaceRepository)(nil).List), ctx, stateID)
+}
+
+// ListAll mocks base method.
+func (m *MockPlaceRepository) ListAll(ctx context.Context) ([]*reference.Place, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListAll", ctx)
+	ret0, _ := ret[0].([]*reference.Place)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListAll indicates an expected call of ListAll.
+func (mr *MockPlaceRepositoryMockRecorder) ListAll(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAll", reflect.TypeOf((*MockPlaceRepository)(nil).ListAll), ctx)
 }
 
 // Update mocks base method.

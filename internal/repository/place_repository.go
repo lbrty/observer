@@ -22,6 +22,30 @@ func NewPlaceRepository(db *sqlx.DB) PlaceRepository {
 	return &placeRepo{db: db}
 }
 
+func (r *placeRepo) ListAll(ctx context.Context) ([]*reference.Place, error) {
+	const q = `
+		SELECT id, state_id, name, lat, lon, created_at, updated_at
+		FROM places ORDER BY name
+	`
+	rows, err := r.db.QueryContext(ctx, q)
+	if err != nil {
+		return nil, fmt.Errorf("list all places: %w", err)
+	}
+	defer rows.Close()
+
+	var out []*reference.Place
+	for rows.Next() {
+		var p reference.Place
+		if err := rows.Scan(&p.ID, &p.StateID, &p.Name, &p.Lat, &p.Lon, &p.CreatedAt, &p.UpdatedAt); err != nil {
+			return nil, fmt.Errorf("scan place: %w", err)
+		}
+		p.CreatedAt = p.CreatedAt.UTC()
+		p.UpdatedAt = p.UpdatedAt.UTC()
+		out = append(out, &p)
+	}
+	return out, rows.Err()
+}
+
 func (r *placeRepo) List(ctx context.Context, stateID string) ([]*reference.Place, error) {
 	const q = `
 		SELECT id, state_id, name, lat, lon, created_at, updated_at

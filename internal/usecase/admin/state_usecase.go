@@ -19,6 +19,19 @@ func NewStateUseCase(repo repository.StateRepository) *StateUseCase {
 	return &StateUseCase{repo: repo}
 }
 
+// ListAll returns all states.
+func (uc *StateUseCase) ListAll(ctx context.Context) ([]StateDTO, error) {
+	states, err := uc.repo.ListAll(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("list all states: %w", err)
+	}
+	dtos := make([]StateDTO, len(states))
+	for i, s := range states {
+		dtos[i] = stateToDTO(s)
+	}
+	return dtos, nil
+}
+
 // List returns all states for a country.
 func (uc *StateUseCase) List(ctx context.Context, countryID string) ([]StateDTO, error) {
 	states, err := uc.repo.List(ctx, countryID)

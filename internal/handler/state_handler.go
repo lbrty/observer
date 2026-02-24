@@ -32,11 +32,15 @@ func NewStateHandler(uc *ucadmin.StateUseCase) *StateHandler {
 // @Router /admin/states [get]
 func (h *StateHandler) List(c *gin.Context) {
 	countryID := c.Query("country_id")
-	if countryID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "country_id is required"})
-		return
+	var (
+		out []ucadmin.StateDTO
+		err error
+	)
+	if countryID != "" {
+		out, err = h.uc.List(c.Request.Context(), countryID)
+	} else {
+		out, err = h.uc.ListAll(c.Request.Context())
 	}
-	out, err := h.uc.List(c.Request.Context(), countryID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return

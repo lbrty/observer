@@ -22,6 +22,30 @@ func NewStateRepository(db *sqlx.DB) StateRepository {
 	return &stateRepo{db: db}
 }
 
+func (r *stateRepo) ListAll(ctx context.Context) ([]*reference.State, error) {
+	const q = `
+		SELECT id, country_id, name, code, conflict_zone, created_at, updated_at
+		FROM states ORDER BY name
+	`
+	rows, err := r.db.QueryContext(ctx, q)
+	if err != nil {
+		return nil, fmt.Errorf("list all states: %w", err)
+	}
+	defer rows.Close()
+
+	var out []*reference.State
+	for rows.Next() {
+		var s reference.State
+		if err := rows.Scan(&s.ID, &s.CountryID, &s.Name, &s.Code, &s.ConflictZone, &s.CreatedAt, &s.UpdatedAt); err != nil {
+			return nil, fmt.Errorf("scan state: %w", err)
+		}
+		s.CreatedAt = s.CreatedAt.UTC()
+		s.UpdatedAt = s.UpdatedAt.UTC()
+		out = append(out, &s)
+	}
+	return out, rows.Err()
+}
+
 func (r *stateRepo) List(ctx context.Context, countryID string) ([]*reference.State, error) {
 	const q = `
 		SELECT id, country_id, name, code, conflict_zone, created_at, updated_at

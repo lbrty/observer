@@ -85,6 +85,7 @@ type CountryRepository interface {
 
 // StateRepository defines persistence operations for states.
 type StateRepository interface {
+	ListAll(ctx context.Context) ([]*reference.State, error)
 	List(ctx context.Context, countryID string) ([]*reference.State, error)
 	GetByID(ctx context.Context, id string) (*reference.State, error)
 	Create(ctx context.Context, s *reference.State) error
@@ -94,6 +95,7 @@ type StateRepository interface {
 
 // PlaceRepository defines persistence operations for places.
 type PlaceRepository interface {
+	ListAll(ctx context.Context) ([]*reference.Place, error)
 	List(ctx context.Context, stateID string) ([]*reference.Place, error)
 	GetByID(ctx context.Context, id string) (*reference.Place, error)
 	Create(ctx context.Context, p *reference.Place) error

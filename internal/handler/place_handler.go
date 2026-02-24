@@ -32,11 +32,15 @@ func NewPlaceHandler(uc *ucadmin.PlaceUseCase) *PlaceHandler {
 // @Router /admin/places [get]
 func (h *PlaceHandler) List(c *gin.Context) {
 	stateID := c.Query("state_id")
-	if stateID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "state_id is required"})
-		return
+	var (
+		out []ucadmin.PlaceDTO
+		err error
+	)
+	if stateID != "" {
+		out, err = h.uc.List(c.Request.Context(), stateID)
+	} else {
+		out, err = h.uc.ListAll(c.Request.Context())
 	}
-	out, err := h.uc.List(c.Request.Context(), stateID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return

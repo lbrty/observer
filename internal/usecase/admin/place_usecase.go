@@ -19,6 +19,19 @@ func NewPlaceUseCase(repo repository.PlaceRepository) *PlaceUseCase {
 	return &PlaceUseCase{repo: repo}
 }
 
+// ListAll returns all places.
+func (uc *PlaceUseCase) ListAll(ctx context.Context) ([]PlaceDTO, error) {
+	places, err := uc.repo.ListAll(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("list all places: %w", err)
+	}
+	dtos := make([]PlaceDTO, len(places))
+	for i, p := range places {
+		dtos[i] = placeToDTO(p)
+	}
+	return dtos, nil
+}
+
 // List returns all places for a state.
 func (uc *PlaceUseCase) List(ctx context.Context, stateID string) ([]PlaceDTO, error) {
 	places, err := uc.repo.List(ctx, stateID)
