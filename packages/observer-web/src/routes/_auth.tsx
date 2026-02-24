@@ -1,5 +1,6 @@
 import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 
+import { AppFooter } from "@/components/app-footer";
 import { useAuth } from "@/stores/auth";
 
 export const Route = createFileRoute("/_auth")({
@@ -16,10 +17,15 @@ function AuthLayout() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4">
-      <div className="w-full max-w-sm">
-        <Outlet />
+    <div className="flex min-h-screen flex-col bg-bg">
+      <div className="flex flex-1 items-center justify-center px-4">
+        <div className="w-full max-w-sm">
+          <div className="rounded-2xl border border-border-secondary bg-bg-secondary p-8 shadow-elevated">
+            <Outlet />
+          </div>
+        </div>
       </div>
+      <AppFooter />
     </div>
   );
 }

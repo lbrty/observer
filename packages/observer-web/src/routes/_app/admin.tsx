@@ -1,10 +1,10 @@
 import {
-  Buildings,
-  FolderSimple,
-  Globe,
-  Tag,
-  Users,
-} from "@phosphor-icons/react";
+  BuildingsIcon,
+  FolderSimpleIcon,
+  GlobeIcon,
+  TagIcon,
+  UsersIcon,
+} from "@/components/icons";
 import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
@@ -27,46 +27,49 @@ function AdminLayout() {
   }
 
   return (
-    <div className="flex gap-6">
-      <aside className="w-60 shrink-0">
-        <nav className="sticky top-20 space-y-1">
+    <div className="flex flex-1">
+      <aside className="w-52 shrink-0 border-r border-border-secondary">
+        <nav className="sticky top-13 space-y-0.5 px-3 py-5">
+          <div className="pb-1.5 pl-3 text-[11px] font-semibold uppercase tracking-wide text-fg-tertiary">
+            {t("admin.title")}
+          </div>
           <SidebarLink
             to="/admin/users"
             label={t("admin.nav.users")}
-            icon={Users}
+            icon={UsersIcon}
           />
 
           {isAdmin && (
             <SidebarLink
               to="/admin/projects"
               label={t("admin.nav.projects")}
-              icon={FolderSimple}
+              icon={FolderSimpleIcon}
             />
           )}
 
-          <div className="pt-4 pb-1 pl-3 text-xs font-medium uppercase tracking-wider text-fg-tertiary">
+          <div className="pt-5 pb-1.5 pl-3 text-[11px] font-semibold uppercase tracking-wide text-fg-tertiary">
             {t("admin.nav.reference")}
           </div>
           <SidebarLink
             to="/admin/reference/countries"
             label={t("admin.nav.countries")}
-            icon={Globe}
+            icon={GlobeIcon}
           />
           <SidebarLink
             to="/admin/reference/offices"
             label={t("admin.nav.offices")}
-            icon={Buildings}
+            icon={BuildingsIcon}
           />
           <SidebarLink
             to="/admin/reference/categories"
             label={t("admin.nav.categories")}
-            icon={Tag}
+            icon={TagIcon}
           />
         </nav>
       </aside>
-      <div className="min-w-0 flex-1">
+      <main className="min-w-0 flex-1 px-8 py-6">
         <Outlet />
-      </div>
+      </main>
     </div>
   );
 }

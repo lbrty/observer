@@ -1,6 +1,5 @@
-import { PencilSimple, Trash } from "@phosphor-icons/react";
+import { PencilSimpleIcon, TrashIcon, XIcon } from "@/components/icons";
 import { Dialog } from "@base-ui/react/dialog";
-import { Field } from "@base-ui/react/field";
 import { createFileRoute } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -9,15 +8,18 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
-import { UICheckbox } from "@/components/ui-checkbox";
 import { UISelect } from "@/components/ui-select";
+import { UISwitch } from "@/components/ui-switch";
+import { UserCombobox } from "@/components/user-combobox";
 import {
   useAssignPermission,
   usePermissions,
   useRevokePermission,
   useUpdatePermission,
 } from "@/hooks/use-permissions";
-import type { ProjectPermission, ProjectRole } from "@/types/permission";
+import { useAuth } from "@/stores/auth";
+import type { AdminUser } from "@/types/admin";
+import type { ProjectPermissionMember, ProjectRole } from "@/types/permission";
 
 export const Route = createFileRoute(
   "/_app/admin/projects/$projectId/permissions",
@@ -25,15 +27,18 @@ export const Route = createFileRoute(
   component: PermissionsPage,
 });
 
-const roleOptions = [
-  { label: "owner", value: "owner" },
-  { label: "manager", value: "manager" },
-  { label: "consultant", value: "consultant" },
-  { label: "viewer", value: "viewer" },
-];
+function Initials({ first, last }: { first: string; last: string }) {
+  const letters = `${first.charAt(0)}${last.charAt(0)}`.toUpperCase() || "?";
+  return (
+    <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-accent/15 text-xs font-medium text-accent">
+      {letters}
+    </span>
+  );
+}
 
 function PermissionsPage() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const { projectId } = Route.useParams();
   const { data, isLoading } = usePermissions(projectId);
   const assignPermission = useAssignPermission();
@@ -41,89 +46,106 @@ function PermissionsPage() {
   const revokePermission = useRevokePermission();
 
   const [assignOpen, setAssignOpen] = useState(false);
-  const [editTarget, setEditTarget] = useState<ProjectPermission | null>(null);
-  const [revokeTarget, setRevokeTarget] = useState<ProjectPermission | null>(
+  const [editTarget, setEditTarget] = useState<ProjectPermissionMember | null>(
     null,
   );
+  const [revokeTarget, setRevokeTarget] =
+    useState<ProjectPermissionMember | null>(null);
 
-  const columns: Column<ProjectPermission>[] = [
+  const isStaff = user?.role === "staff";
+
+  const columns: Column<ProjectPermissionMember>[] = [
     {
-      key: "user_id",
-      header: t("admin.permissions.userId"),
+      key: "member",
+      header: t("admin.permissions.member"),
       render: (p) => (
-        <span className="font-mono text-xs text-fg-secondary">{p.user_id}</span>
+        <div className="flex items-center gap-3">
+          <Initials first={p.user_first_name} last={p.user_last_name} />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-fg">
+              {p.user_first_name} {p.user_last_name}
+            </p>
+            <p className="truncate text-xs text-fg-tertiary">{p.user_email}</p>
+          </div>
+        </div>
       ),
     },
     {
-      key: "role",
-      header: t("admin.permissions.role"),
+      key: "platformRole",
+      header: t("admin.permissions.platformRole"),
+      render: (p) => <StatusBadge label={p.user_role} />,
+    },
+    {
+      key: "projectRole",
+      header: t("admin.permissions.projectRole"),
       render: (p) => <StatusBadge label={p.role} />,
     },
     {
-      key: "contact",
-      header: t("admin.permissions.contact"),
+      key: "access",
+      header: t("admin.permissions.access"),
       render: (p) => (
-        <StatusBadge
-          label={
-            p.can_view_contact ? t("admin.users.yes") : t("admin.users.no")
-          }
-          variant={p.can_view_contact ? "foam" : "neutral"}
-        />
-      ),
-    },
-    {
-      key: "personal",
-      header: t("admin.permissions.personal"),
-      render: (p) => (
-        <StatusBadge
-          label={
-            p.can_view_personal ? t("admin.users.yes") : t("admin.users.no")
-          }
-          variant={p.can_view_personal ? "foam" : "neutral"}
-        />
-      ),
-    },
-    {
-      key: "documents",
-      header: t("admin.permissions.documents"),
-      render: (p) => (
-        <StatusBadge
-          label={
-            p.can_view_documents ? t("admin.users.yes") : t("admin.users.no")
-          }
-          variant={p.can_view_documents ? "foam" : "neutral"}
-        />
+        <div className="flex gap-1">
+          {p.can_view_contact && (
+            <StatusBadge
+              label={t("admin.permissions.contact")}
+              variant="foam"
+            />
+          )}
+          {p.can_view_personal && (
+            <StatusBadge
+              label={t("admin.permissions.personal")}
+              variant="foam"
+            />
+          )}
+          {p.can_view_documents && (
+            <StatusBadge
+              label={t("admin.permissions.documents")}
+              variant="foam"
+            />
+          )}
+          {!p.can_view_contact &&
+            !p.can_view_personal &&
+            !p.can_view_documents && (
+              <span className="text-xs text-fg-tertiary">-</span>
+            )}
+        </div>
       ),
     },
     {
       key: "actions",
       header: t("admin.common.actions"),
-      render: (p) => (
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setEditTarget(p);
-            }}
-            className="cursor-pointer rounded p-1 text-fg-secondary hover:bg-bg-tertiary hover:text-accent"
-          >
-            <PencilSimple size={16} />
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setRevokeTarget(p);
-            }}
-            className="cursor-pointer rounded p-1 text-fg-secondary hover:bg-bg-tertiary hover:text-rose"
-          >
-            <Trash size={16} />
-          </button>
-        </div>
-      ),
+      render: (p) => {
+        const restricted = isStaff && p.user_role === "admin";
+        if (restricted) return null;
+        return (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditTarget(p);
+              }}
+              className="cursor-pointer rounded p-1 text-fg-secondary hover:bg-bg-tertiary hover:text-accent"
+            >
+              <PencilSimpleIcon size={16} />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setRevokeTarget(p);
+              }}
+              className="cursor-pointer rounded p-1 text-fg-secondary hover:bg-bg-tertiary hover:text-rose"
+            >
+              <TrashIcon size={16} />
+            </button>
+          </div>
+        );
+      },
     },
   ];
+
+  const existingUserIds = data?.permissions.map((p) => p.user_id) ?? [];
 
   return (
     <div>
@@ -133,9 +155,9 @@ function PermissionsPage() {
           <button
             type="button"
             onClick={() => setAssignOpen(true)}
-            className="cursor-pointer rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:opacity-90"
+            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
           >
-            {t("admin.permissions.assign")}
+            {t("admin.permissions.addMember")}
           </button>
         }
       />
@@ -150,7 +172,7 @@ function PermissionsPage() {
       <AssignDialog
         open={assignOpen}
         onOpenChange={setAssignOpen}
-        projectId={projectId}
+        excludeIds={existingUserIds}
         onSubmit={async (form) => {
           await assignPermission.mutateAsync({ projectId, data: form });
           setAssignOpen(false);
@@ -179,7 +201,11 @@ function PermissionsPage() {
         open={!!revokeTarget}
         onOpenChange={(open) => !open && setRevokeTarget(null)}
         title={t("admin.permissions.revoke")}
-        description={t("admin.permissions.revokeConfirm")}
+        description={t("admin.permissions.revokeConfirm", {
+          name: revokeTarget
+            ? `${revokeTarget.user_first_name} ${revokeTarget.user_last_name}`
+            : "",
+        })}
         onConfirm={async () => {
           if (revokeTarget) {
             await revokePermission.mutateAsync({
@@ -195,15 +221,32 @@ function PermissionsPage() {
   );
 }
 
+function useRoleOptions() {
+  const { t } = useTranslation();
+  return [
+    { label: t("admin.permissions.roleOwner"), value: "owner" },
+    { label: t("admin.permissions.roleManager"), value: "manager" },
+    { label: t("admin.permissions.roleConsultant"), value: "consultant" },
+    { label: t("admin.permissions.roleViewer"), value: "viewer" },
+  ];
+}
+
+function RoleDescription({ role }: { role: string }) {
+  const { t } = useTranslation();
+  const key = `admin.permissions.role${role.charAt(0).toUpperCase() + role.slice(1)}Desc`;
+  return <p className="text-xs text-fg-tertiary">{t(key)}</p>;
+}
+
 function AssignDialog({
   open,
   onOpenChange,
+  excludeIds,
   onSubmit,
   loading,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  projectId: string;
+  excludeIds: string[];
   onSubmit: (data: {
     user_id: string;
     role: ProjectRole;
@@ -214,7 +257,8 @@ function AssignDialog({
   loading: boolean;
 }) {
   const { t } = useTranslation();
-  const [userId, setUserId] = useState("");
+  const roleOptions = useRoleOptions();
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [role, setRole] = useState<ProjectRole>("viewer");
   const [contact, setContact] = useState(false);
   const [personal, setPersonal] = useState(false);
@@ -222,14 +266,15 @@ function AssignDialog({
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (!selectedUser) return;
     await onSubmit({
-      user_id: userId,
+      user_id: selectedUser.id,
       role,
       can_view_contact: contact,
       can_view_personal: personal,
       can_view_documents: documents,
     });
-    setUserId("");
+    setSelectedUser(null);
     setRole("viewer");
     setContact(false);
     setPersonal(false);
@@ -239,59 +284,99 @@ function AssignDialog({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 bg-black/40" />
-        <Dialog.Popup className="fixed top-1/2 left-1/2 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border-secondary bg-bg-secondary p-6 shadow-elevated">
+        <Dialog.Backdrop className="fixed inset-0 bg-black/40 backdrop-blur-xs" />
+        <Dialog.Popup className="fixed top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border-secondary bg-bg-secondary p-6 shadow-elevated">
           <Dialog.Title className="text-lg font-semibold text-fg">
-            {t("admin.permissions.assignTitle")}
+            {t("admin.permissions.addMemberTitle")}
           </Dialog.Title>
-          <form onSubmit={handleSubmit} className="mt-4 space-y-3">
-            <Field.Root>
-              <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                {t("admin.permissions.userId")}
-              </Field.Label>
-              <Field.Control
-                required
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                className="block w-full rounded-md border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
-              />
-            </Field.Root>
-            <Field.Root>
-              <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                {t("admin.permissions.role")}
-              </Field.Label>
+          <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-fg-secondary">
+                {t("admin.permissions.searchUsers")}
+              </label>
+              {selectedUser ? (
+                <div className="flex items-center justify-between rounded-lg border border-border-secondary bg-bg px-3 py-2">
+                  <div>
+                    <p className="text-sm text-fg">
+                      {selectedUser.first_name} {selectedUser.last_name}
+                    </p>
+                    <p className="text-xs text-fg-tertiary">
+                      {selectedUser.email}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedUser(null)}
+                    className="cursor-pointer rounded p-1 text-fg-tertiary hover:text-fg"
+                  >
+                    <XIcon size={14} />
+                  </button>
+                </div>
+              ) : (
+                <UserCombobox
+                  excludeIds={excludeIds}
+                  onSelect={setSelectedUser}
+                />
+              )}
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm font-medium text-fg-secondary">
+                {t("admin.permissions.projectRole")}
+              </label>
               <UISelect
                 value={role}
                 onValueChange={(v) => setRole(v as ProjectRole)}
                 options={roleOptions}
                 fullWidth
               />
-            </Field.Root>
-            <div className="flex flex-col gap-2">
-              <UICheckbox
-                checked={contact}
-                onCheckedChange={setContact}
-                label={t("admin.permissions.contact")}
-              />
-              <UICheckbox
-                checked={personal}
-                onCheckedChange={setPersonal}
-                label={t("admin.permissions.personal")}
-              />
-              <UICheckbox
-                checked={documents}
-                onCheckedChange={setDocuments}
-                label={t("admin.permissions.documents")}
-              />
+              <RoleDescription role={role} />
             </div>
+
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-fg-secondary">
+                {t("admin.permissions.access")}
+              </p>
+              <div className="space-y-2">
+                <UISwitch
+                  checked={contact}
+                  onCheckedChange={setContact}
+                  label={t("admin.permissions.contactAccess")}
+                />
+                <p className="ml-[46px] text-xs text-fg-tertiary">
+                  {t("admin.permissions.contactAccessDesc")}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <UISwitch
+                  checked={personal}
+                  onCheckedChange={setPersonal}
+                  label={t("admin.permissions.personalAccess")}
+                />
+                <p className="ml-[46px] text-xs text-fg-tertiary">
+                  {t("admin.permissions.personalAccessDesc")}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <UISwitch
+                  checked={documents}
+                  onCheckedChange={setDocuments}
+                  label={t("admin.permissions.documentAccess")}
+                />
+                <p className="ml-[46px] text-xs text-fg-tertiary">
+                  {t("admin.permissions.documentAccessDesc")}
+                </p>
+              </div>
+            </div>
+
             <div className="flex justify-end gap-3 pt-2">
-              <Dialog.Close className="cursor-pointer rounded-md border border-border-secondary px-3 py-1.5 text-sm text-fg-secondary hover:bg-bg-tertiary">
+              <Dialog.Close className="cursor-pointer rounded-lg border border-border-secondary px-4 py-2 text-sm text-fg-secondary hover:bg-bg-tertiary">
                 {t("admin.common.cancel")}
               </Dialog.Close>
               <button
                 type="submit"
-                disabled={loading}
-                className="cursor-pointer rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
+                disabled={loading || !selectedUser}
+                className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
               >
                 {loading
                   ? t("admin.permissions.saving")
@@ -314,7 +399,7 @@ function EditDialog({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  permission: ProjectPermission;
+  permission: ProjectPermissionMember;
   onSubmit: (data: {
     role?: ProjectRole;
     can_view_contact?: boolean;
@@ -324,6 +409,7 @@ function EditDialog({
   loading: boolean;
 }) {
   const { t } = useTranslation();
+  const roleOptions = useRoleOptions();
   const [role, setRole] = useState<ProjectRole>(permission.role);
   const [contact, setContact] = useState(permission.can_view_contact);
   const [personal, setPersonal] = useState(permission.can_view_personal);
@@ -342,48 +428,85 @@ function EditDialog({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 bg-black/40" />
-        <Dialog.Popup className="fixed top-1/2 left-1/2 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border-secondary bg-bg-secondary p-6 shadow-elevated">
+        <Dialog.Backdrop className="fixed inset-0 bg-black/40 backdrop-blur-xs" />
+        <Dialog.Popup className="fixed top-1/2 left-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border-secondary bg-bg-secondary p-6 shadow-elevated">
           <Dialog.Title className="text-lg font-semibold text-fg">
-            {t("admin.permissions.editTitle")}
+            {t("admin.permissions.editMemberTitle")}
           </Dialog.Title>
-          <form onSubmit={handleSubmit} className="mt-4 space-y-3">
-            <Field.Root>
-              <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                {t("admin.permissions.role")}
-              </Field.Label>
+
+          <div className="mt-3 flex items-center gap-3 rounded-lg border border-border-secondary bg-bg px-3 py-2">
+            <Initials
+              first={permission.user_first_name}
+              last={permission.user_last_name}
+            />
+            <div>
+              <p className="text-sm font-medium text-fg">
+                {permission.user_first_name} {permission.user_last_name}
+              </p>
+              <p className="text-xs text-fg-tertiary">
+                {permission.user_email}
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-fg-secondary">
+                {t("admin.permissions.projectRole")}
+              </label>
               <UISelect
                 value={role}
                 onValueChange={(v) => setRole(v as ProjectRole)}
                 options={roleOptions}
                 fullWidth
               />
-            </Field.Root>
-            <div className="flex flex-col gap-2">
-              <UICheckbox
-                checked={contact}
-                onCheckedChange={setContact}
-                label={t("admin.permissions.contact")}
-              />
-              <UICheckbox
-                checked={personal}
-                onCheckedChange={setPersonal}
-                label={t("admin.permissions.personal")}
-              />
-              <UICheckbox
-                checked={documents}
-                onCheckedChange={setDocuments}
-                label={t("admin.permissions.documents")}
-              />
+              <RoleDescription role={role} />
             </div>
+
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-fg-secondary">
+                {t("admin.permissions.access")}
+              </p>
+              <div className="space-y-2">
+                <UISwitch
+                  checked={contact}
+                  onCheckedChange={setContact}
+                  label={t("admin.permissions.contactAccess")}
+                />
+                <p className="ml-[46px] text-xs text-fg-tertiary">
+                  {t("admin.permissions.contactAccessDesc")}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <UISwitch
+                  checked={personal}
+                  onCheckedChange={setPersonal}
+                  label={t("admin.permissions.personalAccess")}
+                />
+                <p className="ml-[46px] text-xs text-fg-tertiary">
+                  {t("admin.permissions.personalAccessDesc")}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <UISwitch
+                  checked={documents}
+                  onCheckedChange={setDocuments}
+                  label={t("admin.permissions.documentAccess")}
+                />
+                <p className="ml-[46px] text-xs text-fg-tertiary">
+                  {t("admin.permissions.documentAccessDesc")}
+                </p>
+              </div>
+            </div>
+
             <div className="flex justify-end gap-3 pt-2">
-              <Dialog.Close className="cursor-pointer rounded-md border border-border-secondary px-3 py-1.5 text-sm text-fg-secondary hover:bg-bg-tertiary">
+              <Dialog.Close className="cursor-pointer rounded-lg border border-border-secondary px-4 py-2 text-sm text-fg-secondary hover:bg-bg-tertiary">
                 {t("admin.common.cancel")}
               </Dialog.Close>
               <button
                 type="submit"
                 disabled={loading}
-                className="cursor-pointer rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
+                className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
               >
                 {loading
                   ? t("admin.permissions.saving")

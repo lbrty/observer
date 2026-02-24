@@ -66,7 +66,7 @@ function UserDetailPage() {
     });
   }
 
-  const offices = officesData?.offices ?? [];
+  const offices = officesData ?? [];
 
   const roleOptions = [
     { label: "admin", value: "admin" },
@@ -76,7 +76,7 @@ function UserDetailPage() {
   ];
 
   const officeOptions = [
-    { label: "\u2014", value: "" },
+    { label: "—", value: "" },
     ...offices.map((o) => ({ label: o.name, value: o.id })),
   ];
 
@@ -94,7 +94,7 @@ function UserDetailPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, first_name: e.target.value }))
               }
-              className="block w-full rounded-md border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+              className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
             />
           </Field.Root>
           <Field.Root>
@@ -106,7 +106,7 @@ function UserDetailPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, last_name: e.target.value }))
               }
-              className="block w-full rounded-md border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+              className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
             />
           </Field.Root>
         </div>
@@ -119,7 +119,7 @@ function UserDetailPage() {
             type="email"
             value={form.email}
             onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-            className="block w-full rounded-md border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 
@@ -131,7 +131,7 @@ function UserDetailPage() {
             type="tel"
             value={form.phone}
             onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-            className="block w-full rounded-md border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 
@@ -155,7 +155,7 @@ function UserDetailPage() {
             value={form.office_id}
             onValueChange={(v) => setForm((f) => ({ ...f, office_id: v }))}
             options={officeOptions}
-            placeholder="\u2014"
+            placeholder="—"
             fullWidth
           />
         </Field.Root>
@@ -176,7 +176,7 @@ function UserDetailPage() {
         <button
           type="submit"
           disabled={updateUser.isPending}
-          className="cursor-pointer rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
+          className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
         >
           {updateUser.isPending
             ? t("admin.users.saving")

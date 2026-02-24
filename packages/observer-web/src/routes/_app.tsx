@@ -1,4 +1,4 @@
-import { GearSix, SignOut } from "@phosphor-icons/react";
+import { SignOutIcon } from "@/components/icons";
 import {
   createFileRoute,
   Link,
@@ -26,41 +26,35 @@ function AppLayout() {
 
   return (
     <div className="flex min-h-screen flex-col bg-bg">
-      <header className="border-b border-border-secondary bg-bg-secondary">
-        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <Link
-              to="/"
-              className="text-sm font-semibold text-fg hover:text-fg"
-            >
-              {t("common.appName")}
-            </Link>
-            {(user?.role === "admin" || user?.role === "staff") && (
-              <Link
-                to="/admin"
-                className="flex items-center gap-1 text-sm text-fg-tertiary hover:text-fg"
-              >
-                <GearSix size={16} />
-                {t("admin.title")}
-              </Link>
-            )}
-          </div>
+      <header className="glass sticky top-0 z-50 border-b border-border-secondary">
+        <div className="flex h-13 items-center justify-between px-5">
+          <Link
+            to="/"
+            className="flex items-center gap-2.5 text-sm font-semibold text-fg hover:text-fg"
+          >
+            <span className="brand-icon inline-flex size-7 items-center justify-center rounded-lg text-xs font-bold text-white">
+              O
+            </span>
+            {t("common.appName")}
+          </Link>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-fg-secondary">{user?.email}</span>
+            <span className="inline-flex size-7 items-center justify-center rounded-full bg-bg-tertiary text-[11px] font-semibold text-fg-secondary">
+              {user?.email?.charAt(0).toUpperCase()}
+            </span>
             <button
               type="button"
               onClick={() => logout()}
-              className="flex cursor-pointer items-center gap-1 text-sm text-fg-tertiary hover:text-fg"
+              className="flex cursor-pointer items-center gap-1.5 text-sm text-fg-tertiary hover:text-fg"
+              title={t("auth.logout")}
             >
-              <SignOut size={16} />
-              {t("common.logout")}
+              <SignOutIcon size={16} />
             </button>
           </div>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-5xl flex-grow px-4 py-6">
+      <div className="flex flex-1">
         <Outlet />
-      </main>
+      </div>
       <AppFooter />
     </div>
   );

@@ -56,7 +56,7 @@ function ProjectDetailPage() {
           <Link
             to="/admin/projects/$projectId/permissions"
             params={{ projectId }}
-            className="rounded-md border border-border-secondary px-3 py-1.5 text-sm text-fg-secondary hover:bg-bg-tertiary"
+            className="rounded-lg border border-border-secondary px-4 py-2 text-sm text-fg-secondary shadow-card hover:bg-bg-tertiary"
           >
             {t("admin.projects.permissions")}
           </Link>
@@ -72,7 +72,7 @@ function ProjectDetailPage() {
             required
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-            className="block w-full rounded-md border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 
@@ -86,7 +86,7 @@ function ProjectDetailPage() {
               setForm((f) => ({ ...f, description: e.target.value }))
             }
             rows={3}
-            className="block w-full rounded-md border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 
@@ -109,7 +109,7 @@ function ProjectDetailPage() {
         <button
           type="submit"
           disabled={updateProject.isPending}
-          className="cursor-pointer rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
+          className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
         >
           {updateProject.isPending
             ? t("admin.projects.saving")

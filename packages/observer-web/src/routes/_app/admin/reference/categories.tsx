@@ -1,13 +1,14 @@
-import { PencilSimple, Trash } from "@phosphor-icons/react";
-import { Dialog } from "@base-ui/react/dialog";
+import { type FormEvent, useState } from "react";
+
 import { Field } from "@base-ui/react/field";
 import { createFileRoute } from "@tanstack/react-router";
-import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
+import { FormDialog } from "@/components/form-dialog";
 import { PageHeader } from "@/components/page-header";
+import { RowActions } from "@/components/row-actions";
 import {
   useCategories,
   useCreateCategory,
@@ -48,28 +49,10 @@ function CategoriesPage() {
       key: "actions",
       header: "",
       render: (c) => (
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setEditTarget(c);
-            }}
-            className="cursor-pointer rounded p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg"
-          >
-            <PencilSimple size={16} />
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeleteTarget(c);
-            }}
-            className="cursor-pointer rounded p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
-          >
-            <Trash size={16} />
-          </button>
-        </div>
+        <RowActions
+          onEdit={() => setEditTarget(c)}
+          onDelete={() => setDeleteTarget(c)}
+        />
       ),
     },
   ];
@@ -82,7 +65,7 @@ function CategoriesPage() {
           <button
             type="button"
             onClick={() => setCreateOpen(true)}
-            className="cursor-pointer rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:opacity-90"
+            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
           >
             {t("admin.reference.categories.add")}
           </button>
@@ -91,7 +74,7 @@ function CategoriesPage() {
 
       <DataTable
         columns={columns}
-        data={data?.categories ?? []}
+        data={data ?? []}
         keyExtractor={(c) => c.id}
         isLoading={isLoading}
       />
@@ -173,51 +156,35 @@ function CategoryFormDialog({
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 bg-black/40" />
-        <Dialog.Popup className="fixed top-1/2 left-1/2 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border-secondary bg-bg-secondary p-6 shadow-elevated">
-          <Dialog.Title className="text-lg font-semibold text-fg">
-            {title}
-          </Dialog.Title>
-          <form onSubmit={handleSubmit} className="mt-4 space-y-3">
-            <Field.Root>
-              <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                {t("admin.reference.categories.name")}
-              </Field.Label>
-              <Field.Control
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="block w-full rounded-md border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
-              />
-            </Field.Root>
-            <Field.Root>
-              <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                {t("admin.reference.categories.description")}
-              </Field.Label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={2}
-                className="block w-full rounded-md border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
-              />
-            </Field.Root>
-            <div className="flex justify-end gap-3 pt-2">
-              <Dialog.Close className="cursor-pointer rounded-md border border-border-secondary px-3 py-1.5 text-sm text-fg-secondary hover:bg-bg-tertiary">
-                {t("admin.common.cancel")}
-              </Dialog.Close>
-              <button
-                type="submit"
-                disabled={loading}
-                className="cursor-pointer rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
-              >
-                {loading ? t("admin.common.saving") : t("admin.common.save")}
-              </button>
-            </div>
-          </form>
-        </Dialog.Popup>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <FormDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title={title}
+      loading={loading}
+      onSubmit={handleSubmit}
+    >
+      <Field.Root>
+        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+          {t("admin.reference.categories.name")}
+        </Field.Label>
+        <Field.Control
+          required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="block w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+        />
+      </Field.Root>
+      <Field.Root>
+        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+          {t("admin.reference.categories.description")}
+        </Field.Label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={2}
+          className="block w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+        />
+      </Field.Root>
+    </FormDialog>
   );
 }

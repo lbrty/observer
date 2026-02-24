@@ -25,7 +25,6 @@ function RegisterPage() {
 
     const form = new FormData(e.currentTarget);
     const email = form.get("email") as string;
-    const phone = form.get("phone") as string;
     const password = form.get("password") as string;
     const confirmPassword = form.get("confirm_password") as string;
 
@@ -42,7 +41,7 @@ function RegisterPage() {
     }
 
     try {
-      await register({ email, phone, password, role: "staff" });
+      await register({ email, password, role: "staff" });
       navigate({ to: "/login" });
     } catch (err) {
       if (err instanceof HTTPError) {
@@ -58,43 +57,36 @@ function RegisterPage() {
 
   return (
     <>
-      <h1 className="mb-6 text-center text-2xl font-semibold">
-        {t("auth.registerTitle")}
-      </h1>
+      <div className="mb-8 flex flex-col items-center">
+        <span className="brand-icon mb-4 inline-flex size-14 items-center justify-center rounded-2xl text-xl font-bold text-white">
+          O
+        </span>
+        <h1 className="text-xl font-semibold text-fg">
+          {t("auth.registerTitle")}
+        </h1>
+      </div>
 
       {error && (
-        <div className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+        <div className="mb-4 rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Field.Root name="email">
-          <Field.Label className="mb-1 block text-sm font-medium text-zinc-700">
+          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
             {t("common.email")}
           </Field.Label>
           <Field.Control
             type="email"
             required
             autoComplete="email"
-            className="block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
-          />
-        </Field.Root>
-
-        <Field.Root name="phone">
-          <Field.Label className="mb-1 block text-sm font-medium text-zinc-700">
-            {t("auth.phone")}
-          </Field.Label>
-          <Field.Control
-            type="tel"
-            required
-            autoComplete="tel"
-            className="block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
+            className="block w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 
         <Field.Root name="password">
-          <Field.Label className="mb-1 block text-sm font-medium text-zinc-700">
+          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
             {t("auth.password")}
           </Field.Label>
           <Field.Control
@@ -102,12 +94,12 @@ function RegisterPage() {
             required
             minLength={8}
             autoComplete="new-password"
-            className="block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
+            className="block w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 
         <Field.Root name="confirm_password">
-          <Field.Label className="mb-1 block text-sm font-medium text-zinc-700">
+          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
             {t("auth.confirmPassword")}
           </Field.Label>
           <Field.Control
@@ -115,22 +107,22 @@ function RegisterPage() {
             required
             minLength={8}
             autoComplete="new-password"
-            className="block w-full rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
+            className="block w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
 
         <button
           type="submit"
           disabled={submitting}
-          className="w-full cursor-pointer rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full cursor-pointer rounded-lg bg-accent px-3 py-2.5 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {submitting ? t("auth.registering") : t("auth.register")}
         </button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-zinc-500">
+      <p className="mt-5 text-center text-sm text-fg-tertiary">
         {t("auth.hasAccount")}{" "}
-        <Link to="/login" className="text-zinc-900 underline">
+        <Link to="/login" className="font-medium text-accent hover:underline">
           {t("auth.login")}
         </Link>
       </p>
