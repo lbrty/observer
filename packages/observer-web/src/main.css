@@ -197,6 +197,11 @@ body {
     "liga" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% -10%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 70%),
+    radial-gradient(ellipse 50% 50% at 0% 50%, color-mix(in srgb, var(--color-foam) 4%, transparent), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
 }
 
 /* Glass surface */
