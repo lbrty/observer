@@ -53,7 +53,7 @@ function PersonDetailLayout() {
   const fullName = [person.first_name, person.last_name].filter(Boolean).join(" ");
 
   return (
-    <div>
+    <div className="rays-people">
       <Link
         to="/projects/$projectId/people"
         params={{ projectId }}

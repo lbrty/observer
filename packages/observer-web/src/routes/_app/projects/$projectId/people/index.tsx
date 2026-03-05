@@ -112,7 +112,7 @@ function PeopleListPage() {
   ];
 
   return (
-    <div>
+    <div className="rays-people">
       <PageHeader
         title={t("project.people.title")}
         action={

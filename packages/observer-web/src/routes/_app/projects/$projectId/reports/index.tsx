@@ -330,7 +330,7 @@ function ReportsPage() {
   const clearDatePreset = () => setActivePreset(null);
 
   return (
-    <div>
+    <div className="rays-reports">
       {/* Print-only header */}
       <div className="print-header hidden">
         <h1 className="text-lg font-bold">{t("project.reports.title")}</h1>

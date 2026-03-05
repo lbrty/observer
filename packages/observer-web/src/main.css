@@ -308,6 +308,168 @@ body {
   pointer-events: none;
 }
 
+/* ── Light ray backgrounds ── */
+
+/* Shared ray structure */
+.rays-dashboard,
+.rays-admin,
+.rays-people,
+.rays-support,
+.rays-reports,
+.rays-profile {
+  position: relative;
+  overflow: hidden;
+}
+.rays-dashboard::before,
+.rays-admin::before,
+.rays-people::before,
+.rays-support::before,
+.rays-reports::before,
+.rays-profile::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Dashboard — 12 rays from top-right */
+.rays-dashboard::before {
+  top: -40%;
+  right: -10%;
+  width: 800px;
+  height: 800px;
+  background: conic-gradient(
+    from 200deg,
+    transparent 0deg, var(--fg) 2deg, transparent 4deg,
+    transparent 30deg, var(--fg) 32deg, transparent 34deg,
+    transparent 60deg, var(--fg) 62deg, transparent 64deg,
+    transparent 90deg, var(--fg) 92deg, transparent 94deg,
+    transparent 120deg, var(--fg) 122deg, transparent 124deg,
+    transparent 150deg, var(--fg) 152deg, transparent 154deg,
+    transparent 180deg, var(--fg) 182deg, transparent 184deg,
+    transparent 210deg, var(--fg) 212deg, transparent 214deg,
+    transparent 240deg, var(--fg) 242deg, transparent 244deg,
+    transparent 270deg, var(--fg) 272deg, transparent 274deg,
+    transparent 300deg, var(--fg) 302deg, transparent 304deg,
+    transparent 330deg, var(--fg) 332deg, transparent 334deg,
+    transparent 360deg
+  );
+  opacity: 0.035;
+}
+
+/* Admin — 8 rays from top-center-right */
+.rays-admin::before {
+  top: -50%;
+  right: 15%;
+  width: 700px;
+  height: 700px;
+  background: conic-gradient(
+    from 180deg,
+    transparent 0deg, var(--fg) 3deg, transparent 6deg,
+    transparent 45deg, var(--fg) 48deg, transparent 51deg,
+    transparent 90deg, var(--fg) 93deg, transparent 96deg,
+    transparent 135deg, var(--fg) 138deg, transparent 141deg,
+    transparent 180deg, var(--fg) 183deg, transparent 186deg,
+    transparent 225deg, var(--fg) 228deg, transparent 231deg,
+    transparent 270deg, var(--fg) 273deg, transparent 276deg,
+    transparent 315deg, var(--fg) 318deg, transparent 321deg,
+    transparent 360deg
+  );
+  opacity: 0.03;
+}
+
+/* People — 10 rays from top-left */
+.rays-people::before {
+  top: -35%;
+  left: -10%;
+  width: 750px;
+  height: 750px;
+  background: conic-gradient(
+    from 120deg,
+    transparent 0deg, var(--fg) 2.5deg, transparent 5deg,
+    transparent 36deg, var(--fg) 38.5deg, transparent 41deg,
+    transparent 72deg, var(--fg) 74.5deg, transparent 77deg,
+    transparent 108deg, var(--fg) 110.5deg, transparent 113deg,
+    transparent 144deg, var(--fg) 146.5deg, transparent 149deg,
+    transparent 180deg, var(--fg) 182.5deg, transparent 185deg,
+    transparent 216deg, var(--fg) 218.5deg, transparent 221deg,
+    transparent 252deg, var(--fg) 254.5deg, transparent 257deg,
+    transparent 288deg, var(--fg) 290.5deg, transparent 293deg,
+    transparent 324deg, var(--fg) 326.5deg, transparent 329deg,
+    transparent 360deg
+  );
+  opacity: 0.035;
+}
+
+/* Support — 6 wide rays from center-right */
+.rays-support::before {
+  top: -20%;
+  right: -15%;
+  width: 650px;
+  height: 650px;
+  background: conic-gradient(
+    from 160deg,
+    transparent 0deg, var(--fg) 4deg, transparent 8deg,
+    transparent 60deg, var(--fg) 64deg, transparent 68deg,
+    transparent 120deg, var(--fg) 124deg, transparent 128deg,
+    transparent 180deg, var(--fg) 184deg, transparent 188deg,
+    transparent 240deg, var(--fg) 244deg, transparent 248deg,
+    transparent 300deg, var(--fg) 304deg, transparent 308deg,
+    transparent 360deg
+  );
+  opacity: 0.04;
+}
+
+/* Reports — 16 fine rays from top-right */
+.rays-reports::before {
+  top: -45%;
+  right: 5%;
+  width: 850px;
+  height: 850px;
+  background: conic-gradient(
+    from 210deg,
+    transparent 0deg, var(--fg) 1.5deg, transparent 3deg,
+    transparent 22.5deg, var(--fg) 24deg, transparent 25.5deg,
+    transparent 45deg, var(--fg) 46.5deg, transparent 48deg,
+    transparent 67.5deg, var(--fg) 69deg, transparent 70.5deg,
+    transparent 90deg, var(--fg) 91.5deg, transparent 93deg,
+    transparent 112.5deg, var(--fg) 114deg, transparent 115.5deg,
+    transparent 135deg, var(--fg) 136.5deg, transparent 138deg,
+    transparent 157.5deg, var(--fg) 159deg, transparent 160.5deg,
+    transparent 180deg, var(--fg) 181.5deg, transparent 183deg,
+    transparent 202.5deg, var(--fg) 204deg, transparent 205.5deg,
+    transparent 225deg, var(--fg) 226.5deg, transparent 228deg,
+    transparent 247.5deg, var(--fg) 249deg, transparent 250.5deg,
+    transparent 270deg, var(--fg) 271.5deg, transparent 273deg,
+    transparent 292.5deg, var(--fg) 294deg, transparent 295.5deg,
+    transparent 315deg, var(--fg) 316.5deg, transparent 318deg,
+    transparent 337.5deg, var(--fg) 339deg, transparent 340.5deg,
+    transparent 360deg
+  );
+  opacity: 0.03;
+}
+
+/* Profile — 8 rays from center-top */
+.rays-profile::before {
+  top: -60%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg, var(--fg) 3deg, transparent 6deg,
+    transparent 45deg, var(--fg) 48deg, transparent 51deg,
+    transparent 90deg, var(--fg) 93deg, transparent 96deg,
+    transparent 135deg, var(--fg) 138deg, transparent 141deg,
+    transparent 180deg, var(--fg) 183deg, transparent 186deg,
+    transparent 225deg, var(--fg) 228deg, transparent 231deg,
+    transparent 270deg, var(--fg) 273deg, transparent 276deg,
+    transparent 315deg, var(--fg) 318deg, transparent 321deg,
+    transparent 360deg
+  );
+  opacity: 0.035;
+}
+
 /* View Transitions: instant swap, no animation */
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -344,5 +506,14 @@ body {
 
   .print-header {
     display: block !important;
+  }
+
+  .rays-dashboard::before,
+  .rays-admin::before,
+  .rays-people::before,
+  .rays-support::before,
+  .rays-reports::before,
+  .rays-profile::before {
+    display: none !important;
   }
 }

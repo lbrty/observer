@@ -124,7 +124,7 @@ function SupportRecordsPage() {
   ];
 
   return (
-    <div>
+    <div className="rays-support">
       <PageHeader
         title={t("project.supportRecords.title")}
         action={
