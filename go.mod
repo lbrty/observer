@@ -3,6 +3,7 @@ module github.com/lbrty/observer
 go 1.25.6
 
 require (
+	github.com/brianvoe/gofakeit/v7 v7.14.1
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.11.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
