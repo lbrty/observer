@@ -231,3 +231,122 @@ func (r *userRepo) checkRowsAffected(res sql.Result, notFoundErr error) error {
 	}
 	return nil
 }
+
+// credentialsRepo is a PostgreSQL-backed credentials repository.
+type credentialsRepo struct {
+	db *sqlx.DB
+}
+
+// NewCredentialsRepository creates a CredentialsRepository backed by the given DB.
+func NewCredentialsRepository(db *sqlx.DB) CredentialsRepository {
+	return &credentialsRepo{db: db}
+}
+
+func (r *credentialsRepo) Create(ctx context.Context, cred *user.Credentials) error {
+	const q = `
+		INSERT INTO credentials (user_id, password_hash, salt, updated_at)
+		VALUES ($1, $2, $3, $4)
+	`
+	_, err := r.db.ExecContext(ctx, q,
+		cred.UserID.String(), cred.PasswordHash, cred.Salt, cred.UpdatedAt.UTC(),
+	)
+	if err != nil {
+		return fmt.Errorf("create credentials: %w", err)
+	}
+	return nil
+}
+
+func (r *credentialsRepo) Update(ctx context.Context, cred *user.Credentials) error {
+	const q = `
+		UPDATE credentials
+		SET password_hash = $1, salt = $2, updated_at = $3
+		WHERE user_id = $4
+	`
+	_, err := r.db.ExecContext(ctx, q,
+		cred.PasswordHash, cred.Salt, time.Now().UTC(), cred.UserID.String(),
+	)
+	if err != nil {
+		return fmt.Errorf("update credentials: %w", err)
+	}
+	return nil
+}
+
+func (r *credentialsRepo) GetByUserID(ctx context.Context, userID ulid.ULID) (*user.Credentials, error) {
+	const q = `SELECT user_id, password_hash, salt, updated_at FROM credentials WHERE user_id=$1`
+
+	var cred user.Credentials
+	var userIDStr string
+	var updatedAt time.Time
+
+	err := r.db.QueryRowContext(ctx, q, userID.String()).Scan(
+		&userIDStr, &cred.PasswordHash, &cred.Salt, &updatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, user.ErrUserNotFound
+		}
+		return nil, fmt.Errorf("get credentials: %w", err)
+	}
+
+	id, err := ulid.Parse(userIDStr)
+	if err != nil {
+		return nil, fmt.Errorf("parse user id: %w", err)
+	}
+
+	cred.UserID = id
+	cred.UpdatedAt = updatedAt.UTC()
+
+	return &cred, nil
+}
+
+// mfaRepo is a PostgreSQL-backed MFA config repository.
+type mfaRepo struct {
+	db *sqlx.DB
+}
+
+// NewMFARepository creates an MFARepository backed by the given DB.
+func NewMFARepository(db *sqlx.DB) MFARepository {
+	return &mfaRepo{db: db}
+}
+
+func (r *mfaRepo) Create(ctx context.Context, cfg *user.MFAConfig) error {
+	const q = `
+		INSERT INTO mfa_configs (user_id, method, secret, phone, is_enabled, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6)
+	`
+	_, err := r.db.ExecContext(ctx, q,
+		cfg.UserID.String(), cfg.Method, cfg.Secret, cfg.Phone, cfg.IsEnabled, cfg.CreatedAt.UTC(),
+	)
+	if err != nil {
+		return fmt.Errorf("create mfa config: %w", err)
+	}
+	return nil
+}
+
+func (r *mfaRepo) GetByUserID(ctx context.Context, userID ulid.ULID) (*user.MFAConfig, error) {
+	const q = `SELECT user_id, method, secret, phone, is_enabled, created_at FROM mfa_configs WHERE user_id=$1`
+
+	var cfg user.MFAConfig
+	var userIDStr string
+	var createdAt time.Time
+
+	err := r.db.QueryRowContext(ctx, q, userID.String()).Scan(
+		&userIDStr, &cfg.Method, &cfg.Secret, &cfg.Phone, &cfg.IsEnabled, &createdAt,
+	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, user.ErrUserNotFound
+		}
+		return nil, fmt.Errorf("get mfa config: %w", err)
+	}
+
+	id, err := ulid.Parse(userIDStr)
+	if err != nil {
+		return nil, fmt.Errorf("parse user id: %w", err)
+	}
+
+	cfg.UserID = id
+	cfg.CreatedAt = createdAt.UTC()
+
+	return &cfg, nil
+}
