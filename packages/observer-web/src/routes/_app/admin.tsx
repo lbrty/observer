@@ -21,7 +21,7 @@ function AdminLayout() {
   }
 
   return (
-    <div className="flex flex-1">
+    <div className="page-bg-admin flex flex-1">
       <aside className="w-52 shrink-0 border-r border-border-secondary">
         <nav className="sticky top-13 space-y-0.5 px-3 py-5">
           <div className="pb-1.5 pl-3 text-[11px] font-semibold uppercase tracking-wide text-fg-tertiary">

@@ -112,7 +112,7 @@ function PeopleListPage() {
   ];
 
   return (
-    <div>
+    <div className="page-bg-people">
       <PageHeader
         title={t("project.people.title")}
         action={
