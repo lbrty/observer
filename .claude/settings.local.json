@@ -39,7 +39,8 @@
       "WebFetch(domain:base-ui.com)",
       "Bash(bun:*)",
       "Bash(just test:*)",
-      "Bash(go vet:*)"
+      "Bash(go vet:*)",
+      "Bash(hugo:*)"
     ]
   }
 }

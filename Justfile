@@ -104,7 +104,7 @@ web-install:
 
 # Start docs dev server (watch + live reload)
 docs-dev:
-    cd docs && hugo server -D
+    cd docs && hugo server -D -w
 
 # Build docs site
 docs-build:

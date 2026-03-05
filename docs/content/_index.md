@@ -14,12 +14,11 @@ layout: hextra-home
   A secure, organized way to manage displaced persons cases, track humanitarian support, and store sensitive personal information.
 {{< /hextra/hero-subtitle >}}
 </div>
-
+<br/>
 <div class="hx-mb-12">
 {{< hextra/hero-button text="Get Started" link="docs/getting-started/" >}}
 </div>
-
-<div class="hx-mt-8"></div>
+<br/>
 
 {{< hextra/feature-grid >}}
   {{< hextra/feature-card
