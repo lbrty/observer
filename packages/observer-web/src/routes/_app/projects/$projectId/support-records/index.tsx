@@ -124,7 +124,7 @@ function SupportRecordsPage() {
   ];
 
   return (
-    <div className="page-bg-support">
+    <div>
       <PageHeader
         title={t("project.supportRecords.title")}
         action={
