@@ -39,15 +39,27 @@ export function BarChart({ data, width = 500, height = 300 }: BarChartProps) {
       .nice()
       .range([h, 0]);
 
-    g.append("g")
+    const axisColor = "var(--fg-tertiary, #6b7280)";
+
+    const xAxis = g
+      .append("g")
       .attr("transform", `translate(0,${h})`)
-      .call(d3.axisBottom(x))
+      .call(d3.axisBottom(x));
+    xAxis
       .selectAll("text")
       .attr("transform", "rotate(-35)")
       .style("text-anchor", "end")
-      .style("font-size", "11px");
+      .style("font-size", "11px")
+      .style("fill", axisColor);
+    xAxis.selectAll("line").style("stroke", axisColor);
+    xAxis.select(".domain").style("stroke", axisColor);
 
-    g.append("g").call(d3.axisLeft(y).ticks(5)).style("font-size", "11px");
+    const yAxis = g
+      .append("g")
+      .call(d3.axisLeft(y).ticks(5));
+    yAxis.selectAll("text").style("font-size", "11px").style("fill", axisColor);
+    yAxis.selectAll("line").style("stroke", axisColor);
+    yAxis.select(".domain").style("stroke", axisColor);
 
     g.selectAll(".bar")
       .data(data)
@@ -68,7 +80,7 @@ export function BarChart({ data, width = 500, height = 300 }: BarChartProps) {
       .attr("y", (d) => y(d.count) - 4)
       .attr("text-anchor", "middle")
       .style("font-size", "11px")
-      .style("fill", "var(--color-fg-secondary, #6b7280)")
+      .style("fill", "var(--fg-secondary, #6b7280)")
       .text((d) => d.count);
   }, [data, width, height]);
 

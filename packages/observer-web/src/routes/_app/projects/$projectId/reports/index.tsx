@@ -7,13 +7,65 @@ import { BarChart } from "@/components/charts/bar-chart";
 import { PieChart } from "@/components/charts/pie-chart";
 import { PageHeader } from "@/components/page-header";
 import { useReport } from "@/hooks/use-reports";
-import type { ReportGroup, ReportParams } from "@/types/report";
+import type { CountResult, ReportGroup, ReportParams } from "@/types/report";
 
 export const Route = createFileRoute(
   "/_app/projects/$projectId/reports/",
 )({
   component: ReportsPage,
 });
+
+const labelKeyMap: Record<string, string> = {
+  // support types
+  humanitarian: "project.supportRecords.typeHumanitarian",
+  legal: "project.supportRecords.typeLegal",
+  social: "project.supportRecords.typeSocial",
+  psychological: "project.supportRecords.typePsychological",
+  medical: "project.supportRecords.typeMedical",
+  general: "project.supportRecords.typeGeneral",
+  // spheres
+  housing_assistance: "project.supportRecords.sphereHousing",
+  document_recovery: "project.supportRecords.sphereDocumentRecovery",
+  social_benefits: "project.supportRecords.sphereSocialBenefits",
+  property_rights: "project.supportRecords.spherePropertyRights",
+  employment_rights: "project.supportRecords.sphereEmploymentRights",
+  family_law: "project.supportRecords.sphereFamilyLaw",
+  healthcare_access: "project.supportRecords.sphereHealthcareAccess",
+  education_access: "project.supportRecords.sphereEducationAccess",
+  financial_aid: "project.supportRecords.sphereFinancialAid",
+  psychological_support: "project.supportRecords.spherePsychologicalSupport",
+  other: "project.supportRecords.sphereOther",
+  unspecified: "project.supportRecords.sphereOther",
+  // sex
+  male: "project.people.sexMale",
+  female: "project.people.sexFemale",
+  unknown: "project.people.sexUnknown",
+  // age groups
+  infant: "project.people.ageInfant",
+  toddler: "project.people.ageToddler",
+  pre_school: "project.people.agePreSchool",
+  middle_childhood: "project.people.ageMiddleChildhood",
+  young_teen: "project.people.ageYoungTeen",
+  teenager: "project.people.ageTeenager",
+  young_adult: "project.people.ageYoungAdult",
+  early_adult: "project.people.ageEarlyAdult",
+  middle_aged: "project.people.ageMiddleAged",
+  older_adult: "project.people.ageOlderAdult",
+  // referral
+  pending: "project.supportRecords.referralPending",
+  accepted: "project.supportRecords.referralAccepted",
+  completed: "project.supportRecords.referralCompleted",
+  declined: "project.supportRecords.referralDeclined",
+  no_response: "project.supportRecords.referralNoResponse",
+};
+
+function useTranslatedRows(rows: CountResult[]): CountResult[] {
+  const { t } = useTranslation();
+  return rows.map((r) => {
+    const key = labelKeyMap[r.label];
+    return key ? { ...r, label: t(key) } : r;
+  });
+}
 
 function ReportCard({
   group,
@@ -24,6 +76,7 @@ function ReportCard({
   title: string;
   chart: "bar" | "pie";
 }) {
+  const rows = useTranslatedRows(group.rows);
   return (
     <div className="rounded-xl border border-border-secondary bg-bg-secondary p-5">
       <div className="mb-1 flex items-baseline justify-between">
@@ -32,11 +85,11 @@ function ReportCard({
           {group.total}
         </span>
       </div>
-      {group.rows.length > 0 ? (
+      {rows.length > 0 ? (
         chart === "bar" ? (
-          <BarChart data={group.rows} />
+          <BarChart data={rows} />
         ) : (
-          <PieChart data={group.rows} />
+          <PieChart data={rows} />
         )
       ) : (
         <p className="py-8 text-center text-sm text-fg-tertiary">—</p>
