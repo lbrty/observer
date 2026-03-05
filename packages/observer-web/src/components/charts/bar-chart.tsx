@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import type { CountResult } from "@/types/report";
 
@@ -30,8 +30,8 @@ interface BarChartProps {
 
 export function BarChart({
   data,
-  width = 500,
-  height = 300,
+  width = 700,
+  height = 260,
   yAxisLabel = "Count",
   legend,
   direction,
@@ -39,6 +39,7 @@ export function BarChart({
 }: BarChartProps) {
   const ref = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const clipId = useId().replace(/:/g, "_");
   const [tooltip, setTooltip] = useState<Tooltip>({
     visible: false,
     x: 0,
@@ -52,7 +53,7 @@ export function BarChart({
     direction === "auto" ? (data.length > 6 ? "horizontal" : "vertical") : (direction ?? "vertical");
 
   const resolvedHeight =
-    resolvedDirection === "horizontal" ? Math.max(300, data.length * 32) : height;
+    resolvedDirection === "horizontal" ? Math.max(200, data.length * 24) : height;
 
   useEffect(() => {
     if (!ref.current || data.length === 0) return;
@@ -86,7 +87,7 @@ export function BarChart({
       selectedLabel === null || selectedLabel === d.label ? 1 : 0.3;
 
     if (resolvedDirection === "horizontal") {
-      const margin = { top: 20, right: 40, bottom: 20, left: 120 };
+      const margin = { top: 10, right: 40, bottom: 20, left: 120 };
       const w = width - margin.left - margin.right;
       const h = resolvedHeight - margin.top - margin.bottom;
 
@@ -118,14 +119,14 @@ export function BarChart({
       yAxis.select(".domain").style("stroke", axisColor);
 
       g.append("clipPath")
-        .attr("id", "bar-clip")
+        .attr("id", clipId)
         .append("rect")
         .attr("x", 0)
         .attr("y", 0)
         .attr("width", w)
         .attr("height", h);
 
-      const barGroup = g.append("g").attr("clip-path", "url(#bar-clip)");
+      const barGroup = g.append("g").attr("clip-path", `url(#${clipId})`);
 
       barGroup
         .selectAll(".bar")
@@ -204,14 +205,14 @@ export function BarChart({
         .text(yAxisLabel);
 
       g.append("clipPath")
-        .attr("id", "bar-clip")
+        .attr("id", clipId)
         .append("rect")
         .attr("x", 0)
         .attr("y", 0)
         .attr("width", w)
         .attr("height", h);
 
-      const barGroup = g.append("g").attr("clip-path", "url(#bar-clip)");
+      const barGroup = g.append("g").attr("clip-path", `url(#${clipId})`);
 
       barGroup
         .selectAll(".bar")
@@ -243,13 +244,13 @@ export function BarChart({
         .attr("opacity", opacityFn)
         .text((d) => d.count);
     }
-  }, [data, width, height, resolvedHeight, yAxisLabel, selectedLabel, resolvedDirection, colorMap]);
+  }, [data, width, height, resolvedHeight, yAxisLabel, selectedLabel, resolvedDirection, colorMap, clipId]);
 
   if (data.length === 0) return null;
 
   return (
     <div ref={containerRef} className="relative w-full">
-      <svg ref={ref} className="w-full" />
+      <svg ref={ref} className="w-full" style={{ maxHeight: 360 }} />
       {tooltip.visible && (
         <div
           style={{

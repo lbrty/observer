@@ -1,10 +1,30 @@
-import type { FullReport } from "@/types/report";
+import type { CountResult, FullReport } from "@/types/report";
 
 function escapeCSV(value: string): string {
   if (value.includes(",") || value.includes('"') || value.includes("\n")) {
     return `"${value.replace(/"/g, '""')}"`;
   }
   return value;
+}
+
+function download(content: string, filename: string) {
+  const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export function exportGroupCSV(title: string, rows: CountResult[]) {
+  const lines = ["Label,Count"];
+  for (const row of rows) {
+    lines.push(`${escapeCSV(row.label)},${row.count}`);
+  }
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const date = new Date().toISOString().slice(0, 10);
+  download(lines.join("\n"), `${slug}-${date}.csv`);
 }
 
 export function exportReportCSV(data: FullReport, projectId: string) {
@@ -33,14 +53,6 @@ export function exportReportCSV(data: FullReport, projectId: string) {
     rows.push(`${escapeCSV(name)},TOTAL,${group.total}`);
   }
 
-  const blob = new Blob([rows.join("\n")], {
-    type: "text/csv;charset=utf-8;",
-  });
-  const url = URL.createObjectURL(blob);
   const date = new Date().toISOString().slice(0, 10);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `report-${projectId}-${date}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
+  download(rows.join("\n"), `report-${projectId}-${date}.csv`);
 }

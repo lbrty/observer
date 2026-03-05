@@ -26,7 +26,7 @@ import { useCategories } from "@/hooks/use-categories";
 import { useOffices } from "@/hooks/use-offices";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useReport } from "@/hooks/use-reports";
-import { exportReportCSV } from "@/lib/export-csv";
+import { exportGroupCSV, exportReportCSV } from "@/lib/export-csv";
 import type { CountResult, ReportGroup, ReportParams } from "@/types/report";
 
 export const Route = createFileRoute("/_app/projects/$projectId/reports/")({
@@ -115,12 +115,22 @@ function ReportCard({
   const source = skipTranslation ? group.rows : translated;
   const rows = mapLabel ? source.map((r) => ({ ...r, label: mapLabel(r.label) })) : source;
   return (
-    <div className="min-h-[280px] rounded-xl border border-border-secondary bg-bg-secondary p-5">
-      <div className="mb-3 flex items-baseline justify-between">
+    <div className="rounded-xl border border-border-secondary bg-bg-secondary p-5">
+      <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-fg">{title}</h3>
-        <span className="tabular-nums text-xs font-medium text-fg-tertiary">
-          {group.total.toLocaleString()}
-        </span>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => exportGroupCSV(title, rows)}
+            className="text-fg-tertiary transition-colors hover:text-fg"
+            title="Download CSV"
+          >
+            <DownloadSimpleIcon size={14} />
+          </button>
+          <span className="tabular-nums text-xs font-medium text-fg-tertiary">
+            {group.total.toLocaleString()}
+          </span>
+        </div>
       </div>
       {rows.length > 0 ? (
         chart === "bar" ? (
