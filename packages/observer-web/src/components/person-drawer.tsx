@@ -5,6 +5,7 @@ import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AddReferenceDialog } from "@/components/add-reference-dialog";
+import { DatePicker } from "@/components/date-picker";
 import { CheckIcon, PlusIcon, WarningIcon, XIcon } from "@/components/icons";
 import { HTTPError } from "@/lib/api";
 import { UISelect } from "@/components/ui-select";
@@ -406,17 +407,15 @@ export function PersonDrawer({
                     />
                   </Field.Root>
 
-                  <Field.Root>
-                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                  <div>
+                    <span className="mb-1 block text-sm font-medium text-fg-secondary">
                       {t("project.people.birthDate")}
-                    </Field.Label>
-                    <Field.Control
-                      type="date"
+                    </span>
+                    <DatePicker
                       value={form.birth_date}
-                      onChange={(e) => set("birth_date", e.target.value)}
-                      className={inputClass}
+                      onChange={(v) => set("birth_date", v)}
                     />
-                  </Field.Root>
+                  </div>
 
                   <Field.Root>
                     <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -650,17 +649,15 @@ export function PersonDrawer({
                     />
 
                     {form.consent_given && (
-                      <Field.Root>
-                        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                      <div>
+                        <span className="mb-1 block text-sm font-medium text-fg-secondary">
                           {t("project.people.consentDate")}
-                        </Field.Label>
-                        <Field.Control
-                          type="date"
+                        </span>
+                        <DatePicker
                           value={form.consent_date}
-                          onChange={(e) => set("consent_date", e.target.value)}
-                          className={inputClass}
+                          onChange={(v) => set("consent_date", v)}
                         />
-                      </Field.Root>
+                      </div>
                     )}
                   </div>
                 </div>

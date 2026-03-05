@@ -3,6 +3,7 @@ export type { Icon } from "@phosphor-icons/react";
 export {
   ArrowLeftIcon,
   ArrowSquareOutIcon,
+  CalendarBlankIcon,
   BuildingsIcon,
   CaretLeftIcon,
   CaretRightIcon,

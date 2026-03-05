@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { DatePicker } from "@/components/date-picker";
 import { CheckIcon, WarningIcon, XIcon } from "@/components/icons";
 import { UISelect } from "@/components/ui-select";
 import { HTTPError } from "@/lib/api";
@@ -311,17 +312,15 @@ export function SupportRecordDrawer({
                     />
                   </Field.Root>
 
-                  <Field.Root>
-                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                  <div>
+                    <span className="mb-1 block text-sm font-medium text-fg-secondary">
                       {t("project.supportRecords.providedAt")}
-                    </Field.Label>
-                    <Field.Control
-                      type="date"
+                    </span>
+                    <DatePicker
                       value={form.provided_at}
-                      onChange={(e) => set("provided_at", e.target.value)}
-                      className={inputClass}
+                      onChange={(v) => set("provided_at", v)}
                     />
-                  </Field.Root>
+                  </div>
 
                   {!personId && (
                     <Field.Root>

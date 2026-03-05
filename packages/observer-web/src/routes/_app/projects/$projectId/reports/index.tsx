@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { DatePicker } from "@/components/date-picker";
 import { BarChart } from "@/components/charts/bar-chart";
 import { PieChart } from "@/components/charts/pie-chart";
 import { PageHeader } from "@/components/page-header";
@@ -55,32 +56,28 @@ function ReportsPage() {
       <PageHeader title={t("project.reports.title")} />
 
       <div className="mb-6 flex items-end gap-4">
-        <label className="space-y-1">
+        <div className="space-y-1">
           <span className="text-xs font-medium text-fg-secondary">
             {t("project.reports.dateFrom")}
           </span>
-          <input
-            type="date"
+          <DatePicker
             value={params.date_from ?? ""}
-            onChange={(e) =>
-              setParams((p) => ({ ...p, date_from: e.target.value || undefined }))
+            onChange={(v) =>
+              setParams((p) => ({ ...p, date_from: v || undefined }))
             }
-            className="block rounded-lg border border-border-secondary bg-bg px-3 py-1.5 text-sm"
           />
-        </label>
-        <label className="space-y-1">
+        </div>
+        <div className="space-y-1">
           <span className="text-xs font-medium text-fg-secondary">
             {t("project.reports.dateTo")}
           </span>
-          <input
-            type="date"
+          <DatePicker
             value={params.date_to ?? ""}
-            onChange={(e) =>
-              setParams((p) => ({ ...p, date_to: e.target.value || undefined }))
+            onChange={(v) =>
+              setParams((p) => ({ ...p, date_to: v || undefined }))
             }
-            className="block rounded-lg border border-border-secondary bg-bg px-3 py-1.5 text-sm"
           />
-        </label>
+        </div>
         {(params.date_from || params.date_to) && (
           <button
             type="button"

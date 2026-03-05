@@ -1,3 +1,4 @@
+import { DatePicker } from "@/components/date-picker";
 import { PlusIcon } from "@/components/icons";
 import { DataTable, type Column } from "@/components/data-table";
 import { FormDialog } from "@/components/form-dialog";
@@ -283,17 +284,15 @@ function PersonMigrationRecords() {
             />
           </div>
 
-          <Field.Root>
-            <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+          <div>
+            <span className="mb-1 block text-sm font-medium text-fg-secondary">
               {t("project.migrationRecords.date")}
-            </Field.Label>
-            <Field.Control
-              type="date"
+            </span>
+            <DatePicker
               value={form.migration_date}
-              onChange={(e) => set("migration_date", e.target.value)}
-              className={inputClass}
+              onChange={(v) => set("migration_date", v)}
             />
-          </Field.Root>
+          </div>
 
           <Field.Root>
             <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">

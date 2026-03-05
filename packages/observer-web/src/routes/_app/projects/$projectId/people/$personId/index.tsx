@@ -3,6 +3,7 @@ import { type FormEvent, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { DatePicker } from "@/components/date-picker";
 import { CheckIcon, PlusIcon, WarningIcon } from "@/components/icons";
 import { StatusBadge } from "@/components/status-badge";
 import { UISelect } from "@/components/ui-select";
@@ -329,11 +330,9 @@ function PersonOverview() {
                 <label className="mb-1.5 block text-xs font-medium text-fg-secondary">
                   {t("project.supportRecords.providedAt")}
                 </label>
-                <input
-                  type="date"
+                <DatePicker
                   value={providedAt}
-                  onChange={(e) => setProvidedAt(e.target.value)}
-                  className={inputClass}
+                  onChange={setProvidedAt}
                 />
               </div>
             </div>

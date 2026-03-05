@@ -1,0 +1,128 @@
+.rdp-popup .rdp-root {
+  --rdp-accent-color: var(--accent);
+  --rdp-accent-background-color: var(--ring);
+  --rdp-day-height: 36px;
+  --rdp-day-width: 36px;
+  --rdp-selected-font: inherit;
+  font-family: inherit;
+}
+
+.rdp-popup .rdp-month_caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.rdp-popup .rdp-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  left: 12px;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.rdp-popup .rdp-button_previous,
+.rdp-popup .rdp-button_next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--fg-secondary);
+  pointer-events: auto;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.rdp-popup .rdp-button_previous:hover,
+.rdp-popup .rdp-button_next:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--fg);
+}
+
+.rdp-popup .rdp-weekday {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--fg-tertiary);
+  width: var(--rdp-day-width);
+  height: 28px;
+  text-align: center;
+}
+
+.rdp-popup .rdp-day {
+  width: var(--rdp-day-width);
+  height: var(--rdp-day-height);
+}
+
+.rdp-popup .rdp-day_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rdp-day-width);
+  height: var(--rdp-day-height);
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  color: var(--fg);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.rdp-popup .rdp-day_button:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.rdp-popup .rdp-today .rdp-day_button {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.rdp-popup .rdp-selected .rdp-day_button {
+  background-color: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 600;
+}
+
+.rdp-popup .rdp-selected .rdp-day_button:hover {
+  background-color: var(--accent);
+  opacity: 0.9;
+}
+
+.rdp-popup .rdp-range_middle .rdp-day_button {
+  background-color: var(--ring);
+  color: var(--fg);
+  border-radius: 0;
+}
+
+.rdp-popup .rdp-range_start .rdp-day_button {
+  border-radius: 8px 0 0 8px;
+}
+
+.rdp-popup .rdp-range_end .rdp-day_button {
+  border-radius: 0 8px 8px 0;
+}
+
+.rdp-popup .rdp-range_start.rdp-range_end .rdp-day_button {
+  border-radius: 8px;
+}
+
+.rdp-popup .rdp-outside .rdp-day_button {
+  color: var(--fg-tertiary);
+  opacity: 0.4;
+}
+
+.rdp-popup .rdp-disabled .rdp-day_button {
+  color: var(--fg-tertiary);
+  opacity: 0.3;
+  cursor: default;
+}
