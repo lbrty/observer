@@ -14,15 +14,18 @@ import (
 	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 )
 
-func TestRegisterUseCase_Success(t *testing.T) {
+func TestRegister_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
+	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
 	hasher := crypto.NewArgonHasher()
+	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen)
 
 	ctx := context.Background()
 	input := ucauth.RegisterInput{
@@ -43,27 +46,30 @@ func TestRegisterUseCase_Success(t *testing.T) {
 		Create(ctx, gomock.Any()).
 		Return(nil)
 
-	out, err := uc.Execute(ctx, input)
+	out, err := uc.Register(ctx, input)
 	require.NoError(t, err)
 	assert.NotEmpty(t, out.UserID)
 	assert.Contains(t, out.Message, "Registration successful")
 }
 
-func TestRegisterUseCase_EmailExists(t *testing.T) {
+func TestRegister_EmailExists(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
+	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
 	hasher := crypto.NewArgonHasher()
+	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen)
 
 	mockUserRepo.EXPECT().
 		GetByEmail(gomock.Any(), "taken@example.com").
 		Return(&user.User{}, nil)
 
-	_, err := uc.Execute(context.Background(), ucauth.RegisterInput{
+	_, err := uc.Register(context.Background(), ucauth.RegisterInput{
 		Email:    "taken@example.com",
 		Password: "securepassword",
 		Role:     "consultant",
@@ -71,17 +77,20 @@ func TestRegisterUseCase_EmailExists(t *testing.T) {
 	assert.ErrorIs(t, err, user.ErrEmailExists)
 }
 
-func TestRegisterUseCase_InvalidRole(t *testing.T) {
+func TestRegister_InvalidRole(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
+	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
 	hasher := crypto.NewArgonHasher()
+	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewRegisterUseCase(mockUserRepo, mockCredRepo, hasher)
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen)
 
-	_, err := uc.Execute(context.Background(), ucauth.RegisterInput{
+	_, err := uc.Register(context.Background(), ucauth.RegisterInput{
 		Email:    "test@example.com",
 		Password: "securepassword",
 		Role:     "superadmin",

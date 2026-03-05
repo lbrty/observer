@@ -10,17 +10,24 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
+	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
 
-func TestListUsersUseCase_Success(t *testing.T) {
+func newUserUC(t *testing.T) (*ucadmin.UserUseCase, *mock_repo.MockUserRepository) {
+	t.Helper()
 	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	hasher := crypto.NewArgonHasher()
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
+	return uc, mockUserRepo
+}
 
-	mockRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewListUsersUseCase(mockRepo)
+func TestUserUseCase_List_Success(t *testing.T) {
+	uc, mockRepo := newUserUC(t)
 
 	ctx := context.Background()
 	now := time.Now().UTC()
@@ -34,7 +41,7 @@ func TestListUsersUseCase_Success(t *testing.T) {
 		List(ctx, user.UserListFilter{Page: 1, PerPage: 10}).
 		Return(users, 2, nil)
 
-	out, err := uc.Execute(ctx, ucadmin.ListUsersInput{Page: 1, PerPage: 10})
+	out, err := uc.List(ctx, ucadmin.ListUsersInput{Page: 1, PerPage: 10})
 	require.NoError(t, err)
 	assert.Equal(t, 2, out.Total)
 	assert.Len(t, out.Users, 2)
@@ -43,45 +50,33 @@ func TestListUsersUseCase_Success(t *testing.T) {
 	assert.Equal(t, 10, out.PerPage)
 }
 
-func TestListUsersUseCase_DefaultPagination(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewListUsersUseCase(mockRepo)
+func TestUserUseCase_List_DefaultPagination(t *testing.T) {
+	uc, mockRepo := newUserUC(t)
 
 	mockRepo.EXPECT().
 		List(gomock.Any(), user.UserListFilter{Page: 1, PerPage: 20}).
 		Return(nil, 0, nil)
 
-	out, err := uc.Execute(context.Background(), ucadmin.ListUsersInput{})
+	out, err := uc.List(context.Background(), ucadmin.ListUsersInput{})
 	require.NoError(t, err)
 	assert.Equal(t, 1, out.Page)
 	assert.Equal(t, 20, out.PerPage)
 }
 
-func TestListUsersUseCase_ClampPerPage(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewListUsersUseCase(mockRepo)
+func TestUserUseCase_List_ClampPerPage(t *testing.T) {
+	uc, mockRepo := newUserUC(t)
 
 	mockRepo.EXPECT().
 		List(gomock.Any(), user.UserListFilter{Page: 1, PerPage: 100}).
 		Return(nil, 0, nil)
 
-	out, err := uc.Execute(context.Background(), ucadmin.ListUsersInput{Page: 1, PerPage: 500})
+	out, err := uc.List(context.Background(), ucadmin.ListUsersInput{Page: 1, PerPage: 500})
 	require.NoError(t, err)
 	assert.Equal(t, 100, out.PerPage)
 }
 
-func TestListUsersUseCase_WithFilters(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewListUsersUseCase(mockRepo)
+func TestUserUseCase_List_WithFilters(t *testing.T) {
+	uc, mockRepo := newUserUC(t)
 
 	active := true
 	mockRepo.EXPECT().
@@ -94,7 +89,7 @@ func TestListUsersUseCase_WithFilters(t *testing.T) {
 		}).
 		Return(nil, 0, nil)
 
-	_, err := uc.Execute(context.Background(), ucadmin.ListUsersInput{
+	_, err := uc.List(context.Background(), ucadmin.ListUsersInput{
 		Search:   "alice",
 		Role:     "admin",
 		IsActive: &active,

@@ -32,28 +32,12 @@ type Container struct {
 	PasswordHasher crypto.PasswordHasher
 	TokenGenerator crypto.TokenGenerator
 
-	// Auth Use Cases
-	RegisterUC       *ucauth.RegisterUseCase
-	LoginUC          *ucauth.LoginUseCase
-	RefreshTokenUC   *ucauth.RefreshTokenUseCase
-	LogoutUC         *ucauth.LogoutUseCase
-	UpdateProfileUC  *ucauth.UpdateProfileUseCase
-	ChangePasswordUC *ucauth.ChangePasswordUseCase
+	// Auth Use Case
+	AuthUC *ucauth.AuthUseCase
 
 	// Admin Use Cases
-	ListUsersUC  *ucadmin.ListUsersUseCase
-	GetUserUC    *ucadmin.GetUserUseCase
-	UpdateUserUC *ucadmin.UpdateUserUseCase
-	CreateUserUC *ucadmin.CreateUserUseCase
-
-	// Admin Password Reset
-	ResetPasswordUC *ucadmin.ResetPasswordUseCase
-
-	// Permission Use Cases
-	ListPermsUC  *ucadmin.ListPermissionsUseCase
-	AssignPermUC *ucadmin.AssignPermissionUseCase
-	UpdatePermUC *ucadmin.UpdatePermissionUseCase
-	RevokePermUC *ucadmin.RevokePermissionUseCase
+	UserUC *ucadmin.UserUseCase
+	PermUC *ucadmin.PermissionUseCase
 
 	// Reference Use Cases
 	CountryUC  *ucadmin.CountryUseCase
@@ -126,23 +110,9 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 		cfg.JWT.Issuer,
 	)
 
-	registerUC := ucauth.NewRegisterUseCase(userRepo, credRepo, hasher)
-	loginUC := ucauth.NewLoginUseCase(userRepo, credRepo, sessionRepo, mfaRepo, hasher, tokenGen)
-	refreshUC := ucauth.NewRefreshTokenUseCase(userRepo, sessionRepo, tokenGen)
-	logoutUC := ucauth.NewLogoutUseCase(sessionRepo)
-	updateProfileUC := ucauth.NewUpdateProfileUseCase(userRepo)
-	changePasswordUC := ucauth.NewChangePasswordUseCase(credRepo, hasher)
-
-	listUsersUC := ucadmin.NewListUsersUseCase(userRepo)
-	getUserUC := ucadmin.NewGetUserUseCase(userRepo)
-	updateUserUC := ucadmin.NewUpdateUserUseCase(userRepo)
-	createUserUC := ucadmin.NewCreateUserUseCase(userRepo, credRepo, hasher)
-
-	resetPasswordUC := ucadmin.NewResetPasswordUseCase(credRepo, hasher)
-	listPermsUC := ucadmin.NewListPermissionsUseCase(permCRUDRepo, userRepo)
-	assignPermUC := ucadmin.NewAssignPermissionUseCase(permCRUDRepo)
-	updatePermUC := ucadmin.NewUpdatePermissionUseCase(permCRUDRepo)
-	revokePermUC := ucadmin.NewRevokePermissionUseCase(permCRUDRepo)
+	authUC := ucauth.NewAuthUseCase(userRepo, credRepo, sessionRepo, mfaRepo, hasher, tokenGen)
+	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher)
+	permUC := ucadmin.NewPermissionUseCase(permCRUDRepo, userRepo)
 
 	countryUC := ucadmin.NewCountryUseCase(countryRepo)
 	stateUC := ucadmin.NewStateUseCase(stateRepo)
@@ -178,21 +148,9 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 		CategoryRepo:      categoryRepo,
 		PasswordHasher:    hasher,
 		TokenGenerator:    tokenGen,
-		RegisterUC:        registerUC,
-		LoginUC:           loginUC,
-		RefreshTokenUC:    refreshUC,
-		LogoutUC:          logoutUC,
-		UpdateProfileUC:   updateProfileUC,
-		ChangePasswordUC:  changePasswordUC,
-		ResetPasswordUC:   resetPasswordUC,
-		ListUsersUC:       listUsersUC,
-		GetUserUC:         getUserUC,
-		UpdateUserUC:      updateUserUC,
-		CreateUserUC:      createUserUC,
-		ListPermsUC:       listPermsUC,
-		AssignPermUC:      assignPermUC,
-		UpdatePermUC:      updatePermUC,
-		RevokePermUC:      revokePermUC,
+		AuthUC:            authUC,
+		UserUC:            userUC,
+		PermUC:            permUC,
 		CountryUC:         countryUC,
 		StateUC:           stateUC,
 		PlaceUC:           placeUC,
@@ -210,7 +168,7 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 		NoteUC:            noteUC,
 		DocumentUC:        documentUC,
 		PetUC:             petUC,
-		ReportUC:           reportUC,
-		ReportRepo:         reportRepo,
+		ReportUC:          reportUC,
+		ReportRepo:        reportRepo,
 	}, nil
 }

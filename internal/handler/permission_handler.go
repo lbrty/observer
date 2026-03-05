@@ -12,25 +12,12 @@ import (
 
 // PermissionHandler exposes project permission management HTTP endpoints.
 type PermissionHandler struct {
-	listUC   *ucadmin.ListPermissionsUseCase
-	assignUC *ucadmin.AssignPermissionUseCase
-	updateUC *ucadmin.UpdatePermissionUseCase
-	revokeUC *ucadmin.RevokePermissionUseCase
+	permUC *ucadmin.PermissionUseCase
 }
 
 // NewPermissionHandler creates a PermissionHandler.
-func NewPermissionHandler(
-	listUC *ucadmin.ListPermissionsUseCase,
-	assignUC *ucadmin.AssignPermissionUseCase,
-	updateUC *ucadmin.UpdatePermissionUseCase,
-	revokeUC *ucadmin.RevokePermissionUseCase,
-) *PermissionHandler {
-	return &PermissionHandler{
-		listUC:   listUC,
-		assignUC: assignUC,
-		updateUC: updateUC,
-		revokeUC: revokeUC,
-	}
+func NewPermissionHandler(permUC *ucadmin.PermissionUseCase) *PermissionHandler {
+	return &PermissionHandler{permUC: permUC}
 }
 
 // ListPermissions handles GET /admin/projects/:project_id/permissions.
@@ -46,7 +33,7 @@ func NewPermissionHandler(
 func (h *PermissionHandler) ListPermissions(c *gin.Context) {
 	projectID := c.Param("project_id")
 
-	out, err := h.listUC.Execute(c.Request.Context(), projectID)
+	out, err := h.permUC.List(c.Request.Context(), projectID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
@@ -77,7 +64,7 @@ func (h *PermissionHandler) AssignPermission(c *gin.Context) {
 		return
 	}
 
-	out, err := h.assignUC.Execute(c.Request.Context(), projectID, input)
+	out, err := h.permUC.Assign(c.Request.Context(), projectID, input)
 	if err != nil {
 		h.handlePermError(c, err)
 		return
@@ -110,7 +97,7 @@ func (h *PermissionHandler) UpdatePermission(c *gin.Context) {
 		return
 	}
 
-	out, err := h.updateUC.Execute(c.Request.Context(), id, input)
+	out, err := h.permUC.Update(c.Request.Context(), id, input)
 	if err != nil {
 		h.handlePermError(c, err)
 		return
@@ -134,7 +121,7 @@ func (h *PermissionHandler) UpdatePermission(c *gin.Context) {
 func (h *PermissionHandler) RevokePermission(c *gin.Context) {
 	id := c.Param("id")
 
-	if err := h.revokeUC.Execute(c.Request.Context(), id); err != nil {
+	if err := h.permUC.Revoke(c.Request.Context(), id); err != nil {
 		h.handlePermError(c, err)
 		return
 	}

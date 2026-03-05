@@ -90,12 +90,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	projectAuthMW := middleware.NewProjectAuthMiddleware(container.PermissionRepo)
 
 	authHandler := handler.NewAuthHandler(
-		container.RegisterUC,
-		container.LoginUC,
-		container.RefreshTokenUC,
-		container.LogoutUC,
-		container.UpdateProfileUC,
-		container.ChangePasswordUC,
+		container.AuthUC,
 		container.UserRepo,
 		cfg.Cookie,
 		cfg.JWT,
@@ -120,8 +115,8 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	}
 
 	// Admin endpoints — requires authentication + admin role
-	adminHandler := handler.NewAdminHandler(container.ListUsersUC, container.GetUserUC, container.UpdateUserUC, container.CreateUserUC, container.ResetPasswordUC)
-	permHandler := handler.NewPermissionHandler(container.ListPermsUC, container.AssignPermUC, container.UpdatePermUC, container.RevokePermUC)
+	adminHandler := handler.NewAdminHandler(container.UserUC)
+	permHandler := handler.NewPermissionHandler(container.PermUC)
 	countryHandler := handler.NewCountryHandler(container.CountryUC)
 	stateHandler := handler.NewStateHandler(container.StateUC)
 	placeHandler := handler.NewPlaceHandler(container.PlaceUC)

@@ -16,8 +16,8 @@ import (
 	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 )
 
-func setupLoginUseCase(t *testing.T) (
-	*ucauth.LoginUseCase,
+func setupAuthUseCase(t *testing.T) (
+	*ucauth.AuthUseCase,
 	*mock_repo.MockUserRepository,
 	*mock_repo.MockCredentialsRepository,
 	*mock_repo.MockSessionRepository,
@@ -34,7 +34,7 @@ func setupLoginUseCase(t *testing.T) (
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewLoginUseCase(
+	uc := ucauth.NewAuthUseCase(
 		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen,
 	)
 	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher
@@ -49,8 +49,8 @@ func newTestTokenGen(t *testing.T) crypto.TokenGenerator {
 	return crypto.NewRSATokenGenerator(keys, 0, 0, 0, "test")
 }
 
-func TestLoginUseCase_Success(t *testing.T) {
-	uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher := setupLoginUseCase(t)
+func TestLogin_Success(t *testing.T) {
+	uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher := setupAuthUseCase(t)
 
 	ctx := context.Background()
 	password := "securepassword"
@@ -66,7 +66,7 @@ func TestLoginUseCase_Success(t *testing.T) {
 	mockMFARepo.EXPECT().GetByUserID(ctx, uid).Return(nil, errors.New("not found"))
 	mockSessionRepo.EXPECT().Create(ctx, gomock.Any()).Return(nil)
 
-	out, err := uc.Execute(ctx, ucauth.LoginInput{Email: u.Email, Password: password}, "agent", "1.2.3.4")
+	out, err := uc.Login(ctx, ucauth.LoginInput{Email: u.Email, Password: password}, "agent", "1.2.3.4")
 	require.NoError(t, err)
 	assert.False(t, out.RequiresMFA)
 	assert.NotNil(t, out.Tokens)
@@ -74,28 +74,28 @@ func TestLoginUseCase_Success(t *testing.T) {
 	assert.NotEmpty(t, out.Tokens.RefreshToken)
 }
 
-func TestLoginUseCase_InvalidCredentials(t *testing.T) {
-	uc, mockUserRepo, _, _, _, _ := setupLoginUseCase(t)
+func TestLogin_InvalidCredentials(t *testing.T) {
+	uc, mockUserRepo, _, _, _, _ := setupAuthUseCase(t)
 
 	mockUserRepo.EXPECT().
 		GetByEmail(gomock.Any(), "bad@example.com").
 		Return(nil, user.ErrUserNotFound)
 
-	_, err := uc.Execute(context.Background(), ucauth.LoginInput{
+	_, err := uc.Login(context.Background(), ucauth.LoginInput{
 		Email: "bad@example.com", Password: "pass",
 	}, "", "")
 	assert.ErrorIs(t, err, user.ErrInvalidCredentials)
 }
 
-func TestLoginUseCase_InactiveUser(t *testing.T) {
-	uc, mockUserRepo, _, _, _, _ := setupLoginUseCase(t)
+func TestLogin_InactiveUser(t *testing.T) {
+	uc, mockUserRepo, _, _, _, _ := setupAuthUseCase(t)
 
 	uid := ulid.New()
 	u := &user.User{ID: uid, Email: "inactive@example.com", IsActive: false}
 
 	mockUserRepo.EXPECT().GetByEmail(gomock.Any(), u.Email).Return(u, nil)
 
-	_, err := uc.Execute(context.Background(), ucauth.LoginInput{
+	_, err := uc.Login(context.Background(), ucauth.LoginInput{
 		Email: u.Email, Password: "pass",
 	}, "", "")
 	assert.ErrorIs(t, err, user.ErrUserNotActive)

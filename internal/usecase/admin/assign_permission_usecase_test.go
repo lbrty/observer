@@ -13,16 +13,17 @@ import (
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
 
-func TestAssignPermissionUseCase_Success(t *testing.T) {
+func TestPermissionUseCase_Assign_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewAssignPermissionUseCase(mockRepo)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
 
 	ctx := context.Background()
 
-	mockRepo.EXPECT().
+	mockPermRepo.EXPECT().
 		Create(ctx, gomock.Any()).
 		DoAndReturn(func(_ context.Context, p *project.ProjectPermission) error {
 			assert.NotEmpty(t, p.ID)
@@ -34,7 +35,7 @@ func TestAssignPermissionUseCase_Success(t *testing.T) {
 			return nil
 		})
 
-	out, err := uc.Execute(ctx, "proj-1", ucadmin.AssignPermissionInput{
+	out, err := uc.Assign(ctx, "proj-1", ucadmin.AssignPermissionInput{
 		UserID:         "user-1",
 		Role:           "manager",
 		CanViewContact: true,
@@ -45,32 +46,34 @@ func TestAssignPermissionUseCase_Success(t *testing.T) {
 	assert.Equal(t, "manager", out.Role)
 }
 
-func TestAssignPermissionUseCase_InvalidRole(t *testing.T) {
+func TestPermissionUseCase_Assign_InvalidRole(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewAssignPermissionUseCase(mockRepo)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
 
-	_, err := uc.Execute(context.Background(), "proj-1", ucadmin.AssignPermissionInput{
+	_, err := uc.Assign(context.Background(), "proj-1", ucadmin.AssignPermissionInput{
 		UserID: "user-1",
 		Role:   "superadmin",
 	})
 	assert.ErrorIs(t, err, project.ErrInvalidProjectRole)
 }
 
-func TestAssignPermissionUseCase_DuplicateDetection(t *testing.T) {
+func TestPermissionUseCase_Assign_DuplicateDetection(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewAssignPermissionUseCase(mockRepo)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
 
-	mockRepo.EXPECT().
+	mockPermRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).
 		Return(project.ErrPermissionExists)
 
-	_, err := uc.Execute(context.Background(), "proj-1", ucadmin.AssignPermissionInput{
+	_, err := uc.Assign(context.Background(), "proj-1", ucadmin.AssignPermissionInput{
 		UserID: "user-1",
 		Role:   "viewer",
 	})

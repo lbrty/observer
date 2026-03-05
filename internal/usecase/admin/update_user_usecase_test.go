@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
+	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
@@ -17,12 +18,14 @@ import (
 
 func ptr[T any](v T) *T { return &v }
 
-func TestUpdateUserUseCase_PartialUpdate(t *testing.T) {
+func TestUserUseCase_Update_PartialUpdate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewUpdateUserUseCase(mockRepo)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	hasher := crypto.NewArgonHasher()
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
@@ -40,8 +43,8 @@ func TestUpdateUserUseCase_PartialUpdate(t *testing.T) {
 		UpdatedAt:  time.Now().UTC(),
 	}
 
-	mockRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
-	mockRepo.EXPECT().Update(ctx, gomock.Any()).DoAndReturn(func(_ context.Context, u *user.User) error {
+	mockUserRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
+	mockUserRepo.EXPECT().Update(ctx, gomock.Any()).DoAndReturn(func(_ context.Context, u *user.User) error {
 		assert.Equal(t, "Bob", u.FirstName)
 		assert.Equal(t, "Smith", u.LastName)          // unchanged
 		assert.Equal(t, "alice@example.com", u.Email) // unchanged
@@ -52,18 +55,20 @@ func TestUpdateUserUseCase_PartialUpdate(t *testing.T) {
 		FirstName: ptr("Bob"),
 	}
 
-	out, err := uc.Execute(ctx, uid, input)
+	out, err := uc.Update(ctx, uid, input)
 	require.NoError(t, err)
 	assert.Equal(t, "Bob", out.FirstName)
 	assert.Equal(t, "Smith", out.LastName)
 }
 
-func TestUpdateUserUseCase_RoleChange(t *testing.T) {
+func TestUserUseCase_Update_RoleChange(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewUpdateUserUseCase(mockRepo)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	hasher := crypto.NewArgonHasher()
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
@@ -78,22 +83,24 @@ func TestUpdateUserUseCase_RoleChange(t *testing.T) {
 		UpdatedAt: time.Now().UTC(),
 	}
 
-	mockRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
-	mockRepo.EXPECT().Update(ctx, gomock.Any()).Return(nil)
+	mockUserRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
+	mockUserRepo.EXPECT().Update(ctx, gomock.Any()).Return(nil)
 
-	out, err := uc.Execute(ctx, uid, ucadmin.UpdateUserInput{
+	out, err := uc.Update(ctx, uid, ucadmin.UpdateUserInput{
 		Role: ptr("admin"),
 	})
 	require.NoError(t, err)
 	assert.Equal(t, "admin", out.Role)
 }
 
-func TestUpdateUserUseCase_InvalidRole(t *testing.T) {
+func TestUserUseCase_Update_InvalidRole(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewUpdateUserUseCase(mockRepo)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	hasher := crypto.NewArgonHasher()
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
@@ -108,36 +115,40 @@ func TestUpdateUserUseCase_InvalidRole(t *testing.T) {
 		UpdatedAt: time.Now().UTC(),
 	}
 
-	mockRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
+	mockUserRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
 
-	_, err := uc.Execute(ctx, uid, ucadmin.UpdateUserInput{
+	_, err := uc.Update(ctx, uid, ucadmin.UpdateUserInput{
 		Role: ptr("superadmin"),
 	})
 	assert.ErrorIs(t, err, user.ErrInvalidRole)
 }
 
-func TestUpdateUserUseCase_NotFound(t *testing.T) {
+func TestUserUseCase_Update_NotFound(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewUpdateUserUseCase(mockRepo)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	hasher := crypto.NewArgonHasher()
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
 
 	uid := ulid.MustNew(ulid.Now(), nil)
-	mockRepo.EXPECT().GetByID(gomock.Any(), uid).Return(nil, user.ErrUserNotFound)
+	mockUserRepo.EXPECT().GetByID(gomock.Any(), uid).Return(nil, user.ErrUserNotFound)
 
-	_, err := uc.Execute(context.Background(), uid, ucadmin.UpdateUserInput{
+	_, err := uc.Update(context.Background(), uid, ucadmin.UpdateUserInput{
 		FirstName: ptr("New"),
 	})
 	assert.ErrorIs(t, err, user.ErrUserNotFound)
 }
 
-func TestUpdateUserUseCase_Deactivate(t *testing.T) {
+func TestUserUseCase_Update_Deactivate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewUpdateUserUseCase(mockRepo)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	hasher := crypto.NewArgonHasher()
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
@@ -152,13 +163,13 @@ func TestUpdateUserUseCase_Deactivate(t *testing.T) {
 		UpdatedAt: time.Now().UTC(),
 	}
 
-	mockRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
-	mockRepo.EXPECT().Update(ctx, gomock.Any()).DoAndReturn(func(_ context.Context, u *user.User) error {
+	mockUserRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
+	mockUserRepo.EXPECT().Update(ctx, gomock.Any()).DoAndReturn(func(_ context.Context, u *user.User) error {
 		assert.False(t, u.IsActive)
 		return nil
 	})
 
-	out, err := uc.Execute(ctx, uid, ucadmin.UpdateUserInput{
+	out, err := uc.Update(ctx, uid, ucadmin.UpdateUserInput{
 		IsActive: ptr(false),
 	})
 	require.NoError(t, err)

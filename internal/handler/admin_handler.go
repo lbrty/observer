@@ -13,28 +13,12 @@ import (
 
 // AdminHandler exposes admin user-management HTTP endpoints.
 type AdminHandler struct {
-	listUsersUC     *ucadmin.ListUsersUseCase
-	getUserUC       *ucadmin.GetUserUseCase
-	updateUserUC    *ucadmin.UpdateUserUseCase
-	createUserUC    *ucadmin.CreateUserUseCase
-	resetPasswordUC *ucadmin.ResetPasswordUseCase
+	userUC *ucadmin.UserUseCase
 }
 
 // NewAdminHandler creates an AdminHandler.
-func NewAdminHandler(
-	listUsersUC *ucadmin.ListUsersUseCase,
-	getUserUC *ucadmin.GetUserUseCase,
-	updateUserUC *ucadmin.UpdateUserUseCase,
-	createUserUC *ucadmin.CreateUserUseCase,
-	resetPasswordUC *ucadmin.ResetPasswordUseCase,
-) *AdminHandler {
-	return &AdminHandler{
-		listUsersUC:     listUsersUC,
-		getUserUC:       getUserUC,
-		updateUserUC:    updateUserUC,
-		createUserUC:    createUserUC,
-		resetPasswordUC: resetPasswordUC,
-	}
+func NewAdminHandler(userUC *ucadmin.UserUseCase) *AdminHandler {
+	return &AdminHandler{userUC: userUC}
 }
 
 // ListUsers handles GET /admin/users.
@@ -59,7 +43,7 @@ func (h *AdminHandler) ListUsers(c *gin.Context) {
 		return
 	}
 
-	out, err := h.listUsersUC.Execute(c.Request.Context(), input)
+	out, err := h.userUC.List(c.Request.Context(), input)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
 		return
@@ -87,7 +71,7 @@ func (h *AdminHandler) GetUser(c *gin.Context) {
 		return
 	}
 
-	out, err := h.getUserUC.Execute(c.Request.Context(), id)
+	out, err := h.userUC.Get(c.Request.Context(), id)
 	if err != nil {
 		h.handleUserError(c, err)
 		return
@@ -123,7 +107,7 @@ func (h *AdminHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	out, err := h.updateUserUC.Execute(c.Request.Context(), id, input)
+	out, err := h.userUC.Update(c.Request.Context(), id, input)
 	if err != nil {
 		h.handleUserError(c, err)
 		return
@@ -151,7 +135,7 @@ func (h *AdminHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	out, err := h.createUserUC.Execute(c.Request.Context(), input)
+	out, err := h.userUC.Create(c.Request.Context(), input)
 	if err != nil {
 		h.handleUserError(c, err)
 		return
@@ -174,7 +158,7 @@ func (h *AdminHandler) ResetPassword(c *gin.Context) {
 		return
 	}
 
-	if err := h.resetPasswordUC.Execute(c.Request.Context(), id, input); err != nil {
+	if err := h.userUC.ResetPassword(c.Request.Context(), id, input); err != nil {
 		h.handleUserError(c, err)
 		return
 	}

@@ -21,39 +21,24 @@ const (
 
 // AuthHandler exposes auth HTTP endpoints.
 type AuthHandler struct {
-	registerUC      *ucauth.RegisterUseCase
-	loginUC         *ucauth.LoginUseCase
-	refreshUC       *ucauth.RefreshTokenUseCase
-	logoutUC        *ucauth.LogoutUseCase
-	updateProfileUC *ucauth.UpdateProfileUseCase
-	changePasswordUC *ucauth.ChangePasswordUseCase
-	userRepo        repository.UserRepository
-	cookie          config.CookieConfig
-	jwt             config.JWTConfig
+	authUC   *ucauth.AuthUseCase
+	userRepo repository.UserRepository
+	cookie   config.CookieConfig
+	jwt      config.JWTConfig
 }
 
 // NewAuthHandler creates an AuthHandler.
 func NewAuthHandler(
-	registerUC *ucauth.RegisterUseCase,
-	loginUC *ucauth.LoginUseCase,
-	refreshUC *ucauth.RefreshTokenUseCase,
-	logoutUC *ucauth.LogoutUseCase,
-	updateProfileUC *ucauth.UpdateProfileUseCase,
-	changePasswordUC *ucauth.ChangePasswordUseCase,
+	authUC *ucauth.AuthUseCase,
 	userRepo repository.UserRepository,
 	cookie config.CookieConfig,
 	jwt config.JWTConfig,
 ) *AuthHandler {
 	return &AuthHandler{
-		registerUC:       registerUC,
-		loginUC:          loginUC,
-		refreshUC:        refreshUC,
-		logoutUC:         logoutUC,
-		updateProfileUC:  updateProfileUC,
-		changePasswordUC: changePasswordUC,
-		userRepo:         userRepo,
-		cookie:           cookie,
-		jwt:              jwt,
+		authUC:   authUC,
+		userRepo: userRepo,
+		cookie:   cookie,
+		jwt:      jwt,
 	}
 }
 
@@ -75,7 +60,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
-	out, err := h.registerUC.Execute(c.Request.Context(), input)
+	out, err := h.authUC.Register(c.Request.Context(), input)
 	if err != nil {
 		h.handleError(c, err)
 		return
@@ -102,7 +87,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	out, err := h.loginUC.Execute(c.Request.Context(), input, c.GetHeader("User-Agent"), c.ClientIP())
+	out, err := h.authUC.Login(c.Request.Context(), input, c.GetHeader("User-Agent"), c.ClientIP())
 	if err != nil {
 		h.handleError(c, err)
 		return
@@ -167,7 +152,7 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 		return
 	}
 
-	tokens, err := h.refreshUC.Execute(c.Request.Context(), ucauth.RefreshTokenInput{
+	tokens, err := h.authUC.RefreshToken(c.Request.Context(), ucauth.RefreshTokenInput{
 		RefreshToken: refreshToken,
 	})
 	if err != nil {
@@ -198,7 +183,7 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 		return
 	}
 
-	if err := h.logoutUC.Execute(c.Request.Context(), refreshToken); err != nil {
+	if err := h.authUC.Logout(c.Request.Context(), refreshToken); err != nil {
 		h.handleError(c, err)
 		return
 	}
@@ -289,7 +274,7 @@ func (h *AuthHandler) UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	dto, err := h.updateProfileUC.Execute(c.Request.Context(), userID, input)
+	dto, err := h.authUC.UpdateProfile(c.Request.Context(), userID, input)
 	if err != nil {
 		h.handleError(c, err)
 		return
@@ -312,7 +297,7 @@ func (h *AuthHandler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	if err := h.changePasswordUC.Execute(c.Request.Context(), userID, input); err != nil {
+	if err := h.authUC.ChangePassword(c.Request.Context(), userID, input); err != nil {
 		h.handleError(c, err)
 		return
 	}
