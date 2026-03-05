@@ -122,7 +122,7 @@ func (h *AuthHandler) Me(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	resp := gin.H{
 		"id":          u.ID.String(),
 		"first_name":  u.FirstName,
 		"last_name":   u.LastName,
@@ -131,7 +131,11 @@ func (h *AuthHandler) Me(c *gin.Context) {
 		"role":        string(u.Role),
 		"is_verified": u.IsVerified,
 		"created_at":  u.CreatedAt,
-	})
+	}
+	if u.OfficeID != nil {
+		resp["office_id"] = *u.OfficeID
+	}
+	c.JSON(http.StatusOK, resp)
 }
 
 // RefreshToken handles POST /auth/refresh.

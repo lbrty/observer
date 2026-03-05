@@ -4,6 +4,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { useAuth } from "@/stores/auth";
+
 import { DatePicker } from "@/components/date-picker";
 import { CheckIcon, WarningIcon, XIcon } from "@/components/icons";
 import { UISelect } from "@/components/ui-select";
@@ -44,6 +46,7 @@ export function SupportRecordDrawer({
   personId,
 }: SupportRecordDrawerProps) {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const isEdit = recordId !== null;
 
   const { data: record } = useSupportRecord(projectId, recordId ?? "");
@@ -58,7 +61,12 @@ export function SupportRecordDrawer({
 
   useEffect(() => {
     if (!open) {
-      setForm({ ...emptyForm, person_id: personId ?? "" });
+      setForm({
+        ...emptyForm,
+        person_id: personId ?? "",
+        consultant_id: user?.id ?? "",
+        office_id: user?.office_id ?? "",
+      });
       setSaved(false);
       setError("");
       setEditingId(null);
@@ -363,11 +371,10 @@ export function SupportRecordDrawer({
                     <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
                       {t("project.supportRecords.consultantId")}
                     </Field.Label>
-                    <Field.Control
-                      value={form.consultant_id}
-                      onChange={(e) => set("consultant_id", e.target.value)}
-                      className={inputClass}
-                    />
+                    <div className={`${inputClass} flex items-center text-fg-secondary`}>
+                      {user ? `${user.first_name} ${user.last_name}`.trim() || user.email : ""}
+                    </div>
+                    <input type="hidden" name="consultant_id" value={form.consultant_id} />
                   </Field.Root>
 
                   {officeOptions.length > 0 && (
