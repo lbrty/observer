@@ -474,7 +474,17 @@
       "byOffice": "Nach Büro",
       "byAgeGroup": "Nach Altersgruppe",
       "byTag": "Nach Schlagwort",
-      "familyUnits": "Familieneinheiten"
+      "familyUnits": "Familieneinheiten",
+      "axisCount": "Anzahl",
+      "filterOffice": "Büro",
+      "filterCategory": "Kategorie",
+      "filterConsultant": "Berater",
+      "filterCaseStatus": "Fallstatus",
+      "filterSex": "Geschlecht",
+      "filterAgeGroup": "Altersgruppe",
+      "statusFlow": "Statusverlauf",
+      "avgDays": "Ø {{days}} Tage",
+      "allValues": "Alle"
     }
   },
   "errors": {

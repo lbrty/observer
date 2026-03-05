@@ -474,7 +474,17 @@
       "byOffice": "За офісом",
       "byAgeGroup": "За віковою групою",
       "byTag": "За тегом",
-      "familyUnits": "Сімейні одиниці"
+      "familyUnits": "Сімейні одиниці",
+      "axisCount": "Кількість",
+      "filterOffice": "Офіс",
+      "filterCategory": "Категорія",
+      "filterConsultant": "Консультант",
+      "filterCaseStatus": "Статус справи",
+      "filterSex": "Стать",
+      "filterAgeGroup": "Вікова група",
+      "statusFlow": "Потік статусів справ",
+      "avgDays": "в середньому {{days}} дн.",
+      "allValues": "Всі"
     }
   },
   "errors": {

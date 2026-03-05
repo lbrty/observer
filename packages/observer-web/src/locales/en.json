@@ -474,7 +474,17 @@
       "byOffice": "By office",
       "byAgeGroup": "By age group",
       "byTag": "By tag",
-      "familyUnits": "Family units"
+      "familyUnits": "Family units",
+      "axisCount": "Count",
+      "filterOffice": "Office",
+      "filterCategory": "Category",
+      "filterConsultant": "Consultant",
+      "filterCaseStatus": "Case status",
+      "filterSex": "Sex",
+      "filterAgeGroup": "Age group",
+      "statusFlow": "Case status flow",
+      "avgDays": "avg {{days}} days",
+      "allValues": "All"
     }
   },
   "errors": {

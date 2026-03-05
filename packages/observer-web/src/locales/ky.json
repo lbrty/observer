@@ -470,11 +470,21 @@
       "byIdpStatus": "IKJ statusu boyunça",
       "byCategory": "Kategoriya boyunça",
       "byRegion": "Rayon boyunça",
-      "bySphere": "çöyrö boyunça",
+      "bySphere": "Çöyrö boyunça",
       "byOffice": "Ofis boyunça",
       "byAgeGroup": "Jaş tobu boyunça",
       "byTag": "Teg boyunça",
-      "familyUnits": "Üy-bülö birlikterin"
+      "familyUnits": "Üy-bülö birlikterin",
+      "axisCount": "Sany",
+      "filterOffice": "Ofis",
+      "filterCategory": "Kategoriya",
+      "filterConsultant": "Konsultant",
+      "filterCaseStatus": "İş statusu",
+      "filterSex": "Jynys",
+      "filterAgeGroup": "Jaş tobu",
+      "statusFlow": "İş statusu akymy",
+      "avgDays": "ortoço {{days}} kün",
+      "allValues": "Bardygy"
     }
   },
   "errors": {

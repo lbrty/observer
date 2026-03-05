@@ -3,8 +3,12 @@ import { useEffect, useRef, useState } from "react";
 
 import type { CountResult } from "@/types/report";
 
-interface PieChartProps {
-  data: CountResult[];
+interface Tooltip {
+  visible: boolean;
+  x: number;
+  y: number;
+  label: string;
+  count: number;
 }
 
 const COLORS = [
@@ -18,10 +22,18 @@ const COLORS = [
   "#f97316",
 ];
 
-export function PieChart({ data }: PieChartProps) {
+export function PieChart({ data }: { data: CountResult[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState(220);
+  const [tooltip, setTooltip] = useState<Tooltip>({
+    visible: false,
+    x: 0,
+    y: 0,
+    label: "",
+    count: 0,
+  });
+  const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -76,7 +88,41 @@ export function PieChart({ data }: PieChartProps) {
       .attr("d", arc)
       .attr("fill", (d) => color(d.data.label))
       .attr("stroke", "var(--bg, #fff)")
-      .attr("stroke-width", 2);
+      .attr("stroke-width", 2)
+      .attr("opacity", (d) =>
+        selectedLabel === null || selectedLabel === d.data.label ? 1 : 0.3,
+      )
+      .style("cursor", "pointer")
+      .on("mouseover", function (event: MouseEvent, d: d3.PieArcDatum<CountResult>) {
+        const bounds = containerRef.current?.getBoundingClientRect();
+        if (!bounds) return;
+        setTooltip({
+          visible: true,
+          x: event.clientX - bounds.left + 12,
+          y: event.clientY - bounds.top - 10,
+          label: d.data.label,
+          count: d.data.count,
+        });
+      })
+      .on("mousemove", function (event: MouseEvent, d: d3.PieArcDatum<CountResult>) {
+        const bounds = containerRef.current?.getBoundingClientRect();
+        if (!bounds) return;
+        setTooltip({
+          visible: true,
+          x: event.clientX - bounds.left + 12,
+          y: event.clientY - bounds.top - 10,
+          label: d.data.label,
+          count: d.data.count,
+        });
+      })
+      .on("mouseout", function () {
+        setTooltip((prev) => ({ ...prev, visible: false }));
+      })
+      .on("click", function (_event: MouseEvent, d: d3.PieArcDatum<CountResult>) {
+        setSelectedLabel((prev) =>
+          prev === d.data.label ? null : d.data.label,
+        );
+      });
 
     g.selectAll(".pie-label")
       .data(pie(data))
@@ -87,17 +133,52 @@ export function PieChart({ data }: PieChartProps) {
       .style("font-size", "11px")
       .style("fill", "#fff")
       .style("font-weight", "600")
+      .attr("opacity", (d) =>
+        selectedLabel === null || selectedLabel === d.data.label ? 1 : 0.3,
+      )
       .text((d) => (d.data.count > 0 ? d.data.count : ""));
-  }, [data, size]);
+  }, [data, size, selectedLabel]);
 
   if (data.length === 0) return null;
 
   return (
-    <div ref={containerRef} className="flex items-center gap-6">
+    <div ref={containerRef} className="relative flex items-center gap-6">
       <svg ref={svgRef} className="shrink-0" />
+      {tooltip.visible && (
+        <div
+          style={{
+            position: "absolute",
+            left: tooltip.x,
+            top: tooltip.y,
+            background: "var(--bg-secondary)",
+            border: "1px solid var(--border-secondary)",
+            borderRadius: 8,
+            padding: "6px 10px",
+            fontSize: 12,
+            color: "var(--fg)",
+            boxShadow: "var(--shadow-elevated)",
+            pointerEvents: "none",
+          }}
+        >
+          <strong>{tooltip.label}</strong>: {tooltip.count}
+        </div>
+      )}
       <ul className="space-y-1.5 text-sm">
         {data.map((d, i) => (
-          <li key={d.label} className="flex items-center gap-2">
+          <li
+            key={d.label}
+            className="flex items-center gap-2"
+            style={{
+              opacity:
+                selectedLabel === null || selectedLabel === d.label ? 1 : 0.3,
+              cursor: "pointer",
+            }}
+            onClick={() =>
+              setSelectedLabel((prev) =>
+                prev === d.label ? null : d.label,
+              )
+            }
+          >
             <span
               className="inline-block size-2.5 rounded-full shrink-0"
               style={{ backgroundColor: COLORS[i % COLORS.length] }}

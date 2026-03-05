@@ -474,7 +474,17 @@
       "byOffice": "По офису",
       "byAgeGroup": "По возрастной группе",
       "byTag": "По тегу",
-      "familyUnits": "Семейные единицы"
+      "familyUnits": "Семейные единицы",
+      "axisCount": "Количество",
+      "filterOffice": "Офис",
+      "filterCategory": "Категория",
+      "filterConsultant": "Консультант",
+      "filterCaseStatus": "Статус дела",
+      "filterSex": "Пол",
+      "filterAgeGroup": "Возрастная группа",
+      "statusFlow": "Поток статусов дел",
+      "avgDays": "в среднем {{days}} дн.",
+      "allValues": "Все"
     }
   },
   "errors": {
