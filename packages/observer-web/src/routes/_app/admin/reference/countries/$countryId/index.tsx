@@ -11,17 +11,10 @@ import { FormDialog } from "@/components/form-dialog";
 import { PageHeader } from "@/components/page-header";
 import { RowActions } from "@/components/row-actions";
 import { StatusBadge } from "@/components/status-badge";
-import {
-  useCreateState,
-  useDeleteState,
-  useStates,
-  useUpdateState,
-} from "@/hooks/use-states";
+import { useCreateState, useDeleteState, useStates, useUpdateState } from "@/hooks/use-states";
 import type { State } from "@/types/reference";
 
-export const Route = createFileRoute(
-  "/_app/admin/reference/countries/$countryId/",
-)({
+export const Route = createFileRoute("/_app/admin/reference/countries/$countryId/")({
   component: StatesPage,
 });
 
@@ -63,10 +56,7 @@ function StatesPage() {
       key: "actions",
       header: "",
       render: (s) => (
-        <RowActions
-          onEdit={() => setEditTarget(s)}
-          onDelete={() => setDeleteTarget(s)}
-        />
+        <RowActions onEdit={() => setEditTarget(s)} onDelete={() => setDeleteTarget(s)} />
       ),
     },
   ];
@@ -181,9 +171,7 @@ function StateFormDialog({
   const { t } = useTranslation();
   const [name, setName] = useState(initial?.name ?? "");
   const [code, setCode] = useState(initial?.code ?? "");
-  const [conflictZone, setConflictZone] = useState(
-    initial?.conflict_zone ?? "",
-  );
+  const [conflictZone, setConflictZone] = useState(initial?.conflict_zone ?? "");
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();

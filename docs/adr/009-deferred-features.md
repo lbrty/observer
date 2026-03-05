@@ -1,10 +1,10 @@
 # ADR-009: Deferred Features (Phase 2)
 
-| Field      | Value                                 |
-| ---------- | ------------------------------------- |
-| Status     | Accepted                              |
-| Date       | 2026-02-27                            |
-| Supersedes | —                                     |
+| Field      | Value                                  |
+| ---------- | -------------------------------------- |
+| Status     | Accepted                               |
+| Date       | 2026-02-27                             |
+| Supersedes | —                                      |
 | Components | observer, crypto, auth, reports, audit |
 
 ---

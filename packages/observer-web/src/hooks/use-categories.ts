@@ -1,8 +1,4 @@
-import type {
-  Category,
-  CreateCategoryInput,
-  UpdateCategoryInput,
-} from "@/types/reference";
+import type { Category, CreateCategoryInput, UpdateCategoryInput } from "@/types/reference";
 
 import { makeReferenceHooks } from "./make-reference-hooks";
 
@@ -11,13 +7,6 @@ const {
   useCreate: useCreateCategory,
   useUpdate: useUpdateCategory,
   useDelete: useDeleteCategory,
-} = makeReferenceHooks<Category, CreateCategoryInput, UpdateCategoryInput>(
-  "categories",
-);
+} = makeReferenceHooks<Category, CreateCategoryInput, UpdateCategoryInput>("categories");
 
-export {
-  useCategories,
-  useCreateCategory,
-  useUpdateCategory,
-  useDeleteCategory,
-};
+export { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory };

@@ -10,9 +10,7 @@ import { Pagination } from "@/components/pagination";
 import { useHouseholds } from "@/hooks/use-households";
 import type { Household } from "@/types/household";
 
-export const Route = createFileRoute(
-  "/_app/projects/$projectId/households/",
-)({
+export const Route = createFileRoute("/_app/projects/$projectId/households/")({
   component: HouseholdsListPage,
 });
 
@@ -50,9 +48,7 @@ function HouseholdsListPage() {
           <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-bg-tertiary text-fg-tertiary">
             <HouseSimpleIcon size={16} />
           </span>
-          <span className="font-medium text-fg">
-            {h.reference_number || "-"}
-          </span>
+          <span className="font-medium text-fg">{h.reference_number || "-"}</span>
         </div>
       ),
     },
@@ -60,19 +56,13 @@ function HouseholdsListPage() {
       key: "head_person_id",
       header: t("project.households.headPerson"),
       render: (h) => (
-        <span className="font-mono text-xs text-fg-secondary">
-          {h.head_person_id || "-"}
-        </span>
+        <span className="font-mono text-xs text-fg-secondary">{h.head_person_id || "-"}</span>
       ),
     },
     {
       key: "members",
       header: t("project.households.members"),
-      render: (h) => (
-        <span className="text-fg-secondary">
-          {h.members?.length ?? 0}
-        </span>
-      ),
+      render: (h) => <span className="text-fg-secondary">{h.members?.length ?? 0}</span>,
     },
     {
       key: "created_at",

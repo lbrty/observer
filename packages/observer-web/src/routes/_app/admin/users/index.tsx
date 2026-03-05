@@ -20,8 +20,7 @@ export const Route = createFileRoute("/_app/admin/users/")({
 });
 
 function Initials({ first, last }: { first: string; last: string }) {
-  const letters =
-    `${first?.charAt(0) ?? ""}${last?.charAt(0) ?? ""}`.toUpperCase() || "?";
+  const letters = `${first?.charAt(0) ?? ""}${last?.charAt(0) ?? ""}`.toUpperCase() || "?";
   return (
     <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-accent/10 text-xs font-semibold text-accent">
       {letters}
@@ -162,9 +161,7 @@ function UsersPage() {
         columns={columns}
         data={data?.users ?? []}
         keyExtractor={(u) => u.id}
-        onRowClick={(u) =>
-          navigate({ to: "/admin/users/$userId", params: { userId: u.id } })
-        }
+        onRowClick={(u) => navigate({ to: "/admin/users/$userId", params: { userId: u.id } })}
         isLoading={isLoading}
       />
 
@@ -264,9 +261,7 @@ function CreateUserDialog({
           <Field.Control
             required
             value={form.first_name}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, first_name: e.target.value }))
-            }
+            onChange={(e) => setForm((f) => ({ ...f, first_name: e.target.value }))}
             className={inputClass}
           />
         </Field.Root>
@@ -276,9 +271,7 @@ function CreateUserDialog({
           </Field.Label>
           <Field.Control
             value={form.last_name}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, last_name: e.target.value }))
-            }
+            onChange={(e) => setForm((f) => ({ ...f, last_name: e.target.value }))}
             className={inputClass}
           />
         </Field.Root>

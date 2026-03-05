@@ -11,11 +11,17 @@ interface Tooltip {
   count: number;
 }
 
+export interface BarLegendItem {
+  short: string;
+  full: string;
+}
+
 interface BarChartProps {
   data: CountResult[];
   width?: number;
   height?: number;
   yAxisLabel?: string;
+  legend?: BarLegendItem[];
 }
 
 export function BarChart({
@@ -23,6 +29,7 @@ export function BarChart({
   width = 500,
   height = 300,
   yAxisLabel = "Count",
+  legend,
 }: BarChartProps) {
   const ref = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -64,23 +71,18 @@ export function BarChart({
 
     const axisColor = "var(--fg-tertiary, #6b7280)";
 
-    const xAxis = g
-      .append("g")
-      .attr("transform", `translate(0,${h})`)
-      .call(d3.axisBottom(x));
+    const xAxis = g.append("g").attr("transform", `translate(0,${h})`).call(d3.axisBottom(x));
     xAxis
       .selectAll("text")
       .attr("transform", "rotate(-35)")
       .style("text-anchor", "end")
-      .style("font-size", "11px")
+      .style("font-size", "9px")
       .style("fill", axisColor);
     xAxis.selectAll("line").style("stroke", axisColor);
     xAxis.select(".domain").style("stroke", axisColor);
 
-    const yAxis = g
-      .append("g")
-      .call(d3.axisLeft(y).ticks(5));
-    yAxis.selectAll("text").style("font-size", "11px").style("fill", axisColor);
+    const yAxis = g.append("g").call(d3.axisLeft(y).ticks(5));
+    yAxis.selectAll("text").style("font-size", "9px").style("fill", axisColor);
     yAxis.selectAll("line").style("stroke", axisColor);
     yAxis.select(".domain").style("stroke", axisColor);
 
@@ -89,7 +91,7 @@ export function BarChart({
       .attr("x", -h / 2)
       .attr("y", -margin.left + 14)
       .attr("text-anchor", "middle")
-      .style("font-size", "12px")
+      .style("font-size", "10px")
       .style("fill", "var(--fg-tertiary, #6b7280)")
       .text(yAxisLabel);
 
@@ -114,9 +116,7 @@ export function BarChart({
       .attr("height", (d) => h - y(d.count) + 3)
       .attr("rx", 3)
       .attr("fill", "var(--color-accent, #6366f1)")
-      .attr("opacity", (d) =>
-        selectedLabel === null || selectedLabel === d.label ? 1 : 0.3,
-      )
+      .attr("opacity", (d) => (selectedLabel === null || selectedLabel === d.label ? 1 : 0.3))
       .style("cursor", "pointer")
       .on("mouseover", function (event: MouseEvent, d: CountResult) {
         const bounds = containerRef.current?.getBoundingClientRect();
@@ -154,11 +154,9 @@ export function BarChart({
       .attr("x", (d) => (x(d.label) ?? 0) + x.bandwidth() / 2)
       .attr("y", (d) => y(d.count) - 4)
       .attr("text-anchor", "middle")
-      .style("font-size", "11px")
+      .style("font-size", "9px")
       .style("fill", "var(--fg-secondary, #6b7280)")
-      .attr("opacity", (d) =>
-        selectedLabel === null || selectedLabel === d.label ? 1 : 0.3,
-      )
+      .attr("opacity", (d) => (selectedLabel === null || selectedLabel === d.label ? 1 : 0.3))
       .text((d) => d.count);
   }, [data, width, height, yAxisLabel, selectedLabel]);
 
@@ -184,6 +182,15 @@ export function BarChart({
           }}
         >
           <strong>{tooltip.label}</strong>: {tooltip.count}
+        </div>
+      )}
+      {legend && legend.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-border-secondary pt-3">
+          {legend.map((item) => (
+            <span key={item.short} className="text-[11px] text-fg-tertiary">
+              <span className="font-medium text-fg-secondary">{item.short}</span> — {item.full}
+            </span>
+          ))}
         </div>
       )}
     </div>

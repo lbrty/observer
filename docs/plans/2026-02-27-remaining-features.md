@@ -151,7 +151,13 @@ Each type file matches the backend DTOs. Pattern from `person.ts`:
 
 ```ts
 // types/support-record.ts
-export type SupportType = "humanitarian" | "legal" | "social" | "psychological" | "medical" | "general";
+export type SupportType =
+  | "humanitarian"
+  | "legal"
+  | "social"
+  | "psychological"
+  | "medical"
+  | "general";
 export type SupportSphere =
   | "housing_assistance"
   | "document_recovery"
@@ -465,7 +471,9 @@ export function useSupportRecords(projectId: string, params?: ListSupportRecords
     queryKey: ["support-records", projectId, params],
     queryFn: () =>
       api
-        .get(`projects/${projectId}/support-records`, { searchParams: params as Record<string, string> })
+        .get(`projects/${projectId}/support-records`, {
+          searchParams: params as Record<string, string>,
+        })
         .json<ListSupportRecordsOutput>(),
     placeholderData: keepPreviousData,
   });
@@ -492,7 +500,9 @@ export function useUpdateSupportRecord(projectId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, ...data }: UpdateSupportRecordInput & { id: string }) =>
-      api.patch(`projects/${projectId}/support-records/${id}`, { json: data }).json<SupportRecord>(),
+      api
+        .patch(`projects/${projectId}/support-records/${id}`, { json: data })
+        .json<SupportRecord>(),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["support-records", projectId] }),
   });
 }

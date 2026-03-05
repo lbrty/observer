@@ -52,10 +52,7 @@ function CountriesPage() {
       key: "actions",
       header: "",
       render: (c) => (
-        <RowActions
-          onEdit={() => setEditTarget(c)}
-          onDelete={() => setDeleteTarget(c)}
-        />
+        <RowActions onEdit={() => setEditTarget(c)} onDelete={() => setDeleteTarget(c)} />
       ),
     },
   ];

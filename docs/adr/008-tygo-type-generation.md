@@ -118,11 +118,7 @@ generate-types:
 `packages/observer-web/src/types/admin.ts` re-exports with any frontend-only additions:
 
 ```ts
-export type {
-  UserDTO,
-  ListUsersOutput,
-  UpdateUserInput,
-} from "./generated/admin";
+export type { UserDTO, ListUsersOutput, UpdateUserInput } from "./generated/admin";
 
 // Frontend-only types (query params, form state, etc.)
 export interface ListUsersParams {

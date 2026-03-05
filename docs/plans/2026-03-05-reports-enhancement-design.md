@@ -5,6 +5,7 @@
 ## 1. Global Filter Bar
 
 Six dropdowns added below date range pickers using existing `UISelect`:
+
 - **Office** — from `useOffices` hook
 - **Category** — from `useCategories` hook (via admin reference)
 - **Consultant** — from project members or `useUsers`
@@ -73,6 +74,7 @@ CREATE TRIGGER trg_person_status_change
 ### Seed Command
 
 Updated to generate realistic transition histories:
+
 - new → active: 1-14 days after registration
 - active → closed: 7-90 days after activation
 - Some closed → archived: 30-180 days later
@@ -111,6 +113,7 @@ Returns `[]StatusFlow{FromStatus, ToStatus, Count, AvgDays}`.
 Current issue: fixed `w-48` (192px) SVG with 300x300 viewBox wastes card space.
 
 Fix:
+
 - Remove fixed `w-48`, use responsive width
 - Center donut + legend using flexbox
 - Increase donut size to fill available space
@@ -118,6 +121,7 @@ Fix:
 ## 7. i18n
 
 New keys added to all 6 locales (en, ky, ru, uk, de, tr):
+
 - `project.reports.axisCount`
 - `project.reports.filterOffice`
 - `project.reports.filterCategory`

@@ -150,9 +150,7 @@ function TagsPage() {
             className="block h-9 w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg outline-none focus:border-accent"
           />
         </Field.Root>
-        {error && (
-          <p className="text-sm text-rose">{error}</p>
-        )}
+        {error && <p className="text-sm text-rose">{error}</p>}
       </FormDialog>
 
       <ConfirmDialog

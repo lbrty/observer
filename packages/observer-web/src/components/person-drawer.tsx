@@ -12,11 +12,7 @@ import { UISelect } from "@/components/ui-select";
 import { UISwitch } from "@/components/ui-switch";
 import { useCountries, useCreateCountry } from "@/hooks/use-countries";
 import { useOffices } from "@/hooks/use-offices";
-import {
-  useCreatePerson,
-  usePerson,
-  useUpdatePerson,
-} from "@/hooks/use-people";
+import { useCreatePerson, usePerson, useUpdatePerson } from "@/hooks/use-people";
 import { useCreatePlace, usePlaces } from "@/hooks/use-places";
 import { useCreateState, useStates } from "@/hooks/use-states";
 import type { CreatePersonInput, UpdatePersonInput } from "@/types/person";
@@ -50,12 +46,7 @@ const emptyForm = {
   consent_date: "",
 };
 
-export function PersonDrawer({
-  open,
-  onOpenChange,
-  projectId,
-  personId,
-}: PersonDrawerProps) {
+export function PersonDrawer({ open, onOpenChange, projectId, personId }: PersonDrawerProps) {
   const { t } = useTranslation();
   const isEdit = personId !== null;
 
@@ -70,8 +61,14 @@ export function PersonDrawer({
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [addCountryOpen, setAddCountryOpen] = useState(false);
-  const [addStateOpen, setAddStateOpen] = useState<{ open: boolean; forOrigin: boolean }>({ open: false, forOrigin: true });
-  const [addPlaceOpen, setAddPlaceOpen] = useState<{ open: boolean; forOrigin: boolean }>({ open: false, forOrigin: true });
+  const [addStateOpen, setAddStateOpen] = useState<{ open: boolean; forOrigin: boolean }>({
+    open: false,
+    forOrigin: true,
+  });
+  const [addPlaceOpen, setAddPlaceOpen] = useState<{ open: boolean; forOrigin: boolean }>({
+    open: false,
+    forOrigin: true,
+  });
 
   const [newCountryName, setNewCountryName] = useState("");
   const [newCountryCode, setNewCountryCode] = useState("");
@@ -154,7 +151,10 @@ export function PersonDrawer({
     try {
       const created = await createState.mutateAsync({
         countryId,
-        data: { name: newStateName, ...(newStateConflictZone && { conflict_zone: newStateConflictZone }) },
+        data: {
+          name: newStateName,
+          ...(newStateConflictZone && { conflict_zone: newStateConflictZone }),
+        },
       });
       if (addStateOpen.forOrigin) {
         set("origin_state", created.id);
@@ -209,8 +209,7 @@ export function PersonDrawer({
           patronymic: form.patronymic || undefined,
           sex: form.sex as UpdatePersonInput["sex"],
           birth_date: form.birth_date || undefined,
-          age_group: (form.age_group ||
-            undefined) as UpdatePersonInput["age_group"],
+          age_group: (form.age_group || undefined) as UpdatePersonInput["age_group"],
           primary_phone: form.primary_phone || undefined,
           email: form.email || undefined,
           origin_place_id: form.origin_place_id || undefined,
@@ -332,19 +331,14 @@ export function PersonDrawer({
           <Drawer.Popup className="fixed top-0 right-0 flex h-dvh w-full max-w-[840px] flex-col border-l border-border-secondary bg-bg-secondary shadow-elevated transition-transform duration-200 ease-out data-ending-style:translate-x-full data-starting-style:translate-x-full">
             <div className="flex shrink-0 items-center justify-between border-b border-border-secondary px-6 py-4">
               <Drawer.Title className="font-serif text-lg font-semibold text-fg">
-                {isEdit
-                  ? t("project.people.editTitle")
-                  : t("project.people.formTitle")}
+                {isEdit ? t("project.people.editTitle") : t("project.people.formTitle")}
               </Drawer.Title>
               <Drawer.Close className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg">
                 <XIcon size={18} />
               </Drawer.Close>
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className="flex min-h-0 flex-1 flex-col"
-            >
+            <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
               <div className="flex-1 space-y-5 overflow-y-auto px-6 py-5">
                 {saved && (
                   <div className="flex items-center gap-2 rounded-lg border border-foam/20 bg-foam/8 px-3 py-2.5 text-sm font-medium text-foam">
@@ -359,7 +353,9 @@ export function PersonDrawer({
                   </div>
                 )}
 
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">{t("project.people.identity")}</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
+                  {t("project.people.identity")}
+                </h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field.Root>
                     <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -411,10 +407,7 @@ export function PersonDrawer({
                     <span className="mb-1 block text-sm font-medium text-fg-secondary">
                       {t("project.people.birthDate")}
                     </span>
-                    <DatePicker
-                      value={form.birth_date}
-                      onChange={(v) => set("birth_date", v)}
-                    />
+                    <DatePicker value={form.birth_date} onChange={(v) => set("birth_date", v)} />
                   </div>
 
                   <Field.Root>
@@ -453,7 +446,9 @@ export function PersonDrawer({
                   </Field.Root>
                 </div>
 
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">{t("project.people.location")}</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
+                  {t("project.people.location")}
+                </h3>
                 <p className="text-xs font-medium text-fg-tertiary">
                   {t("project.people.originPlace")}
                 </p>
@@ -474,7 +469,12 @@ export function PersonDrawer({
                     </div>
                     <button
                       type="button"
-                      onClick={() => { setDialogError(""); setNewCountryName(""); setNewCountryCode(""); setAddCountryOpen(true); }}
+                      onClick={() => {
+                        setDialogError("");
+                        setNewCountryName("");
+                        setNewCountryCode("");
+                        setAddCountryOpen(true);
+                      }}
                       className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border-secondary bg-bg-secondary text-fg-tertiary hover:border-border-primary hover:text-fg"
                       title={t("project.people.addCountry")}
                     >
@@ -498,7 +498,12 @@ export function PersonDrawer({
                     <button
                       type="button"
                       disabled={!form.origin_country}
-                      onClick={() => { setDialogError(""); setNewStateName(""); setNewStateConflictZone(""); setAddStateOpen({ open: true, forOrigin: true }); }}
+                      onClick={() => {
+                        setDialogError("");
+                        setNewStateName("");
+                        setNewStateConflictZone("");
+                        setAddStateOpen({ open: true, forOrigin: true });
+                      }}
                       className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border-secondary bg-bg-secondary text-fg-tertiary hover:border-border-primary hover:text-fg disabled:opacity-30"
                       title={t("project.people.addState")}
                     >
@@ -519,7 +524,11 @@ export function PersonDrawer({
                     <button
                       type="button"
                       disabled={!form.origin_state}
-                      onClick={() => { setDialogError(""); setNewPlaceName(""); setAddPlaceOpen({ open: true, forOrigin: true }); }}
+                      onClick={() => {
+                        setDialogError("");
+                        setNewPlaceName("");
+                        setAddPlaceOpen({ open: true, forOrigin: true });
+                      }}
                       className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border-secondary bg-bg-secondary text-fg-tertiary hover:border-border-primary hover:text-fg disabled:opacity-30"
                       title={t("project.people.addPlace")}
                     >
@@ -548,7 +557,12 @@ export function PersonDrawer({
                     </div>
                     <button
                       type="button"
-                      onClick={() => { setDialogError(""); setNewCountryName(""); setNewCountryCode(""); setAddCountryOpen(true); }}
+                      onClick={() => {
+                        setDialogError("");
+                        setNewCountryName("");
+                        setNewCountryCode("");
+                        setAddCountryOpen(true);
+                      }}
                       className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border-secondary bg-bg-secondary text-fg-tertiary hover:border-border-primary hover:text-fg"
                       title={t("project.people.addCountry")}
                     >
@@ -572,7 +586,12 @@ export function PersonDrawer({
                     <button
                       type="button"
                       disabled={!form.current_country}
-                      onClick={() => { setDialogError(""); setNewStateName(""); setNewStateConflictZone(""); setAddStateOpen({ open: true, forOrigin: false }); }}
+                      onClick={() => {
+                        setDialogError("");
+                        setNewStateName("");
+                        setNewStateConflictZone("");
+                        setAddStateOpen({ open: true, forOrigin: false });
+                      }}
                       className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border-secondary bg-bg-secondary text-fg-tertiary hover:border-border-primary hover:text-fg disabled:opacity-30"
                       title={t("project.people.addState")}
                     >
@@ -593,7 +612,11 @@ export function PersonDrawer({
                     <button
                       type="button"
                       disabled={!form.current_state}
-                      onClick={() => { setDialogError(""); setNewPlaceName(""); setAddPlaceOpen({ open: true, forOrigin: false }); }}
+                      onClick={() => {
+                        setDialogError("");
+                        setNewPlaceName("");
+                        setAddPlaceOpen({ open: true, forOrigin: false });
+                      }}
                       className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border-secondary bg-bg-secondary text-fg-tertiary hover:border-border-primary hover:text-fg disabled:opacity-30"
                       title={t("project.people.addPlace")}
                     >
@@ -602,7 +625,9 @@ export function PersonDrawer({
                   </div>
                 </div>
 
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">{t("project.people.case")}</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
+                  {t("project.people.case")}
+                </h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field.Root>
                     <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -672,9 +697,7 @@ export function PersonDrawer({
                   disabled={isPending}
                   className="cursor-pointer rounded-lg bg-accent px-5 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
                 >
-                  {isPending
-                    ? t("project.people.saving")
-                    : t("project.people.save")}
+                  {isPending ? t("project.people.saving") : t("project.people.save")}
                 </button>
               </div>
 

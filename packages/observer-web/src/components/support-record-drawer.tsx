@@ -14,10 +14,7 @@ import {
   useSupportRecord,
   useUpdateSupportRecord,
 } from "@/hooks/use-support-records";
-import type {
-  CreateSupportRecordInput,
-  UpdateSupportRecordInput,
-} from "@/types/support-record";
+import type { CreateSupportRecordInput, UpdateSupportRecordInput } from "@/types/support-record";
 
 interface SupportRecordDrawerProps {
   open: boolean;
@@ -103,8 +100,7 @@ export function SupportRecordDrawer({
       if (isEdit && editingId) {
         const data: UpdateSupportRecordInput = {
           type: form.type as UpdateSupportRecordInput["type"],
-          sphere: (form.sphere ||
-            undefined) as UpdateSupportRecordInput["sphere"],
+          sphere: (form.sphere || undefined) as UpdateSupportRecordInput["sphere"],
           provided_at: form.provided_at || undefined,
           consultant_id: form.consultant_id || undefined,
           office_id: form.office_id || undefined,
@@ -132,8 +128,7 @@ export function SupportRecordDrawer({
             referred_to_office: form.referred_to_office,
           }),
           ...(form.referral_status && {
-            referral_status:
-              form.referral_status as CreateSupportRecordInput["referral_status"],
+            referral_status: form.referral_status as CreateSupportRecordInput["referral_status"],
           }),
           ...(form.notes && { notes: form.notes }),
         };
@@ -265,10 +260,7 @@ export function SupportRecordDrawer({
               </Drawer.Close>
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className="flex min-h-0 flex-1 flex-col"
-            >
+            <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
               <div className="flex-1 space-y-5 overflow-y-auto px-6 py-5">
                 {saved && (
                   <div className="flex items-center gap-2 rounded-lg border border-foam/20 bg-foam/8 px-3 py-2.5 text-sm font-medium text-foam">
@@ -283,7 +275,9 @@ export function SupportRecordDrawer({
                   </div>
                 )}
 
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">{t("project.supportRecords.recordInfo")}</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
+                  {t("project.supportRecords.recordInfo")}
+                </h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field.Root>
                     <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -305,9 +299,7 @@ export function SupportRecordDrawer({
                       value={form.sphere}
                       onValueChange={(v) => set("sphere", v)}
                       options={sphereOptions}
-                      placeholder={t(
-                        "project.supportRecords.selectSphere",
-                      )}
+                      placeholder={t("project.supportRecords.selectSphere")}
                       fullWidth
                     />
                   </Field.Root>
@@ -316,10 +308,7 @@ export function SupportRecordDrawer({
                     <span className="mb-1 block text-sm font-medium text-fg-secondary">
                       {t("project.supportRecords.providedAt")}
                     </span>
-                    <DatePicker
-                      value={form.provided_at}
-                      onChange={(v) => set("provided_at", v)}
-                    />
+                    <DatePicker value={form.provided_at} onChange={(v) => set("provided_at", v)} />
                   </div>
 
                   {!personId && (
@@ -338,7 +327,9 @@ export function SupportRecordDrawer({
                   )}
                 </div>
 
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">{t("project.supportRecords.referral")}</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
+                  {t("project.supportRecords.referral")}
+                </h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field.Root>
                     <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -348,9 +339,7 @@ export function SupportRecordDrawer({
                       value={form.referral_status}
                       onValueChange={(v) => set("referral_status", v)}
                       options={referralStatusOptions}
-                      placeholder={t(
-                        "project.supportRecords.selectReferralStatus",
-                      )}
+                      placeholder={t("project.supportRecords.selectReferralStatus")}
                       fullWidth
                     />
                   </Field.Root>
@@ -362,13 +351,9 @@ export function SupportRecordDrawer({
                       </Field.Label>
                       <UISelect
                         value={form.referred_to_office}
-                        onValueChange={(v) =>
-                          set("referred_to_office", v)
-                        }
+                        onValueChange={(v) => set("referred_to_office", v)}
                         options={officeOptions}
-                        placeholder={t(
-                          "project.supportRecords.selectOffice",
-                        )}
+                        placeholder={t("project.supportRecords.selectOffice")}
                         fullWidth
                       />
                     </Field.Root>
@@ -380,9 +365,7 @@ export function SupportRecordDrawer({
                     </Field.Label>
                     <Field.Control
                       value={form.consultant_id}
-                      onChange={(e) =>
-                        set("consultant_id", e.target.value)
-                      }
+                      onChange={(e) => set("consultant_id", e.target.value)}
                       className={inputClass}
                     />
                   </Field.Root>
@@ -396,16 +379,16 @@ export function SupportRecordDrawer({
                         value={form.office_id}
                         onValueChange={(v) => set("office_id", v)}
                         options={officeOptions}
-                        placeholder={t(
-                          "project.supportRecords.selectOffice",
-                        )}
+                        placeholder={t("project.supportRecords.selectOffice")}
                         fullWidth
                       />
                     </Field.Root>
                   )}
                 </div>
 
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">{t("project.supportRecords.notesSection")}</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
+                  {t("project.supportRecords.notesSection")}
+                </h3>
                 <textarea
                   value={form.notes}
                   onChange={(e) => set("notes", e.target.value)}

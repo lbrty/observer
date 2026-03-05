@@ -41,18 +41,13 @@ function CategoriesPage() {
     {
       key: "description",
       header: t("admin.reference.categories.description"),
-      render: (c) => (
-        <span className="text-fg-secondary">{c.description ?? "—"}</span>
-      ),
+      render: (c) => <span className="text-fg-secondary">{c.description ?? "—"}</span>,
     },
     {
       key: "actions",
       header: "",
       render: (c) => (
-        <RowActions
-          onEdit={() => setEditTarget(c)}
-          onDelete={() => setDeleteTarget(c)}
-        />
+        <RowActions onEdit={() => setEditTarget(c)} onDelete={() => setDeleteTarget(c)} />
       ),
     },
   ];

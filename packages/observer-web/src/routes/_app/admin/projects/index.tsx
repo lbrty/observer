@@ -58,11 +58,7 @@ function ProjectsPage() {
           </span>
           <div className="min-w-0">
             <p className="truncate font-medium text-fg">{p.name}</p>
-            {p.description && (
-              <p className="truncate text-xs text-fg-tertiary">
-                {p.description}
-              </p>
-            )}
+            {p.description && <p className="truncate text-xs text-fg-tertiary">{p.description}</p>}
           </div>
         </div>
       ),

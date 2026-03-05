@@ -58,15 +58,11 @@ function LoginPage() {
         <span className="brand-icon mb-4 inline-flex size-14 items-center justify-center rounded-2xl text-xl font-bold text-white">
           O
         </span>
-        <h1 className="font-serif text-xl font-semibold text-fg">
-          {t("auth.loginTitle")}
-        </h1>
+        <h1 className="font-serif text-xl font-semibold text-fg">{t("auth.loginTitle")}</h1>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">
-          {error}
-        </div>
+        <div className="mb-4 rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">{error}</div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -105,10 +101,7 @@ function LoginPage() {
 
       <p className="mt-5 text-center text-sm text-fg-tertiary">
         {t("auth.noAccount")}{" "}
-        <Link
-          to="/register"
-          className="font-medium text-accent hover:underline"
-        >
+        <Link to="/register" className="font-medium text-accent hover:underline">
           {t("auth.register")}
         </Link>
       </p>

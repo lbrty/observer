@@ -93,9 +93,7 @@ function UserDetailPage() {
             </Field.Label>
             <Field.Control
               value={form.first_name}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, first_name: e.target.value }))
-              }
+              onChange={(e) => setForm((f) => ({ ...f, first_name: e.target.value }))}
               className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
             />
           </Field.Root>
@@ -105,9 +103,7 @@ function UserDetailPage() {
             </Field.Label>
             <Field.Control
               value={form.last_name}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, last_name: e.target.value }))
-              }
+              onChange={(e) => setForm((f) => ({ ...f, last_name: e.target.value }))}
               className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
             />
           </Field.Root>
@@ -180,9 +176,7 @@ function UserDetailPage() {
           disabled={updateUser.isPending}
           className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
         >
-          {updateUser.isPending
-            ? t("admin.users.saving")
-            : t("admin.users.save")}
+          {updateUser.isPending ? t("admin.users.saving") : t("admin.users.save")}
         </button>
       </form>
 
@@ -245,9 +239,7 @@ function ResetPasswordSection({ userId }: { userId: string }) {
         onSubmit={handleSubmit}
       >
         {error && (
-          <div className="mb-3 rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">
-            {error}
-          </div>
+          <div className="mb-3 rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">{error}</div>
         )}
         <Field.Root>
           <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">

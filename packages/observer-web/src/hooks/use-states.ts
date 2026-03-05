@@ -1,16 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import type {
-  CreateStateInput,
-  State,
-  UpdateStateInput,
-} from "@/types/reference";
+import type { CreateStateInput, State, UpdateStateInput } from "@/types/reference";
 
 import { makeReferenceHooks } from "./make-reference-hooks";
 
-const { useUpdate: useUpdateState, useDelete: useDeleteState } =
-  makeReferenceHooks<State, CreateStateInput, UpdateStateInput>("states");
+const { useUpdate: useUpdateState, useDelete: useDeleteState } = makeReferenceHooks<
+  State,
+  CreateStateInput,
+  UpdateStateInput
+>("states");
 
 export { useUpdateState, useDeleteState };
 
@@ -29,13 +28,7 @@ export function useStates(countryId?: string) {
 export function useCreateState() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      countryId,
-      data,
-    }: {
-      countryId: string;
-      data: CreateStateInput;
-    }) =>
+    mutationFn: ({ countryId, data }: { countryId: string; data: CreateStateInput }) =>
       api
         .post("admin/states", {
           json: data,

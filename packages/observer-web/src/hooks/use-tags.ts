@@ -6,8 +6,7 @@ import type { CreateTagInput, ListTagsOutput, Tag } from "@/types/tag";
 export function useTags(projectId: string) {
   return useQuery({
     queryKey: ["tags", projectId],
-    queryFn: () =>
-      api.get(`projects/${projectId}/tags`).json<ListTagsOutput>(),
+    queryFn: () => api.get(`projects/${projectId}/tags`).json<ListTagsOutput>(),
     enabled: !!projectId,
   });
 }
@@ -24,8 +23,7 @@ export function useCreateTag(projectId: string) {
 export function useDeleteTag(projectId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      api.delete(`projects/${projectId}/tags/${id}`),
+    mutationFn: (id: string) => api.delete(`projects/${projectId}/tags/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["tags", projectId] }),
   });
 }

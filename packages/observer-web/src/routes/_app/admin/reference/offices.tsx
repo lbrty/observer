@@ -9,12 +9,7 @@ import { DataTable, type Column } from "@/components/data-table";
 import { FormDialog } from "@/components/form-dialog";
 import { PageHeader } from "@/components/page-header";
 import { RowActions } from "@/components/row-actions";
-import {
-  useCreateOffice,
-  useDeleteOffice,
-  useOffices,
-  useUpdateOffice,
-} from "@/hooks/use-offices";
+import { useCreateOffice, useDeleteOffice, useOffices, useUpdateOffice } from "@/hooks/use-offices";
 import type { Office } from "@/types/reference";
 
 export const Route = createFileRoute("/_app/admin/reference/offices")({
@@ -42,19 +37,14 @@ function OfficesPage() {
       key: "place_id",
       header: t("admin.reference.offices.place"),
       render: (o) => (
-        <span className="font-mono text-xs text-fg-secondary">
-          {o.place_id ?? "—"}
-        </span>
+        <span className="font-mono text-xs text-fg-secondary">{o.place_id ?? "—"}</span>
       ),
     },
     {
       key: "actions",
       header: "",
       render: (o) => (
-        <RowActions
-          onEdit={() => setEditTarget(o)}
-          onDelete={() => setDeleteTarget(o)}
-        />
+        <RowActions onEdit={() => setEditTarget(o)} onDelete={() => setDeleteTarget(o)} />
       ),
     },
   ];

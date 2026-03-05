@@ -149,7 +149,6 @@ func bulkInsert(ctx context.Context, db *sqlx.DB, table string, cols []string, r
 
 func ptr[T any](v T) *T { return &v }
 
-
 func now() time.Time { return time.Now().UTC() }
 
 // seedReferenceData creates countries, states, places, offices, and categories.
@@ -721,28 +720,80 @@ func genAndInsertStatusHistory(ctx context.Context, db *sqlx.DB, faker *gofakeit
 			continue
 		}
 
-		// new → active
-		offset := time.Duration(faker.IntRange(1, 14)) * 24 * time.Hour
-		activatedAt := regAt.Add(offset)
-		rows = append(rows, []any{p.ID, string(person.CaseStatusNew), string(person.CaseStatusActive), activatedAt})
+		roll := faker.IntRange(1, 100)
+		cursor := regAt
 
-		if status == person.CaseStatusActive {
-			continue
+		switch {
+		case roll <= 8:
+			// 8% — new → closed directly (quick resolution)
+			offset := time.Duration(faker.IntRange(1, 7)) * 24 * time.Hour
+			cursor = cursor.Add(offset)
+			rows = append(rows, []any{p.ID, string(person.CaseStatusNew), string(person.CaseStatusClosed), cursor})
+			if status == person.CaseStatusArchived {
+				offset = time.Duration(faker.IntRange(14, 90)) * 24 * time.Hour
+				cursor = cursor.Add(offset)
+				rows = append(rows, []any{p.ID, string(person.CaseStatusClosed), string(person.CaseStatusArchived), cursor})
+			}
+
+		case roll <= 13:
+			// 5% — new → archived directly (abandoned)
+			offset := time.Duration(faker.IntRange(30, 120)) * 24 * time.Hour
+			cursor = cursor.Add(offset)
+			rows = append(rows, []any{p.ID, string(person.CaseStatusNew), string(person.CaseStatusArchived), cursor})
+
+		case roll <= 20:
+			// 7% — new → active → archived (skip closed)
+			offset := time.Duration(faker.IntRange(1, 14)) * 24 * time.Hour
+			cursor = cursor.Add(offset)
+			rows = append(rows, []any{p.ID, string(person.CaseStatusNew), string(person.CaseStatusActive), cursor})
+			offset = time.Duration(faker.IntRange(14, 60)) * 24 * time.Hour
+			cursor = cursor.Add(offset)
+			rows = append(rows, []any{p.ID, string(person.CaseStatusActive), string(person.CaseStatusArchived), cursor})
+
+		case roll <= 28:
+			// 8% — new → active → closed → active (reopened) → closed → archived
+			offset := time.Duration(faker.IntRange(1, 14)) * 24 * time.Hour
+			cursor = cursor.Add(offset)
+			rows = append(rows, []any{p.ID, string(person.CaseStatusNew), string(person.CaseStatusActive), cursor})
+			offset = time.Duration(faker.IntRange(7, 45)) * 24 * time.Hour
+			cursor = cursor.Add(offset)
+			rows = append(rows, []any{p.ID, string(person.CaseStatusActive), string(person.CaseStatusClosed), cursor})
+			offset = time.Duration(faker.IntRange(7, 30)) * 24 * time.Hour
+			cursor = cursor.Add(offset)
+			rows = append(rows, []any{p.ID, string(person.CaseStatusClosed), string(person.CaseStatusActive), cursor})
+			if status == person.CaseStatusClosed || status == person.CaseStatusArchived {
+				offset = time.Duration(faker.IntRange(7, 60)) * 24 * time.Hour
+				cursor = cursor.Add(offset)
+				rows = append(rows, []any{p.ID, string(person.CaseStatusActive), string(person.CaseStatusClosed), cursor})
+			}
+			if status == person.CaseStatusArchived {
+				offset = time.Duration(faker.IntRange(30, 180)) * 24 * time.Hour
+				cursor = cursor.Add(offset)
+				rows = append(rows, []any{p.ID, string(person.CaseStatusClosed), string(person.CaseStatusArchived), cursor})
+			}
+
+		default:
+			// 72% — standard linear path: new → active → closed → archived
+			offset := time.Duration(faker.IntRange(1, 14)) * 24 * time.Hour
+			cursor = cursor.Add(offset)
+			rows = append(rows, []any{p.ID, string(person.CaseStatusNew), string(person.CaseStatusActive), cursor})
+
+			if status == person.CaseStatusActive {
+				continue
+			}
+
+			offset = time.Duration(faker.IntRange(7, 90)) * 24 * time.Hour
+			cursor = cursor.Add(offset)
+			rows = append(rows, []any{p.ID, string(person.CaseStatusActive), string(person.CaseStatusClosed), cursor})
+
+			if status == person.CaseStatusClosed {
+				continue
+			}
+
+			offset = time.Duration(faker.IntRange(30, 180)) * 24 * time.Hour
+			cursor = cursor.Add(offset)
+			rows = append(rows, []any{p.ID, string(person.CaseStatusClosed), string(person.CaseStatusArchived), cursor})
 		}
-
-		// active → closed
-		offset = time.Duration(faker.IntRange(7, 90)) * 24 * time.Hour
-		closedAt := activatedAt.Add(offset)
-		rows = append(rows, []any{p.ID, string(person.CaseStatusActive), string(person.CaseStatusClosed), closedAt})
-
-		if status == person.CaseStatusClosed {
-			continue
-		}
-
-		// closed → archived
-		offset = time.Duration(faker.IntRange(30, 180)) * 24 * time.Hour
-		archivedAt := closedAt.Add(offset)
-		rows = append(rows, []any{p.ID, string(person.CaseStatusClosed), string(person.CaseStatusArchived), archivedAt})
 	}
 
 	if len(rows) > 0 {

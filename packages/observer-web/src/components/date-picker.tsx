@@ -2,11 +2,7 @@ import { Popover } from "@base-ui/react/popover";
 import { useRef, useState } from "react";
 import { DayPicker, type DateRange } from "react-day-picker";
 
-import {
-  CalendarBlankIcon,
-  CaretLeftIcon,
-  CaretRightIcon,
-} from "@/components/icons";
+import { CalendarBlankIcon, CaretLeftIcon, CaretRightIcon } from "@/components/icons";
 
 import "./date-picker.css";
 
@@ -52,10 +48,7 @@ export function DatePicker({
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger
-        disabled={disabled}
-        className={`${triggerClass} ${className ?? ""}`}
-      >
+      <Popover.Trigger disabled={disabled} className={`${triggerClass} ${className ?? ""}`}>
         <CalendarBlankIcon className="size-4 shrink-0 text-fg-tertiary" />
         <span className={value ? "text-fg" : "text-fg-tertiary"}>
           {value ? formatDisplay(value) : placeholder}

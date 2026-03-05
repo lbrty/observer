@@ -10,17 +10,10 @@ import { DataTable, type Column } from "@/components/data-table";
 import { FormDialog } from "@/components/form-dialog";
 import { PageHeader } from "@/components/page-header";
 import { RowActions } from "@/components/row-actions";
-import {
-  useCreatePlace,
-  useDeletePlace,
-  usePlaces,
-  useUpdatePlace,
-} from "@/hooks/use-places";
+import { useCreatePlace, useDeletePlace, usePlaces, useUpdatePlace } from "@/hooks/use-places";
 import type { Place } from "@/types/reference";
 
-export const Route = createFileRoute(
-  "/_app/admin/reference/countries/$countryId/states/$stateId",
-)({
+export const Route = createFileRoute("/_app/admin/reference/countries/$countryId/states/$stateId")({
   component: PlacesPage,
 });
 
@@ -56,10 +49,7 @@ function PlacesPage() {
       key: "actions",
       header: "",
       render: (p) => (
-        <RowActions
-          onEdit={() => setEditTarget(p)}
-          onDelete={() => setDeleteTarget(p)}
-        />
+        <RowActions onEdit={() => setEditTarget(p)} onDelete={() => setDeleteTarget(p)} />
       ),
     },
   ];
@@ -165,11 +155,7 @@ function PlaceFormDialog({
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    await onSubmit(
-      name,
-      lat ? Number(lat) : undefined,
-      lon ? Number(lon) : undefined,
-    );
+    await onSubmit(name, lat ? Number(lat) : undefined, lon ? Number(lon) : undefined);
     if (!initial) {
       setName("");
       setLat("");

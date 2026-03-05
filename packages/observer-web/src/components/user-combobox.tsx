@@ -58,9 +58,7 @@ export function UserCombobox({ excludeIds = [], onSelect }: UserComboboxProps) {
           type="text"
           role="combobox"
           aria-expanded={showDropdown}
-          aria-activedescendant={
-            activeIndex >= 0 ? `user-option-${activeIndex}` : undefined
-          }
+          aria-activedescendant={activeIndex >= 0 ? `user-option-${activeIndex}` : undefined}
           aria-autocomplete="list"
           aria-controls="user-listbox"
           value={search}
@@ -80,13 +78,9 @@ export function UserCombobox({ excludeIds = [], onSelect }: UserComboboxProps) {
           role="listbox"
           className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-border-secondary bg-bg-secondary shadow-elevated"
         >
-          {isLoading && (
-            <p className="px-3 py-2 text-sm text-fg-tertiary">...</p>
-          )}
+          {isLoading && <p className="px-3 py-2 text-sm text-fg-tertiary">...</p>}
           {!isLoading && filtered.length === 0 && (
-            <p className="px-3 py-2 text-sm text-fg-tertiary">
-              {t("admin.common.noData")}
-            </p>
+            <p className="px-3 py-2 text-sm text-fg-tertiary">{t("admin.common.noData")}</p>
           )}
           {filtered.map((u, i) => (
             <button

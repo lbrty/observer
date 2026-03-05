@@ -1,8 +1,4 @@
-import {
-  MagnifyingGlassIcon,
-  PencilSimpleIcon,
-  UserCircleIcon,
-} from "@/components/icons";
+import { MagnifyingGlassIcon, PencilSimpleIcon, UserCircleIcon } from "@/components/icons";
 import { Tabs } from "@base-ui/react/tabs";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
@@ -93,9 +89,7 @@ function PeopleListPage() {
       header: t("project.people.registered"),
       render: (p) => (
         <span className="font-mono text-xs tabular-nums text-fg-tertiary">
-          {new Date(p.registered_at ?? p.created_at).toLocaleDateString(
-            "en-CA",
-          )}
+          {new Date(p.registered_at ?? p.created_at).toLocaleDateString("en-CA")}
         </span>
       ),
     },

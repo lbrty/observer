@@ -13,9 +13,7 @@ import { HTTPError } from "@/lib/api";
 
 import type { SupportSphere, SupportType } from "@/types/support-record";
 
-export const Route = createFileRoute(
-  "/_app/projects/$projectId/people/$personId/",
-)({
+export const Route = createFileRoute("/_app/projects/$projectId/people/$personId/")({
   component: PersonOverview,
 });
 
@@ -91,9 +89,7 @@ function PersonOverview() {
 
   const [type, setType] = useState<SupportType>("humanitarian");
   const [sphere, setSphere] = useState("");
-  const [providedAt, setProvidedAt] = useState(
-    new Date().toISOString().slice(0, 10),
-  );
+  const [providedAt, setProvidedAt] = useState(new Date().toISOString().slice(0, 10));
   const [notes, setNotes] = useState("");
 
   function resetForm() {
@@ -131,9 +127,7 @@ function PersonOverview() {
     } catch (err) {
       if (err instanceof HTTPError) {
         const body = await err.response.json().catch(() => null);
-        setError(
-          (body as { error?: string } | null)?.error ?? err.message,
-        );
+        setError((body as { error?: string } | null)?.error ?? err.message);
       } else {
         setError(String(err));
       }
@@ -179,34 +173,16 @@ function PersonOverview() {
           {t("project.people.identity")}
         </h2>
         <dl className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3">
-          <Detail
-            label={t("project.people.firstName")}
-            value={person.first_name}
-          />
-          <Detail
-            label={t("project.people.lastName")}
-            value={person.last_name}
-          />
-          <Detail
-            label={t("project.people.patronymic")}
-            value={person.patronymic}
-          />
-          <Detail
-            label={t("project.people.sexLabel")}
-            value={sexLabels[person.sex]}
-          />
-          <Detail
-            label={t("project.people.birthDate")}
-            value={person.birth_date}
-          />
+          <Detail label={t("project.people.firstName")} value={person.first_name} />
+          <Detail label={t("project.people.lastName")} value={person.last_name} />
+          <Detail label={t("project.people.patronymic")} value={person.patronymic} />
+          <Detail label={t("project.people.sexLabel")} value={sexLabels[person.sex]} />
+          <Detail label={t("project.people.birthDate")} value={person.birth_date} />
           <Detail
             label={t("project.people.ageGroup")}
             value={person.age_group ? ageLabels[person.age_group] : undefined}
           />
-          <Detail
-            label={t("project.people.phone")}
-            value={person.primary_phone}
-          />
+          <Detail label={t("project.people.phone")} value={person.primary_phone} />
           <Detail label={t("project.people.email")} value={person.email} />
         </dl>
 
@@ -224,14 +200,8 @@ function PersonOverview() {
               <StatusBadge label={person.case_status} />
             </dd>
           </div>
-          <Detail
-            label={t("project.people.externalId")}
-            value={person.external_id}
-          />
-          <Detail
-            label={t("project.people.office")}
-            value={person.office_id}
-          />
+          <Detail label={t("project.people.externalId")} value={person.external_id} />
+          <Detail label={t("project.people.office")} value={person.office_id} />
           <div>
             <dt className="text-xs font-medium text-fg-tertiary">
               {t("project.people.consentGiven")}
@@ -244,10 +214,7 @@ function PersonOverview() {
               />
             </dd>
           </div>
-          <Detail
-            label={t("project.people.consentDate")}
-            value={person.consent_date}
-          />
+          <Detail label={t("project.people.consentDate")} value={person.consent_date} />
         </dl>
       </section>
 
@@ -330,10 +297,7 @@ function PersonOverview() {
                 <label className="mb-1.5 block text-xs font-medium text-fg-secondary">
                   {t("project.supportRecords.providedAt")}
                 </label>
-                <DatePicker
-                  value={providedAt}
-                  onChange={setProvidedAt}
-                />
+                <DatePicker value={providedAt} onChange={setProvidedAt} />
               </div>
             </div>
 

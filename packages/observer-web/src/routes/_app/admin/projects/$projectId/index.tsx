@@ -71,9 +71,7 @@ function ProjectDetailPage() {
           </Field.Label>
           <textarea
             value={form.description}
-            onChange={(e) =>
-              setForm((f) => ({ ...f, description: e.target.value }))
-            }
+            onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
             rows={3}
             className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
           />
@@ -101,9 +99,7 @@ function ProjectDetailPage() {
             disabled={updateProject.isPending}
             className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
           >
-            {updateProject.isPending
-              ? t("admin.projects.saving")
-              : t("admin.projects.save")}
+            {updateProject.isPending ? t("admin.projects.saving") : t("admin.projects.save")}
           </button>
           <Link
             to="/projects/$projectId/people"

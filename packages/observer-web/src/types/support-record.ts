@@ -19,12 +19,7 @@ export type SupportSphere =
   | "psychological_support"
   | "other";
 
-export type ReferralStatus =
-  | "pending"
-  | "accepted"
-  | "completed"
-  | "declined"
-  | "no_response";
+export type ReferralStatus = "pending" | "accepted" | "completed" | "declined" | "no_response";
 
 export interface SupportRecord {
   id: string;

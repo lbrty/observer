@@ -12,9 +12,7 @@ import { SupportRecordDrawer } from "@/components/support-record-drawer";
 import { useSupportRecords } from "@/hooks/use-support-records";
 import type { SupportRecord } from "@/types/support-record";
 
-export const Route = createFileRoute(
-  "/_app/projects/$projectId/support-records/",
-)({
+export const Route = createFileRoute("/_app/projects/$projectId/support-records/")({
   component: SupportRecordsPage,
 });
 
@@ -74,9 +72,7 @@ function SupportRecordsPage() {
           <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-bg-tertiary text-fg-tertiary">
             <HandHeartIcon size={16} />
           </span>
-          <span className="truncate font-mono text-xs text-fg-secondary">
-            {r.person_id}
-          </span>
+          <span className="truncate font-mono text-xs text-fg-secondary">{r.person_id}</span>
         </div>
       ),
     },
@@ -88,18 +84,14 @@ function SupportRecordsPage() {
     {
       key: "sphere",
       header: t("project.supportRecords.sphere"),
-      render: (r) => (
-        <span className="text-fg-secondary">{r.sphere ?? "\u2014"}</span>
-      ),
+      render: (r) => <span className="text-fg-secondary">{r.sphere ?? "\u2014"}</span>,
     },
     {
       key: "provided_at",
       header: t("project.supportRecords.providedAt"),
       render: (r) => (
         <span className="font-mono text-xs tabular-nums text-fg-tertiary">
-          {r.provided_at
-            ? new Date(r.provided_at).toLocaleDateString("en-CA")
-            : "\u2014"}
+          {r.provided_at ? new Date(r.provided_at).toLocaleDateString("en-CA") : "\u2014"}
         </span>
       ),
     },

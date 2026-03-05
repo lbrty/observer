@@ -61,14 +61,8 @@ export function AppFooter() {
           />
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-fg-tertiary">
-            {t("common.language")}
-          </span>
-          <UISelect
-            value={getLangValue()}
-            onValueChange={handleLangChange}
-            options={LANGUAGES}
-          />
+          <span className="text-xs text-fg-tertiary">{t("common.language")}</span>
+          <UISelect value={getLangValue()} onValueChange={handleLangChange} options={LANGUAGES} />
         </div>
       </div>
     </footer>

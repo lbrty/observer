@@ -6,9 +6,7 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { TrashIcon } from "@/components/icons";
 import { useCreateNote, useDeleteNote, useNotes } from "@/hooks/use-notes";
 
-export const Route = createFileRoute(
-  "/_app/projects/$projectId/people/$personId/notes",
-)({
+export const Route = createFileRoute("/_app/projects/$projectId/people/$personId/notes")({
   component: PersonNotes,
 });
 
@@ -37,9 +35,7 @@ function PersonNotes() {
 
   return (
     <div>
-      <h2 className="mb-4 font-serif text-lg font-semibold text-fg">
-        {t("project.notes.title")}
-      </h2>
+      <h2 className="mb-4 font-serif text-lg font-semibold text-fg">{t("project.notes.title")}</h2>
 
       <form onSubmit={handleSubmit} className="mb-6">
         <textarea
@@ -63,16 +59,11 @@ function PersonNotes() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 3 }, (_, i) => (
-            <div
-              key={i}
-              className="h-24 animate-pulse rounded-xl bg-bg-tertiary"
-            />
+            <div key={i} className="h-24 animate-pulse rounded-xl bg-bg-tertiary" />
           ))}
         </div>
       ) : !data?.notes.length ? (
-        <p className="py-12 text-center text-sm text-fg-tertiary">
-          {t("project.notes.empty")}
-        </p>
+        <p className="py-12 text-center text-sm text-fg-tertiary">{t("project.notes.empty")}</p>
       ) : (
         <div className="space-y-3">
           {data.notes.map((note) => (

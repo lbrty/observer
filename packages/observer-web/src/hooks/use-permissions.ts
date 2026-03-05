@@ -11,10 +11,7 @@ import type {
 export function usePermissions(projectId: string) {
   return useQuery({
     queryKey: ["permissions", projectId],
-    queryFn: () =>
-      api
-        .get(`admin/projects/${projectId}/permissions`)
-        .json<PermissionListOutput>(),
+    queryFn: () => api.get(`admin/projects/${projectId}/permissions`).json<PermissionListOutput>(),
     enabled: !!projectId,
   });
 }
@@ -22,18 +19,9 @@ export function usePermissions(projectId: string) {
 export function useAssignPermission() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      projectId,
-      data,
-    }: {
-      projectId: string;
-      data: AssignPermissionInput;
-    }) =>
-      api
-        .post(`admin/projects/${projectId}/permissions`, { json: data })
-        .json<ProjectPermission>(),
-    onSuccess: (_d, vars) =>
-      qc.invalidateQueries({ queryKey: ["permissions", vars.projectId] }),
+    mutationFn: ({ projectId, data }: { projectId: string; data: AssignPermissionInput }) =>
+      api.post(`admin/projects/${projectId}/permissions`, { json: data }).json<ProjectPermission>(),
+    onSuccess: (_d, vars) => qc.invalidateQueries({ queryKey: ["permissions", vars.projectId] }),
   });
 }
 
@@ -52,8 +40,7 @@ export function useUpdatePermission() {
       api
         .patch(`admin/projects/${projectId}/permissions/${id}`, { json: data })
         .json<ProjectPermission>(),
-    onSuccess: (_d, vars) =>
-      qc.invalidateQueries({ queryKey: ["permissions", vars.projectId] }),
+    onSuccess: (_d, vars) => qc.invalidateQueries({ queryKey: ["permissions", vars.projectId] }),
   });
 }
 
@@ -62,7 +49,6 @@ export function useRevokePermission() {
   return useMutation({
     mutationFn: ({ projectId, id }: { projectId: string; id: string }) =>
       api.delete(`admin/projects/${projectId}/permissions/${id}`).json(),
-    onSuccess: (_d, vars) =>
-      qc.invalidateQueries({ queryKey: ["permissions", vars.projectId] }),
+    onSuccess: (_d, vars) => qc.invalidateQueries({ queryKey: ["permissions", vars.projectId] }),
   });
 }

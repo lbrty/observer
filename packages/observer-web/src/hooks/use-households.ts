@@ -1,9 +1,4 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
 import type {
@@ -15,10 +10,7 @@ import type {
   UpdateHouseholdInput,
 } from "@/types/household";
 
-export function useHouseholds(
-  projectId: string,
-  params: ListHouseholdsParams = {},
-) {
+export function useHouseholds(projectId: string, params: ListHouseholdsParams = {}) {
   return useQuery({
     queryKey: ["households", projectId, params],
     queryFn: () =>
@@ -37,8 +29,7 @@ export function useHouseholds(
 export function useHousehold(projectId: string, id: string) {
   return useQuery({
     queryKey: ["households", projectId, id],
-    queryFn: () =>
-      api.get(`projects/${projectId}/households/${id}`).json<Household>(),
+    queryFn: () => api.get(`projects/${projectId}/households/${id}`).json<Household>(),
     enabled: !!projectId && !!id,
   });
 }
@@ -47,11 +38,8 @@ export function useCreateHousehold(projectId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: CreateHouseholdInput) =>
-      api
-        .post(`projects/${projectId}/households`, { json: data })
-        .json<Household>(),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["households", projectId] }),
+      api.post(`projects/${projectId}/households`, { json: data }).json<Household>(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["households", projectId] }),
   });
 }
 
@@ -59,58 +47,37 @@ export function useUpdateHousehold(projectId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateHouseholdInput }) =>
-      api
-        .patch(`projects/${projectId}/households/${id}`, { json: data })
-        .json<Household>(),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["households", projectId] }),
+      api.patch(`projects/${projectId}/households/${id}`, { json: data }).json<Household>(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["households", projectId] }),
   });
 }
 
 export function useDeleteHousehold(projectId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      api.delete(`projects/${projectId}/households/${id}`),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["households", projectId] }),
+    mutationFn: (id: string) => api.delete(`projects/${projectId}/households/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["households", projectId] }),
   });
 }
 
 export function useAddHouseholdMember(projectId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      householdId,
-      data,
-    }: {
-      householdId: string;
-      data: AddMemberInput;
-    }) =>
+    mutationFn: ({ householdId, data }: { householdId: string; data: AddMemberInput }) =>
       api
         .post(`projects/${projectId}/households/${householdId}/members`, {
           json: data,
         })
         .json(),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["households", projectId] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["households", projectId] }),
   });
 }
 
 export function useRemoveHouseholdMember(projectId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({
-      householdId,
-      personId,
-    }: {
-      householdId: string;
-      personId: string;
-    }) =>
-      api.delete(
-        `projects/${projectId}/households/${householdId}/members/${personId}`,
-      ),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["households", projectId] }),
+    mutationFn: ({ householdId, personId }: { householdId: string; personId: string }) =>
+      api.delete(`projects/${projectId}/households/${householdId}/members/${personId}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["households", projectId] }),
   });
 }

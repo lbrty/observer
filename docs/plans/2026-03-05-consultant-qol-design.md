@@ -13,15 +13,19 @@
 ### Task 1: Backend — Expand adminRead to include consultant
 
 **Files:**
+
 - Modify: `internal/server/server.go:128`
 
 **Step 1: Update adminRead RequireRole**
 
 Change line 128 from:
+
 ```go
 adminRead := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff))
 ```
+
 to:
+
 ```go
 adminRead := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff, user.RoleConsultant))
 ```
@@ -43,6 +47,7 @@ git commit -m "allow consultants to read admin reference data"
 ### Task 2: Backend — Add adminWrite group for consultant reference data
 
 **Files:**
+
 - Modify: `internal/server/server.go:145-181`
 
 **Step 1: Add the adminWrite group between adminRead and admin blocks**
@@ -50,6 +55,7 @@ git commit -m "allow consultants to read admin reference data"
 After the `adminRead` block (after line 143), insert a new route group. Then **remove** the POST/PATCH routes for countries, states, places, categories from the `admin` block (they move to `adminWrite`). The `admin` block keeps only DELETE for these resources, plus all offices write routes.
 
 The new `adminWrite` block:
+
 ```go
 // Reference data write endpoints (admin + staff + consultant)
 adminWrite := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff, user.RoleConsultant))
@@ -69,6 +75,7 @@ adminWrite := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole
 ```
 
 The `admin` block (admin-only) should keep:
+
 - All user management (POST/PATCH/POST reset-password)
 - All project management (GET/POST/PATCH projects, permissions CRUD)
 - All office write routes (POST/PATCH/DELETE offices)
@@ -91,6 +98,7 @@ git commit -m "add adminWrite group for consultant reference data access"
 ### Task 3: Frontend — Add i18n keys for new UI elements
 
 **Files:**
+
 - Modify: `packages/observer-web/src/locales/en.json`
 - Modify: `packages/observer-web/src/locales/ky.json`
 - Modify: `packages/observer-web/src/locales/uk.json`
@@ -100,6 +108,7 @@ git commit -m "add adminWrite group for consultant reference data access"
 **Step 1: Add keys to en.json**
 
 Inside `project.people`, add:
+
 ```json
 "quickSupportTitle": "Quick add support record",
 "quickSupportAdd": "Add support record",
@@ -107,6 +116,7 @@ Inside `project.people`, add:
 ```
 
 Inside `project.people`, add (for the add-reference dialogs):
+
 ```json
 "addCountry": "Add country",
 "addState": "Add state",
@@ -114,6 +124,7 @@ Inside `project.people`, add (for the add-reference dialogs):
 ```
 
 Inside `admin.common` or create `common` section if not present, add:
+
 ```json
 "nameRequired": "Name is required"
 ```
@@ -134,6 +145,7 @@ git commit -m "add i18n keys for consultant QoL features"
 ### Task 4: Frontend — Inline support record form on person overview
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/projects/$projectId/people/$personId/index.tsx`
 
 **Step 1: Add the inline form component**
@@ -147,13 +159,15 @@ Below the existing `<section>` card in `PersonOverview`, add a collapsible inlin
 - When expanded, show a flat form card with subtle section dividers:
 
 ```tsx
-{/* Section divider pattern */}
+{
+  /* Section divider pattern */
+}
 <div className="flex items-center gap-3">
   <span className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
     {t("project.supportRecords.recordInfo")}
   </span>
   <span className="h-px flex-1 bg-border-secondary" />
-</div>
+</div>;
 ```
 
 - Form fields in a 2-col grid: Type (select, required), Sphere (select), Provided at (date), Notes (textarea 2 rows, full width)
@@ -166,6 +180,7 @@ Use the same `inputClass` pattern and `UISelect` component as existing drawers. 
 **Step 2: Test manually**
 
 Navigate to a person's overview tab, verify:
+
 - Button appears below person details
 - Form expands/collapses
 - Type select works
@@ -184,6 +199,7 @@ git commit -m "add inline support record form on person overview"
 ### Task 5: Frontend — Add reference data dialog component
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/add-reference-dialog.tsx`
 
 **Step 1: Create a reusable dialog component**
@@ -203,29 +219,45 @@ interface AddReferenceDialogProps {
 ```
 
 Use `@base-ui/react/dialog` (check existing usage in the codebase for the correct import). The dialog should be a small centered modal with:
+
 - Title
 - Error banner (if error)
 - `{children}` for form fields
 - Cancel / Save buttons in footer
 
 Pattern:
+
 ```tsx
 import { Dialog } from "@base-ui/react/dialog";
 
-export function AddReferenceDialog({ open, onOpenChange, title, children, onSubmit, isPending, error }: AddReferenceDialogProps) {
+export function AddReferenceDialog({
+  open,
+  onOpenChange,
+  title,
+  children,
+  onSubmit,
+  isPending,
+  error,
+}: AddReferenceDialogProps) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/25 backdrop-blur-xs ..." />
         <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border-secondary bg-bg-secondary p-6 shadow-elevated ...">
-          <Dialog.Title className="font-serif text-lg font-semibold text-fg">
-            {title}
-          </Dialog.Title>
+          <Dialog.Title className="font-serif text-lg font-semibold text-fg">{title}</Dialog.Title>
           {error && <error banner />}
-          <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="mt-4 space-y-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              onSubmit();
+            }}
+            className="mt-4 space-y-4"
+          >
             {children}
             <div className="flex justify-end gap-2 pt-2">
-              <Dialog.Close className="...cancel styles...">{t("admin.common.cancel")}</Dialog.Close>
+              <Dialog.Close className="...cancel styles...">
+                {t("admin.common.cancel")}
+              </Dialog.Close>
               <button type="submit" disabled={isPending} className="...accent button...">
                 {isPending ? t("project.people.saving") : t("project.people.save")}
               </button>
@@ -250,11 +282,13 @@ git commit -m "add reusable AddReferenceDialog component"
 ### Task 6: Frontend — Wire add-reference dialogs into person drawer
 
 **Files:**
+
 - Modify: `packages/observer-web/src/components/person-drawer.tsx`
 
 **Step 1: Add state and imports**
 
 Add imports for:
+
 - `AddReferenceDialog` from `@/components/add-reference-dialog`
 - `useCreateCountry` from `@/hooks/use-countries`
 - `useCreateState` from `@/hooks/use-states`
@@ -264,10 +298,17 @@ Add imports for:
 - `useQueryClient` is already imported
 
 Add state for 3 dialogs:
+
 ```tsx
 const [addCountryOpen, setAddCountryOpen] = useState(false);
-const [addStateOpen, setAddStateOpen] = useState<{ open: boolean; forOrigin: boolean }>({ open: false, forOrigin: true });
-const [addPlaceOpen, setAddPlaceOpen] = useState<{ open: boolean; forOrigin: boolean }>({ open: false, forOrigin: true });
+const [addStateOpen, setAddStateOpen] = useState<{ open: boolean; forOrigin: boolean }>({
+  open: false,
+  forOrigin: true,
+});
+const [addPlaceOpen, setAddPlaceOpen] = useState<{ open: boolean; forOrigin: boolean }>({
+  open: false,
+  forOrigin: true,
+});
 
 // Form state for each dialog
 const [newCountryName, setNewCountryName] = useState("");
@@ -292,7 +333,11 @@ For each of the 6 location selects (origin country/state/place, current country/
   <div className="flex-1">
     <UISelect
       value={form.origin_country}
-      onValueChange={(v) => { set("origin_country", v); set("origin_state", ""); set("origin_place_id", ""); }}
+      onValueChange={(v) => {
+        set("origin_country", v);
+        set("origin_state", "");
+        set("origin_place_id", "");
+      }}
       options={countryOptions}
       placeholder={t("project.people.selectCountry")}
       fullWidth
@@ -300,7 +345,12 @@ For each of the 6 location selects (origin country/state/place, current country/
   </div>
   <button
     type="button"
-    onClick={() => { setDialogError(""); setNewCountryName(""); setNewCountryCode(""); setAddCountryOpen(true); }}
+    onClick={() => {
+      setDialogError("");
+      setNewCountryName("");
+      setNewCountryCode("");
+      setAddCountryOpen(true);
+    }}
     className="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border-secondary bg-bg-secondary text-fg-tertiary hover:border-border-primary hover:text-fg"
     title={t("project.people.addCountry")}
   >
@@ -336,7 +386,10 @@ async function handleAddState() {
   try {
     const created = await createState.mutateAsync({
       countryId,
-      data: { name: newStateName, ...(newStateConflictZone && { conflict_zone: newStateConflictZone }) },
+      data: {
+        name: newStateName,
+        ...(newStateConflictZone && { conflict_zone: newStateConflictZone }),
+      },
     });
     if (addStateOpen.forOrigin) {
       set("origin_state", created.id);

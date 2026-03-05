@@ -32,6 +32,7 @@ git commit -m "add gofakeit v7 dependency"
 ### Task 2: Create seed command
 
 **Files:**
+
 - Create: `cmd/observer/cmd/seed.go`
 - Modify: `cmd/observer/main.go` (add `rootCmd.AddCommand(cmd.SeedCmd)`)
 
@@ -70,6 +71,7 @@ import (
 ```
 
 **SeedCmd declaration:**
+
 ```go
 var SeedCmd = &cobra.Command{
 	Use:   "seed",
@@ -85,6 +87,7 @@ func init() {
 ```
 
 **runSeed function — high-level flow:**
+
 ```go
 func runSeed(cmd *cobra.Command, _ []string) error {
 	peopleCount, _ := cmd.Flags().GetInt("people")
@@ -142,6 +145,7 @@ func runSeed(cmd *cobra.Command, _ []string) error {
 ```
 
 **truncateAll — raw SQL TRUNCATE CASCADE:**
+
 ```go
 func truncateAll(ctx context.Context, db *sqlx.DB) error {
 	tables := []string{
@@ -170,6 +174,7 @@ Uses repository.NewCountryRepository(sqlxDB), etc. Returns slices of created ent
 Countries, states, places as described in design. Each entity gets `ID: ulid.NewString()`, `CreatedAt/UpdatedAt: time.Now().UTC()`.
 
 Categories (12):
+
 ```go
 categoryNames := []string{
 	"Internally Displaced Person", "Refugee", "Asylum Seeker", "Returnee",
@@ -180,6 +185,7 @@ categoryNames := []string{
 ```
 
 **seedUsers — 4 fixed users:**
+
 ```go
 type seedUser struct {
 	email string
@@ -200,6 +206,7 @@ seedUsers := []seedUser{
 All get password `"password"`, hashed with `crypto.NewArgonHasher()`. Returns `[]*user.User`.
 
 **seedProject — create project with faker name:**
+
 ```go
 proj := &project.Project{
 	ID:      ulid.NewString(),
@@ -211,12 +218,14 @@ proj := &project.Project{
 ```
 
 **seedPermissions — assign roles to each project:**
+
 - admin → owner (all flags true)
 - staff → manager (all flags true)
 - consultant → consultant (can_view_contact=true, others false)
 - guest → viewer (all flags false)
 
 **seedTags — 5-8 random tags per project:**
+
 ```go
 tagPool := []string{"urgent", "follow-up", "legal-aid", "housing", "medical", "employment", "education", "documentation", "family", "vulnerable"}
 count := faker.IntRange(5, 8)
@@ -224,6 +233,7 @@ count := faker.IntRange(5, 8)
 
 **seedPeople — N people per project:**
 Each person gets:
+
 - `FirstName`, `LastName` from faker
 - Random `Sex` from enum values
 - Random `AgeGroup` from enum values
@@ -243,6 +253,7 @@ Each person gets:
 
 **seedSupportRecords — 0-3 per person:**
 Each record:
+
 - Random `Type` from support types
 - Random `Sphere` (70% chance)
 - `ProvidedAt` = random date after person's `RegisteredAt`
@@ -253,6 +264,7 @@ Each record:
 
 **seedMigrationRecords — 0-2 per person:**
 Each record:
+
 - `FromPlaceID` = person's origin place
 - `DestinationPlaceID` = random place
 - `MigrationDate` = random date
@@ -261,16 +273,19 @@ Each record:
 - `Notes` from faker (40% chance)
 
 **seedNotes — 0-2 per person:**
+
 - `Body` = faker.Sentence(faker.IntRange(5, 20))
 - `AuthorID` = consultant or staff user
 
 **seedPets — 0-1 per person (30% chance):**
+
 - `Name` = faker.PetName()
 - `Status` = random from pet statuses
 - `OwnerID` = person ID
 
 **seedHouseholds — ~20% of people grouped:**
 Take every 5th person as household head, group with 1-3 following people:
+
 - Create household with `HeadPersonID`
 - Add head as `RelationshipHead`
 - Add other members with random relationships (spouse, child, parent, sibling)
@@ -287,6 +302,7 @@ Run: `go build ./...`
 
 Run: `observer seed --people 10 --projects 1 --seed 42`
 Expected output:
+
 ```
 Truncating all tables...
 Seeding reference data...

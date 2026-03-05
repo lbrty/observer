@@ -30,12 +30,7 @@ function getPageNumbers(current: number, total: number): (number | "...")[] {
   return pages;
 }
 
-export function Pagination({
-  page,
-  perPage,
-  total,
-  onChange,
-}: PaginationProps) {
+export function Pagination({ page, perPage, total, onChange }: PaginationProps) {
   const { t } = useTranslation();
   const totalPages = Math.max(1, Math.ceil(total / perPage));
 

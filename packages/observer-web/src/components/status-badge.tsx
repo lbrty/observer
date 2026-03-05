@@ -40,16 +40,13 @@ const statusVariants: Record<string, Variant> = {
 };
 
 export function StatusBadge({ label, variant, dot }: StatusBadgeProps) {
-  const resolved =
-    variant ?? roleVariants[label] ?? statusVariants[label] ?? "neutral";
+  const resolved = variant ?? roleVariants[label] ?? statusVariants[label] ?? "neutral";
 
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium ${variants[resolved]}`}
     >
-      {dot !== false && (
-        <span className={`size-1.5 rounded-full ${dotColors[resolved]}`} />
-      )}
+      {dot !== false && <span className={`size-1.5 rounded-full ${dotColors[resolved]}`} />}
       {label}
     </span>
   );

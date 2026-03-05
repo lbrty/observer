@@ -2,13 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
 import { api, HTTPError } from "@/lib/api";
-import type {
-  LoginInput,
-  LoginOutput,
-  RegisterInput,
-  RegisterOutput,
-  User,
-} from "@/types/auth";
+import type { LoginInput, LoginOutput, RegisterInput, RegisterOutput, User } from "@/types/auth";
 
 interface AuthState {
   user: User | null;
@@ -43,9 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function login(input: LoginInput): Promise<LoginOutput> {
-    const data = await api
-      .post("auth/login", { json: input })
-      .json<LoginOutput>();
+    const data = await api.post("auth/login", { json: input }).json<LoginOutput>();
 
     if (!data.requires_mfa && data.user) {
       setUser(data.user);

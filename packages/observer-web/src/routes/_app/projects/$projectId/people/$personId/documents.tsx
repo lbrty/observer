@@ -8,9 +8,7 @@ import { TrashIcon } from "@/components/icons";
 import { useDeleteDocument, useDocuments } from "@/hooks/use-documents";
 import type { Document } from "@/types/document";
 
-export const Route = createFileRoute(
-  "/_app/projects/$projectId/people/$personId/documents",
-)({
+export const Route = createFileRoute("/_app/projects/$projectId/people/$personId/documents")({
   component: PersonDocuments,
 });
 
@@ -40,16 +38,12 @@ function PersonDocuments() {
     {
       key: "name",
       header: t("project.documents.name"),
-      render: (doc) => (
-        <span className="font-medium text-fg">{doc.name}</span>
-      ),
+      render: (doc) => <span className="font-medium text-fg">{doc.name}</span>,
     },
     {
       key: "mime_type",
       header: t("project.documents.mimeType"),
-      render: (doc) => (
-        <span className="text-fg-secondary">{doc.mime_type}</span>
-      ),
+      render: (doc) => <span className="text-fg-secondary">{doc.mime_type}</span>,
     },
     {
       key: "size",
@@ -101,9 +95,7 @@ function PersonDocuments() {
       />
 
       {!isLoading && !data?.documents.length && (
-        <p className="py-12 text-center text-sm text-fg-tertiary">
-          {t("project.documents.empty")}
-        </p>
+        <p className="py-12 text-center text-sm text-fg-tertiary">{t("project.documents.empty")}</p>
       )}
 
       <ConfirmDialog

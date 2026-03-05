@@ -1,11 +1,6 @@
 import { CheckIcon, SignOutIcon, UserCircleIcon } from "@/components/icons";
 import { Menu } from "@base-ui/react/menu";
-import {
-  createFileRoute,
-  Link,
-  Navigate,
-  Outlet,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate, Outlet } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -21,6 +16,7 @@ const LANG_KEY = "observer-lang";
 const LANGUAGES = [
   { value: "ky", label: "Kyrgyzça" },
   { value: "en", label: "English" },
+  { value: "ru", label: "Русский" },
   { value: "uk", label: "Українська" },
   { value: "de", label: "Deutsch" },
   { value: "tr", label: "Türkçe" },
@@ -67,13 +63,7 @@ function AppLayout() {
   );
 }
 
-function AvatarMenu({
-  email,
-  onLogout,
-}: {
-  email: string;
-  onLogout: () => void;
-}) {
+function AvatarMenu({ email, onLogout }: { email: string; onLogout: () => void }) {
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState(getStoredTheme);
   const [lang, setLang] = useState(getStoredLang);

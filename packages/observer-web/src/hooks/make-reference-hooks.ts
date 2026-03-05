@@ -2,16 +2,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
 
-export function makeReferenceHooks<T extends { id: string }, C, U>(
-  resource: string,
-) {
+export function makeReferenceHooks<T extends { id: string }, C, U>(resource: string) {
   function useList() {
     return useQuery({
       queryKey: [resource],
       queryFn: async () => {
-        const res = await api
-          .get(`admin/${resource}`)
-          .json<Record<string, T[]>>();
+        const res = await api.get(`admin/${resource}`).json<Record<string, T[]>>();
         return res[resource];
       },
     });
@@ -20,8 +16,7 @@ export function makeReferenceHooks<T extends { id: string }, C, U>(
   function useCreate() {
     const qc = useQueryClient();
     return useMutation({
-      mutationFn: (data: C) =>
-        api.post(`admin/${resource}`, { json: data }).json<T>(),
+      mutationFn: (data: C) => api.post(`admin/${resource}`, { json: data }).json<T>(),
       onSuccess: () => qc.invalidateQueries({ queryKey: [resource] }),
     });
   }

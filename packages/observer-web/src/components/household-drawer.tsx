@@ -201,19 +201,14 @@ export function HouseholdDrawer({
           <Drawer.Popup className="fixed top-0 right-0 flex h-dvh w-full max-w-[840px] flex-col border-l border-border-secondary bg-bg-secondary shadow-elevated transition-transform duration-200 ease-out data-ending-style:translate-x-full data-starting-style:translate-x-full">
             <div className="flex shrink-0 items-center justify-between border-b border-border-secondary px-6 py-4">
               <Drawer.Title className="font-serif text-lg font-semibold text-fg">
-                {isEdit
-                  ? t("project.households.editTitle")
-                  : t("project.households.formTitle")}
+                {isEdit ? t("project.households.editTitle") : t("project.households.formTitle")}
               </Drawer.Title>
               <Drawer.Close className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg">
                 <XIcon size={18} />
               </Drawer.Close>
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className="flex min-h-0 flex-1 flex-col"
-            >
+            <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
               <div className="flex-1 space-y-5 overflow-y-auto px-6 py-5">
                 {saved && (
                   <div className="flex items-center gap-2 rounded-lg border border-foam/20 bg-foam/8 px-3 py-2.5 text-sm font-medium text-foam">
@@ -223,16 +218,14 @@ export function HouseholdDrawer({
                 )}
                 {error && (
                   <div className="flex items-center gap-2 rounded-lg border border-rose/20 bg-rose/8 px-3 py-2.5 text-sm font-medium text-rose">
-                    <WarningIcon
-                      size={16}
-                      weight="bold"
-                      className="shrink-0"
-                    />
+                    <WarningIcon size={16} weight="bold" className="shrink-0" />
                     {error}
                   </div>
                 )}
 
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">{t("project.households.info")}</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
+                  {t("project.households.info")}
+                </h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field.Root>
                     <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -240,9 +233,7 @@ export function HouseholdDrawer({
                     </Field.Label>
                     <Field.Control
                       value={form.reference_number}
-                      onChange={(e) =>
-                        set("reference_number", e.target.value)
-                      }
+                      onChange={(e) => set("reference_number", e.target.value)}
                       className={inputClass}
                     />
                   </Field.Root>
@@ -253,9 +244,7 @@ export function HouseholdDrawer({
                     </Field.Label>
                     <Field.Control
                       value={form.head_person_id}
-                      onChange={(e) =>
-                        set("head_person_id", e.target.value)
-                      }
+                      onChange={(e) => set("head_person_id", e.target.value)}
                       className={inputClass}
                     />
                   </Field.Root>
@@ -263,7 +252,9 @@ export function HouseholdDrawer({
 
                 {isEdit && editingId && (
                   <>
-                    <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">{t("project.households.members")}</h3>
+                    <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">
+                      {t("project.households.members")}
+                    </h3>
                     {household?.members && household.members.length > 0 ? (
                       <div className="overflow-hidden rounded-lg border border-border-secondary">
                         <table className="w-full text-sm">
@@ -295,9 +286,7 @@ export function HouseholdDrawer({
                                 <td className="px-3 py-2">
                                   <button
                                     type="button"
-                                    onClick={() =>
-                                      handleRemoveMember(m.person_id)
-                                    }
+                                    onClick={() => handleRemoveMember(m.person_id)}
                                     className="cursor-pointer rounded-lg p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
                                   >
                                     <TrashIcon size={14} />
@@ -354,9 +343,7 @@ export function HouseholdDrawer({
                       <button
                         type="button"
                         onClick={handleAddMember}
-                        disabled={
-                          addMember.isPending || !memberForm.person_id
-                        }
+                        disabled={addMember.isPending || !memberForm.person_id}
                         className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
                       >
                         {t("project.households.addMember")}
@@ -375,9 +362,7 @@ export function HouseholdDrawer({
                   disabled={isPending}
                   className="cursor-pointer rounded-lg bg-accent px-5 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
                 >
-                  {isPending
-                    ? t("project.households.saving")
-                    : t("project.households.save")}
+                  {isPending ? t("project.households.saving") : t("project.households.save")}
                 </button>
               </div>
             </form>

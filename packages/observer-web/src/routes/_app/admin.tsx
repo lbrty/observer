@@ -1,10 +1,4 @@
-import {
-  BuildingsIcon,
-  FolderSimpleIcon,
-  GlobeIcon,
-  TagIcon,
-  UsersIcon,
-} from "@/components/icons";
+import { BuildingsIcon, FolderSimpleIcon, GlobeIcon, TagIcon, UsersIcon } from "@/components/icons";
 import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
@@ -33,11 +27,7 @@ function AdminLayout() {
           <div className="pb-1.5 pl-3 text-[11px] font-semibold uppercase tracking-wide text-fg-tertiary">
             {t("admin.title")}
           </div>
-          <SidebarLink
-            to="/admin/users"
-            label={t("admin.nav.users")}
-            icon={UsersIcon}
-          />
+          <SidebarLink to="/admin/users" label={t("admin.nav.users")} icon={UsersIcon} />
 
           {isAdmin && (
             <SidebarLink

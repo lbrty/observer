@@ -3,10 +3,7 @@ import { PlusIcon } from "@/components/icons";
 import { DataTable, type Column } from "@/components/data-table";
 import { FormDialog } from "@/components/form-dialog";
 import { UISelect } from "@/components/ui-select";
-import {
-  useCreateMigrationRecord,
-  useMigrationRecords,
-} from "@/hooks/use-migration-records";
+import { useCreateMigrationRecord, useMigrationRecords } from "@/hooks/use-migration-records";
 import { useCountries } from "@/hooks/use-countries";
 import { usePlaces } from "@/hooks/use-places";
 import { useStates } from "@/hooks/use-states";
@@ -63,8 +60,7 @@ function PersonMigrationRecords() {
       }),
       ...(form.migration_date && { migration_date: form.migration_date }),
       ...(form.movement_reason && {
-        movement_reason:
-          form.movement_reason as MigrationRecord["movement_reason"],
+        movement_reason: form.movement_reason as MigrationRecord["movement_reason"],
       }),
       ...(form.housing_at_destination && {
         housing_at_destination:
@@ -144,27 +140,19 @@ function PersonMigrationRecords() {
       header: t("project.migrationRecords.date"),
       render: (r) => (
         <span className="font-mono text-xs tabular-nums text-fg-tertiary">
-          {r.migration_date
-            ? new Date(r.migration_date).toLocaleDateString("en-CA")
-            : "—"}
+          {r.migration_date ? new Date(r.migration_date).toLocaleDateString("en-CA") : "—"}
         </span>
       ),
     },
     {
       key: "movement_reason",
       header: t("project.migrationRecords.reason"),
-      render: (r) => (
-        <span className="text-fg-secondary">{r.movement_reason ?? "—"}</span>
-      ),
+      render: (r) => <span className="text-fg-secondary">{r.movement_reason ?? "—"}</span>,
     },
     {
       key: "housing",
       header: t("project.migrationRecords.housing"),
-      render: (r) => (
-        <span className="text-fg-secondary">
-          {r.housing_at_destination ?? "—"}
-        </span>
-      ),
+      render: (r) => <span className="text-fg-secondary">{r.housing_at_destination ?? "—"}</span>,
     },
     {
       key: "created_at",
@@ -183,9 +171,7 @@ function PersonMigrationRecords() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-fg">
-          {t("project.migrationRecords.title")}
-        </h2>
+        <h2 className="text-sm font-semibold text-fg">{t("project.migrationRecords.title")}</h2>
         <button
           type="button"
           onClick={() => setDialogOpen(true)}
@@ -248,9 +234,7 @@ function PersonMigrationRecords() {
             />
           </div>
 
-          <p className="text-xs font-medium text-fg-tertiary">
-            {t("project.migrationRecords.to")}
-          </p>
+          <p className="text-xs font-medium text-fg-tertiary">{t("project.migrationRecords.to")}</p>
           <div className="grid grid-cols-3 gap-2">
             <UISelect
               value={form.dest_country}
@@ -288,10 +272,7 @@ function PersonMigrationRecords() {
             <span className="mb-1 block text-sm font-medium text-fg-secondary">
               {t("project.migrationRecords.date")}
             </span>
-            <DatePicker
-              value={form.migration_date}
-              onChange={(v) => set("migration_date", v)}
-            />
+            <DatePicker value={form.migration_date} onChange={(v) => set("migration_date", v)} />
           </div>
 
           <Field.Root>

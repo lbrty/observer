@@ -35,9 +35,7 @@ export function UISelect({
         className={`inline-flex h-9 items-center justify-between gap-2 rounded-lg border border-border-secondary bg-bg-secondary pr-2 pl-3 text-sm text-fg outline-none hover:border-border-primary focus:border-accent disabled:opacity-50 data-popup-open:border-accent ${fullWidth ? "w-full" : ""}`}
       >
         <Select.Value placeholder={placeholder}>
-          {value
-            ? (options.find((o) => o.value === value)?.label ?? value)
-            : null}
+          {value ? (options.find((o) => o.value === value)?.label ?? value) : null}
         </Select.Value>
         <Select.Icon className="text-fg-tertiary">
           <CaretUpDownIcon size={14} weight="bold" />

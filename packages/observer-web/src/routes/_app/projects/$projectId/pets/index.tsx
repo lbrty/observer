@@ -84,9 +84,7 @@ function PetsListPage() {
     {
       key: "owner_id",
       header: t("project.pets.ownerId"),
-      render: (p) => (
-        <span className="text-fg-secondary">{p.owner_id ?? ""}</span>
-      ),
+      render: (p) => <span className="text-fg-secondary">{p.owner_id ?? ""}</span>,
     },
     {
       key: "registration_id",

@@ -1,9 +1,4 @@
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
 import type {
@@ -43,8 +38,7 @@ export function useCreatePet(projectId: string) {
   return useMutation({
     mutationFn: (data: CreatePetInput) =>
       api.post(`projects/${projectId}/pets`, { json: data }).json<Pet>(),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["pets", projectId] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["pets", projectId] }),
   });
 }
 
@@ -52,20 +46,15 @@ export function useUpdatePet(projectId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdatePetInput }) =>
-      api
-        .patch(`projects/${projectId}/pets/${id}`, { json: data })
-        .json<Pet>(),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["pets", projectId] }),
+      api.patch(`projects/${projectId}/pets/${id}`, { json: data }).json<Pet>(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["pets", projectId] }),
   });
 }
 
 export function useDeletePet(projectId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      api.delete(`projects/${projectId}/pets/${id}`),
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: ["pets", projectId] }),
+    mutationFn: (id: string) => api.delete(`projects/${projectId}/pets/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["pets", projectId] }),
   });
 }

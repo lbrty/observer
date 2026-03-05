@@ -25,12 +25,7 @@ const emptyForm = {
   notes: "",
 };
 
-export function PetDrawer({
-  open,
-  onOpenChange,
-  projectId,
-  petId,
-}: PetDrawerProps) {
+export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerProps) {
   const { t } = useTranslation();
   const isEdit = petId !== null;
 
@@ -136,19 +131,14 @@ export function PetDrawer({
           <Drawer.Popup className="fixed top-0 right-0 flex h-dvh w-full max-w-[840px] flex-col border-l border-border-secondary bg-bg-secondary shadow-elevated transition-transform duration-200 ease-out data-ending-style:translate-x-full data-starting-style:translate-x-full">
             <div className="flex shrink-0 items-center justify-between border-b border-border-secondary px-6 py-4">
               <Drawer.Title className="font-serif text-lg font-semibold text-fg">
-                {isEdit
-                  ? t("project.pets.editTitle")
-                  : t("project.pets.formTitle")}
+                {isEdit ? t("project.pets.editTitle") : t("project.pets.formTitle")}
               </Drawer.Title>
               <Drawer.Close className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg">
                 <XIcon size={18} />
               </Drawer.Close>
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className="flex min-h-0 flex-1 flex-col"
-            >
+            <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
               <div className="flex-1 space-y-6 overflow-y-auto px-6 py-5">
                 {saved && (
                   <div className="flex items-center gap-2 rounded-lg border border-foam/20 bg-foam/8 px-3 py-2.5 text-sm font-medium text-foam">
@@ -206,9 +196,7 @@ export function PetDrawer({
                       </Field.Label>
                       <Field.Control
                         value={form.registration_id}
-                        onChange={(e) =>
-                          set("registration_id", e.target.value)
-                        }
+                        onChange={(e) => set("registration_id", e.target.value)}
                         className={inputClass}
                       />
                     </Field.Root>
@@ -239,9 +227,7 @@ export function PetDrawer({
                   disabled={isPending}
                   className="cursor-pointer rounded-lg bg-accent px-5 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
                 >
-                  {isPending
-                    ? t("project.pets.saving")
-                    : t("project.pets.save")}
+                  {isPending ? t("project.pets.saving") : t("project.pets.save")}
                 </button>
               </div>
             </form>
@@ -252,19 +238,11 @@ export function PetDrawer({
   );
 }
 
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <fieldset className="space-y-3">
       <legend className="text-sm font-semibold text-fg">{title}</legend>
-      <div className="rounded-xl border border-border-secondary bg-bg p-4">
-        {children}
-      </div>
+      <div className="rounded-xl border border-border-secondary bg-bg p-4">{children}</div>
     </fieldset>
   );
 }

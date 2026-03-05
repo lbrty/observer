@@ -8,12 +8,7 @@ interface UICheckboxProps {
   disabled?: boolean;
 }
 
-export function UICheckbox({
-  checked,
-  onCheckedChange,
-  label,
-  disabled,
-}: UICheckboxProps) {
+export function UICheckbox({ checked, onCheckedChange, label, disabled }: UICheckboxProps) {
   return (
     <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-fg-secondary select-none">
       <Checkbox.Root

@@ -57,10 +57,7 @@ export function DataTable<T>({
             <SkeletonRows cols={columns.length} />
           ) : data.length === 0 ? (
             <tr>
-              <td
-                colSpan={columns.length}
-                className="px-4 py-12 text-center text-fg-tertiary"
-              >
+              <td colSpan={columns.length} className="px-4 py-12 text-center text-fg-tertiary">
                 {t("admin.common.noData")}
               </td>
             </tr>
@@ -72,10 +69,7 @@ export function DataTable<T>({
                 className={`transition-colors ${onRowClick ? "cursor-pointer hover:bg-bg-tertiary/40" : ""}`}
               >
                 {columns.map((col) => (
-                  <td
-                    key={col.key}
-                    className={`px-4 py-3 ${col.className ?? ""}`}
-                  >
+                  <td key={col.key} className={`px-4 py-3 ${col.className ?? ""}`}>
                     {col.render(item)}
                   </td>
                 ))}

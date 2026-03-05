@@ -1,9 +1,4 @@
-import {
-  FolderSimpleIcon,
-  GlobeIcon,
-  TagIcon,
-  UsersIcon,
-} from "@/components/icons";
+import { FolderSimpleIcon, GlobeIcon, TagIcon, UsersIcon } from "@/components/icons";
 import type { Icon } from "@/components/icons";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
@@ -136,9 +131,7 @@ function DashboardPage() {
               <span className="relative mb-4 inline-flex size-10 items-center justify-center rounded-xl bg-foam/10 text-foam">
                 <FolderSimpleIcon size={20} weight="duotone" />
               </span>
-              <p className="relative text-sm font-medium text-fg">
-                {project.name}
-              </p>
+              <p className="relative text-sm font-medium text-fg">{project.name}</p>
               {project.description && (
                 <p className="relative mt-0.5 truncate text-xs text-fg-tertiary">
                   {project.description}
@@ -159,27 +152,21 @@ function DashboardPage() {
           </h2>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {quickActions.map(
-              ({ to, icon: ActionIcon, color, titleKey, descKey }) => (
-                <Link
-                  key={to}
-                  to={to}
-                  className="card-bg-dots group rounded-xl border border-border-secondary bg-bg-secondary p-5 transition-shadow hover:shadow-elevated"
+            {quickActions.map(({ to, icon: ActionIcon, color, titleKey, descKey }) => (
+              <Link
+                key={to}
+                to={to}
+                className="card-bg-dots group rounded-xl border border-border-secondary bg-bg-secondary p-5 transition-shadow hover:shadow-elevated"
+              >
+                <span
+                  className={`relative mb-4 inline-flex size-10 items-center justify-center rounded-xl ${colorClasses[color]}`}
                 >
-                  <span
-                    className={`relative mb-4 inline-flex size-10 items-center justify-center rounded-xl ${colorClasses[color]}`}
-                  >
-                    <ActionIcon size={20} weight="duotone" />
-                  </span>
-                  <p className="relative text-sm font-medium text-fg">
-                    {t(titleKey)}
-                  </p>
-                  <p className="relative mt-0.5 text-xs text-fg-tertiary">
-                    {t(descKey)}
-                  </p>
-                </Link>
-              ),
-            )}
+                  <ActionIcon size={20} weight="duotone" />
+                </span>
+                <p className="relative text-sm font-medium text-fg">{t(titleKey)}</p>
+                <p className="relative mt-0.5 text-xs text-fg-tertiary">{t(descKey)}</p>
+              </Link>
+            ))}
           </div>
         </>
       )}

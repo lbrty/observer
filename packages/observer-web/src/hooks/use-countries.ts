@@ -1,8 +1,4 @@
-import type {
-  Country,
-  CreateCountryInput,
-  UpdateCountryInput,
-} from "@/types/reference";
+import type { Country, CreateCountryInput, UpdateCountryInput } from "@/types/reference";
 
 import { makeReferenceHooks } from "./make-reference-hooks";
 
@@ -11,8 +7,6 @@ const {
   useCreate: useCreateCountry,
   useUpdate: useUpdateCountry,
   useDelete: useDeleteCountry,
-} = makeReferenceHooks<Country, CreateCountryInput, UpdateCountryInput>(
-  "countries",
-);
+} = makeReferenceHooks<Country, CreateCountryInput, UpdateCountryInput>("countries");
 
 export { useCountries, useCreateCountry, useUpdateCountry, useDeleteCountry };

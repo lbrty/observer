@@ -29,9 +29,7 @@ export function AddReferenceDialog({
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/25 backdrop-blur-xs" />
         <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border-secondary bg-bg-secondary p-6 shadow-elevated">
-          <Dialog.Title className="font-serif text-lg font-semibold text-fg">
-            {title}
-          </Dialog.Title>
+          <Dialog.Title className="font-serif text-lg font-semibold text-fg">{title}</Dialog.Title>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -54,9 +52,7 @@ export function AddReferenceDialog({
                 disabled={isPending}
                 className="cursor-pointer rounded-lg bg-accent px-5 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
               >
-                {isPending
-                  ? t("project.people.saving")
-                  : t("project.people.save")}
+                {isPending ? t("project.people.saving") : t("project.people.save")}
               </button>
             </div>
           </form>

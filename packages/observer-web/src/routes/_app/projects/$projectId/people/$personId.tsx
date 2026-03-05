@@ -6,9 +6,7 @@ import { ArrowLeftIcon } from "@/components/icons";
 import { StatusBadge } from "@/components/status-badge";
 import { usePerson } from "@/hooks/use-people";
 
-export const Route = createFileRoute(
-  "/_app/projects/$projectId/people/$personId",
-)({
+export const Route = createFileRoute("/_app/projects/$projectId/people/$personId")({
   component: PersonDetailLayout,
 });
 
@@ -52,9 +50,7 @@ function PersonDetailLayout() {
 
   if (!person) return null;
 
-  const fullName = [person.first_name, person.last_name]
-    .filter(Boolean)
-    .join(" ");
+  const fullName = [person.first_name, person.last_name].filter(Boolean).join(" ");
 
   return (
     <div>
@@ -68,9 +64,7 @@ function PersonDetailLayout() {
       </Link>
 
       <div className="mb-6 flex items-center gap-3">
-        <h1 className="font-serif text-xl font-bold tracking-tight text-fg">
-          {fullName}
-        </h1>
+        <h1 className="font-serif text-xl font-bold tracking-tight text-fg">{fullName}</h1>
         <StatusBadge label={person.case_status} />
       </div>
 

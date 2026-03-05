@@ -62,9 +62,7 @@ function RegisterPage() {
           <span className="brand-icon mb-4 inline-flex size-14 items-center justify-center rounded-2xl text-xl font-bold text-white">
             O
           </span>
-          <h1 className="font-serif text-xl font-semibold text-fg">
-            {t("auth.registerTitle")}
-          </h1>
+          <h1 className="font-serif text-xl font-semibold text-fg">{t("auth.registerTitle")}</h1>
         </div>
         <div className="mb-4 rounded-lg bg-foam/10 px-3 py-2 text-sm text-foam">
           {t("auth.pendingApproval")}
@@ -85,15 +83,11 @@ function RegisterPage() {
         <span className="brand-icon mb-4 inline-flex size-14 items-center justify-center rounded-2xl text-xl font-bold text-white">
           O
         </span>
-        <h1 className="font-serif text-xl font-semibold text-fg">
-          {t("auth.registerTitle")}
-        </h1>
+        <h1 className="font-serif text-xl font-semibold text-fg">{t("auth.registerTitle")}</h1>
       </div>
 
       {error && (
-        <div className="mb-4 rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">
-          {error}
-        </div>
+        <div className="mb-4 rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">{error}</div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">

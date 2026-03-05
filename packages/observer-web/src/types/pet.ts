@@ -1,9 +1,4 @@
-export type PetStatus =
-  | "registered"
-  | "adopted"
-  | "owner_found"
-  | "needs_shelter"
-  | "unknown";
+export type PetStatus = "registered" | "adopted" | "owner_found" | "needs_shelter" | "unknown";
 
 export interface Pet {
   id: string;

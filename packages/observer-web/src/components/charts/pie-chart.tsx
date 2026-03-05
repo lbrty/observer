@@ -39,7 +39,7 @@ export function PieChart({ data }: { data: CountResult[] }) {
     if (!containerRef.current) return;
     const observer = new ResizeObserver((entries) => {
       const w = entries[0].contentRect.width;
-      setSize(Math.min(w * 0.55, 340));
+      setSize(Math.min(w * 0.7, 425));
     });
     observer.observe(containerRef.current);
     return () => observer.disconnect();
@@ -89,9 +89,7 @@ export function PieChart({ data }: { data: CountResult[] }) {
       .attr("class", "slice")
       .attr("d", arc)
       .attr("fill", (d) => color(d.data.label))
-      .attr("opacity", (d) =>
-        selectedLabel === null || selectedLabel === d.data.label ? 1 : 0.3,
-      )
+      .attr("opacity", (d) => (selectedLabel === null || selectedLabel === d.data.label ? 1 : 0.3))
       .style("cursor", "pointer")
       .on("mouseover", function (event: MouseEvent, d: d3.PieArcDatum<CountResult>) {
         const bounds = containerRef.current?.getBoundingClientRect();
@@ -119,9 +117,7 @@ export function PieChart({ data }: { data: CountResult[] }) {
         setTooltip((prev) => ({ ...prev, visible: false }));
       })
       .on("click", function (_event: MouseEvent, d: d3.PieArcDatum<CountResult>) {
-        setSelectedLabel((prev) =>
-          prev === d.data.label ? null : d.data.label,
-        );
+        setSelectedLabel((prev) => (prev === d.data.label ? null : d.data.label));
       });
 
     g.selectAll(".pie-label")
@@ -130,12 +126,10 @@ export function PieChart({ data }: { data: CountResult[] }) {
       .attr("class", "pie-label")
       .attr("transform", (d) => `translate(${labelArc.centroid(d)})`)
       .attr("text-anchor", "middle")
-      .style("font-size", "11px")
+      .style("font-size", "9px")
       .style("fill", "#fff")
       .style("font-weight", "600")
-      .attr("opacity", (d) =>
-        selectedLabel === null || selectedLabel === d.data.label ? 1 : 0.3,
-      )
+      .attr("opacity", (d) => (selectedLabel === null || selectedLabel === d.data.label ? 1 : 0.3))
       .text((d) => (d.data.count > 0 ? d.data.count : ""));
   }, [data, size, selectedLabel]);
 
@@ -169,15 +163,10 @@ export function PieChart({ data }: { data: CountResult[] }) {
             key={d.label}
             className="flex items-center gap-2"
             style={{
-              opacity:
-                selectedLabel === null || selectedLabel === d.label ? 1 : 0.3,
+              opacity: selectedLabel === null || selectedLabel === d.label ? 1 : 0.3,
               cursor: "pointer",
             }}
-            onClick={() =>
-              setSelectedLabel((prev) =>
-                prev === d.label ? null : d.label,
-              )
-            }
+            onClick={() => setSelectedLabel((prev) => (prev === d.label ? null : d.label))}
           >
             <span
               className="inline-block size-2.5 rounded-full shrink-0"

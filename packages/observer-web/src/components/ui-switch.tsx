@@ -7,12 +7,7 @@ interface UISwitchProps {
   disabled?: boolean;
 }
 
-export function UISwitch({
-  checked,
-  onCheckedChange,
-  label,
-  disabled,
-}: UISwitchProps) {
+export function UISwitch({ checked, onCheckedChange, label, disabled }: UISwitchProps) {
   return (
     <label className="inline-flex cursor-pointer items-center gap-2.5 text-sm text-fg-secondary select-none">
       <Switch.Root

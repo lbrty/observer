@@ -74,10 +74,8 @@
   --color-foam: var(--color-foam);
   --color-gold: var(--color-gold);
   --color-rose: var(--color-rose);
-  --shadow-card:
-    0 1px 2px var(--shadow-card), 0 0.5px 1px var(--shadow-overlay);
-  --shadow-elevated:
-    0 4px 24px var(--shadow-elevated), 0 1px 4px var(--shadow-card);
+  --shadow-card: 0 1px 2px var(--shadow-card), 0 0.5px 1px var(--shadow-overlay);
+  --shadow-elevated: 0 4px 24px var(--shadow-elevated), 0 1px 4px var(--shadow-card);
   --shadow-overlay: 0 0 0 1px var(--shadow-overlay);
 }
 

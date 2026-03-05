@@ -21,9 +21,7 @@ import { useAuth } from "@/stores/auth";
 import type { AdminUser } from "@/types/admin";
 import type { ProjectPermissionMember, ProjectRole } from "@/types/permission";
 
-export const Route = createFileRoute(
-  "/_app/admin/projects/$projectId/permissions",
-)({
+export const Route = createFileRoute("/_app/admin/projects/$projectId/permissions")({
   component: PermissionsPage,
 });
 
@@ -46,11 +44,8 @@ function PermissionsPage() {
   const revokePermission = useRevokePermission();
 
   const [assignOpen, setAssignOpen] = useState(false);
-  const [editTarget, setEditTarget] = useState<ProjectPermissionMember | null>(
-    null,
-  );
-  const [revokeTarget, setRevokeTarget] =
-    useState<ProjectPermissionMember | null>(null);
+  const [editTarget, setEditTarget] = useState<ProjectPermissionMember | null>(null);
+  const [revokeTarget, setRevokeTarget] = useState<ProjectPermissionMember | null>(null);
 
   const isStaff = user?.role === "staff";
 
@@ -86,28 +81,17 @@ function PermissionsPage() {
       render: (p) => (
         <div className="flex gap-1">
           {p.can_view_contact && (
-            <StatusBadge
-              label={t("admin.permissions.contact")}
-              variant="foam"
-            />
+            <StatusBadge label={t("admin.permissions.contact")} variant="foam" />
           )}
           {p.can_view_personal && (
-            <StatusBadge
-              label={t("admin.permissions.personal")}
-              variant="foam"
-            />
+            <StatusBadge label={t("admin.permissions.personal")} variant="foam" />
           )}
           {p.can_view_documents && (
-            <StatusBadge
-              label={t("admin.permissions.documents")}
-              variant="foam"
-            />
+            <StatusBadge label={t("admin.permissions.documents")} variant="foam" />
           )}
-          {!p.can_view_contact &&
-            !p.can_view_personal &&
-            !p.can_view_documents && (
-              <span className="text-xs text-fg-tertiary">-</span>
-            )}
+          {!p.can_view_contact && !p.can_view_personal && !p.can_view_documents && (
+            <span className="text-xs text-fg-tertiary">-</span>
+          )}
         </div>
       ),
     },
@@ -300,9 +284,7 @@ function AssignDialog({
                     <p className="text-sm text-fg">
                       {selectedUser.first_name} {selectedUser.last_name}
                     </p>
-                    <p className="text-xs text-fg-tertiary">
-                      {selectedUser.email}
-                    </p>
+                    <p className="text-xs text-fg-tertiary">{selectedUser.email}</p>
                   </div>
                   <button
                     type="button"
@@ -313,10 +295,7 @@ function AssignDialog({
                   </button>
                 </div>
               ) : (
-                <UserCombobox
-                  excludeIds={excludeIds}
-                  onSelect={setSelectedUser}
-                />
+                <UserCombobox excludeIds={excludeIds} onSelect={setSelectedUser} />
               )}
             </div>
 
@@ -378,9 +357,7 @@ function AssignDialog({
                 disabled={loading || !selectedUser}
                 className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
               >
-                {loading
-                  ? t("admin.permissions.saving")
-                  : t("admin.permissions.save")}
+                {loading ? t("admin.permissions.saving") : t("admin.permissions.save")}
               </button>
             </div>
           </form>
@@ -435,17 +412,12 @@ function EditDialog({
           </Dialog.Title>
 
           <div className="mt-3 flex items-center gap-3 rounded-lg border border-border-secondary bg-bg px-3 py-2">
-            <Initials
-              first={permission.user_first_name}
-              last={permission.user_last_name}
-            />
+            <Initials first={permission.user_first_name} last={permission.user_last_name} />
             <div>
               <p className="text-sm font-medium text-fg">
                 {permission.user_first_name} {permission.user_last_name}
               </p>
-              <p className="text-xs text-fg-tertiary">
-                {permission.user_email}
-              </p>
+              <p className="text-xs text-fg-tertiary">{permission.user_email}</p>
             </div>
           </div>
 
@@ -508,9 +480,7 @@ function EditDialog({
                 disabled={loading}
                 className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
               >
-                {loading
-                  ? t("admin.permissions.saving")
-                  : t("admin.permissions.save")}
+                {loading ? t("admin.permissions.saving") : t("admin.permissions.save")}
               </button>
             </div>
           </form>

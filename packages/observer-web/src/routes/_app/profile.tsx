@@ -28,13 +28,7 @@ function ProfilePage() {
   );
 }
 
-function ProfileForm({
-  user,
-  setUser,
-}: {
-  user: User | null;
-  setUser: (u: User) => void;
-}) {
+function ProfileForm({ user, setUser }: { user: User | null; setUser: (u: User) => void }) {
   const { t } = useTranslation();
   const [firstName, setFirstName] = useState(user?.first_name ?? "");
   const [lastName, setLastName] = useState(user?.last_name ?? "");
@@ -55,9 +49,7 @@ function ProfileForm({
         last_name: lastName,
         phone,
       };
-      const updated = await api
-        .patch("auth/me", { json: data })
-        .json<User>();
+      const updated = await api.patch("auth/me", { json: data }).json<User>();
       setUser(updated);
       setMessage(t("profile.saved"));
     } catch (err) {
@@ -77,20 +69,12 @@ function ProfileForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-sm font-semibold text-fg">
-        {t("profile.personalInfo")}
-      </h2>
+      <h2 className="text-sm font-semibold text-fg">{t("profile.personalInfo")}</h2>
 
       {message && (
-        <div className="rounded-lg bg-foam/10 px-3 py-2 text-sm text-foam">
-          {message}
-        </div>
+        <div className="rounded-lg bg-foam/10 px-3 py-2 text-sm text-foam">{message}</div>
       )}
-      {error && (
-        <div className="rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">
-          {error}
-        </div>
-      )}
+      {error && <div className="rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">{error}</div>}
 
       <div className="grid grid-cols-2 gap-3">
         <Field.Root>
@@ -120,11 +104,7 @@ function ProfileForm({
         <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
           {t("common.email")}
         </Field.Label>
-        <Field.Control
-          value={user?.email ?? ""}
-          disabled
-          className={`${inputClass} opacity-50`}
-        />
+        <Field.Control value={user?.email ?? ""} disabled className={`${inputClass} opacity-50`} />
       </Field.Root>
 
       <Field.Root>
@@ -206,20 +186,12 @@ function ChangePasswordForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-sm font-semibold text-fg">
-        {t("profile.changePassword")}
-      </h2>
+      <h2 className="text-sm font-semibold text-fg">{t("profile.changePassword")}</h2>
 
       {message && (
-        <div className="rounded-lg bg-foam/10 px-3 py-2 text-sm text-foam">
-          {message}
-        </div>
+        <div className="rounded-lg bg-foam/10 px-3 py-2 text-sm text-foam">{message}</div>
       )}
-      {error && (
-        <div className="rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">
-          {error}
-        </div>
-      )}
+      {error && <div className="rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">{error}</div>}
 
       <Field.Root>
         <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">

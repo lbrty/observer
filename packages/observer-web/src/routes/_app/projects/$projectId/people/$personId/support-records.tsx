@@ -10,9 +10,7 @@ import { SupportRecordDrawer } from "@/components/support-record-drawer";
 import { useSupportRecords } from "@/hooks/use-support-records";
 import type { SupportRecord } from "@/types/support-record";
 
-export const Route = createFileRoute(
-  "/_app/projects/$projectId/people/$personId/support-records",
-)({
+export const Route = createFileRoute("/_app/projects/$projectId/people/$personId/support-records")({
   component: PersonSupportRecords,
 });
 
@@ -56,18 +54,14 @@ function PersonSupportRecords() {
     {
       key: "sphere",
       header: t("project.supportRecords.sphere"),
-      render: (r) => (
-        <span className="text-fg-secondary">{r.sphere ?? "\u2014"}</span>
-      ),
+      render: (r) => <span className="text-fg-secondary">{r.sphere ?? "\u2014"}</span>,
     },
     {
       key: "provided_at",
       header: t("project.supportRecords.providedAt"),
       render: (r) => (
         <span className="font-mono text-xs tabular-nums text-fg-tertiary">
-          {r.provided_at
-            ? new Date(r.provided_at).toLocaleDateString("en-CA")
-            : "\u2014"}
+          {r.provided_at ? new Date(r.provided_at).toLocaleDateString("en-CA") : "\u2014"}
         </span>
       ),
     },

@@ -1,8 +1,4 @@
-import type {
-  CreateOfficeInput,
-  Office,
-  UpdateOfficeInput,
-} from "@/types/reference";
+import type { CreateOfficeInput, Office, UpdateOfficeInput } from "@/types/reference";
 
 import { makeReferenceHooks } from "./make-reference-hooks";
 
