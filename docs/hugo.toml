@@ -1,0 +1,33 @@
+baseURL = "https://lbrty.github.io/observer/"
+title = "Observer"
+languageCode = "en"
+
+[module]
+  [[module.imports]]
+    path = "github.com/imfing/hextra"
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup.highlight]
+  noClasses = false
+
+[[menu.main]]
+  name = "GitHub"
+  url = "https://github.com/lbrty/observer"
+  weight = 100
+  [menu.main.params]
+    icon = "github"
+
+[params]
+  description = "Self-hosted IDP case management for NGOs"
+
+[params.navbar]
+  displayTitle = true
+  displayLogo = false
+
+[params.footer]
+  displayPoweredBy = false
+
+[params.page]
+  width = "wide"
