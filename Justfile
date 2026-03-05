@@ -102,6 +102,18 @@ web-preview:
 web-install:
     bun install
 
+# Start docs dev server (watch + live reload)
+docs-dev:
+    cd docs && hugo server -D
+
+# Build docs site
+docs-build:
+    cd docs && hugo --minify
+
+# Clean docs build
+docs-clean:
+    rm -rf docs/public/
+
 # Format code
 fmt:
     go fmt ./...
