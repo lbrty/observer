@@ -90,6 +90,21 @@ func (h *MigrationRecordHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, out)
 }
 
+// Update handles PATCH /projects/:project_id/people/:person_id/migration-records/:id.
+func (h *MigrationRecordHandler) Update(c *gin.Context) {
+	var input ucproject.UpdateMigrationRecordInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		return
+	}
+	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, out)
+}
+
 func (h *MigrationRecordHandler) handleError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, migration.ErrRecordNotFound):

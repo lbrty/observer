@@ -70,6 +70,21 @@ func (h *NoteHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, out)
 }
 
+// Update handles PATCH /projects/:project_id/people/:person_id/notes/:id.
+func (h *NoteHandler) Update(c *gin.Context) {
+	var input ucproject.UpdateNoteInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		return
+	}
+	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, out)
+}
+
 // Delete handles DELETE /projects/:project_id/people/:person_id/notes/:id.
 // @Summary Delete a note
 // @Tags project-notes

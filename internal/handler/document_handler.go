@@ -100,6 +100,21 @@ func (h *DocumentHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, out)
 }
 
+// Update handles PATCH /projects/:project_id/documents/:id.
+func (h *DocumentHandler) Update(c *gin.Context) {
+	var input ucproject.UpdateDocumentInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		return
+	}
+	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, out)
+}
+
 // Delete handles DELETE /projects/:project_id/documents/:id.
 // @Summary Delete a document
 // @Tags project-documents

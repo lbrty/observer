@@ -247,6 +247,9 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			update.PATCH("/people/:person_id", personHandler.Update)
 			update.PATCH("/support-records/:id", supportHandler.Update)
 			update.PATCH("/households/:id", householdHandler.Update)
+			update.PATCH("/people/:person_id/migration-records/:id", migrationHandler.Update)
+			update.PATCH("/people/:person_id/notes/:id", noteHandler.Update)
+			update.PATCH("/documents/:id", documentHandler.Update)
 			update.PATCH("/pets/:id", petHandler.Update)
 		}
 
