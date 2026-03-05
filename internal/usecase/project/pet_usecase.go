@@ -7,6 +7,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/pet"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
+	"github.com/lbrty/observer/internal/usecase"
 )
 
 // PetUseCase handles pet operations within a project.
@@ -21,14 +22,7 @@ func NewPetUseCase(repo repository.PetRepository) *PetUseCase {
 
 // List returns paginated pets.
 func (uc *PetUseCase) List(ctx context.Context, projectID string, input ListPetsInput) (*ListPetsOutput, error) {
-	page := input.Page
-	if page < 1 {
-		page = 1
-	}
-	perPage := input.PerPage
-	if perPage < 1 {
-		perPage = 20
-	}
+	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
 	pets, total, err := uc.repo.List(ctx, projectID, page, perPage)
 	if err != nil {

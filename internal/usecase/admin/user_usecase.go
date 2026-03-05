@@ -10,6 +10,7 @@ import (
 	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/repository"
+	"github.com/lbrty/observer/internal/usecase"
 	iulid "github.com/lbrty/observer/internal/ulid"
 )
 
@@ -40,15 +41,7 @@ func NewUserUseCase(
 
 // List returns a paginated list of users.
 func (uc *UserUseCase) List(ctx context.Context, input ListUsersInput) (*ListUsersOutput, error) {
-	if input.Page < 1 {
-		input.Page = 1
-	}
-	if input.PerPage < 1 {
-		input.PerPage = 20
-	}
-	if input.PerPage > 100 {
-		input.PerPage = 100
-	}
+	input.Page, input.PerPage = usecase.ClampPagination(input.Page, input.PerPage)
 
 	filter := user.UserListFilter{
 		Page:     input.Page,

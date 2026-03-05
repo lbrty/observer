@@ -38,6 +38,5 @@ export interface CreateMigrationRecordInput {
 }
 
 export interface ListMigrationRecordsOutput {
-  migration_records: MigrationRecord[];
-  total: number;
+  records: MigrationRecord[];
 }

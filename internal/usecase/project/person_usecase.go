@@ -9,6 +9,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
+	"github.com/lbrty/observer/internal/usecase"
 )
 
 // PersonUseCase handles person operations within a project.
@@ -46,14 +47,7 @@ func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListP
 		dtos[i] = personToDTO(p, canViewContact, canViewPersonal)
 	}
 
-	page := input.Page
-	if page < 1 {
-		page = 1
-	}
-	perPage := input.PerPage
-	if perPage < 1 {
-		perPage = 20
-	}
+	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
 	return &ListPeopleOutput{
 		People:  dtos,

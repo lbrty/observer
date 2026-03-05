@@ -58,3 +58,17 @@ export function useDeletePerson(projectId: string) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["people", projectId] }),
   });
 }
+
+export function useSearchPeople(projectId: string, search: string) {
+  return useQuery({
+    queryKey: ["people", projectId, "search", search],
+    queryFn: () =>
+      api
+        .get(`projects/${projectId}/people`, {
+          searchParams: { search, per_page: "10" },
+        })
+        .json<ListPeopleOutput>(),
+    enabled: !!projectId && search.length >= 2,
+    placeholderData: keepPreviousData,
+  });
+}

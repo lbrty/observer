@@ -80,6 +80,7 @@ func (s *Server) setupMiddleware(cfg *config.Config, log *slog.Logger) {
 		ExposeHeaders:    []string{"X-Request-ID"},
 		AllowCredentials: true,
 	}))
+	s.router.Use(middleware.SecurityHeaders())
 }
 
 func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.Container) {
@@ -96,10 +97,13 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		cfg.JWT,
 	)
 
+	loginRL := middleware.RateLimit(float64(cfg.RateLimit.LoginRate)/60.0, cfg.RateLimit.LoginRate)
+	registerRL := middleware.RateLimit(float64(cfg.RateLimit.RegisterRate)/60.0, cfg.RateLimit.RegisterRate)
+
 	auth := s.router.Group("/auth")
 	{
-		auth.POST("/register", authHandler.Register)
-		auth.POST("/login", authHandler.Login)
+		auth.POST("/register", registerRL, authHandler.Register)
+		auth.POST("/login", loginRL, authHandler.Login)
 		auth.POST("/refresh", authHandler.RefreshToken)
 		auth.GET("/me", authMW.Authenticate(), authHandler.Me)
 		auth.PATCH("/me", authMW.Authenticate(), authHandler.UpdateProfile)

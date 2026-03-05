@@ -12,5 +12,4 @@ export interface CreateNoteInput {
 
 export interface ListNotesOutput {
   notes: Note[];
-  total: number;
 }

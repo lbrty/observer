@@ -184,7 +184,7 @@ function PersonMigrationRecords() {
 
       <DataTable
         columns={columns}
-        data={data?.migration_records ?? []}
+        data={data?.records ?? []}
         keyExtractor={(r) => r.id}
         isLoading={isLoading}
       />

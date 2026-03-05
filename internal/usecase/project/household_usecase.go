@@ -7,6 +7,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/household"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
+	"github.com/lbrty/observer/internal/usecase"
 )
 
 // HouseholdUseCase handles household operations within a project.
@@ -22,14 +23,7 @@ func NewHouseholdUseCase(repo repository.HouseholdRepository, memberRepo reposit
 
 // List returns paginated households with members.
 func (uc *HouseholdUseCase) List(ctx context.Context, projectID string, input ListHouseholdsInput) (*ListHouseholdsOutput, error) {
-	page := input.Page
-	if page < 1 {
-		page = 1
-	}
-	perPage := input.PerPage
-	if perPage < 1 {
-		perPage = 20
-	}
+	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
 	households, total, err := uc.repo.List(ctx, projectID, page, perPage)
 	if err != nil {

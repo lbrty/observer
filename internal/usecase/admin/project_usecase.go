@@ -7,6 +7,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/project"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
+	"github.com/lbrty/observer/internal/usecase"
 )
 
 // ProjectUseCase handles CRUD operations for projects.
@@ -41,14 +42,7 @@ func (uc *ProjectUseCase) List(ctx context.Context, input ListProjectsInput) (*L
 		dtos[i] = projectToDTO(p)
 	}
 
-	page := input.Page
-	if page < 1 {
-		page = 1
-	}
-	perPage := input.PerPage
-	if perPage < 1 {
-		perPage = 20
-	}
+	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
 	return &ListProjectsOutput{
 		Projects: dtos,

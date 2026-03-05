@@ -248,9 +248,19 @@ func (r *personCategoryRepo) ReplaceAll(ctx context.Context, personID string, ca
 		return fmt.Errorf("delete person categories: %w", err)
 	}
 
-	for _, catID := range categoryIDs {
-		if _, err := tx.ExecContext(ctx, `INSERT INTO person_categories (person_id, category_id) VALUES ($1, $2)`, personID, catID); err != nil {
-			return fmt.Errorf("insert person category: %w", err)
+	if len(categoryIDs) > 0 {
+		var sb strings.Builder
+		sb.WriteString("INSERT INTO person_categories (person_id, category_id) VALUES ")
+		args := make([]any, 0, len(categoryIDs)*2)
+		for i, catID := range categoryIDs {
+			if i > 0 {
+				sb.WriteString(", ")
+			}
+			sb.WriteString(fmt.Sprintf("($%d, $%d)", i*2+1, i*2+2))
+			args = append(args, personID, catID)
+		}
+		if _, err := tx.ExecContext(ctx, sb.String(), args...); err != nil {
+			return fmt.Errorf("insert person categories: %w", err)
 		}
 	}
 
@@ -298,9 +308,19 @@ func (r *personTagRepo) ReplaceAll(ctx context.Context, personID string, tagIDs 
 		return fmt.Errorf("delete person tags: %w", err)
 	}
 
-	for _, tagID := range tagIDs {
-		if _, err := tx.ExecContext(ctx, `INSERT INTO person_tags (person_id, tag_id) VALUES ($1, $2)`, personID, tagID); err != nil {
-			return fmt.Errorf("insert person tag: %w", err)
+	if len(tagIDs) > 0 {
+		var sb strings.Builder
+		sb.WriteString("INSERT INTO person_tags (person_id, tag_id) VALUES ")
+		args := make([]any, 0, len(tagIDs)*2)
+		for i, tagID := range tagIDs {
+			if i > 0 {
+				sb.WriteString(", ")
+			}
+			sb.WriteString(fmt.Sprintf("($%d, $%d)", i*2+1, i*2+2))
+			args = append(args, personID, tagID)
+		}
+		if _, err := tx.ExecContext(ctx, sb.String(), args...); err != nil {
+			return fmt.Errorf("insert person tags: %w", err)
 		}
 	}
 

@@ -89,12 +89,13 @@ func (m *AuthMiddleware) RequireRole(roles ...user.Role) gin.HandlerFunc {
 	}
 	return func(c *gin.Context) {
 		roleVal, exists := c.Get(string(CtxUserRole))
-		if !exists || roleVal.(string) == "" {
+		roleStr, ok := roleVal.(string)
+		if !exists || !ok || roleStr == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token", "code": "errors.auth.invalidToken"})
 			c.Abort()
 			return
 		}
-		role := user.Role(roleVal.(string))
+		role := user.Role(roleStr)
 		if _, ok := allowed[role]; !ok {
 			c.JSON(http.StatusForbidden, gin.H{"error": "insufficient permissions", "code": "errors.auth.insufficientPermissions"})
 			c.Abort()

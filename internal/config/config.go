@@ -18,14 +18,19 @@ const (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Database DatabaseConfig
-	Log      LogConfig
-	JWT      JWTConfig
-	Redis    RedisConfig
-	Swagger  SwaggerConfig
-	CORS     CORSConfig
-	Cookie   CookieConfig
+	Server    ServerConfig
+	Database  DatabaseConfig
+	Log       LogConfig
+	JWT       JWTConfig
+	Swagger   SwaggerConfig
+	CORS      CORSConfig
+	Cookie    CookieConfig
+	RateLimit RateLimitConfig
+}
+
+type RateLimitConfig struct {
+	LoginRate    int
+	RegisterRate int
 }
 
 type CORSConfig struct {
@@ -79,10 +84,6 @@ type JWTConfig struct {
 	Issuer         string
 }
 
-type RedisConfig struct {
-	URI string
-}
-
 func Load() (*Config, error) {
 	return &Config{
 		Server: ServerConfig{
@@ -105,9 +106,6 @@ func Load() (*Config, error) {
 			MFATempTTL:     getEnvDuration("JWT_MFA_TEMP_TTL", 5*time.Minute),
 			Issuer:         getEnv("JWT_ISSUER", "observer"),
 		},
-		Redis: RedisConfig{
-			URI: getEnv("REDIS_URI", "localhost:6379"),
-		},
 		Swagger: SwaggerConfig{
 			Enabled: getEnvBool("SWAGGER_ENABLED", false),
 		},
@@ -116,9 +114,13 @@ func Load() (*Config, error) {
 		},
 		Cookie: CookieConfig{
 			Domain:   getEnv("COOKIE_DOMAIN", ""),
-			Secure:   getEnvBool("COOKIE_SECURE", false),
+			Secure:   getEnvBool("COOKIE_SECURE", true),
 			SameSite: getEnv("COOKIE_SAME_SITE", "lax"),
 			MaxAge:   getEnvDuration("COOKIE_MAX_AGE", DefaultCookieMaxAge),
+		},
+		RateLimit: RateLimitConfig{
+			LoginRate:    getEnvInt("RATE_LIMIT_LOGIN", 10),
+			RegisterRate: getEnvInt("RATE_LIMIT_REGISTER", 5),
 		},
 	}, nil
 }

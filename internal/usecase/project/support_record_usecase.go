@@ -7,6 +7,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/support"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
+	"github.com/lbrty/observer/internal/usecase"
 )
 
 // SupportRecordUseCase handles support record operations within a project.
@@ -48,14 +49,7 @@ func (uc *SupportRecordUseCase) List(ctx context.Context, projectID string, inpu
 		dtos[i] = supportRecordToDTO(r)
 	}
 
-	page := input.Page
-	if page < 1 {
-		page = 1
-	}
-	perPage := input.PerPage
-	if perPage < 1 {
-		perPage = 20
-	}
+	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
 	return &ListSupportRecordsOutput{
 		Records: dtos,

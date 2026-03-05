@@ -1,13 +1,13 @@
 import { type FormEvent, useState } from "react";
 
-import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
 import { DrawerShell } from "@/components/drawer-shell";
-import { FormField, inputClass } from "@/components/form-field";
+import { FormField } from "@/components/form-field";
 import { TrashIcon } from "@/components/icons";
+import { PersonCombobox } from "@/components/person-combobox";
 import { SectionHeading } from "@/components/section-heading";
 import { UISelect } from "@/components/ui-select";
 import { useDrawerForm } from "@/hooks/use-drawer-form";
@@ -68,6 +68,11 @@ export function HouseholdDrawer({
     });
 
   const [memberForm, setMemberForm] = useState(emptyMemberForm);
+  const [headPersonName, setHeadPersonName] = useState("");
+  const [memberPersonName, setMemberPersonName] = useState("");
+
+  const headPersonLabel = headPersonName || form.head_person_id;
+  const memberPersonLabel = memberPersonName || memberForm.person_id;
 
   const isPending = createHousehold.isPending || updateHousehold.isPending;
 
@@ -179,11 +184,36 @@ export function HouseholdDrawer({
           value={form.reference_number}
           onChange={(v) => set("reference_number", v)}
         />
-        <FormField
-          label={t("project.households.headPerson")}
-          value={form.head_person_id}
-          onChange={(v) => set("head_person_id", v)}
-        />
+        <div>
+          <span className="mb-1 block text-sm font-medium text-fg-secondary">
+            {t("project.households.headPerson")}
+          </span>
+          {form.head_person_id ? (
+            <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
+              <span className="flex-1 truncate font-mono text-xs text-fg">
+                {headPersonLabel}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  set("head_person_id", "");
+                  setHeadPersonName("");
+                }}
+                className="shrink-0 cursor-pointer text-fg-tertiary hover:text-fg"
+              >
+                ×
+              </button>
+            </div>
+          ) : (
+            <PersonCombobox
+              projectId={projectId}
+              onSelect={(p) => {
+                set("head_person_id", p.id);
+                setHeadPersonName(`${p.first_name} ${p.last_name ?? ""}`.trim());
+              }}
+            />
+          )}
+        </div>
       </div>
 
       {isEdit && editingId && (
@@ -241,21 +271,37 @@ export function HouseholdDrawer({
             {t("project.households.addMember")}
           </p>
           <div className="flex items-end gap-3">
-            <Field.Root className="flex-1">
-              <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+            <div className="flex-1">
+              <label className="mb-1 block text-sm font-medium text-fg-secondary">
                 {t("project.households.personId")}
-              </Field.Label>
-              <Field.Control
-                value={memberForm.person_id}
-                onChange={(e) =>
-                  setMemberForm((f) => ({
-                    ...f,
-                    person_id: e.target.value,
-                  }))
-                }
-                className={inputClass}
-              />
-            </Field.Root>
+              </label>
+              {memberForm.person_id ? (
+                <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
+                  <span className="flex-1 truncate font-mono text-xs text-fg">
+                    {memberPersonLabel}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMemberForm(emptyMemberForm);
+                      setMemberPersonName("");
+                    }}
+                    className="shrink-0 cursor-pointer text-fg-tertiary hover:text-fg"
+                  >
+                    ×
+                  </button>
+                </div>
+              ) : (
+                <PersonCombobox
+                  projectId={projectId}
+                  excludeIds={household?.members?.map((m) => m.person_id) ?? []}
+                  onSelect={(p) => {
+                    setMemberForm((f) => ({ ...f, person_id: p.id }));
+                    setMemberPersonName(`${p.first_name} ${p.last_name ?? ""}`.trim());
+                  }}
+                />
+              )}
+            </div>
 
             <div className="flex-1">
               <label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -276,7 +322,10 @@ export function HouseholdDrawer({
 
             <button
               type="button"
-              onClick={handleAddMember}
+              onClick={() => {
+                handleAddMember();
+                setMemberPersonName("");
+              }}
               disabled={addMember.isPending || !memberForm.person_id}
               className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
             >

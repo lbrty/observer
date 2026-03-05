@@ -20,5 +20,4 @@ export interface CreateDocumentInput {
 
 export interface ListDocumentsOutput {
   documents: Document[];
-  total: number;
 }
