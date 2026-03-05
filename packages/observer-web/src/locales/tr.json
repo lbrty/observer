@@ -544,7 +544,8 @@
       "sessionNotFound": "Oturum bulunamadı",
       "sessionExpired": "Oturum süresi dolmuş",
       "refreshTokenRequired": "Yenileme tokeni gerekli",
-      "insufficientPermissions": "Yetersiz yetki"
+      "insufficientPermissions": "Yetersiz yetki",
+      "accountLocked": "Çok fazla başarısız giriş denemesi nedeniyle hesap kilitlendi"
     },
     "project": {
       "notFound": "Proje bulunamadı",

@@ -20,12 +20,17 @@ const (
 type Config struct {
 	Server    ServerConfig
 	Database  DatabaseConfig
+	Redis     RedisConfig
 	Log       LogConfig
 	JWT       JWTConfig
 	Swagger   SwaggerConfig
 	CORS      CORSConfig
 	Cookie    CookieConfig
 	RateLimit RateLimitConfig
+}
+
+type RedisConfig struct {
+	URL string
 }
 
 type RateLimitConfig struct {
@@ -94,6 +99,9 @@ func Load() (*Config, error) {
 		},
 		Database: DatabaseConfig{
 			DSN: getEnv("DATABASE_DSN", ""),
+		},
+		Redis: RedisConfig{
+			URL: getEnv("REDIS_URL", "redis://localhost:6379/0"),
 		},
 		Log: LogConfig{
 			Level: getEnv("LOG_LEVEL", DefaultLogLevel),

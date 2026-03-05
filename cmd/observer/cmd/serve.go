@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/spf13/cobra"
 
 	"github.com/lbrty/observer/internal/app"
@@ -53,7 +54,14 @@ func runServe(cmd *cobra.Command, _ []string) error {
 	}
 	defer db.Close()
 
-	container, err := app.NewContainer(cfg, db)
+	redisOpts, err := redis.ParseURL(cfg.Redis.URL)
+	if err != nil {
+		return err
+	}
+	redisClient := redis.NewClient(redisOpts)
+	defer redisClient.Close()
+
+	container, err := app.NewContainer(cfg, db, redisClient)
 	if err != nil {
 		return err
 	}

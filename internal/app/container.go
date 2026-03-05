@@ -3,6 +3,8 @@ package app
 import (
 	"fmt"
 
+	"github.com/redis/go-redis/v9"
+
 	"github.com/lbrty/observer/internal/config"
 	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/database"
@@ -65,10 +67,13 @@ type Container struct {
 	// Report Use Cases
 	ReportUC   *ucreport.ReportUseCase
 	ReportRepo repository.ReportRepository
+
+	// Login attempt tracking
+	LoginAttemptStore repository.LoginAttemptStore
 }
 
-// NewContainer wires all dependencies from config and database.
-func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
+// NewContainer wires all dependencies from config, database, and redis.
+func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client) (*Container, error) {
 	rsaKeys, err := crypto.LoadRSAKeys(cfg.JWT.PrivateKeyPath, cfg.JWT.PublicKeyPath)
 	if err != nil {
 		return nil, fmt.Errorf("load RSA keys: %w", err)
@@ -134,6 +139,7 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 	documentUC := ucproject.NewDocumentUseCase(documentRepo)
 	petUC := ucproject.NewPetUseCase(petRepo)
 	reportUC := ucreport.NewReportUseCase(reportRepo)
+	loginAttemptStore := repository.NewLoginAttemptStore(redisClient)
 
 	return &Container{
 		UserRepo:          userRepo,
@@ -170,5 +176,6 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 		PetUC:             petUC,
 		ReportUC:          reportUC,
 		ReportRepo:        reportRepo,
+		LoginAttemptStore: loginAttemptStore,
 	}, nil
 }

@@ -2,7 +2,10 @@ package handler
 
 import (
 	"errors"
+	"fmt"
+	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -21,24 +24,27 @@ const (
 
 // AuthHandler exposes auth HTTP endpoints.
 type AuthHandler struct {
-	authUC   *ucauth.AuthUseCase
-	userRepo repository.UserRepository
-	cookie   config.CookieConfig
-	jwt      config.JWTConfig
+	authUC        *ucauth.AuthUseCase
+	userRepo      repository.UserRepository
+	loginAttempts repository.LoginAttemptStore
+	cookie        config.CookieConfig
+	jwt           config.JWTConfig
 }
 
 // NewAuthHandler creates an AuthHandler.
 func NewAuthHandler(
 	authUC *ucauth.AuthUseCase,
 	userRepo repository.UserRepository,
+	loginAttempts repository.LoginAttemptStore,
 	cookie config.CookieConfig,
 	jwt config.JWTConfig,
 ) *AuthHandler {
 	return &AuthHandler{
-		authUC:   authUC,
-		userRepo: userRepo,
-		cookie:   cookie,
-		jwt:      jwt,
+		authUC:        authUC,
+		userRepo:      userRepo,
+		loginAttempts: loginAttempts,
+		cookie:        cookie,
+		jwt:           jwt,
 	}
 }
 
@@ -87,10 +93,44 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
+	// Check if the account is locked out.
+	if remaining, err := h.loginAttempts.IsLocked(c.Request.Context(), input.Email); err != nil {
+		slog.Error("check login lockout", slog.Any("err", err))
+	} else if remaining != 0 {
+		msg := "account temporarily locked"
+		if remaining == -1 {
+			msg = "account locked, contact administrator"
+		} else {
+			msg = fmt.Sprintf("account locked for %s", remaining.Truncate(time.Second))
+		}
+		c.JSON(http.StatusTooManyRequests, errJSON("errors.auth.accountLocked", msg))
+		return
+	}
+
 	out, err := h.authUC.Login(c.Request.Context(), input, c.GetHeader("User-Agent"), c.ClientIP())
 	if err != nil {
+		// Record failure on invalid credentials.
+		if errors.Is(err, user.ErrInvalidCredentials) {
+			if lockDur, recErr := h.loginAttempts.RecordFailure(c.Request.Context(), input.Email); recErr != nil {
+				slog.Error("record login failure", slog.Any("err", recErr))
+			} else if lockDur != 0 {
+				msg := "account temporarily locked"
+				if lockDur == -1 {
+					msg = "account locked, contact administrator"
+				} else {
+					msg = fmt.Sprintf("account locked for %s", lockDur.Truncate(time.Second))
+				}
+				c.JSON(http.StatusTooManyRequests, errJSON("errors.auth.accountLocked", msg))
+				return
+			}
+		}
 		h.handleError(c, err)
 		return
+	}
+
+	// Successful login — clear any prior failure tracking.
+	if clearErr := h.loginAttempts.ClearAttempts(c.Request.Context(), input.Email); clearErr != nil {
+		slog.Error("clear login attempts", slog.Any("err", clearErr))
 	}
 
 	if !out.RequiresMFA && out.Tokens != nil {

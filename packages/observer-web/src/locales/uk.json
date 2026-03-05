@@ -544,7 +544,8 @@
       "sessionNotFound": "Сесію не знайдено",
       "sessionExpired": "Сесія закінчилася",
       "refreshTokenRequired": "Потрібен токен оновлення",
-      "insufficientPermissions": "Недостатньо прав"
+      "insufficientPermissions": "Недостатньо прав",
+      "accountLocked": "Обліковий запис заблоковано через забагато невдалих спроб входу"
     },
     "project": {
       "notFound": "Проєкт не знайдено",

@@ -544,7 +544,8 @@
       "sessionNotFound": "Session not found",
       "sessionExpired": "Session expired",
       "refreshTokenRequired": "Refresh token is required",
-      "insufficientPermissions": "Insufficient permissions"
+      "insufficientPermissions": "Insufficient permissions",
+      "accountLocked": "Account is locked due to too many failed login attempts"
     },
     "project": {
       "notFound": "Project not found",

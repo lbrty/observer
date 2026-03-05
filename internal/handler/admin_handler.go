@@ -8,17 +8,19 @@ import (
 	"github.com/oklog/ulid/v2"
 
 	"github.com/lbrty/observer/internal/domain/user"
+	"github.com/lbrty/observer/internal/repository"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
 
 // AdminHandler exposes admin user-management HTTP endpoints.
 type AdminHandler struct {
-	userUC *ucadmin.UserUseCase
+	userUC        *ucadmin.UserUseCase
+	loginAttempts repository.LoginAttemptStore
 }
 
 // NewAdminHandler creates an AdminHandler.
-func NewAdminHandler(userUC *ucadmin.UserUseCase) *AdminHandler {
-	return &AdminHandler{userUC: userUC}
+func NewAdminHandler(userUC *ucadmin.UserUseCase, loginAttempts repository.LoginAttemptStore) *AdminHandler {
+	return &AdminHandler{userUC: userUC, loginAttempts: loginAttempts}
 }
 
 // ListUsers handles GET /admin/users.
@@ -164,6 +166,28 @@ func (h *AdminHandler) ResetPassword(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "password reset successfully"})
+}
+
+// UnlockAccount handles POST /admin/users/:id/unlock.
+func (h *AdminHandler) UnlockAccount(c *gin.Context) {
+	id, err := ulid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "invalid user ID"))
+		return
+	}
+
+	u, err := h.userUC.Get(c.Request.Context(), id)
+	if err != nil {
+		h.handleUserError(c, err)
+		return
+	}
+
+	if err := h.loginAttempts.ClearAttempts(c.Request.Context(), u.Email); err != nil {
+		internalError(c, "unlock account", err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "account unlocked"})
 }
 
 func (h *AdminHandler) handleUserError(c *gin.Context, err error) {

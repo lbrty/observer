@@ -544,7 +544,8 @@
       "sessionNotFound": "Sessiya tabylğan joq",
       "sessionExpired": "Sessiyanyn möönötü büttü",
       "refreshTokenRequired": "Jañyrtuu tokeni kerek",
-      "insufficientPermissions": "Uquqtar jetişsiz"
+      "insufficientPermissions": "Uquqtar jetişsiz",
+      "accountLocked": "Aqkaunt köp joluq başarysyz kirüü araketterinen ulam bloktolğon"
     },
     "project": {
       "notFound": "Proekt tabylğan joq",

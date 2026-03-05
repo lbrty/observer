@@ -93,6 +93,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	authHandler := handler.NewAuthHandler(
 		container.AuthUC,
 		container.UserRepo,
+		container.LoginAttemptStore,
 		cfg.Cookie,
 		cfg.JWT,
 	)
@@ -119,7 +120,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	}
 
 	// Admin endpoints — requires authentication + admin role
-	adminHandler := handler.NewAdminHandler(container.UserUC)
+	adminHandler := handler.NewAdminHandler(container.UserUC, container.LoginAttemptStore)
 	permHandler := handler.NewPermissionHandler(container.PermUC)
 	countryHandler := handler.NewCountryHandler(container.CountryUC)
 	stateHandler := handler.NewStateHandler(container.StateUC)
@@ -168,6 +169,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		admin.POST("/users", adminHandler.CreateUser)
 		admin.PATCH("/users/:id", adminHandler.UpdateUser)
 		admin.POST("/users/:id/reset-password", adminHandler.ResetPassword)
+		admin.POST("/users/:id/unlock", adminHandler.UnlockAccount)
 
 		admin.GET("/projects", projectHandler.List)
 		admin.GET("/projects/:project_id", projectHandler.Get)

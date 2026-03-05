@@ -544,7 +544,8 @@
       "sessionNotFound": "Sitzung nicht gefunden",
       "sessionExpired": "Sitzung abgelaufen",
       "refreshTokenRequired": "Aktualisierungstoken erforderlich",
-      "insufficientPermissions": "Unzureichende Berechtigungen"
+      "insufficientPermissions": "Unzureichende Berechtigungen",
+      "accountLocked": "Konto ist aufgrund zu vieler fehlgeschlagener Anmeldeversuche gesperrt"
     },
     "project": {
       "notFound": "Projekt nicht gefunden",

@@ -544,7 +544,8 @@
       "sessionNotFound": "Сессия не найдена",
       "sessionExpired": "Сессия истекла",
       "refreshTokenRequired": "Требуется токен обновления",
-      "insufficientPermissions": "Недостаточно прав"
+      "insufficientPermissions": "Недостаточно прав",
+      "accountLocked": "Учётная запись заблокирована из-за множества неудачных попыток входа"
     },
     "project": {
       "notFound": "Проект не найден",
