@@ -26,6 +26,7 @@ export interface MigrationRecord {
   housing_at_destination?: HousingAtDestination;
   notes?: string;
   created_at: string;
+  updated_at?: string;
 }
 
 export interface CreateMigrationRecordInput {
@@ -34,6 +35,15 @@ export interface CreateMigrationRecordInput {
   migration_date?: string;
   movement_reason?: MovementReason;
   housing_at_destination?: HousingAtDestination;
+  notes?: string;
+}
+
+export interface UpdateMigrationRecordInput {
+  from_place_id?: string;
+  destination_place_id?: string;
+  migration_date?: string;
+  movement_reason?: string;
+  housing_at_destination?: string;
   notes?: string;
 }
 

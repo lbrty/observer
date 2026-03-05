@@ -1,7 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import type { CreateDocumentInput, Document, ListDocumentsOutput } from "@/types/document";
+import type {
+  CreateDocumentInput,
+  Document,
+  ListDocumentsOutput,
+  UpdateDocumentInput,
+} from "@/types/document";
 
 export function useDocuments(projectId: string, personId: string) {
   return useQuery({
@@ -25,6 +30,15 @@ export function useCreateDocument(projectId: string) {
   return useMutation({
     mutationFn: (data: CreateDocumentInput) =>
       api.post(`projects/${projectId}/documents`, { json: data }).json<Document>(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["documents", projectId] }),
+  });
+}
+
+export function useUpdateDocument(projectId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateDocumentInput }) =>
+      api.patch(`projects/${projectId}/documents/${id}`, { json: data }).json<Document>(),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["documents", projectId] }),
   });
 }

@@ -5,6 +5,7 @@ import type {
   CreateMigrationRecordInput,
   ListMigrationRecordsOutput,
   MigrationRecord,
+  UpdateMigrationRecordInput,
 } from "@/types/migration-record";
 
 export function useMigrationRecords(projectId: string, personId: string) {
@@ -35,6 +36,20 @@ export function useCreateMigrationRecord(projectId: string, personId: string) {
     mutationFn: (data: CreateMigrationRecordInput) =>
       api
         .post(`projects/${projectId}/people/${personId}/migration-records`, { json: data })
+        .json<MigrationRecord>(),
+    onSuccess: () =>
+      qc.invalidateQueries({
+        queryKey: ["migration-records", projectId, personId],
+      }),
+  });
+}
+
+export function useUpdateMigrationRecord(projectId: string, personId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateMigrationRecordInput }) =>
+      api
+        .patch(`projects/${projectId}/people/${personId}/migration-records/${id}`, { json: data })
         .json<MigrationRecord>(),
     onSuccess: () =>
       qc.invalidateQueries({

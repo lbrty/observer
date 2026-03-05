@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import type { CreateNoteInput, ListNotesOutput, Note } from "@/types/note";
+import type { CreateNoteInput, ListNotesOutput, Note, UpdateNoteInput } from "@/types/note";
 
 export function useNotes(projectId: string, personId: string) {
   return useQuery({
@@ -17,6 +17,17 @@ export function useCreateNote(projectId: string, personId: string) {
   return useMutation({
     mutationFn: (data: CreateNoteInput) =>
       api.post(`projects/${projectId}/people/${personId}/notes`, { json: data }).json<Note>(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notes", projectId, personId] }),
+  });
+}
+
+export function useUpdateNote(projectId: string, personId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateNoteInput }) =>
+      api
+        .patch(`projects/${projectId}/people/${personId}/notes/${id}`, { json: data })
+        .json<Note>(),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["notes", projectId, personId] }),
   });
 }
