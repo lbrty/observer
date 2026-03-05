@@ -82,6 +82,7 @@ func runSeed(cmd *cobra.Command, _ []string) error {
 		fmt.Printf("  Project %q: seeding %d people...\n", proj.Name, peopleCount)
 		people := genPeople(faker, proj.ID, users, places, offices, peopleCount)
 		bulkInsertPeople(ctx, sqlxDB, people)
+		genAndInsertStatusHistory(ctx, sqlxDB, faker, people)
 
 		genAndInsertPersonCategories(ctx, sqlxDB, faker, people, categories)
 		genAndInsertPersonTags(ctx, sqlxDB, faker, people, tags)
@@ -101,6 +102,7 @@ func truncateAll(ctx context.Context, db *sqlx.DB) error {
 		"household_members", "households",
 		"pets", "documents", "person_notes",
 		"migration_records", "support_records",
+		"person_status_history",
 		"person_categories", "person_tags", "people",
 		"tags", "project_permissions", "projects",
 		"offices", "places", "states", "countries", "categories",
@@ -702,6 +704,50 @@ func seedHouseholds(ctx context.Context, db *sqlx.DB, faker *gofakeit.Faker, pro
 	}
 
 	bulkInsert(ctx, db, "household_members", cols, memberRows)
+}
+
+func genAndInsertStatusHistory(ctx context.Context, db *sqlx.DB, faker *gofakeit.Faker, people []*person.Person) {
+	cols := []string{"person_id", "from_status", "to_status", "changed_at"}
+	var rows [][]any
+
+	for _, p := range people {
+		regAt := p.CreatedAt
+		if p.RegisteredAt != nil {
+			regAt = *p.RegisteredAt
+		}
+
+		status := p.CaseStatus
+		if status == person.CaseStatusNew {
+			continue
+		}
+
+		// new → active
+		offset := time.Duration(faker.IntRange(1, 14)) * 24 * time.Hour
+		activatedAt := regAt.Add(offset)
+		rows = append(rows, []any{p.ID, string(person.CaseStatusNew), string(person.CaseStatusActive), activatedAt})
+
+		if status == person.CaseStatusActive {
+			continue
+		}
+
+		// active → closed
+		offset = time.Duration(faker.IntRange(7, 90)) * 24 * time.Hour
+		closedAt := activatedAt.Add(offset)
+		rows = append(rows, []any{p.ID, string(person.CaseStatusActive), string(person.CaseStatusClosed), closedAt})
+
+		if status == person.CaseStatusClosed {
+			continue
+		}
+
+		// closed → archived
+		offset = time.Duration(faker.IntRange(30, 180)) * 24 * time.Hour
+		archivedAt := closedAt.Add(offset)
+		rows = append(rows, []any{p.ID, string(person.CaseStatusClosed), string(person.CaseStatusArchived), archivedAt})
+	}
+
+	if len(rows) > 0 {
+		bulkInsert(ctx, db, "person_status_history", cols, rows)
+	}
 }
 
 func must(err error) {

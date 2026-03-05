@@ -2246,3 +2246,18 @@ func (mr *MockReportRepositoryMockRecorder) CountFamilyUnits(ctx, f any) *gomock
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountFamilyUnits", reflect.TypeOf((*MockReportRepository)(nil).CountFamilyUnits), ctx, f)
 }
+
+// StatusFlowReport mocks base method.
+func (m *MockReportRepository) StatusFlowReport(ctx context.Context, f report.ReportFilter) ([]report.StatusFlow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StatusFlowReport", ctx, f)
+	ret0, _ := ret[0].([]report.StatusFlow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// StatusFlowReport indicates an expected call of StatusFlowReport.
+func (mr *MockReportRepositoryMockRecorder) StatusFlowReport(ctx, f any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StatusFlowReport", reflect.TypeOf((*MockReportRepository)(nil).StatusFlowReport), ctx, f)
+}

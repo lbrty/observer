@@ -37,6 +37,24 @@ func (uc *ReportUseCase) Generate(ctx context.Context, projectID string, input R
 		}
 		f.DateTo = &t
 	}
+	if input.OfficeID != "" {
+		f.OfficeID = &input.OfficeID
+	}
+	if input.CategoryID != "" {
+		f.CategoryID = &input.CategoryID
+	}
+	if input.ConsultantID != "" {
+		f.ConsultantID = &input.ConsultantID
+	}
+	if input.CaseStatus != "" {
+		f.CaseStatus = &input.CaseStatus
+	}
+	if input.Sex != "" {
+		f.Sex = &input.Sex
+	}
+	if input.AgeGroup != "" {
+		f.AgeGroup = &input.AgeGroup
+	}
 
 	out := &FullReportOutput{}
 
@@ -99,6 +117,21 @@ func (uc *ReportUseCase) Generate(ctx context.Context, projectID string, input R
 		return nil, fmt.Errorf("family report: %w", err)
 	}
 	out.FamilyUnits = toOutput("family_units", families)
+
+	flows, err := uc.repo.StatusFlowReport(ctx, f)
+	if err != nil {
+		return nil, fmt.Errorf("status flow report: %w", err)
+	}
+	dtos := make([]StatusFlowDTO, len(flows))
+	for i, fl := range flows {
+		dtos[i] = StatusFlowDTO{
+			FromStatus: fl.FromStatus,
+			ToStatus:   fl.ToStatus,
+			Count:      fl.Count,
+			AvgDays:    fl.AvgDays,
+		}
+	}
+	out.StatusFlow = dtos
 
 	return out, nil
 }
