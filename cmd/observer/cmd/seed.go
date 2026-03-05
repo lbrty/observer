@@ -147,6 +147,7 @@ func bulkInsert(ctx context.Context, db *sqlx.DB, table string, cols []string, r
 
 func ptr[T any](v T) *T { return &v }
 
+
 func now() time.Time { return time.Now().UTC() }
 
 // seedReferenceData creates countries, states, places, offices, and categories.
@@ -399,7 +400,16 @@ func genPeople(
 	people := make([]*person.Person, 0, count)
 	for range count {
 		regDate := faker.DateRange(n.AddDate(-2, 0, 0), n)
-		birthDate := faker.DateRange(time.Date(1940, 1, 1, 0, 0, 0, 0, time.UTC), n.AddDate(-1, 0, 0))
+
+		var birthDateVal *time.Time
+		var ageGroupVal *person.AgeGroup
+		if faker.IntRange(1, 10) <= 7 {
+			bd := faker.DateRange(time.Date(1940, 1, 1, 0, 0, 0, 0, time.UTC), n.AddDate(-1, 0, 0))
+			birthDateVal = &bd
+		} else {
+			ag := ageGroups[faker.IntRange(0, len(ageGroups)-1)]
+			ageGroupVal = &ag
+		}
 
 		p := &person.Person{
 			ID:             ulid.NewString(),
@@ -407,8 +417,8 @@ func genPeople(
 			FirstName:      faker.FirstName(),
 			LastName:       ptr(faker.LastName()),
 			Sex:            sexes[faker.IntRange(0, len(sexes)-1)],
-			AgeGroup:       ptr(ageGroups[faker.IntRange(0, len(ageGroups)-1)]),
-			BirthDate:      &birthDate,
+			AgeGroup:       ageGroupVal,
+			BirthDate:      birthDateVal,
 			PrimaryPhone:   ptr(faker.Phone()),
 			PhoneNumbers:   json.RawMessage(`[]`),
 			Email:          ptr(faker.Email()),
