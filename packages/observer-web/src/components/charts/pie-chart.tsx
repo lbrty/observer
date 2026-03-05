@@ -87,8 +87,8 @@ export function PieChart({ data }: { data: CountResult[] }) {
       .attr("class", "slice")
       .attr("d", arc)
       .attr("fill", (d) => color(d.data.label))
-      .attr("stroke", "var(--bg, #fff)")
-      .attr("stroke-width", 2)
+      .attr("stroke", "var(--bg-secondary, #fff)")
+      .attr("stroke-width", 1)
       .attr("opacity", (d) =>
         selectedLabel === null || selectedLabel === d.data.label ? 1 : 0.3,
       )

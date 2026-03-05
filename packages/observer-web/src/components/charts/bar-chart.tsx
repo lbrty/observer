@@ -105,13 +105,7 @@ export function BarChart({
         const bh = h - by;
         if (bh <= 0) return "";
         const cr = Math.min(r, bw / 2, bh);
-        return `M${bx},${by + cr}
-          a${cr},${cr} 0 0 1 ${cr},-${cr}
-          h${bw - 2 * cr}
-          a${cr},${cr} 0 0 1 ${cr},${cr}
-          v${bh - cr}
-          h-${bw}
-          z`;
+        return `M${bx},${by + cr}a${cr},${cr} 0 0 1 ${cr},-${cr}h${bw - 2 * cr}a${cr},${cr} 0 0 1 ${cr},${cr}v${bh - cr}h-${bw}z`;
       })
       .attr("fill", "var(--color-accent, #6366f1)")
       .attr("opacity", (d) =>
