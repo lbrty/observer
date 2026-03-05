@@ -49,10 +49,27 @@ export function SankeyChart({ data, width = 500, height = 260, translateLabel }:
     const w = width - margin.left - margin.right;
     const h = height - margin.top - margin.bottom;
 
-    const nodeNames = Array.from(new Set(data.flatMap((d) => [d.from_status, d.to_status])));
+    // Define forward order to prevent circular links
+    const STATUS_ORDER: Record<string, number> = {
+      new: 0,
+      active: 1,
+      closed: 2,
+      archived: 3,
+    };
+
+    // Only keep forward transitions (from lower to higher order)
+    const forwardData = data.filter((d) => {
+      const fromIdx = STATUS_ORDER[d.from_status] ?? -1;
+      const toIdx = STATUS_ORDER[d.to_status] ?? -1;
+      return fromIdx < toIdx;
+    });
+
+    const nodeNames = Array.from(new Set(forwardData.flatMap((d) => [d.from_status, d.to_status])));
+
+    if (nodeNames.length === 0) return;
 
     const nodes = nodeNames.map((name) => ({ name }));
-    const links = data.map((d) => ({
+    const links = forwardData.map((d) => ({
       source: d.from_status,
       target: d.to_status,
       value: d.count,
