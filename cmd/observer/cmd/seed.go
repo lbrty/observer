@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -409,6 +410,7 @@ func genPeople(
 			AgeGroup:       ptr(ageGroups[faker.IntRange(0, len(ageGroups)-1)]),
 			BirthDate:      &birthDate,
 			PrimaryPhone:   ptr(faker.Phone()),
+			PhoneNumbers:   json.RawMessage(`[]`),
 			Email:          ptr(faker.Email()),
 			CaseStatus:     statuses[faker.IntRange(0, len(statuses)-1)],
 			OriginPlaceID:  &places[faker.IntRange(0, len(places)-1)].ID,
