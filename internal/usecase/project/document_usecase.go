@@ -62,6 +62,22 @@ func (uc *DocumentUseCase) Create(ctx context.Context, projectID, uploadedBy str
 	return &dto, nil
 }
 
+// Update updates document metadata.
+func (uc *DocumentUseCase) Update(ctx context.Context, id string, input UpdateDocumentInput) (*DocumentDTO, error) {
+	d, err := uc.repo.GetByID(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("get document for update: %w", err)
+	}
+	if input.Name != nil {
+		d.Name = *input.Name
+	}
+	if err := uc.repo.Update(ctx, d); err != nil {
+		return nil, fmt.Errorf("update document: %w", err)
+	}
+	dto := documentToDTO(d)
+	return &dto, nil
+}
+
 // Delete removes document metadata.
 func (uc *DocumentUseCase) Delete(ctx context.Context, id string) error {
 	if err := uc.repo.Delete(ctx, id); err != nil {

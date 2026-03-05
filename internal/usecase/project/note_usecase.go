@@ -47,6 +47,20 @@ func (uc *NoteUseCase) Create(ctx context.Context, personID, authorID string, in
 	return &dto, nil
 }
 
+// Update updates a note body.
+func (uc *NoteUseCase) Update(ctx context.Context, id string, input UpdateNoteInput) (*NoteDTO, error) {
+	n, err := uc.repo.GetByID(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("get note for update: %w", err)
+	}
+	n.Body = input.Body
+	if err := uc.repo.Update(ctx, n); err != nil {
+		return nil, fmt.Errorf("update note: %w", err)
+	}
+	dto := noteToDTO(n)
+	return &dto, nil
+}
+
 // Delete removes a note.
 func (uc *NoteUseCase) Delete(ctx context.Context, id string) error {
 	if err := uc.repo.Delete(ctx, id); err != nil {

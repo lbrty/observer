@@ -9,7 +9,7 @@ import (
 	"github.com/lbrty/observer/internal/ulid"
 )
 
-// MigrationRecordUseCase handles migration record operations (append-only).
+// MigrationRecordUseCase handles migration record operations.
 type MigrationRecordUseCase struct {
 	repo repository.MigrationRecordRepository
 }
@@ -66,6 +66,41 @@ func (uc *MigrationRecordUseCase) Create(ctx context.Context, personID string, i
 
 	if err := uc.repo.Create(ctx, r); err != nil {
 		return nil, fmt.Errorf("create migration record: %w", err)
+	}
+	dto := migrationRecordToDTO(r)
+	return &dto, nil
+}
+
+// Update updates a migration record.
+func (uc *MigrationRecordUseCase) Update(ctx context.Context, id string, input UpdateMigrationRecordInput) (*MigrationRecordDTO, error) {
+	r, err := uc.repo.GetByID(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("get migration record for update: %w", err)
+	}
+
+	if input.FromPlaceID != nil {
+		r.FromPlaceID = input.FromPlaceID
+	}
+	if input.DestinationPlaceID != nil {
+		r.DestinationPlaceID = input.DestinationPlaceID
+	}
+	if input.MovementReason != nil {
+		mr := migration.MovementReason(*input.MovementReason)
+		r.MovementReason = &mr
+	}
+	if input.HousingAtDestination != nil {
+		h := migration.HousingAtDestination(*input.HousingAtDestination)
+		r.HousingAtDestination = &h
+	}
+	if input.Notes != nil {
+		r.Notes = input.Notes
+	}
+	if err := parseDateField(input.MigrationDate, &r.MigrationDate); err != nil {
+		return nil, fmt.Errorf("invalid migration_date: %w", err)
+	}
+
+	if err := uc.repo.Update(ctx, r); err != nil {
+		return nil, fmt.Errorf("update migration record: %w", err)
 	}
 	dto := migrationRecordToDTO(r)
 	return &dto, nil

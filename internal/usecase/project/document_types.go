@@ -8,16 +8,17 @@ import (
 
 // DocumentDTO is the project-scoped document metadata representation.
 type DocumentDTO struct {
-	ID               string    `json:"id"`
-	PersonID         string    `json:"person_id"`
-	ProjectID        string    `json:"project_id"`
-	UploadedBy       *string   `json:"uploaded_by,omitempty"`
-	EncryptionKeyRef *string   `json:"encryption_key_ref,omitempty"`
-	Name             string    `json:"name"`
-	Path             string    `json:"path"`
-	MimeType         string    `json:"mime_type"`
-	Size             int64     `json:"size"`
-	CreatedAt        time.Time `json:"created_at"`
+	ID               string     `json:"id"`
+	PersonID         string     `json:"person_id"`
+	ProjectID        string     `json:"project_id"`
+	UploadedBy       *string    `json:"uploaded_by,omitempty"`
+	EncryptionKeyRef *string    `json:"encryption_key_ref,omitempty"`
+	Name             string     `json:"name"`
+	Path             string     `json:"path"`
+	MimeType         string     `json:"mime_type"`
+	Size             int64      `json:"size"`
+	CreatedAt        time.Time  `json:"created_at"`
+	UpdatedAt        *time.Time `json:"updated_at,omitempty"`
 }
 
 // CreateDocumentInput holds data for creating document metadata.
@@ -30,8 +31,13 @@ type CreateDocumentInput struct {
 	EncryptionKeyRef *string `json:"encryption_key_ref"`
 }
 
+// UpdateDocumentInput holds data for updating document metadata.
+type UpdateDocumentInput struct {
+	Name *string `json:"name"`
+}
+
 func documentToDTO(d *document.Document) DocumentDTO {
-	return DocumentDTO{
+	dto := DocumentDTO{
 		ID:               d.ID,
 		PersonID:         d.PersonID,
 		ProjectID:        d.ProjectID,
@@ -43,4 +49,9 @@ func documentToDTO(d *document.Document) DocumentDTO {
 		Size:             d.Size,
 		CreatedAt:        d.CreatedAt,
 	}
+	if !d.UpdatedAt.IsZero() {
+		t := d.UpdatedAt
+		dto.UpdatedAt = &t
+	}
+	return dto
 }
