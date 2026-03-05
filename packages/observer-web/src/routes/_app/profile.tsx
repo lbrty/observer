@@ -17,7 +17,7 @@ function ProfilePage() {
   const { user, setUser } = useAuth();
 
   return (
-    <div className="rays-profile mx-auto w-full max-w-xl px-5 py-6">
+    <div className="mx-auto w-full max-w-xl px-5 py-6">
       <PageHeader title={t("profile.title")} />
       <div className="space-y-6">
         <ProfileForm user={user} setUser={setUser} />
