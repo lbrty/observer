@@ -128,16 +128,19 @@ export function BarChart({
 
       const barGroup = g.append("g").attr("clip-path", `url(#${clipId})`);
 
+      const rH = 3;
       barGroup
         .selectAll(".bar")
         .data(data)
-        .join("rect")
+        .join("path")
         .attr("class", "bar")
-        .attr("x", 0)
-        .attr("y", (d) => yBand(d.label) ?? 0)
-        .attr("width", (d) => xLinear(d.count) + 3)
-        .attr("height", yBand.bandwidth())
-        .attr("rx", 3)
+        .attr("d", (d) => {
+          const bx = 0;
+          const by = yBand(d.label) ?? 0;
+          const bw = xLinear(d.count);
+          const bh = yBand.bandwidth();
+          return `M${bx},${by} H${bx + bw - rH} a${rH},${rH} 0 0 1 ${rH},${rH} V${by + bh - rH} a${rH},${rH} 0 0 1 ${-rH},${rH} H${bx} Z`;
+        })
         .attr("fill", (d, i) => getColor(d.label, colorMap, i))
         .attr("opacity", opacityFn)
         .style("cursor", "pointer")
@@ -214,16 +217,19 @@ export function BarChart({
 
       const barGroup = g.append("g").attr("clip-path", `url(#${clipId})`);
 
+      const rV = 3;
       barGroup
         .selectAll(".bar")
         .data(data)
-        .join("rect")
+        .join("path")
         .attr("class", "bar")
-        .attr("x", (d) => x(d.label) ?? 0)
-        .attr("y", (d) => y(d.count))
-        .attr("width", x.bandwidth())
-        .attr("height", (d) => h - y(d.count) + 3)
-        .attr("rx", 3)
+        .attr("d", (d) => {
+          const bx = x(d.label) ?? 0;
+          const by = y(d.count);
+          const bw = x.bandwidth();
+          const bh = h - y(d.count);
+          return `M${bx},${by + rV} a${rV},${rV} 0 0 1 ${rV},${-rV} H${bx + bw - rV} a${rV},${rV} 0 0 1 ${rV},${rV} V${by + bh} H${bx} Z`;
+        })
         .attr("fill", (d, i) => getColor(d.label, colorMap, i))
         .attr("opacity", opacityFn)
         .style("cursor", "pointer")
