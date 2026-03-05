@@ -24,7 +24,6 @@ import {
 } from "@/components/icons";
 import { useCategories } from "@/hooks/use-categories";
 import { useOffices } from "@/hooks/use-offices";
-import { usePermissions } from "@/hooks/use-permissions";
 import { useReport } from "@/hooks/use-reports";
 import { exportGroupCSV, exportReportCSV } from "@/lib/export-csv";
 import type { CountResult, ReportGroup, ReportParams } from "@/types/report";
@@ -287,8 +286,6 @@ function ReportsPage() {
   const { data, isLoading } = useReport(projectId, params);
   const { data: offices } = useOffices();
   const { data: categories } = useCategories();
-  const { data: permissionsData } = usePermissions(projectId);
-
   const officeOptions = (offices ?? []).map((o) => ({
     label: o.name,
     value: o.id,
@@ -297,11 +294,6 @@ function ReportsPage() {
   const categoryOptions = (categories ?? []).map((c) => ({
     label: c.name,
     value: c.id,
-  }));
-
-  const consultantOptions = (permissionsData?.permissions ?? []).map((p) => ({
-    label: `${p.user_first_name} ${p.user_last_name}`,
-    value: p.user_id,
   }));
 
   const caseStatusOptions = CASE_STATUS_OPTIONS.map((s) => ({
@@ -407,7 +399,7 @@ function ReportsPage() {
             </div>
 
             {/* Filter grid */}
-            <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
               <FilterField label={t("project.reports.dateFrom")}>
                 <DatePicker
                   value={params.date_from ?? ""}
@@ -444,20 +436,6 @@ function ReportsPage() {
                   options={[
                     { label: t("project.reports.allValues"), value: "" },
                     ...categoryOptions,
-                  ]}
-                  placeholder={t("project.reports.allValues")}
-                  fullWidth
-                />
-              </FilterField>
-              <FilterField label={t("project.reports.filterConsultant")}>
-                <UISelect
-                  value={params.consultant_id ?? ""}
-                  onValueChange={(v) =>
-                    setParams((p) => ({ ...p, consultant_id: v || undefined }))
-                  }
-                  options={[
-                    { label: t("project.reports.allValues"), value: "" },
-                    ...consultantOptions,
                   ]}
                   placeholder={t("project.reports.allValues")}
                   fullWidth
@@ -545,16 +523,6 @@ function ReportsPage() {
                 onRemove={() => setParams((p) => ({ ...p, category_id: undefined }))}
               />
             )}
-            {params.consultant_id && (
-              <FilterChip
-                label={t("project.reports.filterConsultant")}
-                value={
-                  consultantOptions.find((c) => c.value === params.consultant_id)?.label ??
-                  params.consultant_id
-                }
-                onRemove={() => setParams((p) => ({ ...p, consultant_id: undefined }))}
-              />
-            )}
             {params.case_status && (
               <FilterChip
                 label={t("project.reports.filterCaseStatus")}
@@ -613,7 +581,7 @@ function ReportsPage() {
               />
               <KpiCard
                 label={t("project.reports.kpiActiveCases")}
-                value={data.by_idp_status.rows.find((r) => r.label === "active")?.count ?? 0}
+                value={data.by_case_status?.rows.find((r) => r.label === "active")?.count ?? 0}
               />
               <KpiCard
                 label={t("project.reports.kpiIdp")}

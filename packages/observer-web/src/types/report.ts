@@ -27,6 +27,7 @@ export interface FullReport {
   by_age_group: ReportGroup;
   by_tag: ReportGroup;
   family_units: ReportGroup;
+  by_case_status: ReportGroup;
   status_flow: StatusFlow[];
 }
 

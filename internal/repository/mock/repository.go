@@ -2112,6 +2112,21 @@ func (mr *MockReportRepositoryMockRecorder) CountByAgeGroup(ctx, f any) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountByAgeGroup", reflect.TypeOf((*MockReportRepository)(nil).CountByAgeGroup), ctx, f)
 }
 
+// CountByCaseStatus mocks base method.
+func (m *MockReportRepository) CountByCaseStatus(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountByCaseStatus", ctx, f)
+	ret0, _ := ret[0].([]report.CountResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountByCaseStatus indicates an expected call of CountByCaseStatus.
+func (mr *MockReportRepositoryMockRecorder) CountByCaseStatus(ctx, f any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountByCaseStatus", reflect.TypeOf((*MockReportRepository)(nil).CountByCaseStatus), ctx, f)
+}
+
 // CountByCategory mocks base method.
 func (m *MockReportRepository) CountByCategory(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
 	m.ctrl.T.Helper()

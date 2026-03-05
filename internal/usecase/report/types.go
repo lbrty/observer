@@ -45,5 +45,6 @@ type FullReportOutput struct {
 	ByAgeGroup    ReportOutput    `json:"by_age_group"`
 	ByTag         ReportOutput    `json:"by_tag"`
 	FamilyUnits   ReportOutput    `json:"family_units"`
+	ByCaseStatus  ReportOutput    `json:"by_case_status"`
 	StatusFlow    []StatusFlowDTO `json:"status_flow"`
 }

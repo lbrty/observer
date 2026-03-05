@@ -231,5 +231,6 @@ type ReportRepository interface {
 	CountByAgeGroup(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 	CountByTag(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 	CountFamilyUnits(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
+	CountByCaseStatus(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 	StatusFlowReport(ctx context.Context, f report.ReportFilter) ([]report.StatusFlow, error)
 }

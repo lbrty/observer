@@ -285,6 +285,20 @@ func (r *reportRepo) CountFamilyUnits(ctx context.Context, f report.ReportFilter
 	return results, nil
 }
 
+func (r *reportRepo) CountByCaseStatus(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
+	q := `SELECT p.case_status AS label, COUNT(*) AS count
+		FROM people p WHERE p.project_id = $1`
+	args := []any{f.ProjectID}
+	q, args, _ = applyPeopleFilters(q, f, "p.registered_at", args, 2)
+	q += " GROUP BY p.case_status ORDER BY count DESC"
+
+	var results []report.CountResult
+	if err := r.db.SelectContext(ctx, &results, q, args...); err != nil {
+		return nil, fmt.Errorf("count by case status: %w", err)
+	}
+	return results, nil
+}
+
 func (r *reportRepo) StatusFlowReport(ctx context.Context, f report.ReportFilter) ([]report.StatusFlow, error) {
 	q := `SELECT from_status, to_status, COUNT(*) AS count,
 		   COALESCE(AVG(EXTRACT(EPOCH FROM (h.changed_at - COALESCE(prev.changed_at, p.registered_at, p.created_at))) / 86400)::numeric(10,1), 0) AS avg_days
@@ -295,12 +309,14 @@ func (r *reportRepo) StatusFlowReport(ctx context.Context, f report.ReportFilter
 		WHERE h2.person_id = h.person_id AND h2.changed_at < h.changed_at
 		ORDER BY h2.changed_at DESC LIMIT 1
 	) prev ON true
-	WHERE p.project_id = $1
-	GROUP BY from_status, to_status
-	ORDER BY count DESC`
+	WHERE p.project_id = $1`
+
+	args := []any{f.ProjectID}
+	q, args, _ = applyPeopleFilters(q, f, "h.changed_at", args, 2)
+	q += " GROUP BY from_status, to_status ORDER BY count DESC"
 
 	var results []report.StatusFlow
-	if err := r.db.SelectContext(ctx, &results, q, f.ProjectID); err != nil {
+	if err := r.db.SelectContext(ctx, &results, q, args...); err != nil {
 		return nil, fmt.Errorf("status flow report: %w", err)
 	}
 	return results, nil

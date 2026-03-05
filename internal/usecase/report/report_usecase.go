@@ -118,6 +118,12 @@ func (uc *ReportUseCase) Generate(ctx context.Context, projectID string, input R
 	}
 	out.FamilyUnits = toOutput("family_units", families)
 
+	byCaseStatus, err := uc.repo.CountByCaseStatus(ctx, f)
+	if err != nil {
+		return nil, fmt.Errorf("case status report: %w", err)
+	}
+	out.ByCaseStatus = toOutput("by_case_status", byCaseStatus)
+
 	flows, err := uc.repo.StatusFlowReport(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("status flow report: %w", err)
