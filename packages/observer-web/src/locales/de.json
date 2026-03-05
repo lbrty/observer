@@ -318,7 +318,8 @@
       "body": "Notiz schreiben...",
       "add": "Notiz hinzufügen",
       "deleteConfirm": "Sind Sie sicher, dass Sie diese Notiz löschen möchten?",
-      "empty": "Noch keine Notizen"
+      "empty": "Noch keine Notizen",
+      "edited": "bearbeitet"
     },
     "documents": {
       "title": "Dokumente",
@@ -438,7 +439,12 @@
       "housingCollective": "Sammelunterkunft",
       "housingHotel": "Hotel",
       "housingOther": "Sonstiges",
-      "housingUnknown": "Unbekannt"
+      "housingUnknown": "Unbekannt",
+      "editTitle": "Migrationseintrag bearbeiten",
+      "save": "Speichern",
+      "saving": "Speichern...",
+      "saved": "Erfolgreich gespeichert",
+      "details": "Details"
     },
     "pets": {
       "title": "Haustiere",

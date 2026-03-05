@@ -318,7 +318,8 @@
       "body": "Eskerme jazuu...",
       "add": "Eskerme qoşuu",
       "deleteConfirm": "Bu eskermeni öçürösüzbü?",
-      "empty": "Eskermeler joq"
+      "empty": "Eskermeler joq",
+      "edited": "oñdoldu"
     },
     "documents": {
       "title": "Dokumentter",
@@ -438,7 +439,12 @@
       "housingCollective": "Jalpysy jaj",
       "housingHotel": "Meymaqana",
       "housingOther": "Başqa",
-      "housingUnknown": "Belgisiz"
+      "housingUnknown": "Belgisiz",
+      "editTitle": "Kochuu jazuusun oңdoo",
+      "save": "Saktoo",
+      "saving": "Saktaluuda...",
+      "saved": "Iygiliktyy saktaldy",
+      "details": "Toluk maalymat"
     },
     "pets": {
       "title": "Üy janybarlar",

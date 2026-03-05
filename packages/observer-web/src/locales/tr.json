@@ -318,7 +318,8 @@
       "body": "Bir not yazın...",
       "add": "Not ekle",
       "deleteConfirm": "Bu notu silmek istediğinize emin misiniz?",
-      "empty": "Henüz not yok"
+      "empty": "Henüz not yok",
+      "edited": "düzenlendi"
     },
     "documents": {
       "title": "Belgeler",
@@ -438,7 +439,12 @@
       "housingCollective": "Toplu barınma",
       "housingHotel": "Otel",
       "housingOther": "Diğer",
-      "housingUnknown": "Bilinmiyor"
+      "housingUnknown": "Bilinmiyor",
+      "editTitle": "Göç kaydını düzenle",
+      "save": "Kaydet",
+      "saving": "Kaydediliyor...",
+      "saved": "Başarıyla kaydedildi",
+      "details": "Detaylar"
     },
     "pets": {
       "title": "Evcil Hayvanlar",

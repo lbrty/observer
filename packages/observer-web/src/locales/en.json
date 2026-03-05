@@ -318,7 +318,8 @@
       "body": "Write a note...",
       "add": "Add note",
       "deleteConfirm": "Are you sure you want to delete this note?",
-      "empty": "No notes yet"
+      "empty": "No notes yet",
+      "edited": "edited"
     },
     "documents": {
       "title": "Documents",
@@ -438,7 +439,12 @@
       "housingCollective": "Collective site",
       "housingHotel": "Hotel",
       "housingOther": "Other",
-      "housingUnknown": "Unknown"
+      "housingUnknown": "Unknown",
+      "editTitle": "Edit migration record",
+      "save": "Save",
+      "saving": "Saving...",
+      "saved": "Saved successfully",
+      "details": "Details"
     },
     "pets": {
       "title": "Pets",
