@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
 import { DatePicker } from "@/components/date-picker";
 import { DrawerShell } from "@/components/drawer-shell";
-import { FormField, FormTextarea, inputClass } from "@/components/form-field";
+import { FormField, FormTextarea } from "@/components/form-field";
 import { SectionHeading } from "@/components/section-heading";
 import { UISelect } from "@/components/ui-select";
 import { useDrawerForm } from "@/hooks/use-drawer-form";

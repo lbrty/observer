@@ -72,7 +72,7 @@ export interface ListSupportRecordsParams {
 }
 
 export interface ListSupportRecordsOutput {
-  support_records: SupportRecord[];
+  records: SupportRecord[];
   total: number;
   page: number;
   per_page: number;

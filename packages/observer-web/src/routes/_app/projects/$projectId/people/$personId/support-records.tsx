@@ -110,7 +110,7 @@ function PersonSupportRecords() {
 
       <DataTable
         columns={columns}
-        data={data?.support_records ?? []}
+        data={data?.records ?? []}
         keyExtractor={(r) => r.id}
         onRowClick={(r) => openEdit(r.id)}
         isLoading={isLoading}
