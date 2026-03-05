@@ -113,7 +113,7 @@ func (r *reportRepo) CountByCurrentRegion(ctx context.Context, f report.ReportFi
 }
 
 func (r *reportRepo) CountBySphere(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT sr.sphere AS label, COUNT(*) AS count
+	q := `SELECT COALESCE(sr.sphere, 'unspecified') AS label, COUNT(*) AS count
 		FROM support_records sr WHERE sr.project_id = $1`
 	args := []any{f.ProjectID}
 	q, args, _ = dateFilter(q, f, "sr.provided_at", args, 2)
