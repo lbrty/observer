@@ -8,6 +8,7 @@ const LANG_KEY = "observer-lang";
 const LANGUAGES = [
   { value: "ky", label: "Kyrgyzça" },
   { value: "en", label: "English" },
+  { value: "ru", label: "Русский" },
   { value: "uk", label: "Українська" },
   { value: "de", label: "Deutsch" },
   { value: "tr", label: "Türkçe" },
