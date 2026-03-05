@@ -453,4 +453,15 @@ body {
   .print-header {
     display: block !important;
   }
+
+  .page-bg-base::before,
+  .page-bg-dashboard::after,
+  .page-bg-people::after,
+  .page-bg-reports::after,
+  .page-bg-admin::after,
+  .page-bg-support::after,
+  .page-bg-profile::after,
+  .page-bg-reference::after {
+    display: none !important;
+  }
 }
