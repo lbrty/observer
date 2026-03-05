@@ -54,7 +54,7 @@ func (uc *RegisterUseCase) Execute(ctx context.Context, input RegisterInput) (*R
 		Email:      input.Email,
 		Role:       user.Role(input.Role),
 		IsVerified: false,
-		IsActive:   true,
+		IsActive:   false,
 		CreatedAt:  now,
 		UpdatedAt:  now,
 	}
@@ -76,6 +76,6 @@ func (uc *RegisterUseCase) Execute(ctx context.Context, input RegisterInput) (*R
 
 	return &RegisterOutput{
 		UserID:  userID.String(),
-		Message: "Registration successful. Please check your email to verify your account.",
+		Message: "Registration successful. Your account is pending admin approval.",
 	}, nil
 }

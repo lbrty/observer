@@ -2,11 +2,28 @@ export type Role = "admin" | "staff" | "consultant" | "guest";
 
 export interface User {
   id: string;
+  first_name: string;
+  last_name: string;
   email: string;
   phone: string;
   role: Role;
   is_verified: boolean;
   created_at: string;
+}
+
+export interface UpdateProfileInput {
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+}
+
+export interface ChangePasswordInput {
+  current_password: string;
+  new_password: string;
+}
+
+export interface ResetPasswordInput {
+  new_password: string;
 }
 
 export interface TokenPair {

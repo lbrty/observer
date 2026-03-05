@@ -94,6 +94,8 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		container.LoginUC,
 		container.RefreshTokenUC,
 		container.LogoutUC,
+		container.UpdateProfileUC,
+		container.ChangePasswordUC,
 		container.UserRepo,
 		cfg.Cookie,
 		cfg.JWT,
@@ -105,6 +107,8 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		auth.POST("/login", authHandler.Login)
 		auth.POST("/refresh", authHandler.RefreshToken)
 		auth.GET("/me", authMW.Authenticate(), authHandler.Me)
+		auth.PATCH("/me", authMW.Authenticate(), authHandler.UpdateProfile)
+		auth.POST("/change-password", authMW.Authenticate(), authHandler.ChangePassword)
 		auth.POST("/logout", authMW.Authenticate(), authHandler.Logout)
 	}
 
@@ -116,7 +120,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	}
 
 	// Admin endpoints — requires authentication + admin role
-	adminHandler := handler.NewAdminHandler(container.ListUsersUC, container.GetUserUC, container.UpdateUserUC, container.CreateUserUC)
+	adminHandler := handler.NewAdminHandler(container.ListUsersUC, container.GetUserUC, container.UpdateUserUC, container.CreateUserUC, container.ResetPasswordUC)
 	permHandler := handler.NewPermissionHandler(container.ListPermsUC, container.AssignPermUC, container.UpdatePermUC, container.RevokePermUC)
 	countryHandler := handler.NewCountryHandler(container.CountryUC)
 	stateHandler := handler.NewStateHandler(container.StateUC)
@@ -148,6 +152,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	{
 		admin.POST("/users", adminHandler.CreateUser)
 		admin.PATCH("/users/:id", adminHandler.UpdateUser)
+		admin.POST("/users/:id/reset-password", adminHandler.ResetPassword)
 
 		admin.GET("/projects", projectHandler.List)
 		admin.GET("/projects/:project_id", projectHandler.Get)
@@ -189,6 +194,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	noteHandler := handler.NewNoteHandler(container.NoteUC)
 	documentHandler := handler.NewDocumentHandler(container.DocumentUC)
 	petHandler := handler.NewPetHandler(container.PetUC)
+	reportHandler := handler.NewReportHandler(container.ReportUC)
 
 	proj := s.router.Group("/projects/:project_id", authMW.Authenticate())
 	{
@@ -211,6 +217,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			read.GET("/documents/:id", documentHandler.Get)
 			read.GET("/pets", petHandler.List)
 			read.GET("/pets/:id", petHandler.Get)
+			read.GET("/reports", reportHandler.Generate)
 		}
 
 		// Create-level access

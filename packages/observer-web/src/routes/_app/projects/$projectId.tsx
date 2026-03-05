@@ -1,9 +1,17 @@
-import { UserCircleIcon } from "@/components/icons";
-import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
-import { useTranslation } from "react-i18next";
-
+import {
+  ChartBarIcon,
+  FilesIcon,
+  HandHeartIcon,
+  HouseSimpleIcon,
+  PathIcon,
+  PawPrintIcon,
+  TagIcon,
+  UserCircleIcon,
+} from "@/components/icons";
 import { SidebarLink } from "@/components/sidebar-link";
 import { useMyProjects } from "@/hooks/use-my-projects";
+import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/_app/projects/$projectId")({
   component: ProjectLayout,
@@ -33,6 +41,36 @@ function ProjectLayout() {
             to={`/projects/${projectId}/people`}
             label={t("project.nav.people")}
             icon={UserCircleIcon}
+          />
+          <SidebarLink
+            to={`/projects/${projectId}/support-records`}
+            label={t("project.nav.supportRecords")}
+            icon={HandHeartIcon}
+          />
+          <SidebarLink
+            to={`/projects/${projectId}/households`}
+            label={t("project.nav.households")}
+            icon={HouseSimpleIcon}
+          />
+          <SidebarLink
+            to={`/projects/${projectId}/tags`}
+            label={t("project.nav.tags")}
+            icon={TagIcon}
+          />
+          <SidebarLink
+            to={`/projects/${projectId}/documents`}
+            label={t("project.nav.documents")}
+            icon={FilesIcon}
+          />
+          <SidebarLink
+            to={`/projects/${projectId}/pets`}
+            label={t("project.nav.pets")}
+            icon={PawPrintIcon}
+          />
+          <SidebarLink
+            to={`/projects/${projectId}/reports`}
+            label={t("project.nav.reports")}
+            icon={ChartBarIcon}
           />
         </nav>
       </aside>

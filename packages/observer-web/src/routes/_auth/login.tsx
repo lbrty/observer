@@ -39,7 +39,11 @@ function LoginPage() {
     } catch (err) {
       if (err instanceof HTTPError) {
         const body = await err.response.json().catch(() => null);
-        setError(body?.error ?? err.message);
+        if (body?.code === "errors.user.notActive") {
+          setError(t("auth.pendingApproval"));
+        } else {
+          setError(body?.error ?? err.message);
+        }
       } else {
         setError(t("common.unexpectedError"));
       }

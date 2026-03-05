@@ -37,7 +37,8 @@
       "mcp__serena__insert_after_symbol",
       "Bash(tail:*)",
       "WebFetch(domain:base-ui.com)",
-      "Bash(bun:*)"
+      "Bash(bun:*)",
+      "Bash(just test:*)"
     ]
   }
 }

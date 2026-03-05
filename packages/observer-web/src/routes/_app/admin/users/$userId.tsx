@@ -3,11 +3,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { FormDialog } from "@/components/form-dialog";
 import { PageHeader } from "@/components/page-header";
 import { UISelect } from "@/components/ui-select";
 import { UISwitch } from "@/components/ui-switch";
 import { useOffices } from "@/hooks/use-offices";
 import { useUpdateUser, useUser } from "@/hooks/use-users";
+import { api, HTTPError } from "@/lib/api";
 
 export const Route = createFileRoute("/_app/admin/users/$userId")({
   component: UserDetailPage,
@@ -69,10 +71,10 @@ function UserDetailPage() {
   const offices = officesData ?? [];
 
   const roleOptions = [
-    { label: "admin", value: "admin" },
-    { label: "staff", value: "staff" },
-    { label: "consultant", value: "consultant" },
-    { label: "guest", value: "guest" },
+    { label: t("admin.users.roleAdmin"), value: "admin" },
+    { label: t("admin.users.roleStaff"), value: "staff" },
+    { label: t("admin.users.roleConsultant"), value: "consultant" },
+    { label: t("admin.users.roleGuest"), value: "guest" },
   ];
 
   const officeOptions = [
@@ -183,6 +185,85 @@ function UserDetailPage() {
             : t("admin.users.save")}
         </button>
       </form>
+
+      <div className="mt-6 h-px bg-border-secondary" />
+
+      <ResetPasswordSection userId={userId} />
+    </div>
+  );
+}
+
+function ResetPasswordSection({ userId }: { userId: string }) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (password.length < 8) {
+      setError(t("auth.passwordTooShort"));
+      return;
+    }
+
+    setSaving(true);
+    setError("");
+    try {
+      await api.post(`admin/users/${userId}/reset-password`, {
+        json: { new_password: password },
+      });
+      setPassword("");
+      setOpen(false);
+    } catch (err) {
+      if (err instanceof HTTPError) {
+        const body = await err.response.json().catch(() => null);
+        setError(body?.error ?? err.message);
+      } else {
+        setError(t("common.unexpectedError"));
+      }
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="mt-4">
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="cursor-pointer rounded-lg border border-border-secondary px-4 py-2 text-sm font-medium text-fg-secondary hover:bg-bg-tertiary"
+      >
+        {t("admin.users.resetPassword")}
+      </button>
+
+      <FormDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={t("admin.users.resetPasswordTitle")}
+        loading={saving}
+        onSubmit={handleSubmit}
+      >
+        {error && (
+          <div className="mb-3 rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">
+            {error}
+          </div>
+        )}
+        <Field.Root>
+          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+            {t("admin.users.newPassword")}
+          </Field.Label>
+          <Field.Control
+            type="password"
+            required
+            minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+            className="block h-9 w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg outline-none focus:border-accent"
+          />
+        </Field.Root>
+      </FormDialog>
     </div>
   );
 }

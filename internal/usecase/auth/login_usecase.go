@@ -117,6 +117,8 @@ func (uc *LoginUseCase) createSession(ctx context.Context, u *user.User, userAge
 func toUserDTO(u *user.User) *UserDTO {
 	return &UserDTO{
 		ID:         u.ID.String(),
+		FirstName:  u.FirstName,
+		LastName:   u.LastName,
 		Email:      u.Email,
 		Phone:      u.Phone,
 		Role:       string(u.Role),

@@ -13,10 +13,11 @@ import (
 
 // AdminHandler exposes admin user-management HTTP endpoints.
 type AdminHandler struct {
-	listUsersUC  *ucadmin.ListUsersUseCase
-	getUserUC    *ucadmin.GetUserUseCase
-	updateUserUC *ucadmin.UpdateUserUseCase
-	createUserUC *ucadmin.CreateUserUseCase
+	listUsersUC     *ucadmin.ListUsersUseCase
+	getUserUC       *ucadmin.GetUserUseCase
+	updateUserUC    *ucadmin.UpdateUserUseCase
+	createUserUC    *ucadmin.CreateUserUseCase
+	resetPasswordUC *ucadmin.ResetPasswordUseCase
 }
 
 // NewAdminHandler creates an AdminHandler.
@@ -25,12 +26,14 @@ func NewAdminHandler(
 	getUserUC *ucadmin.GetUserUseCase,
 	updateUserUC *ucadmin.UpdateUserUseCase,
 	createUserUC *ucadmin.CreateUserUseCase,
+	resetPasswordUC *ucadmin.ResetPasswordUseCase,
 ) *AdminHandler {
 	return &AdminHandler{
-		listUsersUC:  listUsersUC,
-		getUserUC:    getUserUC,
-		updateUserUC: updateUserUC,
-		createUserUC: createUserUC,
+		listUsersUC:     listUsersUC,
+		getUserUC:       getUserUC,
+		updateUserUC:    updateUserUC,
+		createUserUC:    createUserUC,
+		resetPasswordUC: resetPasswordUC,
 	}
 }
 
@@ -155,6 +158,28 @@ func (h *AdminHandler) CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, out)
+}
+
+// ResetPassword handles POST /admin/users/:id/reset-password.
+func (h *AdminHandler) ResetPassword(c *gin.Context) {
+	id, err := ulid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "invalid user ID"))
+		return
+	}
+
+	var input ucadmin.ResetPasswordInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		return
+	}
+
+	if err := h.resetPasswordUC.Execute(c.Request.Context(), id, input); err != nil {
+		h.handleUserError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "password reset successfully"})
 }
 
 func (h *AdminHandler) handleUserError(c *gin.Context, err error) {

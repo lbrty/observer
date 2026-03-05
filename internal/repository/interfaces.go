@@ -14,12 +14,13 @@ import (
 	"github.com/lbrty/observer/internal/domain/pet"
 	"github.com/lbrty/observer/internal/domain/project"
 	"github.com/lbrty/observer/internal/domain/reference"
+	"github.com/lbrty/observer/internal/domain/report"
 	"github.com/lbrty/observer/internal/domain/support"
 	"github.com/lbrty/observer/internal/domain/tag"
 	"github.com/lbrty/observer/internal/domain/user"
 )
 
-//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/repository UserRepository,CredentialsRepository,MFARepository,VerificationTokenRepository,SessionRepository,PermissionLoader,PermissionRepository,ProjectRepository,CountryRepository,StateRepository,PlaceRepository,OfficeRepository,CategoryRepository,TagRepository,PersonRepository,PersonCategoryRepository,PersonTagRepository,SupportRecordRepository,MigrationRecordRepository,HouseholdRepository,HouseholdMemberRepository,PersonNoteRepository,DocumentRepository,PetRepository
+//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/repository UserRepository,CredentialsRepository,MFARepository,VerificationTokenRepository,SessionRepository,PermissionLoader,PermissionRepository,ProjectRepository,CountryRepository,StateRepository,PlaceRepository,OfficeRepository,CategoryRepository,TagRepository,PersonRepository,PersonCategoryRepository,PersonTagRepository,SupportRecordRepository,MigrationRecordRepository,HouseholdRepository,HouseholdMemberRepository,PersonNoteRepository,DocumentRepository,PetRepository,ReportRepository
 
 // UserRepository defines persistence operations for users.
 type UserRepository interface {
@@ -37,6 +38,7 @@ type UserRepository interface {
 type CredentialsRepository interface {
 	Create(ctx context.Context, cred *user.Credentials) error
 	GetByUserID(ctx context.Context, userID ulid.ULID) (*user.Credentials, error)
+	Update(ctx context.Context, cred *user.Credentials) error
 }
 
 // MFARepository defines persistence operations for MFA configs.
@@ -215,4 +217,18 @@ type PetRepository interface {
 	Create(ctx context.Context, p *pet.Pet) error
 	Update(ctx context.Context, p *pet.Pet) error
 	Delete(ctx context.Context, id string) error
+}
+
+// ReportRepository provides aggregation queries for ADR-005 reports.
+type ReportRepository interface {
+	CountConsultations(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
+	CountBySex(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
+	CountByIDPStatus(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
+	CountByCategory(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
+	CountByCurrentRegion(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
+	CountBySphere(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
+	CountByOffice(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
+	CountByAgeGroup(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
+	CountByTag(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
+	CountFamilyUnits(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 }

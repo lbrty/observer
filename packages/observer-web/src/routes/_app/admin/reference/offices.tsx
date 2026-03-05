@@ -183,7 +183,7 @@ function OfficeFormDialog({
         <Field.Control
           value={placeId}
           onChange={(e) => setPlaceId(e.target.value)}
-          placeholder="Place ID"
+          placeholder={t("admin.reference.offices.placeId")}
           className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
         />
       </Field.Root>

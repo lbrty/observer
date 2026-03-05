@@ -49,9 +49,24 @@ type LogoutInput struct {
 // UserDTO is a serializable user representation.
 type UserDTO struct {
 	ID         string    `json:"id"`
+	FirstName  string    `json:"first_name"`
+	LastName   string    `json:"last_name"`
 	Email      string    `json:"email"`
 	Phone      string    `json:"phone"`
 	Role       string    `json:"role"`
 	IsVerified bool      `json:"is_verified"`
 	CreatedAt  time.Time `json:"created_at"`
+}
+
+// UpdateProfileInput holds fields a user can update on their own profile.
+type UpdateProfileInput struct {
+	FirstName *string `json:"first_name"`
+	LastName  *string `json:"last_name"`
+	Phone     *string `json:"phone"`
+}
+
+// ChangePasswordInput holds data for a password change.
+type ChangePasswordInput struct {
+	CurrentPassword string `json:"current_password" binding:"required"`
+	NewPassword     string `json:"new_password" binding:"required,min=8"`
 }

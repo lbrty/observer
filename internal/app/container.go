@@ -11,6 +11,7 @@ import (
 	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 	ucmy "github.com/lbrty/observer/internal/usecase/my"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
+	ucreport "github.com/lbrty/observer/internal/usecase/report"
 )
 
 // Container holds all application dependencies.
@@ -32,16 +33,21 @@ type Container struct {
 	TokenGenerator crypto.TokenGenerator
 
 	// Auth Use Cases
-	RegisterUC     *ucauth.RegisterUseCase
-	LoginUC        *ucauth.LoginUseCase
-	RefreshTokenUC *ucauth.RefreshTokenUseCase
-	LogoutUC       *ucauth.LogoutUseCase
+	RegisterUC       *ucauth.RegisterUseCase
+	LoginUC          *ucauth.LoginUseCase
+	RefreshTokenUC   *ucauth.RefreshTokenUseCase
+	LogoutUC         *ucauth.LogoutUseCase
+	UpdateProfileUC  *ucauth.UpdateProfileUseCase
+	ChangePasswordUC *ucauth.ChangePasswordUseCase
 
 	// Admin Use Cases
 	ListUsersUC  *ucadmin.ListUsersUseCase
 	GetUserUC    *ucadmin.GetUserUseCase
 	UpdateUserUC *ucadmin.UpdateUserUseCase
 	CreateUserUC *ucadmin.CreateUserUseCase
+
+	// Admin Password Reset
+	ResetPasswordUC *ucadmin.ResetPasswordUseCase
 
 	// Permission Use Cases
 	ListPermsUC  *ucadmin.ListPermissionsUseCase
@@ -71,6 +77,10 @@ type Container struct {
 	NoteUC            *ucproject.NoteUseCase
 	DocumentUC        *ucproject.DocumentUseCase
 	PetUC             *ucproject.PetUseCase
+
+	// Report Use Cases
+	ReportUC   *ucreport.ReportUseCase
+	ReportRepo repository.ReportRepository
 }
 
 // NewContainer wires all dependencies from config and database.
@@ -105,6 +115,7 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 	noteRepo := repository.NewPersonNoteRepository(sqlxDB)
 	documentRepo := repository.NewDocumentRepository(sqlxDB)
 	petRepo := repository.NewPetRepository(sqlxDB)
+	reportRepo := repository.NewReportRepository(sqlxDB)
 
 	hasher := crypto.NewArgonHasher()
 	tokenGen := crypto.NewRSATokenGenerator(
@@ -119,12 +130,15 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 	loginUC := ucauth.NewLoginUseCase(userRepo, credRepo, sessionRepo, mfaRepo, hasher, tokenGen)
 	refreshUC := ucauth.NewRefreshTokenUseCase(userRepo, sessionRepo, tokenGen)
 	logoutUC := ucauth.NewLogoutUseCase(sessionRepo)
+	updateProfileUC := ucauth.NewUpdateProfileUseCase(userRepo)
+	changePasswordUC := ucauth.NewChangePasswordUseCase(credRepo, hasher)
 
 	listUsersUC := ucadmin.NewListUsersUseCase(userRepo)
 	getUserUC := ucadmin.NewGetUserUseCase(userRepo)
 	updateUserUC := ucadmin.NewUpdateUserUseCase(userRepo)
 	createUserUC := ucadmin.NewCreateUserUseCase(userRepo, credRepo, hasher)
 
+	resetPasswordUC := ucadmin.NewResetPasswordUseCase(credRepo, hasher)
 	listPermsUC := ucadmin.NewListPermissionsUseCase(permCRUDRepo, userRepo)
 	assignPermUC := ucadmin.NewAssignPermissionUseCase(permCRUDRepo)
 	updatePermUC := ucadmin.NewUpdatePermissionUseCase(permCRUDRepo)
@@ -149,6 +163,7 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 	noteUC := ucproject.NewNoteUseCase(noteRepo)
 	documentUC := ucproject.NewDocumentUseCase(documentRepo)
 	petUC := ucproject.NewPetUseCase(petRepo)
+	reportUC := ucreport.NewReportUseCase(reportRepo)
 
 	return &Container{
 		UserRepo:          userRepo,
@@ -167,6 +182,9 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 		LoginUC:           loginUC,
 		RefreshTokenUC:    refreshUC,
 		LogoutUC:          logoutUC,
+		UpdateProfileUC:   updateProfileUC,
+		ChangePasswordUC:  changePasswordUC,
+		ResetPasswordUC:   resetPasswordUC,
 		ListUsersUC:       listUsersUC,
 		GetUserUC:         getUserUC,
 		UpdateUserUC:      updateUserUC,
@@ -192,5 +210,7 @@ func NewContainer(cfg *config.Config, db database.DB) (*Container, error) {
 		NoteUC:            noteUC,
 		DocumentUC:        documentUC,
 		PetUC:             petUC,
+		ReportUC:           reportUC,
+		ReportRepo:         reportRepo,
 	}, nil
 }

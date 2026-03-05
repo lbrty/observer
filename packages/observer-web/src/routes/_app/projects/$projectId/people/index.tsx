@@ -4,7 +4,7 @@ import {
   UserCircleIcon,
 } from "@/components/icons";
 import { Tabs } from "@base-ui/react/tabs";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -25,6 +25,7 @@ const statusTabs = ["", "new", "active", "closed", "archived"] as const;
 function PeopleListPage() {
   const { t } = useTranslation();
   const { projectId } = Route.useParams();
+  const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<string>("");
@@ -175,7 +176,12 @@ function PeopleListPage() {
         columns={columns}
         data={data?.people ?? []}
         keyExtractor={(p) => p.id}
-        onRowClick={(p) => openEdit(p.id)}
+        onRowClick={(p) =>
+          navigate({
+            to: "/projects/$projectId/people/$personId",
+            params: { projectId, personId: p.id },
+          })
+        }
         isLoading={isLoading}
       />
 

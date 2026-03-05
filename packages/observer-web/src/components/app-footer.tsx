@@ -10,6 +10,7 @@ const LANGUAGES = [
   { value: "en", label: "English" },
   { value: "uk", label: "Українська" },
   { value: "de", label: "Deutsch" },
+  { value: "tr", label: "Türkçe" },
 ];
 
 function getThemeValue(): string {

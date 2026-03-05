@@ -21,13 +21,15 @@ const (
 
 // AuthHandler exposes auth HTTP endpoints.
 type AuthHandler struct {
-	registerUC *ucauth.RegisterUseCase
-	loginUC    *ucauth.LoginUseCase
-	refreshUC  *ucauth.RefreshTokenUseCase
-	logoutUC   *ucauth.LogoutUseCase
-	userRepo   repository.UserRepository
-	cookie     config.CookieConfig
-	jwt        config.JWTConfig
+	registerUC      *ucauth.RegisterUseCase
+	loginUC         *ucauth.LoginUseCase
+	refreshUC       *ucauth.RefreshTokenUseCase
+	logoutUC        *ucauth.LogoutUseCase
+	updateProfileUC *ucauth.UpdateProfileUseCase
+	changePasswordUC *ucauth.ChangePasswordUseCase
+	userRepo        repository.UserRepository
+	cookie          config.CookieConfig
+	jwt             config.JWTConfig
 }
 
 // NewAuthHandler creates an AuthHandler.
@@ -36,18 +38,22 @@ func NewAuthHandler(
 	loginUC *ucauth.LoginUseCase,
 	refreshUC *ucauth.RefreshTokenUseCase,
 	logoutUC *ucauth.LogoutUseCase,
+	updateProfileUC *ucauth.UpdateProfileUseCase,
+	changePasswordUC *ucauth.ChangePasswordUseCase,
 	userRepo repository.UserRepository,
 	cookie config.CookieConfig,
 	jwt config.JWTConfig,
 ) *AuthHandler {
 	return &AuthHandler{
-		registerUC: registerUC,
-		loginUC:    loginUC,
-		refreshUC:  refreshUC,
-		logoutUC:   logoutUC,
-		userRepo:   userRepo,
-		cookie:     cookie,
-		jwt:        jwt,
+		registerUC:       registerUC,
+		loginUC:          loginUC,
+		refreshUC:        refreshUC,
+		logoutUC:         logoutUC,
+		updateProfileUC:  updateProfileUC,
+		changePasswordUC: changePasswordUC,
+		userRepo:         userRepo,
+		cookie:           cookie,
+		jwt:              jwt,
 	}
 }
 
@@ -133,6 +139,8 @@ func (h *AuthHandler) Me(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"id":          u.ID.String(),
+		"first_name":  u.FirstName,
+		"last_name":   u.LastName,
 		"email":       u.Email,
 		"phone":       u.Phone,
 		"role":        string(u.Role),
@@ -265,6 +273,51 @@ func (h *AuthHandler) clearTokenCookies(c *gin.Context) {
 		Secure:   h.cookie.Secure,
 		SameSite: sameSite,
 	})
+}
+
+// UpdateProfile handles PATCH /auth/me.
+func (h *AuthHandler) UpdateProfile(c *gin.Context) {
+	userID, ok := middleware.UserIDFrom(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, errJSON("errors.auth.missingUser", "missing user identity"))
+		return
+	}
+
+	var input ucauth.UpdateProfileInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		return
+	}
+
+	dto, err := h.updateProfileUC.Execute(c.Request.Context(), userID, input)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, dto)
+}
+
+// ChangePassword handles POST /auth/change-password.
+func (h *AuthHandler) ChangePassword(c *gin.Context) {
+	userID, ok := middleware.UserIDFrom(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, errJSON("errors.auth.missingUser", "missing user identity"))
+		return
+	}
+
+	var input ucauth.ChangePasswordInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		return
+	}
+
+	if err := h.changePasswordUC.Execute(c.Request.Context(), userID, input); err != nil {
+		h.handleError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "password changed successfully"})
 }
 
 func (h *AuthHandler) handleError(c *gin.Context, err error) {

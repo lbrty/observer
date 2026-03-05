@@ -1,4 +1,4 @@
-import { CheckIcon, SignOutIcon } from "@/components/icons";
+import { CheckIcon, SignOutIcon, UserCircleIcon } from "@/components/icons";
 import { Menu } from "@base-ui/react/menu";
 import {
   createFileRoute,
@@ -23,6 +23,7 @@ const LANGUAGES = [
   { value: "en", label: "English" },
   { value: "uk", label: "Українська" },
   { value: "de", label: "Deutsch" },
+  { value: "tr", label: "Türkçe" },
 ];
 
 function getStoredTheme(): string {
@@ -162,6 +163,16 @@ function AvatarMenu({
             </Menu.Group>
 
             <Menu.Separator className="my-1 h-px bg-border-secondary" />
+
+            <Menu.Item
+              render={<Link to="/profile" />}
+              className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-sm text-fg outline-none select-none data-highlighted:bg-bg-tertiary"
+            >
+              <span className="inline-flex w-4 items-center justify-center text-fg-tertiary">
+                <UserCircleIcon size={14} />
+              </span>
+              {t("profile.title")}
+            </Menu.Item>
 
             <Menu.Item
               onClick={onLogout}

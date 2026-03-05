@@ -51,10 +51,10 @@ function UsersPage() {
 
   const roleOptions = [
     { label: t("admin.users.allRoles"), value: "" },
-    { label: "admin", value: "admin" },
-    { label: "staff", value: "staff" },
-    { label: "consultant", value: "consultant" },
-    { label: "guest", value: "guest" },
+    { label: t("admin.users.roleAdmin"), value: "admin" },
+    { label: t("admin.users.roleStaff"), value: "staff" },
+    { label: t("admin.users.roleConsultant"), value: "consultant" },
+    { label: t("admin.users.roleGuest"), value: "guest" },
   ];
 
   const statusOptions = [
@@ -209,10 +209,10 @@ function CreateUserDialog({
   });
 
   const roleOptions = [
-    { label: "admin", value: "admin" },
-    { label: "staff", value: "staff" },
-    { label: "consultant", value: "consultant" },
-    { label: "guest", value: "guest" },
+    { label: t("admin.users.roleAdmin"), value: "admin" },
+    { label: t("admin.users.roleStaff"), value: "staff" },
+    { label: t("admin.users.roleConsultant"), value: "consultant" },
+    { label: t("admin.users.roleGuest"), value: "guest" },
   ];
 
   const officeOptions = [

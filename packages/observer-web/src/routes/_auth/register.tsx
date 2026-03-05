@@ -1,5 +1,5 @@
 import { Field } from "@base-ui/react/field";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -13,9 +13,9 @@ export const Route = createFileRoute("/_auth/register")({
 function RegisterPage() {
   const { t } = useTranslation();
   const { register } = useAuth();
-  const navigate = useNavigate();
 
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -42,7 +42,7 @@ function RegisterPage() {
 
     try {
       await register({ email, password, role: "staff" });
-      navigate({ to: "/login" });
+      setSuccess(true);
     } catch (err) {
       if (err instanceof HTTPError) {
         const body = await err.response.json().catch(() => null);
@@ -53,6 +53,30 @@ function RegisterPage() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (success) {
+    return (
+      <>
+        <div className="mb-8 flex flex-col items-center">
+          <span className="brand-icon mb-4 inline-flex size-14 items-center justify-center rounded-2xl text-xl font-bold text-white">
+            O
+          </span>
+          <h1 className="font-serif text-xl font-semibold text-fg">
+            {t("auth.registerTitle")}
+          </h1>
+        </div>
+        <div className="mb-4 rounded-lg bg-foam/10 px-3 py-2 text-sm text-foam">
+          {t("auth.pendingApproval")}
+        </div>
+        <Link
+          to="/login"
+          className="block w-full cursor-pointer rounded-lg bg-accent px-3 py-2.5 text-center text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
+        >
+          {t("auth.login")}
+        </Link>
+      </>
+    );
   }
 
   return (

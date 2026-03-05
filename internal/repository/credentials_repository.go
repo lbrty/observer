@@ -37,6 +37,21 @@ func (r *credentialsRepo) Create(ctx context.Context, cred *user.Credentials) er
 	return nil
 }
 
+func (r *credentialsRepo) Update(ctx context.Context, cred *user.Credentials) error {
+	const q = `
+		UPDATE credentials
+		SET password_hash = $1, salt = $2, updated_at = $3
+		WHERE user_id = $4
+	`
+	_, err := r.db.ExecContext(ctx, q,
+		cred.PasswordHash, cred.Salt, time.Now().UTC(), cred.UserID.String(),
+	)
+	if err != nil {
+		return fmt.Errorf("update credentials: %w", err)
+	}
+	return nil
+}
+
 func (r *credentialsRepo) GetByUserID(ctx context.Context, userID ulid.ULID) (*user.Credentials, error) {
 	const q = `SELECT user_id, password_hash, salt, updated_at FROM credentials WHERE user_id=$1`
 

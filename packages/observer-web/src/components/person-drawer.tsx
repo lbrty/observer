@@ -264,7 +264,7 @@ export function PersonDrawer({
               onSubmit={handleSubmit}
               className="flex min-h-0 flex-1 flex-col"
             >
-              <div className="flex-1 space-y-6 overflow-y-auto px-6 py-5">
+              <div className="flex-1 space-y-5 overflow-y-auto px-6 py-5">
                 {saved && (
                   <div className="flex items-center gap-2 rounded-lg border border-foam/20 bg-foam/8 px-3 py-2.5 text-sm font-medium text-foam">
                     <CheckIcon size={16} weight="bold" className="shrink-0" />
@@ -278,224 +278,215 @@ export function PersonDrawer({
                   </div>
                 )}
 
-                <Section title={t("project.people.identity")}>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <Field.Root>
-                      <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                        {t("project.people.firstName")} *
-                      </Field.Label>
-                      <Field.Control
-                        required
-                        value={form.first_name}
-                        onChange={(e) => set("first_name", e.target.value)}
-                        className={inputClass}
-                      />
-                    </Field.Root>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">{t("project.people.identity")}</h3>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field.Root>
+                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                      {t("project.people.firstName")} *
+                    </Field.Label>
+                    <Field.Control
+                      required
+                      value={form.first_name}
+                      onChange={(e) => set("first_name", e.target.value)}
+                      className={inputClass}
+                    />
+                  </Field.Root>
 
-                    <Field.Root>
-                      <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                        {t("project.people.lastName")}
-                      </Field.Label>
-                      <Field.Control
-                        value={form.last_name}
-                        onChange={(e) => set("last_name", e.target.value)}
-                        className={inputClass}
-                      />
-                    </Field.Root>
+                  <Field.Root>
+                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                      {t("project.people.lastName")}
+                    </Field.Label>
+                    <Field.Control
+                      value={form.last_name}
+                      onChange={(e) => set("last_name", e.target.value)}
+                      className={inputClass}
+                    />
+                  </Field.Root>
 
-                    <Field.Root>
-                      <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                        {t("project.people.patronymic")}
-                      </Field.Label>
-                      <Field.Control
-                        value={form.patronymic}
-                        onChange={(e) => set("patronymic", e.target.value)}
-                        className={inputClass}
-                      />
-                    </Field.Root>
+                  <Field.Root>
+                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                      {t("project.people.patronymic")}
+                    </Field.Label>
+                    <Field.Control
+                      value={form.patronymic}
+                      onChange={(e) => set("patronymic", e.target.value)}
+                      className={inputClass}
+                    />
+                  </Field.Root>
 
+                  <Field.Root>
+                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                      {t("project.people.sexLabel")}
+                    </Field.Label>
+                    <UISelect
+                      value={form.sex}
+                      onValueChange={(v) => set("sex", v)}
+                      options={sexOptions}
+                      fullWidth
+                    />
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                      {t("project.people.birthDate")}
+                    </Field.Label>
+                    <Field.Control
+                      type="date"
+                      value={form.birth_date}
+                      onChange={(e) => set("birth_date", e.target.value)}
+                      className={inputClass}
+                    />
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                      {t("project.people.ageGroup")}
+                    </Field.Label>
+                    <UISelect
+                      value={form.age_group}
+                      onValueChange={(v) => set("age_group", v)}
+                      options={ageGroupOptions}
+                      fullWidth
+                    />
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                      {t("project.people.phone")}
+                    </Field.Label>
+                    <Field.Control
+                      value={form.primary_phone}
+                      onChange={(e) => set("primary_phone", e.target.value)}
+                      className={inputClass}
+                    />
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                      {t("project.people.email")}
+                    </Field.Label>
+                    <Field.Control
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => set("email", e.target.value)}
+                      className={inputClass}
+                    />
+                  </Field.Root>
+                </div>
+
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">{t("project.people.location")}</h3>
+                <p className="text-xs font-medium text-fg-tertiary">
+                  {t("project.people.originPlace")}
+                </p>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <UISelect
+                    value={form.origin_country}
+                    onValueChange={(v) => {
+                      set("origin_country", v);
+                      set("origin_state", "");
+                      set("origin_place_id", "");
+                    }}
+                    options={countryOptions}
+                    placeholder={t("project.people.selectCountry")}
+                    fullWidth
+                  />
+                  <UISelect
+                    value={form.origin_state}
+                    onValueChange={(v) => {
+                      set("origin_state", v);
+                      set("origin_place_id", "");
+                    }}
+                    options={originStateOptions}
+                    placeholder={t("project.people.selectState")}
+                    disabled={!form.origin_country}
+                    fullWidth
+                  />
+                  <UISelect
+                    value={form.origin_place_id}
+                    onValueChange={(v) => set("origin_place_id", v)}
+                    options={originPlaceOptions}
+                    placeholder={t("project.people.selectPlace")}
+                    disabled={!form.origin_state}
+                    fullWidth
+                  />
+                </div>
+
+                <p className="text-xs font-medium text-fg-tertiary">
+                  {t("project.people.currentPlace")}
+                </p>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <UISelect
+                    value={form.current_country}
+                    onValueChange={(v) => {
+                      set("current_country", v);
+                      set("current_state", "");
+                      set("current_place_id", "");
+                    }}
+                    options={countryOptions}
+                    placeholder={t("project.people.selectCountry")}
+                    fullWidth
+                  />
+                  <UISelect
+                    value={form.current_state}
+                    onValueChange={(v) => {
+                      set("current_state", v);
+                      set("current_place_id", "");
+                    }}
+                    options={currentStateOptions}
+                    placeholder={t("project.people.selectState")}
+                    disabled={!form.current_country}
+                    fullWidth
+                  />
+                  <UISelect
+                    value={form.current_place_id}
+                    onValueChange={(v) => set("current_place_id", v)}
+                    options={currentPlaceOptions}
+                    placeholder={t("project.people.selectPlace")}
+                    disabled={!form.current_state}
+                    fullWidth
+                  />
+                </div>
+
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-tertiary">{t("project.people.case")}</h3>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field.Root>
+                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                      {t("project.people.caseStatusLabel")}
+                    </Field.Label>
+                    <UISelect
+                      value={form.case_status}
+                      onValueChange={(v) => set("case_status", v)}
+                      options={caseStatusOptions}
+                      fullWidth
+                    />
+                  </Field.Root>
+
+                  <Field.Root>
+                    <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+                      {t("project.people.externalId")}
+                    </Field.Label>
+                    <Field.Control
+                      value={form.external_id}
+                      onChange={(e) => set("external_id", e.target.value)}
+                      className={inputClass}
+                    />
+                  </Field.Root>
+
+                  {officeOptions.length > 0 && (
                     <Field.Root>
                       <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                        {t("project.people.sexLabel")}
+                        {t("project.people.office")}
                       </Field.Label>
                       <UISelect
-                        value={form.sex}
-                        onValueChange={(v) => set("sex", v)}
-                        options={sexOptions}
+                        value={form.office_id}
+                        onValueChange={(v) => set("office_id", v)}
+                        options={officeOptions}
                         fullWidth
                       />
                     </Field.Root>
+                  )}
 
-                    <Field.Root>
-                      <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                        {t("project.people.birthDate")}
-                      </Field.Label>
-                      <Field.Control
-                        type="date"
-                        value={form.birth_date}
-                        onChange={(e) => set("birth_date", e.target.value)}
-                        className={inputClass}
-                      />
-                    </Field.Root>
-
-                    <Field.Root>
-                      <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                        {t("project.people.ageGroup")}
-                      </Field.Label>
-                      <UISelect
-                        value={form.age_group}
-                        onValueChange={(v) => set("age_group", v)}
-                        options={ageGroupOptions}
-                        fullWidth
-                      />
-                    </Field.Root>
-                  </div>
-                </Section>
-
-                <Section title={t("project.people.contact")}>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <Field.Root>
-                      <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                        {t("project.people.phone")}
-                      </Field.Label>
-                      <Field.Control
-                        value={form.primary_phone}
-                        onChange={(e) => set("primary_phone", e.target.value)}
-                        className={inputClass}
-                      />
-                    </Field.Root>
-
-                    <Field.Root>
-                      <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                        {t("project.people.email")}
-                      </Field.Label>
-                      <Field.Control
-                        type="email"
-                        value={form.email}
-                        onChange={(e) => set("email", e.target.value)}
-                        className={inputClass}
-                      />
-                    </Field.Root>
-                  </div>
-                </Section>
-
-                <Section title={t("project.people.location")}>
-                  <p className="mb-2 text-xs font-medium text-fg-tertiary">
-                    {t("project.people.originPlace")}
-                  </p>
-                  <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <UISelect
-                      value={form.origin_country}
-                      onValueChange={(v) => {
-                        set("origin_country", v);
-                        set("origin_state", "");
-                        set("origin_place_id", "");
-                      }}
-                      options={countryOptions}
-                      placeholder={t("project.people.selectCountry")}
-                      fullWidth
-                    />
-                    <UISelect
-                      value={form.origin_state}
-                      onValueChange={(v) => {
-                        set("origin_state", v);
-                        set("origin_place_id", "");
-                      }}
-                      options={originStateOptions}
-                      placeholder={t("project.people.selectState")}
-                      disabled={!form.origin_country}
-                      fullWidth
-                    />
-                    <UISelect
-                      value={form.origin_place_id}
-                      onValueChange={(v) => set("origin_place_id", v)}
-                      options={originPlaceOptions}
-                      placeholder={t("project.people.selectPlace")}
-                      disabled={!form.origin_state}
-                      fullWidth
-                    />
-                  </div>
-
-                  <p className="mb-2 text-xs font-medium text-fg-tertiary">
-                    {t("project.people.currentPlace")}
-                  </p>
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <UISelect
-                      value={form.current_country}
-                      onValueChange={(v) => {
-                        set("current_country", v);
-                        set("current_state", "");
-                        set("current_place_id", "");
-                      }}
-                      options={countryOptions}
-                      placeholder={t("project.people.selectCountry")}
-                      fullWidth
-                    />
-                    <UISelect
-                      value={form.current_state}
-                      onValueChange={(v) => {
-                        set("current_state", v);
-                        set("current_place_id", "");
-                      }}
-                      options={currentStateOptions}
-                      placeholder={t("project.people.selectState")}
-                      disabled={!form.current_country}
-                      fullWidth
-                    />
-                    <UISelect
-                      value={form.current_place_id}
-                      onValueChange={(v) => set("current_place_id", v)}
-                      options={currentPlaceOptions}
-                      placeholder={t("project.people.selectPlace")}
-                      disabled={!form.current_state}
-                      fullWidth
-                    />
-                  </div>
-                </Section>
-
-                <Section title={t("project.people.case")}>
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <Field.Root>
-                      <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                        {t("project.people.caseStatusLabel")}
-                      </Field.Label>
-                      <UISelect
-                        value={form.case_status}
-                        onValueChange={(v) => set("case_status", v)}
-                        options={caseStatusOptions}
-                        fullWidth
-                      />
-                    </Field.Root>
-
-                    <Field.Root>
-                      <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                        {t("project.people.externalId")}
-                      </Field.Label>
-                      <Field.Control
-                        value={form.external_id}
-                        onChange={(e) => set("external_id", e.target.value)}
-                        className={inputClass}
-                      />
-                    </Field.Root>
-
-                    {officeOptions.length > 0 && (
-                      <Field.Root>
-                        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                          {t("project.people.office")}
-                        </Field.Label>
-                        <UISelect
-                          value={form.office_id}
-                          onValueChange={(v) => set("office_id", v)}
-                          options={officeOptions}
-                          fullWidth
-                        />
-                      </Field.Root>
-                    )}
-                  </div>
-                </Section>
-
-                <Section title={t("project.people.consent")}>
-                  <div className="space-y-4">
+                  <div className="col-span-full space-y-4">
                     <UISwitch
                       checked={form.consent_given}
                       onCheckedChange={(v) => set("consent_given", v)}
@@ -516,7 +507,7 @@ export function PersonDrawer({
                       </Field.Root>
                     )}
                   </div>
-                </Section>
+                </div>
               </div>
 
               <div className="flex shrink-0 items-center justify-end gap-2 border-t border-border-secondary px-6 py-4">
@@ -538,22 +529,5 @@ export function PersonDrawer({
         </Drawer.Viewport>
       </Drawer.Portal>
     </Drawer.Root>
-  );
-}
-
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <fieldset className="space-y-3">
-      <legend className="text-sm font-semibold text-fg">{title}</legend>
-      <div className="rounded-xl border border-border-secondary bg-bg p-4">
-        {children}
-      </div>
-    </fieldset>
   );
 }
