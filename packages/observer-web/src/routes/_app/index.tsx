@@ -101,51 +101,21 @@ function DashboardPage() {
       </div>
 
       {isAdminOrStaff && (
-        <>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="card-bg-topo rounded-xl border border-border-secondary bg-bg-secondary p-5"
-              >
-                <p className="relative text-[11px] font-semibold uppercase tracking-wide text-fg-tertiary">
-                  {stat.label}
-                </p>
-                <p className="relative mt-2 font-mono text-2xl font-bold tabular-nums text-fg">
-                  {stat.value}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <h2 className="mt-8 mb-4 font-serif text-lg font-semibold text-fg">
-            {t("dashboard.quickActions")}
-          </h2>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {quickActions.map(
-              ({ to, icon: ActionIcon, color, titleKey, descKey }) => (
-                <Link
-                  key={to}
-                  to={to}
-                  className="card-bg-dots group rounded-xl border border-border-secondary bg-bg-secondary p-5 transition-shadow hover:shadow-elevated"
-                >
-                  <span
-                    className={`relative mb-4 inline-flex size-10 items-center justify-center rounded-xl ${colorClasses[color]}`}
-                  >
-                    <ActionIcon size={20} weight="duotone" />
-                  </span>
-                  <p className="relative text-sm font-medium text-fg">
-                    {t(titleKey)}
-                  </p>
-                  <p className="relative mt-0.5 text-xs text-fg-tertiary">
-                    {t(descKey)}
-                  </p>
-                </Link>
-              ),
-            )}
-          </div>
-        </>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="card-bg-topo rounded-xl border border-border-secondary bg-bg-secondary p-5"
+            >
+              <p className="relative text-[11px] font-semibold uppercase tracking-wide text-fg-tertiary">
+                {stat.label}
+              </p>
+              <p className="relative mt-2 font-mono text-2xl font-bold tabular-nums text-fg">
+                {stat.value}
+              </p>
+            </div>
+          ))}
+        </div>
       )}
 
       <h2 className="mt-8 mb-4 font-serif text-lg font-semibold text-fg">
@@ -180,6 +150,38 @@ function DashboardPage() {
             </Link>
           ))}
         </div>
+      )}
+
+      {isAdminOrStaff && (
+        <>
+          <h2 className="mt-8 mb-4 font-serif text-lg font-semibold text-fg">
+            {t("dashboard.quickActions")}
+          </h2>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {quickActions.map(
+              ({ to, icon: ActionIcon, color, titleKey, descKey }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className="card-bg-dots group rounded-xl border border-border-secondary bg-bg-secondary p-5 transition-shadow hover:shadow-elevated"
+                >
+                  <span
+                    className={`relative mb-4 inline-flex size-10 items-center justify-center rounded-xl ${colorClasses[color]}`}
+                  >
+                    <ActionIcon size={20} weight="duotone" />
+                  </span>
+                  <p className="relative text-sm font-medium text-fg">
+                    {t(titleKey)}
+                  </p>
+                  <p className="relative mt-0.5 text-xs text-fg-tertiary">
+                    {t(descKey)}
+                  </p>
+                </Link>
+              ),
+            )}
+          </div>
+        </>
       )}
     </div>
   );
