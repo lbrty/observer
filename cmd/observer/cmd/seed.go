@@ -542,7 +542,7 @@ func genAndInsertSupportRecords(
 	var rows [][]any
 
 	for _, p := range people {
-		count := faker.IntRange(0, 3)
+		count := faker.IntRange(5, 20)
 		for range count {
 			var sphere *support.SupportSphere
 			if faker.IntRange(1, 10) <= 7 {
