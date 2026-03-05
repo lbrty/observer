@@ -31,7 +31,7 @@ func NewCategoryHandler(uc *ucadmin.CategoryUseCase) *CategoryHandler {
 func (h *CategoryHandler) List(c *gin.Context) {
 	out, err := h.uc.List(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list categories", err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"categories": out})
@@ -134,6 +134,6 @@ func (h *CategoryHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, reference.ErrCategoryNameExists):
 		c.JSON(http.StatusConflict, errJSON("errors.reference.categoryNameExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle category operation", err)
 	}
 }

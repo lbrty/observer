@@ -324,6 +324,6 @@ func (h *AuthHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, domainauth.ErrSessionExpired):
 		c.JSON(http.StatusUnauthorized, errJSON("errors.auth.sessionExpired", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle auth operation", err)
 	}
 }

@@ -35,7 +35,7 @@ func (h *PermissionHandler) ListPermissions(c *gin.Context) {
 
 	out, err := h.permUC.List(c.Request.Context(), projectID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list permissions", err)
 		return
 	}
 
@@ -138,6 +138,6 @@ func (h *PermissionHandler) handlePermError(c *gin.Context, err error) {
 	case errors.Is(err, project.ErrInvalidProjectRole):
 		c.JSON(http.StatusBadRequest, errJSON("errors.project.invalidRole", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle permission", err)
 	}
 }

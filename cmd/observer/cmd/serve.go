@@ -45,6 +45,7 @@ func runServe(cmd *cobra.Command, _ []string) error {
 	}
 
 	log := logger.New(cfg.Log.Level)
+	slog.SetDefault(log)
 
 	db, err := database.New(cfg.Database.DSN)
 	if err != nil {

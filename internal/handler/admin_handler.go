@@ -45,7 +45,7 @@ func (h *AdminHandler) ListUsers(c *gin.Context) {
 
 	out, err := h.userUC.List(c.Request.Context(), input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list users", err)
 		return
 	}
 
@@ -177,6 +177,6 @@ func (h *AdminHandler) handleUserError(c *gin.Context, err error) {
 	case errors.Is(err, user.ErrPhoneExists):
 		c.JSON(http.StatusConflict, errJSON("errors.user.phoneExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle user operation", err)
 	}
 }

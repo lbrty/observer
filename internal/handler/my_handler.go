@@ -31,7 +31,7 @@ func (h *MyHandler) Projects(c *gin.Context) {
 
 	out, err := h.projectsUC.Execute(c.Request.Context(), userID.String(), role)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list my projects", err)
 		return
 	}
 

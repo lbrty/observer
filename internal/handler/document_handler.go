@@ -40,7 +40,7 @@ func (h *DocumentHandler) List(c *gin.Context) {
 	personID := c.Param("person_id")
 	out, err := h.uc.List(c.Request.Context(), personID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list documents", err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"documents": out})
@@ -124,6 +124,6 @@ func (h *DocumentHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, document.ErrDocumentNotFound):
 		c.JSON(http.StatusNotFound, errJSON("errors.document.notFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle document operation", err)
 	}
 }

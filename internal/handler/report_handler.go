@@ -30,7 +30,7 @@ func (h *ReportHandler) Generate(c *gin.Context) {
 
 	out, err := h.uc.Generate(c.Request.Context(), projectID, input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "generate report", err)
 		return
 	}
 

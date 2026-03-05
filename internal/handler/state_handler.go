@@ -42,7 +42,7 @@ func (h *StateHandler) List(c *gin.Context) {
 		out, err = h.uc.ListAll(c.Request.Context())
 	}
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list states", err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"states": out})
@@ -148,6 +148,6 @@ func (h *StateHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, reference.ErrStateNotFound):
 		c.JSON(http.StatusNotFound, errJSON("errors.reference.stateNotFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle state", err)
 	}
 }

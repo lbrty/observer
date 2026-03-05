@@ -41,7 +41,7 @@ func (h *HouseholdHandler) List(c *gin.Context) {
 	}
 	out, err := h.uc.List(c.Request.Context(), projectID, input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list households", err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -202,6 +202,6 @@ func (h *HouseholdHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, household.ErrMemberExists):
 		c.JSON(http.StatusConflict, errJSON("errors.household.memberExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle household operation", err)
 	}
 }

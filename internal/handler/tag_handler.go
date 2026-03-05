@@ -33,7 +33,7 @@ func (h *TagHandler) List(c *gin.Context) {
 	projectID := c.Param("project_id")
 	out, err := h.uc.List(c.Request.Context(), projectID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list tags", err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"tags": out})
@@ -94,6 +94,6 @@ func (h *TagHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, tag.ErrTagNameExists):
 		c.JSON(http.StatusConflict, errJSON("errors.tag.nameExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle tag", err)
 	}
 }

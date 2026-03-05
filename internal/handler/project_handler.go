@@ -43,7 +43,7 @@ func (h *ProjectHandler) List(c *gin.Context) {
 	}
 	out, err := h.uc.List(c.Request.Context(), input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list projects", err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -131,6 +131,6 @@ func (h *ProjectHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, project.ErrProjectNameExists):
 		c.JSON(http.StatusConflict, errJSON("errors.project.nameExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle project", err)
 	}
 }

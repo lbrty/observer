@@ -31,7 +31,7 @@ func NewCountryHandler(uc *ucadmin.CountryUseCase) *CountryHandler {
 func (h *CountryHandler) List(c *gin.Context) {
 	out, err := h.uc.List(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list countries", err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"countries": out})
@@ -134,6 +134,6 @@ func (h *CountryHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, reference.ErrCountryCodeExists):
 		c.JSON(http.StatusConflict, errJSON("errors.reference.countryCodeExists", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle country operation", err)
 	}
 }

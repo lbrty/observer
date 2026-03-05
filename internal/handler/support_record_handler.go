@@ -47,7 +47,7 @@ func (h *SupportRecordHandler) List(c *gin.Context) {
 	}
 	out, err := h.uc.List(c.Request.Context(), projectID, input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list support records", err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -153,6 +153,6 @@ func (h *SupportRecordHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, support.ErrRecordNotFound):
 		c.JSON(http.StatusNotFound, errJSON("errors.support.notFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle support record", err)
 	}
 }

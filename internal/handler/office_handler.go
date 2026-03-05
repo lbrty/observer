@@ -31,7 +31,7 @@ func NewOfficeHandler(uc *ucadmin.OfficeUseCase) *OfficeHandler {
 func (h *OfficeHandler) List(c *gin.Context) {
 	out, err := h.uc.List(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list offices", err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"offices": out})
@@ -131,6 +131,6 @@ func (h *OfficeHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, reference.ErrOfficeNotFound):
 		c.JSON(http.StatusNotFound, errJSON("errors.reference.officeNotFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle office", err)
 	}
 }

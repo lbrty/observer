@@ -42,7 +42,7 @@ func (h *PlaceHandler) List(c *gin.Context) {
 		out, err = h.uc.ListAll(c.Request.Context())
 	}
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list places", err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"places": out})
@@ -148,6 +148,6 @@ func (h *PlaceHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, reference.ErrPlaceNotFound):
 		c.JSON(http.StatusNotFound, errJSON("errors.reference.placeNotFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle place", err)
 	}
 }

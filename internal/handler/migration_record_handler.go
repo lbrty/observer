@@ -34,7 +34,7 @@ func (h *MigrationRecordHandler) List(c *gin.Context) {
 	personID := c.Param("person_id")
 	out, err := h.uc.ListByPerson(c.Request.Context(), personID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list migration records", err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"records": out})
@@ -95,6 +95,6 @@ func (h *MigrationRecordHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, migration.ErrRecordNotFound):
 		c.JSON(http.StatusNotFound, errJSON("errors.migration.notFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle migration record operation", err)
 	}
 }

@@ -41,7 +41,7 @@ func (h *PetHandler) List(c *gin.Context) {
 	}
 	out, err := h.uc.List(c.Request.Context(), projectID, input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "list pets", err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -147,6 +147,6 @@ func (h *PetHandler) handleError(c *gin.Context, err error) {
 	case errors.Is(err, pet.ErrPetNotFound):
 		c.JSON(http.StatusNotFound, errJSON("errors.pet.notFound", err.Error()))
 	default:
-		c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+		internalError(c, "handle pet", err)
 	}
 }
