@@ -9,4 +9,5 @@ type Note struct {
 	AuthorID  *string
 	Body      string
 	CreatedAt time.Time
+	UpdatedAt time.Time
 }

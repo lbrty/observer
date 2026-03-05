@@ -22,18 +22,22 @@ func NewMigrationRecordRepository(db *sqlx.DB) MigrationRecordRepository {
 }
 
 const migrationCols = `id, person_id, from_place_id, destination_place_id, migration_date,
-	movement_reason, housing_at_destination, notes, created_at`
+	movement_reason, housing_at_destination, notes, created_at, updated_at`
 
 func scanMigration(row interface{ Scan(dest ...any) error }) (*migration.Record, error) {
 	var r migration.Record
+	var updatedAt sql.NullTime
 	err := row.Scan(
 		&r.ID, &r.PersonID, &r.FromPlaceID, &r.DestinationPlaceID, &r.MigrationDate,
-		&r.MovementReason, &r.HousingAtDestination, &r.Notes, &r.CreatedAt,
+		&r.MovementReason, &r.HousingAtDestination, &r.Notes, &r.CreatedAt, &updatedAt,
 	)
 	if err != nil {
 		return nil, err
 	}
 	r.CreatedAt = r.CreatedAt.UTC()
+	if updatedAt.Valid {
+		r.UpdatedAt = updatedAt.Time.UTC()
+	}
 	return &r, nil
 }
 
@@ -80,6 +84,29 @@ func (r *migrationRecordRepo) Create(ctx context.Context, rec *migration.Record)
 	)
 	if err != nil {
 		return fmt.Errorf("create migration record: %w", err)
+	}
+	return nil
+}
+
+func (r *migrationRecordRepo) Update(ctx context.Context, rec *migration.Record) error {
+	const q = `UPDATE migration_records SET
+		from_place_id=$2, destination_place_id=$3, migration_date=$4,
+		movement_reason=$5, housing_at_destination=$6, notes=$7, updated_at=$8
+	WHERE id=$1`
+	rec.UpdatedAt = time.Now().UTC()
+	res, err := r.db.ExecContext(ctx, q,
+		rec.ID, rec.FromPlaceID, rec.DestinationPlaceID, rec.MigrationDate,
+		rec.MovementReason, rec.HousingAtDestination, rec.Notes, rec.UpdatedAt,
+	)
+	if err != nil {
+		return fmt.Errorf("update migration record: %w", err)
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("rows affected: %w", err)
+	}
+	if rows == 0 {
+		return migration.ErrRecordNotFound
 	}
 	return nil
 }

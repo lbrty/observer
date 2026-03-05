@@ -1648,6 +1648,20 @@ func (mr *MockMigrationRecordRepositoryMockRecorder) ListByPerson(ctx, personID 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListByPerson", reflect.TypeOf((*MockMigrationRecordRepository)(nil).ListByPerson), ctx, personID)
 }
 
+// Update mocks base method.
+func (m *MockMigrationRecordRepository) Update(ctx context.Context, r *migration.Record) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, r)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockMigrationRecordRepositoryMockRecorder) Update(ctx, r any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockMigrationRecordRepository)(nil).Update), ctx, r)
+}
+
 // MockHouseholdRepository is a mock of HouseholdRepository interface.
 type MockHouseholdRepository struct {
 	ctrl     *gomock.Controller
@@ -1894,6 +1908,20 @@ func (mr *MockPersonNoteRepositoryMockRecorder) List(ctx, personID any) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockPersonNoteRepository)(nil).List), ctx, personID)
 }
 
+// Update mocks base method.
+func (m *MockPersonNoteRepository) Update(ctx context.Context, n *note.Note) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, n)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockPersonNoteRepositoryMockRecorder) Update(ctx, n any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockPersonNoteRepository)(nil).Update), ctx, n)
+}
+
 // MockDocumentRepository is a mock of DocumentRepository interface.
 type MockDocumentRepository struct {
 	ctrl     *gomock.Controller
@@ -1974,6 +2002,20 @@ func (m *MockDocumentRepository) List(ctx context.Context, personID string) ([]*
 func (mr *MockDocumentRepositoryMockRecorder) List(ctx, personID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockDocumentRepository)(nil).List), ctx, personID)
+}
+
+// Update mocks base method.
+func (m *MockDocumentRepository) Update(ctx context.Context, d *document.Document) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, d)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockDocumentRepositoryMockRecorder) Update(ctx, d any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockDocumentRepository)(nil).Update), ctx, d)
 }
 
 // MockPetRepository is a mock of PetRepository interface.

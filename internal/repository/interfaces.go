@@ -171,11 +171,12 @@ type SupportRecordRepository interface {
 	Delete(ctx context.Context, id string) error
 }
 
-// MigrationRecordRepository defines persistence operations for migration records (append-only).
+// MigrationRecordRepository defines persistence operations for migration records.
 type MigrationRecordRepository interface {
 	ListByPerson(ctx context.Context, personID string) ([]*migration.Record, error)
 	GetByID(ctx context.Context, id string) (*migration.Record, error)
 	Create(ctx context.Context, r *migration.Record) error
+	Update(ctx context.Context, r *migration.Record) error
 }
 
 // HouseholdRepository defines persistence operations for households.
@@ -194,11 +195,12 @@ type HouseholdMemberRepository interface {
 	Remove(ctx context.Context, householdID, personID string) error
 }
 
-// PersonNoteRepository defines persistence operations for person notes (append-only).
+// PersonNoteRepository defines persistence operations for person notes.
 type PersonNoteRepository interface {
 	List(ctx context.Context, personID string) ([]*note.Note, error)
 	GetByID(ctx context.Context, id string) (*note.Note, error)
 	Create(ctx context.Context, n *note.Note) error
+	Update(ctx context.Context, n *note.Note) error
 	Delete(ctx context.Context, id string) error
 }
 
@@ -207,6 +209,7 @@ type DocumentRepository interface {
 	List(ctx context.Context, personID string) ([]*document.Document, error)
 	GetByID(ctx context.Context, id string) (*document.Document, error)
 	Create(ctx context.Context, d *document.Document) error
+	Update(ctx context.Context, d *document.Document) error
 	Delete(ctx context.Context, id string) error
 }
 

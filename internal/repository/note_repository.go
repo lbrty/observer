@@ -21,8 +21,24 @@ func NewPersonNoteRepository(db *sqlx.DB) PersonNoteRepository {
 	return &personNoteRepo{db: db}
 }
 
+const noteCols = `id, person_id, author_id, body, created_at, updated_at`
+
+func scanNote(row interface{ Scan(dest ...any) error }) (*note.Note, error) {
+	var n note.Note
+	var updatedAt sql.NullTime
+	err := row.Scan(&n.ID, &n.PersonID, &n.AuthorID, &n.Body, &n.CreatedAt, &updatedAt)
+	if err != nil {
+		return nil, err
+	}
+	n.CreatedAt = n.CreatedAt.UTC()
+	if updatedAt.Valid {
+		n.UpdatedAt = updatedAt.Time.UTC()
+	}
+	return &n, nil
+}
+
 func (r *personNoteRepo) List(ctx context.Context, personID string) ([]*note.Note, error) {
-	const q = `SELECT id, person_id, author_id, body, created_at FROM person_notes WHERE person_id = $1 ORDER BY created_at DESC`
+	q := "SELECT " + noteCols + " FROM person_notes WHERE person_id = $1 ORDER BY created_at DESC"
 	rows, err := r.db.QueryContext(ctx, q, personID)
 	if err != nil {
 		return nil, fmt.Errorf("list person notes: %w", err)
@@ -31,28 +47,25 @@ func (r *personNoteRepo) List(ctx context.Context, personID string) ([]*note.Not
 
 	var out []*note.Note
 	for rows.Next() {
-		var n note.Note
-		if err := rows.Scan(&n.ID, &n.PersonID, &n.AuthorID, &n.Body, &n.CreatedAt); err != nil {
+		n, err := scanNote(rows)
+		if err != nil {
 			return nil, fmt.Errorf("scan note: %w", err)
 		}
-		n.CreatedAt = n.CreatedAt.UTC()
-		out = append(out, &n)
+		out = append(out, n)
 	}
 	return out, rows.Err()
 }
 
 func (r *personNoteRepo) GetByID(ctx context.Context, id string) (*note.Note, error) {
-	const q = `SELECT id, person_id, author_id, body, created_at FROM person_notes WHERE id = $1`
-	var n note.Note
-	err := r.db.QueryRowContext(ctx, q, id).Scan(&n.ID, &n.PersonID, &n.AuthorID, &n.Body, &n.CreatedAt)
+	q := "SELECT " + noteCols + " FROM person_notes WHERE id = $1"
+	n, err := scanNote(r.db.QueryRowContext(ctx, q, id))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, note.ErrNoteNotFound
 		}
 		return nil, fmt.Errorf("get note: %w", err)
 	}
-	n.CreatedAt = n.CreatedAt.UTC()
-	return &n, nil
+	return n, nil
 }
 
 func (r *personNoteRepo) Create(ctx context.Context, n *note.Note) error {
@@ -61,6 +74,23 @@ func (r *personNoteRepo) Create(ctx context.Context, n *note.Note) error {
 	_, err := r.db.ExecContext(ctx, q, n.ID, n.PersonID, n.AuthorID, n.Body, n.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("create note: %w", err)
+	}
+	return nil
+}
+
+func (r *personNoteRepo) Update(ctx context.Context, n *note.Note) error {
+	const q = `UPDATE person_notes SET body=$2, updated_at=$3 WHERE id=$1`
+	n.UpdatedAt = time.Now().UTC()
+	res, err := r.db.ExecContext(ctx, q, n.ID, n.Body, n.UpdatedAt)
+	if err != nil {
+		return fmt.Errorf("update note: %w", err)
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("rows affected: %w", err)
+	}
+	if rows == 0 {
+		return note.ErrNoteNotFound
 	}
 	return nil
 }

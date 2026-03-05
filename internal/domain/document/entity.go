@@ -14,4 +14,5 @@ type Document struct {
 	MimeType         string
 	Size             int64
 	CreatedAt        time.Time
+	UpdatedAt        time.Time
 }

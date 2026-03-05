@@ -39,4 +39,5 @@ type Record struct {
 	HousingAtDestination *HousingAtDestination
 	Notes                *string
 	CreatedAt            time.Time
+	UpdatedAt            time.Time
 }
