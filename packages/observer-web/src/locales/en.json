@@ -303,7 +303,13 @@
       "ageYoungAdult": "Young adult (18-24)",
       "ageEarlyAdult": "Early adult (25-44)",
       "ageMiddleAged": "Middle-aged (45-64)",
-      "ageOlderAdult": "Older adult (65+)"
+      "ageOlderAdult": "Older adult (65+)",
+      "quickSupportTitle": "Quick add support record",
+      "quickSupportAdd": "Add support record",
+      "quickSupportSaved": "Support record saved",
+      "addCountry": "Add country",
+      "addState": "Add state",
+      "addPlace": "Add place"
     },
     "notes": {
       "title": "Notes",

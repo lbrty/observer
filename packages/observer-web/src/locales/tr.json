@@ -303,7 +303,13 @@
       "ageYoungAdult": "Genç yetişkin (18-24)",
       "ageEarlyAdult": "Erken yetişkin (25-44)",
       "ageMiddleAged": "Orta yaş (45-64)",
-      "ageOlderAdult": "İleri yaş (65+)"
+      "ageOlderAdult": "İleri yaş (65+)",
+      "quickSupportTitle": "Hızlı destek kaydı ekle",
+      "quickSupportAdd": "Destek kaydı ekle",
+      "quickSupportSaved": "Destek kaydı kaydedildi",
+      "addCountry": "Ülke ekle",
+      "addState": "İl ekle",
+      "addPlace": "Yer ekle"
     },
     "notes": {
       "title": "Notlar",

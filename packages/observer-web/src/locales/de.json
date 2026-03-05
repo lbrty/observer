@@ -303,7 +303,13 @@
       "notesTab": "Notizen",
       "migrationRecordsTab": "Migration",
       "documentsTab": "Dokumente",
-      "backToPeople": "Zurück zu Personen"
+      "backToPeople": "Zurück zu Personen",
+      "quickSupportTitle": "Schnell Unterstützungseintrag hinzufügen",
+      "quickSupportAdd": "Unterstützungseintrag hinzufügen",
+      "quickSupportSaved": "Unterstützungseintrag gespeichert",
+      "addCountry": "Land hinzufügen",
+      "addState": "Region hinzufügen",
+      "addPlace": "Ort hinzufügen"
     },
     "notes": {
       "title": "Notizen",

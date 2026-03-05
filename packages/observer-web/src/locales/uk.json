@@ -303,7 +303,13 @@
       "notesTab": "Нотатки",
       "migrationRecordsTab": "Міграція",
       "documentsTab": "Документи",
-      "backToPeople": "Назад до людей"
+      "backToPeople": "Назад до людей",
+      "quickSupportTitle": "Швидке додавання запису підтримки",
+      "quickSupportAdd": "Додати запис підтримки",
+      "quickSupportSaved": "Запис підтримки збережено",
+      "addCountry": "Додати країну",
+      "addState": "Додати область",
+      "addPlace": "Додати населений пункт"
     },
     "notes": {
       "title": "Нотатки",

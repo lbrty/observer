@@ -303,7 +303,13 @@
       "notesTab": "Eskermeler",
       "migrationRecordsTab": "Köçüü",
       "documentsTab": "Dokumentter",
-      "backToPeople": "Adamdarğa qajtuu"
+      "backToPeople": "Adamdarğa qajtuu",
+      "quickSupportTitle": "Tez koldoo jazuusu qoşuu",
+      "quickSupportAdd": "Koldoo jazuusun qoşuu",
+      "quickSupportSaved": "Koldoo jazuusu saqtaldy",
+      "addCountry": "Ölkö qoşuu",
+      "addState": "Oblast qoşuu",
+      "addPlace": "Jay qoşuu"
     },
     "notes": {
       "title": "Eskermeler",

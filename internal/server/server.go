@@ -124,8 +124,8 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	categoryHandler := handler.NewCategoryHandler(container.CategoryUC)
 	projectHandler := handler.NewProjectHandler(container.ProjectUC)
 
-	// Admin endpoints readable by admin + staff
-	adminRead := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff))
+	// Admin endpoints readable by admin + staff + consultant
+	adminRead := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff, user.RoleConsultant))
 	{
 		adminRead.GET("/users", adminHandler.ListUsers)
 		adminRead.GET("/users/:id", adminHandler.GetUser)
@@ -140,6 +140,22 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		adminRead.GET("/offices/:id", officeHandler.Get)
 		adminRead.GET("/categories", categoryHandler.List)
 		adminRead.GET("/categories/:id", categoryHandler.Get)
+	}
+
+	// Reference data write endpoints (admin + staff + consultant)
+	adminWrite := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff, user.RoleConsultant))
+	{
+		adminWrite.POST("/countries", countryHandler.Create)
+		adminWrite.PATCH("/countries/:id", countryHandler.Update)
+
+		adminWrite.POST("/states", stateHandler.Create)
+		adminWrite.PATCH("/states/:id", stateHandler.Update)
+
+		adminWrite.POST("/places", placeHandler.Create)
+		adminWrite.PATCH("/places/:id", placeHandler.Update)
+
+		adminWrite.POST("/categories", categoryHandler.Create)
+		adminWrite.PATCH("/categories/:id", categoryHandler.Update)
 	}
 
 	// Admin-only write endpoints
@@ -159,24 +175,14 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		admin.PATCH("/projects/:project_id/permissions/:id", permHandler.UpdatePermission)
 		admin.DELETE("/projects/:project_id/permissions/:id", permHandler.RevokePermission)
 
-		admin.POST("/countries", countryHandler.Create)
-		admin.PATCH("/countries/:id", countryHandler.Update)
 		admin.DELETE("/countries/:id", countryHandler.Delete)
-
-		admin.POST("/states", stateHandler.Create)
-		admin.PATCH("/states/:id", stateHandler.Update)
 		admin.DELETE("/states/:id", stateHandler.Delete)
-
-		admin.POST("/places", placeHandler.Create)
-		admin.PATCH("/places/:id", placeHandler.Update)
 		admin.DELETE("/places/:id", placeHandler.Delete)
 
 		admin.POST("/offices", officeHandler.Create)
 		admin.PATCH("/offices/:id", officeHandler.Update)
 		admin.DELETE("/offices/:id", officeHandler.Delete)
 
-		admin.POST("/categories", categoryHandler.Create)
-		admin.PATCH("/categories/:id", categoryHandler.Update)
 		admin.DELETE("/categories/:id", categoryHandler.Delete)
 	}
 
