@@ -1,8 +1,9 @@
-import { Field } from "@base-ui/react/field";
 import { createFileRoute } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
+import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
 import { api, HTTPError } from "@/lib/api";
 import { useAuth } from "@/stores/auth";
@@ -64,59 +65,38 @@ function ProfileForm({ user, setUser }: { user: User | null; setUser: (u: User) 
     }
   }
 
-  const inputClass =
-    "block h-9 w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg outline-none focus:border-accent";
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-sm font-semibold text-fg">{t("profile.personalInfo")}</h2>
 
-      {message && (
-        <div className="rounded-lg bg-foam/10 px-3 py-2 text-sm text-foam">{message}</div>
-      )}
-      {error && <div className="rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">{error}</div>}
+      <SuccessBanner message={message} />
+      <ErrorBanner message={error} />
 
       <div className="grid grid-cols-2 gap-3">
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("profile.firstName")}
-          </Field.Label>
-          <Field.Control
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            className={inputClass}
-          />
-        </Field.Root>
-
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("profile.lastName")}
-          </Field.Label>
-          <Field.Control
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            className={inputClass}
-          />
-        </Field.Root>
+        <FormField
+          label={t("profile.firstName")}
+          value={firstName}
+          onChange={setFirstName}
+        />
+        <FormField
+          label={t("profile.lastName")}
+          value={lastName}
+          onChange={setLastName}
+        />
       </div>
 
-      <Field.Root>
-        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-          {t("common.email")}
-        </Field.Label>
-        <Field.Control value={user?.email ?? ""} disabled className={`${inputClass} opacity-50`} />
-      </Field.Root>
+      <FormField
+        label={t("common.email")}
+        value={user?.email ?? ""}
+        onChange={() => {}}
+        disabled
+      />
 
-      <Field.Root>
-        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-          {t("profile.phone")}
-        </Field.Label>
-        <Field.Control
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className={inputClass}
-        />
-      </Field.Root>
+      <FormField
+        label={t("profile.phone")}
+        value={phone}
+        onChange={setPhone}
+      />
 
       <button
         type="submit"
@@ -181,61 +161,36 @@ function ChangePasswordForm() {
     }
   }
 
-  const inputClass =
-    "block h-9 w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg outline-none focus:border-accent";
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-sm font-semibold text-fg">{t("profile.changePassword")}</h2>
 
-      {message && (
-        <div className="rounded-lg bg-foam/10 px-3 py-2 text-sm text-foam">{message}</div>
-      )}
-      {error && <div className="rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">{error}</div>}
+      <SuccessBanner message={message} />
+      <ErrorBanner message={error} />
 
-      <Field.Root>
-        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-          {t("profile.currentPassword")}
-        </Field.Label>
-        <Field.Control
-          type="password"
-          required
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          autoComplete="current-password"
-          className={inputClass}
-        />
-      </Field.Root>
+      <FormField
+        label={t("profile.currentPassword")}
+        type="password"
+        required
+        value={currentPassword}
+        onChange={setCurrentPassword}
+      />
 
-      <Field.Root>
-        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-          {t("profile.newPassword")}
-        </Field.Label>
-        <Field.Control
-          type="password"
-          required
-          minLength={8}
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          autoComplete="new-password"
-          className={inputClass}
-        />
-      </Field.Root>
+      <FormField
+        label={t("profile.newPassword")}
+        type="password"
+        required
+        value={newPassword}
+        onChange={setNewPassword}
+      />
 
-      <Field.Root>
-        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-          {t("auth.confirmPassword")}
-        </Field.Label>
-        <Field.Control
-          type="password"
-          required
-          minLength={8}
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          autoComplete="new-password"
-          className={inputClass}
-        />
-      </Field.Root>
+      <FormField
+        label={t("auth.confirmPassword")}
+        type="password"
+        required
+        value={confirmPassword}
+        onChange={setConfirmPassword}
+      />
 
       <button
         type="submit"

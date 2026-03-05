@@ -1,4 +1,3 @@
-import { PencilSimpleIcon, TrashIcon, XIcon } from "@/components/icons";
 import { Dialog } from "@base-ui/react/dialog";
 import { createFileRoute } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
@@ -6,11 +5,13 @@ import { useTranslation } from "react-i18next";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
+import { PencilSimpleIcon, TrashIcon, XIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
 import { UISelect } from "@/components/ui-select";
 import { UISwitch } from "@/components/ui-switch";
 import { UserCombobox } from "@/components/user-combobox";
+import { UserInitials } from "@/components/user-initials";
 import {
   useAssignPermission,
   usePermissions,
@@ -24,15 +25,6 @@ import type { ProjectPermissionMember, ProjectRole } from "@/types/permission";
 export const Route = createFileRoute("/_app/admin/projects/$projectId/permissions")({
   component: PermissionsPage,
 });
-
-function Initials({ first, last }: { first: string; last: string }) {
-  const letters = `${first.charAt(0)}${last.charAt(0)}`.toUpperCase() || "?";
-  return (
-    <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-accent/15 text-xs font-medium text-accent">
-      {letters}
-    </span>
-  );
-}
 
 function PermissionsPage() {
   const { t } = useTranslation();
@@ -55,7 +47,7 @@ function PermissionsPage() {
       header: t("admin.permissions.member"),
       render: (p) => (
         <div className="flex items-center gap-3">
-          <Initials first={p.user_first_name} last={p.user_last_name} />
+          <UserInitials firstName={p.user_first_name} lastName={p.user_last_name} />
           <div className="min-w-0">
             <p className="truncate text-sm font-medium text-fg">
               {p.user_first_name} {p.user_last_name}
@@ -412,7 +404,7 @@ function EditDialog({
           </Dialog.Title>
 
           <div className="mt-3 flex items-center gap-3 rounded-lg border border-border-secondary bg-bg px-3 py-2">
-            <Initials first={permission.user_first_name} last={permission.user_last_name} />
+            <UserInitials firstName={permission.user_first_name} lastName={permission.user_last_name} />
             <div>
               <p className="text-sm font-medium text-fg">
                 {permission.user_first_name} {permission.user_last_name}

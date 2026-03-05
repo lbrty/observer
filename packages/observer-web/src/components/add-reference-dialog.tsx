@@ -1,7 +1,7 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { useTranslation } from "react-i18next";
 
-import { WarningIcon } from "@/components/icons";
+import { ErrorBanner } from "@/components/alert-banner";
 
 interface AddReferenceDialogProps {
   open: boolean;
@@ -37,9 +37,8 @@ export function AddReferenceDialog({
             }}
           >
             {error && (
-              <div className="mt-4 flex items-center gap-2 rounded-lg border border-rose/20 bg-rose/8 px-3 py-2.5 text-sm font-medium text-rose">
-                <WarningIcon size={16} weight="bold" className="shrink-0" />
-                {error}
+              <div className="mt-4">
+                <ErrorBanner message={error} />
               </div>
             )}
             <div className="mt-4">{children}</div>

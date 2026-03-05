@@ -3,7 +3,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { ErrorBanner } from "@/components/alert-banner";
 import { FormDialog } from "@/components/form-dialog";
+import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
 import { UISelect } from "@/components/ui-select";
 import { UISwitch } from "@/components/ui-switch";
@@ -87,51 +89,31 @@ function UserDetailPage() {
       <PageHeader title={t("admin.users.editTitle")} />
       <form onSubmit={handleSubmit} className="max-w-lg space-y-4">
         <div className="grid grid-cols-2 gap-4">
-          <Field.Root>
-            <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-              {t("admin.users.firstName")}
-            </Field.Label>
-            <Field.Control
-              value={form.first_name}
-              onChange={(e) => setForm((f) => ({ ...f, first_name: e.target.value }))}
-              className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
-            />
-          </Field.Root>
-          <Field.Root>
-            <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-              {t("admin.users.lastName")}
-            </Field.Label>
-            <Field.Control
-              value={form.last_name}
-              onChange={(e) => setForm((f) => ({ ...f, last_name: e.target.value }))}
-              className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
-            />
-          </Field.Root>
+          <FormField
+            label={t("admin.users.firstName")}
+            value={form.first_name}
+            onChange={(v) => setForm((f) => ({ ...f, first_name: v }))}
+          />
+          <FormField
+            label={t("admin.users.lastName")}
+            value={form.last_name}
+            onChange={(v) => setForm((f) => ({ ...f, last_name: v }))}
+          />
         </div>
 
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("admin.users.email")}
-          </Field.Label>
-          <Field.Control
-            type="email"
-            value={form.email}
-            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
-          />
-        </Field.Root>
+        <FormField
+          label={t("admin.users.email")}
+          type="email"
+          value={form.email}
+          onChange={(v) => setForm((f) => ({ ...f, email: v }))}
+        />
 
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("admin.users.phone")}
-          </Field.Label>
-          <Field.Control
-            type="tel"
-            value={form.phone}
-            onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
-          />
-        </Field.Root>
+        <FormField
+          label={t("admin.users.phone")}
+          type="tel"
+          value={form.phone}
+          onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
+        />
 
         <Field.Root>
           <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -238,23 +220,14 @@ function ResetPasswordSection({ userId }: { userId: string }) {
         loading={saving}
         onSubmit={handleSubmit}
       >
-        {error && (
-          <div className="mb-3 rounded-lg bg-rose/10 px-3 py-2 text-sm text-rose">{error}</div>
-        )}
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("admin.users.newPassword")}
-          </Field.Label>
-          <Field.Control
-            type="password"
-            required
-            minLength={8}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="new-password"
-            className="block h-9 w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg outline-none focus:border-accent"
-          />
-        </Field.Root>
+        <ErrorBanner message={error} />
+        <FormField
+          label={t("admin.users.newPassword")}
+          type="password"
+          required
+          value={password}
+          onChange={setPassword}
+        />
       </FormDialog>
     </div>
   );

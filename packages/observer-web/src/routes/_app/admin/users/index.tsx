@@ -1,4 +1,3 @@
-import { MagnifyingGlassIcon } from "@/components/icons";
 import { Field } from "@base-ui/react/field";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
@@ -6,11 +5,14 @@ import { useTranslation } from "react-i18next";
 
 import { DataTable, type Column } from "@/components/data-table";
 import { FormDialog } from "@/components/form-dialog";
+import { FormField, inputClass } from "@/components/form-field";
+import { MagnifyingGlassIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { StatusBadge, StatusDot } from "@/components/status-badge";
 import { UISelect } from "@/components/ui-select";
 import { UISwitch } from "@/components/ui-switch";
+import { UserInitials } from "@/components/user-initials";
 import { useOffices } from "@/hooks/use-offices";
 import { useCreateUser, useUsers } from "@/hooks/use-users";
 import type { AdminUser } from "@/types/admin";
@@ -18,15 +20,6 @@ import type { AdminUser } from "@/types/admin";
 export const Route = createFileRoute("/_app/admin/users/")({
   component: UsersPage,
 });
-
-function Initials({ first, last }: { first: string; last: string }) {
-  const letters = `${first?.charAt(0) ?? ""}${last?.charAt(0) ?? ""}`.toUpperCase() || "?";
-  return (
-    <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-accent/10 text-xs font-semibold text-accent">
-      {letters}
-    </span>
-  );
-}
 
 function UsersPage() {
   const { t } = useTranslation();
@@ -68,7 +61,7 @@ function UsersPage() {
       header: t("admin.users.name"),
       render: (u) => (
         <div className="flex items-center gap-3">
-          <Initials first={u.first_name} last={u.last_name} />
+          <UserInitials firstName={u.first_name} lastName={u.last_name} />
           <span className="font-medium text-fg">
             {u.first_name} {u.last_name}
           </span>
@@ -179,9 +172,6 @@ function UsersPage() {
   );
 }
 
-const inputClass =
-  "block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent";
-
 function CreateUserDialog({
   open,
   onOpenChange,
@@ -254,67 +244,41 @@ function CreateUserDialog({
       maxWidth="md"
     >
       <div className="grid grid-cols-2 gap-3">
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("admin.users.firstName")}
-          </Field.Label>
-          <Field.Control
-            required
-            value={form.first_name}
-            onChange={(e) => setForm((f) => ({ ...f, first_name: e.target.value }))}
-            className={inputClass}
-          />
-        </Field.Root>
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("admin.users.lastName")}
-          </Field.Label>
-          <Field.Control
-            value={form.last_name}
-            onChange={(e) => setForm((f) => ({ ...f, last_name: e.target.value }))}
-            className={inputClass}
-          />
-        </Field.Root>
+        <FormField
+          label={t("admin.users.firstName")}
+          required
+          value={form.first_name}
+          onChange={(v) => setForm((f) => ({ ...f, first_name: v }))}
+        />
+        <FormField
+          label={t("admin.users.lastName")}
+          value={form.last_name}
+          onChange={(v) => setForm((f) => ({ ...f, last_name: v }))}
+        />
       </div>
 
-      <Field.Root>
-        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-          {t("admin.users.email")}
-        </Field.Label>
-        <Field.Control
-          type="email"
-          required
-          value={form.email}
-          onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-          className={inputClass}
-        />
-      </Field.Root>
+      <FormField
+        label={t("admin.users.email")}
+        type="email"
+        required
+        value={form.email}
+        onChange={(v) => setForm((f) => ({ ...f, email: v }))}
+      />
 
-      <Field.Root>
-        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-          {t("admin.users.phone")}
-        </Field.Label>
-        <Field.Control
-          type="tel"
-          value={form.phone}
-          onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-          className={inputClass}
-        />
-      </Field.Root>
+      <FormField
+        label={t("admin.users.phone")}
+        type="tel"
+        value={form.phone}
+        onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
+      />
 
-      <Field.Root>
-        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-          {t("admin.users.password")}
-        </Field.Label>
-        <Field.Control
-          type="password"
-          required
-          minLength={8}
-          value={form.password}
-          onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-          className={inputClass}
-        />
-      </Field.Root>
+      <FormField
+        label={t("admin.users.password")}
+        type="password"
+        required
+        value={form.password}
+        onChange={(v) => setForm((f) => ({ ...f, password: v }))}
+      />
 
       <Field.Root>
         <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
