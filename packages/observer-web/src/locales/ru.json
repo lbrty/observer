@@ -484,7 +484,25 @@
       "filterAgeGroup": "Возрастная группа",
       "statusFlow": "Поток статусов дел",
       "avgDays": "в среднем {{days}} дн.",
-      "allValues": "Все"
+      "allValues": "Все",
+      "exportCsv": "Экспорт CSV",
+      "print": "Печать",
+      "toggleFilters": "Фильтры",
+      "presetMonth": "Этот месяц",
+      "presetQuarter": "Прошлый квартал",
+      "presetYear": "Этот год",
+      "presetAll": "Всё время",
+      "clearAll": "Сбросить все",
+      "sectionOverview": "Обзор",
+      "sectionServices": "Услуги",
+      "sectionDemographics": "Демография",
+      "sectionGeography": "География и таксономия",
+      "kpiPeople": "Люди",
+      "kpiConsultations": "Консультации",
+      "kpiActiveCases": "Активные дела",
+      "kpiIdp": "ВПЛ",
+      "kpiHouseholds": "Домохозяйства",
+      "kpiOffices": "Офисы"
     }
   },
   "errors": {

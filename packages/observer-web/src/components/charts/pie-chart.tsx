@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 
 import type { CountResult } from "@/types/report";
 
+import { getColor } from "./colors";
+
 interface Tooltip {
   visible: boolean;
   x: number;
@@ -11,18 +13,12 @@ interface Tooltip {
   count: number;
 }
 
-const COLORS = [
-  "#6366f1",
-  "#f59e0b",
-  "#10b981",
-  "#ef4444",
-  "#8b5cf6",
-  "#ec4899",
-  "#14b8a6",
-  "#f97316",
-];
+interface PieChartProps {
+  data: CountResult[];
+  colorMap?: Record<string, string>;
+}
 
-export function PieChart({ data }: { data: CountResult[] }) {
+export function PieChart({ data, colorMap }: PieChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [size, setSize] = useState(220);
@@ -61,11 +57,6 @@ export function PieChart({ data }: { data: CountResult[] }) {
       .append("g")
       .attr("transform", `translate(${dim / 2},${dim / 2})`);
 
-    const color = d3
-      .scaleOrdinal<string>()
-      .domain(data.map((d) => d.label))
-      .range(COLORS);
-
     const pie = d3
       .pie<CountResult>()
       .value((d) => d.count)
@@ -88,7 +79,7 @@ export function PieChart({ data }: { data: CountResult[] }) {
       .join("path")
       .attr("class", "slice")
       .attr("d", arc)
-      .attr("fill", (d) => color(d.data.label))
+      .attr("fill", (d, i) => getColor(d.data.label, colorMap, i))
       .attr("opacity", (d) => (selectedLabel === null || selectedLabel === d.data.label ? 1 : 0.3))
       .style("cursor", "pointer")
       .on("mouseover", function (event: MouseEvent, d: d3.PieArcDatum<CountResult>) {
@@ -131,7 +122,7 @@ export function PieChart({ data }: { data: CountResult[] }) {
       .style("font-weight", "600")
       .attr("opacity", (d) => (selectedLabel === null || selectedLabel === d.data.label ? 1 : 0.3))
       .text((d) => (d.data.count > 0 ? d.data.count : ""));
-  }, [data, size, selectedLabel]);
+  }, [data, size, selectedLabel, colorMap]);
 
   if (data.length === 0) return null;
 
@@ -170,7 +161,7 @@ export function PieChart({ data }: { data: CountResult[] }) {
           >
             <span
               className="inline-block size-2.5 rounded-full shrink-0"
-              style={{ backgroundColor: COLORS[i % COLORS.length] }}
+              style={{ backgroundColor: getColor(d.label, colorMap, i) }}
             />
             <span className="text-fg-secondary">
               {d.label} ({d.count})

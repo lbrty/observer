@@ -484,7 +484,25 @@
       "filterAgeGroup": "Age group",
       "statusFlow": "Case status flow",
       "avgDays": "avg {{days}} days",
-      "allValues": "All"
+      "allValues": "All",
+      "exportCsv": "Export CSV",
+      "print": "Print",
+      "toggleFilters": "Filters",
+      "presetMonth": "This month",
+      "presetQuarter": "Last quarter",
+      "presetYear": "This year",
+      "presetAll": "All time",
+      "clearAll": "Clear all",
+      "sectionOverview": "Overview",
+      "sectionServices": "Services",
+      "sectionDemographics": "Demographics",
+      "sectionGeography": "Geography & Taxonomy",
+      "kpiPeople": "People",
+      "kpiConsultations": "Consultations",
+      "kpiActiveCases": "Active cases",
+      "kpiIdp": "IDPs",
+      "kpiHouseholds": "Households",
+      "kpiOffices": "Offices"
     }
   },
   "errors": {

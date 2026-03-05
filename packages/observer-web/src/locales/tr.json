@@ -484,7 +484,25 @@
       "filterAgeGroup": "Yaş grubu",
       "statusFlow": "Durum akışı",
       "avgDays": "ort. {{days}} gün",
-      "allValues": "Tümü"
+      "allValues": "Tümü",
+      "exportCsv": "CSV dışa aktar",
+      "print": "Yazdır",
+      "toggleFilters": "Filtreler",
+      "presetMonth": "Bu ay",
+      "presetQuarter": "Geçen çeyrek",
+      "presetYear": "Bu yıl",
+      "presetAll": "Tüm zamanlar",
+      "clearAll": "Tümünü temizle",
+      "sectionOverview": "Genel bakış",
+      "sectionServices": "Hizmetler",
+      "sectionDemographics": "Demografi",
+      "sectionGeography": "Coğrafya ve Taksonomi",
+      "kpiPeople": "Kişiler",
+      "kpiConsultations": "Danışmanlıklar",
+      "kpiActiveCases": "Aktif vakalar",
+      "kpiIdp": "YİE'ler",
+      "kpiHouseholds": "Haneler",
+      "kpiOffices": "Ofisler"
     }
   },
   "errors": {

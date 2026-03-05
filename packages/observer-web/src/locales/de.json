@@ -484,7 +484,25 @@
       "filterAgeGroup": "Altersgruppe",
       "statusFlow": "Statusverlauf",
       "avgDays": "Ø {{days}} Tage",
-      "allValues": "Alle"
+      "allValues": "Alle",
+      "exportCsv": "CSV exportieren",
+      "print": "Drucken",
+      "toggleFilters": "Filter",
+      "presetMonth": "Dieser Monat",
+      "presetQuarter": "Letztes Quartal",
+      "presetYear": "Dieses Jahr",
+      "presetAll": "Gesamter Zeitraum",
+      "clearAll": "Alle zurücksetzen",
+      "sectionOverview": "Überblick",
+      "sectionServices": "Dienstleistungen",
+      "sectionDemographics": "Demografie",
+      "sectionGeography": "Geografie & Taxonomie",
+      "kpiPeople": "Personen",
+      "kpiConsultations": "Beratungen",
+      "kpiActiveCases": "Aktive Fälle",
+      "kpiIdp": "Binnenvertriebene",
+      "kpiHouseholds": "Haushalte",
+      "kpiOffices": "Büros"
     }
   },
   "errors": {

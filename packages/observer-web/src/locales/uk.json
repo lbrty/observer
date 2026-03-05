@@ -484,7 +484,25 @@
       "filterAgeGroup": "Вікова група",
       "statusFlow": "Потік статусів справ",
       "avgDays": "в середньому {{days}} дн.",
-      "allValues": "Всі"
+      "allValues": "Всі",
+      "exportCsv": "Експорт CSV",
+      "print": "Друк",
+      "toggleFilters": "Фільтри",
+      "presetMonth": "Цей місяць",
+      "presetQuarter": "Минулий квартал",
+      "presetYear": "Цей рік",
+      "presetAll": "Весь час",
+      "clearAll": "Скинути все",
+      "sectionOverview": "Огляд",
+      "sectionServices": "Послуги",
+      "sectionDemographics": "Демографія",
+      "sectionGeography": "Географія та таксономія",
+      "kpiPeople": "Люди",
+      "kpiConsultations": "Консультації",
+      "kpiActiveCases": "Активні справи",
+      "kpiIdp": "ВПО",
+      "kpiHouseholds": "Домогосподарства",
+      "kpiOffices": "Офіси"
     }
   },
   "errors": {

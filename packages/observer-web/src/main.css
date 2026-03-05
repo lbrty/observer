@@ -313,3 +313,36 @@ body {
 ::view-transition-new(root) {
   animation: none;
 }
+
+/* Print stylesheet — clean PDF output */
+@media print {
+  nav,
+  aside,
+  [data-print-hide] {
+    display: none !important;
+  }
+
+  body,
+  :root,
+  [data-theme] {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .report-grid {
+    display: block !important;
+  }
+  .report-grid > * {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+
+  svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .print-header {
+    display: block !important;
+  }
+}

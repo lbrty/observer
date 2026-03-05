@@ -484,7 +484,25 @@
       "filterAgeGroup": "Jaş tobu",
       "statusFlow": "İş statusu akymy",
       "avgDays": "ortoço {{days}} kün",
-      "allValues": "Bardygy"
+      "allValues": "Bardygy",
+      "exportCsv": "CSV çyğaruu",
+      "print": "Basuu",
+      "toggleFilters": "Süzgüçtör",
+      "presetMonth": "Bul ay",
+      "presetQuarter": "Ötkön kvartal",
+      "presetYear": "Bul jyl",
+      "presetAll": "Bardyq maalda",
+      "clearAll": "Bardygyn tazaloo",
+      "sectionOverview": "Jalpı körünüş",
+      "sectionServices": "Kyzmattar",
+      "sectionDemographics": "Demografiya",
+      "sectionGeography": "Geografiya jana taksonomiya",
+      "kpiPeople": "Adamdar",
+      "kpiConsultations": "Konsultatsiyalar",
+      "kpiActiveCases": "Aktiv işter",
+      "kpiIdp": "IKJlar",
+      "kpiHouseholds": "Üy-bülölör",
+      "kpiOffices": "Ofister"
     }
   },
   "errors": {
