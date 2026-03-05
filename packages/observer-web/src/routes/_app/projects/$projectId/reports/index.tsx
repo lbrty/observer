@@ -602,44 +602,46 @@ function ReportsPage() {
       {/* Dashboard content */}
       {data && (
         <div className="report-grid grid gap-6 lg:grid-cols-2">
-          {/* KPI Row */}
-          <div className="col-span-full grid grid-cols-3 gap-4 lg:grid-cols-6">
-            <KpiCard label={t("project.reports.kpiPeople")} value={data.by_sex.total} />
-            <KpiCard
-              label={t("project.reports.kpiConsultations")}
-              value={data.consultations.total}
-            />
-            <KpiCard
-              label={t("project.reports.kpiActiveCases")}
-              value={data.by_idp_status.rows.find((r) => r.label === "active")?.count ?? 0}
-            />
-            <KpiCard
-              label={t("project.reports.kpiIdp")}
-              value={
-                data.by_idp_status.rows.find((r) => r.label === "idp")?.count ??
-                data.by_idp_status.total
-              }
-            />
-            <KpiCard label={t("project.reports.kpiHouseholds")} value={data.family_units.total} />
-            <KpiCard label={t("project.reports.kpiOffices")} value={data.by_office.rows.length} />
-          </div>
-
-          {/* Overview */}
-          <SectionHeader title={t("project.reports.sectionOverview")} />
-          {data.status_flow && data.status_flow.length > 0 && (
-            <div className="col-span-full rounded-xl border border-border-secondary bg-bg-secondary p-5">
-              <h3 className="mb-3 text-sm font-semibold text-fg">
-                {t("project.reports.statusFlow")}
-              </h3>
-              <SankeyChart
-                data={data.status_flow}
-                translateLabel={(l) => {
-                  const key = labelKeyMap[l];
-                  return key ? t(key) : t(`project.people.${l}`, l);
-                }}
+          {/* Overview: KPI cards + Sankey side by side */}
+          <div className="col-span-full grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* KPI cards — 3x2 grid on the left */}
+            <div className="grid grid-cols-3 gap-3">
+              <KpiCard label={t("project.reports.kpiPeople")} value={data.by_sex.total} />
+              <KpiCard
+                label={t("project.reports.kpiConsultations")}
+                value={data.consultations.total}
               />
+              <KpiCard
+                label={t("project.reports.kpiActiveCases")}
+                value={data.by_idp_status.rows.find((r) => r.label === "active")?.count ?? 0}
+              />
+              <KpiCard
+                label={t("project.reports.kpiIdp")}
+                value={
+                  data.by_idp_status.rows.find((r) => r.label === "idp")?.count ??
+                  data.by_idp_status.total
+                }
+              />
+              <KpiCard label={t("project.reports.kpiHouseholds")} value={data.family_units.total} />
+              <KpiCard label={t("project.reports.kpiOffices")} value={data.by_office.rows.length} />
             </div>
-          )}
+
+            {/* Sankey on the right */}
+            {data.status_flow && data.status_flow.length > 0 && (
+              <div className="rounded-xl border border-border-secondary bg-bg-secondary p-5">
+                <h3 className="mb-3 text-sm font-semibold text-fg">
+                  {t("project.reports.statusFlow")}
+                </h3>
+                <SankeyChart
+                  data={data.status_flow}
+                  translateLabel={(l) => {
+                    const key = labelKeyMap[l];
+                    return key ? t(key) : t(`project.people.${l}`, l);
+                  }}
+                />
+              </div>
+            )}
+          </div>
 
           {/* Services */}
           <SectionHeader title={t("project.reports.sectionServices")} />
