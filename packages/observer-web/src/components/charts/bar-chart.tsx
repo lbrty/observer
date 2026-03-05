@@ -93,20 +93,26 @@ export function BarChart({
       .style("fill", "var(--fg-tertiary, #6b7280)")
       .text(yAxisLabel);
 
-    const r = 3;
-    g.selectAll(".bar")
+    g.append("clipPath")
+      .attr("id", "bar-clip")
+      .append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", w)
+      .attr("height", h);
+
+    const barGroup = g.append("g").attr("clip-path", "url(#bar-clip)");
+
+    barGroup
+      .selectAll(".bar")
       .data(data)
-      .join("path")
+      .join("rect")
       .attr("class", "bar")
-      .attr("d", (d) => {
-        const bx = x(d.label) ?? 0;
-        const by = y(d.count);
-        const bw = x.bandwidth();
-        const bh = h - by;
-        if (bh <= 0) return "";
-        const cr = Math.min(r, bw / 2, bh);
-        return `M${bx},${by + cr}a${cr},${cr} 0 0 1 ${cr},-${cr}h${bw - 2 * cr}a${cr},${cr} 0 0 1 ${cr},${cr}v${bh - cr}h-${bw}z`;
-      })
+      .attr("x", (d) => x(d.label) ?? 0)
+      .attr("y", (d) => y(d.count))
+      .attr("width", x.bandwidth())
+      .attr("height", (d) => h - y(d.count) + 3)
+      .attr("rx", 3)
       .attr("fill", "var(--color-accent, #6366f1)")
       .attr("opacity", (d) =>
         selectedLabel === null || selectedLabel === d.label ? 1 : 0.3,

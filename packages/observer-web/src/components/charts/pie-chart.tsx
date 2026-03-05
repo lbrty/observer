@@ -69,12 +69,14 @@ export function PieChart({ data }: { data: CountResult[] }) {
     const pie = d3
       .pie<CountResult>()
       .value((d) => d.count)
-      .sort(null);
+      .sort(null)
+      .padAngle(0.02);
 
     const arc = d3
       .arc<d3.PieArcDatum<CountResult>>()
       .innerRadius(radius * 0.45)
-      .outerRadius(radius);
+      .outerRadius(radius)
+      .cornerRadius(2);
 
     const labelArc = d3
       .arc<d3.PieArcDatum<CountResult>>()
@@ -87,8 +89,6 @@ export function PieChart({ data }: { data: CountResult[] }) {
       .attr("class", "slice")
       .attr("d", arc)
       .attr("fill", (d) => color(d.data.label))
-      .attr("stroke", "var(--bg-secondary, #fff)")
-      .attr("stroke-width", 1)
       .attr("opacity", (d) =>
         selectedLabel === null || selectedLabel === d.data.label ? 1 : 0.3,
       )
