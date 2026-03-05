@@ -56,7 +56,7 @@ function AppLayout() {
           <AvatarMenu email={user?.email ?? ""} onLogout={logout} />
         </div>
       </header>
-      <div className="flex flex-1">
+      <div className="page-bg-base flex flex-1">
         <Outlet />
       </div>
     </div>
