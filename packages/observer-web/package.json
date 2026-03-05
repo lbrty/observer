@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "bun test"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
@@ -26,8 +27,11 @@
     "react-i18next": "^16.5.4"
   },
   "devDependencies": {
+    "@happy-dom/global-registrator": "^20.8.3",
     "@tailwindcss/vite": "^4",
     "@tanstack/router-vite-plugin": "^1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/d3-sankey": "^0.12.5",
     "@types/node": "^25.3.0",
     "@types/react": "^19",
