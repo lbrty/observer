@@ -6,13 +6,27 @@ import { DatePicker } from "@/components/date-picker";
 import { BarChart, type BarLegendItem } from "@/components/charts/bar-chart";
 import { PieChart } from "@/components/charts/pie-chart";
 import { SankeyChart } from "@/components/charts/sankey-chart";
+import {
+  SEX_COLORS,
+  SUPPORT_TYPE_COLORS,
+  SPHERE_COLORS,
+  IDP_STATUS_COLORS,
+  AGE_GROUP_COLORS,
+} from "@/components/charts/colors";
 import { UISelect } from "@/components/ui-select";
-import { XIcon } from "@/components/icons";
-import { PageHeader } from "@/components/page-header";
+import {
+  CaretDownIcon,
+  CaretUpIcon,
+  DownloadSimpleIcon,
+  FunnelIcon,
+  PrinterIcon,
+  XIcon,
+} from "@/components/icons";
 import { useCategories } from "@/hooks/use-categories";
 import { useOffices } from "@/hooks/use-offices";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useReport } from "@/hooks/use-reports";
+import { exportReportCSV } from "@/lib/export-csv";
 import type { CountResult, ReportGroup, ReportParams } from "@/types/report";
 
 export const Route = createFileRoute("/_app/projects/$projectId/reports/")({
@@ -84,21 +98,24 @@ function ReportCard({
   legend,
   mapLabel,
   skipTranslation,
+  colorMap,
+  direction,
 }: {
   group: ReportGroup;
   title: string;
   chart: "bar" | "pie";
   yAxisLabel?: string;
   legend?: BarLegendItem[];
-
   mapLabel?: (label: string) => string;
   skipTranslation?: boolean;
+  colorMap?: Record<string, string>;
+  direction?: "vertical" | "horizontal" | "auto";
 }) {
   const translated = useTranslatedRows(group.rows);
   const source = skipTranslation ? group.rows : translated;
   const rows = mapLabel ? source.map((r) => ({ ...r, label: mapLabel(r.label) })) : source;
   return (
-    <div className="rounded-xl border border-border-secondary bg-bg-secondary p-5">
+    <div className="min-h-[280px] rounded-xl border border-border-secondary bg-bg-secondary p-5">
       <div className="mb-3 flex items-baseline justify-between">
         <h3 className="text-sm font-semibold text-fg">{title}</h3>
         <span className="tabular-nums text-xs font-medium text-fg-tertiary">
@@ -107,12 +124,18 @@ function ReportCard({
       </div>
       {rows.length > 0 ? (
         chart === "bar" ? (
-          <BarChart data={rows} yAxisLabel={yAxisLabel} legend={legend} />
+          <BarChart
+            data={rows}
+            yAxisLabel={yAxisLabel}
+            legend={legend}
+            colorMap={colorMap}
+            direction={direction}
+          />
         ) : (
-          <PieChart data={rows} />
+          <PieChart data={rows} colorMap={colorMap} />
         )
       ) : (
-        <p className="py-8 text-center text-sm text-fg-tertiary">—</p>
+        <p className="py-8 text-center text-sm text-fg-tertiary">&mdash;</p>
       )}
     </div>
   );
@@ -123,6 +146,62 @@ function FilterField({ label, children }: { label: string; children: React.React
     <div className="space-y-1.5">
       <span className="block text-xs font-medium text-fg-secondary">{label}</span>
       {children}
+    </div>
+  );
+}
+
+function SectionHeader({ title }: { title: string }) {
+  return (
+    <div className="col-span-full border-b border-border-secondary pb-1 pt-4">
+      <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-tertiary">{title}</h2>
+    </div>
+  );
+}
+
+function KpiCard({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-xl border border-border-secondary bg-bg-secondary p-4">
+      <p className="text-2xl font-bold tabular-nums text-fg">{value.toLocaleString()}</p>
+      <p className="mt-0.5 text-xs font-medium text-fg-tertiary">{label}</p>
+    </div>
+  );
+}
+
+function FilterChip({
+  label,
+  value,
+  onRemove,
+}: {
+  label: string;
+  value: string;
+  onRemove: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onRemove}
+      className="inline-flex items-center gap-1 rounded-md bg-bg-tertiary px-2 py-0.5 text-xs font-medium text-fg-secondary transition-colors hover:text-fg"
+    >
+      <span className="text-fg-tertiary">{label}:</span> {value}
+      <XIcon size={10} />
+    </button>
+  );
+}
+
+function ReportSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-3 gap-4 lg:grid-cols-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="h-20 animate-pulse rounded-xl bg-bg-tertiary" />
+        ))}
+      </div>
+      <div className="h-64 animate-pulse rounded-xl bg-bg-tertiary" />
+      <div className="grid gap-6 lg:grid-cols-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-72 animate-pulse rounded-xl bg-bg-tertiary" />
+        ))}
+      </div>
     </div>
   );
 }
@@ -155,10 +234,46 @@ const AGE_GROUP_OPTIONS = [
   "old_adult",
 ] as const;
 
+type DatePreset = "month" | "quarter" | "year" | "all";
+
+function getPresetDates(preset: DatePreset): { date_from?: string; date_to?: string } {
+  const now = new Date();
+  const fmt = (d: Date) => d.toISOString().slice(0, 10);
+  const today = fmt(now);
+
+  switch (preset) {
+    case "month": {
+      const from = new Date(now.getFullYear(), now.getMonth(), 1);
+      return { date_from: fmt(from), date_to: today };
+    }
+    case "quarter": {
+      const qMonth = Math.floor(now.getMonth() / 3) * 3 - 3;
+      const from = new Date(now.getFullYear(), qMonth, 1);
+      const to = new Date(now.getFullYear(), qMonth + 3, 0);
+      return { date_from: fmt(from), date_to: fmt(to) };
+    }
+    case "year": {
+      const from = new Date(now.getFullYear(), 0, 1);
+      return { date_from: fmt(from), date_to: today };
+    }
+    case "all":
+      return { date_from: undefined, date_to: undefined };
+  }
+}
+
+const PRESET_KEYS: { key: DatePreset; i18n: string }[] = [
+  { key: "month", i18n: "project.reports.presetMonth" },
+  { key: "quarter", i18n: "project.reports.presetQuarter" },
+  { key: "year", i18n: "project.reports.presetYear" },
+  { key: "all", i18n: "project.reports.presetAll" },
+];
+
 function ReportsPage() {
   const { t } = useTranslation();
   const { projectId } = Route.useParams();
   const [params, setParams] = useState<ReportParams>({});
+  const [filtersOpen, setFiltersOpen] = useState(true);
+  const [activePreset, setActivePreset] = useState<DatePreset | null>(null);
   const { data, isLoading } = useReport(projectId, params);
   const { data: offices } = useOffices();
   const { data: categories } = useCategories();
@@ -202,159 +317,307 @@ function ReportsPage() {
   const hasFilters = Object.values(params).some((v) => v != null && v !== "");
   const axisLabel = t("project.reports.axisCount");
 
+  const clearDatePreset = () => setActivePreset(null);
+
   return (
     <div>
-      <PageHeader title={t("project.reports.title")} />
+      {/* Print-only header */}
+      <div className="print-header hidden">
+        <h1 className="text-lg font-bold">{t("project.reports.title")}</h1>
+        {params.date_from && (
+          <p>
+            {params.date_from} &mdash; {params.date_to ?? "..."}
+          </p>
+        )}
+      </div>
 
-      {/* Filter panel */}
-      <div className="mb-8 rounded-xl border border-border-secondary bg-bg-secondary p-4">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
-          <FilterField label={t("project.reports.dateFrom")}>
-            <DatePicker
-              value={params.date_from ?? ""}
-              onChange={(v) => setParams((p) => ({ ...p, date_from: v || undefined }))}
-            />
-          </FilterField>
-          <FilterField label={t("project.reports.dateTo")}>
-            <DatePicker
-              value={params.date_to ?? ""}
-              onChange={(v) => setParams((p) => ({ ...p, date_to: v || undefined }))}
-            />
-          </FilterField>
-          <FilterField label={t("project.reports.filterOffice")}>
-            <UISelect
-              value={params.office_id ?? ""}
-              onValueChange={(v) => setParams((p) => ({ ...p, office_id: v || undefined }))}
-              options={[{ label: t("project.reports.allValues"), value: "" }, ...officeOptions]}
-              placeholder={t("project.reports.allValues")}
-              fullWidth
-            />
-          </FilterField>
-          <FilterField label={t("project.reports.filterCategory")}>
-            <UISelect
-              value={params.category_id ?? ""}
-              onValueChange={(v) => setParams((p) => ({ ...p, category_id: v || undefined }))}
-              options={[{ label: t("project.reports.allValues"), value: "" }, ...categoryOptions]}
-              placeholder={t("project.reports.allValues")}
-              fullWidth
-            />
-          </FilterField>
-          <FilterField label={t("project.reports.filterConsultant")}>
-            <UISelect
-              value={params.consultant_id ?? ""}
-              onValueChange={(v) => setParams((p) => ({ ...p, consultant_id: v || undefined }))}
-              options={[{ label: t("project.reports.allValues"), value: "" }, ...consultantOptions]}
-              placeholder={t("project.reports.allValues")}
-              fullWidth
-            />
-          </FilterField>
-          <FilterField label={t("project.reports.filterCaseStatus")}>
-            <UISelect
-              value={params.case_status ?? ""}
-              onValueChange={(v) => setParams((p) => ({ ...p, case_status: v || undefined }))}
-              options={[{ label: t("project.reports.allValues"), value: "" }, ...caseStatusOptions]}
-              placeholder={t("project.reports.allValues")}
-              fullWidth
-            />
-          </FilterField>
-          <FilterField label={t("project.reports.filterSex")}>
-            <UISelect
-              value={params.sex ?? ""}
-              onValueChange={(v) => setParams((p) => ({ ...p, sex: v || undefined }))}
-              options={[{ label: t("project.reports.allValues"), value: "" }, ...sexOptions]}
-              placeholder={t("project.reports.allValues")}
-              fullWidth
-            />
-          </FilterField>
-          <FilterField label={t("project.reports.filterAgeGroup")}>
-            <UISelect
-              value={params.age_group ?? ""}
-              onValueChange={(v) => setParams((p) => ({ ...p, age_group: v || undefined }))}
-              options={[{ label: t("project.reports.allValues"), value: "" }, ...ageGroupOptions]}
-              placeholder={t("project.reports.allValues")}
-              fullWidth
-            />
-          </FilterField>
-        </div>
-        {hasFilters && (
-          <div className="mt-3 border-t border-border-secondary pt-3">
+      {/* Unified header + filter panel */}
+      <div data-print-hide className="mb-6 rounded-xl border border-border-secondary bg-bg-secondary">
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-5 py-3">
+          <h1 className="font-serif text-xl font-bold tracking-tight text-fg">
+            {t("project.reports.title")}
+          </h1>
+          <div className="flex items-center gap-2">
+            {data && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => exportReportCSV(data, projectId)}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border-secondary px-3 py-1.5 text-xs font-medium text-fg-secondary transition-colors hover:text-fg"
+                >
+                  <DownloadSimpleIcon size={14} />
+                  {t("project.reports.exportCsv")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border-secondary px-3 py-1.5 text-xs font-medium text-fg-secondary transition-colors hover:text-fg"
+                >
+                  <PrinterIcon size={14} />
+                  {t("project.reports.print")}
+                </button>
+              </>
+            )}
             <button
               type="button"
-              onClick={() => setParams({})}
-              className="inline-flex items-center gap-1.5 rounded-md bg-bg-tertiary px-2.5 py-1 text-xs font-medium text-fg-secondary transition-colors hover:text-fg"
+              onClick={() => setFiltersOpen((o) => !o)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border-secondary px-3 py-1.5 text-xs font-medium text-fg-secondary transition-colors hover:text-fg"
             >
-              <XIcon size={12} />
-              {t("project.reports.clearFilters")}
+              <FunnelIcon size={14} />
+              {t("project.reports.toggleFilters")}
+              {filtersOpen ? <CaretUpIcon size={12} /> : <CaretDownIcon size={12} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Collapsible filter panel */}
+        {filtersOpen && (
+          <div className="border-t border-border-secondary px-5 pb-4 pt-3">
+            {/* Date presets */}
+            <div className="mb-3 flex flex-wrap gap-1.5">
+              {PRESET_KEYS.map(({ key, i18n }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => {
+                    const dates = getPresetDates(key);
+                    setParams((p) => ({ ...p, ...dates }));
+                    setActivePreset(key);
+                  }}
+                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                    activePreset === key
+                      ? "bg-accent text-accent-fg"
+                      : "bg-bg-tertiary text-fg-secondary hover:text-fg"
+                  }`}
+                >
+                  {t(i18n)}
+                </button>
+              ))}
+            </div>
+
+            {/* Filter grid */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
+              <FilterField label={t("project.reports.dateFrom")}>
+                <DatePicker
+                  value={params.date_from ?? ""}
+                  onChange={(v) => {
+                    setParams((p) => ({ ...p, date_from: v || undefined }));
+                    clearDatePreset();
+                  }}
+                />
+              </FilterField>
+              <FilterField label={t("project.reports.dateTo")}>
+                <DatePicker
+                  value={params.date_to ?? ""}
+                  onChange={(v) => {
+                    setParams((p) => ({ ...p, date_to: v || undefined }));
+                    clearDatePreset();
+                  }}
+                />
+              </FilterField>
+              <FilterField label={t("project.reports.filterOffice")}>
+                <UISelect
+                  value={params.office_id ?? ""}
+                  onValueChange={(v) => setParams((p) => ({ ...p, office_id: v || undefined }))}
+                  options={[{ label: t("project.reports.allValues"), value: "" }, ...officeOptions]}
+                  placeholder={t("project.reports.allValues")}
+                  fullWidth
+                />
+              </FilterField>
+              <FilterField label={t("project.reports.filterCategory")}>
+                <UISelect
+                  value={params.category_id ?? ""}
+                  onValueChange={(v) =>
+                    setParams((p) => ({ ...p, category_id: v || undefined }))
+                  }
+                  options={[
+                    { label: t("project.reports.allValues"), value: "" },
+                    ...categoryOptions,
+                  ]}
+                  placeholder={t("project.reports.allValues")}
+                  fullWidth
+                />
+              </FilterField>
+              <FilterField label={t("project.reports.filterConsultant")}>
+                <UISelect
+                  value={params.consultant_id ?? ""}
+                  onValueChange={(v) =>
+                    setParams((p) => ({ ...p, consultant_id: v || undefined }))
+                  }
+                  options={[
+                    { label: t("project.reports.allValues"), value: "" },
+                    ...consultantOptions,
+                  ]}
+                  placeholder={t("project.reports.allValues")}
+                  fullWidth
+                />
+              </FilterField>
+              <FilterField label={t("project.reports.filterCaseStatus")}>
+                <UISelect
+                  value={params.case_status ?? ""}
+                  onValueChange={(v) =>
+                    setParams((p) => ({ ...p, case_status: v || undefined }))
+                  }
+                  options={[
+                    { label: t("project.reports.allValues"), value: "" },
+                    ...caseStatusOptions,
+                  ]}
+                  placeholder={t("project.reports.allValues")}
+                  fullWidth
+                />
+              </FilterField>
+              <FilterField label={t("project.reports.filterSex")}>
+                <UISelect
+                  value={params.sex ?? ""}
+                  onValueChange={(v) => setParams((p) => ({ ...p, sex: v || undefined }))}
+                  options={[{ label: t("project.reports.allValues"), value: "" }, ...sexOptions]}
+                  placeholder={t("project.reports.allValues")}
+                  fullWidth
+                />
+              </FilterField>
+              <FilterField label={t("project.reports.filterAgeGroup")}>
+                <UISelect
+                  value={params.age_group ?? ""}
+                  onValueChange={(v) => setParams((p) => ({ ...p, age_group: v || undefined }))}
+                  options={[
+                    { label: t("project.reports.allValues"), value: "" },
+                    ...ageGroupOptions,
+                  ]}
+                  placeholder={t("project.reports.allValues")}
+                  fullWidth
+                />
+              </FilterField>
+            </div>
+          </div>
+        )}
+
+        {/* Active filter chips (always visible) */}
+        {hasFilters && (
+          <div className="flex flex-wrap items-center gap-1.5 border-t border-border-secondary px-5 py-2.5">
+            {params.date_from && (
+              <FilterChip
+                label={t("project.reports.dateFrom")}
+                value={params.date_from}
+                onRemove={() => {
+                  setParams((p) => ({ ...p, date_from: undefined }));
+                  clearDatePreset();
+                }}
+              />
+            )}
+            {params.date_to && (
+              <FilterChip
+                label={t("project.reports.dateTo")}
+                value={params.date_to}
+                onRemove={() => {
+                  setParams((p) => ({ ...p, date_to: undefined }));
+                  clearDatePreset();
+                }}
+              />
+            )}
+            {params.office_id && (
+              <FilterChip
+                label={t("project.reports.filterOffice")}
+                value={
+                  officeOptions.find((o) => o.value === params.office_id)?.label ??
+                  params.office_id
+                }
+                onRemove={() => setParams((p) => ({ ...p, office_id: undefined }))}
+              />
+            )}
+            {params.category_id && (
+              <FilterChip
+                label={t("project.reports.filterCategory")}
+                value={
+                  categoryOptions.find((c) => c.value === params.category_id)?.label ??
+                  params.category_id
+                }
+                onRemove={() => setParams((p) => ({ ...p, category_id: undefined }))}
+              />
+            )}
+            {params.consultant_id && (
+              <FilterChip
+                label={t("project.reports.filterConsultant")}
+                value={
+                  consultantOptions.find((c) => c.value === params.consultant_id)?.label ??
+                  params.consultant_id
+                }
+                onRemove={() => setParams((p) => ({ ...p, consultant_id: undefined }))}
+              />
+            )}
+            {params.case_status && (
+              <FilterChip
+                label={t("project.reports.filterCaseStatus")}
+                value={
+                  caseStatusOptions.find((s) => s.value === params.case_status)?.label ??
+                  params.case_status
+                }
+                onRemove={() => setParams((p) => ({ ...p, case_status: undefined }))}
+              />
+            )}
+            {params.sex && (
+              <FilterChip
+                label={t("project.reports.filterSex")}
+                value={sexOptions.find((s) => s.value === params.sex)?.label ?? params.sex}
+                onRemove={() => setParams((p) => ({ ...p, sex: undefined }))}
+              />
+            )}
+            {params.age_group && (
+              <FilterChip
+                label={t("project.reports.filterAgeGroup")}
+                value={
+                  ageGroupOptions.find((g) => g.value === params.age_group)?.label ??
+                  params.age_group
+                }
+                onRemove={() => setParams((p) => ({ ...p, age_group: undefined }))}
+              />
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                setParams({});
+                clearDatePreset();
+              }}
+              className="ml-1 text-xs font-medium text-fg-tertiary underline transition-colors hover:text-fg"
+            >
+              {t("project.reports.clearAll")}
             </button>
           </div>
         )}
       </div>
 
-      {isLoading && (
-        <p className="py-12 text-center text-sm text-fg-tertiary">{t("project.reports.loading")}</p>
-      )}
+      {/* Loading skeleton */}
+      {isLoading && <ReportSkeleton />}
 
+      {/* Dashboard content */}
       {data && (
-        <div className="grid gap-6 lg:grid-cols-2">
-          <ReportCard
-            group={data.consultations}
-            title={t("project.reports.consultations")}
-            chart="bar"
-            yAxisLabel={axisLabel}
-          />
-          <ReportCard group={data.by_sex} title={t("project.reports.bySex")} chart="pie" />
-          <ReportCard
-            group={data.by_idp_status}
-            title={t("project.reports.byIdpStatus")}
-            chart="bar"
-            yAxisLabel={axisLabel}
-          />
-          <ReportCard
-            group={data.by_category}
-            title={t("project.reports.byCategory")}
-            chart="bar"
-            yAxisLabel={axisLabel}
-          />
-          <ReportCard
-            group={data.by_region}
-            title={t("project.reports.byRegion")}
-            chart="bar"
-            yAxisLabel={axisLabel}
-          />
-          <ReportCard
-            group={data.by_sphere}
-            title={t("project.reports.bySphere")}
-            chart="bar"
-            yAxisLabel={axisLabel}
-          />
-          <ReportCard
-            group={data.by_office}
-            title={t("project.reports.byOffice")}
-            chart="bar"
-            yAxisLabel={axisLabel}
-          />
-          <ReportCard
-            group={data.by_age_group}
-            title={t("project.reports.byAgeGroup")}
-            chart="bar"
-            yAxisLabel={axisLabel}
-            skipTranslation
-            mapLabel={(l) => AGE_RANGE_MAP[l] ?? l}
-            legend={ageGroupLegend}
-          />
-          <ReportCard
-            group={data.by_tag}
-            title={t("project.reports.byTag")}
-            chart="bar"
-            yAxisLabel={axisLabel}
-          />
-          <ReportCard
-            group={data.family_units}
-            title={t("project.reports.familyUnits")}
-            chart="pie"
-          />
+        <div className="report-grid grid gap-6 lg:grid-cols-2">
+          {/* KPI Row */}
+          <div className="col-span-full grid grid-cols-3 gap-4 lg:grid-cols-6">
+            <KpiCard label={t("project.reports.kpiPeople")} value={data.by_sex.total} />
+            <KpiCard
+              label={t("project.reports.kpiConsultations")}
+              value={data.consultations.total}
+            />
+            <KpiCard
+              label={t("project.reports.kpiActiveCases")}
+              value={data.by_idp_status.rows.find((r) => r.label === "active")?.count ?? 0}
+            />
+            <KpiCard
+              label={t("project.reports.kpiIdp")}
+              value={
+                data.by_idp_status.rows.find((r) => r.label === "idp")?.count ??
+                data.by_idp_status.total
+              }
+            />
+            <KpiCard label={t("project.reports.kpiHouseholds")} value={data.family_units.total} />
+            <KpiCard label={t("project.reports.kpiOffices")} value={data.by_office.rows.length} />
+          </div>
+
+          {/* Overview */}
+          <SectionHeader title={t("project.reports.sectionOverview")} />
           {data.status_flow && data.status_flow.length > 0 && (
-            <div className="rounded-xl border border-border-secondary bg-bg-secondary p-5 lg:col-span-2">
+            <div className="col-span-full rounded-xl border border-border-secondary bg-bg-secondary p-5">
               <h3 className="mb-3 text-sm font-semibold text-fg">
                 {t("project.reports.statusFlow")}
               </h3>
@@ -367,6 +630,93 @@ function ReportsPage() {
               />
             </div>
           )}
+
+          {/* Services */}
+          <SectionHeader title={t("project.reports.sectionServices")} />
+          <div className="col-span-full">
+            <ReportCard
+              group={data.consultations}
+              title={t("project.reports.consultations")}
+              chart="bar"
+              yAxisLabel={axisLabel}
+              colorMap={SUPPORT_TYPE_COLORS}
+            />
+          </div>
+          <ReportCard
+            group={data.by_sphere}
+            title={t("project.reports.bySphere")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            colorMap={SPHERE_COLORS}
+            direction="auto"
+          />
+          <ReportCard
+            group={data.by_office}
+            title={t("project.reports.byOffice")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            direction="auto"
+          />
+
+          {/* Demographics */}
+          <SectionHeader title={t("project.reports.sectionDemographics")} />
+          <div className="col-span-full grid grid-cols-1 gap-6 md:grid-cols-3">
+            <ReportCard
+              group={data.by_sex}
+              title={t("project.reports.bySex")}
+              chart="pie"
+              colorMap={SEX_COLORS}
+            />
+            <ReportCard
+              group={data.family_units}
+              title={t("project.reports.familyUnits")}
+              chart="pie"
+            />
+            <ReportCard
+              group={data.by_idp_status}
+              title={t("project.reports.byIdpStatus")}
+              chart="pie"
+              colorMap={IDP_STATUS_COLORS}
+            />
+          </div>
+          <div className="col-span-full">
+            <ReportCard
+              group={data.by_age_group}
+              title={t("project.reports.byAgeGroup")}
+              chart="bar"
+              yAxisLabel={axisLabel}
+              skipTranslation
+              mapLabel={(l) => AGE_RANGE_MAP[l] ?? l}
+              legend={ageGroupLegend}
+              colorMap={AGE_GROUP_COLORS}
+            />
+          </div>
+
+          {/* Geography & Taxonomy */}
+          <SectionHeader title={t("project.reports.sectionGeography")} />
+          <ReportCard
+            group={data.by_region}
+            title={t("project.reports.byRegion")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            direction="auto"
+          />
+          <ReportCard
+            group={data.by_category}
+            title={t("project.reports.byCategory")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            direction="auto"
+          />
+          <div className="col-span-full">
+            <ReportCard
+              group={data.by_tag}
+              title={t("project.reports.byTag")}
+              chart="bar"
+              yAxisLabel={axisLabel}
+              direction="auto"
+            />
+          </div>
         </div>
       )}
     </div>
