@@ -10,7 +10,8 @@
     "themeLight": "Hell",
     "themeDark": "Dunkel",
     "themeLightHc": "Hell (HK)",
-    "themeDarkHc": "Dunkel (HK)"
+    "themeDarkHc": "Dunkel (HK)",
+    "cancel": "Abbrechen"
   },
   "auth": {
     "loginTitle": "Anmelden",

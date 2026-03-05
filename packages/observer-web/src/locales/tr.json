@@ -10,7 +10,8 @@
     "themeLight": "Açık",
     "themeDark": "Koyu",
     "themeLightHc": "Açık (YK)",
-    "themeDarkHc": "Koyu (YK)"
+    "themeDarkHc": "Koyu (YK)",
+    "cancel": "İptal"
   },
   "auth": {
     "loginTitle": "Giriş yap",

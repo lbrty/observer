@@ -10,7 +10,8 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeLightHc": "Light (HC)",
-    "themeDarkHc": "Dark (HC)"
+    "themeDarkHc": "Dark (HC)",
+    "cancel": "Cancel"
   },
   "auth": {
     "loginTitle": "Sign in",

@@ -213,7 +213,7 @@ export function SupportRecordDrawer({
       value: "financial_aid",
     },
     {
-      label: t("project.supportRecords.spherePsychological"),
+      label: t("project.supportRecords.spherePsychologicalSupport"),
       value: "psychological_support",
     },
     { label: t("project.supportRecords.sphereOther"), value: "other" },

@@ -10,7 +10,8 @@
     "themeLight": "Світла",
     "themeDark": "Темна",
     "themeLightHc": "Світла (КК)",
-    "themeDarkHc": "Темна (КК)"
+    "themeDarkHc": "Темна (КК)",
+    "cancel": "Скасувати"
   },
   "auth": {
     "loginTitle": "Вхід",
