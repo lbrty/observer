@@ -240,7 +240,8 @@
       "tags": "Теги",
       "documents": "Документы",
       "pets": "Питомцы",
-      "reports": "Отчёты"
+      "reports": "Отчёты",
+      "myStats": "Моя статистика"
     },
     "people": {
       "title": "Люди",
@@ -510,6 +511,13 @@
       "kpiIdp": "ВПЛ",
       "kpiHouseholds": "Домохозяйства",
       "kpiOffices": "Офисы"
+    },
+    "myStats": {
+      "title": "Моя статистика",
+      "kpiPeople": "Мои люди",
+      "kpiConsultations": "Мои консультации",
+      "kpiActiveCases": "Активные дела",
+      "kpiHouseholds": "Домохозяйства"
     }
   },
   "errors": {

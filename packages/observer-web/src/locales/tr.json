@@ -240,7 +240,8 @@
       "tags": "Etiketler",
       "documents": "Belgeler",
       "pets": "Evcil hayvanlar",
-      "reports": "Raporlar"
+      "reports": "Raporlar",
+      "myStats": "İstatistiklerim"
     },
     "people": {
       "title": "Kişiler",
@@ -510,6 +511,13 @@
       "kpiIdp": "YİE'ler",
       "kpiHouseholds": "Haneler",
       "kpiOffices": "Ofisler"
+    },
+    "myStats": {
+      "title": "İstatistiklerim",
+      "kpiPeople": "Kişilerim",
+      "kpiConsultations": "Danışmalarım",
+      "kpiActiveCases": "Aktif vakalar",
+      "kpiHouseholds": "Haneler"
     }
   },
   "errors": {

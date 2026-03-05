@@ -240,7 +240,8 @@
       "tags": "Tags",
       "documents": "Documents",
       "pets": "Pets",
-      "reports": "Reports"
+      "reports": "Reports",
+      "myStats": "My Statistics"
     },
     "people": {
       "title": "People",
@@ -510,6 +511,13 @@
       "kpiIdp": "IDPs",
       "kpiHouseholds": "Households",
       "kpiOffices": "Offices"
+    },
+    "myStats": {
+      "title": "My Statistics",
+      "kpiPeople": "My People",
+      "kpiConsultations": "My Consultations",
+      "kpiActiveCases": "Active Cases",
+      "kpiHouseholds": "Households"
     }
   },
   "errors": {

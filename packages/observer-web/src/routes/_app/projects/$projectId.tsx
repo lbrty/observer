@@ -7,9 +7,11 @@ import {
   PawPrintIcon,
   TagIcon,
   UserCircleIcon,
+  UserFocusIcon,
 } from "@/components/icons";
 import { SidebarLink } from "@/components/sidebar-link";
 import { useMyProjects } from "@/hooks/use-my-projects";
+import { useAuth } from "@/stores/auth";
 import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
@@ -20,6 +22,7 @@ export const Route = createFileRoute("/_app/projects/$projectId")({
 function ProjectLayout() {
   const { t } = useTranslation();
   const { projectId } = Route.useParams();
+  const { user } = useAuth();
   const { data, isLoading } = useMyProjects();
 
   if (isLoading) return null;
@@ -72,6 +75,13 @@ function ProjectLayout() {
             label={t("project.nav.reports")}
             icon={ChartBarIcon}
           />
+          {user?.role === "consultant" && (
+            <SidebarLink
+              to={`/projects/${projectId}/my-stats`}
+              label={t("project.nav.myStats")}
+              icon={UserFocusIcon}
+            />
+          )}
         </nav>
       </aside>
       <main className="min-w-0 flex-1 px-8 py-6">

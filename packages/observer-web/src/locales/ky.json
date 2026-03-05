@@ -240,7 +240,8 @@
       "tags": "Tegder",
       "documents": "Dokumentter",
       "pets": "Üy janybarlar",
-      "reports": "Raporlor"
+      "reports": "Raporlor",
+      "myStats": "Menim statistikam"
     },
     "people": {
       "title": "Adamdar",
@@ -510,6 +511,13 @@
       "kpiIdp": "IKJlar",
       "kpiHouseholds": "Üy-bülölör",
       "kpiOffices": "Ofister"
+    },
+    "myStats": {
+      "title": "Menim statistikam",
+      "kpiPeople": "Menim adamdarym",
+      "kpiConsultations": "Menim konsultatsiyalayrm",
+      "kpiActiveCases": "Aktiv işter",
+      "kpiHouseholds": "Üy çarba"
     }
   },
   "errors": {

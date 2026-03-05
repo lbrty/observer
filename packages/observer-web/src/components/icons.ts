@@ -33,5 +33,6 @@ export {
   UserCircleIcon,
   UsersIcon,
   WarningIcon,
+  UserFocusIcon,
   XIcon,
 } from "@phosphor-icons/react";

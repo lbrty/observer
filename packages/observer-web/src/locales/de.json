@@ -240,7 +240,8 @@
       "tags": "Tags",
       "documents": "Dokumente",
       "pets": "Haustiere",
-      "reports": "Berichte"
+      "reports": "Berichte",
+      "myStats": "Meine Statistik"
     },
     "people": {
       "title": "Personen",
@@ -510,6 +511,13 @@
       "kpiIdp": "Binnenvertriebene",
       "kpiHouseholds": "Haushalte",
       "kpiOffices": "Büros"
+    },
+    "myStats": {
+      "title": "Meine Statistik",
+      "kpiPeople": "Meine Personen",
+      "kpiConsultations": "Meine Beratungen",
+      "kpiActiveCases": "Aktive Fälle",
+      "kpiHouseholds": "Haushalte"
     }
   },
   "errors": {
