@@ -25,6 +25,19 @@
 **Project scoping:** All reports operate within a single project context unless stated otherwise.
 
 
+### Group 1 — General Consultation Counts
+
+| #   | Report                                                    | Count type |
+| --- | --------------------------------------------------------- | ---------- |
+| 1   | Total consultations of all types in a given period        | Events     |
+| 2   | Total legal consultations in a given period               | Events     |
+| 3   | Total social consultations in a given period              | Events     |
+
+**Schema:** `support_records.type` filtered by `provided_at` range. Pattern A.
+
+> These are the top-level aggregates. Every other group refines these totals by a demographic or organisational dimension.
+
+
 ### Group 2 — Sex Breakdown
 
 | #   | Report                                                        | Count type |
@@ -41,6 +54,20 @@
 > Reports 14–17 count distinct people, not consultation events. A woman who had three legal consultations in the period counts as 1.
 
 
+### Group 3 — Geographic/IDP Status
+
+| #    | Report                                                                     | Count type |
+| ---- | -------------------------------------------------------------------------- | ---------- |
+| 4    | Total people registered in a given period                                  | People     |
+| 5–6  | People from [conflict zone] registered in a given period                   | People     |
+| 7–10 | People from [conflict zone] who received [legal/social] consultations      | People     |
+| 11   | Non-IDPs registered in a given period                                      | People     |
+
+**Schema:** IDP status is derived via `people.origin_place_id → places.state_id → states.conflict_zone`. Registration window uses `people.registered_at`. Pattern B.
+
+> Reports 5–6 and 7–10 are parameterised by conflict zone label. Each distinct `states.conflict_zone` value produces a separate row.
+
+
 ### Group 4 — Vulnerability Category Breakdown
 
 | #   | Report                                                                       | Count type |
@@ -52,6 +79,19 @@
 **Schema:** `people.category_id → categories.name`. Joined to `support_records` for consultation-specific counts.
 
 > People with `category_id IS NULL` appear as an "uncategorised" bucket or are excluded depending on the report context.
+
+
+### Group 5 — Current Region of Stay
+
+| #   | Report                                                            | Count type |
+| --- | ----------------------------------------------------------------- | ---------- |
+| 21  | People registered — by current region of stay                     | People     |
+| 22  | People who received legal consultations — by current region       | People     |
+| 23  | People who received social consultations — by current region      | People     |
+
+**Schema:** `people.current_place_id → places.state_id → states.name`. Pattern D.
+
+> People with `current_place_id IS NULL` appear in an "unknown" region bucket.
 
 
 ### Group 6 — Support Sphere Breakdown
@@ -84,6 +124,19 @@
 > Records with `sphere IS NULL` are excluded from sphere breakdowns. The sphere field is optional but encouraged for all legal and social records.
 
 
+### Group 7 — Office Breakdown
+
+| #   | Report                                                  | Count type |
+| --- | ------------------------------------------------------- | ---------- |
+| 28  | Legal consultation count — by providing office          | Events     |
+| 32  | Social consultation count — by providing office         | Events     |
+| 33  | Total consultation count — by providing office          | Events     |
+
+**Schema:** `support_records.office_id → offices.name`. Pattern E.
+
+> Records with `office_id IS NULL` appear in an "unknown" office bucket.
+
+
 ### Group 8 — Age Group Breakdown
 
 | #   | Report                                                       | Count type |
@@ -113,6 +166,18 @@
 | `unknown`           | Not specified |
 
 When `birth_date` is set and `age_group` is NULL, the application layer computes the bucket using `age = EXTRACT(YEAR FROM AGE(birth_date))` and maps to the ranges above. The `chk_people_age_xor` constraint ensures both are never set simultaneously.
+
+
+### Group 9 — Tag Search
+
+| #   | Report                                                              | Count type |
+| --- | ------------------------------------------------------------------- | ---------- |
+| 35  | Support records associated with people having specific tags         | Events     |
+| 36  | People registered whose records include specific tags               | People     |
+
+**Schema:** `person_tags.tag_id → tags.name` joined to `support_records` via `person_id`. Tag IDs are provided as filter parameters.
+
+> These reports accept one or more tag IDs as input and return matching records/people. Useful for ad-hoc donor queries.
 
 
 ### Group 10 — Family Units
