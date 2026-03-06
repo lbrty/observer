@@ -1,4 +1,4 @@
 ---
 title: Observer
-lead: Self-hosted case management for displaced persons. One Go binary, one PostgreSQL database.
+lead: Self-contained case management platform for displaced persons.
 ---
