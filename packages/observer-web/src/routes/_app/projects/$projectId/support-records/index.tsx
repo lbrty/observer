@@ -1,14 +1,16 @@
-import { HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
+import { useState } from "react";
+
 import { Tabs } from "@base-ui/react/tabs";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { EmptyState } from "@/components/empty-state";
+import { HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
+import { PersonName } from "@/components/person-name";
 import { StatusBadge } from "@/components/status-badge";
 import { SupportRecordDrawer } from "@/components/support-record-drawer";
 import { useSupportRecords } from "@/hooks/use-support-records";
@@ -86,7 +88,9 @@ function SupportRecordsPage() {
           <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-bg-tertiary text-fg-tertiary">
             <HandHeartIcon size={16} />
           </span>
-          <span className="truncate font-mono text-xs text-fg-secondary">{r.person_id}</span>
+          <span className="truncate text-sm text-fg">
+            <PersonName projectId={projectId} personId={r.person_id} />
+          </span>
         </div>
       ),
     },

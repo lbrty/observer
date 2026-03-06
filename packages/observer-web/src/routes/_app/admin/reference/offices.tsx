@@ -13,6 +13,7 @@ import { BuildingsIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { RowActions } from "@/components/row-actions";
 import { useCreateOffice, useDeleteOffice, useOffices, useUpdateOffice } from "@/hooks/use-offices";
+import { usePlaces } from "@/hooks/use-places";
 import type { Office } from "@/types/reference";
 
 export const Route = createFileRoute("/_app/admin/reference/offices")({
@@ -22,6 +23,8 @@ export const Route = createFileRoute("/_app/admin/reference/offices")({
 function OfficesPage() {
   const { t } = useTranslation();
   const { data, isLoading } = useOffices();
+  const { data: placesData } = usePlaces();
+  const places = placesData?.places ?? [];
   const createOffice = useCreateOffice();
   const updateOffice = useUpdateOffice();
   const deleteOffice = useDeleteOffice();
@@ -39,9 +42,10 @@ function OfficesPage() {
     {
       key: "place_id",
       header: t("admin.reference.offices.place"),
-      render: (o) => (
-        <span className="font-mono text-xs text-fg-secondary">{o.place_id ?? "—"}</span>
-      ),
+      render: (o) => {
+        const placeName = o.place_id ? places.find((p) => p.id === o.place_id)?.name : null;
+        return <span className="text-sm text-fg-secondary">{placeName ?? "—"}</span>;
+      },
     },
     {
       key: "actions",

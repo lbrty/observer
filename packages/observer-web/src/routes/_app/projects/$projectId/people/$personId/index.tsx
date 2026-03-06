@@ -8,6 +8,7 @@ import { DatePicker } from "@/components/date-picker";
 import { PlusIcon, WarningIcon } from "@/components/icons";
 import { StatusBadge } from "@/components/status-badge";
 import { UISelect } from "@/components/ui-select";
+import { useOffices } from "@/hooks/use-offices";
 import { usePerson } from "@/hooks/use-people";
 import { useCreateSupportRecord } from "@/hooks/use-support-records";
 import { HTTPError } from "@/lib/api";
@@ -82,6 +83,11 @@ function PersonOverview() {
   const { t } = useTranslation();
   const { projectId, personId } = Route.useParams();
   const { data: person, isLoading } = usePerson(projectId, personId);
+  const { data: offices } = useOffices();
+
+  const officeName = person?.office_id
+    ? offices?.find((o) => o.id === person.office_id)?.name
+    : undefined;
 
   const createRecord = useCreateSupportRecord(projectId);
   const toast = useToast();
@@ -200,7 +206,7 @@ function PersonOverview() {
             </dd>
           </div>
           <Detail label={t("project.people.externalId")} value={person.external_id} />
-          <Detail label={t("project.people.office")} value={person.office_id} />
+          <Detail label={t("project.people.office")} value={officeName} />
           <div>
             <dt className="text-xs font-medium text-fg-tertiary">
               {t("project.people.consentGiven")}

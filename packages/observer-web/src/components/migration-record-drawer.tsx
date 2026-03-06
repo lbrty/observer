@@ -1,4 +1,4 @@
-import { type FormEvent } from "react";
+import { type FormEvent, useEffect } from "react";
 
 import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
@@ -82,10 +82,42 @@ export function MigrationRecordDrawer({
   });
 
   const { data: countries } = useCountries();
+  const { data: allStates } = useStates();
+  const { data: allPlaces } = usePlaces();
   const { data: fromStates } = useStates(form.from_country || undefined);
   const { data: fromPlaces } = usePlaces(form.from_state || undefined);
   const { data: destStates } = useStates(form.dest_country || undefined);
   const { data: destPlaces } = usePlaces(form.dest_state || undefined);
+
+  // resolve place → state → country when record loads
+  useEffect(() => {
+    if (!isEdit || !record || !allStates?.states || !allPlaces?.places) return;
+
+    const states = allStates.states;
+    const places = allPlaces.places;
+
+    if (record.from_place_id && !form.from_country) {
+      const place = places.find((p) => p.id === record.from_place_id);
+      if (place) {
+        const state = states.find((s) => s.id === place.state_id);
+        if (state) {
+          set("from_country", state.country_id);
+          set("from_state", state.id);
+        }
+      }
+    }
+
+    if (record.destination_place_id && !form.dest_country) {
+      const place = places.find((p) => p.id === record.destination_place_id);
+      if (place) {
+        const state = states.find((s) => s.id === place.state_id);
+        if (state) {
+          set("dest_country", state.country_id);
+          set("dest_state", state.id);
+        }
+      }
+    }
+  }, [record, allStates, allPlaces]);
 
   const isPending = createRecord.isPending || updateRecord.isPending;
 

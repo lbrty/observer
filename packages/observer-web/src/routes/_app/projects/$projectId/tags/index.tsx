@@ -9,7 +9,13 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
 import { EmptyState } from "@/components/empty-state";
 import { FormDialog } from "@/components/form-dialog";
-import { PencilSimpleIcon, PlusIcon, TagIcon, TrashIcon } from "@/components/icons";
+import {
+  ArrowsClockwiseIcon,
+  PencilSimpleIcon,
+  PlusIcon,
+  TagIcon,
+  TrashIcon,
+} from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { useCreateTag, useDeleteTag, useUpdateTag, useTags } from "@/hooks/use-tags";
 import { HTTPError } from "@/lib/api";
@@ -27,6 +33,13 @@ function colorFromName(name: string): string {
   }
   const h = ((hash % 360) + 360) % 360;
   return `hsl(${h}, 55%, 55%)`;
+}
+
+function randomHex(): string {
+  const hex = Math.floor(Math.random() * 0xffffff)
+    .toString(16)
+    .padStart(6, "0");
+  return `#${hex}`;
 }
 
 function hslToHex(hsl: string): string {
@@ -269,6 +282,13 @@ function TagsPage() {
               onChange={(e) => setColor(e.target.value)}
               className="size-9 cursor-pointer rounded-lg border border-border-secondary bg-bg-secondary p-0.5"
             />
+            <button
+              type="button"
+              onClick={() => setColor(randomHex())}
+              className="inline-flex size-9 cursor-pointer items-center justify-center rounded-lg border border-border-secondary bg-bg-secondary text-fg-tertiary transition-colors hover:text-fg"
+            >
+              <ArrowsClockwiseIcon size={16} />
+            </button>
             <span className="font-mono text-sm text-fg-tertiary">
               {color || hslToHex(colorFromName(name || "tag"))}
             </span>

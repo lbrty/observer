@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -19,6 +19,8 @@ import {
   useRemoveHouseholdMember,
   useUpdateHousehold,
 } from "@/hooks/use-households";
+import { usePerson } from "@/hooks/use-people";
+import { PersonName } from "@/components/person-name";
 import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";
 
@@ -74,7 +76,14 @@ export function HouseholdDrawer({
   const [headPersonName, setHeadPersonName] = useState("");
   const [memberPersonName, setMemberPersonName] = useState("");
 
-  const headPersonLabel = headPersonName || form.head_person_id;
+  const { data: headPerson } = usePerson(
+    projectId,
+    isEdit && form.head_person_id && !headPersonName ? form.head_person_id : "",
+  );
+
+  const resolvedHeadName = headPersonName
+    || (headPerson ? `${headPerson.first_name} ${headPerson.last_name ?? ""}`.trim() : "");
+  const headPersonLabel = resolvedHeadName || form.head_person_id;
   const memberPersonLabel = memberPersonName || memberForm.person_id;
 
   const isPending = createHousehold.isPending || updateHousehold.isPending;
@@ -192,7 +201,7 @@ export function HouseholdDrawer({
           </span>
           {form.head_person_id ? (
             <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
-              <span className="flex-1 truncate font-mono text-xs text-fg">
+              <span className="flex-1 truncate text-sm text-fg">
                 {headPersonLabel}
               </span>
               <button
@@ -227,7 +236,7 @@ export function HouseholdDrawer({
                 <thead>
                   <tr className="border-b border-border-secondary bg-bg-secondary">
                     <th className="px-3 py-2 text-left font-medium text-fg-secondary">
-                      {t("project.households.personId")}
+                      {t("project.households.member")}
                     </th>
                     <th className="px-3 py-2 text-left font-medium text-fg-secondary">
                       {t("project.households.relationship")}
@@ -241,8 +250,8 @@ export function HouseholdDrawer({
                       key={m.person_id}
                       className="border-b border-border-secondary last:border-b-0"
                     >
-                      <td className="px-3 py-2 font-mono text-xs text-fg">
-                        {m.person_id}
+                      <td className="px-3 py-2 text-sm text-fg">
+                        <PersonName projectId={projectId} personId={m.person_id} />
                       </td>
                       <td className="px-3 py-2 text-fg-secondary">
                         {t(
@@ -275,11 +284,11 @@ export function HouseholdDrawer({
           <div className="flex items-end gap-3">
             <div className="flex-1">
               <label className="mb-1 block text-sm font-medium text-fg-secondary">
-                {t("project.households.personId")}
+                {t("project.households.member")}
               </label>
               {memberForm.person_id ? (
                 <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
-                  <span className="flex-1 truncate font-mono text-xs text-fg">
+                  <span className="flex-1 truncate text-sm text-fg">
                     {memberPersonLabel}
                   </span>
                   <button

@@ -1,14 +1,16 @@
-import { HouseSimpleIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+
+import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { EmptyState } from "@/components/empty-state";
 import { HouseholdDrawer } from "@/components/household-drawer";
+import { HouseSimpleIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
+import { PersonName } from "@/components/person-name";
 import { useHouseholds } from "@/hooks/use-households";
 import type { Household } from "@/types/household";
 
@@ -57,9 +59,14 @@ function HouseholdsListPage() {
     {
       key: "head_person_id",
       header: t("project.households.headPerson"),
-      render: (h) => (
-        <span className="font-mono text-xs text-fg-secondary">{h.head_person_id || "-"}</span>
-      ),
+      render: (h) =>
+        h.head_person_id ? (
+          <span className="text-sm text-fg-secondary">
+            <PersonName projectId={projectId} personId={h.head_person_id} />
+          </span>
+        ) : (
+          <span className="text-fg-tertiary">—</span>
+        ),
     },
     {
       key: "members",

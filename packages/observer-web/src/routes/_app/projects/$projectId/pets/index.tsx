@@ -1,14 +1,16 @@
-import { PawPrintIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
+import { useState } from "react";
+
 import { Tabs } from "@base-ui/react/tabs";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { EmptyState } from "@/components/empty-state";
+import { PawPrintIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
+import { PersonName } from "@/components/person-name";
 import { PetDrawer } from "@/components/pet-drawer";
 import { StatusBadge } from "@/components/status-badge";
 import { usePets } from "@/hooks/use-pets";
@@ -98,7 +100,14 @@ function PetsListPage() {
     {
       key: "owner_id",
       header: t("project.pets.ownerId"),
-      render: (p) => <span className="text-fg-secondary">{p.owner_id ?? ""}</span>,
+      render: (p) =>
+        p.owner_id ? (
+          <span className="text-sm text-fg-secondary">
+            <PersonName projectId={projectId} personId={p.owner_id} />
+          </span>
+        ) : (
+          <span className="text-fg-tertiary">—</span>
+        ),
     },
     {
       key: "registration_id",
