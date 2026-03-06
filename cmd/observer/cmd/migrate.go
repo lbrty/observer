@@ -8,9 +8,11 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/spf13/cobra"
 
 	"github.com/lbrty/observer/internal/config"
+	"github.com/lbrty/observer/migrations"
 )
 
 // MigrateCmd groups migration subcommands.
@@ -53,6 +55,19 @@ func newMigrate(cmd *cobra.Command) (*migrate.Migrate, error) {
 	cfg, err := config.Load()
 	if err != nil {
 		return nil, err
+	}
+
+	// Use embedded migrations in production builds.
+	if migrations.Embedded() {
+		fsys, err := migrations.FS()
+		if err != nil {
+			return nil, fmt.Errorf("embedded migrations: %w", err)
+		}
+		d, err := iofs.New(fsys, ".")
+		if err != nil {
+			return nil, fmt.Errorf("iofs source: %w", err)
+		}
+		return migrate.NewWithSourceInstance("iofs", d, cfg.Database.DSN)
 	}
 
 	dir, _ := cmd.Flags().GetString("path")

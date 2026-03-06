@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -10,6 +11,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/redis/go-redis/v9"
 	"github.com/spf13/cobra"
 
@@ -18,6 +22,7 @@ import (
 	"github.com/lbrty/observer/internal/database"
 	"github.com/lbrty/observer/internal/logger"
 	"github.com/lbrty/observer/internal/server"
+	"github.com/lbrty/observer/migrations"
 )
 
 // ServeCmd starts the HTTP server.
@@ -61,6 +66,13 @@ func runServe(cmd *cobra.Command, _ []string) error {
 	redisClient := redis.NewClient(redisOpts)
 	defer redisClient.Close()
 
+	// Auto-run migrations when embedded in production build.
+	if migrations.Embedded() {
+		if err := autoMigrate(cfg.Database.DSN, log); err != nil {
+			return err
+		}
+	}
+
 	container, err := app.NewContainer(cfg, db, redisClient)
 	if err != nil {
 		return err
@@ -86,4 +98,28 @@ func runServe(cmd *cobra.Command, _ []string) error {
 	defer cancel()
 
 	return srv.Shutdown(ctx)
+}
+
+func autoMigrate(dsn string, log *slog.Logger) error {
+	fsys, err := migrations.FS()
+	if err != nil {
+		return fmt.Errorf("embedded migrations: %w", err)
+	}
+	d, err := iofs.New(fsys, ".")
+	if err != nil {
+		return fmt.Errorf("iofs source: %w", err)
+	}
+	m, err := migrate.NewWithSourceInstance("iofs", d, dsn)
+	if err != nil {
+		return fmt.Errorf("migrate init: %w", err)
+	}
+	defer m.Close()
+
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		return fmt.Errorf("migrate up: %w", err)
+	}
+
+	v, dirty, _ := m.Version()
+	log.Info("migrations applied", slog.Uint64("version", uint64(v)), slog.Bool("dirty", dirty))
+	return nil
 }
