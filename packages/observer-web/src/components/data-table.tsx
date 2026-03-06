@@ -14,6 +14,7 @@ interface DataTableProps<T> {
   keyExtractor: (item: T) => string;
   onRowClick?: (item: T) => void;
   isLoading?: boolean;
+  emptyState?: ReactNode;
 }
 
 function SkeletonRows({ cols, rows = 5 }: { cols: number; rows?: number }) {
@@ -34,6 +35,7 @@ export function DataTable<T>({
   keyExtractor,
   onRowClick,
   isLoading,
+  emptyState,
 }: DataTableProps<T>) {
   const { t } = useTranslation();
 
@@ -57,8 +59,12 @@ export function DataTable<T>({
             <SkeletonRows cols={columns.length} />
           ) : data.length === 0 ? (
             <tr>
-              <td colSpan={columns.length} className="px-4 py-12 text-center text-fg-tertiary">
-                {t("admin.common.noData")}
+              <td colSpan={columns.length}>
+                {emptyState ?? (
+                  <p className="px-4 py-12 text-center text-fg-tertiary">
+                    {t("admin.common.noData")}
+                  </p>
+                )}
               </td>
             </tr>
           ) : (

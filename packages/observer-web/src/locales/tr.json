@@ -313,7 +313,9 @@
       "quickSupportSaved": "Destek kaydı kaydedildi",
       "addCountry": "Ülke ekle",
       "addState": "İl ekle",
-      "addPlace": "Yer ekle"
+      "addPlace": "Yer ekle",
+      "emptyTitle": "Kayıtlı kişi yok",
+      "emptyDescription": "İlk kişiyi kaydedin"
     },
     "notes": {
       "title": "Notlar",
@@ -329,14 +331,18 @@
       "mimeType": "Tür",
       "size": "Boyut",
       "deleteConfirm": "Bu belgeyi silmek istediğinize emin misiniz?",
-      "empty": "Henüz belge yok"
+      "empty": "Henüz belge yok",
+      "emptyTitle": "Belge yok",
+      "emptyDescription": "İlk belgeyi yükleyin"
     },
     "tags": {
       "title": "Etiketler",
       "name": "Ad",
       "add": "Etiket ekle",
       "addTitle": "Etiket ekle",
-      "deleteConfirm": "Bu etiketi silmek istediğinize emin misiniz?"
+      "deleteConfirm": "Bu etiketi silmek istediğinize emin misiniz?",
+      "emptyTitle": "Etiket yok",
+      "emptyDescription": "İlk etiketi oluşturun"
     },
     "supportRecords": {
       "title": "Destek Kayıtları",
@@ -386,7 +392,9 @@
       "referralAccepted": "Kabul edildi",
       "referralCompleted": "Tamamlandı",
       "referralDeclined": "Reddedildi",
-      "referralNoResponse": "Yanıt yok"
+      "referralNoResponse": "Yanıt yok",
+      "emptyTitle": "Destek kaydı yok",
+      "emptyDescription": "İlk destek kaydını ekleyin"
     },
     "households": {
       "title": "Haneler",
@@ -416,7 +424,9 @@
       "relationshipGrandchild": "Torun",
       "relationshipGrandparent": "Büyükanne/Büyükbaba",
       "relationshipOtherRelative": "Diğer akraba",
-      "relationshipNonRelative": "Akraba olmayan"
+      "relationshipNonRelative": "Akraba olmayan",
+      "emptyTitle": "Hane yok",
+      "emptyDescription": "İlk haneyi oluşturun"
     },
     "migrationRecords": {
       "title": "Göç Kayıtları",
@@ -466,7 +476,9 @@
       "statusAdopted": "Sahiplendirilmiş",
       "statusOwnerFound": "Sahibi bulundu",
       "statusNeedsShelter": "Barınak gerekli",
-      "statusUnknown": "Bilinmiyor"
+      "statusUnknown": "Bilinmiyor",
+      "emptyTitle": "Kayıtlı hayvan yok",
+      "emptyDescription": "İlk hayvanı kaydedin"
     },
     "reports": {
       "title": "Raporlar",

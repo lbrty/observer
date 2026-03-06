@@ -313,7 +313,9 @@
       "quickSupportSaved": "Support record saved",
       "addCountry": "Add country",
       "addState": "Add state",
-      "addPlace": "Add place"
+      "addPlace": "Add place",
+      "emptyTitle": "No people registered",
+      "emptyDescription": "Register the first person to get started"
     },
     "notes": {
       "title": "Notes",
@@ -329,14 +331,18 @@
       "mimeType": "Type",
       "size": "Size",
       "deleteConfirm": "Are you sure you want to delete this document?",
-      "empty": "No documents yet"
+      "empty": "No documents yet",
+      "emptyTitle": "No documents",
+      "emptyDescription": "Upload the first document"
     },
     "tags": {
       "title": "Tags",
       "name": "Name",
       "add": "Add tag",
       "addTitle": "Add tag",
-      "deleteConfirm": "Are you sure you want to delete this tag?"
+      "deleteConfirm": "Are you sure you want to delete this tag?",
+      "emptyTitle": "No tags",
+      "emptyDescription": "Create the first tag"
     },
     "supportRecords": {
       "title": "Support Records",
@@ -386,7 +392,9 @@
       "referralAccepted": "Accepted",
       "referralCompleted": "Completed",
       "referralDeclined": "Declined",
-      "referralNoResponse": "No response"
+      "referralNoResponse": "No response",
+      "emptyTitle": "No support records",
+      "emptyDescription": "Add the first support record"
     },
     "households": {
       "title": "Households",
@@ -416,7 +424,9 @@
       "relationshipGrandchild": "Grandchild",
       "relationshipGrandparent": "Grandparent",
       "relationshipOtherRelative": "Other relative",
-      "relationshipNonRelative": "Non-relative"
+      "relationshipNonRelative": "Non-relative",
+      "emptyTitle": "No households",
+      "emptyDescription": "Create the first household"
     },
     "migrationRecords": {
       "title": "Migration Records",
@@ -466,7 +476,9 @@
       "statusAdopted": "Adopted",
       "statusOwnerFound": "Owner found",
       "statusNeedsShelter": "Needs shelter",
-      "statusUnknown": "Unknown"
+      "statusUnknown": "Unknown",
+      "emptyTitle": "No pets registered",
+      "emptyDescription": "Register the first pet"
     },
     "reports": {
       "title": "Reports",

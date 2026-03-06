@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
+import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { PersonDrawer } from "@/components/person-drawer";
@@ -174,6 +175,18 @@ function PeopleListPage() {
           })
         }
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={UserCircleIcon}
+            title={t("project.people.emptyTitle")}
+            description={t("project.people.emptyDescription")}
+            action={
+              <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
+                {t("project.people.register")}
+              </Button>
+            }
+          />
+        }
       />
 
       {data && (

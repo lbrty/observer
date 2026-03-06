@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
+import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { PetDrawer } from "@/components/pet-drawer";
@@ -153,6 +154,18 @@ function PetsListPage() {
         keyExtractor={(p) => p.id}
         onRowClick={(p) => openEdit(p.id)}
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={PawPrintIcon}
+            title={t("project.pets.emptyTitle")}
+            description={t("project.pets.emptyDescription")}
+            action={
+              <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
+                {t("project.pets.register")}
+              </Button>
+            }
+          />
+        }
       />
 
       {data && (

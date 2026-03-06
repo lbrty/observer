@@ -313,7 +313,9 @@
       "quickSupportSaved": "Запис підтримки збережено",
       "addCountry": "Додати країну",
       "addState": "Додати область",
-      "addPlace": "Додати населений пункт"
+      "addPlace": "Додати населений пункт",
+      "emptyTitle": "Немає зареєстрованих людей",
+      "emptyDescription": "Зареєструйте першу людину"
     },
     "notes": {
       "title": "Нотатки",
@@ -329,14 +331,18 @@
       "mimeType": "Тип",
       "size": "Розмір",
       "deleteConfirm": "Ви впевнені, що хочете видалити цей документ?",
-      "empty": "Документів ще немає"
+      "empty": "Документів ще немає",
+      "emptyTitle": "Немає документів",
+      "emptyDescription": "Завантажте перший документ"
     },
     "tags": {
       "title": "Теги",
       "name": "Назва",
       "add": "Додати тег",
       "addTitle": "Додати тег",
-      "deleteConfirm": "Ви впевнені, що хочете видалити цей тег?"
+      "deleteConfirm": "Ви впевнені, що хочете видалити цей тег?",
+      "emptyTitle": "Немає тегів",
+      "emptyDescription": "Створіть перший тег"
     },
     "supportRecords": {
       "title": "Записи підтримки",
@@ -386,7 +392,9 @@
       "referralAccepted": "Прийнято",
       "referralCompleted": "Завершено",
       "referralDeclined": "Відхилено",
-      "referralNoResponse": "Без відповіді"
+      "referralNoResponse": "Без відповіді",
+      "emptyTitle": "Немає записів підтримки",
+      "emptyDescription": "Додайте перший запис підтримки"
     },
     "households": {
       "title": "Домогосподарства",
@@ -416,7 +424,9 @@
       "relationshipGrandchild": "Онук/онучка",
       "relationshipGrandparent": "Дідусь/бабуся",
       "relationshipOtherRelative": "Інший родич",
-      "relationshipNonRelative": "Не родич"
+      "relationshipNonRelative": "Не родич",
+      "emptyTitle": "Немає домогосподарств",
+      "emptyDescription": "Створіть перше домогосподарство"
     },
     "migrationRecords": {
       "title": "Записи міграції",
@@ -466,7 +476,9 @@
       "statusAdopted": "Прийнята",
       "statusOwnerFound": "Знайдено власника",
       "statusNeedsShelter": "Потребує притулку",
-      "statusUnknown": "Невідомо"
+      "statusUnknown": "Невідомо",
+      "emptyTitle": "Немає зареєстрованих тварин",
+      "emptyDescription": "Зареєструйте першу тварину"
     },
     "reports": {
       "title": "Звіти",

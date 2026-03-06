@@ -313,7 +313,9 @@
       "quickSupportSaved": "Unterstützungseintrag gespeichert",
       "addCountry": "Land hinzufügen",
       "addState": "Region hinzufügen",
-      "addPlace": "Ort hinzufügen"
+      "addPlace": "Ort hinzufügen",
+      "emptyTitle": "Keine Personen registriert",
+      "emptyDescription": "Registrieren Sie die erste Person"
     },
     "notes": {
       "title": "Notizen",
@@ -329,14 +331,18 @@
       "mimeType": "Typ",
       "size": "Größe",
       "deleteConfirm": "Sind Sie sicher, dass Sie dieses Dokument löschen möchten?",
-      "empty": "Noch keine Dokumente"
+      "empty": "Noch keine Dokumente",
+      "emptyTitle": "Keine Dokumente",
+      "emptyDescription": "Laden Sie das erste Dokument hoch"
     },
     "tags": {
       "title": "Tags",
       "name": "Name",
       "add": "Tag hinzufügen",
       "addTitle": "Tag hinzufügen",
-      "deleteConfirm": "Sind Sie sicher, dass Sie diesen Tag löschen möchten?"
+      "deleteConfirm": "Sind Sie sicher, dass Sie diesen Tag löschen möchten?",
+      "emptyTitle": "Keine Tags",
+      "emptyDescription": "Erstellen Sie den ersten Tag"
     },
     "supportRecords": {
       "title": "Unterstützungseinträge",
@@ -386,7 +392,9 @@
       "referralAccepted": "Akzeptiert",
       "referralCompleted": "Abgeschlossen",
       "referralDeclined": "Abgelehnt",
-      "referralNoResponse": "Keine Antwort"
+      "referralNoResponse": "Keine Antwort",
+      "emptyTitle": "Keine Unterstützungseinträge",
+      "emptyDescription": "Fügen Sie den ersten Eintrag hinzu"
     },
     "households": {
       "title": "Haushalte",
@@ -416,7 +424,9 @@
       "relationshipGrandchild": "Enkel",
       "relationshipGrandparent": "Großelternteil",
       "relationshipOtherRelative": "Anderer Verwandter",
-      "relationshipNonRelative": "Nicht verwandt"
+      "relationshipNonRelative": "Nicht verwandt",
+      "emptyTitle": "Keine Haushalte",
+      "emptyDescription": "Erstellen Sie den ersten Haushalt"
     },
     "migrationRecords": {
       "title": "Migrationseinträge",
@@ -466,7 +476,9 @@
       "statusAdopted": "Adoptiert",
       "statusOwnerFound": "Besitzer gefunden",
       "statusNeedsShelter": "Benötigt Unterkunft",
-      "statusUnknown": "Unbekannt"
+      "statusUnknown": "Unbekannt",
+      "emptyTitle": "Keine Haustiere registriert",
+      "emptyDescription": "Registrieren Sie das erste Haustier"
     },
     "reports": {
       "title": "Berichte",

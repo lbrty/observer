@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
+import { EmptyState } from "@/components/empty-state";
 import { FormDialog } from "@/components/form-dialog";
 import { PlusIcon, TagIcon, TrashIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
@@ -130,6 +131,25 @@ function TagsPage() {
         data={data?.tags ?? []}
         keyExtractor={(tag) => tag.id}
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={TagIcon}
+            title={t("project.tags.emptyTitle")}
+            description={t("project.tags.emptyDescription")}
+            action={
+              <Button
+                onClick={() => {
+                  setError("");
+                  setName("");
+                  setCreateOpen(true);
+                }}
+                icon={<PlusIcon size={16} />}
+              >
+                {t("project.tags.add")}
+              </Button>
+            }
+          />
+        }
       />
 
       <FormDialog

@@ -313,7 +313,9 @@
       "quickSupportSaved": "Koldoo jazuusu saqtaldy",
       "addCountry": "Ölkö qoşuu",
       "addState": "Oblast qoşuu",
-      "addPlace": "Jay qoşuu"
+      "addPlace": "Jay qoşuu",
+      "emptyTitle": "Kattalgan adamdar jok",
+      "emptyDescription": "Baştoo üchün birinchi adamdy kattañyz"
     },
     "notes": {
       "title": "Eskermeler",
@@ -329,14 +331,18 @@
       "mimeType": "Türü",
       "size": "Ölçömü",
       "deleteConfirm": "Bu dokumentti öçürösüzbü?",
-      "empty": "Dokumentter joq"
+      "empty": "Dokumentter joq",
+      "emptyTitle": "Dokumentter jok",
+      "emptyDescription": "Birinchi dokumentti jüktöñüz"
     },
     "tags": {
       "title": "Tegder",
       "name": "Aty",
       "add": "Teg qoşuu",
       "addTitle": "Teg qoşuu",
-      "deleteConfirm": "Bu tegdi joqqo çyğarasyñyzby?"
+      "deleteConfirm": "Bu tegdi joqqo çyğarasyñyzby?",
+      "emptyTitle": "Tegder jok",
+      "emptyDescription": "Birinchi tegdi tüzüñüz"
     },
     "supportRecords": {
       "title": "Qoldoo tizmesi",
@@ -386,7 +392,9 @@
       "referralAccepted": "Qabyl alyndy",
       "referralCompleted": "Ayaqtaldy",
       "referralDeclined": "Baş tartyldy",
-      "referralNoResponse": "Javap joq"
+      "referralNoResponse": "Javap joq",
+      "emptyTitle": "Koldoo jazdary jok",
+      "emptyDescription": "Birinchi koldoo jazdysyn koshunguz"
     },
     "households": {
       "title": "Üy bülöölör",
@@ -416,7 +424,9 @@
       "relationshipGrandchild": "Nebere",
       "relationshipGrandparent": "Çoñ ata/ene",
       "relationshipOtherRelative": "Başqa tuuğan",
-      "relationshipNonRelative": "Tuuğan emes"
+      "relationshipNonRelative": "Tuuğan emes",
+      "emptyTitle": "Üy bölüktörü jok",
+      "emptyDescription": "Birinchi üy bölügün tüzüñüz"
     },
     "migrationRecords": {
       "title": "Köçüü jazuulary",
@@ -466,7 +476,9 @@
       "statusAdopted": "Bagylğan",
       "statusOwnerFound": "Eesi tabylğan",
       "statusNeedsShelter": "Bayaq kerek",
-      "statusUnknown": "Belgisiz"
+      "statusUnknown": "Belgisiz",
+      "emptyTitle": "Kattalgan üy jandyktary jok",
+      "emptyDescription": "Birinchi üy jandygyn kattañyz"
     },
     "reports": {
       "title": "Raporlor",

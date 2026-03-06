@@ -313,7 +313,9 @@
       "quickSupportSaved": "Запись поддержки сохранена",
       "addCountry": "Добавить страну",
       "addState": "Добавить область",
-      "addPlace": "Добавить населённый пункт"
+      "addPlace": "Добавить населённый пункт",
+      "emptyTitle": "Нет зарегистрированных людей",
+      "emptyDescription": "Зарегистрируйте первого человека"
     },
     "notes": {
       "title": "Заметки",
@@ -329,14 +331,18 @@
       "mimeType": "Тип",
       "size": "Размер",
       "deleteConfirm": "Вы уверены, что хотите удалить этот документ?",
-      "empty": "Документов пока нет"
+      "empty": "Документов пока нет",
+      "emptyTitle": "Нет документов",
+      "emptyDescription": "Загрузите первый документ"
     },
     "tags": {
       "title": "Теги",
       "name": "Название",
       "add": "Добавить тег",
       "addTitle": "Добавить тег",
-      "deleteConfirm": "Вы уверены, что хотите удалить этот тег?"
+      "deleteConfirm": "Вы уверены, что хотите удалить этот тег?",
+      "emptyTitle": "Нет тегов",
+      "emptyDescription": "Создайте первый тег"
     },
     "supportRecords": {
       "title": "Записи поддержки",
@@ -386,7 +392,9 @@
       "referralAccepted": "Принято",
       "referralCompleted": "Завершено",
       "referralDeclined": "Отклонено",
-      "referralNoResponse": "Без ответа"
+      "referralNoResponse": "Без ответа",
+      "emptyTitle": "Нет записей поддержки",
+      "emptyDescription": "Добавьте первую запись поддержки"
     },
     "households": {
       "title": "Домохозяйства",
@@ -416,7 +424,9 @@
       "relationshipGrandchild": "Внук/внучка",
       "relationshipGrandparent": "Дедушка/бабушка",
       "relationshipOtherRelative": "Другой родственник",
-      "relationshipNonRelative": "Не родственник"
+      "relationshipNonRelative": "Не родственник",
+      "emptyTitle": "Нет домохозяйств",
+      "emptyDescription": "Создайте первое домохозяйство"
     },
     "migrationRecords": {
       "title": "Записи миграции",
@@ -466,7 +476,9 @@
       "statusAdopted": "Усыновлён",
       "statusOwnerFound": "Хозяин найден",
       "statusNeedsShelter": "Нуждается в приюте",
-      "statusUnknown": "Неизвестно"
+      "statusUnknown": "Неизвестно",
+      "emptyTitle": "Нет зарегистрированных животных",
+      "emptyDescription": "Зарегистрируйте первое животное"
     },
     "reports": {
       "title": "Отчёты",
