@@ -49,8 +49,7 @@ func (r *petRepo) List(ctx context.Context, projectID string, page, perPage int)
 		if err := rows.Scan(&p.ID, &p.ProjectID, &p.OwnerID, &p.Name, &p.Status, &p.RegistrationID, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, 0, fmt.Errorf("scan pet: %w", err)
 		}
-		p.CreatedAt = p.CreatedAt.UTC()
-		p.UpdatedAt = p.UpdatedAt.UTC()
+		TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 		out = append(out, &p)
 	}
 	return out, total, rows.Err()
@@ -66,8 +65,7 @@ func (r *petRepo) GetByID(ctx context.Context, id string) (*pet.Pet, error) {
 		}
 		return nil, fmt.Errorf("get pet: %w", err)
 	}
-	p.CreatedAt = p.CreatedAt.UTC()
-	p.UpdatedAt = p.UpdatedAt.UTC()
+	TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 	return &p, nil
 }
 
@@ -91,14 +89,7 @@ func (r *petRepo) Update(ctx context.Context, p *pet.Pet) error {
 	if err != nil {
 		return fmt.Errorf("update pet: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return pet.ErrPetNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, pet.ErrPetNotFound)
 }
 
 func (r *petRepo) Delete(ctx context.Context, id string) error {
@@ -107,12 +98,5 @@ func (r *petRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete pet: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return pet.ErrPetNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, pet.ErrPetNotFound)
 }

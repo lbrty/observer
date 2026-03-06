@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 
 	"github.com/lbrty/observer/internal/domain/project"
 )
@@ -85,8 +84,7 @@ func (r *projectRepo) List(ctx context.Context, filter project.ProjectListFilter
 		if err := rows.Scan(&p.ID, &p.Name, &p.Description, &p.OwnerID, &p.Status, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, 0, fmt.Errorf("scan project: %w", err)
 		}
-		p.CreatedAt = p.CreatedAt.UTC()
-		p.UpdatedAt = p.UpdatedAt.UTC()
+		TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 		out = append(out, &p)
 	}
 	return out, total, rows.Err()
@@ -102,8 +100,7 @@ func (r *projectRepo) GetByID(ctx context.Context, id string) (*project.Project,
 		}
 		return nil, fmt.Errorf("get project: %w", err)
 	}
-	p.CreatedAt = p.CreatedAt.UTC()
-	p.UpdatedAt = p.UpdatedAt.UTC()
+	TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 	return &p, nil
 }
 
@@ -114,8 +111,7 @@ func (r *projectRepo) Create(ctx context.Context, p *project.Project) error {
 	p.UpdatedAt = now
 	_, err := r.db.ExecContext(ctx, q, p.ID, p.Name, p.Description, p.OwnerID, p.Status, p.CreatedAt, p.UpdatedAt)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return project.ErrProjectNameExists
 		}
 		return fmt.Errorf("create project: %w", err)
@@ -128,18 +124,10 @@ func (r *projectRepo) Update(ctx context.Context, p *project.Project) error {
 	p.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q, p.ID, p.Name, p.Description, p.Status, p.UpdatedAt)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return project.ErrProjectNameExists
 		}
 		return fmt.Errorf("update project: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return project.ErrProjectNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, project.ErrProjectNotFound)
 }

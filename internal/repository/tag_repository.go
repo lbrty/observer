@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 
 	"github.com/lbrty/observer/internal/domain/tag"
 )
@@ -36,7 +35,7 @@ func (r *tagRepo) List(ctx context.Context, projectID string) ([]*tag.Tag, error
 		if err := rows.Scan(&t.ID, &t.ProjectID, &t.Name, &t.Color, &t.CreatedAt); err != nil {
 			return nil, fmt.Errorf("scan tag: %w", err)
 		}
-		t.CreatedAt = t.CreatedAt.UTC()
+		TimesToUTC(&t.CreatedAt)
 		out = append(out, &t)
 	}
 	return out, rows.Err()
@@ -52,7 +51,7 @@ func (r *tagRepo) GetByID(ctx context.Context, id string) (*tag.Tag, error) {
 		}
 		return nil, fmt.Errorf("get tag: %w", err)
 	}
-	t.CreatedAt = t.CreatedAt.UTC()
+	TimesToUTC(&t.CreatedAt)
 	return &t, nil
 }
 
@@ -61,8 +60,7 @@ func (r *tagRepo) Create(ctx context.Context, t *tag.Tag) error {
 	t.CreatedAt = time.Now().UTC()
 	_, err := r.db.ExecContext(ctx, q, t.ID, t.ProjectID, t.Name, t.Color, t.CreatedAt)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return tag.ErrTagNameExists
 		}
 		return fmt.Errorf("create tag: %w", err)
@@ -74,20 +72,12 @@ func (r *tagRepo) Update(ctx context.Context, t *tag.Tag) error {
 	const q = `UPDATE tags SET name = $1, color = $2 WHERE id = $3`
 	res, err := r.db.ExecContext(ctx, q, t.Name, t.Color, t.ID)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return tag.ErrTagNameExists
 		}
 		return fmt.Errorf("update tag: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return tag.ErrTagNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, tag.ErrTagNotFound)
 }
 
 func (r *tagRepo) Delete(ctx context.Context, id string) error {
@@ -96,12 +86,5 @@ func (r *tagRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete tag: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return tag.ErrTagNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, tag.ErrTagNotFound)
 }

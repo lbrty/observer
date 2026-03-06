@@ -30,9 +30,10 @@ func scanNote(row interface{ Scan(dest ...any) error }) (*note.Note, error) {
 	if err != nil {
 		return nil, err
 	}
-	n.CreatedAt = n.CreatedAt.UTC()
+	TimesToUTC(&n.CreatedAt)
 	if updatedAt.Valid {
-		n.UpdatedAt = updatedAt.Time.UTC()
+		t := updatedAt.Time.UTC()
+		n.UpdatedAt = t
 	}
 	return &n, nil
 }
@@ -85,14 +86,7 @@ func (r *personNoteRepo) Update(ctx context.Context, n *note.Note) error {
 	if err != nil {
 		return fmt.Errorf("update note: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return note.ErrNoteNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, note.ErrNoteNotFound)
 }
 
 func (r *personNoteRepo) Delete(ctx context.Context, id string) error {
@@ -101,12 +95,5 @@ func (r *personNoteRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete note: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return note.ErrNoteNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, note.ErrNoteNotFound)
 }

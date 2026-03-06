@@ -31,9 +31,10 @@ func scanDocument(row interface{ Scan(dest ...any) error }) (*document.Document,
 	if err != nil {
 		return nil, err
 	}
-	d.CreatedAt = d.CreatedAt.UTC()
+	TimesToUTC(&d.CreatedAt)
 	if updatedAt.Valid {
-		d.UpdatedAt = updatedAt.Time.UTC()
+		t := updatedAt.Time.UTC()
+		d.UpdatedAt = t
 	}
 	return &d, nil
 }
@@ -88,14 +89,7 @@ func (r *documentRepo) Update(ctx context.Context, d *document.Document) error {
 	if err != nil {
 		return fmt.Errorf("update document: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return document.ErrDocumentNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, document.ErrDocumentNotFound)
 }
 
 func (r *documentRepo) Delete(ctx context.Context, id string) error {
@@ -104,12 +98,5 @@ func (r *documentRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete document: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return document.ErrDocumentNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, document.ErrDocumentNotFound)
 }

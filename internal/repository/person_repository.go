@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 
 	"github.com/lbrty/observer/internal/domain/person"
 )
@@ -40,8 +39,7 @@ func scanPerson(row interface{ Scan(dest ...any) error }) (*person.Person, error
 	if err != nil {
 		return nil, err
 	}
-	p.CreatedAt = p.CreatedAt.UTC()
-	p.UpdatedAt = p.UpdatedAt.UTC()
+	TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 	return &p, nil
 }
 
@@ -151,8 +149,7 @@ func (r *personRepo) Create(ctx context.Context, p *person.Person) error {
 		p.CreatedAt, p.UpdatedAt,
 	)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return person.ErrExternalIDExists
 		}
 		return fmt.Errorf("create person: %w", err)
@@ -175,20 +172,12 @@ func (r *personRepo) Update(ctx context.Context, p *person.Person) error {
 		p.CaseStatus, p.ConsentGiven, p.ConsentDate, p.RegisteredAt, p.UpdatedAt,
 	)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return person.ErrExternalIDExists
 		}
 		return fmt.Errorf("update person: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return person.ErrPersonNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, person.ErrPersonNotFound)
 }
 
 func (r *personRepo) Delete(ctx context.Context, id string) error {
@@ -197,14 +186,7 @@ func (r *personRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete person: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return person.ErrPersonNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, person.ErrPersonNotFound)
 }
 
 // PersonCategory repository

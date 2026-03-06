@@ -92,8 +92,9 @@ func (r *sessionRepo) scanSession(row *sql.Row) (*auth.Session, error) {
 
 	s.ID = id
 	s.UserID = userID
-	s.ExpiresAt = expiresAt.UTC()
-	s.CreatedAt = createdAt.UTC()
+	TimesToUTC(&expiresAt, &createdAt)
+	s.ExpiresAt = expiresAt
+	s.CreatedAt = createdAt
 
 	return &s, nil
 }

@@ -91,7 +91,7 @@ func (r *userRepo) Update(ctx context.Context, u *user.User) error {
 	if err != nil {
 		return fmt.Errorf("update user: %w", err)
 	}
-	return r.checkRowsAffected(res, user.ErrUserNotFound)
+	return CheckRowsAffected(res, user.ErrUserNotFound)
 }
 
 func (r *userRepo) UpdateVerified(ctx context.Context, id ulid.ULID, verified bool) error {
@@ -100,7 +100,7 @@ func (r *userRepo) UpdateVerified(ctx context.Context, id ulid.ULID, verified bo
 	if err != nil {
 		return fmt.Errorf("update verified: %w", err)
 	}
-	return r.checkRowsAffected(res, user.ErrUserNotFound)
+	return CheckRowsAffected(res, user.ErrUserNotFound)
 }
 
 func (r *userRepo) List(ctx context.Context, filter user.UserListFilter) ([]*user.User, int, error) {
@@ -184,8 +184,9 @@ func (r *userRepo) scanUser(row *sql.Row) (*user.User, error) {
 
 	u.ID = id
 	u.Role = user.Role(role)
-	u.CreatedAt = createdAt.UTC()
-	u.UpdatedAt = updatedAt.UTC()
+	TimesToUTC(&createdAt, &updatedAt)
+	u.CreatedAt = createdAt
+	u.UpdatedAt = updatedAt
 
 	return &u, nil
 }
@@ -211,25 +212,15 @@ func (r *userRepo) scanUsers(rows *sql.Rows) ([]*user.User, error) {
 
 		u.ID = id
 		u.Role = user.Role(role)
-		u.CreatedAt = createdAt.UTC()
-		u.UpdatedAt = updatedAt.UTC()
+		TimesToUTC(&createdAt, &updatedAt)
+		u.CreatedAt = createdAt
+		u.UpdatedAt = updatedAt
 		users = append(users, &u)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("iterate user rows: %w", err)
 	}
 	return users, nil
-}
-
-func (r *userRepo) checkRowsAffected(res sql.Result, notFoundErr error) error {
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return notFoundErr
-	}
-	return nil
 }
 
 // credentialsRepo is a PostgreSQL-backed credentials repository.
@@ -294,7 +285,8 @@ func (r *credentialsRepo) GetByUserID(ctx context.Context, userID ulid.ULID) (*u
 	}
 
 	cred.UserID = id
-	cred.UpdatedAt = updatedAt.UTC()
+	TimesToUTC(&updatedAt)
+	cred.UpdatedAt = updatedAt
 
 	return &cred, nil
 }
@@ -346,7 +338,8 @@ func (r *mfaRepo) GetByUserID(ctx context.Context, userID ulid.ULID) (*user.MFAC
 	}
 
 	cfg.UserID = id
-	cfg.CreatedAt = createdAt.UTC()
+	TimesToUTC(&createdAt)
+	cfg.CreatedAt = createdAt
 
 	return &cfg, nil
 }

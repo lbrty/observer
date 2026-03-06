@@ -34,9 +34,10 @@ func scanMigration(row interface{ Scan(dest ...any) error }) (*migration.Record,
 	if err != nil {
 		return nil, err
 	}
-	r.CreatedAt = r.CreatedAt.UTC()
+	TimesToUTC(&r.CreatedAt)
 	if updatedAt.Valid {
-		r.UpdatedAt = updatedAt.Time.UTC()
+		t := updatedAt.Time.UTC()
+		r.UpdatedAt = t
 	}
 	return &r, nil
 }
@@ -101,12 +102,5 @@ func (r *migrationRecordRepo) Update(ctx context.Context, rec *migration.Record)
 	if err != nil {
 		return fmt.Errorf("update migration record: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return migration.ErrRecordNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, migration.ErrRecordNotFound)
 }

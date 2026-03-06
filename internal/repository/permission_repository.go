@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 	"github.com/oklog/ulid/v2"
 
 	"github.com/lbrty/observer/internal/domain/project"
@@ -136,8 +135,7 @@ func (r *projectPermissionRepo) GetByID(ctx context.Context, id string) (*projec
 		return nil, fmt.Errorf("get project permission: %w", err)
 	}
 	p.Role = project.ProjectRole(role)
-	p.CreatedAt = p.CreatedAt.UTC()
-	p.UpdatedAt = p.UpdatedAt.UTC()
+	TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 	return &p, nil
 }
 
@@ -155,8 +153,7 @@ func (r *projectPermissionRepo) Create(ctx context.Context, p *project.ProjectPe
 		p.CreatedAt, p.UpdatedAt,
 	)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return project.ErrPermissionExists
 		}
 		return fmt.Errorf("create project permission: %w", err)
@@ -179,14 +176,7 @@ func (r *projectPermissionRepo) Update(ctx context.Context, p *project.ProjectPe
 	if err != nil {
 		return fmt.Errorf("update project permission: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return project.ErrPermissionNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, project.ErrPermissionNotFound)
 }
 
 func (r *projectPermissionRepo) Delete(ctx context.Context, id string) error {
@@ -195,14 +185,7 @@ func (r *projectPermissionRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete project permission: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return project.ErrPermissionNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, project.ErrPermissionNotFound)
 }
 
 func (r *projectPermissionRepo) scanPermissionRow(rows *sql.Rows) (*project.ProjectPermission, error) {
@@ -217,7 +200,6 @@ func (r *projectPermissionRepo) scanPermissionRow(rows *sql.Rows) (*project.Proj
 		return nil, fmt.Errorf("scan project permission: %w", err)
 	}
 	p.Role = project.ProjectRole(role)
-	p.CreatedAt = p.CreatedAt.UTC()
-	p.UpdatedAt = p.UpdatedAt.UTC()
+	TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 	return &p, nil
 }

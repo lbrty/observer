@@ -36,8 +36,7 @@ func scanSupport(row interface{ Scan(dest ...any) error }) (*support.Record, err
 	if err != nil {
 		return nil, err
 	}
-	r.CreatedAt = r.CreatedAt.UTC()
-	r.UpdatedAt = r.UpdatedAt.UTC()
+	TimesToUTC(&r.CreatedAt, &r.UpdatedAt)
 	return &r, nil
 }
 
@@ -167,14 +166,7 @@ func (r *supportRecordRepo) Update(ctx context.Context, rec *support.Record) err
 	if err != nil {
 		return fmt.Errorf("update support record: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return support.ErrRecordNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, support.ErrRecordNotFound)
 }
 
 func (r *supportRecordRepo) Delete(ctx context.Context, id string) error {
@@ -183,12 +175,5 @@ func (r *supportRecordRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete support record: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return support.ErrRecordNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, support.ErrRecordNotFound)
 }

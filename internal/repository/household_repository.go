@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 
 	"github.com/lbrty/observer/internal/domain/household"
 )
@@ -52,8 +51,7 @@ func (r *householdRepo) List(ctx context.Context, projectID string, page, perPag
 		if err := rows.Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &h.MemberCount, &h.CreatedAt, &h.UpdatedAt); err != nil {
 			return nil, 0, fmt.Errorf("scan household: %w", err)
 		}
-		h.CreatedAt = h.CreatedAt.UTC()
-		h.UpdatedAt = h.UpdatedAt.UTC()
+		TimesToUTC(&h.CreatedAt, &h.UpdatedAt)
 		out = append(out, &h)
 	}
 	return out, total, rows.Err()
@@ -69,8 +67,7 @@ func (r *householdRepo) GetByID(ctx context.Context, id string) (*household.Hous
 		}
 		return nil, fmt.Errorf("get household: %w", err)
 	}
-	h.CreatedAt = h.CreatedAt.UTC()
-	h.UpdatedAt = h.UpdatedAt.UTC()
+	TimesToUTC(&h.CreatedAt, &h.UpdatedAt)
 	return &h, nil
 }
 
@@ -94,14 +91,7 @@ func (r *householdRepo) Update(ctx context.Context, h *household.Household) erro
 	if err != nil {
 		return fmt.Errorf("update household: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return household.ErrHouseholdNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, household.ErrHouseholdNotFound)
 }
 
 func (r *householdRepo) Delete(ctx context.Context, id string) error {
@@ -110,14 +100,7 @@ func (r *householdRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete household: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return household.ErrHouseholdNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, household.ErrHouseholdNotFound)
 }
 
 type householdMemberRepo struct {
@@ -152,8 +135,7 @@ func (r *householdMemberRepo) Add(ctx context.Context, m *household.Member) erro
 	const q = `INSERT INTO household_members (household_id, person_id, relationship) VALUES ($1, $2, $3)`
 	_, err := r.db.ExecContext(ctx, q, m.HouseholdID, m.PersonID, m.Relationship)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return household.ErrMemberExists
 		}
 		return fmt.Errorf("add household member: %w", err)
@@ -167,12 +149,5 @@ func (r *householdMemberRepo) Remove(ctx context.Context, householdID, personID 
 	if err != nil {
 		return fmt.Errorf("remove household member: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return household.ErrMemberNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, household.ErrMemberNotFound)
 }

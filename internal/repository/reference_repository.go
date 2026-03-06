@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
 
 	"github.com/lbrty/observer/internal/domain/reference"
 )
@@ -37,8 +36,7 @@ func (r *countryRepo) List(ctx context.Context) ([]*reference.Country, error) {
 		if err := rows.Scan(&c.ID, &c.Name, &c.Code, &c.CreatedAt, &c.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("scan country: %w", err)
 		}
-		c.CreatedAt = c.CreatedAt.UTC()
-		c.UpdatedAt = c.UpdatedAt.UTC()
+		TimesToUTC(&c.CreatedAt, &c.UpdatedAt)
 		out = append(out, &c)
 	}
 	return out, rows.Err()
@@ -54,8 +52,7 @@ func (r *countryRepo) GetByID(ctx context.Context, id string) (*reference.Countr
 		}
 		return nil, fmt.Errorf("get country: %w", err)
 	}
-	c.CreatedAt = c.CreatedAt.UTC()
-	c.UpdatedAt = c.UpdatedAt.UTC()
+	TimesToUTC(&c.CreatedAt, &c.UpdatedAt)
 	return &c, nil
 }
 
@@ -66,8 +63,7 @@ func (r *countryRepo) Create(ctx context.Context, c *reference.Country) error {
 	c.UpdatedAt = now
 	_, err := r.db.ExecContext(ctx, q, c.ID, c.Name, c.Code, c.CreatedAt, c.UpdatedAt)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return reference.ErrCountryCodeExists
 		}
 		return fmt.Errorf("create country: %w", err)
@@ -80,20 +76,12 @@ func (r *countryRepo) Update(ctx context.Context, c *reference.Country) error {
 	c.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q, c.ID, c.Name, c.Code, c.UpdatedAt)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return reference.ErrCountryCodeExists
 		}
 		return fmt.Errorf("update country: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return reference.ErrCountryNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, reference.ErrCountryNotFound)
 }
 
 func (r *countryRepo) Delete(ctx context.Context, id string) error {
@@ -102,14 +90,7 @@ func (r *countryRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete country: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return reference.ErrCountryNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, reference.ErrCountryNotFound)
 }
 
 // stateRepo is a PostgreSQL-backed state repository.
@@ -139,8 +120,7 @@ func (r *stateRepo) ListAll(ctx context.Context) ([]*reference.State, error) {
 		if err := rows.Scan(&s.ID, &s.CountryID, &s.Name, &s.Code, &s.ConflictZone, &s.CreatedAt, &s.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("scan state: %w", err)
 		}
-		s.CreatedAt = s.CreatedAt.UTC()
-		s.UpdatedAt = s.UpdatedAt.UTC()
+		TimesToUTC(&s.CreatedAt, &s.UpdatedAt)
 		out = append(out, &s)
 	}
 	return out, rows.Err()
@@ -163,8 +143,7 @@ func (r *stateRepo) List(ctx context.Context, countryID string) ([]*reference.St
 		if err := rows.Scan(&s.ID, &s.CountryID, &s.Name, &s.Code, &s.ConflictZone, &s.CreatedAt, &s.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("scan state: %w", err)
 		}
-		s.CreatedAt = s.CreatedAt.UTC()
-		s.UpdatedAt = s.UpdatedAt.UTC()
+		TimesToUTC(&s.CreatedAt, &s.UpdatedAt)
 		out = append(out, &s)
 	}
 	return out, rows.Err()
@@ -180,8 +159,7 @@ func (r *stateRepo) GetByID(ctx context.Context, id string) (*reference.State, e
 		}
 		return nil, fmt.Errorf("get state: %w", err)
 	}
-	s.CreatedAt = s.CreatedAt.UTC()
-	s.UpdatedAt = s.UpdatedAt.UTC()
+	TimesToUTC(&s.CreatedAt, &s.UpdatedAt)
 	return &s, nil
 }
 
@@ -207,14 +185,7 @@ func (r *stateRepo) Update(ctx context.Context, s *reference.State) error {
 	if err != nil {
 		return fmt.Errorf("update state: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return reference.ErrStateNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, reference.ErrStateNotFound)
 }
 
 func (r *stateRepo) Delete(ctx context.Context, id string) error {
@@ -223,14 +194,7 @@ func (r *stateRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete state: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return reference.ErrStateNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, reference.ErrStateNotFound)
 }
 
 // placeRepo is a PostgreSQL-backed place repository.
@@ -260,8 +224,7 @@ func (r *placeRepo) ListAll(ctx context.Context) ([]*reference.Place, error) {
 		if err := rows.Scan(&p.ID, &p.StateID, &p.Name, &p.Lat, &p.Lon, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("scan place: %w", err)
 		}
-		p.CreatedAt = p.CreatedAt.UTC()
-		p.UpdatedAt = p.UpdatedAt.UTC()
+		TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 		out = append(out, &p)
 	}
 	return out, rows.Err()
@@ -284,8 +247,7 @@ func (r *placeRepo) List(ctx context.Context, stateID string) ([]*reference.Plac
 		if err := rows.Scan(&p.ID, &p.StateID, &p.Name, &p.Lat, &p.Lon, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("scan place: %w", err)
 		}
-		p.CreatedAt = p.CreatedAt.UTC()
-		p.UpdatedAt = p.UpdatedAt.UTC()
+		TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 		out = append(out, &p)
 	}
 	return out, rows.Err()
@@ -301,8 +263,7 @@ func (r *placeRepo) GetByID(ctx context.Context, id string) (*reference.Place, e
 		}
 		return nil, fmt.Errorf("get place: %w", err)
 	}
-	p.CreatedAt = p.CreatedAt.UTC()
-	p.UpdatedAt = p.UpdatedAt.UTC()
+	TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 	return &p, nil
 }
 
@@ -328,14 +289,7 @@ func (r *placeRepo) Update(ctx context.Context, p *reference.Place) error {
 	if err != nil {
 		return fmt.Errorf("update place: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return reference.ErrPlaceNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, reference.ErrPlaceNotFound)
 }
 
 func (r *placeRepo) Delete(ctx context.Context, id string) error {
@@ -344,14 +298,7 @@ func (r *placeRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete place: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return reference.ErrPlaceNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, reference.ErrPlaceNotFound)
 }
 
 // officeRepo is a PostgreSQL-backed office repository.
@@ -378,8 +325,7 @@ func (r *officeRepo) List(ctx context.Context) ([]*reference.Office, error) {
 		if err := rows.Scan(&o.ID, &o.Name, &o.PlaceID, &o.CreatedAt, &o.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("scan office: %w", err)
 		}
-		o.CreatedAt = o.CreatedAt.UTC()
-		o.UpdatedAt = o.UpdatedAt.UTC()
+		TimesToUTC(&o.CreatedAt, &o.UpdatedAt)
 		out = append(out, &o)
 	}
 	return out, rows.Err()
@@ -395,8 +341,7 @@ func (r *officeRepo) GetByID(ctx context.Context, id string) (*reference.Office,
 		}
 		return nil, fmt.Errorf("get office: %w", err)
 	}
-	o.CreatedAt = o.CreatedAt.UTC()
-	o.UpdatedAt = o.UpdatedAt.UTC()
+	TimesToUTC(&o.CreatedAt, &o.UpdatedAt)
 	return &o, nil
 }
 
@@ -419,14 +364,7 @@ func (r *officeRepo) Update(ctx context.Context, o *reference.Office) error {
 	if err != nil {
 		return fmt.Errorf("update office: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return reference.ErrOfficeNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, reference.ErrOfficeNotFound)
 }
 
 func (r *officeRepo) Delete(ctx context.Context, id string) error {
@@ -435,14 +373,7 @@ func (r *officeRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete office: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return reference.ErrOfficeNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, reference.ErrOfficeNotFound)
 }
 
 // categoryRepo is a PostgreSQL-backed category repository.
@@ -469,8 +400,7 @@ func (r *categoryRepo) List(ctx context.Context) ([]*reference.Category, error) 
 		if err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.CreatedAt, &c.UpdatedAt); err != nil {
 			return nil, fmt.Errorf("scan category: %w", err)
 		}
-		c.CreatedAt = c.CreatedAt.UTC()
-		c.UpdatedAt = c.UpdatedAt.UTC()
+		TimesToUTC(&c.CreatedAt, &c.UpdatedAt)
 		out = append(out, &c)
 	}
 	return out, rows.Err()
@@ -486,8 +416,7 @@ func (r *categoryRepo) GetByID(ctx context.Context, id string) (*reference.Categ
 		}
 		return nil, fmt.Errorf("get category: %w", err)
 	}
-	c.CreatedAt = c.CreatedAt.UTC()
-	c.UpdatedAt = c.UpdatedAt.UTC()
+	TimesToUTC(&c.CreatedAt, &c.UpdatedAt)
 	return &c, nil
 }
 
@@ -498,8 +427,7 @@ func (r *categoryRepo) Create(ctx context.Context, c *reference.Category) error 
 	c.UpdatedAt = now
 	_, err := r.db.ExecContext(ctx, q, c.ID, c.Name, c.Description, c.CreatedAt, c.UpdatedAt)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return reference.ErrCategoryNameExists
 		}
 		return fmt.Errorf("create category: %w", err)
@@ -512,20 +440,12 @@ func (r *categoryRepo) Update(ctx context.Context, c *reference.Category) error 
 	c.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q, c.ID, c.Name, c.Description, c.UpdatedAt)
 	if err != nil {
-		var pqErr *pq.Error
-		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+		if IsUniqueViolation(err) {
 			return reference.ErrCategoryNameExists
 		}
 		return fmt.Errorf("update category: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return reference.ErrCategoryNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, reference.ErrCategoryNotFound)
 }
 
 func (r *categoryRepo) Delete(ctx context.Context, id string) error {
@@ -534,12 +454,5 @@ func (r *categoryRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete category: %w", err)
 	}
-	rows, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("rows affected: %w", err)
-	}
-	if rows == 0 {
-		return reference.ErrCategoryNotFound
-	}
-	return nil
+	return CheckRowsAffected(res, reference.ErrCategoryNotFound)
 }
