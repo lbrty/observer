@@ -1,0 +1,14 @@
+[[main]]
+    identifier = "docs"
+    name = "Documentation"
+    url = "/docs"
+    weight = 1
+    [main.params]
+        icon = "archives"
+
+[[social]]
+    identifier = "github"
+    name = "GitHub"
+    url = "https://github.com/lbrty/observer"
+    [social.params]
+        icon = "brand-github"

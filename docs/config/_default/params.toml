@@ -1,0 +1,30 @@
+mainSections = ["docs"]
+rssFullContent = true
+
+[footer]
+    since = 2025
+
+[sidebar]
+    emoji = "👁️"
+    subtitle = "Self-hosted IDP case management for NGOs"
+
+[article]
+    headingAnchor = true
+    math = false
+    readingTime = true
+
+    [article.license]
+        enabled = false
+
+[widgets]
+    homepage = [
+        { type = "search" },
+    ]
+    page = [{ type = "toc" }]
+
+[colorScheme]
+    toggle = true
+    default = "auto"
+
+[comments]
+    enabled = false
