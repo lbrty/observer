@@ -2,6 +2,7 @@ import { Dialog } from "@base-ui/react/dialog";
 import { useTranslation } from "react-i18next";
 
 import { ErrorBanner } from "@/components/alert-banner";
+import { Button } from "@/components/button";
 
 interface AddReferenceDialogProps {
   open: boolean;
@@ -43,16 +44,12 @@ export function AddReferenceDialog({
             )}
             <div className="mt-4">{children}</div>
             <div className="mt-6 flex justify-end gap-2">
-              <Dialog.Close className="cursor-pointer rounded-lg border border-border-secondary px-4 py-2 text-sm font-medium text-fg-secondary shadow-card hover:bg-bg-tertiary">
-                {t("admin.common.cancel")}
-              </Dialog.Close>
-              <button
-                type="submit"
-                disabled={isPending}
-                className="cursor-pointer rounded-lg bg-accent px-5 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
-              >
+              <Button variant="secondary" asChild>
+                <Dialog.Close>{t("admin.common.cancel")}</Dialog.Close>
+              </Button>
+              <Button type="submit" disabled={isPending}>
                 {isPending ? t("project.people.saving") : t("project.people.save")}
-              </button>
+              </Button>
             </div>
           </form>
         </Dialog.Popup>

@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { FormDialog } from "@/components/form-dialog";
 import { FormField, inputClass } from "@/components/form-field";
@@ -104,13 +105,9 @@ function UsersPage() {
       <PageHeader
         title={t("admin.users.title")}
         action={
-          <button
-            type="button"
-            onClick={() => setCreateOpen(true)}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
-          >
+          <Button onClick={() => setCreateOpen(true)}>
             {t("admin.users.add")}
-          </button>
+          </Button>
         }
       />
 

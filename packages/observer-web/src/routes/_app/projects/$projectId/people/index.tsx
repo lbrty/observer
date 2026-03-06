@@ -1,9 +1,10 @@
-import { MagnifyingGlassIcon, PencilSimpleIcon, UserCircleIcon } from "@/components/icons";
+import { MagnifyingGlassIcon, PencilSimpleIcon, PlusIcon, UserCircleIcon } from "@/components/icons";
 import { Tabs } from "@base-ui/react/tabs";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
@@ -97,16 +98,16 @@ function PeopleListPage() {
       key: "actions",
       header: "",
       render: (p) => (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          className="p-1.5"
           onClick={(e) => {
             e.stopPropagation();
             openEdit(p.id);
           }}
-          className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-accent"
         >
           <PencilSimpleIcon size={16} />
-        </button>
+        </Button>
       ),
     },
   ];
@@ -116,13 +117,9 @@ function PeopleListPage() {
       <PageHeader
         title={t("project.people.title")}
         action={
-          <button
-            type="button"
-            onClick={openCreate}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
-          >
-            + {t("project.people.register")}
-          </button>
+          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+            {t("project.people.register")}
+          </Button>
         }
       />
 

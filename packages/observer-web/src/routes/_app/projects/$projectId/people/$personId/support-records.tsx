@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
-import { HandHeartIcon, PencilSimpleIcon } from "@/components/icons";
+import { HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { Pagination } from "@/components/pagination";
 import { StatusBadge } from "@/components/status-badge";
 import { SupportRecordDrawer } from "@/components/support-record-drawer";
@@ -79,16 +80,16 @@ function PersonSupportRecords() {
       key: "actions",
       header: "",
       render: (r) => (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          className="p-1.5"
           onClick={(e) => {
             e.stopPropagation();
             openEdit(r.id);
           }}
-          className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-accent"
         >
           <PencilSimpleIcon size={16} />
-        </button>
+        </Button>
       ),
     },
   ];
@@ -99,13 +100,9 @@ function PersonSupportRecords() {
         <h2 className="text-sm font-semibold text-fg-secondary">
           {t("project.supportRecords.title")}
         </h2>
-        <button
-          type="button"
-          onClick={openCreate}
-          className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
-        >
-          + {t("project.supportRecords.create")}
-        </button>
+        <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+          {t("project.supportRecords.create")}
+        </Button>
       </div>
 
       <DataTable

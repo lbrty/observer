@@ -1,8 +1,9 @@
-import { HouseSimpleIcon, PencilSimpleIcon } from "@/components/icons";
+import { HouseSimpleIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { HouseholdDrawer } from "@/components/household-drawer";
 import { PageHeader } from "@/components/page-header";
@@ -77,16 +78,16 @@ function HouseholdsListPage() {
       key: "actions",
       header: "",
       render: (h) => (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          className="p-1.5"
           onClick={(e) => {
             e.stopPropagation();
             openEdit(h.id);
           }}
-          className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-accent"
         >
           <PencilSimpleIcon size={16} />
-        </button>
+        </Button>
       ),
     },
   ];
@@ -96,13 +97,9 @@ function HouseholdsListPage() {
       <PageHeader
         title={t("project.households.title")}
         action={
-          <button
-            type="button"
-            onClick={openCreate}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
-          >
-            + {t("project.households.create")}
-          </button>
+          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+            {t("project.households.create")}
+          </Button>
         }
       />
 

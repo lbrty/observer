@@ -3,6 +3,7 @@ import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
+import { Button } from "@/components/button";
 import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
 import { api, HTTPError } from "@/lib/api";
@@ -98,13 +99,9 @@ function ProfileForm({ user, setUser }: { user: User | null; setUser: (u: User) 
         onChange={setPhone}
       />
 
-      <button
-        type="submit"
-        disabled={saving}
-        className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-      >
+      <Button type="submit" disabled={saving}>
         {saving ? t("profile.saving") : t("profile.save")}
-      </button>
+      </Button>
     </form>
   );
 }
@@ -192,13 +189,9 @@ function ChangePasswordForm() {
         onChange={setConfirmPassword}
       />
 
-      <button
-        type="submit"
-        disabled={saving}
-        className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-      >
+      <Button type="submit" disabled={saving}>
         {saving ? t("profile.saving") : t("profile.changePassword")}
-      </button>
+      </Button>
     </form>
   );
 }

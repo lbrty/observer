@@ -4,6 +4,7 @@ import { Field } from "@base-ui/react/field";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
 import { FormDialog } from "@/components/form-dialog";
@@ -54,13 +55,9 @@ function OfficesPage() {
       <PageHeader
         title={t("admin.reference.offices.title")}
         action={
-          <button
-            type="button"
-            onClick={() => setCreateOpen(true)}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
-          >
+          <Button onClick={() => setCreateOpen(true)}>
             {t("admin.reference.offices.add")}
-          </button>
+          </Button>
         }
       />
 

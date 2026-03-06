@@ -1,6 +1,8 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
+
 interface ConfirmDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -30,17 +32,12 @@ export function ConfirmDialog({
             {description}
           </Dialog.Description>
           <div className="mt-6 flex justify-end gap-2">
-            <Dialog.Close className="cursor-pointer rounded-lg border border-border-secondary px-4 py-2 text-sm font-medium text-fg-secondary shadow-card hover:bg-bg-tertiary">
-              {t("admin.common.cancel")}
-            </Dialog.Close>
-            <button
-              type="button"
-              disabled={loading}
-              onClick={onConfirm}
-              className="cursor-pointer rounded-lg bg-rose px-4 py-2 text-sm font-medium text-white shadow-card hover:opacity-90 disabled:opacity-50"
-            >
+            <Button variant="secondary" asChild>
+              <Dialog.Close>{t("admin.common.cancel")}</Dialog.Close>
+            </Button>
+            <Button variant="danger" disabled={loading} onClick={onConfirm}>
               {t("admin.common.delete")}
-            </button>
+            </Button>
           </div>
         </Dialog.Popup>
       </Dialog.Portal>

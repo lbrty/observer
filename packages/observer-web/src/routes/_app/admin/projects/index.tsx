@@ -2,6 +2,7 @@ import {
   ArrowSquareOutIcon,
   FolderSimpleIcon,
   PencilSimpleIcon,
+  PlusIcon,
   UsersIcon,
 } from "@/components/icons";
 import { Field } from "@base-ui/react/field";
@@ -10,6 +11,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { FormDialog } from "@/components/form-dialog";
 import { PageHeader } from "@/components/page-header";
@@ -82,31 +84,34 @@ function ProjectsPage() {
       header: "",
       render: (p) => (
         <div className="flex gap-1">
-          <Link
-            to="/projects/$projectId/people"
-            params={{ projectId: p.id }}
-            onClick={(e) => e.stopPropagation()}
-            className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-accent"
-            title={t("admin.projects.browse")}
-          >
-            <ArrowSquareOutIcon size={16} />
-          </Link>
-          <Link
-            to="/admin/projects/$projectId/permissions"
-            params={{ projectId: p.id }}
-            onClick={(e) => e.stopPropagation()}
-            className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-accent"
-          >
-            <UsersIcon size={16} />
-          </Link>
-          <Link
-            to="/admin/projects/$projectId"
-            params={{ projectId: p.id }}
-            onClick={(e) => e.stopPropagation()}
-            className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-accent"
-          >
-            <PencilSimpleIcon size={16} />
-          </Link>
+          <Button variant="ghost" className="p-1.5" asChild>
+            <Link
+              to="/projects/$projectId/people"
+              params={{ projectId: p.id }}
+              onClick={(e) => e.stopPropagation()}
+              title={t("admin.projects.browse")}
+            >
+              <ArrowSquareOutIcon size={16} />
+            </Link>
+          </Button>
+          <Button variant="ghost" className="p-1.5" asChild>
+            <Link
+              to="/admin/projects/$projectId/permissions"
+              params={{ projectId: p.id }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <UsersIcon size={16} />
+            </Link>
+          </Button>
+          <Button variant="ghost" className="p-1.5" asChild>
+            <Link
+              to="/admin/projects/$projectId"
+              params={{ projectId: p.id }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <PencilSimpleIcon size={16} />
+            </Link>
+          </Button>
         </div>
       ),
     },
@@ -117,13 +122,9 @@ function ProjectsPage() {
       <PageHeader
         title={t("admin.projects.title")}
         action={
-          <button
-            type="button"
-            onClick={() => setCreateOpen(true)}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
-          >
-            + {t("admin.projects.newProject")}
-          </button>
+          <Button icon={<PlusIcon size={16} />} onClick={() => setCreateOpen(true)}>
+            {t("admin.projects.newProject")}
+          </Button>
         }
       />
 

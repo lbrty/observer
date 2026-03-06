@@ -2,6 +2,7 @@ import { DrawerPreview as Drawer } from "@base-ui/react/drawer";
 import type { FormEvent, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { XIcon } from "@/components/icons";
 
 interface DrawerShellProps {
@@ -51,16 +52,12 @@ export function DrawerShell({
 
               {footer ?? (
                 <div className="flex shrink-0 items-center justify-end gap-2 border-t border-border-secondary px-6 py-4">
-                  <Drawer.Close className="cursor-pointer rounded-lg border border-border-secondary px-4 py-2 text-sm font-medium text-fg-secondary shadow-card hover:bg-bg-tertiary">
-                    {t("admin.common.cancel")}
-                  </Drawer.Close>
-                  <button
-                    type="submit"
-                    disabled={isPending}
-                    className="cursor-pointer rounded-lg bg-accent px-5 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
-                  >
+                  <Button variant="secondary" asChild>
+                    <Drawer.Close>{t("admin.common.cancel")}</Drawer.Close>
+                  </Button>
+                  <Button type="submit" disabled={isPending}>
                     {isPending ? savingText : saveText}
-                  </button>
+                  </Button>
                 </div>
               )}
             </form>

@@ -1,9 +1,10 @@
-import { HandHeartIcon, PencilSimpleIcon } from "@/components/icons";
+import { HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { Tabs } from "@base-ui/react/tabs";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
@@ -109,16 +110,16 @@ function SupportRecordsPage() {
       key: "actions",
       header: "",
       render: (r) => (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          className="p-1.5"
           onClick={(e) => {
             e.stopPropagation();
             openEdit(r.id);
           }}
-          className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-accent"
         >
           <PencilSimpleIcon size={16} />
-        </button>
+        </Button>
       ),
     },
   ];
@@ -128,13 +129,9 @@ function SupportRecordsPage() {
       <PageHeader
         title={t("project.supportRecords.title")}
         action={
-          <button
-            type="button"
-            onClick={openCreate}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
-          >
-            + {t("project.supportRecords.create")}
-          </button>
+          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+            {t("project.supportRecords.create")}
+          </Button>
         }
       />
 

@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { HTTPError } from "@/lib/api";
 import { useAuth } from "@/stores/auth";
 
@@ -67,12 +68,9 @@ function RegisterPage() {
         <div className="mb-4 rounded-lg bg-foam/10 px-3 py-2 text-sm text-foam">
           {t("auth.pendingApproval")}
         </div>
-        <Link
-          to="/login"
-          className="block w-full cursor-pointer rounded-lg bg-accent px-3 py-2.5 text-center text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
-        >
-          {t("auth.login")}
-        </Link>
+        <Button asChild className="w-full">
+          <Link to="/login">{t("auth.login")}</Link>
+        </Button>
       </>
     );
   }
@@ -129,13 +127,9 @@ function RegisterPage() {
           />
         </Field.Root>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full cursor-pointer rounded-lg bg-accent px-3 py-2.5 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
+        <Button type="submit" disabled={submitting} className="w-full">
           {submitting ? t("auth.registering") : t("auth.register")}
-        </button>
+        </Button>
       </form>
 
       <p className="mt-5 text-center text-sm text-fg-tertiary">

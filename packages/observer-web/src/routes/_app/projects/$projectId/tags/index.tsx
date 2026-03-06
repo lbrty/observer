@@ -4,10 +4,11 @@ import { Field } from "@base-ui/react/field";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
 import { FormDialog } from "@/components/form-dialog";
-import { TagIcon, TrashIcon } from "@/components/icons";
+import { PlusIcon, TagIcon, TrashIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { useCreateTag, useDeleteTag, useTags } from "@/hooks/use-tags";
 import { HTTPError } from "@/lib/api";
@@ -92,16 +93,16 @@ function TagsPage() {
       key: "actions",
       header: "",
       render: (tag) => (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          className="p-1.5 hover:text-rose"
           onClick={(e) => {
             e.stopPropagation();
             setDeleteTarget(tag);
           }}
-          className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
         >
           <TrashIcon size={16} />
-        </button>
+        </Button>
       ),
     },
   ];
@@ -111,17 +112,16 @@ function TagsPage() {
       <PageHeader
         title={t("project.tags.title")}
         action={
-          <button
-            type="button"
+          <Button
+            icon={<PlusIcon size={16} />}
             onClick={() => {
               setError("");
               setName("");
               setCreateOpen(true);
             }}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
           >
-            + {t("project.tags.add")}
-          </button>
+            {t("project.tags.add")}
+          </Button>
         }
       />
 

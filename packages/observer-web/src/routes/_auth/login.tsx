@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { HTTPError } from "@/lib/api";
 import { useAuth } from "@/stores/auth";
 
@@ -90,13 +91,9 @@ function LoginPage() {
           />
         </Field.Root>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full cursor-pointer rounded-lg bg-accent px-3 py-2.5 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
+        <Button type="submit" disabled={submitting} className="w-full">
           {submitting ? t("auth.loggingIn") : t("auth.login")}
-        </button>
+        </Button>
       </form>
 
       <p className="mt-5 text-center text-sm text-fg-tertiary">

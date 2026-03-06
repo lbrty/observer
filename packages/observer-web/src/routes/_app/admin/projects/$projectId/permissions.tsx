@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
 import { PencilSimpleIcon, TrashIcon, XIcon } from "@/components/icons";
@@ -95,26 +96,26 @@ function PermissionsPage() {
         if (restricted) return null;
         return (
           <div className="flex gap-2">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              className="p-1"
               onClick={(e) => {
                 e.stopPropagation();
                 setEditTarget(p);
               }}
-              className="cursor-pointer rounded p-1 text-fg-secondary hover:bg-bg-tertiary hover:text-accent"
             >
               <PencilSimpleIcon size={16} />
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="ghost"
+              className="p-1 hover:text-rose"
               onClick={(e) => {
                 e.stopPropagation();
                 setRevokeTarget(p);
               }}
-              className="cursor-pointer rounded p-1 text-fg-secondary hover:bg-bg-tertiary hover:text-rose"
             >
               <TrashIcon size={16} />
-            </button>
+            </Button>
           </div>
         );
       },
@@ -128,13 +129,9 @@ function PermissionsPage() {
       <PageHeader
         title={t("admin.permissions.title")}
         action={
-          <button
-            type="button"
-            onClick={() => setAssignOpen(true)}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
-          >
+          <Button onClick={() => setAssignOpen(true)}>
             {t("admin.permissions.addMember")}
-          </button>
+          </Button>
         }
       />
 
@@ -341,16 +338,12 @@ function AssignDialog({
             </div>
 
             <div className="flex justify-end gap-3 pt-2">
-              <Dialog.Close className="cursor-pointer rounded-lg border border-border-secondary px-4 py-2 text-sm text-fg-secondary hover:bg-bg-tertiary">
-                {t("admin.common.cancel")}
-              </Dialog.Close>
-              <button
-                type="submit"
-                disabled={loading || !selectedUser}
-                className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
-              >
+              <Button variant="secondary" asChild>
+                <Dialog.Close>{t("admin.common.cancel")}</Dialog.Close>
+              </Button>
+              <Button type="submit" disabled={loading || !selectedUser}>
                 {loading ? t("admin.permissions.saving") : t("admin.permissions.save")}
-              </button>
+              </Button>
             </div>
           </form>
         </Dialog.Popup>
@@ -464,16 +457,12 @@ function EditDialog({
             </div>
 
             <div className="flex justify-end gap-3 pt-2">
-              <Dialog.Close className="cursor-pointer rounded-lg border border-border-secondary px-4 py-2 text-sm text-fg-secondary hover:bg-bg-tertiary">
-                {t("admin.common.cancel")}
-              </Dialog.Close>
-              <button
-                type="submit"
-                disabled={loading}
-                className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
-              >
+              <Button variant="secondary" asChild>
+                <Dialog.Close>{t("admin.common.cancel")}</Dialog.Close>
+              </Button>
+              <Button type="submit" disabled={loading}>
                 {loading ? t("admin.permissions.saving") : t("admin.permissions.save")}
-              </button>
+              </Button>
             </div>
           </form>
         </Dialog.Popup>

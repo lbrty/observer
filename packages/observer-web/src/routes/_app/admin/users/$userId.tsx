@@ -4,6 +4,7 @@ import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ErrorBanner } from "@/components/alert-banner";
+import { Button } from "@/components/button";
 import { FormDialog } from "@/components/form-dialog";
 import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
@@ -153,13 +154,9 @@ function UserDetailPage() {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={updateUser.isPending}
-          className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
-        >
+        <Button type="submit" disabled={updateUser.isPending}>
           {updateUser.isPending ? t("admin.users.saving") : t("admin.users.save")}
-        </button>
+        </Button>
       </form>
 
       <div className="mt-6 h-px bg-border-secondary" />
@@ -205,13 +202,9 @@ function ResetPasswordSection({ userId }: { userId: string }) {
 
   return (
     <div className="mt-4">
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="cursor-pointer rounded-lg border border-border-secondary px-4 py-2 text-sm font-medium text-fg-secondary hover:bg-bg-tertiary"
-      >
+      <Button variant="secondary" onClick={() => setOpen(true)}>
         {t("admin.users.resetPassword")}
-      </button>
+      </Button>
 
       <FormDialog
         open={open}

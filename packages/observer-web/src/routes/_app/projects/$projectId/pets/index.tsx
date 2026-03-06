@@ -1,9 +1,10 @@
-import { PawPrintIcon, PencilSimpleIcon } from "@/components/icons";
+import { PawPrintIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { Tabs } from "@base-ui/react/tabs";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
@@ -99,16 +100,16 @@ function PetsListPage() {
       key: "actions",
       header: "",
       render: (p) => (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          className="p-1.5"
           onClick={(e) => {
             e.stopPropagation();
             openEdit(p.id);
           }}
-          className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-accent"
         >
           <PencilSimpleIcon size={16} />
-        </button>
+        </Button>
       ),
     },
   ];
@@ -118,13 +119,9 @@ function PetsListPage() {
       <PageHeader
         title={t("project.pets.title")}
         action={
-          <button
-            type="button"
-            onClick={openCreate}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90"
-          >
-            + {t("project.pets.register")}
-          </button>
+          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+            {t("project.pets.register")}
+          </Button>
         }
       />
 

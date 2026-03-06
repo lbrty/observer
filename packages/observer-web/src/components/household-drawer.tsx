@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
+import { Button } from "@/components/button";
 import { DrawerShell } from "@/components/drawer-shell";
 import { FormField } from "@/components/form-field";
 import { TrashIcon } from "@/components/icons";
@@ -248,13 +249,13 @@ export function HouseholdDrawer({
                         )}
                       </td>
                       <td className="px-3 py-2">
-                        <button
-                          type="button"
+                        <Button
+                          variant="ghost"
+                          className="p-1 hover:text-rose"
                           onClick={() => handleRemoveMember(m.person_id)}
-                          className="cursor-pointer rounded-lg p-1 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
                         >
                           <TrashIcon size={14} />
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -320,17 +321,15 @@ export function HouseholdDrawer({
               />
             </div>
 
-            <button
-              type="button"
+            <Button
               onClick={() => {
                 handleAddMember();
                 setMemberPersonName("");
               }}
               disabled={addMember.isPending || !memberForm.person_id}
-              className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
             >
               {t("project.households.addMember")}
-            </button>
+            </Button>
           </div>
         </>
       )}

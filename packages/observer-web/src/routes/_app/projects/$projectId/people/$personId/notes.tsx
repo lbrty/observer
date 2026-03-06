@@ -3,6 +3,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { PencilSimpleIcon, TrashIcon, XIcon } from "@/components/icons";
 import { useCreateNote, useDeleteNote, useNotes, useUpdateNote } from "@/hooks/use-notes";
@@ -68,13 +69,9 @@ function PersonNotes() {
           className="w-full rounded-xl border border-border-secondary bg-bg-secondary px-4 py-3 text-sm text-fg outline-none transition-colors focus:border-accent"
         />
         <div className="mt-2 flex justify-end">
-          <button
-            type="submit"
-            disabled={!body.trim() || createNote.isPending}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:cursor-default disabled:opacity-50"
-          >
+          <Button type="submit" disabled={!body.trim() || createNote.isPending}>
             {t("project.notes.add")}
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -102,21 +99,16 @@ function PersonNotes() {
                     className="w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
                   />
                   <div className="mt-2 flex justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={cancelEdit}
-                      className="cursor-pointer rounded-lg border border-border-secondary px-3 py-1.5 text-sm text-fg-secondary hover:bg-bg-tertiary"
-                    >
+                    <Button variant="secondary" size="sm" onClick={cancelEdit}>
                       {t("admin.common.cancel")}
-                    </button>
-                    <button
-                      type="button"
+                    </Button>
+                    <Button
+                      size="sm"
                       onClick={saveEdit}
                       disabled={!editBody.trim() || updateNote.isPending}
-                      className="cursor-pointer rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg hover:opacity-90 disabled:opacity-50"
                     >
                       {t("admin.common.save")}
-                    </button>
+                    </Button>
                   </div>
                 </>
               ) : (
@@ -132,20 +124,20 @@ function PersonNotes() {
                       )}
                     </span>
                     <div className="flex gap-1">
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
+                        className="p-1.5"
                         onClick={() => startEdit(note.id, note.body)}
-                        className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg"
                       >
                         <PencilSimpleIcon size={14} />
-                      </button>
-                      <button
-                        type="button"
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="p-1.5 hover:text-rose"
                         onClick={() => setDeleteId(note.id)}
-                        className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
                       >
                         <TrashIcon size={14} />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </>

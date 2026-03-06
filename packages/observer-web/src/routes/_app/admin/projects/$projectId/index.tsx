@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { PageHeader } from "@/components/page-header";
 import { UISelect } from "@/components/ui-select";
 import { useProject, useUpdateProject } from "@/hooks/use-projects";
@@ -94,27 +95,19 @@ function ProjectDetailPage() {
         </Field.Root>
 
         <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            disabled={updateProject.isPending}
-            className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
-          >
+          <Button type="submit" disabled={updateProject.isPending}>
             {updateProject.isPending ? t("admin.projects.saving") : t("admin.projects.save")}
-          </button>
-          <Link
-            to="/projects/$projectId/people"
-            params={{ projectId }}
-            className="rounded-lg border border-border-secondary px-4 py-2 text-sm text-fg-secondary hover:bg-bg-tertiary"
-          >
-            {t("admin.projects.browse")}
-          </Link>
-          <Link
-            to="/admin/projects/$projectId/permissions"
-            params={{ projectId }}
-            className="rounded-lg border border-border-secondary px-4 py-2 text-sm text-fg-secondary hover:bg-bg-tertiary"
-          >
-            {t("admin.projects.permissions")}
-          </Link>
+          </Button>
+          <Button variant="secondary" asChild>
+            <Link to="/projects/$projectId/people" params={{ projectId }}>
+              {t("admin.projects.browse")}
+            </Link>
+          </Button>
+          <Button variant="secondary" asChild>
+            <Link to="/admin/projects/$projectId/permissions" params={{ projectId }}>
+              {t("admin.projects.permissions")}
+            </Link>
+          </Button>
         </div>
       </form>
     </div>

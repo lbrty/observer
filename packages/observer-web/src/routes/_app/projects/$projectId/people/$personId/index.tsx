@@ -3,6 +3,7 @@ import { type FormEvent, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { Button } from "@/components/button";
 import { DatePicker } from "@/components/date-picker";
 import { CheckIcon, PlusIcon, WarningIcon } from "@/components/icons";
 import { StatusBadge } from "@/components/status-badge";
@@ -219,14 +220,13 @@ function PersonOverview() {
       </section>
 
       {!formOpen && (
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          icon={<PlusIcon size={16} weight="bold" />}
           onClick={() => setFormOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-fg-secondary hover:bg-bg-tertiary"
         >
-          <PlusIcon size={16} weight="bold" />
           {t("project.people.quickSupportAdd")}
-        </button>
+        </Button>
       )}
 
       {formOpen && (
@@ -314,22 +314,14 @@ function PersonOverview() {
             </div>
 
             <div className="flex justify-end gap-2 pt-1">
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-fg-secondary hover:bg-bg-tertiary"
-              >
+              <Button variant="secondary" onClick={handleCancel}>
                 {t("common.cancel")}
-              </button>
-              <button
-                type="submit"
-                disabled={createRecord.isPending || saved}
-                className="cursor-pointer rounded-lg bg-accent px-5 py-2 text-sm font-medium text-accent-fg shadow-card hover:opacity-90 disabled:opacity-50"
-              >
+              </Button>
+              <Button type="submit" disabled={createRecord.isPending || saved}>
                 {createRecord.isPending
                   ? t("project.supportRecords.saving")
                   : t("project.supportRecords.save")}
-              </button>
+              </Button>
             </div>
           </form>
         </section>

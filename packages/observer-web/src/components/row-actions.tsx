@@ -1,3 +1,4 @@
+import { Button } from "@/components/button";
 import { PencilSimpleIcon, TrashIcon } from "@/components/icons";
 
 interface RowActionsProps {
@@ -8,26 +9,26 @@ interface RowActionsProps {
 export function RowActions({ onEdit, onDelete }: RowActionsProps) {
   return (
     <div className="flex gap-2">
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        className="p-1.5"
         onClick={(e) => {
           e.stopPropagation();
           onEdit();
         }}
-        className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-accent"
       >
         <PencilSimpleIcon size={16} />
-      </button>
-      <button
-        type="button"
+      </Button>
+      <Button
+        variant="ghost"
+        className="p-1.5 hover:text-rose"
         onClick={(e) => {
           e.stopPropagation();
           onDelete();
         }}
-        className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
       >
         <TrashIcon size={16} />
-      </button>
+      </Button>
     </div>
   );
 }
