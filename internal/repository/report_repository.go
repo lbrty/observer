@@ -238,26 +238,27 @@ func (r *reportRepo) CountByOffice(ctx context.Context, f report.ReportFilter) (
 
 func (r *reportRepo) CountByAgeGroup(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
 	q := `SELECT
-		CASE
-			WHEN age < 1 THEN 'infant'
-			WHEN age < 3 THEN 'toddler'
-			WHEN age < 6 THEN 'pre_school'
-			WHEN age < 12 THEN 'middle_childhood'
-			WHEN age < 14 THEN 'young_teen'
-			WHEN age < 18 THEN 'teenager'
-			WHEN age < 25 THEN 'young_adult'
-			WHEN age < 35 THEN 'early_adult'
-			WHEN age < 55 THEN 'middle_aged_adult'
-			ELSE 'old_adult'
-		END AS label,
-		COUNT(*) AS count
-	FROM (
-		SELECT EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) AS age
-		FROM people p
-		WHERE p.project_id = $1 AND p.birth_date IS NOT NULL
-	) sub
-	GROUP BY label ORDER BY label`
+		COALESCE(p.age_group::text,
+			CASE
+				WHEN p.birth_date IS NULL THEN 'unknown'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 1  THEN 'infant'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 3  THEN 'toddler'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 6  THEN 'pre_school'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 12 THEN 'middle_childhood'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 14 THEN 'young_teen'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 18 THEN 'teenager'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 25 THEN 'young_adult'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 35 THEN 'early_adult'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 55 THEN 'middle_aged_adult'
+				ELSE 'old_adult'
+			END
+		) AS label,
+		COUNT(DISTINCT p.id) AS count
+	FROM people p
+	WHERE p.project_id = $1`
 	args := []any{f.ProjectID}
+	q, args, _ = applyPeopleFilters(q, f, "p.registered_at", args, 2)
+	q += " GROUP BY label ORDER BY label"
 
 	var results []report.CountResult
 	if err := r.db.SelectContext(ctx, &results, q, args...); err != nil {
