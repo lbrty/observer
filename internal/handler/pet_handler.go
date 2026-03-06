@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/lbrty/observer/internal/domain/pet"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
 
@@ -61,7 +59,7 @@ func (h *PetHandler) List(c *gin.Context) {
 func (h *PetHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -89,7 +87,7 @@ func (h *PetHandler) Create(c *gin.Context) {
 	}
 	out, err := h.uc.Create(c.Request.Context(), projectID, input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)
@@ -117,7 +115,7 @@ func (h *PetHandler) Update(c *gin.Context) {
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -136,17 +134,9 @@ func (h *PetHandler) Update(c *gin.Context) {
 // @Router /projects/{project_id}/pets/{id} [delete]
 func (h *PetHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "pet deleted"})
 }
 
-func (h *PetHandler) handleError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, pet.ErrPetNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.pet.notFound", err.Error()))
-	default:
-		internalError(c, "handle pet", err)
-	}
-}

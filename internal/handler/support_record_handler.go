@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/lbrty/observer/internal/domain/support"
 	"github.com/lbrty/observer/internal/middleware"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
@@ -67,7 +65,7 @@ func (h *SupportRecordHandler) List(c *gin.Context) {
 func (h *SupportRecordHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -95,7 +93,7 @@ func (h *SupportRecordHandler) Create(c *gin.Context) {
 	userID, _ := middleware.UserIDFrom(c)
 	out, err := h.uc.Create(c.Request.Context(), projectID, userID.String(), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)
@@ -123,7 +121,7 @@ func (h *SupportRecordHandler) Update(c *gin.Context) {
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -142,17 +140,9 @@ func (h *SupportRecordHandler) Update(c *gin.Context) {
 // @Router /projects/{project_id}/support-records/{id} [delete]
 func (h *SupportRecordHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "support record deleted"})
 }
 
-func (h *SupportRecordHandler) handleError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, support.ErrRecordNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.support.notFound", err.Error()))
-	default:
-		internalError(c, "handle support record", err)
-	}
-}

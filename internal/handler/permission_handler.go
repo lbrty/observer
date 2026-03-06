@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/lbrty/observer/internal/domain/project"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
 
@@ -66,7 +64,7 @@ func (h *PermissionHandler) AssignPermission(c *gin.Context) {
 
 	out, err := h.permUC.Assign(c.Request.Context(), projectID, input)
 	if err != nil {
-		h.handlePermError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -99,7 +97,7 @@ func (h *PermissionHandler) UpdatePermission(c *gin.Context) {
 
 	out, err := h.permUC.Update(c.Request.Context(), id, input)
 	if err != nil {
-		h.handlePermError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -122,22 +120,10 @@ func (h *PermissionHandler) RevokePermission(c *gin.Context) {
 	id := c.Param("id")
 
 	if err := h.permUC.Revoke(c.Request.Context(), id); err != nil {
-		h.handlePermError(c, err)
+		HandleError(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "permission revoked"})
 }
 
-func (h *PermissionHandler) handlePermError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, project.ErrPermissionNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.project.permissionNotFound", err.Error()))
-	case errors.Is(err, project.ErrPermissionExists):
-		c.JSON(http.StatusConflict, errJSON("errors.project.permissionExists", err.Error()))
-	case errors.Is(err, project.ErrInvalidProjectRole):
-		c.JSON(http.StatusBadRequest, errJSON("errors.project.invalidRole", err.Error()))
-	default:
-		internalError(c, "handle permission", err)
-	}
-}

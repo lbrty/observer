@@ -1,13 +1,11 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oklog/ulid/v2"
 
-	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/repository"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
@@ -75,7 +73,7 @@ func (h *AdminHandler) GetUser(c *gin.Context) {
 
 	out, err := h.userUC.Get(c.Request.Context(), id)
 	if err != nil {
-		h.handleUserError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -111,7 +109,7 @@ func (h *AdminHandler) UpdateUser(c *gin.Context) {
 
 	out, err := h.userUC.Update(c.Request.Context(), id, input)
 	if err != nil {
-		h.handleUserError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -139,7 +137,7 @@ func (h *AdminHandler) CreateUser(c *gin.Context) {
 
 	out, err := h.userUC.Create(c.Request.Context(), input)
 	if err != nil {
-		h.handleUserError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -161,7 +159,7 @@ func (h *AdminHandler) ResetPassword(c *gin.Context) {
 	}
 
 	if err := h.userUC.ResetPassword(c.Request.Context(), id, input); err != nil {
-		h.handleUserError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -178,7 +176,7 @@ func (h *AdminHandler) UnlockAccount(c *gin.Context) {
 
 	u, err := h.userUC.Get(c.Request.Context(), id)
 	if err != nil {
-		h.handleUserError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -190,17 +188,3 @@ func (h *AdminHandler) UnlockAccount(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "account unlocked"})
 }
 
-func (h *AdminHandler) handleUserError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, user.ErrUserNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.user.notFound", err.Error()))
-	case errors.Is(err, user.ErrInvalidRole):
-		c.JSON(http.StatusBadRequest, errJSON("errors.user.invalidRole", err.Error()))
-	case errors.Is(err, user.ErrEmailExists):
-		c.JSON(http.StatusConflict, errJSON("errors.user.emailExists", err.Error()))
-	case errors.Is(err, user.ErrPhoneExists):
-		c.JSON(http.StatusConflict, errJSON("errors.user.phoneExists", err.Error()))
-	default:
-		internalError(c, "handle user operation", err)
-	}
-}

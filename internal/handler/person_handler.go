@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/middleware"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
@@ -76,7 +74,7 @@ func (h *PersonHandler) Get(c *gin.Context) {
 	canPersonal := middleware.CanViewPersonalFrom(c)
 	out, err := h.personUC.Get(c.Request.Context(), c.Param("person_id"), canContact, canPersonal)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -104,7 +102,7 @@ func (h *PersonHandler) Create(c *gin.Context) {
 	}
 	out, err := h.personUC.Create(c.Request.Context(), projectID, input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)
@@ -132,7 +130,7 @@ func (h *PersonHandler) Update(c *gin.Context) {
 	}
 	out, err := h.personUC.Update(c.Request.Context(), c.Param("person_id"), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -151,7 +149,7 @@ func (h *PersonHandler) Update(c *gin.Context) {
 // @Router /projects/{project_id}/people/{person_id} [delete]
 func (h *PersonHandler) Delete(c *gin.Context) {
 	if err := h.personUC.Delete(c.Request.Context(), c.Param("person_id")); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "person deleted"})
@@ -247,17 +245,3 @@ func (h *PersonHandler) ReplaceTags(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"tag_ids": input.IDs})
 }
 
-func (h *PersonHandler) handleError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, person.ErrPersonNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.person.notFound", err.Error()))
-	case errors.Is(err, person.ErrExternalIDExists):
-		c.JSON(http.StatusConflict, errJSON("errors.person.externalIdExists", err.Error()))
-	case errors.Is(err, person.ErrConsentConstraint):
-		c.JSON(http.StatusBadRequest, errJSON("errors.person.consentConstraint", err.Error()))
-	case errors.Is(err, person.ErrAgeConstraint):
-		c.JSON(http.StatusBadRequest, errJSON("errors.person.ageConstraint", err.Error()))
-	default:
-		internalError(c, "handle person", err)
-	}
-}

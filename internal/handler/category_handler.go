@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/lbrty/observer/internal/domain/reference"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
 
@@ -50,7 +48,7 @@ func (h *CategoryHandler) List(c *gin.Context) {
 func (h *CategoryHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -76,7 +74,7 @@ func (h *CategoryHandler) Create(c *gin.Context) {
 	}
 	out, err := h.uc.Create(c.Request.Context(), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)
@@ -103,7 +101,7 @@ func (h *CategoryHandler) Update(c *gin.Context) {
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -121,19 +119,9 @@ func (h *CategoryHandler) Update(c *gin.Context) {
 // @Router /admin/categories/{id} [delete]
 func (h *CategoryHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "category deleted"})
 }
 
-func (h *CategoryHandler) handleError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, reference.ErrCategoryNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.reference.categoryNotFound", err.Error()))
-	case errors.Is(err, reference.ErrCategoryNameExists):
-		c.JSON(http.StatusConflict, errJSON("errors.reference.categoryNameExists", err.Error()))
-	default:
-		internalError(c, "handle category operation", err)
-	}
-}

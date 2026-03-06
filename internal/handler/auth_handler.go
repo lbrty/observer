@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/lbrty/observer/internal/config"
-	domainauth "github.com/lbrty/observer/internal/domain/auth"
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/middleware"
 	"github.com/lbrty/observer/internal/repository"
@@ -68,7 +67,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 	out, err := h.authUC.Register(c.Request.Context(), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -124,7 +123,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 				return
 			}
 		}
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -158,7 +157,7 @@ func (h *AuthHandler) Me(c *gin.Context) {
 
 	u, err := h.userRepo.GetByID(c.Request.Context(), userID)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -200,7 +199,7 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 		RefreshToken: refreshToken,
 	})
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -228,7 +227,7 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 	}
 
 	if err := h.authUC.Logout(c.Request.Context(), refreshToken); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -320,7 +319,7 @@ func (h *AuthHandler) UpdateProfile(c *gin.Context) {
 
 	dto, err := h.authUC.UpdateProfile(c.Request.Context(), userID, input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 
@@ -342,32 +341,10 @@ func (h *AuthHandler) ChangePassword(c *gin.Context) {
 	}
 
 	if err := h.authUC.ChangePassword(c.Request.Context(), userID, input); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "password changed successfully"})
 }
 
-func (h *AuthHandler) handleError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, user.ErrEmailExists):
-		c.JSON(http.StatusConflict, errJSON("errors.user.emailExists", err.Error()))
-	case errors.Is(err, user.ErrPhoneExists):
-		c.JSON(http.StatusConflict, errJSON("errors.user.phoneExists", err.Error()))
-	case errors.Is(err, user.ErrInvalidCredentials):
-		c.JSON(http.StatusUnauthorized, errJSON("errors.auth.invalidCredentials", err.Error()))
-	case errors.Is(err, user.ErrUserNotActive):
-		c.JSON(http.StatusForbidden, errJSON("errors.user.notActive", err.Error()))
-	case errors.Is(err, user.ErrUserNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.user.notFound", err.Error()))
-	case errors.Is(err, user.ErrInvalidRole):
-		c.JSON(http.StatusBadRequest, errJSON("errors.user.invalidRole", err.Error()))
-	case errors.Is(err, domainauth.ErrSessionNotFound):
-		c.JSON(http.StatusUnauthorized, errJSON("errors.auth.sessionNotFound", err.Error()))
-	case errors.Is(err, domainauth.ErrSessionExpired):
-		c.JSON(http.StatusUnauthorized, errJSON("errors.auth.sessionExpired", err.Error()))
-	default:
-		internalError(c, "handle auth operation", err)
-	}
-}

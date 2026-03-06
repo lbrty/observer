@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/lbrty/observer/internal/domain/household"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
 
@@ -61,7 +59,7 @@ func (h *HouseholdHandler) List(c *gin.Context) {
 func (h *HouseholdHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -88,7 +86,7 @@ func (h *HouseholdHandler) Create(c *gin.Context) {
 	}
 	out, err := h.uc.Create(c.Request.Context(), projectID, input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)
@@ -116,7 +114,7 @@ func (h *HouseholdHandler) Update(c *gin.Context) {
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -135,7 +133,7 @@ func (h *HouseholdHandler) Update(c *gin.Context) {
 // @Router /projects/{project_id}/households/{id} [delete]
 func (h *HouseholdHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "household deleted"})
@@ -165,7 +163,7 @@ func (h *HouseholdHandler) AddMember(c *gin.Context) {
 	}
 	out, err := h.uc.AddMember(c.Request.Context(), householdID, input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)
@@ -187,21 +185,9 @@ func (h *HouseholdHandler) RemoveMember(c *gin.Context) {
 	householdID := c.Param("id")
 	personID := c.Param("person_id")
 	if err := h.uc.RemoveMember(c.Request.Context(), householdID, personID); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "member removed"})
 }
 
-func (h *HouseholdHandler) handleError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, household.ErrHouseholdNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.household.notFound", err.Error()))
-	case errors.Is(err, household.ErrMemberNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.household.memberNotFound", err.Error()))
-	case errors.Is(err, household.ErrMemberExists):
-		c.JSON(http.StatusConflict, errJSON("errors.household.memberExists", err.Error()))
-	default:
-		internalError(c, "handle household operation", err)
-	}
-}

@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/lbrty/observer/internal/domain/document"
 	"github.com/lbrty/observer/internal/middleware"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
@@ -65,7 +63,7 @@ func (h *DocumentHandler) Get(c *gin.Context) {
 	}
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -94,7 +92,7 @@ func (h *DocumentHandler) Create(c *gin.Context) {
 	userID, _ := middleware.UserIDFrom(c)
 	out, err := h.uc.Create(c.Request.Context(), projectID, userID.String(), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)
@@ -109,7 +107,7 @@ func (h *DocumentHandler) Update(c *gin.Context) {
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -128,17 +126,9 @@ func (h *DocumentHandler) Update(c *gin.Context) {
 // @Router /projects/{project_id}/documents/{id} [delete]
 func (h *DocumentHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "document deleted"})
 }
 
-func (h *DocumentHandler) handleError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, document.ErrDocumentNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.document.notFound", err.Error()))
-	default:
-		internalError(c, "handle document operation", err)
-	}
-}

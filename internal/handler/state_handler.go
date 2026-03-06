@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/lbrty/observer/internal/domain/reference"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
 
@@ -61,7 +59,7 @@ func (h *StateHandler) List(c *gin.Context) {
 func (h *StateHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -92,7 +90,7 @@ func (h *StateHandler) Create(c *gin.Context) {
 	}
 	out, err := h.uc.Create(c.Request.Context(), countryID, input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)
@@ -119,7 +117,7 @@ func (h *StateHandler) Update(c *gin.Context) {
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -137,17 +135,9 @@ func (h *StateHandler) Update(c *gin.Context) {
 // @Router /admin/states/{id} [delete]
 func (h *StateHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "state deleted"})
 }
 
-func (h *StateHandler) handleError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, reference.ErrStateNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.reference.stateNotFound", err.Error()))
-	default:
-		internalError(c, "handle state", err)
-	}
-}

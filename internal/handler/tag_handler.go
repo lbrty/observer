@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/lbrty/observer/internal/domain/tag"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
 
@@ -62,7 +60,7 @@ func (h *TagHandler) Create(c *gin.Context) {
 	}
 	out, err := h.uc.Create(c.Request.Context(), projectID, input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)
@@ -91,7 +89,7 @@ func (h *TagHandler) Update(c *gin.Context) {
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -110,19 +108,9 @@ func (h *TagHandler) Update(c *gin.Context) {
 // @Router /projects/{project_id}/tags/{id} [delete]
 func (h *TagHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "tag deleted"})
 }
 
-func (h *TagHandler) handleError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, tag.ErrTagNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.tag.notFound", err.Error()))
-	case errors.Is(err, tag.ErrTagNameExists):
-		c.JSON(http.StatusConflict, errJSON("errors.tag.nameExists", err.Error()))
-	default:
-		internalError(c, "handle tag", err)
-	}
-}

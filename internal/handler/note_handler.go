@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/lbrty/observer/internal/domain/note"
 	"github.com/lbrty/observer/internal/middleware"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
@@ -79,7 +77,7 @@ func (h *NoteHandler) Update(c *gin.Context) {
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -99,17 +97,9 @@ func (h *NoteHandler) Update(c *gin.Context) {
 // @Router /projects/{project_id}/people/{person_id}/notes/{id} [delete]
 func (h *NoteHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "note deleted"})
 }
 
-func (h *NoteHandler) handleError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, note.ErrNoteNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.note.notFound", err.Error()))
-	default:
-		internalError(c, "handle note", err)
-	}
-}

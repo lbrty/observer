@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/lbrty/observer/internal/domain/reference"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
 
@@ -50,7 +48,7 @@ func (h *OfficeHandler) List(c *gin.Context) {
 func (h *OfficeHandler) Get(c *gin.Context) {
 	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -75,7 +73,7 @@ func (h *OfficeHandler) Create(c *gin.Context) {
 	}
 	out, err := h.uc.Create(c.Request.Context(), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)
@@ -102,7 +100,7 @@ func (h *OfficeHandler) Update(c *gin.Context) {
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
 	if err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, out)
@@ -120,17 +118,9 @@ func (h *OfficeHandler) Update(c *gin.Context) {
 // @Router /admin/offices/{id} [delete]
 func (h *OfficeHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
-		h.handleError(c, err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "office deleted"})
 }
 
-func (h *OfficeHandler) handleError(c *gin.Context, err error) {
-	switch {
-	case errors.Is(err, reference.ErrOfficeNotFound):
-		c.JSON(http.StatusNotFound, errJSON("errors.reference.officeNotFound", err.Error()))
-	default:
-		internalError(c, "handle office", err)
-	}
-}
