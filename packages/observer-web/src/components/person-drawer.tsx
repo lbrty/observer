@@ -4,23 +4,20 @@ import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-import { AddReferenceDialog } from "@/components/add-reference-dialog";
 import { ErrorBanner } from "@/components/alert-banner";
 import { DatePicker } from "@/components/date-picker";
 import { DrawerShell } from "@/components/drawer-shell";
-import { inputClass } from "@/components/form-field";
 import { FormField } from "@/components/form-field";
-import { PlusIcon } from "@/components/icons";
+import { PlaceCombobox } from "@/components/place-combobox";
 import { SectionHeading } from "@/components/section-heading";
 import { UISelect } from "@/components/ui-select";
 import { UISwitch } from "@/components/ui-switch";
-import { useCountries, useCreateCountry } from "@/hooks/use-countries";
+import { useCountries } from "@/hooks/use-countries";
 import { useDrawerForm } from "@/hooks/use-drawer-form";
 import { useOffices } from "@/hooks/use-offices";
 import { useCreatePerson, usePerson, useUpdatePerson } from "@/hooks/use-people";
-import { useCreatePlace, usePlaces } from "@/hooks/use-places";
-import { useCreateState, useStates } from "@/hooks/use-states";
-import { HTTPError } from "@/lib/api";
+import { usePlaces } from "@/hooks/use-places";
+import { useStates } from "@/hooks/use-states";
 import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";
 
@@ -42,11 +39,7 @@ const emptyForm = {
   age_group: "",
   primary_phone: "",
   email: "",
-  origin_country: "",
-  origin_state: "",
   origin_place_id: "",
-  current_country: "",
-  current_state: "",
   current_place_id: "",
   case_status: "new",
   external_id: "",
@@ -79,11 +72,7 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
       age_group: (d.age_group as string) ?? "",
       primary_phone: (d.primary_phone as string) ?? "",
       email: (d.email as string) ?? "",
-      origin_country: "",
-      origin_state: "",
       origin_place_id: (d.origin_place_id as string) ?? "",
-      current_country: "",
-      current_state: "",
       current_place_id: (d.current_place_id as string) ?? "",
       case_status: (d.case_status as string) ?? "new",
       external_id: (d.external_id as string) ?? "",
@@ -93,102 +82,32 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
     }),
   });
 
-  const [addCountryOpen, setAddCountryOpen] = useState(false);
-  const [addStateOpen, setAddStateOpen] = useState<{ open: boolean; forOrigin: boolean }>({
-    open: false,
-    forOrigin: true,
-  });
-  const [addPlaceOpen, setAddPlaceOpen] = useState<{ open: boolean; forOrigin: boolean }>({
-    open: false,
-    forOrigin: true,
-  });
+  // Labels for selected places (resolved from reference data or set on select)
+  const [originPlaceLabel, setOriginPlaceLabel] = useState("");
+  const [currentPlaceLabel, setCurrentPlaceLabel] = useState("");
 
-  const [newCountryName, setNewCountryName] = useState("");
-  const [newCountryCode, setNewCountryCode] = useState("");
-  const [newStateName, setNewStateName] = useState("");
-  const [newStateConflictZone, setNewStateConflictZone] = useState("");
-  const [newPlaceName, setNewPlaceName] = useState("");
-  const [dialogError, setDialogError] = useState("");
-
-  const createCountry = useCreateCountry();
-  const createState = useCreateState();
-  const createPlace = useCreatePlace();
-
+  // Reference data for resolving place IDs to labels in edit mode
   const { data: countries } = useCountries();
-  const { data: originStates } = useStates(form.origin_country || undefined);
-  const { data: originPlaces } = usePlaces(form.origin_state || undefined);
-  const { data: currentStates } = useStates(form.current_country || undefined);
-  const { data: currentPlaces } = usePlaces(form.current_state || undefined);
+  const { data: statesData } = useStates();
+  const { data: placesData } = usePlaces();
   const { data: offices } = useOffices();
 
   const isPending = createPerson.isPending || updatePerson.isPending;
 
-  async function handleAddCountry() {
-    setDialogError("");
-    try {
-      await createCountry.mutateAsync({ name: newCountryName, code: newCountryCode });
-      setAddCountryOpen(false);
-      setNewCountryName("");
-      setNewCountryCode("");
-    } catch (err) {
-      if (err instanceof HTTPError) {
-        const body = await err.response.json().catch(() => null);
-        setDialogError((body as { error?: string } | null)?.error ?? err.message);
-      }
-    }
+  function resolvePlaceLabel(placeId: string): string {
+    if (!placeId) return "";
+    const place = placesData?.places.find((p) => p.id === placeId);
+    if (!place) return placeId;
+    const state = statesData?.states.find((s) => s.id === place.state_id);
+    const country = state ? (countries ?? []).find((c) => c.id === state.country_id) : undefined;
+    const parts = [place.name];
+    if (state) parts.push(state.name);
+    if (country) parts.push(country.name);
+    return parts.join(", ");
   }
 
-  async function handleAddState() {
-    setDialogError("");
-    const countryId = addStateOpen.forOrigin ? form.origin_country : form.current_country;
-    try {
-      const created = await createState.mutateAsync({
-        countryId,
-        data: {
-          name: newStateName,
-          ...(newStateConflictZone && { conflict_zone: newStateConflictZone }),
-        },
-      });
-      if (addStateOpen.forOrigin) {
-        set("origin_state", created.id);
-        set("origin_place_id", "");
-      } else {
-        set("current_state", created.id);
-        set("current_place_id", "");
-      }
-      setAddStateOpen({ open: false, forOrigin: true });
-      setNewStateName("");
-      setNewStateConflictZone("");
-    } catch (err) {
-      if (err instanceof HTTPError) {
-        const body = await err.response.json().catch(() => null);
-        setDialogError((body as { error?: string } | null)?.error ?? err.message);
-      }
-    }
-  }
-
-  async function handleAddPlace() {
-    setDialogError("");
-    const stateId = addPlaceOpen.forOrigin ? form.origin_state : form.current_state;
-    try {
-      const created = await createPlace.mutateAsync({
-        stateId,
-        data: { name: newPlaceName },
-      });
-      if (addPlaceOpen.forOrigin) {
-        set("origin_place_id", created.id);
-      } else {
-        set("current_place_id", created.id);
-      }
-      setAddPlaceOpen({ open: false, forOrigin: true });
-      setNewPlaceName("");
-    } catch (err) {
-      if (err instanceof HTTPError) {
-        const body = await err.response.json().catch(() => null);
-        setDialogError((body as { error?: string } | null)?.error ?? err.message);
-      }
-    }
-  }
+  const resolvedOriginLabel = originPlaceLabel || resolvePlaceLabel(form.origin_place_id);
+  const resolvedCurrentLabel = currentPlaceLabel || resolvePlaceLabel(form.current_place_id);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -252,11 +171,6 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
     }
   }
 
-  const countryOptions = (countries ?? []).map((c) => ({ label: c.name, value: c.id }));
-  const originStateOptions = (originStates?.states ?? []).map((s) => ({ label: s.name, value: s.id }));
-  const originPlaceOptions = (originPlaces?.places ?? []).map((p) => ({ label: p.name, value: p.id }));
-  const currentStateOptions = (currentStates?.states ?? []).map((s) => ({ label: s.name, value: s.id }));
-  const currentPlaceOptions = (currentPlaces?.places ?? []).map((p) => ({ label: p.name, value: p.id }));
   const officeOptions = (offices ?? []).map((o) => ({ label: o.name, value: o.id }));
 
   const sexOptions = [
@@ -284,9 +198,6 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
     { label: t("project.people.ageOlderAdult"), value: "old_adult" },
     { label: t("project.people.sexUnknown"), value: "unknown" },
   ];
-
-  const addBtnClass =
-    "inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border-secondary bg-bg-secondary text-fg-tertiary hover:border-border-primary hover:text-fg disabled:opacity-30";
 
   return (
     <DrawerShell
@@ -364,175 +275,65 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
       </div>
 
       <SectionHeading>{t("project.people.location")}</SectionHeading>
-      <p className="text-xs font-medium text-fg-tertiary">{t("project.people.originPlace")}</p>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div className="flex gap-1.5">
-          <div className="flex-1">
-            <UISelect
-              value={form.origin_country}
-              onValueChange={(v) => {
-                set("origin_country", v);
-                set("origin_state", "");
-                set("origin_place_id", "");
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <span className="mb-1 block text-sm font-medium text-fg-secondary">
+            {t("project.people.originPlace")}
+          </span>
+          {form.origin_place_id ? (
+            <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
+              <span className="flex-1 truncate text-sm text-fg">
+                {resolvedOriginLabel || form.origin_place_id}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  set("origin_place_id", "");
+                  setOriginPlaceLabel("");
+                }}
+                className="shrink-0 cursor-pointer text-fg-tertiary hover:text-fg"
+              >
+                ×
+              </button>
+            </div>
+          ) : (
+            <PlaceCombobox
+              onSelect={(place, state, country) => {
+                set("origin_place_id", place.id);
+                setOriginPlaceLabel(`${place.name}, ${state.name}, ${country.name}`);
               }}
-              options={countryOptions}
-              placeholder={t("project.people.selectCountry")}
-              fullWidth
             />
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setDialogError("");
-              setNewCountryName("");
-              setNewCountryCode("");
-              setAddCountryOpen(true);
-            }}
-            className={addBtnClass}
-            title={t("project.people.addCountry")}
-          >
-            <PlusIcon size={16} />
-          </button>
+          )}
         </div>
-        <div className="flex gap-1.5">
-          <div className="flex-1">
-            <UISelect
-              value={form.origin_state}
-              onValueChange={(v) => {
-                set("origin_state", v);
-                set("origin_place_id", "");
-              }}
-              options={originStateOptions}
-              placeholder={t("project.people.selectState")}
-              disabled={!form.origin_country}
-              fullWidth
-            />
-          </div>
-          <button
-            type="button"
-            disabled={!form.origin_country}
-            onClick={() => {
-              setDialogError("");
-              setNewStateName("");
-              setNewStateConflictZone("");
-              setAddStateOpen({ open: true, forOrigin: true });
-            }}
-            className={addBtnClass}
-            title={t("project.people.addState")}
-          >
-            <PlusIcon size={16} />
-          </button>
-        </div>
-        <div className="flex gap-1.5">
-          <div className="flex-1">
-            <UISelect
-              value={form.origin_place_id}
-              onValueChange={(v) => set("origin_place_id", v)}
-              options={originPlaceOptions}
-              placeholder={t("project.people.selectPlace")}
-              disabled={!form.origin_state}
-              fullWidth
-            />
-          </div>
-          <button
-            type="button"
-            disabled={!form.origin_state}
-            onClick={() => {
-              setDialogError("");
-              setNewPlaceName("");
-              setAddPlaceOpen({ open: true, forOrigin: true });
-            }}
-            className={addBtnClass}
-            title={t("project.people.addPlace")}
-          >
-            <PlusIcon size={16} />
-          </button>
-        </div>
-      </div>
 
-      <p className="text-xs font-medium text-fg-tertiary">{t("project.people.currentPlace")}</p>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div className="flex gap-1.5">
-          <div className="flex-1">
-            <UISelect
-              value={form.current_country}
-              onValueChange={(v) => {
-                set("current_country", v);
-                set("current_state", "");
-                set("current_place_id", "");
+        <div>
+          <span className="mb-1 block text-sm font-medium text-fg-secondary">
+            {t("project.people.currentPlace")}
+          </span>
+          {form.current_place_id ? (
+            <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
+              <span className="flex-1 truncate text-sm text-fg">
+                {resolvedCurrentLabel || form.current_place_id}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  set("current_place_id", "");
+                  setCurrentPlaceLabel("");
+                }}
+                className="shrink-0 cursor-pointer text-fg-tertiary hover:text-fg"
+              >
+                ×
+              </button>
+            </div>
+          ) : (
+            <PlaceCombobox
+              onSelect={(place, state, country) => {
+                set("current_place_id", place.id);
+                setCurrentPlaceLabel(`${place.name}, ${state.name}, ${country.name}`);
               }}
-              options={countryOptions}
-              placeholder={t("project.people.selectCountry")}
-              fullWidth
             />
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setDialogError("");
-              setNewCountryName("");
-              setNewCountryCode("");
-              setAddCountryOpen(true);
-            }}
-            className={addBtnClass}
-            title={t("project.people.addCountry")}
-          >
-            <PlusIcon size={16} />
-          </button>
-        </div>
-        <div className="flex gap-1.5">
-          <div className="flex-1">
-            <UISelect
-              value={form.current_state}
-              onValueChange={(v) => {
-                set("current_state", v);
-                set("current_place_id", "");
-              }}
-              options={currentStateOptions}
-              placeholder={t("project.people.selectState")}
-              disabled={!form.current_country}
-              fullWidth
-            />
-          </div>
-          <button
-            type="button"
-            disabled={!form.current_country}
-            onClick={() => {
-              setDialogError("");
-              setNewStateName("");
-              setNewStateConflictZone("");
-              setAddStateOpen({ open: true, forOrigin: false });
-            }}
-            className={addBtnClass}
-            title={t("project.people.addState")}
-          >
-            <PlusIcon size={16} />
-          </button>
-        </div>
-        <div className="flex gap-1.5">
-          <div className="flex-1">
-            <UISelect
-              value={form.current_place_id}
-              onValueChange={(v) => set("current_place_id", v)}
-              options={currentPlaceOptions}
-              placeholder={t("project.people.selectPlace")}
-              disabled={!form.current_state}
-              fullWidth
-            />
-          </div>
-          <button
-            type="button"
-            disabled={!form.current_state}
-            onClick={() => {
-              setDialogError("");
-              setNewPlaceName("");
-              setAddPlaceOpen({ open: true, forOrigin: false });
-            }}
-            className={addBtnClass}
-            title={t("project.people.addPlace")}
-          >
-            <PlusIcon size={16} />
-          </button>
+          )}
         </div>
       </div>
 
@@ -587,90 +388,6 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
           )}
         </div>
       </div>
-
-      <AddReferenceDialog
-        open={addCountryOpen}
-        onOpenChange={setAddCountryOpen}
-        title={t("project.people.addCountry")}
-        onSubmit={handleAddCountry}
-        isPending={createCountry.isPending}
-        error={dialogError}
-      >
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("admin.reference.countries.name")} *
-          </Field.Label>
-          <Field.Control
-            required
-            value={newCountryName}
-            onChange={(e) => setNewCountryName(e.target.value)}
-            className={inputClass}
-          />
-        </Field.Root>
-        <Field.Root className="mt-3">
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("admin.reference.countries.code")}
-          </Field.Label>
-          <Field.Control
-            value={newCountryCode}
-            onChange={(e) => setNewCountryCode(e.target.value)}
-            className={inputClass}
-            maxLength={3}
-          />
-        </Field.Root>
-      </AddReferenceDialog>
-
-      <AddReferenceDialog
-        open={addStateOpen.open}
-        onOpenChange={(v) => setAddStateOpen((s) => ({ ...s, open: v }))}
-        title={t("project.people.addState")}
-        onSubmit={handleAddState}
-        isPending={createState.isPending}
-        error={dialogError}
-      >
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("admin.reference.states.name")} *
-          </Field.Label>
-          <Field.Control
-            required
-            value={newStateName}
-            onChange={(e) => setNewStateName(e.target.value)}
-            className={inputClass}
-          />
-        </Field.Root>
-        <Field.Root className="mt-3">
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("admin.reference.states.conflictZone")}
-          </Field.Label>
-          <Field.Control
-            value={newStateConflictZone}
-            onChange={(e) => setNewStateConflictZone(e.target.value)}
-            className={inputClass}
-          />
-        </Field.Root>
-      </AddReferenceDialog>
-
-      <AddReferenceDialog
-        open={addPlaceOpen.open}
-        onOpenChange={(v) => setAddPlaceOpen((s) => ({ ...s, open: v }))}
-        title={t("project.people.addPlace")}
-        onSubmit={handleAddPlace}
-        isPending={createPlace.isPending}
-        error={dialogError}
-      >
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("admin.reference.places.name")} *
-          </Field.Label>
-          <Field.Control
-            required
-            value={newPlaceName}
-            onChange={(e) => setNewPlaceName(e.target.value)}
-            className={inputClass}
-          />
-        </Field.Root>
-      </AddReferenceDialog>
     </DrawerShell>
   );
 }

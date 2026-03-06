@@ -45,18 +45,6 @@ function HouseholdsListPage() {
 
   const columns: Column<Household>[] = [
     {
-      key: "reference_number",
-      header: t("project.households.referenceNumber"),
-      render: (h) => (
-        <div className="flex items-center gap-3">
-          <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-bg-tertiary text-fg-tertiary">
-            <HouseSimpleIcon size={16} />
-          </span>
-          <span className="font-medium text-fg">{h.reference_number || "-"}</span>
-        </div>
-      ),
-    },
-    {
       key: "head_person_id",
       header: t("project.households.headPerson"),
       render: (h) =>
@@ -72,6 +60,18 @@ function HouseholdsListPage() {
       key: "members",
       header: t("project.households.members"),
       render: (h) => <span className="text-fg-secondary">{h.member_count}</span>,
+    },
+    {
+      key: "reference_number",
+      header: t("project.households.referenceNumber"),
+      render: (h) => (
+        <div className="flex items-center gap-3">
+          <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-bg-tertiary text-fg-tertiary">
+            <HouseSimpleIcon size={16} />
+          </span>
+          <span className="font-medium text-fg">{h.reference_number || "-"}</span>
+        </div>
+      ),
     },
     {
       key: "created_at",

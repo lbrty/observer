@@ -36,12 +36,14 @@ import { Route as AppProjectsProjectIdHouseholdsIndexRouteImport } from './route
 import { Route as AppProjectsProjectIdDocumentsIndexRouteImport } from './routes/_app/projects/$projectId/documents/index'
 import { Route as AppAdminReferenceCountriesIndexRouteImport } from './routes/_app/admin/reference/countries/index'
 import { Route as AppAdminProjectsProjectIdIndexRouteImport } from './routes/_app/admin/projects/$projectId/index'
+import { Route as AppProjectsProjectIdSupportRecordsTypeRouteImport } from './routes/_app/projects/$projectId/support-records/$type'
 import { Route as AppProjectsProjectIdPeoplePersonIdRouteImport } from './routes/_app/projects/$projectId/people/$personId'
 import { Route as AppAdminReferenceCountriesCountryIdRouteImport } from './routes/_app/admin/reference/countries/$countryId'
 import { Route as AppAdminProjectsProjectIdPermissionsRouteImport } from './routes/_app/admin/projects/$projectId/permissions'
 import { Route as AppProjectsProjectIdPeoplePersonIdIndexRouteImport } from './routes/_app/projects/$projectId/people/$personId/index'
 import { Route as AppAdminReferenceCountriesCountryIdIndexRouteImport } from './routes/_app/admin/reference/countries/$countryId/index'
 import { Route as AppProjectsProjectIdPeoplePersonIdSupportRecordsRouteImport } from './routes/_app/projects/$projectId/people/$personId/support-records'
+import { Route as AppProjectsProjectIdPeoplePersonIdStatsRouteImport } from './routes/_app/projects/$projectId/people/$personId/stats'
 import { Route as AppProjectsProjectIdPeoplePersonIdNotesRouteImport } from './routes/_app/projects/$projectId/people/$personId/notes'
 import { Route as AppProjectsProjectIdPeoplePersonIdMigrationRecordsRouteImport } from './routes/_app/projects/$projectId/people/$personId/migration-records'
 import { Route as AppProjectsProjectIdPeoplePersonIdDocumentsRouteImport } from './routes/_app/projects/$projectId/people/$personId/documents'
@@ -194,6 +196,12 @@ const AppAdminProjectsProjectIdIndexRoute =
     path: '/',
     getParentRoute: () => AppAdminProjectsProjectIdRoute,
   } as any)
+const AppProjectsProjectIdSupportRecordsTypeRoute =
+  AppProjectsProjectIdSupportRecordsTypeRouteImport.update({
+    id: '/support-records/$type',
+    path: '/support-records/$type',
+    getParentRoute: () => AppProjectsProjectIdRoute,
+  } as any)
 const AppProjectsProjectIdPeoplePersonIdRoute =
   AppProjectsProjectIdPeoplePersonIdRouteImport.update({
     id: '/people/$personId',
@@ -228,6 +236,12 @@ const AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute =
   AppProjectsProjectIdPeoplePersonIdSupportRecordsRouteImport.update({
     id: '/support-records',
     path: '/support-records',
+    getParentRoute: () => AppProjectsProjectIdPeoplePersonIdRoute,
+  } as any)
+const AppProjectsProjectIdPeoplePersonIdStatsRoute =
+  AppProjectsProjectIdPeoplePersonIdStatsRouteImport.update({
+    id: '/stats',
+    path: '/stats',
     getParentRoute: () => AppProjectsProjectIdPeoplePersonIdRoute,
   } as any)
 const AppProjectsProjectIdPeoplePersonIdNotesRoute =
@@ -274,6 +288,7 @@ export interface FileRoutesByFullPath {
   '/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
   '/admin/reference/countries/$countryId': typeof AppAdminReferenceCountriesCountryIdRouteWithChildren
   '/projects/$projectId/people/$personId': typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
+  '/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
   '/admin/projects/$projectId/': typeof AppAdminProjectsProjectIdIndexRoute
   '/admin/reference/countries/': typeof AppAdminReferenceCountriesIndexRoute
   '/projects/$projectId/documents/': typeof AppProjectsProjectIdDocumentsIndexRoute
@@ -287,6 +302,7 @@ export interface FileRoutesByFullPath {
   '/projects/$projectId/people/$personId/documents': typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute
   '/projects/$projectId/people/$personId/migration-records': typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute
   '/projects/$projectId/people/$personId/notes': typeof AppProjectsProjectIdPeoplePersonIdNotesRoute
+  '/projects/$projectId/people/$personId/stats': typeof AppProjectsProjectIdPeoplePersonIdStatsRoute
   '/projects/$projectId/people/$personId/support-records': typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute
   '/admin/reference/countries/$countryId/': typeof AppAdminReferenceCountriesCountryIdIndexRoute
   '/projects/$projectId/people/$personId/': typeof AppProjectsProjectIdPeoplePersonIdIndexRoute
@@ -306,6 +322,7 @@ export interface FileRoutesByTo {
   '/admin/reference': typeof AppAdminReferenceIndexRoute
   '/admin/users': typeof AppAdminUsersIndexRoute
   '/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
+  '/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
   '/admin/projects/$projectId': typeof AppAdminProjectsProjectIdIndexRoute
   '/admin/reference/countries': typeof AppAdminReferenceCountriesIndexRoute
   '/projects/$projectId/documents': typeof AppProjectsProjectIdDocumentsIndexRoute
@@ -319,6 +336,7 @@ export interface FileRoutesByTo {
   '/projects/$projectId/people/$personId/documents': typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute
   '/projects/$projectId/people/$personId/migration-records': typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute
   '/projects/$projectId/people/$personId/notes': typeof AppProjectsProjectIdPeoplePersonIdNotesRoute
+  '/projects/$projectId/people/$personId/stats': typeof AppProjectsProjectIdPeoplePersonIdStatsRoute
   '/projects/$projectId/people/$personId/support-records': typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute
   '/admin/reference/countries/$countryId': typeof AppAdminReferenceCountriesCountryIdIndexRoute
   '/projects/$projectId/people/$personId': typeof AppProjectsProjectIdPeoplePersonIdIndexRoute
@@ -346,6 +364,7 @@ export interface FileRoutesById {
   '/_app/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
   '/_app/admin/reference/countries/$countryId': typeof AppAdminReferenceCountriesCountryIdRouteWithChildren
   '/_app/projects/$projectId/people/$personId': typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
+  '/_app/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
   '/_app/admin/projects/$projectId/': typeof AppAdminProjectsProjectIdIndexRoute
   '/_app/admin/reference/countries/': typeof AppAdminReferenceCountriesIndexRoute
   '/_app/projects/$projectId/documents/': typeof AppProjectsProjectIdDocumentsIndexRoute
@@ -359,6 +378,7 @@ export interface FileRoutesById {
   '/_app/projects/$projectId/people/$personId/documents': typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute
   '/_app/projects/$projectId/people/$personId/migration-records': typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute
   '/_app/projects/$projectId/people/$personId/notes': typeof AppProjectsProjectIdPeoplePersonIdNotesRoute
+  '/_app/projects/$projectId/people/$personId/stats': typeof AppProjectsProjectIdPeoplePersonIdStatsRoute
   '/_app/projects/$projectId/people/$personId/support-records': typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute
   '/_app/admin/reference/countries/$countryId/': typeof AppAdminReferenceCountriesCountryIdIndexRoute
   '/_app/projects/$projectId/people/$personId/': typeof AppProjectsProjectIdPeoplePersonIdIndexRoute
@@ -385,6 +405,7 @@ export interface FileRouteTypes {
     | '/admin/projects/$projectId/permissions'
     | '/admin/reference/countries/$countryId'
     | '/projects/$projectId/people/$personId'
+    | '/projects/$projectId/support-records/$type'
     | '/admin/projects/$projectId/'
     | '/admin/reference/countries/'
     | '/projects/$projectId/documents/'
@@ -398,6 +419,7 @@ export interface FileRouteTypes {
     | '/projects/$projectId/people/$personId/documents'
     | '/projects/$projectId/people/$personId/migration-records'
     | '/projects/$projectId/people/$personId/notes'
+    | '/projects/$projectId/people/$personId/stats'
     | '/projects/$projectId/people/$personId/support-records'
     | '/admin/reference/countries/$countryId/'
     | '/projects/$projectId/people/$personId/'
@@ -417,6 +439,7 @@ export interface FileRouteTypes {
     | '/admin/reference'
     | '/admin/users'
     | '/admin/projects/$projectId/permissions'
+    | '/projects/$projectId/support-records/$type'
     | '/admin/projects/$projectId'
     | '/admin/reference/countries'
     | '/projects/$projectId/documents'
@@ -430,6 +453,7 @@ export interface FileRouteTypes {
     | '/projects/$projectId/people/$personId/documents'
     | '/projects/$projectId/people/$personId/migration-records'
     | '/projects/$projectId/people/$personId/notes'
+    | '/projects/$projectId/people/$personId/stats'
     | '/projects/$projectId/people/$personId/support-records'
     | '/admin/reference/countries/$countryId'
     | '/projects/$projectId/people/$personId'
@@ -456,6 +480,7 @@ export interface FileRouteTypes {
     | '/_app/admin/projects/$projectId/permissions'
     | '/_app/admin/reference/countries/$countryId'
     | '/_app/projects/$projectId/people/$personId'
+    | '/_app/projects/$projectId/support-records/$type'
     | '/_app/admin/projects/$projectId/'
     | '/_app/admin/reference/countries/'
     | '/_app/projects/$projectId/documents/'
@@ -469,6 +494,7 @@ export interface FileRouteTypes {
     | '/_app/projects/$projectId/people/$personId/documents'
     | '/_app/projects/$projectId/people/$personId/migration-records'
     | '/_app/projects/$projectId/people/$personId/notes'
+    | '/_app/projects/$projectId/people/$personId/stats'
     | '/_app/projects/$projectId/people/$personId/support-records'
     | '/_app/admin/reference/countries/$countryId/'
     | '/_app/projects/$projectId/people/$personId/'
@@ -671,6 +697,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminProjectsProjectIdIndexRouteImport
       parentRoute: typeof AppAdminProjectsProjectIdRoute
     }
+    '/_app/projects/$projectId/support-records/$type': {
+      id: '/_app/projects/$projectId/support-records/$type'
+      path: '/support-records/$type'
+      fullPath: '/projects/$projectId/support-records/$type'
+      preLoaderRoute: typeof AppProjectsProjectIdSupportRecordsTypeRouteImport
+      parentRoute: typeof AppProjectsProjectIdRoute
+    }
     '/_app/projects/$projectId/people/$personId': {
       id: '/_app/projects/$projectId/people/$personId'
       path: '/people/$personId'
@@ -711,6 +744,13 @@ declare module '@tanstack/react-router' {
       path: '/support-records'
       fullPath: '/projects/$projectId/people/$personId/support-records'
       preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRouteImport
+      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute
+    }
+    '/_app/projects/$projectId/people/$personId/stats': {
+      id: '/_app/projects/$projectId/people/$personId/stats'
+      path: '/stats'
+      fullPath: '/projects/$projectId/people/$personId/stats'
+      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdStatsRouteImport
       parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute
     }
     '/_app/projects/$projectId/people/$personId/notes': {
@@ -828,6 +868,7 @@ interface AppProjectsProjectIdPeoplePersonIdRouteChildren {
   AppProjectsProjectIdPeoplePersonIdDocumentsRoute: typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute
   AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute: typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute
   AppProjectsProjectIdPeoplePersonIdNotesRoute: typeof AppProjectsProjectIdPeoplePersonIdNotesRoute
+  AppProjectsProjectIdPeoplePersonIdStatsRoute: typeof AppProjectsProjectIdPeoplePersonIdStatsRoute
   AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute: typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute
   AppProjectsProjectIdPeoplePersonIdIndexRoute: typeof AppProjectsProjectIdPeoplePersonIdIndexRoute
 }
@@ -840,6 +881,8 @@ const AppProjectsProjectIdPeoplePersonIdRouteChildren: AppProjectsProjectIdPeopl
       AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute,
     AppProjectsProjectIdPeoplePersonIdNotesRoute:
       AppProjectsProjectIdPeoplePersonIdNotesRoute,
+    AppProjectsProjectIdPeoplePersonIdStatsRoute:
+      AppProjectsProjectIdPeoplePersonIdStatsRoute,
     AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute:
       AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute,
     AppProjectsProjectIdPeoplePersonIdIndexRoute:
@@ -853,6 +896,7 @@ const AppProjectsProjectIdPeoplePersonIdRouteWithChildren =
 
 interface AppProjectsProjectIdRouteChildren {
   AppProjectsProjectIdPeoplePersonIdRoute: typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
+  AppProjectsProjectIdSupportRecordsTypeRoute: typeof AppProjectsProjectIdSupportRecordsTypeRoute
   AppProjectsProjectIdDocumentsIndexRoute: typeof AppProjectsProjectIdDocumentsIndexRoute
   AppProjectsProjectIdHouseholdsIndexRoute: typeof AppProjectsProjectIdHouseholdsIndexRoute
   AppProjectsProjectIdMyStatsIndexRoute: typeof AppProjectsProjectIdMyStatsIndexRoute
@@ -866,6 +910,8 @@ interface AppProjectsProjectIdRouteChildren {
 const AppProjectsProjectIdRouteChildren: AppProjectsProjectIdRouteChildren = {
   AppProjectsProjectIdPeoplePersonIdRoute:
     AppProjectsProjectIdPeoplePersonIdRouteWithChildren,
+  AppProjectsProjectIdSupportRecordsTypeRoute:
+    AppProjectsProjectIdSupportRecordsTypeRoute,
   AppProjectsProjectIdDocumentsIndexRoute:
     AppProjectsProjectIdDocumentsIndexRoute,
   AppProjectsProjectIdHouseholdsIndexRoute:

@@ -1,6 +1,7 @@
 import { type FormEvent, useEffect, useState } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { ErrorBanner } from "@/components/alert-banner";
@@ -250,8 +251,15 @@ export function HouseholdDrawer({
                       key={m.person_id}
                       className="border-b border-border-secondary last:border-b-0"
                     >
-                      <td className="px-3 py-2 text-sm text-fg">
-                        <PersonName projectId={projectId} personId={m.person_id} />
+                      <td className="px-3 py-2 text-sm">
+                        <Link
+                          to="/projects/$projectId/people/$personId"
+                          params={{ projectId, personId: m.person_id }}
+                          className="text-fg underline-offset-2 hover:underline"
+                          onClick={() => onOpenChange(false)}
+                        >
+                          <PersonName projectId={projectId} personId={m.person_id} />
+                        </Link>
                       </td>
                       <td className="px-3 py-2 text-fg-secondary">
                         {t(

@@ -36,6 +36,10 @@ function PersonDetailLayout() {
       to: "/projects/$projectId/people/$personId/migration-records" as const,
       label: t("project.people.migrationRecordsTab"),
     },
+    {
+      to: "/projects/$projectId/people/$personId/stats" as const,
+      label: t("project.people.statsTab"),
+    },
     ...(project?.can_view_documents !== false
       ? [
           {

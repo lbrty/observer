@@ -174,6 +174,20 @@ function TagsPage() {
               style={{ backgroundColor: hex }}
             />
             <span className="font-mono text-xs text-fg-tertiary">{hex}</span>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                const newColor = randomHex();
+                updateTag.mutate(
+                  { id: tag.id, data: { color: newColor } },
+                  { onSuccess: () => toast.success(t("project.tags.saved")) },
+                );
+              }}
+              className="ml-1 inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-fg-tertiary transition-colors hover:bg-bg-tertiary hover:text-fg"
+            >
+              <ArrowsClockwiseIcon size={14} />
+            </button>
           </div>
         );
       },

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -17,17 +17,27 @@ export const Route = createFileRoute(
   "/_app/projects/$projectId/people/$personId/migration-records",
 )({
   component: PersonMigrationRecords,
+  validateSearch: (search: Record<string, unknown>): { view?: string } => ({
+    view: (search.view as string) || undefined,
+  }),
 });
 
 function PersonMigrationRecords() {
   const { t } = useTranslation();
   const { projectId, personId } = Route.useParams();
+  const navigate = useNavigate();
+  const { view: viewParam } = Route.useSearch();
+  const view = viewParam === "table" ? "table" : "timeline";
+
   const { data, isLoading } = useMigrationRecords(projectId, personId);
   const { data: placesData } = usePlaces();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [view, setView] = useState<"timeline" | "table">("timeline");
+
+  function setView(v: string) {
+    navigate({ from: Route.fullPath, search: { view: v === "timeline" ? undefined : v }, replace: true });
+  }
 
   const records = data?.records ?? [];
   const places = placesData?.places ?? [];
