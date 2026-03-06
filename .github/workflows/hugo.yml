@@ -33,6 +33,10 @@ jobs:
           hugo-version: "0.157.0"
           extended: true
 
+      - name: Install Dart Sass
+        run: sudo snap install dart-sass
+        working-directory: .
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
 
