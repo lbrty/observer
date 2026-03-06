@@ -17,8 +17,8 @@ defaultContentLanguageInSubdir = false
   enable = true
 
 [outputs]
-  home = ["html", "rss", "sitemap", "searchIndex"]
-  section = ["html", "rss", "sitemap"]
+  home = ["html", "sitemap", "searchIndex"]
+  section = ["html", "sitemap"]
 
 [outputFormats.searchIndex]
   mediaType = "application/json"
