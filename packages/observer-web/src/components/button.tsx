@@ -1,3 +1,4 @@
+import { cva, type VariantProps } from "class-variance-authority";
 import {
   forwardRef,
   cloneElement,
@@ -7,35 +8,35 @@ import {
   type ReactNode,
 } from "react";
 
-type Variant = "primary" | "secondary" | "ghost" | "danger";
-type Size = "sm" | "md";
+const buttonVariants = cva(
+  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+  {
+    variants: {
+      variant: {
+        primary: "bg-accent text-accent-fg shadow-card hover:opacity-90",
+        secondary:
+          "border border-border-secondary text-fg-secondary shadow-card hover:bg-bg-tertiary",
+        ghost: "text-fg-secondary hover:bg-bg-tertiary hover:text-fg",
+        danger: "bg-rose text-white shadow-card hover:opacity-90",
+      },
+      size: {
+        sm: "h-8 px-3 text-xs",
+        md: "h-9 px-4",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+      size: "md",
+    },
+  },
+);
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: Variant;
-  size?: Size;
+interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
   loading?: boolean;
   icon?: ReactNode;
   asChild?: boolean;
-}
-
-const base =
-  "inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]";
-
-const variantStyles: Record<Variant, string> = {
-  primary: "bg-accent text-accent-fg shadow-card hover:opacity-90",
-  secondary:
-    "border border-border-secondary text-fg-secondary shadow-card hover:bg-bg-tertiary",
-  ghost: "text-fg-secondary hover:bg-bg-tertiary hover:text-fg",
-  danger: "bg-rose text-white shadow-card hover:opacity-90",
-};
-
-const sizeStyles: Record<Size, string> = {
-  sm: "h-8 px-3 text-xs",
-  md: "h-9 px-4",
-};
-
-function cx(...classes: (string | undefined | false)[]): string {
-  return classes.filter(Boolean).join(" ");
 }
 
 const Spinner = (
@@ -43,20 +44,10 @@ const Spinner = (
 );
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  {
-    variant = "primary",
-    size = "md",
-    loading = false,
-    icon,
-    asChild = false,
-    className,
-    disabled,
-    children,
-    ...rest
-  },
+  { variant, size, loading = false, icon, asChild = false, className, disabled, children, ...rest },
   ref,
 ) {
-  const classes = cx(base, variantStyles[variant], sizeStyles[size], className);
+  const classes = buttonVariants({ variant, size, className });
   const isDisabled = disabled || loading;
 
   const inner = (
@@ -68,30 +59,27 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
 
   if (asChild && isValidElement(children)) {
     return cloneElement(children as ReactElement<Record<string, unknown>>, {
-      className: cx(
-        base,
-        variantStyles[variant],
-        sizeStyles[size],
-        (children.props as { className?: string }).className,
-        className,
-      ),
+      className: buttonVariants({
+        variant,
+        size,
+        className: [
+          (children.props as { className?: string }).className,
+          className,
+        ]
+          .filter(Boolean)
+          .join(" "),
+      }),
       ref,
       ...rest,
     });
   }
 
   return (
-    <button
-      ref={ref}
-      type="button"
-      className={classes}
-      disabled={isDisabled}
-      {...rest}
-    >
+    <button ref={ref} type="button" className={classes} disabled={isDisabled} {...rest}>
       {inner}
     </button>
   );
 });
 
-export { Button };
+export { Button, buttonVariants };
 export type { ButtonProps };

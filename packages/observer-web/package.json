@@ -39,6 +39,7 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5",
     "babel-plugin-react-compiler": "latest",
+    "class-variance-authority": "^0.7.1",
     "tailwindcss": "^4",
     "typescript": "^5.7",
     "vite": "npm:rolldown-vite@latest"
