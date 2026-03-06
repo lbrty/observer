@@ -231,6 +231,7 @@ type ReportRepository interface {
 	CountByCategory(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 	CountByCurrentRegion(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 	CountBySphere(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
+	CountPeopleBySphere(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 	CountByOffice(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 	CountByAgeGroup(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 	CountByTag(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)

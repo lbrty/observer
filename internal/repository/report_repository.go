@@ -220,6 +220,20 @@ func (r *reportRepo) CountBySphere(ctx context.Context, f report.ReportFilter) (
 	return results, nil
 }
 
+func (r *reportRepo) CountPeopleBySphere(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
+	q := `SELECT COALESCE(sr.sphere::text, 'unspecified') AS label, COUNT(DISTINCT sr.person_id) AS count
+		FROM support_records sr WHERE sr.project_id = $1`
+	args := []any{f.ProjectID}
+	q, args, _ = applySupportFilters(q, f, "sr.provided_at", args, 2)
+	q += " GROUP BY sr.sphere ORDER BY count DESC"
+
+	var results []report.CountResult
+	if err := r.db.SelectContext(ctx, &results, q, args...); err != nil {
+		return nil, fmt.Errorf("count people by sphere: %w", err)
+	}
+	return results, nil
+}
+
 func (r *reportRepo) CountByOffice(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
 	q := `SELECT COALESCE(o.name, 'unassigned') AS label, COUNT(*) AS count
 		FROM support_records sr

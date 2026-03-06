@@ -2318,6 +2318,21 @@ func (mr *MockReportRepositoryMockRecorder) CountFamilyUnits(ctx, f any) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountFamilyUnits", reflect.TypeOf((*MockReportRepository)(nil).CountFamilyUnits), ctx, f)
 }
 
+// CountPeopleBySphere mocks base method.
+func (m *MockReportRepository) CountPeopleBySphere(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountPeopleBySphere", ctx, f)
+	ret0, _ := ret[0].([]report.CountResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountPeopleBySphere indicates an expected call of CountPeopleBySphere.
+func (mr *MockReportRepositoryMockRecorder) CountPeopleBySphere(ctx, f any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountPeopleBySphere", reflect.TypeOf((*MockReportRepository)(nil).CountPeopleBySphere), ctx, f)
+}
+
 // StatusFlowReport mocks base method.
 func (m *MockReportRepository) StatusFlowReport(ctx context.Context, f report.ReportFilter) ([]report.StatusFlow, error) {
 	m.ctrl.T.Helper()
