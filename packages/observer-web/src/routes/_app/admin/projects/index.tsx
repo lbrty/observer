@@ -9,6 +9,7 @@ import { Field } from "@base-ui/react/field";
 import { Tabs } from "@base-ui/react/tabs";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
+
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -23,6 +24,10 @@ import type { Project } from "@/types/project";
 
 export const Route = createFileRoute("/_app/admin/projects/")({
   component: ProjectsPage,
+  validateSearch: (search: Record<string, unknown>): { status?: string; page?: number } => ({
+    status: (search.status as string) || undefined,
+    page: Number(search.page) || undefined,
+  }),
 });
 
 const statusTabs = ["", "active", "archived", "closed"] as const;
@@ -30,10 +35,17 @@ const statusTabs = ["", "active", "archived", "closed"] as const;
 function ProjectsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { status = "", page = 1 } = Route.useSearch();
 
-  const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<string>("");
   const [createOpen, setCreateOpen] = useState(false);
+
+  function setStatus(value: string) {
+    navigate({ from: Route.fullPath, search: { status: value || undefined }, replace: true });
+  }
+
+  function setPage(value: number) {
+    navigate({ from: Route.fullPath, search: (prev) => ({ ...prev, page: value > 1 ? value : undefined }), replace: true });
+  }
 
   const params = {
     page,
@@ -134,7 +146,6 @@ function ProjectsPage() {
         value={status}
         onValueChange={(value) => {
           setStatus(value as string);
-          setPage(1);
         }}
         className="mb-4"
       >

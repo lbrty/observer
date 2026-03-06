@@ -1,6 +1,6 @@
 import { PawPrintIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { Tabs } from "@base-ui/react/tabs";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -16,6 +16,10 @@ import type { Pet } from "@/types/pet";
 
 export const Route = createFileRoute("/_app/projects/$projectId/pets/")({
   component: PetsListPage,
+  validateSearch: (search: Record<string, unknown>): { status?: string; page?: number } => ({
+    status: (search.status as string) || undefined,
+    page: Number(search.page) || undefined,
+  }),
 });
 
 const statusTabs = [
@@ -30,11 +34,19 @@ const statusTabs = [
 function PetsListPage() {
   const { t } = useTranslation();
   const { projectId } = Route.useParams();
+  const navigate = useNavigate();
+  const { status = "", page = 1 } = Route.useSearch();
 
-  const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<string>("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editPetId, setEditPetId] = useState<string | null>(null);
+
+  function setStatus(value: string) {
+    navigate({ from: Route.fullPath, search: { status: value || undefined }, replace: true });
+  }
+
+  function setPage(value: number) {
+    navigate({ from: Route.fullPath, search: (prev) => ({ ...prev, page: value > 1 ? value : undefined }), replace: true });
+  }
 
   const params = {
     page,
@@ -131,7 +143,6 @@ function PetsListPage() {
         value={status}
         onValueChange={(value) => {
           setStatus(value as string);
-          setPage(1);
         }}
         className="mb-4"
       >

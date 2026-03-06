@@ -16,6 +16,10 @@ import type { Person } from "@/types/person";
 
 export const Route = createFileRoute("/_app/projects/$projectId/people/")({
   component: PeopleListPage,
+  validateSearch: (search: Record<string, unknown>): { status?: string; page?: number } => ({
+    status: (search.status as string) || undefined,
+    page: Number(search.page) || undefined,
+  }),
 });
 
 const statusTabs = ["", "new", "active", "closed", "archived"] as const;
@@ -24,12 +28,19 @@ function PeopleListPage() {
   const { t } = useTranslation();
   const { projectId } = Route.useParams();
   const navigate = useNavigate();
+  const { status = "", page = 1 } = Route.useSearch();
 
-  const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<string>("");
   const [search, setSearch] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editPersonId, setEditPersonId] = useState<string | null>(null);
+
+  function setStatus(value: string) {
+    navigate({ from: Route.fullPath, search: { status: value || undefined }, replace: true });
+  }
+
+  function setPage(value: number) {
+    navigate({ from: Route.fullPath, search: (prev) => ({ ...prev, page: value > 1 ? value : undefined }), replace: true });
+  }
 
   const params = {
     page,
@@ -134,7 +145,6 @@ function PeopleListPage() {
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setPage(1);
             }}
             placeholder={t("project.people.search")}
             className="w-full rounded-lg border border-border-secondary bg-bg-secondary py-2 pr-3 pl-9 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
@@ -147,7 +157,6 @@ function PeopleListPage() {
         value={status}
         onValueChange={(value) => {
           setStatus(value as string);
-          setPage(1);
         }}
         className="mb-4"
       >

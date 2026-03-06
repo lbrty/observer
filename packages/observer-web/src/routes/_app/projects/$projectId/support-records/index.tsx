@@ -1,6 +1,6 @@
 import { HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { Tabs } from "@base-ui/react/tabs";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -16,6 +16,10 @@ import type { SupportRecord } from "@/types/support-record";
 
 export const Route = createFileRoute("/_app/projects/$projectId/support-records/")({
   component: SupportRecordsPage,
+  validateSearch: (search: Record<string, unknown>): { type?: string; page?: number } => ({
+    type: (search.type as string) || undefined,
+    page: Number(search.page) || undefined,
+  }),
 });
 
 const typeTabs = [
@@ -31,11 +35,19 @@ const typeTabs = [
 function SupportRecordsPage() {
   const { t } = useTranslation();
   const { projectId } = Route.useParams();
+  const navigate = useNavigate();
+  const { type: typeFilter = "", page = 1 } = Route.useSearch();
 
-  const [page, setPage] = useState(1);
-  const [typeFilter, setTypeFilter] = useState<string>("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editRecordId, setEditRecordId] = useState<string | null>(null);
+
+  function setTypeFilter(value: string) {
+    navigate({ from: Route.fullPath, search: { type: value || undefined }, replace: true });
+  }
+
+  function setPage(value: number) {
+    navigate({ from: Route.fullPath, search: (prev) => ({ ...prev, page: value > 1 ? value : undefined }), replace: true });
+  }
 
   const params = {
     page,
@@ -141,7 +153,6 @@ function SupportRecordsPage() {
         value={typeFilter}
         onValueChange={(value) => {
           setTypeFilter(value as string);
-          setPage(1);
         }}
         className="mb-4"
       >
