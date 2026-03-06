@@ -25,5 +25,27 @@ services:
       timeout: 5s
       retries: 5
 
+  observer:
+    build: .
+    ports:
+      - "9000:9000"
+    environment:
+      SERVER_HOST: "0.0.0.0"
+      SERVER_PORT: "9000"
+      DATABASE_DSN: "postgres://postgres:postgres@postgres:5432/observer?sslmode=disable"
+      REDIS_URL: "redis://redis:6379/0"
+      SPA_DIR: "/spa"
+      JWT_PRIVATE_KEY_PATH: "/keys/jwt_rsa"
+      JWT_PUBLIC_KEY_PATH: "/keys/jwt_rsa.pub"
+      CORS_ORIGINS: "http://localhost:9000"
+      COOKIE_SECURE: "false"
+    volumes:
+      - ./keys:/keys:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 volumes:
   postgres_data:

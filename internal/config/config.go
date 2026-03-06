@@ -27,6 +27,11 @@ type Config struct {
 	CORS      CORSConfig
 	Cookie    CookieConfig
 	RateLimit RateLimitConfig
+	SPA       SPAConfig
+}
+
+type SPAConfig struct {
+	Dir string
 }
 
 type RedisConfig struct {
@@ -129,6 +134,9 @@ func Load() (*Config, error) {
 		RateLimit: RateLimitConfig{
 			LoginRate:    getEnvInt("RATE_LIMIT_LOGIN", 10),
 			RegisterRate: getEnvInt("RATE_LIMIT_REGISTER", 5),
+		},
+		SPA: SPAConfig{
+			Dir: getEnv("SPA_DIR", ""),
 		},
 	}, nil
 }

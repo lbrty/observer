@@ -1,0 +1,7 @@
+.git
+.claude
+keys
+packages/observer-web/node_modules
+packages/observer-web/dist
+docs
+*.md

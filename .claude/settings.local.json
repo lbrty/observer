@@ -40,7 +40,8 @@
       "Bash(bun:*)",
       "Bash(just test:*)",
       "Bash(go vet:*)",
-      "Bash(hugo:*)"
+      "Bash(hugo:*)",
+      "Bash(bun pm:*)"
     ]
   }
 }

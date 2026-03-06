@@ -21,6 +21,7 @@ import (
 	"github.com/lbrty/observer/internal/health"
 	"github.com/lbrty/observer/internal/logger"
 	"github.com/lbrty/observer/internal/middleware"
+	"github.com/lbrty/observer/internal/spa"
 	"github.com/lbrty/observer/internal/ulid"
 )
 
@@ -268,6 +269,12 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			del.DELETE("/documents/:id", documentHandler.Delete)
 			del.DELETE("/pets/:id", petHandler.Delete)
 		}
+	}
+
+	// Serve embedded SPA in production
+	if cfg.SPA.Dir != "" {
+		slog.Info("serving SPA", slog.String("dir", cfg.SPA.Dir))
+		s.router.NoRoute(spa.Handler(cfg.SPA.Dir))
 	}
 }
 
