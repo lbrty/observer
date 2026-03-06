@@ -1,31 +1,35 @@
 package spa
 
 import (
+	"io/fs"
 	"net/http"
-	"os"
-	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 )
 
 // Handler returns a Gin handler that serves a single-page application
-// from the given directory. Known API prefixes are skipped. All other
-// requests either serve a matching static file or fall back to index.html.
-func Handler(dir string) gin.HandlerFunc {
-	fs := http.Dir(dir)
+// from the given filesystem. Requests matching a static file are served
+// directly; everything else falls back to index.html for client-side routing.
+func Handler(fsys fs.FS) gin.HandlerFunc {
+	fileServer := http.FileServer(http.FS(fsys))
 
 	return func(c *gin.Context) {
 		p := c.Request.URL.Path
+		if p == "/" {
+			p = "index.html"
+		}
 
-		// Try to serve the exact file.
-		if _, err := os.Stat(filepath.Join(dir, filepath.Clean(p))); err == nil {
-			http.FileServer(fs).ServeHTTP(c.Writer, c.Request)
+		// Try to open the exact file.
+		if f, err := fsys.Open(p); err == nil {
+			f.Close()
+			fileServer.ServeHTTP(c.Writer, c.Request)
 			c.Abort()
 			return
 		}
 
 		// Fallback to index.html for client-side routing.
-		c.File(filepath.Join(dir, "index.html"))
+		c.Request.URL.Path = "/"
+		fileServer.ServeHTTP(c.Writer, c.Request)
 		c.Abort()
 	}
 }

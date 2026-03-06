@@ -271,10 +271,15 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		}
 	}
 
-	// Serve embedded SPA in production
-	if cfg.SPA.Dir != "" {
-		slog.Info("serving SPA", slog.String("dir", cfg.SPA.Dir))
-		s.router.NoRoute(spa.Handler(cfg.SPA.Dir))
+	// Serve embedded SPA in production builds
+	if spa.Enabled() {
+		spaFS, err := spa.FS()
+		if err != nil {
+			slog.Error("failed to load embedded SPA", slog.Any("err", err))
+		} else {
+			slog.Info("serving embedded SPA")
+			s.router.NoRoute(spa.Handler(spaFS))
+		}
 	}
 }
 
