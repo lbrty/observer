@@ -1,0 +1,3864 @@
+basePath: /
+definitions:
+  github_com_lbrty_observer_internal_usecase_admin.AssignPermissionInput:
+    properties:
+      can_view_contact:
+        type: boolean
+      can_view_documents:
+        type: boolean
+      can_view_personal:
+        type: boolean
+      role:
+        type: string
+      user_id:
+        type: string
+    required:
+    - role
+    - user_id
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.CategoryDTO:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.CountryDTO:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.CreateCategoryInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.CreateCountryInput:
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.CreateOfficeInput:
+    properties:
+      name:
+        type: string
+      place_id:
+        type: string
+    required:
+    - name
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.CreatePlaceInput:
+    properties:
+      lat:
+        type: number
+      lon:
+        type: number
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.CreateProjectInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.CreateStateInput:
+    properties:
+      code:
+        type: string
+      conflict_zone:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.CreateUserInput:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      is_active:
+        type: boolean
+      is_verified:
+        type: boolean
+      last_name:
+        type: string
+      office_id:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
+    required:
+    - email
+    - first_name
+    - password
+    - role
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.ListProjectsOutput:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      projects:
+        items:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.ProjectDTO'
+        type: array
+      total:
+        type: integer
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.ListUsersOutput:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      total:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UserDTO'
+        type: array
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.OfficeDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      place_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.PermissionDTO:
+    properties:
+      can_view_contact:
+        type: boolean
+      can_view_documents:
+        type: boolean
+      can_view_personal:
+        type: boolean
+      created_at:
+        type: string
+      id:
+        type: string
+      project_id:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.PermissionMemberDTO:
+    properties:
+      can_view_contact:
+        type: boolean
+      can_view_documents:
+        type: boolean
+      can_view_personal:
+        type: boolean
+      created_at:
+        type: string
+      id:
+        type: string
+      project_id:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+      user_email:
+        type: string
+      user_first_name:
+        type: string
+      user_id:
+        type: string
+      user_last_name:
+        type: string
+      user_role:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.PlaceDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      lat:
+        type: number
+      lon:
+        type: number
+      name:
+        type: string
+      state_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.ProjectDTO:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      owner_id:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.StateDTO:
+    properties:
+      code:
+        type: string
+      conflict_zone:
+        type: string
+      country_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.UpdateCategoryInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.UpdateCountryInput:
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.UpdateOfficeInput:
+    properties:
+      name:
+        type: string
+      place_id:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.UpdatePermissionInput:
+    properties:
+      can_view_contact:
+        type: boolean
+      can_view_documents:
+        type: boolean
+      can_view_personal:
+        type: boolean
+      role:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.UpdatePlaceInput:
+    properties:
+      lat:
+        type: number
+      lon:
+        type: number
+      name:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.UpdateProjectInput:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.UpdateStateInput:
+    properties:
+      code:
+        type: string
+      conflict_zone:
+        type: string
+      name:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.UpdateUserInput:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      is_active:
+        type: boolean
+      is_verified:
+        type: boolean
+      last_name:
+        type: string
+      office_id:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_admin.UserDTO:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      is_verified:
+        type: boolean
+      last_name:
+        type: string
+      office_id:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_auth.LoginInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  github_com_lbrty_observer_internal_usecase_auth.LoginOutput:
+    properties:
+      mfa_token:
+        type: string
+      requires_mfa:
+        type: boolean
+      tokens:
+        $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_auth.TokenPair'
+      user:
+        $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_auth.UserDTO'
+    type: object
+  github_com_lbrty_observer_internal_usecase_auth.LogoutInput:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  github_com_lbrty_observer_internal_usecase_auth.RefreshTokenInput:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  github_com_lbrty_observer_internal_usecase_auth.RegisterInput:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      role:
+        type: string
+    required:
+    - email
+    - password
+    - role
+    type: object
+  github_com_lbrty_observer_internal_usecase_auth.RegisterOutput:
+    properties:
+      message:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_auth.TokenPair:
+    properties:
+      access_token:
+        type: string
+      expires_at:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_auth.UserDTO:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      is_verified:
+        type: boolean
+      last_name:
+        type: string
+      phone:
+        type: string
+      role:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.AddMemberInput:
+    properties:
+      person_id:
+        type: string
+      relationship:
+        type: string
+    required:
+    - person_id
+    - relationship
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.CreateDocumentInput:
+    properties:
+      encryption_key_ref:
+        type: string
+      mime_type:
+        type: string
+      name:
+        type: string
+      path:
+        type: string
+      person_id:
+        type: string
+      size:
+        type: integer
+    required:
+    - mime_type
+    - name
+    - path
+    - person_id
+    - size
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.CreateHouseholdInput:
+    properties:
+      head_person_id:
+        type: string
+      reference_number:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.CreateMigrationRecordInput:
+    properties:
+      destination_place_id:
+        type: string
+      from_place_id:
+        type: string
+      housing_at_destination:
+        type: string
+      migration_date:
+        type: string
+      movement_reason:
+        type: string
+      notes:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.CreateNoteInput:
+    properties:
+      body:
+        type: string
+    required:
+    - body
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.CreatePersonInput:
+    properties:
+      age_group:
+        type: string
+      birth_date:
+        type: string
+      case_status:
+        type: string
+      consent_date:
+        type: string
+      consent_given:
+        type: boolean
+      consultant_id:
+        type: string
+      current_place_id:
+        type: string
+      email:
+        type: string
+      external_id:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      office_id:
+        type: string
+      origin_place_id:
+        type: string
+      patronymic:
+        type: string
+      phone_numbers:
+        items:
+          type: string
+        type: array
+      primary_phone:
+        type: string
+      registered_at:
+        type: string
+      sex:
+        type: string
+    required:
+    - first_name
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.CreatePetInput:
+    properties:
+      name:
+        type: string
+      notes:
+        type: string
+      owner_id:
+        type: string
+      registration_id:
+        type: string
+      status:
+        type: string
+    required:
+    - name
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.CreateSupportRecordInput:
+    properties:
+      consultant_id:
+        type: string
+      notes:
+        type: string
+      office_id:
+        type: string
+      person_id:
+        type: string
+      provided_at:
+        type: string
+      referral_status:
+        type: string
+      referred_to_office:
+        type: string
+      sphere:
+        type: string
+      type:
+        type: string
+    required:
+    - person_id
+    - type
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.CreateTagInput:
+    properties:
+      color:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.DocumentDTO:
+    properties:
+      created_at:
+        type: string
+      encryption_key_ref:
+        type: string
+      id:
+        type: string
+      mime_type:
+        type: string
+      name:
+        type: string
+      path:
+        type: string
+      person_id:
+        type: string
+      project_id:
+        type: string
+      size:
+        type: integer
+      updated_at:
+        type: string
+      uploaded_by:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.HouseholdDTO:
+    properties:
+      created_at:
+        type: string
+      head_person_id:
+        type: string
+      id:
+        type: string
+      member_count:
+        type: integer
+      members:
+        items:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.HouseholdMemberDTO'
+        type: array
+      project_id:
+        type: string
+      reference_number:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.HouseholdMemberDTO:
+    properties:
+      person_id:
+        type: string
+      relationship:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.ListHouseholdsOutput:
+    properties:
+      households:
+        items:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.HouseholdDTO'
+        type: array
+      page:
+        type: integer
+      per_page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.ListPeopleOutput:
+    properties:
+      page:
+        type: integer
+      people:
+        items:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.PersonDTO'
+        type: array
+      per_page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.ListPetsOutput:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      pets:
+        items:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.PetDTO'
+        type: array
+      total:
+        type: integer
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.ListSupportRecordsOutput:
+    properties:
+      page:
+        type: integer
+      per_page:
+        type: integer
+      records:
+        items:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.SupportRecordDTO'
+        type: array
+      total:
+        type: integer
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.MigrationRecordDTO:
+    properties:
+      created_at:
+        type: string
+      destination_place_id:
+        type: string
+      from_place_id:
+        type: string
+      housing_at_destination:
+        type: string
+      id:
+        type: string
+      migration_date:
+        type: string
+      movement_reason:
+        type: string
+      notes:
+        type: string
+      person_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.NoteDTO:
+    properties:
+      author_id:
+        type: string
+      body:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      person_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.PersonDTO:
+    properties:
+      age_group:
+        type: string
+      birth_date:
+        type: string
+      case_status:
+        type: string
+      consent_date:
+        type: string
+      consent_given:
+        type: boolean
+      consultant_id:
+        type: string
+      created_at:
+        type: string
+      current_place_id:
+        type: string
+      email:
+        type: string
+      external_id:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      office_id:
+        type: string
+      origin_place_id:
+        type: string
+      patronymic:
+        type: string
+      phone_numbers:
+        items:
+          type: string
+        type: array
+      primary_phone:
+        type: string
+      project_id:
+        type: string
+      registered_at:
+        type: string
+      sex:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.PetDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      notes:
+        type: string
+      owner_id:
+        type: string
+      project_id:
+        type: string
+      registration_id:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.ReplaceIDsInput:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    required:
+    - ids
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.SupportRecordDTO:
+    properties:
+      consultant_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      notes:
+        type: string
+      office_id:
+        type: string
+      person_id:
+        type: string
+      project_id:
+        type: string
+      provided_at:
+        type: string
+      recorded_by:
+        type: string
+      referral_status:
+        type: string
+      referred_to_office:
+        type: string
+      sphere:
+        type: string
+      type:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.TagDTO:
+    properties:
+      color:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      project_id:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.UpdateHouseholdInput:
+    properties:
+      head_person_id:
+        type: string
+      reference_number:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.UpdatePersonInput:
+    properties:
+      age_group:
+        type: string
+      birth_date:
+        type: string
+      case_status:
+        type: string
+      consent_date:
+        type: string
+      consent_given:
+        type: boolean
+      consultant_id:
+        type: string
+      current_place_id:
+        type: string
+      email:
+        type: string
+      external_id:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      office_id:
+        type: string
+      origin_place_id:
+        type: string
+      patronymic:
+        type: string
+      phone_numbers:
+        items:
+          type: string
+        type: array
+      primary_phone:
+        type: string
+      registered_at:
+        type: string
+      sex:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.UpdatePetInput:
+    properties:
+      name:
+        type: string
+      notes:
+        type: string
+      owner_id:
+        type: string
+      registration_id:
+        type: string
+      status:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.UpdateSupportRecordInput:
+    properties:
+      consultant_id:
+        type: string
+      notes:
+        type: string
+      office_id:
+        type: string
+      provided_at:
+        type: string
+      referral_status:
+        type: string
+      referred_to_office:
+        type: string
+      sphere:
+        type: string
+      type:
+        type: string
+    type: object
+  github_com_lbrty_observer_internal_usecase_project.UpdateTagInput:
+    properties:
+      color:
+        type: string
+      name:
+        type: string
+    type: object
+  internal_handler.ErrorResponse:
+    properties:
+      code:
+        example: errors.internal
+        type: string
+      error:
+        example: resource not found
+        type: string
+    type: object
+  internal_handler.MessageResponse:
+    properties:
+      message:
+        example: deleted
+        type: string
+    type: object
+  internal_handler.PermissionListResponse:
+    properties:
+      permissions:
+        items:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.PermissionMemberDTO'
+        type: array
+    type: object
+host: localhost:9000
+info:
+  contact: {}
+  description: IDP case management platform API.
+  title: Observer API
+  version: "1.0"
+paths:
+  /admin/categories:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of categories
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all categories
+      tags:
+      - admin-categories
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CreateCategoryInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CategoryDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new category
+      tags:
+      - admin-categories
+  /admin/categories/{id}:
+    delete:
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a category
+      tags:
+      - admin-categories
+    get:
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CategoryDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a category by ID
+      tags:
+      - admin-categories
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UpdateCategoryInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CategoryDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a category
+      tags:
+      - admin-categories
+  /admin/countries:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of countries
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all countries
+      tags:
+      - admin-countries
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Country payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CreateCountryInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CountryDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new country
+      tags:
+      - admin-countries
+  /admin/countries/{id}:
+    delete:
+      parameters:
+      - description: Country ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a country
+      tags:
+      - admin-countries
+    get:
+      parameters:
+      - description: Country ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CountryDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a country by ID
+      tags:
+      - admin-countries
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Country ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UpdateCountryInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CountryDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a country
+      tags:
+      - admin-countries
+  /admin/offices:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of offices
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all offices
+      tags:
+      - admin-offices
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Office payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CreateOfficeInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.OfficeDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new office
+      tags:
+      - admin-offices
+  /admin/offices/{id}:
+    delete:
+      parameters:
+      - description: Office ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete an office
+      tags:
+      - admin-offices
+    get:
+      parameters:
+      - description: Office ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.OfficeDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get an office by ID
+      tags:
+      - admin-offices
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Office ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UpdateOfficeInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.OfficeDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update an office
+      tags:
+      - admin-offices
+  /admin/places:
+    get:
+      parameters:
+      - description: State ID
+        in: query
+        name: state_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of places
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List places by state
+      tags:
+      - admin-places
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: State ID
+        in: query
+        name: state_id
+        required: true
+        type: string
+      - description: Place payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CreatePlaceInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.PlaceDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new place
+      tags:
+      - admin-places
+  /admin/places/{id}:
+    delete:
+      parameters:
+      - description: Place ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a place
+      tags:
+      - admin-places
+    get:
+      parameters:
+      - description: Place ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.PlaceDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a place by ID
+      tags:
+      - admin-places
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Place ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UpdatePlaceInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.PlaceDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a place
+      tags:
+      - admin-places
+  /admin/projects:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Filter by owner ID
+        in: query
+        name: owner_id
+        type: string
+      - description: Filter by project status
+        in: query
+        name: status
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.ListProjectsOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List projects
+      tags:
+      - admin-projects
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project creation payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CreateProjectInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.ProjectDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a project
+      tags:
+      - admin-projects
+  /admin/projects/{project_id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.ProjectDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get project by ID
+      tags:
+      - admin-projects
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Project update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UpdateProjectInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.ProjectDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a project
+      tags:
+      - admin-projects
+  /admin/projects/{project_id}/permissions:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.PermissionListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List project permissions
+      tags:
+      - admin-permissions
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Permission assignment payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.AssignPermissionInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.PermissionDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Assign a project permission
+      tags:
+      - admin-permissions
+  /admin/projects/{project_id}/permissions/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Permission ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Revoke a project permission
+      tags:
+      - admin-permissions
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Permission ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Permission update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UpdatePermissionInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.PermissionDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a project permission
+      tags:
+      - admin-permissions
+  /admin/states:
+    get:
+      parameters:
+      - description: Country ID
+        in: query
+        name: country_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of states
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List states by country
+      tags:
+      - admin-states
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Country ID
+        in: query
+        name: country_id
+        required: true
+        type: string
+      - description: State payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CreateStateInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.StateDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new state
+      tags:
+      - admin-states
+  /admin/states/{id}:
+    delete:
+      parameters:
+      - description: State ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a state
+      tags:
+      - admin-states
+    get:
+      parameters:
+      - description: State ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.StateDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a state by ID
+      tags:
+      - admin-states
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: State ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UpdateStateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.StateDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a state
+      tags:
+      - admin-states
+  /admin/users:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      - description: Search by name or email
+        in: query
+        name: search
+        type: string
+      - description: Filter by role
+        in: query
+        name: role
+        type: string
+      - description: Filter by active status
+        in: query
+        name: is_active
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.ListUsersOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List users
+      tags:
+      - admin-users
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User creation payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.CreateUserInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UserDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a new user
+      tags:
+      - admin-users
+  /admin/users/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UserDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user by ID
+      tags:
+      - admin-users
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UpdateUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.UserDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update user by ID
+      tags:
+      - admin-users
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_auth.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_auth.LoginOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      summary: Log in with credentials
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Logout payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_auth.LogoutInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Log out and invalidate refresh token
+      tags:
+      - auth
+  /auth/me:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_auth.UserDTO'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get current authenticated user
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Refresh token payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_auth.RefreshTokenInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_auth.TokenPair'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      summary: Refresh access and refresh tokens
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Registration payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_auth.RegisterInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_auth.RegisterOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - auth
+  /health:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - health
+  /projects/{project_id}/documents:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Document payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.CreateDocumentInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.DocumentDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a document
+      tags:
+      - project-documents
+  /projects/{project_id}/documents/{id}:
+    delete:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Document ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a document
+      tags:
+      - project-documents
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Document ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.DocumentDTO'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a document by ID
+      tags:
+      - project-documents
+  /projects/{project_id}/households:
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.ListHouseholdsOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List households in a project
+      tags:
+      - project-households
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Household payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.CreateHouseholdInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.HouseholdDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a household in a project
+      tags:
+      - project-households
+  /projects/{project_id}/households/{id}:
+    delete:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Household ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a household
+      tags:
+      - project-households
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Household ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.HouseholdDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a household by ID
+      tags:
+      - project-households
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Household ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.UpdateHouseholdInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.HouseholdDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a household
+      tags:
+      - project-households
+  /projects/{project_id}/households/{id}/members:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Household ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Member payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.AddMemberInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.HouseholdMemberDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Add a member to a household
+      tags:
+      - project-households
+  /projects/{project_id}/households/{id}/members/{person_id}:
+    delete:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Household ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Remove a member from a household
+      tags:
+      - project-households
+  /projects/{project_id}/people:
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Filter by consultant ID
+        in: query
+        name: consultant_id
+        type: string
+      - description: Filter by office ID
+        in: query
+        name: office_id
+        type: string
+      - description: Filter by case status
+        in: query
+        name: case_status
+        type: string
+      - description: Search term
+        in: query
+        name: search
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.ListPeopleOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List people in a project
+      tags:
+      - project-people
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.CreatePersonInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.PersonDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a person in a project
+      tags:
+      - project-people
+  /projects/{project_id}/people/{person_id}:
+    delete:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a person
+      tags:
+      - project-people
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.PersonDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a person by ID
+      tags:
+      - project-people
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.UpdatePersonInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.PersonDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a person
+      tags:
+      - project-people
+  /projects/{project_id}/people/{person_id}/categories:
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wrapper with category_ids array
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List category IDs for a person
+      tags:
+      - project-people
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      - description: Category IDs payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.ReplaceIDsInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wrapper with category_ids array
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Replace category IDs for a person
+      tags:
+      - project-people
+  /projects/{project_id}/people/{person_id}/documents:
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wrapper with documents array
+          schema:
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List documents for a person
+      tags:
+      - project-documents
+  /projects/{project_id}/people/{person_id}/migration-records:
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wrapper with records array
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List migration records for a person
+      tags:
+      - project-migration-records
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      - description: Migration record payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.CreateMigrationRecordInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.MigrationRecordDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a migration record for a person
+      tags:
+      - project-migration-records
+  /projects/{project_id}/people/{person_id}/migration-records/{id}:
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      - description: Migration record ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.MigrationRecordDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a migration record by ID
+      tags:
+      - project-migration-records
+  /projects/{project_id}/people/{person_id}/notes:
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wrapper with notes array
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List notes for a person
+      tags:
+      - project-notes
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      - description: Note payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.CreateNoteInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.NoteDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a note for a person
+      tags:
+      - project-notes
+  /projects/{project_id}/people/{person_id}/notes/{id}:
+    delete:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      - description: Note ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a note
+      tags:
+      - project-notes
+  /projects/{project_id}/people/{person_id}/tags:
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wrapper with tag_ids array
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List tag IDs for a person
+      tags:
+      - project-people
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Person ID
+        in: path
+        name: person_id
+        required: true
+        type: string
+      - description: Tag IDs payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.ReplaceIDsInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wrapper with tag_ids array
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Replace tag IDs for a person
+      tags:
+      - project-people
+  /projects/{project_id}/pets:
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.ListPetsOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List pets in a project
+      tags:
+      - project-pets
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Pet payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.CreatePetInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.PetDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a pet in a project
+      tags:
+      - project-pets
+  /projects/{project_id}/pets/{id}:
+    delete:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Pet ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a pet
+      tags:
+      - project-pets
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Pet ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.PetDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a pet by ID
+      tags:
+      - project-pets
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Pet ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.UpdatePetInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.PetDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a pet
+      tags:
+      - project-pets
+  /projects/{project_id}/support-records:
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Filter by person ID
+        in: query
+        name: person_id
+        type: string
+      - description: Filter by consultant ID
+        in: query
+        name: consultant_id
+        type: string
+      - description: Filter by office ID
+        in: query
+        name: office_id
+        type: string
+      - description: Filter by support type
+        in: query
+        name: type
+        type: string
+      - description: Filter by support sphere
+        in: query
+        name: sphere
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.ListSupportRecordsOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List support records in a project
+      tags:
+      - project-support-records
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Support record payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.CreateSupportRecordInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.SupportRecordDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a support record
+      tags:
+      - project-support-records
+  /projects/{project_id}/support-records/{id}:
+    delete:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Support record ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a support record
+      tags:
+      - project-support-records
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Support record ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.SupportRecordDTO'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a support record by ID
+      tags:
+      - project-support-records
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Support record ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.UpdateSupportRecordInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.SupportRecordDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a support record
+      tags:
+      - project-support-records
+  /projects/{project_id}/tags:
+    get:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Wrapper with tags array
+          schema:
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List tags in a project
+      tags:
+      - project-tags
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Tag payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.CreateTagInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.TagDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create a tag in a project
+      tags:
+      - project-tags
+  /projects/{project_id}/tags/{id}:
+    delete:
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.MessageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete a tag
+      tags:
+      - project-tags
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Project ID
+        in: path
+        name: project_id
+        required: true
+        type: string
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Tag payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.UpdateTagInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.TagDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update a tag
+      tags:
+      - project-tags
+securityDefinitions:
+  BearerAuth:
+    description: Enter "Bearer {token}"
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
