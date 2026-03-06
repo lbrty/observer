@@ -1,7 +1,24 @@
-[[social]]
-    identifier = "github"
-    name       = "GitHub"
-    url        = "https://github.com/lbrty/observer"
+[[main]]
+  name   = "Guide"
+  url    = "/docs/guide/"
+  weight = 1
 
-    [social.params]
-        icon = "brand-github"
+[[main]]
+  name   = "Developers"
+  url    = "/docs/developers/"
+  weight = 2
+
+[[main]]
+  name   = "ADRs"
+  url    = "/docs/adr/"
+  weight = 3
+
+[[main]]
+  name   = "Plans"
+  url    = "/docs/plans/"
+  weight = 4
+
+[[social]]
+  name   = "GitHub"
+  url    = "https://github.com/lbrty/observer"
+  weight = 1

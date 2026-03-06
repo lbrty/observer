@@ -1,38 +1,6 @@
-mainSections = ["docs"]
-rssFullContent = true
+[doks]
+  sectionNav = ["docs"]
 
-[footer]
-    since = 2025
-
-[dateFormat]
-    published   = ":date_full"
-    lastUpdated = ":date_full"
-
-[sidebar]
-    emoji    = "👁️"
-    subtitle = "Self-hosted IDP case management for NGOs"
-
-[article]
-    headingAnchor = true
-    math          = false
-    readingTime   = true
-
-    [article.license]
-        enabled = false
-
-[widgets]
-    homepage = [
-        { type = "search" },
-        { type = "archives", params = { limit = 5 } },
-    ]
-    page = [{ type = "toc" }]
-
-[opengraph.twitter]
-    card = "summary_large_image"
-
-[colorScheme]
-    toggle  = true
-    default = "auto"
-
-[comments]
-    enabled = false
+  [doks.menu]
+    [doks.menu.section]
+      collapsibleSidebar = true

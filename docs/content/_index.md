@@ -1,22 +1,11 @@
 ---
 title: Observer
-description: Self-hosted IDP case management for NGOs
-menu:
-    main:
-        name: Home
-        weight: 1
-        params:
-            icon: home
 ---
 
-A secure, organized way to manage displaced persons cases, track humanitarian support, and store sensitive personal information.
+Self-hosted case management for displaced persons. One Go binary, one PostgreSQL database.
 
-## Key features
-
-**Actually deployable** — A Go binary, a PostgreSQL database, and a Justfile. Deploy on a single VPS — no UN agency sponsorship required.
-
-**Dual-level RBAC** — Platform roles combined with project roles and data sensitivity flags. Declarative, schema-enforced access control.
-
-**39 report types** — Matching actual Ukrainian NGO donor reporting obligations — EU, USAID, and bilateral donor formats built in.
-
-[Get Started →](/observer/docs/getting-started/)
+{{< cards >}}
+{{< card link="docs/guide/" title="Guide" subtitle="What Observer does, who it's for, and how to deploy it" >}}
+{{< card link="docs/developers/" title="Developers" subtitle="Setup, architecture, frontend, and testing" >}}
+{{< card link="docs/adr/" title="ADRs" subtitle="Architecture decision records" >}}
+{{< /cards >}}

@@ -1,6 +1,6 @@
 ---
 title: Architecture Decision Records
-weight: 7
+weight: 3
 sidebar:
   open: false
 ---
