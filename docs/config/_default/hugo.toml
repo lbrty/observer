@@ -1,12 +1,11 @@
 title = "Observer"
-baseurl = "/"
+baseurl = "https://lbrty.github.io/observer/"
 disableAliases = true
 disableHugoGeneratorInject = true
 enableEmoji = true
 enableGitInfo = false
 enableRobotsTXT = true
 languageCode = "en"
-rssLimit = 10
 summarylength = 20
 
 defaultContentLanguage = "en"
@@ -16,9 +15,14 @@ defaultContentLanguageInSubdir = false
 [build.buildStats]
   enable = true
 
+[outputFormats.rss]
+  disable = true
+
 [outputs]
   home = ["html", "sitemap", "searchIndex"]
   section = ["html", "sitemap"]
+  taxonomy = ["html"]
+  term = ["html"]
 
 [outputFormats.searchIndex]
   mediaType = "application/json"
