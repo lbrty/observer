@@ -4,23 +4,12 @@ import { createFileRoute, Link, Navigate, Outlet } from "@tanstack/react-router"
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import { LANG_KEY, LANGUAGES, THEME_KEY } from "@/lib/constants";
 import { useAuth } from "@/stores/auth";
 
 export const Route = createFileRoute("/_app")({
   component: AppLayout,
 });
-
-const THEME_KEY = "observer-theme";
-const LANG_KEY = "observer-lang";
-
-const LANGUAGES = [
-  { value: "ky", label: "Kyrgyzça" },
-  { value: "en", label: "English" },
-  { value: "ru", label: "Русский" },
-  { value: "uk", label: "Українська" },
-  { value: "de", label: "Deutsch" },
-  { value: "tr", label: "Türkçe" },
-];
 
 function getStoredTheme(): string {
   return localStorage.getItem(THEME_KEY) || "system";
