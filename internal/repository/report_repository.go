@@ -243,12 +243,12 @@ func (r *reportRepo) CountByAgeGroup(ctx context.Context, f report.ReportFilter)
 			WHEN age < 3 THEN 'toddler'
 			WHEN age < 6 THEN 'pre_school'
 			WHEN age < 12 THEN 'middle_childhood'
-			WHEN age < 15 THEN 'young_teen'
+			WHEN age < 14 THEN 'young_teen'
 			WHEN age < 18 THEN 'teenager'
 			WHEN age < 25 THEN 'young_adult'
-			WHEN age < 45 THEN 'early_adult'
-			WHEN age < 65 THEN 'middle_aged'
-			ELSE 'older_adult'
+			WHEN age < 35 THEN 'early_adult'
+			WHEN age < 55 THEN 'middle_aged_adult'
+			ELSE 'old_adult'
 		END AS label,
 		COUNT(*) AS count
 	FROM (
