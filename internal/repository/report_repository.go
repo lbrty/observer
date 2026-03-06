@@ -281,6 +281,38 @@ func (r *reportRepo) CountByAgeGroup(ctx context.Context, f report.ReportFilter)
 	return results, nil
 }
 
+func (r *reportRepo) CountConsultationsByAgeGroup(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
+	q := `SELECT
+		COALESCE(p.age_group::text,
+			CASE
+				WHEN p.birth_date IS NULL THEN 'unknown'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 1  THEN 'infant'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 3  THEN 'toddler'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 6  THEN 'pre_school'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 12 THEN 'middle_childhood'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 14 THEN 'young_teen'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 18 THEN 'teenager'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 25 THEN 'young_adult'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 35 THEN 'early_adult'
+				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 55 THEN 'middle_aged_adult'
+				ELSE 'old_adult'
+			END
+		) AS label,
+		COUNT(*) AS count
+	FROM support_records sr
+	JOIN people p ON sr.person_id = p.id
+	WHERE sr.project_id = $1`
+	args := []any{f.ProjectID}
+	q, args, _ = applySupportFilters(q, f, "sr.provided_at", args, 2)
+	q += " GROUP BY label ORDER BY label"
+
+	var results []report.CountResult
+	if err := r.db.SelectContext(ctx, &results, q, args...); err != nil {
+		return nil, fmt.Errorf("count consultations by age group: %w", err)
+	}
+	return results, nil
+}
+
 func (r *reportRepo) CountByTag(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
 	q := `SELECT t.name AS label, COUNT(DISTINCT pt.person_id) AS count
 		FROM person_tags pt

@@ -23,8 +23,10 @@ export interface FullReport {
   by_category: ReportGroup;
   by_region: ReportGroup;
   by_sphere: ReportGroup;
+  people_by_sphere: ReportGroup;
   by_office: ReportGroup;
   by_age_group: ReportGroup;
+  consultations_by_age_group: ReportGroup;
   by_tag: ReportGroup;
   family_units: ReportGroup;
   by_case_status: ReportGroup;

@@ -668,6 +668,14 @@ function ReportsPage() {
             direction="auto"
           />
           <ReportCard
+            group={data.people_by_sphere}
+            title={t("project.reports.peopleBySphere")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            colorMap={SPHERE_COLORS}
+            direction="auto"
+          />
+          <ReportCard
             group={data.by_office}
             title={t("project.reports.byOffice")}
             chart="bar"
@@ -700,6 +708,18 @@ function ReportsPage() {
             <ReportCard
               group={data.by_age_group}
               title={t("project.reports.byAgeGroup")}
+              chart="bar"
+              yAxisLabel={axisLabel}
+              skipTranslation
+              mapLabel={(l) => AGE_RANGE_MAP[l] ?? l}
+              legend={ageGroupLegend}
+              colorMap={AGE_GROUP_COLORS}
+            />
+          </div>
+          <div className="col-span-full">
+            <ReportCard
+              group={data.consultations_by_age_group}
+              title={t("project.reports.consultationsByAgeGroup")}
               chart="bar"
               yAxisLabel={axisLabel}
               skipTranslation

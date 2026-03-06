@@ -41,9 +41,11 @@ type FullReportOutput struct {
 	ByIDPStatus   ReportOutput    `json:"by_idp_status"`
 	ByCategory    ReportOutput    `json:"by_category"`
 	ByRegion      ReportOutput    `json:"by_region"`
-	BySphere      ReportOutput    `json:"by_sphere"`
-	ByOffice      ReportOutput    `json:"by_office"`
-	ByAgeGroup    ReportOutput    `json:"by_age_group"`
+	BySphere               ReportOutput `json:"by_sphere"`
+	PeopleBySphere         ReportOutput `json:"people_by_sphere"`
+	ByOffice               ReportOutput `json:"by_office"`
+	ByAgeGroup             ReportOutput `json:"by_age_group"`
+	ConsultationsByAgeGroup ReportOutput `json:"consultations_by_age_group"`
 	ByTag         ReportOutput    `json:"by_tag"`
 	FamilyUnits   ReportOutput    `json:"family_units"`
 	ByCaseStatus  ReportOutput    `json:"by_case_status"`

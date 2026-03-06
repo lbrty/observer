@@ -97,6 +97,12 @@ func (uc *ReportUseCase) Generate(ctx context.Context, projectID string, input R
 	}
 	out.BySphere = toOutput("by_sphere", bySphere)
 
+	peopleBySphere, err := uc.repo.CountPeopleBySphere(ctx, f)
+	if err != nil {
+		return nil, fmt.Errorf("people by sphere report: %w", err)
+	}
+	out.PeopleBySphere = toOutput("people_by_sphere", peopleBySphere)
+
 	byOffice, err := uc.repo.CountByOffice(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("office report: %w", err)
@@ -108,6 +114,12 @@ func (uc *ReportUseCase) Generate(ctx context.Context, projectID string, input R
 		return nil, fmt.Errorf("age report: %w", err)
 	}
 	out.ByAgeGroup = toOutput("by_age_group", byAge)
+
+	consultsByAge, err := uc.repo.CountConsultationsByAgeGroup(ctx, f)
+	if err != nil {
+		return nil, fmt.Errorf("consultations by age report: %w", err)
+	}
+	out.ConsultationsByAgeGroup = toOutput("consultations_by_age_group", consultsByAge)
 
 	byTag, err := uc.repo.CountByTag(ctx, f)
 	if err != nil {
