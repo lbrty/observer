@@ -1,4 +1,4 @@
-import { type FormEvent } from "react";
+import { type FormEvent, useState } from "react";
 import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
 import { DrawerShell } from "@/components/drawer-shell";
 import { FormField, FormTextarea } from "@/components/form-field";
+import { PersonCombobox } from "@/components/person-combobox";
 import { SectionHeading } from "@/components/section-heading";
 import { UISelect } from "@/components/ui-select";
 import { useDrawerForm } from "@/hooks/use-drawer-form";
@@ -36,6 +37,8 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
   const qc = useQueryClient();
   const createPet = useCreatePet(projectId);
   const updatePet = useUpdatePet(projectId);
+
+  const [ownerName, setOwnerName] = useState("");
 
   const { form, set, saved, setSaved, error, setError, editingId, setEditingId } = useDrawerForm({
     initial: emptyForm,
@@ -135,11 +138,36 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
               />
             </Field.Root>
 
-            <FormField
-              label={t("project.pets.ownerId")}
-              value={form.owner_id}
-              onChange={(v) => set("owner_id", v)}
-            />
+            <div>
+              <span className="mb-1 block text-sm font-medium text-fg-secondary">
+                {t("project.pets.ownerId")}
+              </span>
+              {form.owner_id ? (
+                <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
+                  <span className="flex-1 truncate text-sm text-fg">
+                    {ownerName || form.owner_id}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      set("owner_id", "");
+                      setOwnerName("");
+                    }}
+                    className="shrink-0 cursor-pointer text-fg-tertiary hover:text-fg"
+                  >
+                    ×
+                  </button>
+                </div>
+              ) : (
+                <PersonCombobox
+                  projectId={projectId}
+                  onSelect={(p) => {
+                    set("owner_id", p.id);
+                    setOwnerName(`${p.first_name} ${p.last_name ?? ""}`.trim());
+                  }}
+                />
+              )}
+            </div>
 
             <FormField
               label={t("project.pets.registrationId")}
