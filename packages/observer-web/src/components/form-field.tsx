@@ -17,6 +17,7 @@ interface FormFieldProps {
   type?: string;
   maxLength?: number;
   className?: string;
+  error?: string;
 }
 
 export function FormField({
@@ -28,9 +29,10 @@ export function FormField({
   type,
   maxLength,
   className,
+  error,
 }: FormFieldProps) {
   return (
-    <Field.Root className={className}>
+    <Field.Root className={className} invalid={!!error}>
       <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
         {label}
         {required && " *"}
@@ -42,8 +44,9 @@ export function FormField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         maxLength={maxLength}
-        className={inputClass}
+        className={`${inputClass} ${error ? "!border-rose" : ""}`}
       />
+      {error && <p className="mt-1 text-xs text-rose">{error}</p>}
     </Field.Root>
   );
 }
@@ -54,11 +57,19 @@ interface FormTextareaProps {
   onChange: (value: string) => void;
   rows?: number;
   className?: string;
+  error?: string;
 }
 
-export function FormTextarea({ label, value, onChange, rows = 4, className }: FormTextareaProps) {
+export function FormTextarea({
+  label,
+  value,
+  onChange,
+  rows = 4,
+  className,
+  error,
+}: FormTextareaProps) {
   return (
-    <Field.Root className={className}>
+    <Field.Root className={className} invalid={!!error}>
       <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
         {label}
       </Field.Label>
@@ -66,8 +77,9 @@ export function FormTextarea({ label, value, onChange, rows = 4, className }: Fo
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
-        className={textareaClass}
+        className={`${textareaClass} ${error ? "!border-rose" : ""}`}
       />
+      {error && <p className="mt-1 text-xs text-rose">{error}</p>}
     </Field.Root>
   );
 }

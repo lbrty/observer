@@ -84,7 +84,7 @@ function ProjectLayout() {
           )}
         </nav>
       </aside>
-      <main className="min-w-0 flex-1 px-8 py-6">
+      <main className="min-w-0 flex-1 animate-fade-in px-8 py-6">
         <Outlet />
       </main>
     </div>
