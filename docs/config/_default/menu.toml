@@ -1,24 +1,26 @@
 [[main]]
-  name   = "Guide"
-  url    = "/docs/guide/"
+  name = "Guide"
+  pageRef = "/docs/guide"
   weight = 1
 
 [[main]]
-  name   = "Developers"
-  url    = "/docs/developers/"
+  name = "Developers"
+  pageRef = "/docs/developers"
   weight = 2
 
 [[main]]
-  name   = "ADRs"
-  url    = "/docs/adr/"
+  name = "ADRs"
+  pageRef = "/docs/adr"
   weight = 3
 
 [[main]]
-  name   = "Plans"
-  url    = "/docs/plans/"
+  name = "Plans"
+  pageRef = "/docs/plans"
   weight = 4
 
-[[social]]
-  name   = "GitHub"
-  url    = "https://github.com/lbrty/observer"
-  weight = 1
+[[main]]
+  name = "GitHub"
+  url = "https://github.com/lbrty/observer"
+  weight = 10
+  [main.params]
+    icon = "github"

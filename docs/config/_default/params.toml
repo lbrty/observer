@@ -1,6 +1,9 @@
-[doks]
-  sectionNav = ["docs"]
+[navbar]
+  displayTitle = true
+  displayLogo = false
 
-  [doks.menu]
-    [doks.menu.section]
-      collapsibleSidebar = true
+[footer]
+  displayPoweredBy = false
+
+[editURL]
+  enable = false
