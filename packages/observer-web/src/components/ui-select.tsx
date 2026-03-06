@@ -50,12 +50,12 @@ export function UISelect({
                 <Select.Item
                   key={opt.value}
                   value={opt.value}
-                  className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-sm text-fg outline-none select-none data-highlighted:bg-bg-tertiary"
+                  className="flex cursor-pointer items-center justify-between gap-2 px-3 py-1.5 text-sm text-fg outline-none select-none data-highlighted:bg-bg-tertiary"
                 >
+                  <Select.ItemText>{opt.label}</Select.ItemText>
                   <Select.ItemIndicator className="inline-flex w-4 items-center justify-center text-accent">
                     <CheckIcon size={14} weight="bold" />
                   </Select.ItemIndicator>
-                  <Select.ItemText>{opt.label}</Select.ItemText>
                 </Select.Item>
               ))}
             </Select.List>
