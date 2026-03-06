@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect } from "react";
+import { type SyntheticEvent, useEffect } from "react";
 
 import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
@@ -121,7 +121,7 @@ export function MigrationRecordDrawer({
 
   const isPending = createRecord.isPending || updateRecord.isPending;
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     setError("");
 

@@ -1,6 +1,6 @@
 import { Field } from "@base-ui/react/field";
 import { createFileRoute } from "@tanstack/react-router";
-import { type FormEvent, useEffect, useState } from "react";
+import { type SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ErrorBanner } from "@/components/alert-banner";
@@ -54,7 +54,7 @@ function UserDetailPage() {
   if (isLoading) return null;
   if (!user) return null;
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     await updateUser.mutateAsync({
       id: userId,
@@ -173,7 +173,7 @@ function ResetPasswordSection({ userId }: { userId: string }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (password.length < 8) {
       setError(t("auth.passwordTooShort"));

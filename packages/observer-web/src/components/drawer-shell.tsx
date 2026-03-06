@@ -1,5 +1,5 @@
 import { DrawerPreview as Drawer } from "@base-ui/react/drawer";
-import type { FormEvent, ReactNode } from "react";
+import type { SyntheticEvent, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -10,7 +10,7 @@ interface DrawerShellProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  onSubmit: (e: FormEvent) => void;
+  onSubmit: (e: SyntheticEvent) => void;
   isPending?: boolean;
   submitLabel?: string;
   savingLabel?: string;

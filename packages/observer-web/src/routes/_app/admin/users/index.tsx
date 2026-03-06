@@ -1,6 +1,6 @@
 import { Field } from "@base-ui/react/field";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { type FormEvent, useState } from "react";
+import { type SyntheticEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -211,7 +211,7 @@ function CreateUserDialog({
     ...(officesData ?? []).map((o) => ({ label: o.name, value: o.id })),
   ];
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     await createUser.mutateAsync({
       first_name: form.first_name,

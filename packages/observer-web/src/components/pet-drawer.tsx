@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from "react";
+import { type SyntheticEvent, useState } from "react";
 import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -58,7 +58,7 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
 
   const isPending = createPet.isPending || updatePet.isPending;
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     setError("");
 

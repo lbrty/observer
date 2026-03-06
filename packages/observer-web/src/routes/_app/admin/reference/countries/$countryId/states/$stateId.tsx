@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from "react";
+import { type SyntheticEvent, useState } from "react";
 
 import { ArrowLeftIcon, GlobeIcon } from "@/components/icons";
 import { Field } from "@base-ui/react/field";
@@ -163,7 +163,7 @@ function PlaceFormDialog({
   const [lat, setLat] = useState(initial?.lat?.toString() ?? "");
   const [lon, setLon] = useState(initial?.lon?.toString() ?? "");
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     await onSubmit(name, lat ? Number(lat) : undefined, lon ? Number(lon) : undefined);
     if (!initial) {

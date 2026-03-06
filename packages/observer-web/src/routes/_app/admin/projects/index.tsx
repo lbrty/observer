@@ -8,7 +8,7 @@ import {
 import { Field } from "@base-ui/react/field";
 import { Tabs } from "@base-ui/react/tabs";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { type FormEvent, useState } from "react";
+import { type SyntheticEvent, useState } from "react";
 
 import { useTranslation } from "react-i18next";
 
@@ -225,7 +225,7 @@ function CreateProjectDialog({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     const project = await createProject.mutateAsync({
       name,

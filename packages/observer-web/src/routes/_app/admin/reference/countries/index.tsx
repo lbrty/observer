@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from "react";
+import { type SyntheticEvent, useState } from "react";
 
 import { Field } from "@base-ui/react/field";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -160,7 +160,7 @@ function CountryFormDialog({
   const [name, setName] = useState(initial?.name ?? "");
   const [code, setCode] = useState(initial?.code ?? "");
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     await onSubmit(name, code);
     if (!initial) {

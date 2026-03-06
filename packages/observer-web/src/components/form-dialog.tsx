@@ -1,4 +1,4 @@
-import type { FormEvent, ReactNode } from "react";
+import type { SyntheticEvent, ReactNode } from "react";
 
 import { Dialog } from "@base-ui/react/dialog";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,7 @@ interface FormDialogProps {
   title: string;
   description?: string;
   loading?: boolean;
-  onSubmit: (e: FormEvent) => void;
+  onSubmit: (e: SyntheticEvent) => void;
   children: ReactNode;
   maxWidth?: "sm" | "md";
 }

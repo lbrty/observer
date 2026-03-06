@@ -1,6 +1,6 @@
 import { Field } from "@base-ui/react/field";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { type FormEvent, useEffect, useState } from "react";
+import { type SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -37,7 +37,7 @@ function ProjectDetailPage() {
   if (isLoading) return null;
   if (!project) return null;
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     await updateProject.mutateAsync({
       id: projectId,

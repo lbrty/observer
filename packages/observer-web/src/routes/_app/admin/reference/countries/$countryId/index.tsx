@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from "react";
+import { type SyntheticEvent, useState } from "react";
 
 import { ArrowLeftIcon, GlobeIcon } from "@/components/icons";
 import { Field } from "@base-ui/react/field";
@@ -183,7 +183,7 @@ function StateFormDialog({
   const [code, setCode] = useState(initial?.code ?? "");
   const [conflictZone, setConflictZone] = useState(initial?.conflict_zone ?? "");
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     await onSubmit(name, code, conflictZone);
     if (!initial) {

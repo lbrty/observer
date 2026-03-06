@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useState } from "react";
+import { type SyntheticEvent, useEffect, useState } from "react";
 
 import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
@@ -112,7 +112,7 @@ export function SupportRecordDrawer({
 
   const isPending = createRecord.isPending || updateRecord.isPending;
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     setError("");
 

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { type FormEvent, useState } from "react";
+import { type SyntheticEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ErrorBanner } from "@/components/alert-banner";
@@ -40,7 +40,7 @@ function ProfileForm({ user, setUser }: { user: User | null; setUser: (u: User) 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     setSaving(true);
     setError("");
@@ -114,7 +114,7 @@ function ChangePasswordForm() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     setError("");
 

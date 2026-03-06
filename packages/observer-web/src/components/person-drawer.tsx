@@ -109,7 +109,7 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
   const resolvedOriginLabel = originPlaceLabel || resolvePlaceLabel(form.origin_place_id);
   const resolvedCurrentLabel = currentPlaceLabel || resolvePlaceLabel(form.current_place_id);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     setError("");
 

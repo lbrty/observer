@@ -26,7 +26,7 @@ function PersonNotes() {
   const [editId, setEditId] = useState<string | null>(null);
   const [editBody, setEditBody] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     const trimmed = body.trim();
     if (!trimmed) return;

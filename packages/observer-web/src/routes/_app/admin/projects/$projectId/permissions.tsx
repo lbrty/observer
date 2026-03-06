@@ -1,6 +1,6 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { createFileRoute } from "@tanstack/react-router";
-import { type FormEvent, useState } from "react";
+import { type SyntheticEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -250,7 +250,7 @@ function AssignDialog({
   const [personal, setPersonal] = useState(false);
   const [documents, setDocuments] = useState(false);
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     if (!selectedUser) return;
     await onSubmit({
@@ -390,7 +390,7 @@ function EditDialog({
   const [personal, setPersonal] = useState(permission.can_view_personal);
   const [documents, setDocuments] = useState(permission.can_view_documents);
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     await onSubmit({
       role,

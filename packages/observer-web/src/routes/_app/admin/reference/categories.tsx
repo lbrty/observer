@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from "react";
+import { type SyntheticEvent, useState } from "react";
 
 import { Field } from "@base-ui/react/field";
 import { createFileRoute } from "@tanstack/react-router";
@@ -152,7 +152,7 @@ function CategoryFormDialog({
   const [name, setName] = useState(initial?.name ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     await onSubmit(name, description);
     if (!initial) {

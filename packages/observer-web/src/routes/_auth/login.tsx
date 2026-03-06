@@ -1,6 +1,6 @@
 import { Field } from "@base-ui/react/field";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { type FormEvent, useState } from "react";
+import { type SyntheticEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -19,7 +19,7 @@ function LoginPage() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     setSubmitting(true);
