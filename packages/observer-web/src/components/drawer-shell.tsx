@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { XIcon } from "@/components/icons";
+import { Tooltip } from "@/components/tooltip";
 
 interface DrawerShellProps {
   open: boolean;
@@ -42,9 +43,11 @@ export function DrawerShell({
               <Drawer.Title className="font-serif text-lg font-semibold text-fg">
                 {title}
               </Drawer.Title>
-              <Drawer.Close className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg">
-                <XIcon size={18} />
-              </Drawer.Close>
+              <Tooltip label={t("admin.common.close")}>
+                <Drawer.Close className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg">
+                  <XIcon size={18} />
+                </Drawer.Close>
+              </Tooltip>
             </div>
 
             <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
