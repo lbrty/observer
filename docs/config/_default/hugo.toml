@@ -1,5 +1,5 @@
 title = "Observer"
-baseurl = "https://lbrty.github.io/observer/"
+baseurl = "/"
 disableAliases = true
 disableHugoGeneratorInject = true
 enableEmoji = true

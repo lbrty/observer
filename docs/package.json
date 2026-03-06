@@ -2,7 +2,7 @@
   "name": "observer-docs",
   "private": true,
   "scripts": {
-    "dev": "hugo server --disableFastRender --noHTTPCache --baseURL http://localhost:1313/observer/",
+    "dev": "hugo server --disableFastRender --noHTTPCache",
     "build": "hugo --minify --gc"
   },
   "dependencies": {
