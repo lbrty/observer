@@ -163,7 +163,7 @@ function CategoryFormDialog({
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
+          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
         />
       </Field.Root>
       <Field.Root>
@@ -174,7 +174,7 @@ function CategoryFormDialog({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
-          className="block w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+          className="block w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
         />
       </Field.Root>
     </FormDialog>

@@ -75,7 +75,7 @@ export function PersonCombobox({
           }}
           onKeyDown={handleKeyDown}
           placeholder={placeholder ?? t("project.people.searchPeople")}
-          className="block w-full rounded-lg border border-border-secondary bg-bg-secondary py-2 pr-3 pl-9 text-sm text-fg outline-none focus:border-accent"
+          className="block w-full rounded-lg border border-border-secondary bg-bg-secondary py-2 pr-3 pl-9 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
         />
       </div>
       {showDropdown && (

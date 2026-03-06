@@ -62,7 +62,7 @@ function ProjectDetailPage() {
             required
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary h-9 px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
           />
         </Field.Root>
 
@@ -74,7 +74,7 @@ function ProjectDetailPage() {
             value={form.description}
             onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
             rows={3}
-            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
           />
         </Field.Root>
 

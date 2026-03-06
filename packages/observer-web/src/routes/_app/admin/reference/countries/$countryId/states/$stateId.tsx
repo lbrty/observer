@@ -176,7 +176,7 @@ function PlaceFormDialog({
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
+          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
         />
       </Field.Root>
       <div className="grid grid-cols-2 gap-3">
@@ -189,7 +189,7 @@ function PlaceFormDialog({
             step="any"
             value={lat}
             onChange={(e) => setLat(e.target.value)}
-            className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
           />
         </Field.Root>
         <Field.Root>
@@ -201,7 +201,7 @@ function PlaceFormDialog({
             step="any"
             value={lon}
             onChange={(e) => setLon(e.target.value)}
-            className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
+            className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
           />
         </Field.Root>
       </div>

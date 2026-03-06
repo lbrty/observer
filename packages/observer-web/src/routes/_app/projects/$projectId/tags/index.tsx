@@ -147,7 +147,7 @@ function TagsPage() {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="block h-9 w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg outline-none focus:border-accent"
+            className="block h-9 w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
           />
         </Field.Root>
         {error && <p className="text-sm text-rose">{error}</p>}

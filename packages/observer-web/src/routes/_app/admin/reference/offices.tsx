@@ -160,7 +160,7 @@ function OfficeFormDialog({
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
+          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
         />
       </Field.Root>
       <Field.Root>
@@ -171,7 +171,7 @@ function OfficeFormDialog({
           value={placeId}
           onChange={(e) => setPlaceId(e.target.value)}
           placeholder={t("admin.reference.offices.placeId")}
-          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
+          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
         />
       </Field.Root>
     </FormDialog>

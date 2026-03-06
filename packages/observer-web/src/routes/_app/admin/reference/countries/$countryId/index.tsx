@@ -196,7 +196,7 @@ function StateFormDialog({
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
+          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
         />
       </Field.Root>
       <Field.Root>
@@ -206,7 +206,7 @@ function StateFormDialog({
         <Field.Control
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
+          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
         />
       </Field.Root>
       <Field.Root>
@@ -216,7 +216,7 @@ function StateFormDialog({
         <Field.Control
           value={conflictZone}
           onChange={(e) => setConflictZone(e.target.value)}
-          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent"
+          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
         />
       </Field.Root>
     </FormDialog>

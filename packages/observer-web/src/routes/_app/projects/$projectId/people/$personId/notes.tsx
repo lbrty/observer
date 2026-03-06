@@ -96,7 +96,7 @@ function PersonNotes() {
                     value={editBody}
                     onChange={(e) => setEditBody(e.target.value)}
                     rows={3}
-                    className="w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent"
+                    className="w-full rounded-lg border border-border-secondary bg-bg px-3 py-2 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
                   />
                   <div className="mt-2 flex justify-end gap-2">
                     <Button variant="secondary" size="sm" onClick={cancelEdit}>
