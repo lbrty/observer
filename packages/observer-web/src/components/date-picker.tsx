@@ -55,7 +55,7 @@ export function DatePicker({
         </span>
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Positioner sideOffset={4} className="z-[60]">
+        <Popover.Positioner sideOffset={4} className="z-60">
           <Popover.Popup className="rdp-popup rounded-xl border border-border-secondary bg-bg-secondary p-3 shadow-elevated outline-none">
             <DayPicker
               mode="single"
@@ -132,7 +132,7 @@ export function DateRangePicker({
         </span>
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Positioner sideOffset={4} className="z-[60]">
+        <Popover.Positioner sideOffset={4} className="z-60">
           <Popover.Popup className="rdp-popup rounded-xl border border-border-secondary bg-bg-secondary p-3 shadow-elevated outline-none">
             <DayPicker
               mode="range"

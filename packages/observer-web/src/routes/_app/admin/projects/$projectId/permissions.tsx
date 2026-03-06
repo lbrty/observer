@@ -324,7 +324,7 @@ function AssignDialog({
                   onCheckedChange={setContact}
                   label={t("admin.permissions.contactAccess")}
                 />
-                <p className="ml-[46px] text-xs text-fg-tertiary">
+                <p className="ml-11.5 text-xs text-fg-tertiary">
                   {t("admin.permissions.contactAccessDesc")}
                 </p>
               </div>
@@ -334,7 +334,7 @@ function AssignDialog({
                   onCheckedChange={setPersonal}
                   label={t("admin.permissions.personalAccess")}
                 />
-                <p className="ml-[46px] text-xs text-fg-tertiary">
+                <p className="ml-11.5 text-xs text-fg-tertiary">
                   {t("admin.permissions.personalAccessDesc")}
                 </p>
               </div>
@@ -344,7 +344,7 @@ function AssignDialog({
                   onCheckedChange={setDocuments}
                   label={t("admin.permissions.documentAccess")}
                 />
-                <p className="ml-[46px] text-xs text-fg-tertiary">
+                <p className="ml-11.5 text-xs text-fg-tertiary">
                   {t("admin.permissions.documentAccessDesc")}
                 </p>
               </div>
@@ -443,7 +443,7 @@ function EditDialog({
                   onCheckedChange={setContact}
                   label={t("admin.permissions.contactAccess")}
                 />
-                <p className="ml-[46px] text-xs text-fg-tertiary">
+                <p className="ml-11.5 text-xs text-fg-tertiary">
                   {t("admin.permissions.contactAccessDesc")}
                 </p>
               </div>
@@ -453,7 +453,7 @@ function EditDialog({
                   onCheckedChange={setPersonal}
                   label={t("admin.permissions.personalAccess")}
                 />
-                <p className="ml-[46px] text-xs text-fg-tertiary">
+                <p className="ml-11.5 text-xs text-fg-tertiary">
                   {t("admin.permissions.personalAccessDesc")}
                 </p>
               </div>
@@ -463,7 +463,7 @@ function EditDialog({
                   onCheckedChange={setDocuments}
                   label={t("admin.permissions.documentAccess")}
                 />
-                <p className="ml-[46px] text-xs text-fg-tertiary">
+                <p className="ml-11.5 text-xs text-fg-tertiary">
                   {t("admin.permissions.documentAccessDesc")}
                 </p>
               </div>

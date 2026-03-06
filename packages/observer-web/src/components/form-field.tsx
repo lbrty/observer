@@ -44,7 +44,7 @@ export function FormField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         maxLength={maxLength}
-        className={`${inputClass} ${error ? "!border-rose" : ""}`}
+        className={`${inputClass} ${error ? "border-rose!" : ""}`}
       />
       {error && <p className="mt-1 text-xs text-rose">{error}</p>}
     </Field.Root>
@@ -77,7 +77,7 @@ export function FormTextarea({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
-        className={`${textareaClass} ${error ? "!border-rose" : ""}`}
+        className={`${textareaClass} ${error ? "border-rose!" : ""}`}
       />
       {error && <p className="mt-1 text-xs text-rose">{error}</p>}
     </Field.Root>
