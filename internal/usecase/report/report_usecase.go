@@ -55,6 +55,9 @@ func (uc *ReportUseCase) Generate(ctx context.Context, projectID string, input R
 	if input.AgeGroup != "" {
 		f.AgeGroup = &input.AgeGroup
 	}
+	if input.SupportType != "" {
+		f.SupportType = &input.SupportType
+	}
 
 	out := &FullReportOutput{}
 

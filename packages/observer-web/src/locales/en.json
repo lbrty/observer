@@ -542,6 +542,7 @@
       "filterCaseStatus": "Case status",
       "filterSex": "Sex",
       "filterAgeGroup": "Age group",
+      "filterSupportType": "Support type",
       "statusFlow": "Case status flow",
       "avgDays": "avg {{days}} days",
       "allValues": "All",

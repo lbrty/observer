@@ -228,6 +228,14 @@ const AGE_RANGE_MAP: Record<string, string> = {
   older_adult: "65+",
 };
 
+const SUPPORT_TYPE_OPTIONS = [
+  "humanitarian",
+  "legal",
+  "social",
+  "psychological",
+  "medical",
+  "general",
+] as const;
 const CASE_STATUS_OPTIONS = ["new", "active", "closed", "archived"] as const;
 const SEX_OPTIONS = ["male", "female", "other", "unknown"] as const;
 const AGE_GROUP_OPTIONS = [
@@ -294,6 +302,11 @@ function ReportsPage() {
   const categoryOptions = (categories ?? []).map((c) => ({
     label: c.name,
     value: c.id,
+  }));
+
+  const supportTypeOptions = SUPPORT_TYPE_OPTIONS.map((s) => ({
+    label: t(labelKeyMap[s] ?? s),
+    value: s,
   }));
 
   const caseStatusOptions = CASE_STATUS_OPTIONS.map((s) => ({
@@ -476,6 +489,20 @@ function ReportsPage() {
                   fullWidth
                 />
               </FilterField>
+              <FilterField label={t("project.reports.filterSupportType")}>
+                <UISelect
+                  value={params.support_type ?? ""}
+                  onValueChange={(v) =>
+                    setParams((p) => ({ ...p, support_type: v || undefined }))
+                  }
+                  options={[
+                    { label: t("project.reports.allValues"), value: "" },
+                    ...supportTypeOptions,
+                  ]}
+                  placeholder={t("project.reports.allValues")}
+                  fullWidth
+                />
+              </FilterField>
             </div>
           </div>
         )}
@@ -548,6 +575,16 @@ function ReportsPage() {
                   params.age_group
                 }
                 onRemove={() => setParams((p) => ({ ...p, age_group: undefined }))}
+              />
+            )}
+            {params.support_type && (
+              <FilterChip
+                label={t("project.reports.filterSupportType")}
+                value={
+                  supportTypeOptions.find((s) => s.value === params.support_type)?.label ??
+                  params.support_type
+                }
+                onRemove={() => setParams((p) => ({ ...p, support_type: undefined }))}
               />
             )}
             <button

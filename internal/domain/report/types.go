@@ -13,6 +13,7 @@ type ReportFilter struct {
 	CaseStatus   *string
 	Sex          *string
 	AgeGroup     *string
+	SupportType  *string
 }
 
 // CountResult represents a single count in a report breakdown.

@@ -10,6 +10,7 @@ type ReportInput struct {
 	CaseStatus   string `form:"case_status"`
 	Sex          string `form:"sex"`
 	AgeGroup     string `form:"age_group"`
+	SupportType  string `form:"support_type"`
 }
 
 // CountResultDTO is the response row.

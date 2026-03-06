@@ -542,6 +542,7 @@
       "filterCaseStatus": "Статус справи",
       "filterSex": "Стать",
       "filterAgeGroup": "Вікова група",
+      "filterSupportType": "Тип підтримки",
       "statusFlow": "Потік статусів справ",
       "avgDays": "в середньому {{days}} дн.",
       "allValues": "Всі",

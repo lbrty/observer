@@ -542,6 +542,7 @@
       "filterCaseStatus": "Статус дела",
       "filterSex": "Пол",
       "filterAgeGroup": "Возрастная группа",
+      "filterSupportType": "Тип поддержки",
       "statusFlow": "Поток статусов дел",
       "avgDays": "в среднем {{days}} дн.",
       "allValues": "Все",

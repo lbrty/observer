@@ -542,6 +542,7 @@
       "filterCaseStatus": "Fallstatus",
       "filterSex": "Geschlecht",
       "filterAgeGroup": "Altersgruppe",
+      "filterSupportType": "Unterstützungsart",
       "statusFlow": "Statusverlauf",
       "avgDays": "Ø {{days}} Tage",
       "allValues": "Alle",

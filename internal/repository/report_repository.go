@@ -56,6 +56,11 @@ func applyPeopleFilters(q string, f report.ReportFilter, dateCol string, args []
 		args = append(args, *f.ConsultantID)
 		ix++
 	}
+	if f.SupportType != nil {
+		q += fmt.Sprintf(" AND p.id IN (SELECT sr2.person_id FROM support_records sr2 WHERE sr2.project_id = $1 AND sr2.type = $%d)", ix)
+		args = append(args, *f.SupportType)
+		ix++
+	}
 	return q, args, ix
 }
 
@@ -80,6 +85,11 @@ func applySupportFilters(q string, f report.ReportFilter, dateCol string, args [
 	if f.ConsultantID != nil {
 		q += fmt.Sprintf(" AND sr.consultant_id = $%d", ix)
 		args = append(args, *f.ConsultantID)
+		ix++
+	}
+	if f.SupportType != nil {
+		q += fmt.Sprintf(" AND sr.type = $%d", ix)
+		args = append(args, *f.SupportType)
 		ix++
 	}
 
@@ -277,6 +287,17 @@ func (r *reportRepo) CountFamilyUnits(ctx context.Context, f report.ReportFilter
 	q := `SELECT 'households' AS label, COUNT(DISTINCT h.id) AS count
 		FROM households h WHERE h.project_id = $1`
 	args := []any{f.ProjectID}
+	ix := 2
+
+	if f.SupportType != nil {
+		q += fmt.Sprintf(` AND h.id IN (
+			SELECT hm.household_id FROM household_members hm
+			JOIN support_records sr ON sr.person_id = hm.person_id
+			WHERE sr.project_id = $1 AND sr.type = $%d)`, ix)
+		args = append(args, *f.SupportType)
+		ix++
+	}
+	_ = ix
 
 	var results []report.CountResult
 	if err := r.db.SelectContext(ctx, &results, q, args...); err != nil {

@@ -40,4 +40,5 @@ export interface ReportParams {
   case_status?: string;
   sex?: string;
   age_group?: string;
+  support_type?: string;
 }

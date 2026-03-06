@@ -3,7 +3,11 @@ title: Architecture
 weight: 3
 ---
 
+This page is for developers and technical staff who want to understand how Observer is built. If you're an admin setting up Observer for your organization, you can skip this — head to [Deployment](/docs/guide/deployment/) instead.
+
 ## High-Level Overview
+
+Every HTTP request flows through the same path: it enters the server, passes through middleware (authentication, logging), reaches a handler that delegates to a use case, and the use case talks to the database through a repository. Configuration and dependency injection wire everything together at startup.
 
 ```mermaid
 graph TD
@@ -24,6 +28,8 @@ graph TD
 ```
 
 ## Dependency Flow (Clean Architecture)
+
+The codebase is organized in layers. Inner layers define the rules, outer layers provide the infrastructure. Dependencies always point inward — business logic never imports database or HTTP code directly. This makes it possible to test use cases without a running database.
 
 ```mermaid
 graph LR
@@ -63,6 +69,8 @@ graph LR
 ```
 
 ## Repository: Interface to Implementation
+
+Domain code defines _what_ data operations are needed (interfaces), while the PostgreSQL layer provides the _how_ (implementations). This separation means you could swap PostgreSQL for another database without touching any business logic. Each domain area — users, auth, projects, reference data — has its own repository interface.
 
 ```mermaid
 classDiagram
@@ -175,6 +183,8 @@ classDiagram
 
 ## Use Cases: Who Depends on What
 
+Each user action — logging in, listing people, assigning permissions — is handled by a dedicated use case. Use cases coordinate between repositories and crypto services but contain no HTTP or database code themselves. The diagram below shows which repositories each use case depends on.
+
 ```mermaid
 graph TD
     subgraph auth_usecases["Auth Use Cases"]
@@ -257,6 +267,8 @@ graph TD
 
 ## HTTP Request Flow
 
+Here's what happens when a user logs in. The request enters through the router, passes through middleware that assigns a request ID and logger, then reaches the auth handler. The handler parses the JSON body and calls the login use case, which looks up the user, verifies the password with Argon2, generates JWT tokens, and creates a session.
+
 ```mermaid
 sequenceDiagram
     participant C as Client
@@ -290,6 +302,8 @@ sequenceDiagram
 
 ## Protected Route Flow (Admin + Project RBAC)
 
+Protected routes go through additional checks. Admin routes verify the user's platform role (admin, staff, etc.). Project-scoped routes load the user's project-level permission and check whether their project role is sufficient for the requested action. The middleware also sets sensitivity flags that control whether the response includes contact info, personal details, or document data.
+
 ```mermaid
 sequenceDiagram
     participant C as Client
@@ -322,6 +336,8 @@ sequenceDiagram
 ```
 
 ## DI Container Wiring
+
+At startup, the application reads configuration and connects to the database, then wires everything together in a dependency injection container. The container creates repositories, crypto services, and use cases, passing each component its dependencies. The fully assembled container is handed to the server, which injects handlers and middleware into the router.
 
 ```mermaid
 graph TD
@@ -359,4 +375,3 @@ graph TD
     SERVER --> |injects into| HANDLERS[Handlers]
     SERVER --> |injects into| MIDDLEWARE[Middleware]
 ```
-

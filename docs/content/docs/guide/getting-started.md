@@ -3,7 +3,7 @@ title: Getting Started
 weight: 2
 ---
 
-## Try it in 5 minutes
+## See it running in 5 minutes
 
 You don't need a server, a hosting provider, or an IT department. If you have a laptop with Docker installed, you can see Observer running right now.
 
@@ -16,7 +16,7 @@ just docker-up
 just run
 ```
 
-Open `http://localhost:9000/health` — if you see `"status":"healthy"`, the backend is running.
+Open `http://localhost:9000/health` in your browser. If you see `"status":"healthy"`, the backend is running.
 
 Then start the web interface:
 
@@ -28,26 +28,30 @@ Open `http://localhost:5173` — you're looking at Observer.
 
 ## What you just started
 
-- A **Go backend** serving the API on port 9000
-- A **PostgreSQL database** with 24 tables for people, households, support records, migration history, documents, and pets
-- A **React frontend** with project management, role-based access, and 39 built-in report types
-- **JWT authentication** with automatic token rotation
+- A **backend** serving the API — handles authentication, data storage, and reports
+- A **database** with tables for people, households, support records, migration history, documents, and pets
+- A **web interface** with project management, role-based access, and built-in reporting
+- **Automatic login security** — tokens rotate on every session refresh
 
-All of this runs on a single machine. In production, it compiles down to one binary.
+All of this runs on a single machine. In production, it compiles down to one file you can copy to any server.
 
-## What you'll need for a real deployment
+## Ready to deploy for real?
 
-| Requirement | Why |
+To move from "trying it out" to "my team uses this every day," you need:
+
+| What | Why |
 | --- | --- |
-| A VPS or on-premise server | Observer is self-hosted — your data stays on your infrastructure |
-| PostgreSQL database | The only external dependency |
-| 30 minutes of sysadmin time | `docker compose up` on a server with your domain pointed at it |
+| A server (VPS or on-premise) | Observer is self-hosted — your data never leaves your infrastructure |
+| PostgreSQL | The only external service Observer needs |
+| About 30 minutes | Run `docker compose up` on a server with your domain pointed at it |
 
-No SaaS subscription. No per-user fees. No vendor lock-in. You own the data and the deployment.
+No subscription. No per-user fees. No vendor lock-in. You own the data and the deployment.
 
-See [Deployment](/docs/guide/deployment/) for the full production setup guide.
+See [Deployment](/docs/guide/deployment/) for the step-by-step production setup.
 
-## Prerequisites for development
+## For developers: local setup
+
+If you want to work on Observer itself, you'll need these tools installed:
 
 | Tool | Version | Install |
 | --- | --- | --- |
@@ -55,8 +59,6 @@ See [Deployment](/docs/guide/deployment/) for the full production setup guide.
 | Bun | latest | https://bun.sh/ |
 | Docker + Compose | latest | https://docs.docker.com/get-docker/ |
 | Just | latest | https://github.com/casey/just#installation |
-
-## Step by step
 
 ### 1. Clone and install dependencies
 
@@ -73,17 +75,17 @@ bun install
 cp .env.example .env
 ```
 
-The defaults work out of the box with the provided `docker-compose.yml`.
+The defaults work out of the box with the provided `docker-compose.yml`. No editing needed.
 
-### 3. Generate RSA keys
+### 3. Generate signing keys
 
 ```bash
 just generate-keys
 ```
 
-Creates `keys/jwt_rsa` and `keys/jwt_rsa.pub` for JWT signing.
+This creates a key pair that Observer uses to sign login tokens. The `keys/` directory is gitignored — each developer generates their own.
 
-### 4. Start services and run
+### 4. Start everything
 
 ```bash
 just docker-up    # starts PostgreSQL and Redis
@@ -91,10 +93,10 @@ just run          # starts the backend on :9000 (runs migrations automatically)
 just web-dev      # starts the frontend on :5173
 ```
 
-## Troubleshooting
+## Something not working?
 
-**Port 5432 already in use** — A local Postgres instance may be running. Stop it or change the port mapping in `docker-compose.yml`.
+**Port 5432 already in use** — You probably have a local PostgreSQL running. Stop it, or change the port in `docker-compose.yml`.
 
-**"no such file or directory" for key paths** — Run `just generate-keys` first. The `keys/` directory is gitignored.
+**"no such file or directory" for key paths** — You need to run `just generate-keys` first.
 
-**Migration fails with "connection refused"** — Docker services may not be ready yet. Wait a few seconds after `just docker-up`.
+**Migration fails with "connection refused"** — The database container might not be ready yet. Wait a few seconds after `just docker-up` and try again.

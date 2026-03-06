@@ -542,6 +542,7 @@
       "filterCaseStatus": "Durum",
       "filterSex": "Cinsiyet",
       "filterAgeGroup": "Yaş grubu",
+      "filterSupportType": "Destek türü",
       "statusFlow": "Durum akışı",
       "avgDays": "ort. {{days}} gün",
       "allValues": "Tümü",

@@ -3,7 +3,7 @@ title: Introduction
 weight: 1
 ---
 
-Observer is a self-hosted IDP case management platform for NGOs.
+Observer is a self-hosted case management platform for NGOs working with internally displaced persons.
 
 ## The problem
 
@@ -11,17 +11,25 @@ Small and mid-size NGOs working with displaced persons in Ukraine face a gap: pa
 
 Observer fills that gap.
 
-## What it is
+## What it does
 
-A self-hosted case management platform. One Go binary, one PostgreSQL database. A single sysadmin can deploy it on a VPS.
+Observer gives your organization a private, secure system to track the people you serve. It runs on your own server — no cloud service, no subscription, no third party ever sees your data.
 
-It tracks people, their movement history, support records, households, documents, and pets — scoped per project, with role-based access control and built-in reporting.
+With Observer, your team can:
+
+- **Register people and families** — record personal details, household relationships, and documents
+- **Track support** — log consultations, referrals, and the type of assistance provided
+- **Follow movement** — where people came from, where they moved, and why
+- **Control access** — decide who on your team can see what, down to contact details and documents
+- **Generate reports** — built-in breakdowns by sex, age, region, support type, vulnerability category, and more — filterable to match EU, USAID, and bilateral donor requirements
+
+One person with basic server skills can set it up in under an hour.
 
 ## Who it's for
 
 Organizations with:
 
-- 5–50 staff, one or zero IT people
+- 5 to 50 staff, one or zero IT people
 - One or more donor-funded aid projects
 - Reporting obligations to EU, USAID, or bilateral donors
 - Data sensitivity requirements that prevent using third-party SaaS
@@ -38,25 +46,25 @@ Organizations with:
 
 ## What makes Observer different
 
-**Deployable without permission.** No partner onboarding, no SaaS agreement. `docker compose up` and you're running.
+**You don't need anyone's permission.** No partner onboarding, no SaaS agreement. Install it on your server and start working.
 
-**Schema-enforced access control.** Platform roles (admin, staff, consultant, guest) combined with project roles (owner, manager, consultant, viewer) and three data sensitivity flags. Declarative and immediate.
+**Your data stays yours.** Everything runs on infrastructure you control. No data leaves your server unless you export it.
 
-**Reports that match donor requirements.** 39 report types covering consultation counts, IDP origin breakdowns, sex/age disaggregation, sphere of appeal breakdowns, and family unit counts.
+**Access control is built in.** Platform roles (admin, staff, consultant, guest) combine with project roles (owner, manager, consultant, viewer) and sensitivity flags that control who sees contact info, personal details, and documents.
 
-**Support sphere taxonomy.** 11 constrained consultation topics enabling GROUP BY-safe breakdowns.
+**Reports match what donors actually ask for.** 12 report dimensions — consultation counts, IDP origin, sex/age disaggregation, support sphere, vulnerability category, region, office, tags, family units, and case status — each filterable by date range, support type, and demographic criteria.
 
-**Households as first-class entities.** Typed relationships (head, spouse, child, parent, sibling) that support family unit reports.
+**Families are tracked as units.** Typed household relationships (head, spouse, child, parent, sibling) power family-level reporting.
 
-**IDP classification derived from geography.** Origin computed from `origin_place → state → conflict_zone` — no hardcoded political categories.
-
-**Forward-only migrations.** Versioned, append-only SQL migrations. No rollback files.
+**IDP status is computed, not guessed.** A person's displacement status is derived from their origin location and whether that area is a conflict zone — no manual classification needed.
 
 ## What Observer does not do
 
-- Scale to millions of registrations (proGres territory)
+Observer is built for organizations serving hundreds to low thousands of people. It is not designed for:
+
+- Millions of registrations (that's proGres territory)
 - Inter-agency referral workflows (Primero territory)
-- Biometric deduplication (proGres + BIMS)
+- Biometric deduplication
 - Cluster-level 5W/3W aggregate reporting (ActivityInfo territory)
 
-Observer produces the raw data. If you need cluster dashboards, export to ActivityInfo.
+If you need cluster dashboards, export your data from Observer to ActivityInfo.
