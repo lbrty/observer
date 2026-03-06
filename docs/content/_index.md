@@ -1,6 +1,12 @@
 ---
 title: Observer
 description: Self-hosted IDP case management for NGOs
+menu:
+    main:
+        name: Home
+        weight: 1
+        params:
+            icon: home
 ---
 
 A secure, organized way to manage displaced persons cases, track humanitarian support, and store sensitive personal information.
@@ -13,4 +19,4 @@ A secure, organized way to manage displaced persons cases, track humanitarian su
 
 **39 report types** — Matching actual Ukrainian NGO donor reporting obligations — EU, USAID, and bilateral donor formats built in.
 
-[Get Started →](/docs/getting-started/)
+[Get Started →](/observer/docs/getting-started/)

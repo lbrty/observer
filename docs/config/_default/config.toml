@@ -1,3 +1,9 @@
 baseurl      = "https://lbrty.github.io/observer/"
 languageCode = "en"
 title        = "Observer"
+
+defaultContentLanguage = "en"
+hasCJKLanguage         = false
+
+[pagination]
+    pagerSize = 20
