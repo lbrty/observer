@@ -237,6 +237,8 @@
       "saving": "Saving...",
       "cancel": "Cancel",
       "close": "Close",
+      "copyId": "Copy ID",
+      "copied": "Copied to clipboard",
       "delete": "Delete",
       "edit": "Edit",
       "add": "Add",

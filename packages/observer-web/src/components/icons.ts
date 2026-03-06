@@ -12,6 +12,7 @@ export {
   CaretUpIcon,
   ChartBarIcon,
   CheckIcon,
+  CopySimpleIcon,
   DownloadSimpleIcon,
   FilesIcon,
   FolderSimpleIcon,

@@ -237,6 +237,8 @@
       "saving": "Speichern...",
       "cancel": "Abbrechen",
       "close": "Schließen",
+      "copyId": "ID kopieren",
+      "copied": "In die Zwischenablage kopiert",
       "delete": "Löschen",
       "edit": "Bearbeiten",
       "add": "Hinzufügen",

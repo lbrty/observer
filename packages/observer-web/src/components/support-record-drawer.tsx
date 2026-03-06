@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 
 import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
@@ -7,11 +7,15 @@ import { useTranslation } from "react-i18next";
 import { ErrorBanner } from "@/components/alert-banner";
 import { DatePicker } from "@/components/date-picker";
 import { DrawerShell } from "@/components/drawer-shell";
-import { FormField, FormTextarea } from "@/components/form-field";
+import { FormTextarea } from "@/components/form-field";
+import { CopySimpleIcon } from "@/components/icons";
+import { PersonCombobox } from "@/components/person-combobox";
 import { SectionHeading } from "@/components/section-heading";
+import { Tooltip } from "@/components/tooltip";
 import { UISelect } from "@/components/ui-select";
 import { useDrawerForm } from "@/hooks/use-drawer-form";
 import { useOffices } from "@/hooks/use-offices";
+import { usePerson } from "@/hooks/use-people";
 import {
   useCreateSupportRecord,
   useSupportRecord,
@@ -86,9 +90,21 @@ export function SupportRecordDrawer({
       }),
     });
 
+  const [personName, setPersonName] = useState("");
+  const { data: personData } = usePerson(projectId, form.person_id);
+
+  useEffect(() => {
+    if (personData) {
+      setPersonName(`${personData.first_name} ${personData.last_name ?? ""}`.trim());
+    }
+  }, [personData]);
+
   useEffect(() => {
     if (open && !isEdit && personId) {
       setForm((f) => ({ ...f, person_id: personId }));
+    }
+    if (!open) {
+      setPersonName("");
     }
   }, [open, isEdit, personId]);
 
@@ -241,7 +257,7 @@ export function SupportRecordDrawer({
       onOpenChange={onOpenChange}
       title={
         isEdit
-          ? t("project.supportRecords.editTitle")
+          ? `${t("project.supportRecords.editTitle")}${personName ? ` — ${personName}` : ""}`
           : t("project.supportRecords.formTitle")
       }
       onSubmit={handleSubmit}
@@ -286,13 +302,50 @@ export function SupportRecordDrawer({
         </div>
 
         {!personId && (
-          <FormField
-            label={t("project.supportRecords.personId")}
-            required={!isEdit}
-            value={form.person_id}
-            onChange={(v) => set("person_id", v)}
-            disabled={isEdit}
-          />
+          <div>
+            <span className="mb-1 block text-sm font-medium text-fg-secondary">
+              {t("project.supportRecords.person")} {!isEdit && " *"}
+            </span>
+            {form.person_id ? (
+              <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
+                <span className="flex-1 truncate text-sm text-fg">
+                  {personName || form.person_id}
+                </span>
+                <Tooltip label={t("admin.common.copyId")}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(form.person_id);
+                      toast.success(t("admin.common.copied"));
+                    }}
+                    className="shrink-0 cursor-pointer text-fg-tertiary hover:text-fg"
+                  >
+                    <CopySimpleIcon size={14} />
+                  </button>
+                </Tooltip>
+                {!isEdit && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      set("person_id", "");
+                      setPersonName("");
+                    }}
+                    className="shrink-0 cursor-pointer text-fg-tertiary hover:text-fg"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            ) : (
+              <PersonCombobox
+                projectId={projectId}
+                onSelect={(p) => {
+                  set("person_id", p.id);
+                  setPersonName(`${p.first_name} ${p.last_name ?? ""}`.trim());
+                }}
+              />
+            )}
+          </div>
         )}
       </div>
 
