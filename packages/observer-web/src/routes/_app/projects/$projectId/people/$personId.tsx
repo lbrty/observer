@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { ArrowLeftIcon } from "@/components/icons";
 import { StatusBadge } from "@/components/status-badge";
+import { useMyProjects } from "@/hooks/use-my-projects";
 import { usePerson } from "@/hooks/use-people";
 
 export const Route = createFileRoute("/_app/projects/$projectId/people/$personId")({
@@ -14,6 +15,8 @@ function PersonDetailLayout() {
   const { t } = useTranslation();
   const { projectId, personId } = Route.useParams();
   const { data: person, isLoading } = usePerson(projectId, personId);
+  const { data: projectsData } = useMyProjects();
+  const project = projectsData?.projects.find((p) => p.id === projectId);
 
   const tabs = [
     {
@@ -33,10 +36,14 @@ function PersonDetailLayout() {
       to: "/projects/$projectId/people/$personId/migration-records" as const,
       label: t("project.people.migrationRecordsTab"),
     },
-    {
-      to: "/projects/$projectId/people/$personId/documents" as const,
-      label: t("project.people.documentsTab"),
-    },
+    ...(project?.can_view_documents !== false
+      ? [
+          {
+            to: "/projects/$projectId/people/$personId/documents" as const,
+            label: t("project.people.documentsTab"),
+          },
+        ]
+      : []),
   ];
 
   if (isLoading) {
