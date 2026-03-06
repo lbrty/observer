@@ -106,7 +106,8 @@
       "roleAdmin": "Yönetici",
       "roleStaff": "Personel",
       "roleConsultant": "Danışman",
-      "roleGuest": "Misafir"
+      "roleGuest": "Misafir",
+      "emptyTitle": "Kullanıcı yok"
     },
     "projects": {
       "title": "Projeler",
@@ -124,7 +125,9 @@
       "allStatuses": "Tüm durumlar",
       "statusActive": "Aktif",
       "statusArchived": "Arşivlenmiş",
-      "statusClosed": "Kapatılmış"
+      "statusClosed": "Kapatılmış",
+      "emptyTitle": "Proje yok",
+      "emptyDescription": "İlk projeyi oluşturun"
     },
     "permissions": {
       "title": "Üyeleri yönet",
@@ -156,7 +159,9 @@
       "revoke": "Erişimi kaldır",
       "revokeConfirm": "{{name}} için erişimi kaldırmak istediğinize emin misiniz?",
       "save": "Kaydet",
-      "saving": "Kaydediliyor..."
+      "saving": "Kaydediliyor...",
+      "emptyTitle": "İzin yok",
+      "emptyDescription": "İlk izni verin"
     },
     "reference": {
       "countries": {
@@ -166,7 +171,9 @@
         "add": "Ekle",
         "addTitle": "Ülke ekle",
         "editTitle": "Ülkeyi düzenle",
-        "deleteConfirm": "Bu ülkeyi silmek istediğinize emin misiniz?"
+        "deleteConfirm": "Bu ülkeyi silmek istediğinize emin misiniz?",
+        "emptyTitle": "Ülke yok",
+        "emptyDescription": "İlk ülkeyi ekleyin"
       },
       "states": {
         "title": "İller",
@@ -178,6 +185,8 @@
         "addTitle": "İl ekle",
         "editTitle": "İli düzenle",
         "deleteConfirm": "Bu ili silmek istediğinize emin misiniz?",
+        "emptyTitle": "İl yok",
+        "emptyDescription": "İlk ili ekleyin",
         "selectCountry": "Ülke seçin",
         "allCountries": "Tüm ülkeler"
       },
@@ -192,6 +201,8 @@
         "addTitle": "Yer ekle",
         "editTitle": "Yeri düzenle",
         "deleteConfirm": "Bu yeri silmek istediğinize emin misiniz?",
+        "emptyTitle": "Yer yok",
+        "emptyDescription": "İlk yeri ekleyin",
         "selectCountry": "Ülke seçin",
         "selectState": "İl seçin",
         "allCountries": "Tüm ülkeler",
@@ -205,7 +216,9 @@
         "add": "Ekle",
         "addTitle": "Ofis ekle",
         "editTitle": "Ofisi düzenle",
-        "deleteConfirm": "Bu ofisi silmek istediğinize emin misiniz?"
+        "deleteConfirm": "Bu ofisi silmek istediğinize emin misiniz?",
+        "emptyTitle": "Ofis yok",
+        "emptyDescription": "İlk ofisi oluşturun"
       },
       "categories": {
         "title": "Kategoriler",
@@ -214,7 +227,9 @@
         "add": "Ekle",
         "addTitle": "Kategori ekle",
         "editTitle": "Kategoriyi düzenle",
-        "deleteConfirm": "Bu kategoriyi silmek istediğinize emin misiniz?"
+        "deleteConfirm": "Bu kategoriyi silmek istediğinize emin misiniz?",
+        "emptyTitle": "Kategori yok",
+        "emptyDescription": "İlk kategoriyi oluşturun"
       }
     },
     "common": {
@@ -315,7 +330,13 @@
       "addState": "İl ekle",
       "addPlace": "Yer ekle",
       "emptyTitle": "Kayıtlı kişi yok",
-      "emptyDescription": "İlk kişiyi kaydedin"
+      "emptyDescription": "İlk kişiyi kaydedin",
+      "documentsEmptyTitle": "Belge yok",
+      "documentsEmptyDescription": "Bu kişi için ilk belgeyi yükleyin",
+      "migrationRecordsEmptyTitle": "Göç kaydı yok",
+      "migrationRecordsEmptyDescription": "İlk göç kaydını ekleyin",
+      "supportRecordsEmptyTitle": "Destek kaydı yok",
+      "supportRecordsEmptyDescription": "Bu kişi için ilk destek kaydını ekleyin"
     },
     "notes": {
       "title": "Notlar",

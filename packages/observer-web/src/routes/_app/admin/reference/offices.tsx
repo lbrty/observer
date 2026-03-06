@@ -7,7 +7,9 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
+import { EmptyState } from "@/components/empty-state";
 import { FormDialog } from "@/components/form-dialog";
+import { BuildingsIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { RowActions } from "@/components/row-actions";
 import { useCreateOffice, useDeleteOffice, useOffices, useUpdateOffice } from "@/hooks/use-offices";
@@ -66,6 +68,18 @@ function OfficesPage() {
         data={data ?? []}
         keyExtractor={(o) => o.id}
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={BuildingsIcon}
+            title={t("admin.reference.offices.emptyTitle")}
+            description={t("admin.reference.offices.emptyDescription")}
+            action={
+              <Button onClick={() => setCreateOpen(true)}>
+                {t("admin.reference.offices.add")}
+              </Button>
+            }
+          />
+        }
       />
 
       <OfficeFormDialog

@@ -106,7 +106,8 @@
       "roleAdmin": "Admin",
       "roleStaff": "Mitarbeiter",
       "roleConsultant": "Berater",
-      "roleGuest": "Gast"
+      "roleGuest": "Gast",
+      "emptyTitle": "Keine Benutzer"
     },
     "projects": {
       "title": "Projekte",
@@ -124,7 +125,9 @@
       "allStatuses": "Alle Status",
       "statusActive": "Aktiv",
       "statusArchived": "Archiviert",
-      "statusClosed": "Geschlossen"
+      "statusClosed": "Geschlossen",
+      "emptyTitle": "Keine Projekte",
+      "emptyDescription": "Erstellen Sie das erste Projekt"
     },
     "permissions": {
       "title": "Mitglieder verwalten",
@@ -156,7 +159,9 @@
       "revoke": "Zugriff entziehen",
       "revokeConfirm": "Sind Sie sicher, dass Sie den Zugriff für {{name}} entziehen möchten?",
       "save": "Speichern",
-      "saving": "Speichern..."
+      "saving": "Speichern...",
+      "emptyTitle": "Keine Berechtigungen",
+      "emptyDescription": "Erteilen Sie die erste Berechtigung"
     },
     "reference": {
       "countries": {
@@ -166,7 +171,9 @@
         "add": "Hinzufügen",
         "addTitle": "Land hinzufügen",
         "editTitle": "Land bearbeiten",
-        "deleteConfirm": "Sind Sie sicher, dass Sie dieses Land löschen möchten?"
+        "deleteConfirm": "Sind Sie sicher, dass Sie dieses Land löschen möchten?",
+        "emptyTitle": "Keine Länder",
+        "emptyDescription": "Fügen Sie das erste Land hinzu"
       },
       "states": {
         "title": "Regionen",
@@ -178,6 +185,8 @@
         "addTitle": "Region hinzufügen",
         "editTitle": "Region bearbeiten",
         "deleteConfirm": "Sind Sie sicher, dass Sie diese Region löschen möchten?",
+        "emptyTitle": "Keine Regionen",
+        "emptyDescription": "Fügen Sie die erste Region hinzu",
         "selectCountry": "Land auswählen",
         "allCountries": "Alle Länder"
       },
@@ -192,6 +201,8 @@
         "addTitle": "Ort hinzufügen",
         "editTitle": "Ort bearbeiten",
         "deleteConfirm": "Sind Sie sicher, dass Sie diesen Ort löschen möchten?",
+        "emptyTitle": "Keine Orte",
+        "emptyDescription": "Fügen Sie den ersten Ort hinzu",
         "selectCountry": "Land auswählen",
         "selectState": "Region auswählen",
         "allCountries": "Alle Länder",
@@ -205,7 +216,9 @@
         "add": "Hinzufügen",
         "addTitle": "Büro hinzufügen",
         "editTitle": "Büro bearbeiten",
-        "deleteConfirm": "Sind Sie sicher, dass Sie dieses Büro löschen möchten?"
+        "deleteConfirm": "Sind Sie sicher, dass Sie dieses Büro löschen möchten?",
+        "emptyTitle": "Keine Büros",
+        "emptyDescription": "Erstellen Sie das erste Büro"
       },
       "categories": {
         "title": "Kategorien",
@@ -214,7 +227,9 @@
         "add": "Hinzufügen",
         "addTitle": "Kategorie hinzufügen",
         "editTitle": "Kategorie bearbeiten",
-        "deleteConfirm": "Sind Sie sicher, dass Sie diese Kategorie löschen möchten?"
+        "deleteConfirm": "Sind Sie sicher, dass Sie diese Kategorie löschen möchten?",
+        "emptyTitle": "Keine Kategorien",
+        "emptyDescription": "Erstellen Sie die erste Kategorie"
       }
     },
     "common": {
@@ -315,7 +330,13 @@
       "addState": "Region hinzufügen",
       "addPlace": "Ort hinzufügen",
       "emptyTitle": "Keine Personen registriert",
-      "emptyDescription": "Registrieren Sie die erste Person"
+      "emptyDescription": "Registrieren Sie die erste Person",
+      "documentsEmptyTitle": "Keine Dokumente",
+      "documentsEmptyDescription": "Laden Sie das erste Dokument für diese Person hoch",
+      "migrationRecordsEmptyTitle": "Keine Migrationseinträge",
+      "migrationRecordsEmptyDescription": "Fügen Sie den ersten Migrationseintrag hinzu",
+      "supportRecordsEmptyTitle": "Keine Unterstützungseinträge",
+      "supportRecordsEmptyDescription": "Fügen Sie den ersten Unterstützungseintrag für diese Person hinzu"
     },
     "notes": {
       "title": "Notizen",

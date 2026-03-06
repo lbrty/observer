@@ -1,6 +1,6 @@
 import { type FormEvent, useState } from "react";
 
-import { ArrowLeftIcon } from "@/components/icons";
+import { ArrowLeftIcon, GlobeIcon } from "@/components/icons";
 import { Field } from "@base-ui/react/field";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
+import { EmptyState } from "@/components/empty-state";
 import { FormDialog } from "@/components/form-dialog";
 import { PageHeader } from "@/components/page-header";
 import { RowActions } from "@/components/row-actions";
@@ -92,6 +93,18 @@ function StatesPage() {
           })
         }
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={GlobeIcon}
+            title={t("admin.reference.states.emptyTitle")}
+            description={t("admin.reference.states.emptyDescription")}
+            action={
+              <Button onClick={() => setCreateOpen(true)}>
+                {t("admin.reference.states.add")}
+              </Button>
+            }
+          />
+        }
       />
 
       <StateFormDialog

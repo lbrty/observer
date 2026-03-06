@@ -5,9 +5,10 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
+import { EmptyState } from "@/components/empty-state";
 import { FormDialog } from "@/components/form-dialog";
 import { FormField, inputClass } from "@/components/form-field";
-import { MagnifyingGlassIcon } from "@/components/icons";
+import { MagnifyingGlassIcon, UsersIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { StatusBadge, StatusDot } from "@/components/status-badge";
@@ -153,6 +154,12 @@ function UsersPage() {
         keyExtractor={(u) => u.id}
         onRowClick={(u) => navigate({ to: "/admin/users/$userId", params: { userId: u.id } })}
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={UsersIcon}
+            title={t("admin.users.emptyTitle")}
+          />
+        }
       />
 
       {data && (

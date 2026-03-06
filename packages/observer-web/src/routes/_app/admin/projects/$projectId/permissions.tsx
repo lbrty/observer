@@ -6,7 +6,8 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
-import { PencilSimpleIcon, TrashIcon, XIcon } from "@/components/icons";
+import { EmptyState } from "@/components/empty-state";
+import { PencilSimpleIcon, TrashIcon, UsersIcon, XIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
 import { UISelect } from "@/components/ui-select";
@@ -140,6 +141,18 @@ function PermissionsPage() {
         data={data?.permissions ?? []}
         keyExtractor={(p) => p.id}
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={UsersIcon}
+            title={t("admin.permissions.emptyTitle")}
+            description={t("admin.permissions.emptyDescription")}
+            action={
+              <Button onClick={() => setAssignOpen(true)}>
+                {t("admin.permissions.addMember")}
+              </Button>
+            }
+          />
+        }
       />
 
       <AssignDialog

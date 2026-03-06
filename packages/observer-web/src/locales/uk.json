@@ -106,7 +106,8 @@
       "roleAdmin": "Адмін",
       "roleStaff": "Персонал",
       "roleConsultant": "Консультант",
-      "roleGuest": "Гість"
+      "roleGuest": "Гість",
+      "emptyTitle": "Немає користувачів"
     },
     "projects": {
       "title": "Проєкти",
@@ -124,7 +125,9 @@
       "allStatuses": "Усі статуси",
       "statusActive": "Активний",
       "statusArchived": "Архівований",
-      "statusClosed": "Закритий"
+      "statusClosed": "Закритий",
+      "emptyTitle": "Немає проєктів",
+      "emptyDescription": "Створіть перший проєкт"
     },
     "permissions": {
       "title": "Управління учасниками",
@@ -156,7 +159,9 @@
       "revoke": "Скасувати доступ",
       "revokeConfirm": "Ви впевнені, що хочете скасувати доступ для {{name}}?",
       "save": "Зберегти",
-      "saving": "Збереження..."
+      "saving": "Збереження...",
+      "emptyTitle": "Немає дозволів",
+      "emptyDescription": "Надайте перший дозвіл"
     },
     "reference": {
       "countries": {
@@ -166,7 +171,9 @@
         "add": "Додати",
         "addTitle": "Додати країну",
         "editTitle": "Редагування країни",
-        "deleteConfirm": "Ви впевнені, що хочете видалити цю країну?"
+        "deleteConfirm": "Ви впевнені, що хочете видалити цю країну?",
+        "emptyTitle": "Немає країн",
+        "emptyDescription": "Додайте першу країну"
       },
       "states": {
         "title": "Області",
@@ -178,6 +185,8 @@
         "addTitle": "Додати область",
         "editTitle": "Редагування області",
         "deleteConfirm": "Ви впевнені, що хочете видалити цю область?",
+        "emptyTitle": "Немає областей",
+        "emptyDescription": "Додайте першу область",
         "selectCountry": "Оберіть країну",
         "allCountries": "Усі країни"
       },
@@ -192,6 +201,8 @@
         "addTitle": "Додати населений пункт",
         "editTitle": "Редагування населеного пункту",
         "deleteConfirm": "Ви впевнені, що хочете видалити цей населений пункт?",
+        "emptyTitle": "Немає населених пунктів",
+        "emptyDescription": "Додайте перший населений пункт",
         "selectCountry": "Оберіть країну",
         "selectState": "Оберіть область",
         "allCountries": "Усі країни",
@@ -205,7 +216,9 @@
         "add": "Додати",
         "addTitle": "Додати офіс",
         "editTitle": "Редагування офісу",
-        "deleteConfirm": "Ви впевнені, що хочете видалити цей офіс?"
+        "deleteConfirm": "Ви впевнені, що хочете видалити цей офіс?",
+        "emptyTitle": "Немає офісів",
+        "emptyDescription": "Створіть перший офіс"
       },
       "categories": {
         "title": "Категорії",
@@ -214,7 +227,9 @@
         "add": "Додати",
         "addTitle": "Додати категорію",
         "editTitle": "Редагування категорії",
-        "deleteConfirm": "Ви впевнені, що хочете видалити цю категорію?"
+        "deleteConfirm": "Ви впевнені, що хочете видалити цю категорію?",
+        "emptyTitle": "Немає категорій",
+        "emptyDescription": "Створіть першу категорію"
       }
     },
     "common": {
@@ -315,7 +330,13 @@
       "addState": "Додати область",
       "addPlace": "Додати населений пункт",
       "emptyTitle": "Немає зареєстрованих людей",
-      "emptyDescription": "Зареєструйте першу людину"
+      "emptyDescription": "Зареєструйте першу людину",
+      "documentsEmptyTitle": "Немає документів",
+      "documentsEmptyDescription": "Завантажте перший документ для цієї особи",
+      "migrationRecordsEmptyTitle": "Немає записів міграції",
+      "migrationRecordsEmptyDescription": "Додайте перший запис міграції",
+      "supportRecordsEmptyTitle": "Немає записів підтримки",
+      "supportRecordsEmptyDescription": "Додайте перший запис підтримки для цієї особи"
     },
     "notes": {
       "title": "Нотатки",

@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
+import { EmptyState } from "@/components/empty-state";
 import { FormDialog } from "@/components/form-dialog";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
@@ -161,6 +162,18 @@ function ProjectsPage() {
           })
         }
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={FolderSimpleIcon}
+            title={t("admin.projects.emptyTitle")}
+            description={t("admin.projects.emptyDescription")}
+            action={
+              <Button icon={<PlusIcon size={16} />} onClick={() => setCreateOpen(true)}>
+                {t("admin.projects.newProject")}
+              </Button>
+            }
+          />
+        }
       />
 
       {data && (

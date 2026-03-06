@@ -4,7 +4,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { DataTable, type Column } from "@/components/data-table";
-import { PencilSimpleIcon, PlusIcon } from "@/components/icons";
+import { EmptyState } from "@/components/empty-state";
+import { PathIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { MigrationRecordDrawer } from "@/components/migration-record-drawer";
 import { useMigrationRecords } from "@/hooks/use-migration-records";
 import type { MigrationRecord } from "@/types/migration-record";
@@ -99,6 +100,13 @@ function PersonMigrationRecords() {
         data={data?.records ?? []}
         keyExtractor={(r) => r.id}
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={PathIcon}
+            title={t("project.people.migrationRecordsEmptyTitle")}
+            description={t("project.people.migrationRecordsEmptyDescription")}
+          />
+        }
       />
 
       <MigrationRecordDrawer

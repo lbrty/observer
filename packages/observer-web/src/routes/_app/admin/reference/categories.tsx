@@ -7,7 +7,9 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
+import { EmptyState } from "@/components/empty-state";
 import { FormDialog } from "@/components/form-dialog";
+import { TagIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { RowActions } from "@/components/row-actions";
 import {
@@ -69,6 +71,18 @@ function CategoriesPage() {
         data={data ?? []}
         keyExtractor={(c) => c.id}
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={TagIcon}
+            title={t("admin.reference.categories.emptyTitle")}
+            description={t("admin.reference.categories.emptyDescription")}
+            action={
+              <Button onClick={() => setCreateOpen(true)}>
+                {t("admin.reference.categories.add")}
+              </Button>
+            }
+          />
+        }
       />
 
       <CategoryFormDialog

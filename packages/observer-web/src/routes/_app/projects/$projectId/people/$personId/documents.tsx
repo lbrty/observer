@@ -5,7 +5,8 @@ import { useTranslation } from "react-i18next";
 
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
-import { CheckIcon, PencilSimpleIcon, TrashIcon, XIcon } from "@/components/icons";
+import { EmptyState } from "@/components/empty-state";
+import { CheckIcon, FilesIcon, PencilSimpleIcon, TrashIcon, XIcon } from "@/components/icons";
 import { useDeleteDocument, useDocuments, useUpdateDocument } from "@/hooks/use-documents";
 import type { Document } from "@/types/document";
 
@@ -158,11 +159,14 @@ function PersonDocuments() {
         data={data?.documents ?? []}
         keyExtractor={(doc) => doc.id}
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={FilesIcon}
+            title={t("project.people.documentsEmptyTitle")}
+            description={t("project.people.documentsEmptyDescription")}
+          />
+        }
       />
-
-      {!isLoading && !data?.documents.length && (
-        <p className="py-12 text-center text-sm text-fg-tertiary">{t("project.documents.empty")}</p>
-      )}
 
       <ConfirmDialog
         open={!!deleteId}

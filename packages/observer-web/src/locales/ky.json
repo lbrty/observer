@@ -106,7 +106,8 @@
       "roleAdmin": "Admin",
       "roleStaff": "Kyzmatker",
       "roleConsultant": "Konsultant",
-      "roleGuest": "Konok"
+      "roleGuest": "Konok",
+      "emptyTitle": "Qoldonuuçular jok"
     },
     "projects": {
       "title": "Dolboorlor",
@@ -124,7 +125,9 @@
       "allStatuses": "Baardyq statustar",
       "statusActive": "Aktiv",
       "statusArchived": "Arhivdelgen",
-      "statusClosed": "Jabyq"
+      "statusClosed": "Jabyq",
+      "emptyTitle": "Dolboorlor jok",
+      "emptyDescription": "Birinçi dolboordu tüzüñüz"
     },
     "permissions": {
       "title": "Müçölördü başqaruu",
@@ -156,7 +159,9 @@
       "revoke": "Jettikti aluu",
       "revokeConfirm": "{{name}} üçün jettikti alğanyzğa işeneesizbi?",
       "save": "Saqta",
-      "saving": "Saqtaluuda..."
+      "saving": "Saqtaluuda...",
+      "emptyTitle": "Uquqtar jok",
+      "emptyDescription": "Birinçi uquqtu beriñiz"
     },
     "reference": {
       "countries": {
@@ -166,7 +171,9 @@
         "add": "Qoşuu",
         "addTitle": "Ölkönü qoşuu",
         "editTitle": "Ölkönü özgörtüü",
-        "deleteConfirm": "Bu ölkönü öçürösüzbü?"
+        "deleteConfirm": "Bu ölkönü öçürösüzbü?",
+        "emptyTitle": "Ölkölör jok",
+        "emptyDescription": "Birinçi ölkönü qoşuñuz"
       },
       "states": {
         "title": "Oblustar",
@@ -178,6 +185,8 @@
         "addTitle": "Oblast qoşuu",
         "editTitle": "Oblasty özgörtüü",
         "deleteConfirm": "Bu oblasty öçürösüzbü?",
+        "emptyTitle": "Oblustar jok",
+        "emptyDescription": "Birinçi oblasty qoşuñuz",
         "selectCountry": "Ölkönü tandanyz",
         "allCountries": "Baardyq ölkölör"
       },
@@ -192,6 +201,8 @@
         "addTitle": "Jaidy qoşuu",
         "editTitle": "Jaidy özgörtüü",
         "deleteConfirm": "Bu jaidy öçürösüzbü?",
+        "emptyTitle": "Jailar jok",
+        "emptyDescription": "Birinçi jaidy qoşuñuz",
         "selectCountry": "Ölkönü tandanyz",
         "selectState": "Oblastty tandanyz",
         "allCountries": "Baardyq ölkölör",
@@ -205,7 +216,9 @@
         "add": "Qoşuu",
         "addTitle": "Ofis qoşuu",
         "editTitle": "Ofisti özgörtüü",
-        "deleteConfirm": "Bu ofisti öçürösüzbü?"
+        "deleteConfirm": "Bu ofisti öçürösüzbü?",
+        "emptyTitle": "Ofistter jok",
+        "emptyDescription": "Birinçi ofisti tüzüñüz"
       },
       "categories": {
         "title": "Kategoriyalar",
@@ -214,7 +227,9 @@
         "add": "Qoşuu",
         "addTitle": "Kategoriya qoşuu",
         "editTitle": "Kategoriyany özgörtüü",
-        "deleteConfirm": "Bu kategoriyany öçürösüzbü?"
+        "deleteConfirm": "Bu kategoriyany öçürösüzbü?",
+        "emptyTitle": "Kategoriyalar jok",
+        "emptyDescription": "Birinçi kategoriyany tüzüñüz"
       }
     },
     "common": {
@@ -315,7 +330,13 @@
       "addState": "Oblast qoşuu",
       "addPlace": "Jay qoşuu",
       "emptyTitle": "Kattalgan adamdar jok",
-      "emptyDescription": "Baştoo üchün birinchi adamdy kattañyz"
+      "emptyDescription": "Baştoo üçün birinçi adamdy kattañyz",
+      "documentsEmptyTitle": "Dokumentter jok",
+      "documentsEmptyDescription": "Bu adam üçün birinçi dokumentti jüktöñüz",
+      "migrationRecordsEmptyTitle": "Köçüü jazuulary jok",
+      "migrationRecordsEmptyDescription": "Birinçi köçüü jazuusun qoşuñuz",
+      "supportRecordsEmptyTitle": "Qoldoo jazuulary jok",
+      "supportRecordsEmptyDescription": "Bu adam üçün birinçi qoldoo jazuusun qoşuñuz"
     },
     "notes": {
       "title": "Eskermeler",
@@ -333,7 +354,7 @@
       "deleteConfirm": "Bu dokumentti öçürösüzbü?",
       "empty": "Dokumentter joq",
       "emptyTitle": "Dokumentter jok",
-      "emptyDescription": "Birinchi dokumentti jüktöñüz"
+      "emptyDescription": "Birinçi dokumentti jüktöñüz"
     },
     "tags": {
       "title": "Tegder",
@@ -342,7 +363,7 @@
       "addTitle": "Teg qoşuu",
       "deleteConfirm": "Bu tegdi joqqo çyğarasyñyzby?",
       "emptyTitle": "Tegder jok",
-      "emptyDescription": "Birinchi tegdi tüzüñüz"
+      "emptyDescription": "Birinçi tegdi tüzüñüz"
     },
     "supportRecords": {
       "title": "Qoldoo tizmesi",
@@ -394,7 +415,7 @@
       "referralDeclined": "Baş tartyldy",
       "referralNoResponse": "Javap joq",
       "emptyTitle": "Koldoo jazdary jok",
-      "emptyDescription": "Birinchi koldoo jazdysyn koshunguz"
+      "emptyDescription": "Birinçi koldoo jazdysyn koshunguz"
     },
     "households": {
       "title": "Üy bülöölör",
@@ -426,7 +447,7 @@
       "relationshipOtherRelative": "Başqa tuuğan",
       "relationshipNonRelative": "Tuuğan emes",
       "emptyTitle": "Üy bölüktörü jok",
-      "emptyDescription": "Birinchi üy bölügün tüzüñüz"
+      "emptyDescription": "Birinçi üy bölügün tüzüñüz"
     },
     "migrationRecords": {
       "title": "Köçüü jazuulary",
@@ -478,7 +499,7 @@
       "statusNeedsShelter": "Bayaq kerek",
       "statusUnknown": "Belgisiz",
       "emptyTitle": "Kattalgan üy jandyktary jok",
-      "emptyDescription": "Birinchi üy jandygyn kattañyz"
+      "emptyDescription": "Birinçi üy jandygyn kattañyz"
     },
     "reports": {
       "title": "Raporlor",

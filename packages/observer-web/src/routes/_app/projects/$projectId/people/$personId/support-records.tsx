@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
+import { EmptyState } from "@/components/empty-state";
 import { HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { Pagination } from "@/components/pagination";
 import { StatusBadge } from "@/components/status-badge";
@@ -111,6 +112,13 @@ function PersonSupportRecords() {
         keyExtractor={(r) => r.id}
         onRowClick={(r) => openEdit(r.id)}
         isLoading={isLoading}
+        emptyState={
+          <EmptyState
+            icon={HandHeartIcon}
+            title={t("project.people.supportRecordsEmptyTitle")}
+            description={t("project.people.supportRecordsEmptyDescription")}
+          />
+        }
       />
 
       {data && (
