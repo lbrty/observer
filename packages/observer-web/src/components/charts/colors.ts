@@ -51,8 +51,8 @@ export const AGE_GROUP_COLORS: Record<string, string> = {
   teenager: "#d97706",
   young_adult: "#b45309",
   early_adult: "#92400e",
-  middle_aged: "#78350f",
-  older_adult: "#451a03",
+  middle_aged_adult: "#78350f",
+  old_adult: "#451a03",
 };
 
 export const FALLBACK_PALETTE = [

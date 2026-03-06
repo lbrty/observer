@@ -167,8 +167,8 @@ function PersonOverview() {
     teenager: t("project.people.ageTeenager"),
     young_adult: t("project.people.ageYoungAdult"),
     early_adult: t("project.people.ageEarlyAdult"),
-    middle_aged_adult: t("project.people.ageMiddleAged"),
-    old_adult: t("project.people.ageOlderAdult"),
+    middle_aged_adult: t("project.people.ageMiddleAgedAdult"),
+    old_adult: t("project.people.ageOldAdult"),
   };
 
   return (

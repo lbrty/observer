@@ -194,8 +194,8 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
     { label: t("project.people.ageTeenager"), value: "teenager" },
     { label: t("project.people.ageYoungAdult"), value: "young_adult" },
     { label: t("project.people.ageEarlyAdult"), value: "early_adult" },
-    { label: t("project.people.ageMiddleAged"), value: "middle_aged_adult" },
-    { label: t("project.people.ageOlderAdult"), value: "old_adult" },
+    { label: t("project.people.ageMiddleAgedAdult"), value: "middle_aged_adult" },
+    { label: t("project.people.ageOldAdult"), value: "old_adult" },
     { label: t("project.people.sexUnknown"), value: "unknown" },
   ];
 
