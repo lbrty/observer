@@ -141,7 +141,7 @@ function TagsPage() {
         <div className="flex items-center gap-2.5">
           <span
             className="inline-flex size-7 shrink-0 items-center justify-center rounded-md"
-            style={{ backgroundColor: tag.color || colorFromName(tag.name) }}
+            style={{ backgroundColor: tag.color || hslToHex(colorFromName(tag.name)) }}
           >
             <TagIcon size={14} className="text-white" />
           </span>
@@ -153,14 +153,14 @@ function TagsPage() {
       key: "color",
       header: t("project.tags.color"),
       render: (tag) => {
-        const c = tag.color || colorFromName(tag.name);
+        const hex = tag.color || hslToHex(colorFromName(tag.name));
         return (
           <div className="flex items-center gap-2">
             <span
               className="inline-block size-4 rounded-full border border-border-secondary"
-              style={{ backgroundColor: c }}
+              style={{ backgroundColor: hex }}
             />
-            <span className="font-mono text-xs text-fg-tertiary">{tag.color || "—"}</span>
+            <span className="font-mono text-xs text-fg-tertiary">{hex}</span>
           </div>
         );
       },

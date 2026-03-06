@@ -482,7 +482,11 @@
       "save": "Speichern",
       "saving": "Speichern...",
       "saved": "Erfolgreich gespeichert",
-      "details": "Details"
+      "details": "Details",
+      "timelineView": "Zeitachse",
+      "tableView": "Tabelle",
+      "arrivedAt": "Angekommen in",
+      "movement": "Bewegung erfasst"
     },
     "pets": {
       "title": "Haustiere",

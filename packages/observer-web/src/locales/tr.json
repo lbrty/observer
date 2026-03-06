@@ -482,7 +482,11 @@
       "save": "Kaydet",
       "saving": "Kaydediliyor...",
       "saved": "Başarıyla kaydedildi",
-      "details": "Detaylar"
+      "details": "Detaylar",
+      "timelineView": "Zaman çizelgesi",
+      "tableView": "Tablo",
+      "arrivedAt": "Varış yeri",
+      "movement": "Hareket kaydedildi"
     },
     "pets": {
       "title": "Evcil Hayvanlar",

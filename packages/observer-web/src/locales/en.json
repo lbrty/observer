@@ -482,7 +482,11 @@
       "save": "Save",
       "saving": "Saving...",
       "saved": "Saved successfully",
-      "details": "Details"
+      "details": "Details",
+      "timelineView": "Timeline",
+      "tableView": "Table",
+      "arrivedAt": "Arrived at",
+      "movement": "Movement recorded"
     },
     "pets": {
       "title": "Pets",

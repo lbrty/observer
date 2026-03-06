@@ -482,7 +482,11 @@
       "save": "Saktoo",
       "saving": "Saktaluuda...",
       "saved": "Iygiliktyy saktaldy",
-      "details": "Toluk maalymat"
+      "details": "Toluk maalymat",
+      "timelineView": "Ubaqyt syzygı",
+      "tableView": "Tabla",
+      "arrivedAt": "Keldi",
+      "movement": "Köçüü jazyldy"
     },
     "pets": {
       "title": "Üy janybarlar",
