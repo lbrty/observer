@@ -51,14 +51,6 @@ export function useUpdatePerson(projectId: string) {
   });
 }
 
-export function useDeletePerson(projectId: string) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (personId: string) => api.delete(`projects/${projectId}/people/${personId}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["people", projectId] }),
-  });
-}
-
 export function useSearchPeople(projectId: string, search: string) {
   return useQuery({
     queryKey: ["people", projectId, "search", search],

@@ -52,14 +52,6 @@ export function useUpdateHousehold(projectId: string) {
   });
 }
 
-export function useDeleteHousehold(projectId: string) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => api.delete(`projects/${projectId}/households/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["households", projectId] }),
-  });
-}
-
 export function useAddHouseholdMember(projectId: string) {
   const qc = useQueryClient();
   return useMutation({

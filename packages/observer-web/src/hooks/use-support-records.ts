@@ -53,10 +53,3 @@ export function useUpdateSupportRecord(projectId: string) {
   });
 }
 
-export function useDeleteSupportRecord(projectId: string) {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => api.delete(`projects/${projectId}/support-records/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["support-records", projectId] }),
-  });
-}
