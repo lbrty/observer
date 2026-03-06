@@ -12,6 +12,7 @@ import {
   AGE_GROUP_COLORS,
 } from "@/components/charts/colors";
 import { DatePicker } from "@/components/date-picker";
+import { UISelect } from "@/components/ui-select";
 import {
   CaretDownIcon,
   CaretUpIcon,
@@ -196,6 +197,24 @@ const AGE_RANGE_MAP: Record<string, string> = {
   old_adult: "55+",
 };
 
+const SUPPORT_TYPE_OPTIONS = [
+  "humanitarian",
+  "legal",
+  "social",
+  "psychological",
+  "medical",
+  "general",
+] as const;
+
+function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1.5">
+      <span className="block text-xs font-medium text-fg-secondary">{label}</span>
+      {children}
+    </div>
+  );
+}
+
 type DatePreset = "month" | "quarter" | "year" | "all";
 
 function getPresetDates(preset: DatePreset): { date_from?: string; date_to?: string } {
@@ -240,6 +259,11 @@ function MyStatsPage() {
 
   const reportParams: ReportParams = { ...params, consultant_id: user?.id };
   const { data, isLoading } = useReport(projectId, reportParams);
+
+  const supportTypeOptions = SUPPORT_TYPE_OPTIONS.map((s) => ({
+    label: t(labelKeyMap[s] ?? s),
+    value: s,
+  }));
 
   const hasFilters = Object.entries(params).some(([, v]) => v != null && v !== "");
   const axisLabel = t("project.reports.axisCount");
@@ -304,11 +328,8 @@ function MyStatsPage() {
               ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-              <div className="space-y-1.5">
-                <span className="block text-xs font-medium text-fg-secondary">
-                  {t("project.reports.dateFrom")}
-                </span>
+            <div className="grid grid-cols-3 gap-x-4 gap-y-3">
+              <FilterField label={t("project.reports.dateFrom")}>
                 <DatePicker
                   value={params.date_from ?? ""}
                   onChange={(v) => {
@@ -316,11 +337,8 @@ function MyStatsPage() {
                     clearDatePreset();
                   }}
                 />
-              </div>
-              <div className="space-y-1.5">
-                <span className="block text-xs font-medium text-fg-secondary">
-                  {t("project.reports.dateTo")}
-                </span>
+              </FilterField>
+              <FilterField label={t("project.reports.dateTo")}>
                 <DatePicker
                   value={params.date_to ?? ""}
                   onChange={(v) => {
@@ -328,7 +346,21 @@ function MyStatsPage() {
                     clearDatePreset();
                   }}
                 />
-              </div>
+              </FilterField>
+              <FilterField label={t("project.reports.filterSupportType")}>
+                <UISelect
+                  value={params.support_type ?? ""}
+                  onValueChange={(v) =>
+                    setParams((p) => ({ ...p, support_type: v || undefined }))
+                  }
+                  options={[
+                    { label: t("project.reports.allValues"), value: "" },
+                    ...supportTypeOptions,
+                  ]}
+                  placeholder={t("project.reports.allValues")}
+                  fullWidth
+                />
+              </FilterField>
             </div>
           </div>
         )}
@@ -353,6 +385,16 @@ function MyStatsPage() {
                   setParams((p) => ({ ...p, date_to: undefined }));
                   clearDatePreset();
                 }}
+              />
+            )}
+            {params.support_type && (
+              <FilterChip
+                label={t("project.reports.filterSupportType")}
+                value={
+                  supportTypeOptions.find((s) => s.value === params.support_type)?.label ??
+                  params.support_type
+                }
+                onRemove={() => setParams((p) => ({ ...p, support_type: undefined }))}
               />
             )}
             <button
@@ -407,6 +449,20 @@ function MyStatsPage() {
             colorMap={SPHERE_COLORS}
             direction="auto"
           />
+          <StatsCard
+            group={data.by_office}
+            title={t("project.reports.byOffice")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            direction="auto"
+          />
+          <StatsCard
+            group={data.by_region}
+            title={t("project.reports.byRegion")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            direction="auto"
+          />
 
           {/* Demographics */}
           <StatsCard
@@ -414,6 +470,13 @@ function MyStatsPage() {
             title={t("project.reports.bySex")}
             chart="pie"
             colorMap={SEX_COLORS}
+          />
+          <StatsCard
+            group={data.by_case_status}
+            title={t("project.reports.byCaseStatus")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            direction="auto"
           />
 
           {/* Age distribution */}
