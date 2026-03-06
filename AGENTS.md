@@ -5,7 +5,7 @@
 - **Module**: `github.com/lbrty/observer` | **Go** 1.25.\* | **Port**: 9000
 - **Architecture**: DDD + Clean Architecture, manual DI (no frameworks)
 - **Build**: `Justfile` (not Makefile) | **Frontend pkg manager**: `bun`
-- **ADRs**: `docs/adr/` | **Testing guide**: `docs/testing-guide.md` | **Variables**: `docs/variables.md`
+- **ADRs**: `adr/` | **Plans**: `plans/` | **Testing guide**: `docs/testing-guide.md` | **Variables**: `docs/variables.md`
 
 ## Project Layout
 
@@ -21,7 +21,8 @@ internal/
   config/         # reads env vars with defaults
   server/         # HTTP server setup
   app/            # DI container (manual wiring)
-docs/adr/         # architectural decision records
+adr/              # architectural decision records
+plans/            # design docs and implementation plans
 migrations/       # forward-only SQL migrations
 ```
 
