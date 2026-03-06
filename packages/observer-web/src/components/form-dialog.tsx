@@ -3,6 +3,7 @@ import type { SyntheticEvent, ReactNode } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { useTranslation } from "react-i18next";
 
+import { ErrorBanner } from "@/components/alert-banner";
 import { Button } from "@/components/button";
 
 interface FormDialogProps {
@@ -14,6 +15,8 @@ interface FormDialogProps {
   onSubmit: (e: SyntheticEvent) => void;
   children: ReactNode;
   maxWidth?: "sm" | "md";
+  error?: string;
+  isPending?: boolean;
 }
 
 export function FormDialog({
@@ -25,6 +28,8 @@ export function FormDialog({
   onSubmit,
   children,
   maxWidth = "sm",
+  error,
+  isPending,
 }: FormDialogProps) {
   const { t } = useTranslation();
 
@@ -42,13 +47,14 @@ export function FormDialog({
             </Dialog.Description>
           )}
           <form onSubmit={onSubmit} className="mt-5 space-y-4">
+            {error && <ErrorBanner message={error} />}
             {children}
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="secondary" asChild>
                 <Dialog.Close>{t("admin.common.cancel")}</Dialog.Close>
               </Button>
-              <Button type="submit" disabled={loading}>
-                {loading ? t("admin.common.saving") : t("admin.common.save")}
+              <Button type="submit" disabled={loading || isPending}>
+                {loading || isPending ? t("admin.common.saving") : t("admin.common.save")}
               </Button>
             </div>
           </form>
