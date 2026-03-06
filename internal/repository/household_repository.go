@@ -21,6 +21,32 @@ func NewHouseholdRepository(db *sqlx.DB) HouseholdRepository {
 	return &householdRepo{db: db}
 }
 
+func scanHousehold(row interface{ Scan(dest ...any) error }) (*household.Household, error) {
+	var h household.Household
+	if err := row.Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &h.CreatedAt, &h.UpdatedAt); err != nil {
+		return nil, err
+	}
+	TimesToUTC(&h.CreatedAt, &h.UpdatedAt)
+	return &h, nil
+}
+
+func scanHouseholdWithCount(row interface{ Scan(dest ...any) error }) (*household.Household, error) {
+	var h household.Household
+	if err := row.Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &h.MemberCount, &h.CreatedAt, &h.UpdatedAt); err != nil {
+		return nil, err
+	}
+	TimesToUTC(&h.CreatedAt, &h.UpdatedAt)
+	return &h, nil
+}
+
+func scanMember(row interface{ Scan(dest ...any) error }) (*household.Member, error) {
+	var m household.Member
+	if err := row.Scan(&m.HouseholdID, &m.PersonID, &m.Relationship); err != nil {
+		return nil, err
+	}
+	return &m, nil
+}
+
 func (r *householdRepo) List(ctx context.Context, projectID string, page, perPage int) ([]*household.Household, int, error) {
 	if page < 1 {
 		page = 1
@@ -47,28 +73,25 @@ func (r *householdRepo) List(ctx context.Context, projectID string, page, perPag
 
 	var out []*household.Household
 	for rows.Next() {
-		var h household.Household
-		if err := rows.Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &h.MemberCount, &h.CreatedAt, &h.UpdatedAt); err != nil {
+		h, err := scanHouseholdWithCount(rows)
+		if err != nil {
 			return nil, 0, fmt.Errorf("scan household: %w", err)
 		}
-		TimesToUTC(&h.CreatedAt, &h.UpdatedAt)
-		out = append(out, &h)
+		out = append(out, h)
 	}
 	return out, total, rows.Err()
 }
 
 func (r *householdRepo) GetByID(ctx context.Context, id string) (*household.Household, error) {
 	const q = `SELECT id, project_id, reference_number, head_person_id, created_at, updated_at FROM households WHERE id = $1`
-	var h household.Household
-	err := r.db.QueryRowContext(ctx, q, id).Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &h.CreatedAt, &h.UpdatedAt)
+	h, err := scanHousehold(r.db.QueryRowContext(ctx, q, id))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, household.ErrHouseholdNotFound
 		}
 		return nil, fmt.Errorf("get household: %w", err)
 	}
-	TimesToUTC(&h.CreatedAt, &h.UpdatedAt)
-	return &h, nil
+	return h, nil
 }
 
 func (r *householdRepo) Create(ctx context.Context, h *household.Household) error {
@@ -122,11 +145,11 @@ func (r *householdMemberRepo) List(ctx context.Context, householdID string) ([]*
 
 	var out []*household.Member
 	for rows.Next() {
-		var m household.Member
-		if err := rows.Scan(&m.HouseholdID, &m.PersonID, &m.Relationship); err != nil {
+		m, err := scanMember(rows)
+		if err != nil {
 			return nil, fmt.Errorf("scan household member: %w", err)
 		}
-		out = append(out, &m)
+		out = append(out, m)
 	}
 	return out, rows.Err()
 }

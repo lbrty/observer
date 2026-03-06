@@ -22,6 +22,15 @@ func NewOfficeRepository(db *sqlx.DB) OfficeRepository {
 	return &officeRepo{db: db}
 }
 
+func scanOffice(row interface{ Scan(dest ...any) error }) (*reference.Office, error) {
+	var o reference.Office
+	if err := row.Scan(&o.ID, &o.Name, &o.PlaceID, &o.CreatedAt, &o.UpdatedAt); err != nil {
+		return nil, err
+	}
+	TimesToUTC(&o.CreatedAt, &o.UpdatedAt)
+	return &o, nil
+}
+
 func (r *officeRepo) List(ctx context.Context) ([]*reference.Office, error) {
 	const q = `SELECT id, name, place_id, created_at, updated_at FROM offices ORDER BY name`
 	rows, err := r.db.QueryContext(ctx, q)
@@ -32,28 +41,25 @@ func (r *officeRepo) List(ctx context.Context) ([]*reference.Office, error) {
 
 	var out []*reference.Office
 	for rows.Next() {
-		var o reference.Office
-		if err := rows.Scan(&o.ID, &o.Name, &o.PlaceID, &o.CreatedAt, &o.UpdatedAt); err != nil {
+		o, err := scanOffice(rows)
+		if err != nil {
 			return nil, fmt.Errorf("scan office: %w", err)
 		}
-		TimesToUTC(&o.CreatedAt, &o.UpdatedAt)
-		out = append(out, &o)
+		out = append(out, o)
 	}
 	return out, rows.Err()
 }
 
 func (r *officeRepo) GetByID(ctx context.Context, id string) (*reference.Office, error) {
 	const q = `SELECT id, name, place_id, created_at, updated_at FROM offices WHERE id = $1`
-	var o reference.Office
-	err := r.db.QueryRowContext(ctx, q, id).Scan(&o.ID, &o.Name, &o.PlaceID, &o.CreatedAt, &o.UpdatedAt)
+	o, err := scanOffice(r.db.QueryRowContext(ctx, q, id))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, reference.ErrOfficeNotFound
 		}
 		return nil, fmt.Errorf("get office: %w", err)
 	}
-	TimesToUTC(&o.CreatedAt, &o.UpdatedAt)
-	return &o, nil
+	return o, nil
 }
 
 func (r *officeRepo) Create(ctx context.Context, o *reference.Office) error {

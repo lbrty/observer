@@ -21,6 +21,15 @@ func NewTagRepository(db *sqlx.DB) TagRepository {
 	return &tagRepo{db: db}
 }
 
+func scanTag(row interface{ Scan(dest ...any) error }) (*tag.Tag, error) {
+	var t tag.Tag
+	if err := row.Scan(&t.ID, &t.ProjectID, &t.Name, &t.Color, &t.CreatedAt); err != nil {
+		return nil, err
+	}
+	TimesToUTC(&t.CreatedAt)
+	return &t, nil
+}
+
 func (r *tagRepo) List(ctx context.Context, projectID string) ([]*tag.Tag, error) {
 	const q = `SELECT id, project_id, name, color, created_at FROM tags WHERE project_id = $1 ORDER BY name`
 	rows, err := r.db.QueryContext(ctx, q, projectID)
@@ -31,28 +40,25 @@ func (r *tagRepo) List(ctx context.Context, projectID string) ([]*tag.Tag, error
 
 	var out []*tag.Tag
 	for rows.Next() {
-		var t tag.Tag
-		if err := rows.Scan(&t.ID, &t.ProjectID, &t.Name, &t.Color, &t.CreatedAt); err != nil {
+		t, err := scanTag(rows)
+		if err != nil {
 			return nil, fmt.Errorf("scan tag: %w", err)
 		}
-		TimesToUTC(&t.CreatedAt)
-		out = append(out, &t)
+		out = append(out, t)
 	}
 	return out, rows.Err()
 }
 
 func (r *tagRepo) GetByID(ctx context.Context, id string) (*tag.Tag, error) {
 	const q = `SELECT id, project_id, name, color, created_at FROM tags WHERE id = $1`
-	var t tag.Tag
-	err := r.db.QueryRowContext(ctx, q, id).Scan(&t.ID, &t.ProjectID, &t.Name, &t.Color, &t.CreatedAt)
+	t, err := scanTag(r.db.QueryRowContext(ctx, q, id))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, tag.ErrTagNotFound
 		}
 		return nil, fmt.Errorf("get tag: %w", err)
 	}
-	TimesToUTC(&t.CreatedAt)
-	return &t, nil
+	return t, nil
 }
 
 func (r *tagRepo) Create(ctx context.Context, t *tag.Tag) error {

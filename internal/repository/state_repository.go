@@ -22,6 +22,15 @@ func NewStateRepository(db *sqlx.DB) StateRepository {
 	return &stateRepo{db: db}
 }
 
+func scanState(row interface{ Scan(dest ...any) error }) (*reference.State, error) {
+	var s reference.State
+	if err := row.Scan(&s.ID, &s.CountryID, &s.Name, &s.Code, &s.ConflictZone, &s.CreatedAt, &s.UpdatedAt); err != nil {
+		return nil, err
+	}
+	TimesToUTC(&s.CreatedAt, &s.UpdatedAt)
+	return &s, nil
+}
+
 func (r *stateRepo) ListAll(ctx context.Context) ([]*reference.State, error) {
 	const q = `
 		SELECT id, country_id, name, code, conflict_zone, created_at, updated_at
@@ -35,12 +44,11 @@ func (r *stateRepo) ListAll(ctx context.Context) ([]*reference.State, error) {
 
 	var out []*reference.State
 	for rows.Next() {
-		var s reference.State
-		if err := rows.Scan(&s.ID, &s.CountryID, &s.Name, &s.Code, &s.ConflictZone, &s.CreatedAt, &s.UpdatedAt); err != nil {
+		s, err := scanState(rows)
+		if err != nil {
 			return nil, fmt.Errorf("scan state: %w", err)
 		}
-		TimesToUTC(&s.CreatedAt, &s.UpdatedAt)
-		out = append(out, &s)
+		out = append(out, s)
 	}
 	return out, rows.Err()
 }
@@ -58,28 +66,25 @@ func (r *stateRepo) List(ctx context.Context, countryID string) ([]*reference.St
 
 	var out []*reference.State
 	for rows.Next() {
-		var s reference.State
-		if err := rows.Scan(&s.ID, &s.CountryID, &s.Name, &s.Code, &s.ConflictZone, &s.CreatedAt, &s.UpdatedAt); err != nil {
+		s, err := scanState(rows)
+		if err != nil {
 			return nil, fmt.Errorf("scan state: %w", err)
 		}
-		TimesToUTC(&s.CreatedAt, &s.UpdatedAt)
-		out = append(out, &s)
+		out = append(out, s)
 	}
 	return out, rows.Err()
 }
 
 func (r *stateRepo) GetByID(ctx context.Context, id string) (*reference.State, error) {
 	const q = `SELECT id, country_id, name, code, conflict_zone, created_at, updated_at FROM states WHERE id = $1`
-	var s reference.State
-	err := r.db.QueryRowContext(ctx, q, id).Scan(&s.ID, &s.CountryID, &s.Name, &s.Code, &s.ConflictZone, &s.CreatedAt, &s.UpdatedAt)
+	s, err := scanState(r.db.QueryRowContext(ctx, q, id))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, reference.ErrStateNotFound
 		}
 		return nil, fmt.Errorf("get state: %w", err)
 	}
-	TimesToUTC(&s.CreatedAt, &s.UpdatedAt)
-	return &s, nil
+	return s, nil
 }
 
 func (r *stateRepo) Create(ctx context.Context, s *reference.State) error {

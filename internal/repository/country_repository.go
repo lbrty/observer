@@ -22,6 +22,15 @@ func NewCountryRepository(db *sqlx.DB) CountryRepository {
 	return &countryRepo{db: db}
 }
 
+func scanCountry(row interface{ Scan(dest ...any) error }) (*reference.Country, error) {
+	var c reference.Country
+	if err := row.Scan(&c.ID, &c.Name, &c.Code, &c.CreatedAt, &c.UpdatedAt); err != nil {
+		return nil, err
+	}
+	TimesToUTC(&c.CreatedAt, &c.UpdatedAt)
+	return &c, nil
+}
+
 func (r *countryRepo) List(ctx context.Context) ([]*reference.Country, error) {
 	const q = `SELECT id, name, code, created_at, updated_at FROM countries ORDER BY name`
 	rows, err := r.db.QueryContext(ctx, q)
@@ -32,28 +41,25 @@ func (r *countryRepo) List(ctx context.Context) ([]*reference.Country, error) {
 
 	var out []*reference.Country
 	for rows.Next() {
-		var c reference.Country
-		if err := rows.Scan(&c.ID, &c.Name, &c.Code, &c.CreatedAt, &c.UpdatedAt); err != nil {
+		c, err := scanCountry(rows)
+		if err != nil {
 			return nil, fmt.Errorf("scan country: %w", err)
 		}
-		TimesToUTC(&c.CreatedAt, &c.UpdatedAt)
-		out = append(out, &c)
+		out = append(out, c)
 	}
 	return out, rows.Err()
 }
 
 func (r *countryRepo) GetByID(ctx context.Context, id string) (*reference.Country, error) {
 	const q = `SELECT id, name, code, created_at, updated_at FROM countries WHERE id = $1`
-	var c reference.Country
-	err := r.db.QueryRowContext(ctx, q, id).Scan(&c.ID, &c.Name, &c.Code, &c.CreatedAt, &c.UpdatedAt)
+	c, err := scanCountry(r.db.QueryRowContext(ctx, q, id))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, reference.ErrCountryNotFound
 		}
 		return nil, fmt.Errorf("get country: %w", err)
 	}
-	TimesToUTC(&c.CreatedAt, &c.UpdatedAt)
-	return &c, nil
+	return c, nil
 }
 
 func (r *countryRepo) Create(ctx context.Context, c *reference.Country) error {

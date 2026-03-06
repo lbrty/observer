@@ -21,6 +21,15 @@ func NewPetRepository(db *sqlx.DB) PetRepository {
 	return &petRepo{db: db}
 }
 
+func scanPet(row interface{ Scan(dest ...any) error }) (*pet.Pet, error) {
+	var p pet.Pet
+	if err := row.Scan(&p.ID, &p.ProjectID, &p.OwnerID, &p.Name, &p.Status, &p.RegistrationID, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		return nil, err
+	}
+	TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
+	return &p, nil
+}
+
 func (r *petRepo) List(ctx context.Context, projectID string, page, perPage int) ([]*pet.Pet, int, error) {
 	if page < 1 {
 		page = 1
@@ -45,28 +54,25 @@ func (r *petRepo) List(ctx context.Context, projectID string, page, perPage int)
 
 	var out []*pet.Pet
 	for rows.Next() {
-		var p pet.Pet
-		if err := rows.Scan(&p.ID, &p.ProjectID, &p.OwnerID, &p.Name, &p.Status, &p.RegistrationID, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		p, err := scanPet(rows)
+		if err != nil {
 			return nil, 0, fmt.Errorf("scan pet: %w", err)
 		}
-		TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
-		out = append(out, &p)
+		out = append(out, p)
 	}
 	return out, total, rows.Err()
 }
 
 func (r *petRepo) GetByID(ctx context.Context, id string) (*pet.Pet, error) {
 	const q = `SELECT id, project_id, owner_id, name, status, registration_id, notes, created_at, updated_at FROM pets WHERE id = $1`
-	var p pet.Pet
-	err := r.db.QueryRowContext(ctx, q, id).Scan(&p.ID, &p.ProjectID, &p.OwnerID, &p.Name, &p.Status, &p.RegistrationID, &p.Notes, &p.CreatedAt, &p.UpdatedAt)
+	p, err := scanPet(r.db.QueryRowContext(ctx, q, id))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, pet.ErrPetNotFound
 		}
 		return nil, fmt.Errorf("get pet: %w", err)
 	}
-	TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
-	return &p, nil
+	return p, nil
 }
 
 func (r *petRepo) Create(ctx context.Context, p *pet.Pet) error {

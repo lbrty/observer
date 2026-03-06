@@ -22,6 +22,15 @@ func NewCategoryRepository(db *sqlx.DB) CategoryRepository {
 	return &categoryRepo{db: db}
 }
 
+func scanCategory(row interface{ Scan(dest ...any) error }) (*reference.Category, error) {
+	var c reference.Category
+	if err := row.Scan(&c.ID, &c.Name, &c.Description, &c.CreatedAt, &c.UpdatedAt); err != nil {
+		return nil, err
+	}
+	TimesToUTC(&c.CreatedAt, &c.UpdatedAt)
+	return &c, nil
+}
+
 func (r *categoryRepo) List(ctx context.Context) ([]*reference.Category, error) {
 	const q = `SELECT id, name, description, created_at, updated_at FROM categories ORDER BY name`
 	rows, err := r.db.QueryContext(ctx, q)
@@ -32,28 +41,25 @@ func (r *categoryRepo) List(ctx context.Context) ([]*reference.Category, error) 
 
 	var out []*reference.Category
 	for rows.Next() {
-		var c reference.Category
-		if err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.CreatedAt, &c.UpdatedAt); err != nil {
+		c, err := scanCategory(rows)
+		if err != nil {
 			return nil, fmt.Errorf("scan category: %w", err)
 		}
-		TimesToUTC(&c.CreatedAt, &c.UpdatedAt)
-		out = append(out, &c)
+		out = append(out, c)
 	}
 	return out, rows.Err()
 }
 
 func (r *categoryRepo) GetByID(ctx context.Context, id string) (*reference.Category, error) {
 	const q = `SELECT id, name, description, created_at, updated_at FROM categories WHERE id = $1`
-	var c reference.Category
-	err := r.db.QueryRowContext(ctx, q, id).Scan(&c.ID, &c.Name, &c.Description, &c.CreatedAt, &c.UpdatedAt)
+	c, err := scanCategory(r.db.QueryRowContext(ctx, q, id))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, reference.ErrCategoryNotFound
 		}
 		return nil, fmt.Errorf("get category: %w", err)
 	}
-	TimesToUTC(&c.CreatedAt, &c.UpdatedAt)
-	return &c, nil
+	return c, nil
 }
 
 func (r *categoryRepo) Create(ctx context.Context, c *reference.Category) error {

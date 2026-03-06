@@ -22,6 +22,15 @@ func NewPlaceRepository(db *sqlx.DB) PlaceRepository {
 	return &placeRepo{db: db}
 }
 
+func scanPlace(row interface{ Scan(dest ...any) error }) (*reference.Place, error) {
+	var p reference.Place
+	if err := row.Scan(&p.ID, &p.StateID, &p.Name, &p.Lat, &p.Lon, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		return nil, err
+	}
+	TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
+	return &p, nil
+}
+
 func (r *placeRepo) ListAll(ctx context.Context) ([]*reference.Place, error) {
 	const q = `
 		SELECT id, state_id, name, lat, lon, created_at, updated_at
@@ -35,12 +44,11 @@ func (r *placeRepo) ListAll(ctx context.Context) ([]*reference.Place, error) {
 
 	var out []*reference.Place
 	for rows.Next() {
-		var p reference.Place
-		if err := rows.Scan(&p.ID, &p.StateID, &p.Name, &p.Lat, &p.Lon, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		p, err := scanPlace(rows)
+		if err != nil {
 			return nil, fmt.Errorf("scan place: %w", err)
 		}
-		TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
-		out = append(out, &p)
+		out = append(out, p)
 	}
 	return out, rows.Err()
 }
@@ -58,28 +66,25 @@ func (r *placeRepo) List(ctx context.Context, stateID string) ([]*reference.Plac
 
 	var out []*reference.Place
 	for rows.Next() {
-		var p reference.Place
-		if err := rows.Scan(&p.ID, &p.StateID, &p.Name, &p.Lat, &p.Lon, &p.CreatedAt, &p.UpdatedAt); err != nil {
+		p, err := scanPlace(rows)
+		if err != nil {
 			return nil, fmt.Errorf("scan place: %w", err)
 		}
-		TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
-		out = append(out, &p)
+		out = append(out, p)
 	}
 	return out, rows.Err()
 }
 
 func (r *placeRepo) GetByID(ctx context.Context, id string) (*reference.Place, error) {
 	const q = `SELECT id, state_id, name, lat, lon, created_at, updated_at FROM places WHERE id = $1`
-	var p reference.Place
-	err := r.db.QueryRowContext(ctx, q, id).Scan(&p.ID, &p.StateID, &p.Name, &p.Lat, &p.Lon, &p.CreatedAt, &p.UpdatedAt)
+	p, err := scanPlace(r.db.QueryRowContext(ctx, q, id))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, reference.ErrPlaceNotFound
 		}
 		return nil, fmt.Errorf("get place: %w", err)
 	}
-	TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
-	return &p, nil
+	return p, nil
 }
 
 func (r *placeRepo) Create(ctx context.Context, p *reference.Place) error {
