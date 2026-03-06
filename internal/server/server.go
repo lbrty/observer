@@ -246,6 +246,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		// Update-level access
 		update := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionUpdate))
 		{
+			update.PATCH("/tags/:id", tagHandler.Update)
 			update.PATCH("/people/:person_id", personHandler.Update)
 			update.PATCH("/support-records/:id", supportHandler.Update)
 			update.PATCH("/households/:id", householdHandler.Update)

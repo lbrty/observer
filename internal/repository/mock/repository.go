@@ -1280,6 +1280,20 @@ func (mr *MockTagRepositoryMockRecorder) List(ctx, projectID any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockTagRepository)(nil).List), ctx, projectID)
 }
 
+// Update mocks base method.
+func (m *MockTagRepository) Update(ctx context.Context, t *tag.Tag) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, t)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockTagRepositoryMockRecorder) Update(ctx, t any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockTagRepository)(nil).Update), ctx, t)
+}
+
 // MockPersonRepository is a mock of PersonRepository interface.
 type MockPersonRepository struct {
 	ctrl     *gomock.Controller

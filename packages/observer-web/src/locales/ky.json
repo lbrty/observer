@@ -361,8 +361,11 @@
     "tags": {
       "title": "Tegder",
       "name": "Aty",
+      "color": "Tüs",
       "add": "Teg qoşuu",
-      "addTitle": "Teg qoşuu",
+      "edit": "Tegdi özgörtüü",
+      "saved": "Teg saqtaldy",
+      "deleted": "Teg joqqo çyğaryldy",
       "deleteConfirm": "Bu tegdi joqqo çyğarasyñyzby?",
       "emptyTitle": "Tegder jok",
       "emptyDescription": "Birinçi tegdi tüzüñüz"

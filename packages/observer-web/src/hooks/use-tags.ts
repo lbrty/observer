@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import type { CreateTagInput, ListTagsOutput, Tag } from "@/types/tag";
+import type { CreateTagInput, ListTagsOutput, Tag, UpdateTagInput } from "@/types/tag";
 
 export function useTags(projectId: string) {
   return useQuery({
@@ -16,6 +16,15 @@ export function useCreateTag(projectId: string) {
   return useMutation({
     mutationFn: (data: CreateTagInput) =>
       api.post(`projects/${projectId}/tags`, { json: data }).json<Tag>(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["tags", projectId] }),
+  });
+}
+
+export function useUpdateTag(projectId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateTagInput }) =>
+      api.patch(`projects/${projectId}/tags/${id}`, { json: data }).json<Tag>(),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["tags", projectId] }),
   });
 }

@@ -361,8 +361,11 @@
     "tags": {
       "title": "Tags",
       "name": "Name",
+      "color": "Farbe",
       "add": "Tag hinzufügen",
-      "addTitle": "Tag hinzufügen",
+      "edit": "Tag bearbeiten",
+      "saved": "Tag gespeichert",
+      "deleted": "Tag gelöscht",
       "deleteConfirm": "Sind Sie sicher, dass Sie diesen Tag löschen möchten?",
       "emptyTitle": "Keine Tags",
       "emptyDescription": "Erstellen Sie den ersten Tag"

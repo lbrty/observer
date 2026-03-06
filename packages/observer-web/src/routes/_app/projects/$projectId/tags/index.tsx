@@ -9,36 +9,100 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
 import { EmptyState } from "@/components/empty-state";
 import { FormDialog } from "@/components/form-dialog";
-import { PlusIcon, TagIcon, TrashIcon } from "@/components/icons";
+import { PencilSimpleIcon, PlusIcon, TagIcon, TrashIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
-import { useCreateTag, useDeleteTag, useTags } from "@/hooks/use-tags";
+import { useCreateTag, useDeleteTag, useUpdateTag, useTags } from "@/hooks/use-tags";
 import { HTTPError } from "@/lib/api";
+import { useToast } from "@/stores/toast";
 import type { Tag } from "@/types/tag";
 
 export const Route = createFileRoute("/_app/projects/$projectId/tags/")({
   component: TagsPage,
 });
 
+function colorFromName(name: string): string {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const h = ((hash % 360) + 360) % 360;
+  return `hsl(${h}, 55%, 55%)`;
+}
+
+function hslToHex(hsl: string): string {
+  const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+  if (!match) return "#888888";
+  const h = Number(match[1]) / 360;
+  const s = Number(match[2]) / 100;
+  const l = Number(match[3]) / 100;
+
+  const hue2rgb = (p: number, q: number, t: number) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  const r = Math.round(hue2rgb(p, q, h + 1 / 3) * 255);
+  const g = Math.round(hue2rgb(p, q, h) * 255);
+  const b = Math.round(hue2rgb(p, q, h - 1 / 3) * 255);
+
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
 function TagsPage() {
   const { t } = useTranslation();
   const { projectId } = Route.useParams();
+  const toast = useToast();
 
   const { data, isLoading } = useTags(projectId);
   const createTag = useCreateTag(projectId);
+  const updateTag = useUpdateTag(projectId);
   const deleteTag = useDeleteTag(projectId);
 
-  const [createOpen, setCreateOpen] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editTag, setEditTag] = useState<Tag | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Tag | null>(null);
   const [name, setName] = useState("");
+  const [color, setColor] = useState("");
   const [error, setError] = useState("");
 
-  async function handleCreate(e: FormEvent) {
+  function openCreate() {
+    setEditTag(null);
+    setName("");
+    setColor("");
+    setError("");
+    setFormOpen(true);
+  }
+
+  function openEdit(tag: Tag) {
+    setEditTag(tag);
+    setName(tag.name);
+    setColor(tag.color || hslToHex(colorFromName(tag.name)));
+    setError("");
+    setFormOpen(true);
+  }
+
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
     try {
-      await createTag.mutateAsync({ name: name.trim() });
-      setName("");
-      setCreateOpen(false);
+      if (editTag) {
+        await updateTag.mutateAsync({
+          id: editTag.id,
+          data: { name: name.trim(), color },
+        });
+        toast.success(t("project.tags.saved"));
+      } else {
+        const tagColor = color || hslToHex(colorFromName(name.trim()));
+        await createTag.mutateAsync({ name: name.trim(), color: tagColor });
+        toast.success(t("project.tags.saved"));
+      }
+      setFormOpen(false);
     } catch (err) {
       if (err instanceof HTTPError) {
         const body = await err.response.json().catch(() => null);
@@ -56,6 +120,7 @@ function TagsPage() {
     try {
       await deleteTag.mutateAsync(deleteTarget.id);
       setDeleteTarget(null);
+      toast.success(t("project.tags.deleted"));
     } catch (err) {
       if (err instanceof HTTPError) {
         const body = await err.response.json().catch(() => null);
@@ -74,12 +139,31 @@ function TagsPage() {
       header: t("project.tags.name"),
       render: (tag) => (
         <div className="flex items-center gap-2.5">
-          <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-md bg-bg-tertiary text-fg-tertiary">
-            <TagIcon size={14} />
+          <span
+            className="inline-flex size-7 shrink-0 items-center justify-center rounded-md"
+            style={{ backgroundColor: tag.color || colorFromName(tag.name) }}
+          >
+            <TagIcon size={14} className="text-white" />
           </span>
           <span className="font-medium text-fg">{tag.name}</span>
         </div>
       ),
+    },
+    {
+      key: "color",
+      header: t("project.tags.color"),
+      render: (tag) => {
+        const c = tag.color || colorFromName(tag.name);
+        return (
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-block size-4 rounded-full border border-border-secondary"
+              style={{ backgroundColor: c }}
+            />
+            <span className="font-mono text-xs text-fg-tertiary">{tag.color || "—"}</span>
+          </div>
+        );
+      },
     },
     {
       key: "created_at",
@@ -94,16 +178,28 @@ function TagsPage() {
       key: "actions",
       header: "",
       render: (tag) => (
-        <Button
-          variant="ghost"
-          className="p-1.5 hover:text-rose"
-          onClick={(e) => {
-            e.stopPropagation();
-            setDeleteTarget(tag);
-          }}
-        >
-          <TrashIcon size={16} />
-        </Button>
+        <div className="flex gap-1">
+          <Button
+            variant="ghost"
+            className="p-1.5"
+            onClick={(e) => {
+              e.stopPropagation();
+              openEdit(tag);
+            }}
+          >
+            <PencilSimpleIcon size={16} />
+          </Button>
+          <Button
+            variant="ghost"
+            className="p-1.5 hover:text-rose"
+            onClick={(e) => {
+              e.stopPropagation();
+              setDeleteTarget(tag);
+            }}
+          >
+            <TrashIcon size={16} />
+          </Button>
+        </div>
       ),
     },
   ];
@@ -113,14 +209,7 @@ function TagsPage() {
       <PageHeader
         title={t("project.tags.title")}
         action={
-          <Button
-            icon={<PlusIcon size={16} />}
-            onClick={() => {
-              setError("");
-              setName("");
-              setCreateOpen(true);
-            }}
-          >
+          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
             {t("project.tags.add")}
           </Button>
         }
@@ -137,14 +226,7 @@ function TagsPage() {
             title={t("project.tags.emptyTitle")}
             description={t("project.tags.emptyDescription")}
             action={
-              <Button
-                onClick={() => {
-                  setError("");
-                  setName("");
-                  setCreateOpen(true);
-                }}
-                icon={<PlusIcon size={16} />}
-              >
+              <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
                 {t("project.tags.add")}
               </Button>
             }
@@ -153,11 +235,11 @@ function TagsPage() {
       />
 
       <FormDialog
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-        title={t("project.tags.add")}
-        loading={createTag.isPending}
-        onSubmit={handleCreate}
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        title={editTag ? t("project.tags.edit") : t("project.tags.add")}
+        loading={createTag.isPending || updateTag.isPending}
+        onSubmit={handleSubmit}
       >
         <Field.Root>
           <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -166,10 +248,33 @@ function TagsPage() {
           <Field.Control
             required
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (!editTag && !color) {
+                // preview color will update automatically
+              }
+            }}
             className="block h-9 w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
           />
         </Field.Root>
+
+        <Field.Root>
+          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+            {t("project.tags.color")}
+          </Field.Label>
+          <div className="flex items-center gap-3">
+            <input
+              type="color"
+              value={color || hslToHex(colorFromName(name || "tag"))}
+              onChange={(e) => setColor(e.target.value)}
+              className="size-9 cursor-pointer rounded-lg border border-border-secondary bg-bg-secondary p-0.5"
+            />
+            <span className="font-mono text-sm text-fg-tertiary">
+              {color || hslToHex(colorFromName(name || "tag"))}
+            </span>
+          </div>
+        </Field.Root>
+
         {error && <p className="text-sm text-rose">{error}</p>}
       </FormDialog>
 

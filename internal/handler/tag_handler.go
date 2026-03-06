@@ -68,6 +68,35 @@ func (h *TagHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, out)
 }
 
+// Update handles PUT /projects/:project_id/tags/:id.
+// @Summary Update a tag
+// @Tags project-tags
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param project_id path string true "Project ID"
+// @Param id path string true "Tag ID"
+// @Param input body ucproject.UpdateTagInput true "Tag payload"
+// @Success 200 {object} ucproject.TagDTO
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 409 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /projects/{project_id}/tags/{id} [put]
+func (h *TagHandler) Update(c *gin.Context) {
+	var input ucproject.UpdateTagInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		return
+	}
+	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
+	if err != nil {
+		h.handleError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, out)
+}
+
 // Delete handles DELETE /projects/:project_id/tags/:id.
 // @Summary Delete a tag
 // @Tags project-tags

@@ -7,5 +7,6 @@ type Tag struct {
 	ID        string
 	ProjectID string
 	Name      string
+	Color     string
 	CreatedAt time.Time
 }

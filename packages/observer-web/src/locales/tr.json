@@ -361,8 +361,11 @@
     "tags": {
       "title": "Etiketler",
       "name": "Ad",
+      "color": "Renk",
       "add": "Etiket ekle",
-      "addTitle": "Etiket ekle",
+      "edit": "Etiketi düzenle",
+      "saved": "Etiket kaydedildi",
+      "deleted": "Etiket silindi",
       "deleteConfirm": "Bu etiketi silmek istediğinize emin misiniz?",
       "emptyTitle": "Etiket yok",
       "emptyDescription": "İlk etiketi oluşturun"

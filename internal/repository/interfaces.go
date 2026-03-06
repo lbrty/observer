@@ -138,6 +138,7 @@ type TagRepository interface {
 	List(ctx context.Context, projectID string) ([]*tag.Tag, error)
 	GetByID(ctx context.Context, id string) (*tag.Tag, error)
 	Create(ctx context.Context, t *tag.Tag) error
+	Update(ctx context.Context, t *tag.Tag) error
 	Delete(ctx context.Context, id string) error
 }
 

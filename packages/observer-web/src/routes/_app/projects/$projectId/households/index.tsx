@@ -64,7 +64,7 @@ function HouseholdsListPage() {
     {
       key: "members",
       header: t("project.households.members"),
-      render: (h) => <span className="text-fg-secondary">{h.members?.length ?? 0}</span>,
+      render: (h) => <span className="text-fg-secondary">{h.member_count}</span>,
     },
     {
       key: "created_at",

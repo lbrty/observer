@@ -12,6 +12,7 @@ type HouseholdDTO struct {
 	ProjectID       string               `json:"project_id"`
 	ReferenceNumber *string              `json:"reference_number,omitempty"`
 	HeadPersonID    *string              `json:"head_person_id,omitempty"`
+	MemberCount     int                  `json:"member_count"`
 	Members         []HouseholdMemberDTO `json:"members,omitempty"`
 	CreatedAt       time.Time            `json:"created_at"`
 	UpdatedAt       time.Time            `json:"updated_at"`
@@ -61,6 +62,7 @@ func householdToDTO(h *household.Household) HouseholdDTO {
 		ProjectID:       h.ProjectID,
 		ReferenceNumber: h.ReferenceNumber,
 		HeadPersonID:    h.HeadPersonID,
+		MemberCount:     h.MemberCount,
 		CreatedAt:       h.CreatedAt,
 		UpdatedAt:       h.UpdatedAt,
 	}

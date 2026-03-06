@@ -36,8 +36,10 @@ func (r *householdRepo) List(ctx context.Context, projectID string, page, perPag
 	}
 
 	offset := (page - 1) * perPage
-	const q = `SELECT id, project_id, reference_number, head_person_id, created_at, updated_at
-		FROM households WHERE project_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`
+	const q = `SELECT h.id, h.project_id, h.reference_number, h.head_person_id,
+			COALESCE((SELECT COUNT(*) FROM household_members hm WHERE hm.household_id = h.id), 0) AS member_count,
+			h.created_at, h.updated_at
+		FROM households h WHERE h.project_id = $1 ORDER BY h.created_at DESC LIMIT $2 OFFSET $3`
 	rows, err := r.db.QueryContext(ctx, q, projectID, perPage, offset)
 	if err != nil {
 		return nil, 0, fmt.Errorf("list households: %w", err)
@@ -47,7 +49,7 @@ func (r *householdRepo) List(ctx context.Context, projectID string, page, perPag
 	var out []*household.Household
 	for rows.Next() {
 		var h household.Household
-		if err := rows.Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &h.CreatedAt, &h.UpdatedAt); err != nil {
+		if err := rows.Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &h.MemberCount, &h.CreatedAt, &h.UpdatedAt); err != nil {
 			return nil, 0, fmt.Errorf("scan household: %w", err)
 		}
 		h.CreatedAt = h.CreatedAt.UTC()

@@ -23,6 +23,7 @@ type Household struct {
 	ProjectID       string
 	ReferenceNumber *string
 	HeadPersonID    *string
+	MemberCount     int
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 }

@@ -361,8 +361,11 @@
     "tags": {
       "title": "Tags",
       "name": "Name",
+      "color": "Color",
       "add": "Add tag",
-      "addTitle": "Add tag",
+      "edit": "Edit tag",
+      "saved": "Tag saved",
+      "deleted": "Tag deleted",
       "deleteConfirm": "Are you sure you want to delete this tag?",
       "emptyTitle": "No tags",
       "emptyDescription": "Create the first tag"

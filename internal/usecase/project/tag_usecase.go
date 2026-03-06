@@ -38,9 +38,29 @@ func (uc *TagUseCase) Create(ctx context.Context, projectID string, input Create
 		ID:        ulid.NewString(),
 		ProjectID: projectID,
 		Name:      input.Name,
+		Color:     input.Color,
 	}
 	if err := uc.repo.Create(ctx, t); err != nil {
 		return nil, fmt.Errorf("create tag: %w", err)
+	}
+	dto := tagToDTO(t)
+	return &dto, nil
+}
+
+// Update applies a partial update to a tag.
+func (uc *TagUseCase) Update(ctx context.Context, id string, input UpdateTagInput) (*TagDTO, error) {
+	t, err := uc.repo.GetByID(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("get tag for update: %w", err)
+	}
+	if input.Name != nil {
+		t.Name = *input.Name
+	}
+	if input.Color != nil {
+		t.Color = *input.Color
+	}
+	if err := uc.repo.Update(ctx, t); err != nil {
+		return nil, fmt.Errorf("update tag: %w", err)
 	}
 	dto := tagToDTO(t)
 	return &dto, nil
