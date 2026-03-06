@@ -18,7 +18,7 @@ import {
 } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { useCreateTag, useDeleteTag, useUpdateTag, useTags } from "@/hooks/use-tags";
-import { HTTPError } from "@/lib/api";
+import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";
 import type { Tag } from "@/types/tag";
 
@@ -117,14 +117,7 @@ function TagsPage() {
       }
       setFormOpen(false);
     } catch (err) {
-      if (err instanceof HTTPError) {
-        const body = await err.response.json().catch(() => null);
-        const code = body?.code;
-        const translated = code ? t(code, { defaultValue: "" }) : "";
-        setError(translated || body?.error || err.message);
-      } else {
-        setError(t("common.unexpectedError"));
-      }
+      setError(await handleApiError(err, t));
     }
   }
 
@@ -135,14 +128,7 @@ function TagsPage() {
       setDeleteTarget(null);
       toast.success(t("project.tags.deleted"));
     } catch (err) {
-      if (err instanceof HTTPError) {
-        const body = await err.response.json().catch(() => null);
-        const code = body?.code;
-        const translated = code ? t(code, { defaultValue: "" }) : "";
-        setError(translated || body?.error || err.message);
-      } else {
-        setError(t("common.unexpectedError"));
-      }
+      setError(await handleApiError(err, t));
     }
   }
 
