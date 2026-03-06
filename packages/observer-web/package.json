@@ -16,6 +16,7 @@
     "@tanstack/react-query-devtools": "^5",
     "@tanstack/react-router": "^1",
     "@tanstack/react-router-devtools": "^1.162.8",
+    "@tanstack/react-table": "^8.21.3",
     "@types/d3": "^7.4.3",
     "d3": "^7.9.0",
     "d3-sankey": "^0.12.3",

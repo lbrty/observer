@@ -281,7 +281,7 @@ function ReportsPage() {
   const { t } = useTranslation();
   const { projectId } = Route.useParams();
   const [params, setParams] = useState<ReportParams>({});
-  const [filtersOpen, setFiltersOpen] = useState(true);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [activePreset, setActivePreset] = useState<DatePreset | null>(null);
   const { data, isLoading } = useReport(projectId, params);
   const { data: offices } = useOffices();

@@ -37,6 +37,7 @@ import { Route as AppProjectsProjectIdDocumentsIndexRouteImport } from './routes
 import { Route as AppAdminReferenceCountriesIndexRouteImport } from './routes/_app/admin/reference/countries/index'
 import { Route as AppAdminProjectsProjectIdIndexRouteImport } from './routes/_app/admin/projects/$projectId/index'
 import { Route as AppProjectsProjectIdSupportRecordsTypeRouteImport } from './routes/_app/projects/$projectId/support-records/$type'
+import { Route as AppProjectsProjectIdPetsStatusRouteImport } from './routes/_app/projects/$projectId/pets/$status'
 import { Route as AppProjectsProjectIdPeoplePersonIdRouteImport } from './routes/_app/projects/$projectId/people/$personId'
 import { Route as AppAdminReferenceCountriesCountryIdRouteImport } from './routes/_app/admin/reference/countries/$countryId'
 import { Route as AppAdminProjectsProjectIdPermissionsRouteImport } from './routes/_app/admin/projects/$projectId/permissions'
@@ -202,6 +203,12 @@ const AppProjectsProjectIdSupportRecordsTypeRoute =
     path: '/support-records/$type',
     getParentRoute: () => AppProjectsProjectIdRoute,
   } as any)
+const AppProjectsProjectIdPetsStatusRoute =
+  AppProjectsProjectIdPetsStatusRouteImport.update({
+    id: '/pets/$status',
+    path: '/pets/$status',
+    getParentRoute: () => AppProjectsProjectIdRoute,
+  } as any)
 const AppProjectsProjectIdPeoplePersonIdRoute =
   AppProjectsProjectIdPeoplePersonIdRouteImport.update({
     id: '/people/$personId',
@@ -288,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
   '/admin/reference/countries/$countryId': typeof AppAdminReferenceCountriesCountryIdRouteWithChildren
   '/projects/$projectId/people/$personId': typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
+  '/projects/$projectId/pets/$status': typeof AppProjectsProjectIdPetsStatusRoute
   '/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
   '/admin/projects/$projectId/': typeof AppAdminProjectsProjectIdIndexRoute
   '/admin/reference/countries/': typeof AppAdminReferenceCountriesIndexRoute
@@ -322,6 +330,7 @@ export interface FileRoutesByTo {
   '/admin/reference': typeof AppAdminReferenceIndexRoute
   '/admin/users': typeof AppAdminUsersIndexRoute
   '/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
+  '/projects/$projectId/pets/$status': typeof AppProjectsProjectIdPetsStatusRoute
   '/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
   '/admin/projects/$projectId': typeof AppAdminProjectsProjectIdIndexRoute
   '/admin/reference/countries': typeof AppAdminReferenceCountriesIndexRoute
@@ -364,6 +373,7 @@ export interface FileRoutesById {
   '/_app/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
   '/_app/admin/reference/countries/$countryId': typeof AppAdminReferenceCountriesCountryIdRouteWithChildren
   '/_app/projects/$projectId/people/$personId': typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
+  '/_app/projects/$projectId/pets/$status': typeof AppProjectsProjectIdPetsStatusRoute
   '/_app/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
   '/_app/admin/projects/$projectId/': typeof AppAdminProjectsProjectIdIndexRoute
   '/_app/admin/reference/countries/': typeof AppAdminReferenceCountriesIndexRoute
@@ -405,6 +415,7 @@ export interface FileRouteTypes {
     | '/admin/projects/$projectId/permissions'
     | '/admin/reference/countries/$countryId'
     | '/projects/$projectId/people/$personId'
+    | '/projects/$projectId/pets/$status'
     | '/projects/$projectId/support-records/$type'
     | '/admin/projects/$projectId/'
     | '/admin/reference/countries/'
@@ -439,6 +450,7 @@ export interface FileRouteTypes {
     | '/admin/reference'
     | '/admin/users'
     | '/admin/projects/$projectId/permissions'
+    | '/projects/$projectId/pets/$status'
     | '/projects/$projectId/support-records/$type'
     | '/admin/projects/$projectId'
     | '/admin/reference/countries'
@@ -480,6 +492,7 @@ export interface FileRouteTypes {
     | '/_app/admin/projects/$projectId/permissions'
     | '/_app/admin/reference/countries/$countryId'
     | '/_app/projects/$projectId/people/$personId'
+    | '/_app/projects/$projectId/pets/$status'
     | '/_app/projects/$projectId/support-records/$type'
     | '/_app/admin/projects/$projectId/'
     | '/_app/admin/reference/countries/'
@@ -704,6 +717,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProjectsProjectIdSupportRecordsTypeRouteImport
       parentRoute: typeof AppProjectsProjectIdRoute
     }
+    '/_app/projects/$projectId/pets/$status': {
+      id: '/_app/projects/$projectId/pets/$status'
+      path: '/pets/$status'
+      fullPath: '/projects/$projectId/pets/$status'
+      preLoaderRoute: typeof AppProjectsProjectIdPetsStatusRouteImport
+      parentRoute: typeof AppProjectsProjectIdRoute
+    }
     '/_app/projects/$projectId/people/$personId': {
       id: '/_app/projects/$projectId/people/$personId'
       path: '/people/$personId'
@@ -896,6 +916,7 @@ const AppProjectsProjectIdPeoplePersonIdRouteWithChildren =
 
 interface AppProjectsProjectIdRouteChildren {
   AppProjectsProjectIdPeoplePersonIdRoute: typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
+  AppProjectsProjectIdPetsStatusRoute: typeof AppProjectsProjectIdPetsStatusRoute
   AppProjectsProjectIdSupportRecordsTypeRoute: typeof AppProjectsProjectIdSupportRecordsTypeRoute
   AppProjectsProjectIdDocumentsIndexRoute: typeof AppProjectsProjectIdDocumentsIndexRoute
   AppProjectsProjectIdHouseholdsIndexRoute: typeof AppProjectsProjectIdHouseholdsIndexRoute
@@ -910,6 +931,7 @@ interface AppProjectsProjectIdRouteChildren {
 const AppProjectsProjectIdRouteChildren: AppProjectsProjectIdRouteChildren = {
   AppProjectsProjectIdPeoplePersonIdRoute:
     AppProjectsProjectIdPeoplePersonIdRouteWithChildren,
+  AppProjectsProjectIdPetsStatusRoute: AppProjectsProjectIdPetsStatusRoute,
   AppProjectsProjectIdSupportRecordsTypeRoute:
     AppProjectsProjectIdSupportRecordsTypeRoute,
   AppProjectsProjectIdDocumentsIndexRoute:

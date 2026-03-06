@@ -1,13 +1,28 @@
-[goldmark.renderer]
-  unsafe = true
+defaultMarkdownHandler = "goldmark"
 
-[tableOfContents]
-  endLevel   = 4
-  ordered    = true
-  startLevel = 2
+[goldmark]
+  [goldmark.extensions]
+    linkify = false
+    [goldmark.extensions.passthrough]
+      enable = true
+      [goldmark.extensions.passthrough.delimiters]
+        block = [['\[', '\]'], ['$$', '$$']]
+        inline = [['\(', '\)']]
+  [goldmark.parser]
+    autoHeadingID = true
+    autoHeadingIDType = "github"
+    [goldmark.parser.attribute]
+      block = true
+      title = true
+  [goldmark.renderer]
+    unsafe = true
 
 [highlight]
-  noClasses  = false
   codeFences = true
-  lineNos    = true
-  tabWidth   = 4
+  noClasses = false
+  tabWidth = 2
+
+[tableOfContents]
+  endLevel = 3
+  ordered = false
+  startLevel = 2

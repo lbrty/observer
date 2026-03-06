@@ -1,7 +1,9 @@
 ---
-title: Why Observer
+title: Introduction
 weight: 1
 ---
+
+Observer is a self-hosted IDP case management platform for NGOs.
 
 ## The problem
 
@@ -58,3 +60,68 @@ Organizations with:
 - Cluster-level 5W/3W aggregate reporting (ActivityInfo territory)
 
 Observer produces the raw data. If you need cluster dashboards, export to ActivityInfo.
+
+## Stack
+
+| Concern | Choice |
+| --- | --- |
+| Backend | Go 1.25, Gin, sqlx, PostgreSQL |
+| Frontend | React 19, Vite 6, TanStack Router/Query, Tailwind v4 |
+| Auth | RS256 JWT (HttpOnly cookies), Argon2id passwords |
+| IDs | ULID (sortable, human-readable) |
+| Migrations | golang-migrate, forward-only |
+| Testing | testify + gomock + testcontainers-go |
+| CLI | Cobra |
+| Build | Justfile, Bun, Docker multistage |
+
+## Current state
+
+24 migrations, forward-only. Reference data first, then auth, then projects, then core domain.
+
+| Table | Purpose |
+| --- | --- |
+| countries, states, places | Geographic hierarchy |
+| offices | Service delivery locations |
+| categories | Vulnerability categories |
+| users, credentials, mfa_configs | Platform users and auth |
+| sessions, verification_tokens | Auth lifecycle |
+| projects, project_permissions | Multi-project scoping |
+| tags, person_tags | Project-scoped tagging |
+| people | Individual records |
+| person_categories | Multi-code vulnerability (junction) |
+| households, household_members | Family units with typed relationships |
+| migration_records | Movement history with causality |
+| support_records | Service delivery + referral tracking |
+| person_notes | Case notes |
+| documents | Document metadata |
+| pets | Companion animals |
+
+### Authentication
+
+```
+POST /auth/register  → hash password → create user + credentials
+POST /auth/login     → verify password → check MFA → create session → set cookies
+POST /auth/refresh   → rotate refresh token → set new cookies
+POST /auth/logout    → delete session → clear cookies
+```
+
+- Access token: RS256 JWT, 15 min
+- Refresh token: ULID, 7 days, rotated on each refresh
+- Transport: HttpOnly cookies (`access_token` on `/`, `refresh_token` on `/auth`)
+
+### Authorization
+
+Two levels:
+
+1. **Platform role** (admin / staff / consultant / guest) — set on the user record
+2. **Project role** (owner / manager / consultant / viewer) — set per user per project, plus three sensitivity flags: `can_view_contact`, `can_view_personal`, `can_view_documents`
+
+Action permissions (read/create/update/delete) derive from the project role rank. Sensitivity flags are independent boolean grants.
+
+### Deployment
+
+Production builds embed the React frontend into the Go binary via `go:embed`. The final Docker image is built from `scratch` — a single static binary + SSL certs + migrations.
+
+```bash
+docker compose up    # postgres + redis + observer on :9000
+```
