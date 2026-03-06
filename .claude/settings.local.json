@@ -41,7 +41,9 @@
       "Bash(just test:*)",
       "Bash(go vet:*)",
       "Bash(hugo:*)",
-      "Bash(bun pm:*)"
+      "Bash(bun pm:*)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }
