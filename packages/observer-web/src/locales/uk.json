@@ -326,6 +326,8 @@
       "statsDocuments": "Документи",
       "statsByType": "Підтримка за типом",
       "statsBySphere": "Підтримка за сферою",
+      "statsByConsultant": "За консультантом",
+      "statsByOffice": "За офісом",
       "statsEmpty": "Даних для відображення ще немає",
       "backToPeople": "Назад до людей",
       "quickSupportTitle": "Швидке додавання запису підтримки",

@@ -326,6 +326,8 @@
       "statsDocuments": "Dokumentter",
       "statsByType": "Koldoo türü boyunça",
       "statsBySphere": "Koldoo çöyrösü boyunça",
+      "statsByConsultant": "Konsultant boyuncha",
+      "statsByOffice": "Ofis boyuncha",
       "statsEmpty": "Ali maalımat joq",
       "backToPeople": "Adamdarğa qajtuu",
       "quickSupportTitle": "Tez koldoo jazuusu qoşuu",

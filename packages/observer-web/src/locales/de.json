@@ -326,6 +326,8 @@
       "statsDocuments": "Dokumente",
       "statsByType": "Unterstützung nach Typ",
       "statsBySphere": "Unterstützung nach Bereich",
+      "statsByConsultant": "Nach Berater",
+      "statsByOffice": "Nach Büro",
       "statsEmpty": "Noch keine Daten vorhanden",
       "backToPeople": "Zurück zu Personen",
       "quickSupportTitle": "Schnell Unterstützungseintrag hinzufügen",

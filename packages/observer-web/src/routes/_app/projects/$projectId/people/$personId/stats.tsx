@@ -7,6 +7,8 @@ import { useDocuments } from "@/hooks/use-documents";
 import { useMigrationRecords } from "@/hooks/use-migration-records";
 import { useMyProjects } from "@/hooks/use-my-projects";
 import { useNotes } from "@/hooks/use-notes";
+import { useOffices } from "@/hooks/use-offices";
+import { usePermissions } from "@/hooks/use-permissions";
 import { useSupportRecords } from "@/hooks/use-support-records";
 
 import type { CountResult } from "@/types/report";
@@ -40,6 +42,9 @@ function PersonStats() {
   const { data: projectsData } = useMyProjects();
   const project = projectsData?.projects.find((p) => p.id === projectId);
   const canViewDocuments = project?.can_view_documents ?? false;
+
+  const { data: permissionsData } = usePermissions(projectId);
+  const { data: officesData } = useOffices();
 
   const { data: supportData, isLoading: loadingSupport } = useSupportRecords(projectId, {
     person_id: personId,
@@ -115,6 +120,40 @@ function PersonStats() {
     count,
   }));
 
+  const memberMap = new Map<string, string>();
+  for (const m of permissionsData?.permissions ?? []) {
+    memberMap.set(m.user_id, `${m.user_first_name} ${m.user_last_name}`.trim());
+  }
+
+  const consultantCounts = new Map<string, number>();
+  for (const r of supportRecords) {
+    if (r.consultant_id) {
+      const name = memberMap.get(r.consultant_id) ?? r.consultant_id;
+      consultantCounts.set(name, (consultantCounts.get(name) ?? 0) + 1);
+    }
+  }
+  const byConsultant: CountResult[] = Array.from(consultantCounts, ([label, count]) => ({
+    label,
+    count,
+  }));
+
+  const officeMap = new Map<string, string>();
+  for (const o of officesData ?? []) {
+    officeMap.set(o.id, o.name);
+  }
+
+  const officeCounts = new Map<string, number>();
+  for (const r of supportRecords) {
+    if (r.office_id) {
+      const name = officeMap.get(r.office_id) ?? r.office_id;
+      officeCounts.set(name, (officeCounts.get(name) ?? 0) + 1);
+    }
+  }
+  const byOffice: CountResult[] = Array.from(officeCounts, ([label, count]) => ({
+    label,
+    count,
+  }));
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -141,6 +180,27 @@ function PersonStats() {
                 {t("project.people.statsBySphere")}
               </h3>
               <PieChart data={bySphere} />
+            </div>
+          )}
+        </div>
+      )}
+
+      {(byConsultant.length > 0 || byOffice.length > 0) && (
+        <div className="grid gap-6 lg:grid-cols-2">
+          {byConsultant.length > 0 && (
+            <div className="rounded-xl border border-border-secondary bg-bg-secondary p-5">
+              <h3 className="mb-3 text-sm font-semibold text-fg">
+                {t("project.people.statsByConsultant")}
+              </h3>
+              <PieChart data={byConsultant} />
+            </div>
+          )}
+          {byOffice.length > 0 && (
+            <div className="rounded-xl border border-border-secondary bg-bg-secondary p-5">
+              <h3 className="mb-3 text-sm font-semibold text-fg">
+                {t("project.people.statsByOffice")}
+              </h3>
+              <PieChart data={byOffice} />
             </div>
           )}
         </div>

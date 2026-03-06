@@ -315,6 +315,8 @@
       "statsDocuments": "Belgeler",
       "statsByType": "Türe göre destek",
       "statsBySphere": "Alana göre destek",
+      "statsByConsultant": "Danışmana Göre",
+      "statsByOffice": "Ofise Göre",
       "statsEmpty": "Henüz görüntülenecek veri yok",
       "backToPeople": "Kişilere dön",
       "saved": "Başarıyla kaydedildi",

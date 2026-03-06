@@ -315,6 +315,8 @@
       "statsDocuments": "Documents",
       "statsByType": "Support by type",
       "statsBySphere": "Support by sphere",
+      "statsByConsultant": "By Consultant",
+      "statsByOffice": "By Office",
       "statsEmpty": "No data to display yet",
       "backToPeople": "Back to People",
       "saved": "Saved successfully",

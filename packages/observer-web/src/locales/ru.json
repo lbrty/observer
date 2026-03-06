@@ -315,6 +315,8 @@
       "statsDocuments": "Документы",
       "statsByType": "Поддержка по типу",
       "statsBySphere": "Поддержка по сфере",
+      "statsByConsultant": "По консультанту",
+      "statsByOffice": "По офису",
       "statsEmpty": "Данных для отображения пока нет",
       "backToPeople": "Назад к списку",
       "saved": "Сохранено",
