@@ -1,7 +1,5 @@
----
-title: "ADR-008: Tygo Type Generation"
-weight: 8
----
+# ADR-008: Tygo Type Generation
+
 
 | Field      | Value                                          |
 | ---------- | ---------------------------------------------- |
@@ -9,19 +7,6 @@ weight: 8
 | Date       | 2026-02-24                                     |
 | Components | observer (backend DTOs), observer-web (types/) |
 
----
-
-## Context
-
-Observer's backend defines DTO structs in `internal/usecase/{auth,admin,project}/` with `json:` tags. The frontend currently hand-writes equivalent TypeScript interfaces in `packages/observer-web/src/types/`. As the API surface grows (36 admin endpoints, project-scoped CRUD, reports), keeping these in sync manually becomes error-prone:
-
-1. Field additions/renames in Go require a corresponding TS change — easy to forget.
-2. `omitempty` vs required semantics drift silently.
-3. New usecase packages (reports, audit logs) will multiply the surface.
-
-We need a single source of truth for API types.
-
----
 
 ## Decision
 
@@ -141,24 +126,6 @@ This keeps generated files untouched while allowing frontend-specific types alon
 - Wrapper response types that the frontend destructures differently.
 - React-specific types (form state, component props).
 
----
-
-## Consequences
-
-### Positive
-
-- **Single source of truth**: Go structs are the canonical API contract. TS types cannot drift.
-- **Zero runtime cost**: tygo runs at build time, output is plain `.ts` interfaces.
-- **Incremental adoption**: can generate for new packages while keeping existing hand-written types until migration.
-- **Doc preservation**: Go doc comments flow through to TSDoc, improving IDE experience.
-
-### Negative
-
-- **Build step dependency**: developers need `tygo` installed (`go install github.com/gzuidhof/tygo@latest`).
-- **Pointer → optional mapping**: Go `*string` becomes `string | undefined`, not `string | null`. Frontend code must use `undefined` checks (or a thin re-export layer can remap).
-- **`form:` tags ignored**: query parameter structs (`ListUsersInput`) use `form:` tags that tygo does not read. These stay hand-written on the frontend.
-
----
 
 ## Alternatives Considered
 

@@ -8,26 +8,6 @@
 
 **Tech Stack:** Go, cobra CLI, gofakeit v7, sqlx (raw TRUNCATE), repository layer for inserts, argon hasher for passwords.
 
----
-
-### Task 1: Add gofakeit dependency
-
-**Step 1: Add the dependency**
-
-Run: `go get github.com/brianvoe/gofakeit/v7`
-
-**Step 2: Verify**
-
-Run: `go build ./...`
-
-**Step 3: Commit**
-
-```bash
-git add go.mod go.sum
-git commit -m "add gofakeit v7 dependency"
-```
-
----
 
 ### Task 2: Create seed command
 
@@ -321,23 +301,3 @@ git add cmd/observer/cmd/seed.go cmd/observer/main.go
 git commit -m "add seed command for dev database population"
 ```
 
----
-
-### Task 3: Scan and fix missing i18n keys
-
-After implementation, scan all frontend source files for translation key usage and verify every key exists in all 5 locale files. Add any missing keys.
-
-**Step 1: Run scan**
-
-```bash
-grep -rohP "t\([\"']([^\"']+)[\"']" packages/observer-web/src/ | sort -u
-```
-
-Cross-reference against all 5 locale JSON files. Add any missing keys.
-
-**Step 2: Commit if changes**
-
-```bash
-git add packages/observer-web/src/locales/*.json
-git commit -m "add missing i18n keys"
-```

@@ -8,41 +8,6 @@
 
 **Tech Stack:** Go (Gin router, middleware), React 19, TanStack Router/Query, Base UI dialogs, ky HTTP client, i18next.
 
----
-
-### Task 1: Backend — Expand adminRead to include consultant
-
-**Files:**
-
-- Modify: `internal/server/server.go:128`
-
-**Step 1: Update adminRead RequireRole**
-
-Change line 128 from:
-
-```go
-adminRead := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff))
-```
-
-to:
-
-```go
-adminRead := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff, user.RoleConsultant))
-```
-
-**Step 2: Verify it compiles**
-
-Run: `go build ./...`
-Expected: success
-
-**Step 3: Commit**
-
-```bash
-git add internal/server/server.go
-git commit -m "allow consultants to read admin reference data"
-```
-
----
 
 ### Task 2: Backend — Add adminWrite group for consultant reference data
 
@@ -93,54 +58,6 @@ git add internal/server/server.go
 git commit -m "add adminWrite group for consultant reference data access"
 ```
 
----
-
-### Task 3: Frontend — Add i18n keys for new UI elements
-
-**Files:**
-
-- Modify: `packages/observer-web/src/locales/en.json`
-- Modify: `packages/observer-web/src/locales/ky.json`
-- Modify: `packages/observer-web/src/locales/uk.json`
-- Modify: `packages/observer-web/src/locales/de.json`
-- Modify: `packages/observer-web/src/locales/tr.json`
-
-**Step 1: Add keys to en.json**
-
-Inside `project.people`, add:
-
-```json
-"quickSupportTitle": "Quick add support record",
-"quickSupportAdd": "Add support record",
-"quickSupportSaved": "Support record saved"
-```
-
-Inside `project.people`, add (for the add-reference dialogs):
-
-```json
-"addCountry": "Add country",
-"addState": "Add state",
-"addPlace": "Add place"
-```
-
-Inside `admin.common` or create `common` section if not present, add:
-
-```json
-"nameRequired": "Name is required"
-```
-
-**Step 2: Add equivalent keys to ky.json, uk.json, de.json, tr.json**
-
-Use the Kyrgyz Latin transliteration rules for ky.json. Translate appropriately for the other locales.
-
-**Step 3: Commit**
-
-```bash
-git add packages/observer-web/src/locales/*.json
-git commit -m "add i18n keys for consultant QoL features"
-```
-
----
 
 ### Task 4: Frontend — Inline support record form on person overview
 
@@ -194,90 +111,6 @@ git add packages/observer-web/src/routes/_app/projects/\$projectId/people/\$pers
 git commit -m "add inline support record form on person overview"
 ```
 
----
-
-### Task 5: Frontend — Add reference data dialog component
-
-**Files:**
-
-- Create: `packages/observer-web/src/components/add-reference-dialog.tsx`
-
-**Step 1: Create a reusable dialog component**
-
-This component renders a Base UI dialog for adding a new reference data item (country, state, or place). It accepts:
-
-```tsx
-interface AddReferenceDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  title: string;
-  children: React.ReactNode;
-  onSubmit: () => void;
-  isPending: boolean;
-  error: string;
-}
-```
-
-Use `@base-ui/react/dialog` (check existing usage in the codebase for the correct import). The dialog should be a small centered modal with:
-
-- Title
-- Error banner (if error)
-- `{children}` for form fields
-- Cancel / Save buttons in footer
-
-Pattern:
-
-```tsx
-import { Dialog } from "@base-ui/react/dialog";
-
-export function AddReferenceDialog({
-  open,
-  onOpenChange,
-  title,
-  children,
-  onSubmit,
-  isPending,
-  error,
-}: AddReferenceDialogProps) {
-  return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/25 backdrop-blur-xs ..." />
-        <Dialog.Popup className="fixed top-1/2 left-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border-secondary bg-bg-secondary p-6 shadow-elevated ...">
-          <Dialog.Title className="font-serif text-lg font-semibold text-fg">{title}</Dialog.Title>
-          {error && <error banner />}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              onSubmit();
-            }}
-            className="mt-4 space-y-4"
-          >
-            {children}
-            <div className="flex justify-end gap-2 pt-2">
-              <Dialog.Close className="...cancel styles...">
-                {t("admin.common.cancel")}
-              </Dialog.Close>
-              <button type="submit" disabled={isPending} className="...accent button...">
-                {isPending ? t("project.people.saving") : t("project.people.save")}
-              </button>
-            </div>
-          </form>
-        </Dialog.Popup>
-      </Dialog.Portal>
-    </Dialog.Root>
-  );
-}
-```
-
-**Step 2: Commit**
-
-```bash
-git add packages/observer-web/src/components/add-reference-dialog.tsx
-git commit -m "add reusable AddReferenceDialog component"
-```
-
----
 
 ### Task 6: Frontend — Wire add-reference dialogs into person drawer
 
@@ -533,34 +366,3 @@ git add packages/observer-web/src/components/person-drawer.tsx packages/observer
 git commit -m "add inline reference data creation dialogs in person drawer"
 ```
 
----
-
-### Task 7: Verify and final commit
-
-**Step 1: Run backend tests**
-
-Run: `just test`
-Expected: all pass (except pre-existing middleware test)
-
-**Step 2: Run frontend type check**
-
-Run: `cd packages/observer-web && bunx tsc --noEmit`
-Expected: no errors
-
-**Step 3: Manual smoke test**
-
-1. Log in as consultant
-2. Navigate to a project → People → select a person
-3. On overview tab: click "Add support record", fill type+sphere, save → success
-4. Check Support Records tab → new record visible
-5. Go back to people list → open person drawer
-6. In location section: click `+` next to country → add country dialog → save → new country in dropdown
-7. Select country → `+` next to state → add state → auto-selected
-8. Verify the same works for current location section
-
-**Step 4: Final commit if any fixups needed**
-
-```bash
-git add -A
-git commit -m "consultant QoL: inline support records, reference data dialogs, RBAC expansion"
-```

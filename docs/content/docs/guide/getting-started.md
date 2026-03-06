@@ -3,23 +3,60 @@ title: Getting Started
 weight: 2
 ---
 
-## Prerequisites
+## Try it in 5 minutes
 
-| Tool             | Version | Install                                                                 |
-| ---------------- | ------- | ----------------------------------------------------------------------- |
-| Go               | 1.25.\* | https://go.dev/dl/                                                      |
-| Bun              | latest  | https://bun.sh/                                                         |
-| Docker + Compose | latest  | https://docs.docker.com/get-docker/                                     |
-| Just             | latest  | https://github.com/casey/just#installation                              |
-| golangci-lint    | latest  | `go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest` |
+You don't need a server, a hosting provider, or an IT department. If you have a laptop with Docker installed, you can see Observer running right now.
 
-Optional for OpenAPI generation:
+```bash
+git clone https://github.com/lbrty/observer.git
+cd observer
+cp .env.example .env
+just generate-keys
+just docker-up
+just run
+```
 
-| Tool | Install                                             |
-| ---- | --------------------------------------------------- |
-| swag | `go install github.com/swaggo/swag/cmd/swag@latest` |
+Open `http://localhost:9000/health` — if you see `"status":"healthy"`, the backend is running.
 
-## Setup
+Then start the web interface:
+
+```bash
+just web-dev
+```
+
+Open `http://localhost:5173` — you're looking at Observer.
+
+## What you just started
+
+- A **Go backend** serving the API on port 9000
+- A **PostgreSQL database** with 24 tables for people, households, support records, migration history, documents, and pets
+- A **React frontend** with project management, role-based access, and 39 built-in report types
+- **JWT authentication** with automatic token rotation
+
+All of this runs on a single machine. In production, it compiles down to one binary.
+
+## What you'll need for a real deployment
+
+| Requirement | Why |
+| --- | --- |
+| A VPS or on-premise server | Observer is self-hosted — your data stays on your infrastructure |
+| PostgreSQL database | The only external dependency |
+| 30 minutes of sysadmin time | `docker compose up` on a server with your domain pointed at it |
+
+No SaaS subscription. No per-user fees. No vendor lock-in. You own the data and the deployment.
+
+See [Deployment](/docs/guide/deployment/) for the full production setup guide.
+
+## Prerequisites for development
+
+| Tool | Version | Install |
+| --- | --- | --- |
+| Go | 1.25.* | https://go.dev/dl/ |
+| Bun | latest | https://bun.sh/ |
+| Docker + Compose | latest | https://docs.docker.com/get-docker/ |
+| Just | latest | https://github.com/casey/just#installation |
+
+## Step by step
 
 ### 1. Clone and install dependencies
 
@@ -36,120 +73,28 @@ bun install
 cp .env.example .env
 ```
 
-The defaults work out of the box with the provided `docker-compose.yml`. Edit `.env` only if you need non-default ports or credentials.
+The defaults work out of the box with the provided `docker-compose.yml`.
 
 ### 3. Generate RSA keys
-
-The server needs an RSA key pair for JWT signing. Use the OpenSSL method — it matches the default config paths:
 
 ```bash
 just generate-keys
 ```
 
-This creates `keys/jwt_rsa` (private) and `keys/jwt_rsa.pub` (public) with correct permissions.
+Creates `keys/jwt_rsa` and `keys/jwt_rsa.pub` for JWT signing.
 
-Alternatively, use the built-in Go command (requires adjusting env vars):
-
-```bash
-mkdir -p keys
-go run ./cmd/observer keygen --output keys
-```
-
-This outputs `keys/private_key.pem` and `keys/public_key.pem`, so you'd update `.env`:
-
-```
-JWT_PRIVATE_KEY_PATH=keys/private_key.pem
-JWT_PUBLIC_KEY_PATH=keys/public_key.pem
-```
-
-### 4. Start Postgres and Redis
+### 4. Start services and run
 
 ```bash
-just docker-up
+just docker-up    # starts PostgreSQL and Redis
+just run          # starts the backend on :9000 (runs migrations automatically)
+just web-dev      # starts the frontend on :5173
 ```
-
-Verify both services are healthy:
-
-```bash
-docker-compose ps
-```
-
-You should see `postgres` and `redis` with status `healthy`.
-
-### 5. Run database migrations
-
-```bash
-just migrate-up
-```
-
-Check current version:
-
-```bash
-just migrate-version
-```
-
-### 6. Start the server
-
-```bash
-just run
-```
-
-The server starts on `http://localhost:9000` with Swagger UI enabled at `http://localhost:9000/swagger/index.html`.
-
-### 7. Verify the backend
-
-```bash
-curl http://localhost:9000/health
-```
-
-Expected response:
-
-```json
-{ "status": "healthy", "database": "connected", "timestamp": "..." }
-```
-
-### 8. Start the frontend
-
-```bash
-just web-dev
-```
-
-Opens at `http://localhost:5173`. The frontend proxies API requests to the backend at `:9000` via cookies (CORS is pre-configured for `localhost:5173`).
-
-See [docs/frontend.md](frontend.md) for full frontend documentation.
-
-## Running Tests
-
-```bash
-just test          # unit tests only — fast, no Docker needed
-just test-all      # all tests including integration — Docker must be running
-just test-coverage # generate HTML coverage report (opens coverage.html)
-just test-race     # run with Go race detector
-```
-
-## Common Tasks
-
-| Task                  | Command                      |
-| --------------------- | ---------------------------- |
-| Build binary          | `just build`                 |
-| Format code           | `just fmt`                   |
-| Lint                  | `just lint`                  |
-| Tidy modules          | `just tidy`                  |
-| Regenerate mocks      | `just generate-mocks`        |
-| Generate OpenAPI spec | `just openapi`               |
-| Create new migration  | `just migrate-create <name>` |
-| Stop Docker services  | `just docker-down`           |
-| Frontend dev server   | `just web-dev`               |
-| Frontend build        | `just web-build`             |
-| Frontend dependencies | `just web-install`           |
-| List all commands     | `just`                       |
 
 ## Troubleshooting
 
-**Port 5432 already in use** — A local Postgres instance may be running. Stop it or change the port mapping in `docker-compose.yml` and update `DATABASE_DSN` in `.env`.
+**Port 5432 already in use** — A local Postgres instance may be running. Stop it or change the port mapping in `docker-compose.yml`.
 
-**"no such file or directory" for key paths** — Run `just generate-keys` first. The `keys/` directory is gitignored and must be created locally.
+**"no such file or directory" for key paths** — Run `just generate-keys` first. The `keys/` directory is gitignored.
 
-**Migration fails with "connection refused"** — Docker services may not be ready yet. Wait a few seconds after `just docker-up` or check `docker-compose ps` for health status.
-
-**Tests fail with "short mode"** — Integration tests are skipped with `just test`. Use `just test-all` (requires Docker) to run the full suite.
+**Migration fails with "connection refused"** — Docker services may not be ready yet. Wait a few seconds after `just docker-up`.

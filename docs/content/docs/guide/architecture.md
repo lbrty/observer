@@ -1,6 +1,6 @@
 ---
 title: Architecture
-weight: 2
+weight: 3
 ---
 
 ## High-Level Overview
@@ -360,59 +360,3 @@ graph TD
     SERVER --> |injects into| MIDDLEWARE[Middleware]
 ```
 
-## Package Import Graph
-
-```
-cmd/observer/
-  --> internal/config
-  --> internal/database
-  --> internal/logger
-  --> internal/app         (DI container)
-  --> internal/server
-
-internal/app/
-  --> internal/config
-  --> internal/crypto
-  --> internal/database
-  --> internal/domain/user       (interfaces + entities)
-  --> internal/domain/auth       (interfaces + entities)
-  --> internal/domain/project    (interfaces + entities)
-  --> internal/domain/reference  (interfaces + entities)
-  --> internal/postgres          (implementations)
-  --> internal/usecase/auth
-  --> internal/usecase/admin
-
-internal/server/
-  --> internal/app
-  --> internal/handler
-  --> internal/middleware
-  --> internal/domain/user       (for user.RoleAdmin constant)
-
-internal/handler/
-  --> internal/usecase/auth      (use case types)
-  --> internal/usecase/admin     (use case types)
-  --> internal/domain/user       (error sentinels)
-  --> internal/domain/project    (error sentinels)
-  --> internal/domain/reference  (error sentinels)
-
-internal/middleware/
-  --> internal/crypto            (TokenGenerator for JWT)
-  --> internal/domain/user       (Role type + constants)
-  --> internal/domain/project    (PermissionLoader, Action, entities)
-
-internal/usecase/auth/
-  --> internal/domain/user       (UserRepository, CredentialsRepository, entities)
-  --> internal/domain/auth       (SessionRepository, entities)
-  --> internal/crypto            (PasswordHasher, TokenGenerator)
-
-internal/usecase/admin/
-  --> internal/domain/user       (UserRepository, entities)
-  --> internal/domain/project    (PermissionRepository, entities)
-  --> internal/domain/reference  (all reference repos, entities)
-
-internal/postgres/
-  --> internal/domain/user       (entities + errors)
-  --> internal/domain/auth       (entities + errors)
-  --> internal/domain/project    (entities + errors)
-  --> internal/domain/reference  (entities + errors)
-```

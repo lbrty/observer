@@ -10,39 +10,6 @@
 
 **Design doc:** `docs/plans/2026-03-05-report-dashboard-redesign.md`
 
----
-
-### Task 1: Add New Icons to Icon Barrel
-
-**Files:**
-- Modify: `packages/observer-web/src/components/icons.ts`
-
-**Step 1: Add icon exports**
-
-Add these exports to the existing barrel file (alphabetical order within the list):
-
-```ts
-// Add to the existing export block:
-CaretDownIcon,
-CaretUpIcon,
-DownloadSimpleIcon,
-FunnelIcon,
-PrinterIcon,
-```
-
-**Step 2: Verify build**
-
-Run: `cd packages/observer-web && bunx --bun vite build --mode development 2>&1 | head -5`
-Expected: no errors about missing exports
-
-**Step 3: Commit**
-
-```bash
-git add packages/observer-web/src/components/icons.ts
-git commit -m "add icons for report dashboard redesign"
-```
-
----
 
 ### Task 2: Add i18n Keys for All 6 Locales
 
@@ -99,99 +66,6 @@ git add packages/observer-web/src/locales/*.json
 git commit -m "add i18n keys for report dashboard redesign"
 ```
 
----
-
-### Task 3: Create Color Palette Module
-
-**Files:**
-- Create: `packages/observer-web/src/components/charts/colors.ts`
-
-**Step 1: Create the semantic color palette**
-
-This module exports color maps for each data domain, plus a fallback palette and a helper to get a color for a given label.
-
-```ts
-export const SEX_COLORS: Record<string, string> = {
-  female: "#e05a8a",
-  male: "#5a8ae0",
-  other: "#8b5cf6",
-  unknown: "#94a3b8",
-};
-
-export const SUPPORT_TYPE_COLORS: Record<string, string> = {
-  humanitarian: "#d97706",
-  legal: "#3b82f6",
-  social: "#10b981",
-  psychological: "#8b5cf6",
-  medical: "#ef4444",
-  general: "#64748b",
-};
-
-export const SPHERE_COLORS: Record<string, string> = {
-  housing_assistance: "#0ea5e9",
-  document_recovery: "#6366f1",
-  social_benefits: "#10b981",
-  property_rights: "#f59e0b",
-  employment_rights: "#ec4899",
-  family_law: "#8b5cf6",
-  healthcare_access: "#ef4444",
-  education_access: "#14b8a6",
-  financial_aid: "#d97706",
-  psychological_support: "#a78bfa",
-  other: "#94a3b8",
-  unspecified: "#94a3b8",
-};
-
-export const CASE_STATUS_COLORS: Record<string, string> = {
-  new: "#6366f1",
-  active: "#10b981",
-  closed: "#94a3b8",
-  archived: "#64748b",
-};
-
-export const IDP_STATUS_COLORS: Record<string, string> = {
-  idp: "#ef4444",
-  non_idp: "#10b981",
-  unknown: "#94a3b8",
-};
-
-export const AGE_GROUP_COLORS: Record<string, string> = {
-  infant: "#fef3c7",
-  toddler: "#fde68a",
-  pre_school: "#fcd34d",
-  middle_childhood: "#fbbf24",
-  young_teen: "#f59e0b",
-  teenager: "#d97706",
-  young_adult: "#b45309",
-  early_adult: "#92400e",
-  middle_aged: "#78350f",
-  older_adult: "#451a03",
-};
-
-export const FALLBACK_PALETTE = [
-  "#6366f1", "#f59e0b", "#10b981", "#ef4444",
-  "#8b5cf6", "#ec4899", "#14b8a6", "#f97316",
-  "#3b82f6", "#84cc16", "#e879f9", "#06b6d4",
-];
-
-export function getColor(
-  label: string,
-  colorMap?: Record<string, string>,
-  index?: number,
-): string {
-  if (colorMap?.[label]) return colorMap[label];
-  return FALLBACK_PALETTE[(index ?? 0) % FALLBACK_PALETTE.length];
-}
-```
-
-**Step 2: Commit**
-
-```bash
-git add packages/observer-web/src/components/charts/colors.ts
-git commit -m "add semantic color palette for report charts"
-```
-
----
 
 ### Task 4: Add Horizontal Mode to BarChart
 
@@ -254,43 +128,6 @@ git add packages/observer-web/src/components/charts/bar-chart.tsx
 git commit -m "add horizontal mode and color map support to BarChart"
 ```
 
----
-
-### Task 5: Update PieChart to Use Color Maps
-
-**Files:**
-- Modify: `packages/observer-web/src/components/charts/pie-chart.tsx`
-
-**Step 1: Accept colorMap prop**
-
-Add `colorMap?: Record<string, string>` to `PieChart` props.
-
-**Step 2: Replace hardcoded COLORS**
-
-Instead of the static `COLORS` array with `d3.scaleOrdinal`, use:
-
-```ts
-import { getColor, FALLBACK_PALETTE } from "./colors";
-// ...
-const color = (label: string, i: number) => getColor(label, colorMap, i);
-```
-
-Update the `.attr("fill", ...)` in slices and the legend dot `backgroundColor` to use this function.
-
-Keep the existing `COLORS` array as `FALLBACK_PALETTE` is now the source of truth — delete the local `COLORS` constant.
-
-**Step 3: Verify build**
-
-Run: `cd packages/observer-web && bunx --bun vite build --mode development 2>&1 | head -5`
-
-**Step 4: Commit**
-
-```bash
-git add packages/observer-web/src/components/charts/pie-chart.tsx
-git commit -m "use semantic color maps in PieChart"
-```
-
----
 
 ### Task 6: Create CSV Export Utility
 
@@ -350,62 +187,6 @@ git add packages/observer-web/src/lib/export-csv.ts
 git commit -m "add client-side CSV export for reports"
 ```
 
----
-
-### Task 7: Add Print Stylesheet
-
-**Files:**
-- Modify: `packages/observer-web/src/main.css`
-
-**Step 1: Add @media print rules at the end of main.css**
-
-```css
-@media print {
-  /* Hide non-essential UI */
-  nav,
-  aside,
-  [data-print-hide] {
-    display: none !important;
-  }
-
-  /* Reset backgrounds for ink savings */
-  body,
-  :root,
-  [data-theme] {
-    background: #fff !important;
-    color: #000 !important;
-  }
-
-  /* Single-column chart layout */
-  .report-grid {
-    display: block !important;
-  }
-  .report-grid > * {
-    break-inside: avoid;
-    margin-bottom: 1rem;
-  }
-
-  /* Ensure charts are visible */
-  svg {
-    max-width: 100% !important;
-    height: auto !important;
-  }
-
-  /* Print header */
-  .print-header {
-    display: block !important;
-  }
-}
-```
-
-**Step 2: Commit**
-
-```bash
-git add packages/observer-web/src/main.css
-git commit -m "add print stylesheet for report dashboard"
-```
-
----
 
 ### Task 8: Rewrite Reports Page — Unified Header + Collapsible Filters
 
@@ -902,61 +683,6 @@ git add packages/observer-web/src/routes/_app/projects/\$projectId/reports/index
 git commit -m "redesign report dashboard with unified header, KPI row, sections, and adaptive charts"
 ```
 
----
-
-### Task 9: Translate i18n Keys for preset labels
-
-**Files:**
-- Modify: `packages/observer-web/src/locales/ky.json`
-- Modify: `packages/observer-web/src/locales/ru.json`
-- Modify: `packages/observer-web/src/locales/uk.json`
-- Modify: `packages/observer-web/src/locales/de.json`
-- Modify: `packages/observer-web/src/locales/tr.json`
-
-The preset key names in code are:
-- `presetMonth` → maps to `presetThisMonth`
-- `presetQuarter` → maps to `presetLastQuarter`
-- `presetYear` → maps to `presetThisYear`
-- `presetAll` → maps to `presetAllTime`
-
-Wait — check the preset button code. The key construction is:
-```ts
-t(`project.reports.preset${preset[0].toUpperCase()}${preset.slice(1)}`)
-```
-With presets `"month" | "quarter" | "year" | "all"` this produces:
-- `project.reports.presetMonth`
-- `project.reports.presetQuarter`
-- `project.reports.presetYear`
-- `project.reports.presetAll`
-
-So the i18n keys need to match exactly. Update Task 2's keys to use:
-- `"presetMonth"` (not `"presetThisMonth"`)
-- `"presetQuarter"` (not `"presetLastQuarter"`)
-- `"presetYear"` (not `"presetThisYear"`)
-- `"presetAll"` (not `"presetAllTime"`)
-
-With display text:
-- en: "This month", "Last quarter", "This year", "All time"
-- ru: "Этот месяц", "Прошлый квартал", "Этот год", "Всё время"
-- uk: "Цей місяць", "Минулий квартал", "Цей рік", "Весь час"
-- de: "Dieser Monat", "Letztes Quartal", "Dieses Jahr", "Gesamter Zeitraum"
-- tr: "Bu ay", "Geçen çeyrek", "Bu yıl", "Tüm zamanlar"
-- ky: Use Kyrgyz Latin transliteration
-
-This task is just a correction pass to ensure key names match the code. Should be handled as part of Task 2.
-
-**Step 1: Verify all keys match code usage**
-
-Search the reports page for all `t("project.reports.` calls and cross-check with locale files.
-
-**Step 2: Commit if any fixes needed**
-
-```bash
-git add packages/observer-web/src/locales/*.json
-git commit -m "fix i18n key names to match preset code"
-```
-
----
 
 ### Task 10: Visual QA and Polish
 
@@ -997,18 +723,3 @@ git add -A
 git commit -m "polish report dashboard visual QA fixes"
 ```
 
----
-
-## Task Dependency Graph
-
-```
-Task 1 (icons) ──┐
-Task 2 (i18n) ───┤
-Task 3 (colors) ─┼── Task 8 (page rewrite) ── Task 9 (key fix) ── Task 10 (QA)
-Task 4 (bar-h) ──┤
-Task 5 (pie) ────┤
-Task 6 (csv) ────┤
-Task 7 (print) ──┘
-```
-
-Tasks 1–7 are independent and can be parallelized. Task 8 depends on all of them. Tasks 9–10 are sequential after 8.

@@ -1,6 +1,6 @@
 ---
 title: Deployment
-weight: 2
+weight: 4
 ---
 
 ## Docker (recommended)

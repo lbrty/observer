@@ -1,7 +1,5 @@
----
-title: "ADR-007: Color Themes"
-weight: 7
----
+# ADR-007: Color Themes
+
 
 | Field      | Value                   |
 | ---------- | ----------------------- |
@@ -9,18 +7,6 @@ weight: 7
 | Date       | 2026-02-23              |
 | Components | observer-web (main.css) |
 
----
-
-## Context
-
-Observer is case management infrastructure for humanitarian case workers operating in NGO offices and field locations — low-light environments, direct sunlight, degraded displays. The color system must:
-
-1. Communicate case states (verified, pending, attention-required) with zero ambiguity.
-2. Work across four lighting conditions without losing semantic clarity.
-3. Avoid cool tones that feel clinical — the palette should feel warm and deliberate, not sterile.
-4. Meet WCAG AAA (7.0:1) for body text and AA18 (3.0:1) for interactive elements across all themes.
-
----
 
 ## Decision
 
@@ -193,23 +179,6 @@ Theme preference is stored in the browser via `localStorage` under the key `obse
 
 No backend persistence is needed — theme is a per-device preference, not a per-account setting.
 
----
-
-## Consequences
-
-### Positive
-
-- **Unambiguous state communication**: sage/amber/sienna carry fixed meanings — case workers never have to guess what a color means.
-- **Field-ready**: four themes cover the full range of working conditions from NGO offices to field locations in direct sunlight.
-- **Warm palette**: avoids the clinical feel of cool grays, appropriate for sensitive humanitarian case work with vulnerable populations.
-- **Token indirection**: components reference tokens, not hex values — theme changes propagate automatically.
-
-### Negative
-
-- **Four theme variants to maintain**: every new color token requires four hex values. Mitigated by keeping the token count small.
-- **localStorage-only persistence**: theme preference does not roam across devices. Acceptable trade-off — field workers typically use a single assigned device.
-
----
 
 ## Alternatives Considered
 

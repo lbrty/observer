@@ -8,71 +8,6 @@
 
 **Tech Stack:** CSS (Tailwind v4 + custom classes in `main.css`), inline SVG data URIs
 
----
-
-### Task 1: Add base topo layer to app shell
-
-**Files:**
-- Modify: `packages/observer-web/src/main.css` (add `.page-bg-base` class after existing card patterns)
-- Modify: `packages/observer-web/src/routes/_app.tsx:59` (add class to content wrapper)
-
-**Step 1: Add the `.page-bg-base` class to `main.css`**
-
-Add after the `.auth-backdrop` block (after line 309). This is a large-scale topographic contour pattern covering the top ~400px of the page, fading naturally.
-
-```css
-/* Page-level base — large topo contours behind all content */
-.page-bg-base {
-  position: relative;
-}
-.page-bg-base::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  bottom: auto;
-  height: 500px;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 500' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,420 C100,400 250,370 400,350 C550,330 700,340 850,320 C1000,300 1100,280 1200,260' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M0,350 C120,325 280,290 440,270 C600,250 740,265 900,245 C1060,225 1140,200 1200,185' fill='none' stroke='black' stroke-width='1.2'/%3E%3Cpath d='M0,280 C140,255 300,215 470,195 C640,175 780,190 940,170 C1100,150 1160,128 1200,115' fill='none' stroke='black' stroke-width='1'/%3E%3Cpath d='M0,210 C160,185 320,145 500,125 C680,105 820,120 980,100 C1100,85 1160,68 1200,55' fill='none' stroke='black' stroke-width='0.8'/%3E%3Cpath d='M0,145 C180,122 340,85 530,68 C720,51 860,62 1020,48 C1100,40 1160,28 1200,18' fill='none' stroke='black' stroke-width='0.6'/%3E%3Ccircle cx='200' cy='340' r='2.5' fill='black'/%3E%3Ccircle cx='500' cy='250' r='2' fill='black'/%3E%3Ccircle cx='750' cy='210' r='2' fill='black'/%3E%3Ccircle cx='1000' cy='150' r='1.5' fill='black'/%3E%3Ccircle cx='350' cy='280' r='1.5' fill='black'/%3E%3Ccircle cx='650' cy='190' r='2' fill='black'/%3E%3Ccircle cx='900' cy='130' r='1.5' fill='black'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 500' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,420 C100,400 250,370 400,350 C550,330 700,340 850,320 C1000,300 1100,280 1200,260' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M0,350 C120,325 280,290 440,270 C600,250 740,265 900,245 C1060,225 1140,200 1200,185' fill='none' stroke='black' stroke-width='1.2'/%3E%3Cpath d='M0,280 C140,255 300,215 470,195 C640,175 780,190 940,170 C1100,150 1160,128 1200,115' fill='none' stroke='black' stroke-width='1'/%3E%3Cpath d='M0,210 C160,185 320,145 500,125 C680,105 820,120 980,100 C1100,85 1160,68 1200,55' fill='none' stroke='black' stroke-width='0.8'/%3E%3Cpath d='M0,145 C180,122 340,85 530,68 C720,51 860,62 1020,48 C1100,40 1160,28 1200,18' fill='none' stroke='black' stroke-width='0.6'/%3E%3Ccircle cx='200' cy='340' r='2.5' fill='black'/%3E%3Ccircle cx='500' cy='250' r='2' fill='black'/%3E%3Ccircle cx='750' cy='210' r='2' fill='black'/%3E%3Ccircle cx='1000' cy='150' r='1.5' fill='black'/%3E%3Ccircle cx='350' cy='280' r='1.5' fill='black'/%3E%3Ccircle cx='650' cy='190' r='2' fill='black'/%3E%3Ccircle cx='900' cy='130' r='1.5' fill='black'/%3E%3C/svg%3E");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center top;
-  mask-position: center top;
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  background-color: var(--fg);
-  opacity: 0.045;
-  pointer-events: none;
-}
-```
-
-**Step 2: Apply class to `_app.tsx` content wrapper**
-
-In `packages/observer-web/src/routes/_app.tsx`, change line 59 from:
-
-```tsx
-<div className="flex flex-1">
-```
-
-to:
-
-```tsx
-<div className="page-bg-base flex flex-1">
-```
-
-**Step 3: Verify visually**
-
-Run: `cd packages/observer-web && bun dev`
-
-Check: Navigate to any page. You should see faint topographic contour lines in the top portion of the page, behind the content. Switch between all 4 themes (light, dark, light-hc, dark-hc) and confirm the pattern is visible in each.
-
-**Step 4: Commit**
-
-```bash
-git add packages/observer-web/src/main.css packages/observer-web/src/routes/_app.tsx
-git commit -m "add base topo background layer to app shell"
-```
-
----
 
 ### Task 2: Add accent pattern CSS classes
 
@@ -177,51 +112,6 @@ git add packages/observer-web/src/main.css
 git commit -m "add 7 page-level accent background pattern classes"
 ```
 
----
-
-### Task 3: Apply accent classes to Dashboard and Admin pages
-
-**Files:**
-- Modify: `packages/observer-web/src/routes/_app/index.tsx:88` (dashboard)
-- Modify: `packages/observer-web/src/routes/_app/admin.tsx` (admin layout — wraps all admin pages)
-- Modify: `packages/observer-web/src/routes/_app/admin/reference/index.tsx` (reference data hub)
-
-**Step 1: Dashboard — add `page-bg-dashboard`**
-
-In `packages/observer-web/src/routes/_app/index.tsx`, change the root div (line 88) from:
-
-```tsx
-<div className="mx-auto w-full max-w-[1080px] px-10 py-8">
-```
-
-to:
-
-```tsx
-<div className="page-bg-dashboard mx-auto w-full max-w-[1080px] px-10 py-8">
-```
-
-**Step 2: Admin layout — add `page-bg-admin`**
-
-Read `packages/observer-web/src/routes/_app/admin.tsx` and add `page-bg-admin` to its outer `<div>` wrapper (the one that wraps `<Outlet />`). If the admin layout has a sidebar or wrapper div, add it to the main content area div.
-
-**Step 3: Reference data — add `page-bg-reference`**
-
-Read `packages/observer-web/src/routes/_app/admin/reference/index.tsx` and add `page-bg-reference` to its outer div. This overrides the admin accent for the reference sub-section.
-
-**Step 4: Verify visually**
-
-Run: `cd packages/observer-web && bun dev`
-
-Check: Dashboard shows compass rose in top-right area. Admin pages show hexagonal grid. Reference data page shows globe.
-
-**Step 5: Commit**
-
-```bash
-git add packages/observer-web/src/routes/_app/index.tsx packages/observer-web/src/routes/_app/admin.tsx packages/observer-web/src/routes/_app/admin/reference/index.tsx
-git commit -m "apply accent backgrounds to dashboard, admin, reference pages"
-```
-
----
 
 ### Task 4: Apply accent classes to Project pages
 
@@ -263,51 +153,6 @@ git add 'packages/observer-web/src/routes/_app/projects/$projectId/people/index.
 git commit -m "apply accent backgrounds to people, support, reports pages"
 ```
 
----
-
-### Task 5: Apply accent classes to Profile and remaining pages
-
-**Files:**
-- Modify: `packages/observer-web/src/routes/_app/profile.tsx`
-- Modify: `packages/observer-web/src/routes/_app/projects/$projectId/households/index.tsx`
-- Modify: `packages/observer-web/src/routes/_app/projects/$projectId/tags/index.tsx`
-- Modify: `packages/observer-web/src/routes/_app/projects/$projectId/pets/index.tsx`
-- Modify: `packages/observer-web/src/routes/_app/projects/$projectId/documents/index.tsx`
-
-**Step 1: Profile — add `page-bg-profile`**
-
-In `packages/observer-web/src/routes/_app/profile.tsx`, change line 20 from:
-
-```tsx
-<div className="mx-auto w-full max-w-xl px-5 py-6">
-```
-
-to:
-
-```tsx
-<div className="page-bg-profile mx-auto w-full max-w-xl px-5 py-6">
-```
-
-**Step 2: Remaining project pages — no accent class needed**
-
-Read each of these files and confirm they exist. These pages get the base topo layer only (from the app shell), no additional accent. No changes needed:
-- `packages/observer-web/src/routes/_app/projects/$projectId/households/index.tsx`
-- `packages/observer-web/src/routes/_app/projects/$projectId/tags/index.tsx`
-- `packages/observer-web/src/routes/_app/projects/$projectId/pets/index.tsx`
-- `packages/observer-web/src/routes/_app/projects/$projectId/documents/index.tsx`
-
-**Step 3: Verify visually**
-
-Check: Profile page shows circle with radiating lines. Households/tags/pets/docs pages show only the base topo layer.
-
-**Step 4: Commit**
-
-```bash
-git add packages/observer-web/src/routes/_app/profile.tsx
-git commit -m "apply accent background to profile page"
-```
-
----
 
 ### Task 6: Print stylesheet exclusion
 
