@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import { AddReferenceDialog } from "@/components/add-reference-dialog";
-import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
+import { ErrorBanner } from "@/components/alert-banner";
 import { DatePicker } from "@/components/date-picker";
 import { DrawerShell } from "@/components/drawer-shell";
 import { inputClass } from "@/components/form-field";
@@ -22,6 +22,7 @@ import { useCreatePlace, usePlaces } from "@/hooks/use-places";
 import { useCreateState, useStates } from "@/hooks/use-states";
 import { HTTPError } from "@/lib/api";
 import { handleApiError } from "@/lib/form-error";
+import { useToast } from "@/stores/toast";
 
 import type { CreatePersonInput, UpdatePersonInput } from "@/types/person";
 
@@ -63,7 +64,8 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
   const createPerson = useCreatePerson(projectId);
   const updatePerson = useUpdatePerson(projectId);
 
-  const { form, set, saved, setSaved, error, setError, editingId, setEditingId } = useDrawerForm({
+  const toast = useToast();
+  const { form, set, error, setError, editingId, setEditingId } = useDrawerForm({
     initial: emptyForm,
     open,
     isEdit,
@@ -213,7 +215,7 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
         };
         await updatePerson.mutateAsync({ personId: editingId, data });
         await qc.invalidateQueries({ queryKey: ["people", projectId] });
-        setSaved(true);
+        toast.success(t("project.people.saved"));
       } else {
         const input: CreatePersonInput = {
           first_name: form.first_name,
@@ -243,7 +245,7 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
         const created = await createPerson.mutateAsync(input);
         await qc.invalidateQueries({ queryKey: ["people", projectId] });
         setEditingId(created.id);
-        setSaved(true);
+        toast.success(t("project.people.saved"));
       }
     } catch (err) {
       setError(await handleApiError(err, t));
@@ -296,7 +298,6 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
       submitLabel={t("project.people.save")}
       savingLabel={t("project.people.saving")}
     >
-      <SuccessBanner message={saved ? t("project.people.saved") : ""} />
       <ErrorBanner message={error} />
 
       <SectionHeading>{t("project.people.identity")}</SectionHeading>

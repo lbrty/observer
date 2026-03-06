@@ -3,7 +3,7 @@ import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
+import { ErrorBanner } from "@/components/alert-banner";
 import { DrawerShell } from "@/components/drawer-shell";
 import { FormField, FormTextarea } from "@/components/form-field";
 import { PersonCombobox } from "@/components/person-combobox";
@@ -12,6 +12,7 @@ import { UISelect } from "@/components/ui-select";
 import { useDrawerForm } from "@/hooks/use-drawer-form";
 import { useCreatePet, usePet, useUpdatePet } from "@/hooks/use-pets";
 import { handleApiError } from "@/lib/form-error";
+import { useToast } from "@/stores/toast";
 import type { CreatePetInput, UpdatePetInput } from "@/types/pet";
 
 interface PetDrawerProps {
@@ -40,7 +41,8 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
 
   const [ownerName, setOwnerName] = useState("");
 
-  const { form, set, saved, setSaved, error, setError, editingId, setEditingId } = useDrawerForm({
+  const toast = useToast();
+  const { form, set, error, setError, editingId, setEditingId } = useDrawerForm({
     initial: emptyForm,
     open,
     isEdit,
@@ -71,7 +73,7 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
         };
         await updatePet.mutateAsync({ id: editingId, data });
         await qc.invalidateQueries({ queryKey: ["pets", projectId] });
-        setSaved(true);
+        toast.success(t("project.pets.saved"));
       } else {
         const input: CreatePetInput = {
           name: form.name,
@@ -87,7 +89,7 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
         const created = await createPet.mutateAsync(input);
         await qc.invalidateQueries({ queryKey: ["pets", projectId] });
         setEditingId(created.id);
-        setSaved(true);
+        toast.success(t("project.pets.saved"));
       }
     } catch (err) {
       setError(await handleApiError(err, t));
@@ -112,7 +114,6 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
       submitLabel={t("project.pets.save")}
       savingLabel={t("project.pets.saving")}
     >
-      <SuccessBanner message={saved ? t("project.pets.saved") : ""} />
       <ErrorBanner message={error} />
 
       <fieldset className="space-y-3">

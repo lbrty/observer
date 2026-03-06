@@ -3,7 +3,7 @@ import { type FormEvent, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
+import { ErrorBanner } from "@/components/alert-banner";
 import { Button } from "@/components/button";
 import { DrawerShell } from "@/components/drawer-shell";
 import { FormField } from "@/components/form-field";
@@ -20,6 +20,7 @@ import {
   useUpdateHousehold,
 } from "@/hooks/use-households";
 import { handleApiError } from "@/lib/form-error";
+import { useToast } from "@/stores/toast";
 
 import type { Relationship } from "@/types/household";
 
@@ -56,7 +57,8 @@ export function HouseholdDrawer({
   const addMember = useAddHouseholdMember(projectId);
   const removeMember = useRemoveHouseholdMember(projectId);
 
-  const { form, set, saved, setSaved, error, setError, editingId, setEditingId } =
+  const toast = useToast();
+  const { form, set, error, setError, editingId, setEditingId } =
     useDrawerForm({
       initial: emptyForm,
       open,
@@ -91,7 +93,7 @@ export function HouseholdDrawer({
           },
         });
         await qc.invalidateQueries({ queryKey: ["households", projectId] });
-        setSaved(true);
+        toast.success(t("project.households.saved"));
       } else {
         const created = await createHousehold.mutateAsync({
           reference_number: form.reference_number || undefined,
@@ -99,7 +101,7 @@ export function HouseholdDrawer({
         });
         await qc.invalidateQueries({ queryKey: ["households", projectId] });
         setEditingId(created.id);
-        setSaved(true);
+        toast.success(t("project.households.saved"));
       }
     } catch (err) {
       setError(await handleApiError(err, t));
@@ -175,7 +177,6 @@ export function HouseholdDrawer({
       submitLabel={t("project.households.save")}
       savingLabel={t("project.households.saving")}
     >
-      {saved && <SuccessBanner message={t("project.households.saved")} />}
       {error && <ErrorBanner message={error} />}
 
       <SectionHeading>{t("project.households.info")}</SectionHeading>

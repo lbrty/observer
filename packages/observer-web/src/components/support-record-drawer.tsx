@@ -4,7 +4,7 @@ import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
+import { ErrorBanner } from "@/components/alert-banner";
 import { DatePicker } from "@/components/date-picker";
 import { DrawerShell } from "@/components/drawer-shell";
 import { FormField, FormTextarea } from "@/components/form-field";
@@ -19,6 +19,7 @@ import {
 } from "@/hooks/use-support-records";
 import { handleApiError } from "@/lib/form-error";
 import { useAuth } from "@/stores/auth";
+import { useToast } from "@/stores/toast";
 
 import type { CreateSupportRecordInput, UpdateSupportRecordInput } from "@/types/support-record";
 
@@ -65,7 +66,8 @@ export function SupportRecordDrawer({
     office_id: user?.office_id ?? "",
   };
 
-  const { form, set, saved, setSaved, error, setError, editingId, setEditingId, setForm } =
+  const toast = useToast();
+  const { form, set, error, setError, editingId, setEditingId, setForm } =
     useDrawerForm({
       initial,
       open,
@@ -115,7 +117,7 @@ export function SupportRecordDrawer({
         await qc.invalidateQueries({
           queryKey: ["support-records", projectId],
         });
-        setSaved(true);
+        toast.success(t("project.supportRecords.saved"));
       } else {
         const input: CreateSupportRecordInput = {
           person_id: form.person_id,
@@ -139,7 +141,7 @@ export function SupportRecordDrawer({
           queryKey: ["support-records", projectId],
         });
         setEditingId(created.id);
-        setSaved(true);
+        toast.success(t("project.supportRecords.saved"));
       }
     } catch (err) {
       setError(await handleApiError(err, t));
@@ -247,7 +249,6 @@ export function SupportRecordDrawer({
       submitLabel={t("project.supportRecords.save")}
       savingLabel={t("project.supportRecords.saving")}
     >
-      {saved && <SuccessBanner message={t("project.supportRecords.saved")} />}
       <ErrorBanner message={error} />
 
       <SectionHeading>{t("project.supportRecords.recordInfo")}</SectionHeading>

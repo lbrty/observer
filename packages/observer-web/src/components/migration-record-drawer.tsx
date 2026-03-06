@@ -4,7 +4,7 @@ import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
+import { ErrorBanner } from "@/components/alert-banner";
 import { DatePicker } from "@/components/date-picker";
 import { DrawerShell } from "@/components/drawer-shell";
 import { FormTextarea } from "@/components/form-field";
@@ -20,6 +20,8 @@ import {
 import { usePlaces } from "@/hooks/use-places";
 import { useStates } from "@/hooks/use-states";
 import { handleApiError } from "@/lib/form-error";
+
+import { useToast } from "@/stores/toast";
 
 import type { HousingAtDestination, MovementReason } from "@/types/migration-record";
 
@@ -59,7 +61,8 @@ export function MigrationRecordDrawer({
   const createRecord = useCreateMigrationRecord(projectId, personId);
   const updateRecord = useUpdateMigrationRecord(projectId, personId);
 
-  const { form, set, saved, setSaved, error, setError, editingId, setEditingId } = useDrawerForm({
+  const toast = useToast();
+  const { form, set, error, setError, editingId, setEditingId } = useDrawerForm({
     initial: emptyForm,
     open,
     isEdit,
@@ -108,7 +111,7 @@ export function MigrationRecordDrawer({
         await qc.invalidateQueries({
           queryKey: ["migration-records", projectId, personId],
         });
-        setSaved(true);
+        toast.success(t("project.migrationRecords.saved"));
       } else {
         const created = await createRecord.mutateAsync({
           ...(form.from_place_id && { from_place_id: form.from_place_id }),
@@ -126,7 +129,7 @@ export function MigrationRecordDrawer({
           queryKey: ["migration-records", projectId, personId],
         });
         setEditingId(created.id);
-        setSaved(true);
+        toast.success(t("project.migrationRecords.saved"));
       }
     } catch (err) {
       setError(await handleApiError(err, t));
@@ -188,7 +191,6 @@ export function MigrationRecordDrawer({
       submitLabel={t("project.migrationRecords.save")}
       savingLabel={t("project.migrationRecords.saving")}
     >
-      {saved && <SuccessBanner message={t("project.migrationRecords.saved")} />}
       {error && <ErrorBanner message={error} />}
 
       <SectionHeading>{t("project.migrationRecords.from")}</SectionHeading>

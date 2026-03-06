@@ -2,12 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { type FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner, SuccessBanner } from "@/components/alert-banner";
+import { ErrorBanner } from "@/components/alert-banner";
 import { Button } from "@/components/button";
 import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
 import { api, HTTPError } from "@/lib/api";
 import { useAuth } from "@/stores/auth";
+import { useToast } from "@/stores/toast";
 import type { ChangePasswordInput, UpdateProfileInput, User } from "@/types/auth";
 
 export const Route = createFileRoute("/_app/profile")({
@@ -32,17 +33,16 @@ function ProfilePage() {
 
 function ProfileForm({ user, setUser }: { user: User | null; setUser: (u: User) => void }) {
   const { t } = useTranslation();
+  const toast = useToast();
   const [firstName, setFirstName] = useState(user?.first_name ?? "");
   const [lastName, setLastName] = useState(user?.last_name ?? "");
   const [phone, setPhone] = useState(user?.phone ?? "");
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setSaving(true);
-    setMessage("");
     setError("");
 
     try {
@@ -53,7 +53,7 @@ function ProfileForm({ user, setUser }: { user: User | null; setUser: (u: User) 
       };
       const updated = await api.patch("auth/me", { json: data }).json<User>();
       setUser(updated);
-      setMessage(t("profile.saved"));
+      toast.success(t("profile.saved"));
     } catch (err) {
       if (err instanceof HTTPError) {
         const body = await err.response.json().catch(() => null);
@@ -70,7 +70,6 @@ function ProfileForm({ user, setUser }: { user: User | null; setUser: (u: User) 
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-sm font-semibold text-fg">{t("profile.personalInfo")}</h2>
 
-      <SuccessBanner message={message} />
       <ErrorBanner message={error} />
 
       <div className="grid grid-cols-2 gap-3">
@@ -108,16 +107,15 @@ function ProfileForm({ user, setUser }: { user: User | null; setUser: (u: User) 
 
 function ChangePasswordForm() {
   const { t } = useTranslation();
+  const toast = useToast();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setMessage("");
     setError("");
 
     if (newPassword !== confirmPassword) {
@@ -138,7 +136,7 @@ function ChangePasswordForm() {
         new_password: newPassword,
       };
       await api.post("auth/change-password", { json: data });
-      setMessage(t("profile.passwordChanged"));
+      toast.success(t("profile.passwordChanged"));
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -162,7 +160,6 @@ function ChangePasswordForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-sm font-semibold text-fg">{t("profile.changePassword")}</h2>
 
-      <SuccessBanner message={message} />
       <ErrorBanner message={error} />
 
       <FormField

@@ -5,12 +5,13 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { DatePicker } from "@/components/date-picker";
-import { CheckIcon, PlusIcon, WarningIcon } from "@/components/icons";
+import { PlusIcon, WarningIcon } from "@/components/icons";
 import { StatusBadge } from "@/components/status-badge";
 import { UISelect } from "@/components/ui-select";
 import { usePerson } from "@/hooks/use-people";
 import { useCreateSupportRecord } from "@/hooks/use-support-records";
 import { HTTPError } from "@/lib/api";
+import { useToast } from "@/stores/toast";
 
 import type { SupportSphere, SupportType } from "@/types/support-record";
 
@@ -83,9 +84,9 @@ function PersonOverview() {
   const { data: person, isLoading } = usePerson(projectId, personId);
 
   const createRecord = useCreateSupportRecord(projectId);
+  const toast = useToast();
 
   const [formOpen, setFormOpen] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
 
   const [type, setType] = useState<SupportType>("humanitarian");
@@ -99,7 +100,6 @@ function PersonOverview() {
     setProvidedAt(new Date().toISOString().slice(0, 10));
     setNotes("");
     setError("");
-    setSaved(false);
   }
 
   function handleCancel() {
@@ -120,11 +120,9 @@ function PersonOverview() {
         notes: notes || undefined,
       });
 
-      setSaved(true);
-      setTimeout(() => {
-        setFormOpen(false);
-        resetForm();
-      }, 1500);
+      toast.success(t("project.people.quickSupportSaved"));
+      setFormOpen(false);
+      resetForm();
     } catch (err) {
       if (err instanceof HTTPError) {
         const body = await err.response.json().catch(() => null);
@@ -232,13 +230,6 @@ function PersonOverview() {
       {formOpen && (
         <section className="rounded-xl border border-border-secondary bg-bg-secondary p-5">
           <form onSubmit={handleSubmit} className="space-y-4">
-            {saved && (
-              <div className="flex items-center gap-2 rounded-lg border border-foam/20 bg-foam/8 px-3 py-2.5 text-sm font-medium text-foam">
-                <CheckIcon size={16} weight="bold" className="shrink-0" />
-                {t("project.people.quickSupportSaved")}
-              </div>
-            )}
-
             {error && (
               <div className="flex items-center gap-2 rounded-lg border border-rose/20 bg-rose/8 px-3 py-2.5 text-sm font-medium text-rose">
                 <WarningIcon size={16} weight="bold" className="shrink-0" />
@@ -317,7 +308,7 @@ function PersonOverview() {
               <Button variant="secondary" onClick={handleCancel}>
                 {t("common.cancel")}
               </Button>
-              <Button type="submit" disabled={createRecord.isPending || saved}>
+              <Button type="submit" disabled={createRecord.isPending}>
                 {createRecord.isPending
                   ? t("project.supportRecords.saving")
                   : t("project.supportRecords.save")}
