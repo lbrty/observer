@@ -75,9 +75,26 @@ func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) (
 		args = append(args, *filter.Search)
 	}
 
+	var tagJoin string
+	if len(filter.TagIDs) > 0 {
+		placeholders := make([]string, len(filter.TagIDs))
+		for i, tagID := range filter.TagIDs {
+			ix++
+			placeholders[i] = "$" + strconv.Itoa(ix)
+			args = append(args, tagID)
+		}
+		tagJoin = " JOIN person_tags pt ON pt.person_id = people.id AND pt.tag_id IN (" + strings.Join(placeholders, ",") + ")"
+		where = append(where, "1=1 GROUP BY people.id HAVING COUNT(DISTINCT pt.tag_id) = "+strconv.Itoa(len(filter.TagIDs)))
+	}
+
 	whereClause := "WHERE " + strings.Join(where, " AND ")
 
-	countQ := "SELECT COUNT(*) FROM people " + whereClause
+	var countQ string
+	if tagJoin != "" {
+		countQ = "SELECT COUNT(*) FROM (SELECT people.id FROM people" + tagJoin + " " + whereClause + ") sub"
+	} else {
+		countQ = "SELECT COUNT(*) FROM people " + whereClause
+	}
 	var total int
 	if err := r.db.QueryRowContext(ctx, countQ, args...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count people: %w", err)
@@ -100,8 +117,14 @@ func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) (
 	args = append(args, offset)
 	offsetParam := "$" + strconv.Itoa(ix)
 
-	q := "SELECT " + personColumns + " FROM people " +
-		whereClause + " ORDER BY created_at DESC LIMIT " + limitParam + " OFFSET " + offsetParam
+	var q string
+	if tagJoin != "" {
+		q = "SELECT " + personColumns + " FROM people" + tagJoin + " " +
+			whereClause + " ORDER BY people.created_at DESC LIMIT " + limitParam + " OFFSET " + offsetParam
+	} else {
+		q = "SELECT " + personColumns + " FROM people " +
+			whereClause + " ORDER BY created_at DESC LIMIT " + limitParam + " OFFSET " + offsetParam
+	}
 
 	rows, err := r.db.QueryContext(ctx, q, args...)
 	if err != nil {
@@ -277,6 +300,14 @@ func (r *personTagRepo) List(ctx context.Context, personID string) ([]string, er
 		ids = append(ids, id)
 	}
 	return ids, rows.Err()
+}
+
+func (r *personTagRepo) ListBulk(ctx context.Context, entityIDs []string) (map[string][]string, error) {
+	if len(entityIDs) == 0 {
+		return map[string][]string{}, nil
+	}
+	q, args := buildBulkTagQuery("person_tags", "person_id", entityIDs)
+	return queryBulkTags(ctx, r.db, q, args)
 }
 
 func (r *personTagRepo) ReplaceAll(ctx context.Context, personID string, tagIDs []string) error {

@@ -1,8 +1,11 @@
+import { useState } from "react";
+
 import { Link, Outlet } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { ArrowLeftIcon } from "@/components/icons";
+import { ArrowLeftIcon, PencilSimpleIcon } from "@/components/icons";
+import { PersonDrawer } from "@/components/person-drawer";
 import { StatusBadge } from "@/components/status-badge";
 import { useMyProjects } from "@/hooks/use-my-projects";
 import { usePerson } from "@/hooks/use-people";
@@ -17,6 +20,8 @@ function PersonDetailLayout() {
   const { data: person, isLoading } = usePerson(projectId, personId);
   const { data: projectsData } = useMyProjects();
   const project = projectsData?.projects.find((p) => p.id === projectId);
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const tabs = [
     {
@@ -36,10 +41,6 @@ function PersonDetailLayout() {
       to: "/projects/$projectId/people/$personId/migration-records" as const,
       label: t("project.people.migrationRecordsTab"),
     },
-    {
-      to: "/projects/$projectId/people/$personId/stats" as const,
-      label: t("project.people.statsTab"),
-    },
     ...(project?.can_view_documents !== false
       ? [
           {
@@ -48,6 +49,10 @@ function PersonDetailLayout() {
           },
         ]
       : []),
+    {
+      to: "/projects/$projectId/people/$personId/stats" as const,
+      label: t("project.people.statsTab"),
+    },
   ];
 
   if (isLoading) {
@@ -76,7 +81,15 @@ function PersonDetailLayout() {
 
       <div className="mb-6 flex items-center gap-3">
         <h1 className="font-serif text-xl font-bold tracking-tight text-fg">{fullName}</h1>
-        <StatusBadge label={person.case_status} />
+        <StatusBadge label={t(`project.people.${person.case_status}`)} />
+        <button
+          type="button"
+          onClick={() => setDrawerOpen(true)}
+          className="ml-auto rounded-lg p-1.5 text-fg-tertiary transition-colors hover:bg-bg-tertiary hover:text-fg"
+          title={t("project.people.editTitle")}
+        >
+          <PencilSimpleIcon size={18} />
+        </button>
       </div>
 
       <div className="mb-6 flex gap-0 rounded-lg border border-border-secondary bg-bg-secondary p-0.5">
@@ -96,6 +109,13 @@ function PersonDetailLayout() {
       </div>
 
       <Outlet />
+
+      <PersonDrawer
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+        projectId={projectId}
+        personId={personId}
+      />
     </div>
   );
 }

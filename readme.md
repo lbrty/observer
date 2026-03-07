@@ -26,4 +26,3 @@ who need a structured, secure alternative to spreadsheets.
 If you believe in this work, contributions, donations, and spreading the word are all welcome.
 
 - [PayPal](https://paypal.me/SultanIman)
-- [GitHub Sponsors](https://github.com/lbrty/observer)

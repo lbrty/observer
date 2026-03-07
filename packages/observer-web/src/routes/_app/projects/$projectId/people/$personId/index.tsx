@@ -10,8 +10,9 @@ import { StatusBadge } from "@/components/status-badge";
 import { UISelect } from "@/components/ui-select";
 import { useOffices } from "@/hooks/use-offices";
 import { usePerson } from "@/hooks/use-people";
+import { sphereKeys, typeKeys } from "@/constants/support";
 import { useCreateSupportRecord } from "@/hooks/use-support-records";
-import { HTTPError } from "@/lib/api";
+import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";
 
 import type { SupportSphere, SupportType } from "@/types/support-record";
@@ -56,28 +57,8 @@ const sphereOptions: SupportSphere[] = [
   "other",
 ];
 
-const typeKeyMap: Record<SupportType, string> = {
-  humanitarian: "project.supportRecords.typeHumanitarian",
-  legal: "project.supportRecords.typeLegal",
-  social: "project.supportRecords.typeSocial",
-  psychological: "project.supportRecords.typePsychological",
-  medical: "project.supportRecords.typeMedical",
-  general: "project.supportRecords.typeGeneral",
-};
-
-const sphereKeyMap: Record<SupportSphere, string> = {
-  housing_assistance: "project.supportRecords.sphereHousing",
-  document_recovery: "project.supportRecords.sphereDocumentRecovery",
-  social_benefits: "project.supportRecords.sphereSocialBenefits",
-  property_rights: "project.supportRecords.spherePropertyRights",
-  employment_rights: "project.supportRecords.sphereEmploymentRights",
-  family_law: "project.supportRecords.sphereFamilyLaw",
-  healthcare_access: "project.supportRecords.sphereHealthcareAccess",
-  education_access: "project.supportRecords.sphereEducationAccess",
-  financial_aid: "project.supportRecords.sphereFinancialAid",
-  psychological_support: "project.supportRecords.spherePsychologicalSupport",
-  other: "project.supportRecords.sphereOther",
-};
+const typeKeyMap = typeKeys as Record<SupportType, string>;
+const sphereKeyMap = sphereKeys as Record<SupportSphere, string>;
 
 function PersonOverview() {
   const { t } = useTranslation();
@@ -130,12 +111,7 @@ function PersonOverview() {
       setFormOpen(false);
       resetForm();
     } catch (err) {
-      if (err instanceof HTTPError) {
-        const body = await err.response.json().catch(() => null);
-        setError((body as { error?: string } | null)?.error ?? err.message);
-      } else {
-        setError(String(err));
-      }
+      setError(await handleApiError(err, t));
     }
   }
 
@@ -202,7 +178,7 @@ function PersonOverview() {
               {t("project.people.caseStatusLabel")}
             </dt>
             <dd className="mt-1">
-              <StatusBadge label={person.case_status} />
+              <StatusBadge label={t(`project.people.${person.case_status}`)} />
             </dd>
           </div>
           <Detail label={t("project.people.externalId")} value={person.external_id} />

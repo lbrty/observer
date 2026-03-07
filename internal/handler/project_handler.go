@@ -39,6 +39,12 @@ func (h *ProjectHandler) List(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
+
+	userID, _ := middleware.UserIDFrom(c)
+	role, _ := middleware.UserRoleFrom(c)
+	input.CallerID = userID.String()
+	input.CallerRole = role
+
 	out, err := h.uc.List(c.Request.Context(), input)
 	if err != nil {
 		internalError(c, "list projects", err)
@@ -59,7 +65,10 @@ func (h *ProjectHandler) List(c *gin.Context) {
 // @Security BearerAuth
 // @Router /admin/projects/{project_id} [get]
 func (h *ProjectHandler) Get(c *gin.Context) {
-	out, err := h.uc.Get(c.Request.Context(), c.Param("project_id"))
+	userID, _ := middleware.UserIDFrom(c)
+	role, _ := middleware.UserRoleFrom(c)
+
+	out, err := h.uc.Get(c.Request.Context(), c.Param("project_id"), userID.String(), role)
 	if err != nil {
 		HandleError(c, err)
 		return
@@ -121,4 +130,3 @@ func (h *ProjectHandler) Update(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, out)
 }
-

@@ -3,7 +3,6 @@ import {
   FilesIcon,
   HandHeartIcon,
   HouseSimpleIcon,
-  PathIcon,
   PawPrintIcon,
   TagIcon,
   UserCircleIcon,
@@ -12,12 +11,45 @@ import {
 import { SidebarLink } from "@/components/sidebar-link";
 import { useMyProjects } from "@/hooks/use-my-projects";
 import { useAuth } from "@/stores/auth";
-import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Navigate, Outlet, useLocation } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/_app/projects/$projectId")({
   component: ProjectLayout,
 });
+
+function ReportsGroup({ projectId }: { projectId: string }) {
+  const { t } = useTranslation();
+  const location = useLocation();
+  const isActive = location.pathname.includes(`/projects/${projectId}/reports`);
+
+  return (
+    <div>
+      <div
+        className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
+          isActive
+            ? "font-medium text-accent"
+            : "text-fg-secondary"
+        }`}
+      >
+        <ChartBarIcon size={18} weight={isActive ? "fill" : "regular"} />
+        {t("project.nav.reports")}
+      </div>
+      <div className="ml-7 space-y-0.5 border-l border-border-secondary pl-2">
+        <SidebarLink
+          to={`/projects/${projectId}/reports/people`}
+          label={t("project.nav.reportsPeople")}
+          icon={UserCircleIcon}
+        />
+        <SidebarLink
+          to={`/projects/${projectId}/reports/pets`}
+          label={t("project.nav.reportsPets")}
+          icon={PawPrintIcon}
+        />
+      </div>
+    </div>
+  );
+}
 
 function ProjectLayout() {
   const { t } = useTranslation();
@@ -72,11 +104,7 @@ function ProjectLayout() {
             label={t("project.nav.pets")}
             icon={PawPrintIcon}
           />
-          <SidebarLink
-            to={`/projects/${projectId}/reports`}
-            label={t("project.nav.reports")}
-            icon={ChartBarIcon}
-          />
+          <ReportsGroup projectId={projectId} />
           {user?.role === "consultant" && (
             <SidebarLink
               to={`/projects/${projectId}/my-stats`}

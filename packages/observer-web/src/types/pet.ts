@@ -8,6 +8,7 @@ export interface Pet {
   status: PetStatus;
   registration_id?: string;
   notes?: string;
+  tag_ids: string[];
   created_at: string;
   updated_at: string;
 }
@@ -31,6 +32,8 @@ export interface UpdatePetInput {
 export interface ListPetsParams {
   page?: number;
   per_page?: number;
+  status?: string;
+  tag_ids?: string[];
 }
 
 export interface ListPetsOutput {

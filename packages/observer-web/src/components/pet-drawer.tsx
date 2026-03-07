@@ -1,4 +1,4 @@
-import { type SyntheticEvent, useState } from "react";
+import { type SyntheticEvent, useEffect, useState } from "react";
 import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -7,10 +7,13 @@ import { ErrorBanner } from "@/components/alert-banner";
 import { DrawerShell } from "@/components/drawer-shell";
 import { FormField, FormTextarea } from "@/components/form-field";
 import { PersonCombobox } from "@/components/person-combobox";
+import { PersonName } from "@/components/person-name";
 import { SectionHeading } from "@/components/section-heading";
+import { TagPicker } from "@/components/tag-picker";
 import { UISelect } from "@/components/ui-select";
 import { useDrawerForm } from "@/hooks/use-drawer-form";
 import { useCreatePet, usePet, useUpdatePet } from "@/hooks/use-pets";
+import { usePetTags, useReplacePetTags } from "@/hooks/use-tags";
 import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";
 import type { CreatePetInput, UpdatePetInput } from "@/types/pet";
@@ -35,11 +38,22 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
   const isEdit = petId !== null;
 
   const { data: pet } = usePet(projectId, petId ?? "");
+  const { data: petTagsData } = usePetTags(projectId, petId ?? "");
   const qc = useQueryClient();
   const createPet = useCreatePet(projectId);
   const updatePet = useUpdatePet(projectId);
+  const replacePetTags = useReplacePetTags(projectId);
 
   const [ownerName, setOwnerName] = useState("");
+  const [tagIds, setTagIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (petTagsData) setTagIds(petTagsData.tag_ids ?? []);
+  }, [petTagsData]);
+
+  useEffect(() => {
+    if (!open) setTagIds([]);
+  }, [open]);
 
   const toast = useToast();
   const { form, set, error, setError, editingId, setEditingId } = useDrawerForm({
@@ -56,7 +70,7 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
     }),
   });
 
-  const isPending = createPet.isPending || updatePet.isPending;
+  const isPending = createPet.isPending || updatePet.isPending || replacePetTags.isPending;
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
@@ -72,6 +86,7 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
           notes: form.notes || undefined,
         };
         await updatePet.mutateAsync({ id: editingId, data });
+        await replacePetTags.mutateAsync({ petId: editingId, ids: tagIds });
         await qc.invalidateQueries({ queryKey: ["pets", projectId] });
         toast.success(t("project.pets.saved"));
       } else {
@@ -87,6 +102,9 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
           ...(form.notes && { notes: form.notes }),
         };
         const created = await createPet.mutateAsync(input);
+        if (tagIds.length > 0) {
+          await replacePetTags.mutateAsync({ petId: created.id, ids: tagIds });
+        }
         await qc.invalidateQueries({ queryKey: ["pets", projectId] });
         setEditingId(created.id);
         toast.success(t("project.pets.saved"));
@@ -146,7 +164,7 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
               {form.owner_id ? (
                 <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
                   <span className="flex-1 truncate text-sm text-fg">
-                    {ownerName || form.owner_id}
+                    {ownerName || <PersonName projectId={projectId} personId={form.owner_id} />}
                   </span>
                   <button
                     type="button"
@@ -186,6 +204,9 @@ export function PetDrawer({ open, onOpenChange, projectId, petId }: PetDrawerPro
           </div>
         </div>
       </fieldset>
+
+      <SectionHeading>{t("project.tags.title")}</SectionHeading>
+      <TagPicker projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
     </DrawerShell>
   );
 }

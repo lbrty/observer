@@ -34,6 +34,7 @@ export interface Person {
   consent_given: boolean;
   consent_date?: string;
   registered_at?: string;
+  tag_ids: string[];
   created_at: string;
   updated_at: string;
 }
@@ -50,6 +51,7 @@ export interface ListPeopleParams {
   case_status?: string;
   office_id?: string;
   consultant_id?: string;
+  tag_ids?: string[];
   page?: number;
   per_page?: number;
 }

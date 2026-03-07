@@ -256,6 +256,8 @@
       "documents": "Документи",
       "pets": "Тварини",
       "reports": "Звіти",
+      "reportsPeople": "Люди",
+      "reportsPets": "Тварини",
       "myStats": "Моя статистика"
     },
     "people": {
@@ -358,6 +360,10 @@
       "name": "Назва",
       "mimeType": "Тип",
       "size": "Розмір",
+      "upload": "Завантажити",
+      "uploading": "Завантаження...",
+      "uploadError": "Помилка завантаження",
+      "download": "Завантажити",
       "deleteConfirm": "Ви впевнені, що хочете видалити цей документ?",
       "emptyTitle": "Немає документів",
       "emptyDescription": "Завантажте перший документ"
@@ -372,7 +378,9 @@
       "deleted": "Тег видалено",
       "deleteConfirm": "Ви впевнені, що хочете видалити цей тег?",
       "emptyTitle": "Немає тегів",
-      "emptyDescription": "Створіть перший тег"
+      "emptyDescription": "Створіть перший тег",
+      "searchTags": "Пошук тегів...",
+      "filterByTags": "За тегами"
     },
     "supportRecords": {
       "title": "Записи підтримки",
@@ -546,6 +554,21 @@
       "kpiIdp": "ВПО",
       "kpiHouseholds": "Домогосподарства",
       "kpiOffices": "Офіси"
+    },
+    "petReports": {
+      "title": "Звіти по тваринах",
+      "byStatus": "За статусом",
+      "byOwnership": "Власність",
+      "byMonth": "Реєстрації за місяць",
+      "needsShelterByMonth": "Потребують притулку тренд",
+      "adoptedByMonth": "Всиновлені тренд",
+      "totalByMonth": "Загальна кількість тренд",
+      "kpiTotal": "Усього тварин",
+      "kpiNeedsShelter": "Потребують притулку",
+      "kpiAdopted": "Всиновлені",
+      "withOwner": "З власником",
+      "withoutOwner": "Без власника",
+      "filterStatus": "Статус"
     },
     "myStats": {
       "title": "Моя статистика",

@@ -120,6 +120,7 @@ func (h *DocumentHandler) Stream(c *gin.Context) {
 	defer rc.Close()
 
 	c.Header("Content-Disposition", "inline; filename=\""+doc.Name+"\"")
+	c.Writer.Header().Del("X-Frame-Options")
 	c.DataFromReader(http.StatusOK, doc.Size, doc.MimeType, rc, nil)
 }
 

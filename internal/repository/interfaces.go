@@ -20,7 +20,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 )
 
-//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/repository UserRepository,CredentialsRepository,MFARepository,VerificationTokenRepository,SessionRepository,PermissionLoader,PermissionRepository,ProjectRepository,CountryRepository,StateRepository,PlaceRepository,OfficeRepository,CategoryRepository,TagRepository,PersonRepository,PersonCategoryRepository,PersonTagRepository,SupportRecordRepository,MigrationRecordRepository,HouseholdRepository,HouseholdMemberRepository,PersonNoteRepository,DocumentRepository,PetRepository,ReportRepository
+//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/repository UserRepository,CredentialsRepository,MFARepository,VerificationTokenRepository,SessionRepository,PermissionLoader,PermissionRepository,ProjectRepository,CountryRepository,StateRepository,PlaceRepository,OfficeRepository,CategoryRepository,TagRepository,PersonRepository,PersonCategoryRepository,PersonTagRepository,SupportRecordRepository,MigrationRecordRepository,HouseholdRepository,HouseholdMemberRepository,PersonNoteRepository,DocumentRepository,PetRepository,PetTagRepository,PetReportRepository,ReportRepository
 
 // UserRepository defines persistence operations for users.
 type UserRepository interface {
@@ -160,6 +160,7 @@ type PersonCategoryRepository interface {
 // PersonTagRepository manages person-tag associations.
 type PersonTagRepository interface {
 	List(ctx context.Context, personID string) ([]string, error)
+	ListBulk(ctx context.Context, entityIDs []string) (map[string][]string, error)
 	ReplaceAll(ctx context.Context, personID string, tagIDs []string) error
 }
 
@@ -216,11 +217,26 @@ type DocumentRepository interface {
 
 // PetRepository defines persistence operations for pets.
 type PetRepository interface {
-	List(ctx context.Context, projectID string, page, perPage int) ([]*pet.Pet, int, error)
+	List(ctx context.Context, projectID string, status string, tagIDs []string, page, perPage int) ([]*pet.Pet, int, error)
 	GetByID(ctx context.Context, id string) (*pet.Pet, error)
 	Create(ctx context.Context, p *pet.Pet) error
 	Update(ctx context.Context, p *pet.Pet) error
 	Delete(ctx context.Context, id string) error
+}
+
+// PetTagRepository manages pet-tag associations.
+type PetTagRepository interface {
+	List(ctx context.Context, petID string) ([]string, error)
+	ListBulk(ctx context.Context, entityIDs []string) (map[string][]string, error)
+	ReplaceAll(ctx context.Context, petID string, tagIDs []string) error
+}
+
+// PetReportRepository provides aggregation queries for pet reports.
+type PetReportRepository interface {
+	CountByStatus(ctx context.Context, f report.PetReportFilter) ([]report.CountResult, error)
+	CountByOwnership(ctx context.Context, f report.PetReportFilter) ([]report.CountResult, error)
+	CountByMonth(ctx context.Context, f report.PetReportFilter) ([]report.CountResult, error)
+	CountByStatusByMonth(ctx context.Context, f report.PetReportFilter) ([]report.MonthlyStatusCount, error)
 }
 
 // ReportRepository provides aggregation queries for ADR-005 reports.

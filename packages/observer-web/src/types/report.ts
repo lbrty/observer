@@ -33,6 +33,25 @@ export interface FullReport {
   status_flow: StatusFlow[];
 }
 
+export interface MonthlyStatusCount {
+  month: string;
+  status: string;
+  count: number;
+}
+
+export interface PetReport {
+  by_status: ReportGroup;
+  by_ownership: ReportGroup;
+  by_month: ReportGroup;
+  by_status_by_month: MonthlyStatusCount[];
+}
+
+export interface PetReportParams {
+  date_from?: string;
+  date_to?: string;
+  status?: string;
+}
+
 export interface ReportParams {
   date_from?: string;
   date_to?: string;

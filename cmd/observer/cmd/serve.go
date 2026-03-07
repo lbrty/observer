@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
@@ -52,6 +53,18 @@ func runServe(cmd *cobra.Command, _ []string) error {
 
 	log := logger.New(cfg.Log.Level)
 	slog.SetDefault(log)
+
+	if cfg.Sentry.Enabled() {
+		err := sentry.Init(sentry.ClientOptions{
+			Dsn:              cfg.Sentry.DSN,
+			TracesSampleRate: cfg.Sentry.TracesSampleRate,
+		})
+		if err != nil {
+			return fmt.Errorf("sentry init: %w", err)
+		}
+		defer sentry.Flush(2 * time.Second)
+		log.Info("sentry enabled")
+	}
 
 	db, err := database.New(cfg.Database.DSN)
 	if err != nil {

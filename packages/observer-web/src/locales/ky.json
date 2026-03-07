@@ -256,12 +256,14 @@
       "documents": "Dokumentter",
       "pets": "Üj canybarlar",
       "reports": "Raporlor",
+      "reportsPeople": "Adamdar",
+      "reportsPets": "Üj canybarlar",
       "myStats": "Menim statistikam"
     },
     "people": {
       "title": "Adamdar",
       "name": "Aty",
-      "sex": "cynsy",
+      "sex": "Cynyşy",
       "caseStatus": "Iştin statusu",
       "registered": "Qattalğany",
       "register": "Adam qattoo",
@@ -358,6 +360,10 @@
       "name": "Aty",
       "mimeType": "Türü",
       "size": "Ölçömü",
+      "upload": "Cüktöö",
+      "uploading": "Cüktölüüdö...",
+      "uploadError": "Cüktöö iygiliktüü bolbodu",
+      "download": "Köçürüp aluu",
       "deleteConfirm": "Bu dokumentti öçürösüzbü?",
       "emptyTitle": "Dokumentter coq",
       "emptyDescription": "Birinçi dokumentti cüktöñüz"
@@ -372,7 +378,9 @@
       "deleted": "Teg coqqo çyğaryldy",
       "deleteConfirm": "Bu tegdi coqqo çyğarasyñyzby?",
       "emptyTitle": "Tegder coq",
-      "emptyDescription": "Birinçi tegdi tüzüñüz"
+      "emptyDescription": "Birinçi tegdi tüzüñüz",
+      "searchTags": "Teg izdöö...",
+      "filterByTags": "Tegder bojunça"
     },
     "supportRecords": {
       "title": "Qoldoo tizmesi",
@@ -497,7 +505,7 @@
       "saved": "Ijgiliktüü saqtaldy",
       "all": "Baary",
       "statusRegistered": "Qattalğan",
-      "statusAdopted": "Bağylğan",
+      "statusAdopted": "Kolğo berilgen",
       "statusOwnerFound": "Eesi tabylğan",
       "statusNeedsShelter": "Bayaq kerek",
       "statusUnknown": "Belgisiz",
@@ -546,6 +554,21 @@
       "kpiIdp": "IKJlar",
       "kpiHouseholds": "Üj-bülölör",
       "kpiOffices": "Ofister"
+    },
+    "petReports": {
+      "title": "Üj canybarlar raporloru",
+      "byStatus": "Status boyunça",
+      "byOwnership": "Eesi",
+      "byMonth": "Aj boyunça qattoo",
+      "needsShelterByMonth": "Ee izdelgeninin trendi",
+      "adoptedByMonth": "Kolgo ketken trendi",
+      "totalByMonth": "Carmyq üj canybarlar trendi",
+      "kpiTotal": "Carmyq üj canybarlar",
+      "kpiNeedsShelter": "Ee kerek",
+      "kpiAdopted": "Kolğo berilgen",
+      "withOwner": "Eesi bar",
+      "withoutOwner": "Eesi coq",
+      "filterStatus": "Status"
     },
     "myStats": {
       "title": "Menim statistikam",

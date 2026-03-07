@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/lbrty/observer/internal/domain/project"
+	"github.com/lbrty/observer/internal/domain/user"
 )
 
 // ProjectDTO is the admin-facing project representation.
@@ -32,10 +33,12 @@ type UpdateProjectInput struct {
 
 // ListProjectsInput holds filter parameters.
 type ListProjectsInput struct {
-	OwnerID *string `form:"owner_id"`
-	Status  *string `form:"status"`
-	Page    int     `form:"page"`
-	PerPage int     `form:"per_page"`
+	OwnerID    *string   `form:"owner_id"`
+	Status     *string   `form:"status"`
+	Page       int       `form:"page"`
+	PerPage    int       `form:"per_page"`
+	CallerID   string    `form:"-"`
+	CallerRole user.Role `form:"-"`
 }
 
 // ListProjectsOutput holds paginated results.

@@ -92,11 +92,11 @@ func (s *redisLoginAttemptStore) IsLocked(ctx context.Context, email string) (ti
 		return 0, fmt.Errorf("check lockout ttl: %w", err)
 	}
 
-	switch {
-	case ttl == -2:
+	switch  ttl{
+	case -2:
 		// Key doesn't exist — not locked.
 		return 0, nil
-	case ttl == -1:
+	case -1:
 		// Key exists with no expiry — permanent lock.
 		return -1, nil
 	default:

@@ -13,10 +13,20 @@ import { Pagination } from "@/components/pagination";
 import { PersonName } from "@/components/person-name";
 import { PetDrawer } from "@/components/pet-drawer";
 import { StatusBadge } from "@/components/status-badge";
+import { TagChips } from "@/components/tag-chips";
+import { TagFilter } from "@/components/tag-filter";
 import { usePets } from "@/hooks/use-pets";
 import type { Pet } from "@/types/pet";
 
 export type PetStatus = "" | "registered" | "adopted" | "owner_found" | "needs_shelter" | "unknown";
+
+const statusVariants: Record<string, "foam" | "gold" | "rose" | "neutral"> = {
+  registered: "gold",
+  adopted: "foam",
+  owner_found: "foam",
+  needs_shelter: "rose",
+  unknown: "neutral",
+};
 
 const statusTabs: PetStatus[] = [
   "",
@@ -43,17 +53,18 @@ export function PetsContent({
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editPetId, setEditPetId] = useState<string | null>(null);
+  const [tagIds, setTagIds] = useState<string[]>([]);
 
   const params = {
     page,
     per_page: 20,
     ...(statusFilter && { status: statusFilter }),
+    ...(tagIds.length > 0 && { tag_ids: tagIds }),
   };
 
   const { data, isLoading } = usePets(projectId, params);
 
-  const tabLabels: Record<string, string> = {
-    "": t("project.pets.all"),
+  const statusLabels: Record<string, string> = {
     registered: t("project.pets.statusRegistered"),
     adopted: t("project.pets.statusAdopted"),
     owner_found: t("project.pets.statusOwnerFound"),
@@ -89,7 +100,7 @@ export function PetsContent({
     {
       key: "status",
       header: t("project.pets.status"),
-      render: (p) => <StatusBadge label={p.status} />,
+      render: (p) => <StatusBadge label={statusLabels[p.status] ?? p.status} variant={statusVariants[p.status]} />,
     },
     {
       key: "owner_id",
@@ -102,6 +113,11 @@ export function PetsContent({
         ) : (
           <span className="text-fg-tertiary">—</span>
         ),
+    },
+    {
+      key: "tags",
+      header: t("project.tags.title"),
+      render: (p) => <TagChips projectId={projectId} tagIds={p.tag_ids} />,
     },
     {
       key: "registration_id",
@@ -161,11 +177,15 @@ export function PetsContent({
               value={tab}
               className="cursor-pointer rounded-sm px-4 py-1.5 m-0.5 text-sm font-medium text-fg-tertiary transition-colors hover:text-fg data-active:bg-bg data-active:text-fg data-active:shadow-card"
             >
-              {tabLabels[tab]}
+              {tab === "" ? t("project.pets.all") : statusLabels[tab]}
             </Tabs.Tab>
           ))}
         </Tabs.List>
       </Tabs.Root>
+
+      <div className="mb-4">
+        <TagFilter projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
+      </div>
 
       <DataTable
         columns={columns}

@@ -256,6 +256,8 @@
       "documents": "Belgeler",
       "pets": "Evcil hayvanlar",
       "reports": "Raporlar",
+      "reportsPeople": "Kişiler",
+      "reportsPets": "Evcil hayvanlar",
       "myStats": "İstatistiklerim"
     },
     "people": {
@@ -358,6 +360,10 @@
       "name": "Ad",
       "mimeType": "Tür",
       "size": "Boyut",
+      "upload": "Yükle",
+      "uploading": "Yükleniyor...",
+      "uploadError": "Yükleme başarısız",
+      "download": "İndir",
       "deleteConfirm": "Bu belgeyi silmek istediğinize emin misiniz?",
       "emptyTitle": "Belge yok",
       "emptyDescription": "İlk belgeyi yükleyin"
@@ -372,7 +378,9 @@
       "deleted": "Etiket silindi",
       "deleteConfirm": "Bu etiketi silmek istediğinize emin misiniz?",
       "emptyTitle": "Etiket yok",
-      "emptyDescription": "İlk etiketi oluşturun"
+      "emptyDescription": "İlk etiketi oluşturun",
+      "searchTags": "Etiket ara...",
+      "filterByTags": "Etiketlere göre"
     },
     "supportRecords": {
       "title": "Destek Kayıtları",
@@ -546,6 +554,21 @@
       "kpiIdp": "YİE'ler",
       "kpiHouseholds": "Haneler",
       "kpiOffices": "Ofisler"
+    },
+    "petReports": {
+      "title": "Evcil hayvan raporları",
+      "byStatus": "Duruma göre",
+      "byOwnership": "Sahiplik",
+      "byMonth": "Aylık kayıtlar",
+      "needsShelterByMonth": "Barınak ihtiyacı trendi",
+      "adoptedByMonth": "Sahiplenme trendi",
+      "totalByMonth": "Toplam hayvan trendi",
+      "kpiTotal": "Toplam hayvanlar",
+      "kpiNeedsShelter": "Barınak gerekli",
+      "kpiAdopted": "Sahiplenilmiş",
+      "withOwner": "Sahibi var",
+      "withoutOwner": "Sahibi yok",
+      "filterStatus": "Durum"
     },
     "myStats": {
       "title": "İstatistiklerim",

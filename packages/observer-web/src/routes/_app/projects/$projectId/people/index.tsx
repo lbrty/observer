@@ -11,6 +11,8 @@ import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { PersonDrawer } from "@/components/person-drawer";
 import { StatusBadge } from "@/components/status-badge";
+import { TagChips } from "@/components/tag-chips";
+import { TagFilter } from "@/components/tag-filter";
 import { usePeople } from "@/hooks/use-people";
 import type { Person } from "@/types/person";
 
@@ -31,6 +33,7 @@ function PeopleListPage() {
   const { status = "", page = 1 } = Route.useSearch();
 
   const [search, setSearch] = useState("");
+  const [tagIds, setTagIds] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editPersonId, setEditPersonId] = useState<string | null>(null);
 
@@ -47,12 +50,12 @@ function PeopleListPage() {
     per_page: 20,
     ...(status && { case_status: status }),
     ...(search && { search }),
+    ...(tagIds.length > 0 && { tag_ids: tagIds }),
   };
 
   const { data, isLoading } = usePeople(projectId, params);
 
-  const tabLabels: Record<string, string> = {
-    "": t("project.people.all"),
+  const statusLabels: Record<string, string> = {
     new: t("project.people.new"),
     active: t("project.people.active"),
     closed: t("project.people.closed"),
@@ -95,7 +98,12 @@ function PeopleListPage() {
     {
       key: "case_status",
       header: t("project.people.caseStatus"),
-      render: (p) => <StatusBadge label={p.case_status} />,
+      render: (p) => <StatusBadge label={statusLabels[p.case_status] ?? p.case_status} />,
+    },
+    {
+      key: "tags",
+      header: t("project.tags.title"),
+      render: (p) => <TagChips projectId={projectId} tagIds={p.tag_ids} />,
     },
     {
       key: "registered",
@@ -150,6 +158,7 @@ function PeopleListPage() {
             className="w-full rounded-lg border border-border-secondary bg-bg-secondary py-2 pr-3 pl-9 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
           />
         </div>
+        <TagFilter projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
       </div>
 
       <Tabs.Root
@@ -167,7 +176,7 @@ function PeopleListPage() {
               value={tab}
               className="cursor-pointer rounded-sm px-4 py-1.5 m-0.5 text-sm font-medium text-fg-tertiary transition-colors hover:text-fg data-active:bg-bg data-active:text-fg data-active:shadow-card"
             >
-              {tabLabels[tab]}
+              {tab === "" ? t("project.people.all") : statusLabels[tab]}
             </Tabs.Tab>
           ))}
         </Tabs.List>

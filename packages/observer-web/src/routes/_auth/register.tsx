@@ -4,7 +4,7 @@ import { type SyntheticEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
-import { HTTPError } from "@/lib/api";
+import { handleApiError } from "@/lib/form-error";
 import { useAuth } from "@/stores/auth";
 
 export const Route = createFileRoute("/_auth/register")({
@@ -45,12 +45,7 @@ function RegisterPage() {
       await register({ email, password, role: "staff" });
       setSuccess(true);
     } catch (err) {
-      if (err instanceof HTTPError) {
-        const body = await err.response.json().catch(() => null);
-        setError(body?.error ?? err.message);
-      } else {
-        setError(t("common.unexpectedError"));
-      }
+      setError(await handleApiError(err, t));
     } finally {
       setSubmitting(false);
     }

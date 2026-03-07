@@ -256,6 +256,8 @@
       "documents": "Dokumente",
       "pets": "Haustiere",
       "reports": "Berichte",
+      "reportsPeople": "Personen",
+      "reportsPets": "Haustiere",
       "myStats": "Meine Statistik"
     },
     "people": {
@@ -358,6 +360,10 @@
       "name": "Name",
       "mimeType": "Typ",
       "size": "Größe",
+      "upload": "Hochladen",
+      "uploading": "Wird hochgeladen...",
+      "uploadError": "Hochladen fehlgeschlagen",
+      "download": "Herunterladen",
       "deleteConfirm": "Sind Sie sicher, dass Sie dieses Dokument löschen möchten?",
       "emptyTitle": "Keine Dokumente",
       "emptyDescription": "Laden Sie das erste Dokument hoch"
@@ -372,7 +378,9 @@
       "deleted": "Tag gelöscht",
       "deleteConfirm": "Sind Sie sicher, dass Sie diesen Tag löschen möchten?",
       "emptyTitle": "Keine Tags",
-      "emptyDescription": "Erstellen Sie den ersten Tag"
+      "emptyDescription": "Erstellen Sie den ersten Tag",
+      "searchTags": "Tags suchen...",
+      "filterByTags": "Nach Tags filtern"
     },
     "supportRecords": {
       "title": "Unterstützungseinträge",
@@ -546,6 +554,21 @@
       "kpiIdp": "Binnenvertriebene",
       "kpiHouseholds": "Haushalte",
       "kpiOffices": "Büros"
+    },
+    "petReports": {
+      "title": "Haustierberichte",
+      "byStatus": "Nach Status",
+      "byOwnership": "Besitzverhältnis",
+      "byMonth": "Registrierungen pro Monat",
+      "needsShelterByMonth": "Unterkunft benötigt Trend",
+      "adoptedByMonth": "Adoptiert Trend",
+      "totalByMonth": "Gesamt Haustiere Trend",
+      "kpiTotal": "Gesamt Haustiere",
+      "kpiNeedsShelter": "Unterkunft benötigt",
+      "kpiAdopted": "Adoptiert",
+      "withOwner": "Mit Besitzer",
+      "withoutOwner": "Ohne Besitzer",
+      "filterStatus": "Status"
     },
     "myStats": {
       "title": "Meine Statistik",

@@ -55,6 +55,19 @@ export const AGE_GROUP_COLORS: Record<string, string> = {
   old_adult: "#451a03",
 };
 
+export const PET_STATUS_COLORS: Record<string, string> = {
+  registered: "#6366f1",
+  adopted: "#10b981",
+  owner_found: "#3b82f6",
+  needs_shelter: "#ef4444",
+  unknown: "#94a3b8",
+};
+
+export const PET_OWNERSHIP_COLORS: Record<string, string> = {
+  with_owner: "#10b981",
+  without_owner: "#f59e0b",
+};
+
 export const FALLBACK_PALETTE = [
   "#6366f1", "#f59e0b", "#10b981", "#ef4444",
   "#8b5cf6", "#ec4899", "#14b8a6", "#f97316",

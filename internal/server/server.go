@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/getsentry/sentry-go/gin"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -73,6 +74,9 @@ func (s *Server) Shutdown(ctx context.Context) error {
 func (s *Server) setupMiddleware(cfg *config.Config, log *slog.Logger) {
 	s.router.Use(requestIDMiddleware())
 	s.router.Use(logger.GinMiddleware(log))
+	if cfg.Sentry.Enabled() {
+		s.router.Use(sentrygin.New(sentrygin.Options{Repanic: true}))
+	}
 	s.router.Use(gin.Recovery())
 	s.router.Use(cors.New(cors.Config{
 		AllowOrigins:     cfg.CORS.Origins,
@@ -207,8 +211,9 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	householdHandler := handler.NewHouseholdHandler(container.HouseholdUC)
 	noteHandler := handler.NewNoteHandler(container.NoteUC)
 	documentHandler := handler.NewDocumentHandler(container.DocumentUC)
-	petHandler := handler.NewPetHandler(container.PetUC)
+	petHandler := handler.NewPetHandler(container.PetUC, container.PetTagUC)
 	reportHandler := handler.NewReportHandler(container.ReportUC)
+	petReportHandler := handler.NewPetReportHandler(container.PetReportUC)
 
 	proj := s.router.Group("/projects/:project_id", authMW.Authenticate())
 	{
@@ -234,7 +239,9 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			read.GET("/documents/:id/thumbnail", documentHandler.Thumbnail)
 			read.GET("/pets", petHandler.List)
 			read.GET("/pets/:id", petHandler.Get)
+			read.GET("/pets/:id/tags", petHandler.ListTags)
 			read.GET("/reports", reportHandler.Generate)
+			read.GET("/reports/pets", petReportHandler.Generate)
 		}
 
 		// Create-level access
@@ -251,6 +258,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			create.POST("/households/:id/members", householdHandler.AddMember)
 			create.POST("/people/:person_id/documents", documentHandler.Upload)
 			create.POST("/pets", petHandler.Create)
+			create.PUT("/pets/:id/tags", petHandler.ReplaceTags)
 		}
 
 		// Update-level access

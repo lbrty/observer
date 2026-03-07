@@ -12,26 +12,41 @@ import (
 
 // PetUseCase handles pet operations within a project.
 type PetUseCase struct {
-	repo repository.PetRepository
+	repo    repository.PetRepository
+	tagRepo repository.PetTagRepository
 }
 
 // NewPetUseCase creates a PetUseCase.
-func NewPetUseCase(repo repository.PetRepository) *PetUseCase {
-	return &PetUseCase{repo: repo}
+func NewPetUseCase(repo repository.PetRepository, tagRepo repository.PetTagRepository) *PetUseCase {
+	return &PetUseCase{repo: repo, tagRepo: tagRepo}
 }
 
 // List returns paginated pets.
 func (uc *PetUseCase) List(ctx context.Context, projectID string, input ListPetsInput) (*ListPetsOutput, error) {
 	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
-	pets, total, err := uc.repo.List(ctx, projectID, page, perPage)
+	pets, total, err := uc.repo.List(ctx, projectID, input.Status, input.TagIDs, page, perPage)
 	if err != nil {
 		return nil, fmt.Errorf("list pets: %w", err)
 	}
 
+	ids := make([]string, len(pets))
 	dtos := make([]PetDTO, len(pets))
 	for i, p := range pets {
+		ids[i] = p.ID
 		dtos[i] = petToDTO(p)
+	}
+
+	tagMap, err := uc.tagRepo.ListBulk(ctx, ids)
+	if err != nil {
+		return nil, fmt.Errorf("list pet tags: %w", err)
+	}
+	for i := range dtos {
+		if tags, ok := tagMap[dtos[i].ID]; ok {
+			dtos[i].TagIDs = tags
+		} else {
+			dtos[i].TagIDs = []string{}
+		}
 	}
 
 	return &ListPetsOutput{

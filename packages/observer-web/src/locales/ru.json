@@ -256,6 +256,8 @@
       "documents": "Документы",
       "pets": "Питомцы",
       "reports": "Отчёты",
+      "reportsPeople": "Люди",
+      "reportsPets": "Питомцы",
       "myStats": "Моя статистика"
     },
     "people": {
@@ -358,6 +360,10 @@
       "name": "Название",
       "mimeType": "Тип",
       "size": "Размер",
+      "upload": "Загрузить",
+      "uploading": "Загрузка...",
+      "uploadError": "Ошибка загрузки",
+      "download": "Скачать",
       "deleteConfirm": "Вы уверены, что хотите удалить этот документ?",
       "emptyTitle": "Нет документов",
       "emptyDescription": "Загрузите первый документ"
@@ -372,7 +378,9 @@
       "deleted": "Тег удалён",
       "deleteConfirm": "Вы уверены, что хотите удалить этот тег?",
       "emptyTitle": "Нет тегов",
-      "emptyDescription": "Создайте первый тег"
+      "emptyDescription": "Создайте первый тег",
+      "searchTags": "Поиск тегов...",
+      "filterByTags": "По тегам"
     },
     "supportRecords": {
       "title": "Записи поддержки",
@@ -546,6 +554,21 @@
       "kpiIdp": "ВПЛ",
       "kpiHouseholds": "Домохозяйства",
       "kpiOffices": "Офисы"
+    },
+    "petReports": {
+      "title": "Отчёты по питомцам",
+      "byStatus": "По статусу",
+      "byOwnership": "Владение",
+      "byMonth": "Регистрации за месяц",
+      "needsShelterByMonth": "Нуждаются в приюте тренд",
+      "adoptedByMonth": "Усыновлённые тренд",
+      "totalByMonth": "Всего питомцев тренд",
+      "kpiTotal": "Всего питомцев",
+      "kpiNeedsShelter": "Нуждаются в приюте",
+      "kpiAdopted": "Усыновлённые",
+      "withOwner": "С владельцем",
+      "withoutOwner": "Без владельца",
+      "filterStatus": "Статус"
     },
     "myStats": {
       "title": "Моя статистика",

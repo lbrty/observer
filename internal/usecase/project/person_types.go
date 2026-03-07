@@ -28,6 +28,7 @@ type PersonDTO struct {
 	ConsentGiven   bool      `json:"consent_given"`
 	ConsentDate    *string   `json:"consent_date,omitempty"`
 	RegisteredAt   *string   `json:"registered_at,omitempty"`
+	TagIDs         []string  `json:"tag_ids"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }
@@ -78,12 +79,13 @@ type UpdatePersonInput struct {
 
 // ListPeopleInput holds filter parameters for listing people.
 type ListPeopleInput struct {
-	ConsultantID *string `form:"consultant_id"`
-	OfficeID     *string `form:"office_id"`
-	CaseStatus   *string `form:"case_status"`
-	Search       *string `form:"search"`
-	Page         int     `form:"page"`
-	PerPage      int     `form:"per_page"`
+	ConsultantID *string  `form:"consultant_id"`
+	OfficeID     *string  `form:"office_id"`
+	CaseStatus   *string  `form:"case_status"`
+	Search       *string  `form:"search"`
+	TagIDs       []string `form:"tag_ids"`
+	Page         int      `form:"page"`
+	PerPage      int      `form:"per_page"`
 }
 
 // ListPeopleOutput holds paginated results.

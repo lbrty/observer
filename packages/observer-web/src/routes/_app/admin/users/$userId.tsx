@@ -12,7 +12,8 @@ import { UISelect } from "@/components/ui-select";
 import { UISwitch } from "@/components/ui-switch";
 import { useOffices } from "@/hooks/use-offices";
 import { useUpdateUser, useUser } from "@/hooks/use-users";
-import { api, HTTPError } from "@/lib/api";
+import { api } from "@/lib/api";
+import { handleApiError } from "@/lib/form-error";
 
 export const Route = createFileRoute("/_app/admin/users/$userId")({
   component: UserDetailPage,
@@ -189,12 +190,7 @@ function ResetPasswordSection({ userId }: { userId: string }) {
       setPassword("");
       setOpen(false);
     } catch (err) {
-      if (err instanceof HTTPError) {
-        const body = await err.response.json().catch(() => null);
-        setError(body?.error ?? err.message);
-      } else {
-        setError(t("common.unexpectedError"));
-      }
+      setError(await handleApiError(err, t));
     } finally {
       setSaving(false);
     }

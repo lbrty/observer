@@ -22,18 +22,24 @@ func TestPersonUseCase_List(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
-	uc := ucproject.NewPersonUseCase(mockRepo)
+	mockTagRepo := mock_repo.NewMockPersonTagRepository(ctrl)
+	uc := ucproject.NewPersonUseCase(mockRepo, mockTagRepo)
 
 	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*person.Person{
 		{ID: "p1", ProjectID: "proj1", FirstName: "Aida", Sex: person.SexFemale, CaseStatus: person.CaseStatusActive, PhoneNumbers: json.RawMessage("[]")},
 		{ID: "p2", ProjectID: "proj1", FirstName: "Bek", Sex: person.SexMale, CaseStatus: person.CaseStatusNew, PhoneNumbers: json.RawMessage("[]")},
 	}, 2, nil)
+	mockTagRepo.EXPECT().ListBulk(gomock.Any(), []string{"p1", "p2"}).Return(map[string][]string{
+		"p1": {"tag1"},
+	}, nil)
 
 	out, err := uc.List(context.Background(), "proj1", ucproject.ListPeopleInput{Page: 1, PerPage: 20}, true, true)
 	require.NoError(t, err)
 	assert.Len(t, out.People, 2)
 	assert.Equal(t, 2, out.Total)
 	assert.Equal(t, "Aida", out.People[0].FirstName)
+	assert.Equal(t, []string{"tag1"}, out.People[0].TagIDs)
+	assert.Equal(t, []string{}, out.People[1].TagIDs)
 }
 
 func TestPersonUseCase_Get_WithRedaction(t *testing.T) {
@@ -41,7 +47,7 @@ func TestPersonUseCase_Get_WithRedaction(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
-	uc := ucproject.NewPersonUseCase(mockRepo)
+	uc := ucproject.NewPersonUseCase(mockRepo, nil)
 
 	email := "aida@example.com"
 	phone := "+996555111222"
@@ -77,7 +83,7 @@ func TestPersonUseCase_Get_FullVisibility(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
-	uc := ucproject.NewPersonUseCase(mockRepo)
+	uc := ucproject.NewPersonUseCase(mockRepo, nil)
 
 	email := "aida@example.com"
 	phone := "+996555111222"
@@ -108,7 +114,7 @@ func TestPersonUseCase_Create(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
-	uc := ucproject.NewPersonUseCase(mockRepo)
+	uc := ucproject.NewPersonUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).
@@ -135,7 +141,7 @@ func TestPersonUseCase_Create_AgeConstraint(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
-	uc := ucproject.NewPersonUseCase(mockRepo)
+	uc := ucproject.NewPersonUseCase(mockRepo, nil)
 
 	// Both birth_date and age_group should fail validation
 	_, err := uc.Create(context.Background(), "proj1", ucproject.CreatePersonInput{
@@ -151,7 +157,7 @@ func TestPersonUseCase_Create_ConsentConstraint(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
-	uc := ucproject.NewPersonUseCase(mockRepo)
+	uc := ucproject.NewPersonUseCase(mockRepo, nil)
 
 	// consent_date without consent_given=true should fail
 	_, err := uc.Create(context.Background(), "proj1", ucproject.CreatePersonInput{
@@ -166,7 +172,7 @@ func TestPersonUseCase_Create_ExternalIDConflict(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
-	uc := ucproject.NewPersonUseCase(mockRepo)
+	uc := ucproject.NewPersonUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).
@@ -184,7 +190,7 @@ func TestPersonUseCase_Delete(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
-	uc := ucproject.NewPersonUseCase(mockRepo)
+	uc := ucproject.NewPersonUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "p1").Return(nil)
 
@@ -197,7 +203,7 @@ func TestPersonUseCase_Delete_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
-	uc := ucproject.NewPersonUseCase(mockRepo)
+	uc := ucproject.NewPersonUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(person.ErrPersonNotFound)
 

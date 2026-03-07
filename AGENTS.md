@@ -4,8 +4,8 @@
 
 - **Module**: `github.com/lbrty/observer` | **Go** 1.25.\* | **Port**: 9000
 - **Architecture**: DDD + Clean Architecture, manual DI (no frameworks)
-- **Build**: `Justfile` (not Makefile) | **Frontend pkg manager**: `bun`
-- **ADRs**: `adr/` | **Plans**: `plans/` | **Testing guide**: `docs/testing-guide.md` | **Variables**: `docs/variables.md`
+- **Build**: `Justfile` (not Makefile) | **Frontend pkg manager**: `bun` | **Always use `bun`/`bunx`** (never `npm`/`npx`/`node`)
+- **ADRs**: `adr/`
 
 ## Project Layout
 
@@ -18,11 +18,11 @@ internal/
   middleware/     # HTTP middleware (auth, RBAC)
   postgres/       # repository implementations
   crypto/         # RSA keys, Argon hasher, token generator
+  storage/        # file storage interface + local filesystem impl
   config/         # reads env vars with defaults
   server/         # HTTP server setup
   app/            # DI container (manual wiring)
 adr/              # architectural decision records
-plans/            # design docs and implementation plans
 migrations/       # forward-only SQL migrations
 ```
 
@@ -60,7 +60,6 @@ just generate-mocks  # regenerate gomock mocks
 - Unit: testify `assert`/`require` + gomock
 - Integration: testcontainers-go (Postgres, Redis), guarded by `testing.Short()`
 - Never skip verification — fix failing tests before proceeding
-- Full guide with examples: `docs/testing-guide.md`
 
 ## Frontend
 
@@ -89,6 +88,3 @@ When >10 rules, separate `@apply` per group on its own line:
 
 positioning > layout > sizing > borders > background > padding/margin > text > transforms > rest
 
-## Variables
-
-Use values from `docs/variables.md` when implementing features. Suggest new entries when values repeat across files.

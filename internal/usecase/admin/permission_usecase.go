@@ -23,8 +23,27 @@ func NewPermissionUseCase(permRepo repository.PermissionRepository, userRepo rep
 	return &PermissionUseCase{permRepo: permRepo, userRepo: userRepo}
 }
 
-// List returns all permissions for a project with user details.
-func (uc *PermissionUseCase) List(ctx context.Context, projectID string) ([]PermissionMemberDTO, error) {
+// List returns permissions for a project with user details.
+// Admin and Staff see all permissions; other roles see permissions
+// only if they are a member of the project, otherwise get an empty list.
+func (uc *PermissionUseCase) List(ctx context.Context, projectID string, callerID string, callerRole user.Role) ([]PermissionMemberDTO, error) {
+	if callerRole != user.RoleAdmin && callerRole != user.RoleStaff {
+		userPerms, err := uc.permRepo.ListByUserID(ctx, callerID)
+		if err != nil {
+			return nil, fmt.Errorf("check user permissions: %w", err)
+		}
+		allowed := false
+		for _, p := range userPerms {
+			if p.ProjectID == projectID {
+				allowed = true
+				break
+			}
+		}
+		if !allowed {
+			return []PermissionMemberDTO{}, nil
+		}
+	}
+
 	perms, err := uc.permRepo.List(ctx, projectID)
 	if err != nil {
 		return nil, fmt.Errorf("list permissions: %w", err)

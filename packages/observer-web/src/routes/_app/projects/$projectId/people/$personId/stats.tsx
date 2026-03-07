@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { PieChart } from "@/components/charts/pie-chart";
+import { sphereKeys } from "@/constants/support";
 import { SUPPORT_TYPE_COLORS } from "@/components/charts/colors";
 import { useDocuments } from "@/hooks/use-documents";
 import { useMigrationRecords } from "@/hooks/use-migration-records";
@@ -101,22 +102,8 @@ function PersonStats() {
     }
   }
 
-  const sphereKeyMap: Record<string, string> = {
-    housing_assistance: "project.supportRecords.sphereHousing",
-    document_recovery: "project.supportRecords.sphereDocumentRecovery",
-    social_benefits: "project.supportRecords.sphereSocialBenefits",
-    property_rights: "project.supportRecords.spherePropertyRights",
-    employment_rights: "project.supportRecords.sphereEmploymentRights",
-    family_law: "project.supportRecords.sphereFamilyLaw",
-    healthcare_access: "project.supportRecords.sphereHealthcareAccess",
-    education_access: "project.supportRecords.sphereEducationAccess",
-    financial_aid: "project.supportRecords.sphereFinancialAid",
-    psychological_support: "project.supportRecords.spherePsychologicalSupport",
-    other: "project.supportRecords.sphereOther",
-  };
-
   const bySphere: CountResult[] = Array.from(sphereCounts, ([label, count]) => ({
-    label: t(sphereKeyMap[label] ?? label),
+    label: t(sphereKeys[label] ?? label),
     count,
   }));
 

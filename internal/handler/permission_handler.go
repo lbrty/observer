@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/lbrty/observer/internal/middleware"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
 
@@ -19,6 +20,8 @@ func NewPermissionHandler(permUC *ucadmin.PermissionUseCase) *PermissionHandler 
 }
 
 // ListPermissions handles GET /admin/projects/:project_id/permissions.
+// Admin and Staff see all permissions; other roles see permissions only for
+// projects they belong to, returning 200 with empty list otherwise.
 // @Summary List project permissions
 // @Tags admin-permissions
 // @Accept json
@@ -30,8 +33,10 @@ func NewPermissionHandler(permUC *ucadmin.PermissionUseCase) *PermissionHandler 
 // @Router /admin/projects/{project_id}/permissions [get]
 func (h *PermissionHandler) ListPermissions(c *gin.Context) {
 	projectID := c.Param("project_id")
+	userID, _ := middleware.UserIDFrom(c)
+	role, _ := middleware.UserRoleFrom(c)
 
-	out, err := h.permUC.List(c.Request.Context(), projectID)
+	out, err := h.permUC.List(c.Request.Context(), projectID, userID.String(), role)
 	if err != nil {
 		internalError(c, "list permissions", err)
 		return
@@ -126,4 +131,3 @@ func (h *PermissionHandler) RevokePermission(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "permission revoked"})
 }
-

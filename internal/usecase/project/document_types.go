@@ -14,21 +14,10 @@ type DocumentDTO struct {
 	UploadedBy       *string    `json:"uploaded_by,omitempty"`
 	EncryptionKeyRef *string    `json:"encryption_key_ref,omitempty"`
 	Name             string     `json:"name"`
-	Path             string     `json:"path"`
 	MimeType         string     `json:"mime_type"`
 	Size             int64      `json:"size"`
 	CreatedAt        time.Time  `json:"created_at"`
 	UpdatedAt        *time.Time `json:"updated_at,omitempty"`
-}
-
-// CreateDocumentInput holds data for creating document metadata.
-type CreateDocumentInput struct {
-	PersonID         string  `json:"person_id" binding:"required"`
-	Name             string  `json:"name" binding:"required"`
-	Path             string  `json:"path" binding:"required"`
-	MimeType         string  `json:"mime_type" binding:"required"`
-	Size             int64   `json:"size" binding:"required"`
-	EncryptionKeyRef *string `json:"encryption_key_ref"`
 }
 
 // UpdateDocumentInput holds data for updating document metadata.
@@ -44,7 +33,6 @@ func documentToDTO(d *document.Document) DocumentDTO {
 		UploadedBy:       d.UploadedBy,
 		EncryptionKeyRef: d.EncryptionKeyRef,
 		Name:             d.Name,
-		Path:             d.Path,
 		MimeType:         d.MimeType,
 		Size:             d.Size,
 		CreatedAt:        d.CreatedAt,

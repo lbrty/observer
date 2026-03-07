@@ -75,6 +75,7 @@ type PersonListFilter struct {
 	OfficeID     *string
 	CaseStatus   *CaseStatus
 	Search       *string
+	TagIDs       []string
 	Page         int
 	PerPage      int
 }

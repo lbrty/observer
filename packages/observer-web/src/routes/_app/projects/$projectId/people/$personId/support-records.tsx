@@ -9,6 +9,7 @@ import { HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { Pagination } from "@/components/pagination";
 import { StatusBadge } from "@/components/status-badge";
 import { SupportRecordDrawer } from "@/components/support-record-drawer";
+import { referralKeys, sphereKeys, typeKeys } from "@/constants/support";
 import { useSupportRecords } from "@/hooks/use-support-records";
 import type { SupportRecord } from "@/types/support-record";
 
@@ -49,14 +50,14 @@ function PersonSupportRecords() {
           <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-bg-tertiary text-fg-tertiary">
             <HandHeartIcon size={16} />
           </span>
-          <StatusBadge label={r.type} />
+          <StatusBadge label={typeKeys[r.type] ? t(typeKeys[r.type]) : r.type} />
         </div>
       ),
     },
     {
       key: "sphere",
       header: t("project.supportRecords.sphere"),
-      render: (r) => <span className="text-fg-secondary">{r.sphere ?? "\u2014"}</span>,
+      render: (r) => <span className="text-fg-secondary">{r.sphere ? t(sphereKeys[r.sphere] ?? r.sphere) : "\u2014"}</span>,
     },
     {
       key: "provided_at",
@@ -72,7 +73,7 @@ function PersonSupportRecords() {
       header: t("project.supportRecords.referralStatus"),
       render: (r) =>
         r.referral_status ? (
-          <StatusBadge label={r.referral_status} />
+          <StatusBadge label={referralKeys[r.referral_status] ? t(referralKeys[r.referral_status]) : r.referral_status} />
         ) : (
           <span className="text-fg-tertiary">{"\u2014"}</span>
         ),

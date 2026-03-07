@@ -15,6 +15,7 @@ type PetDTO struct {
 	Status         string    `json:"status"`
 	RegistrationID *string   `json:"registration_id,omitempty"`
 	Notes          *string   `json:"notes,omitempty"`
+	TagIDs         []string  `json:"tag_ids"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }
@@ -39,8 +40,10 @@ type UpdatePetInput struct {
 
 // ListPetsInput holds filter parameters.
 type ListPetsInput struct {
-	Page    int `form:"page"`
-	PerPage int `form:"per_page"`
+	Page    int      `form:"page"`
+	PerPage int      `form:"per_page"`
+	Status  string   `form:"status"`
+	TagIDs  []string `form:"tag_ids"`
 }
 
 // ListPetsOutput holds paginated results.

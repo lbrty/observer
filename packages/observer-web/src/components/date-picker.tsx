@@ -2,7 +2,7 @@ import { Popover } from "@base-ui/react/popover";
 import { useRef, useState } from "react";
 import { DayPicker, type DateRange } from "react-day-picker";
 
-import { CalendarBlankIcon, CaretLeftIcon, CaretRightIcon } from "@/components/icons";
+import { CalendarBlankIcon, CaretLeftIcon, CaretRightIcon, XIcon } from "@/components/icons";
 
 import "./date-picker.css";
 
@@ -33,6 +33,10 @@ interface DatePickerProps {
   onChange: (value: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  clearable?: boolean;
+  captionLayout?: "label" | "dropdown" | "dropdown-months" | "dropdown-years";
+  startYear?: number;
+  endYear?: number;
   className?: string;
 }
 
@@ -41,47 +45,73 @@ export function DatePicker({
   onChange,
   placeholder = "dd.mm.yyyy",
   disabled,
+  clearable,
+  captionLayout,
+  startYear,
+  endYear,
   className,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const selected = parseISO(value);
 
+  const now = new Date();
+  const useDropdown = captionLayout === "dropdown" || captionLayout === "dropdown-months" || captionLayout === "dropdown-years";
+  const startMonth = useDropdown ? new Date(startYear ?? 1920, 0) : undefined;
+  const endMonth = useDropdown ? new Date(endYear ?? now.getFullYear(), 11) : undefined;
+
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger disabled={disabled} className={`${triggerClass} ${className ?? ""}`}>
-        <CalendarBlankIcon className="size-4 shrink-0 text-fg-tertiary" />
-        <span className={value ? "text-fg" : "text-fg-tertiary"}>
-          {value ? formatDisplay(value) : placeholder}
-        </span>
-      </Popover.Trigger>
-      <Popover.Portal>
-        <Popover.Positioner sideOffset={4} className="z-60">
-          <Popover.Popup className="rdp-popup rounded-xl border border-border-secondary bg-bg-secondary p-3 shadow-elevated outline-none">
-            <DayPicker
-              mode="single"
-              selected={selected}
-              onSelect={(day) => {
-                if (day) {
-                  onChange(toISO(day));
-                } else {
-                  onChange("");
-                }
-                setOpen(false);
-              }}
-              defaultMonth={selected}
-              components={{
-                Chevron: ({ orientation }) =>
-                  orientation === "left" ? (
-                    <CaretLeftIcon className="size-4" />
-                  ) : (
-                    <CaretRightIcon className="size-4" />
-                  ),
-              }}
-            />
-          </Popover.Popup>
-        </Popover.Positioner>
-      </Popover.Portal>
-    </Popover.Root>
+    <div className="flex items-center gap-1">
+      <Popover.Root open={open} onOpenChange={setOpen}>
+        <Popover.Trigger
+          disabled={disabled}
+          className={`flex-1 ${triggerClass} ${className ?? ""}`}
+        >
+          <CalendarBlankIcon className="size-4 shrink-0 text-fg-tertiary" />
+          <span className={value ? "text-fg" : "text-fg-tertiary"}>
+            {value ? formatDisplay(value) : placeholder}
+          </span>
+        </Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Positioner sideOffset={4} className="z-60">
+            <Popover.Popup className="rdp-popup rounded-xl border border-border-secondary bg-bg-secondary p-3 shadow-elevated outline-none">
+              <DayPicker
+                mode="single"
+                captionLayout={captionLayout}
+                selected={selected}
+                onSelect={(day) => {
+                  if (day) {
+                    onChange(toISO(day));
+                  } else {
+                    onChange("");
+                  }
+                  setOpen(false);
+                }}
+                defaultMonth={selected}
+                startMonth={startMonth}
+                endMonth={endMonth}
+                components={{
+                  Chevron: ({ orientation }) =>
+                    orientation === "left" ? (
+                      <CaretLeftIcon className="size-4" />
+                    ) : (
+                      <CaretRightIcon className="size-4" />
+                    ),
+                }}
+              />
+            </Popover.Popup>
+          </Popover.Positioner>
+        </Popover.Portal>
+      </Popover.Root>
+      {clearable && value && (
+        <button
+          type="button"
+          onClick={() => onChange("")}
+          className="inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-fg-tertiary hover:bg-bg-tertiary hover:text-fg"
+        >
+          <XIcon className="size-4" />
+        </button>
+      )}
+    </div>
   );
 }
 

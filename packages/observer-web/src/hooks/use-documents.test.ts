@@ -28,7 +28,7 @@ mock.module("@/lib/api", () => ({
   },
 }));
 
-const { useDocuments, useCreateDocument, useUpdateDocument, useDeleteDocument } = await import(
+const { useDocuments, useUploadDocument, useUpdateDocument, useDeleteDocument } = await import(
   "@/hooks/use-documents"
 );
 
@@ -58,9 +58,9 @@ describe("useDocuments", () => {
   });
 });
 
-describe("useCreateDocument", () => {
+describe("useUploadDocument", () => {
   it("returns a mutation hook", () => {
-    const { result } = renderHook(() => useCreateDocument("proj1"), {
+    const { result } = renderHook(() => useUploadDocument("proj1", "p1"), {
       wrapper: TestWrapper,
     });
     expect(result.current.mutateAsync).toBeFunction();

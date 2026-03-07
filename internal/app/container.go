@@ -64,10 +64,15 @@ type Container struct {
 	NoteUC            *ucproject.NoteUseCase
 	DocumentUC        *ucproject.DocumentUseCase
 	PetUC             *ucproject.PetUseCase
+	PetTagUC          *ucproject.PetTagUseCase
 
 	// Report Use Cases
-	ReportUC   *ucreport.ReportUseCase
-	ReportRepo repository.ReportRepository
+	ReportUC    *ucreport.ReportUseCase
+	PetReportUC *ucreport.PetReportUseCase
+	ReportRepo  repository.ReportRepository
+
+	// Storage
+	FileStorage storage.FileStorage
 
 	// Login attempt tracking
 	LoginAttemptStore repository.LoginAttemptStore
@@ -105,11 +110,13 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	noteRepo := repository.NewPersonNoteRepository(sqlxDB)
 	documentRepo := repository.NewDocumentRepository(sqlxDB)
 	petRepo := repository.NewPetRepository(sqlxDB)
+	petTagRepo := repository.NewPetTagRepository(sqlxDB)
 	reportRepo := repository.NewReportRepository(sqlxDB)
+	petReportRepo := repository.NewPetReportRepository(sqlxDB)
 
 	fileStorage, err := storage.NewLocalStorage(cfg.Storage.Path)
 	if err != nil {
-		return nil, fmt.Errorf("create file storage: %w", err)
+		return nil, fmt.Errorf("init file storage: %w", err)
 	}
 
 	hasher := crypto.NewArgonHasher()
@@ -133,9 +140,9 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 
 	myProjectsUC := ucmy.NewMyProjectsUseCase(permCRUDRepo, projectRepo)
 
-	projectUC := ucadmin.NewProjectUseCase(projectRepo)
+	projectUC := ucadmin.NewProjectUseCase(projectRepo, permCRUDRepo)
 	tagUC := ucproject.NewTagUseCase(tagRepo)
-	personUC := ucproject.NewPersonUseCase(personRepo)
+	personUC := ucproject.NewPersonUseCase(personRepo, personTagRepo)
 	personCategoryUC := ucproject.NewPersonCategoryUseCase(personCatRepo)
 	personTagUC := ucproject.NewPersonTagUseCase(personTagRepo)
 	supportRecordUC := ucproject.NewSupportRecordUseCase(supportRepo)
@@ -143,8 +150,10 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	householdUC := ucproject.NewHouseholdUseCase(householdRepo, householdMemberRepo)
 	noteUC := ucproject.NewNoteUseCase(noteRepo)
 	documentUC := ucproject.NewDocumentUseCase(documentRepo, fileStorage)
-	petUC := ucproject.NewPetUseCase(petRepo)
+	petUC := ucproject.NewPetUseCase(petRepo, petTagRepo)
+	petTagUC := ucproject.NewPetTagUseCase(petTagRepo)
 	reportUC := ucreport.NewReportUseCase(reportRepo)
+	petReportUC := ucreport.NewPetReportUseCase(petReportRepo)
 	loginAttemptStore := repository.NewLoginAttemptStore(redisClient)
 
 	return &Container{
@@ -178,9 +187,12 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 		MigrationRecordUC: migrationRecordUC,
 		HouseholdUC:       householdUC,
 		NoteUC:            noteUC,
+		FileStorage:       fileStorage,
 		DocumentUC:        documentUC,
 		PetUC:             petUC,
+		PetTagUC:          petTagUC,
 		ReportUC:          reportUC,
+		PetReportUC:       petReportUC,
 		ReportRepo:        reportRepo,
 		LoginAttemptStore: loginAttemptStore,
 	}, nil

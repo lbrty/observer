@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
@@ -10,6 +10,7 @@ import { DrawerShell } from "@/components/drawer-shell";
 import { FormField } from "@/components/form-field";
 import { PlaceCombobox } from "@/components/place-combobox";
 import { SectionHeading } from "@/components/section-heading";
+import { TagPicker } from "@/components/tag-picker";
 import { UISelect } from "@/components/ui-select";
 import { UISwitch } from "@/components/ui-switch";
 import { useCountries } from "@/hooks/use-countries";
@@ -18,6 +19,7 @@ import { useOffices } from "@/hooks/use-offices";
 import { useCreatePerson, usePerson, useUpdatePerson } from "@/hooks/use-people";
 import { usePlaces } from "@/hooks/use-places";
 import { useStates } from "@/hooks/use-states";
+import { usePersonTags, useReplacePersonTags } from "@/hooks/use-tags";
 import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";
 
@@ -53,9 +55,13 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
   const isEdit = personId !== null;
 
   const { data: person } = usePerson(projectId, personId ?? "");
+  const { data: personTagsData } = usePersonTags(projectId, personId ?? "");
   const qc = useQueryClient();
   const createPerson = useCreatePerson(projectId);
   const updatePerson = useUpdatePerson(projectId);
+  const replacePersonTags = useReplacePersonTags(projectId);
+
+  const [tagIds, setTagIds] = useState<string[]>([]);
 
   const toast = useToast();
   const { form, set, error, setError, editingId, setEditingId } = useDrawerForm({
@@ -82,6 +88,14 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
     }),
   });
 
+  useEffect(() => {
+    if (personTagsData) setTagIds(personTagsData.tag_ids ?? []);
+  }, [personTagsData]);
+
+  useEffect(() => {
+    if (!open) setTagIds([]);
+  }, [open]);
+
   // Labels for selected places (resolved from reference data or set on select)
   const [originPlaceLabel, setOriginPlaceLabel] = useState("");
   const [currentPlaceLabel, setCurrentPlaceLabel] = useState("");
@@ -92,7 +106,7 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
   const { data: placesData } = usePlaces();
   const { data: offices } = useOffices();
 
-  const isPending = createPerson.isPending || updatePerson.isPending;
+  const isPending = createPerson.isPending || updatePerson.isPending || replacePersonTags.isPending;
 
   function resolvePlaceLabel(placeId: string): string {
     if (!placeId) return "";
@@ -133,6 +147,7 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
           consent_date: form.consent_date || undefined,
         };
         await updatePerson.mutateAsync({ personId: editingId, data });
+        await replacePersonTags.mutateAsync({ personId: editingId, ids: tagIds });
         await qc.invalidateQueries({ queryKey: ["people", projectId] });
         toast.success(t("project.people.saved"));
       } else {
@@ -162,6 +177,9 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
           ...(form.consent_date && { consent_date: form.consent_date }),
         };
         const created = await createPerson.mutateAsync(input);
+        if (tagIds.length > 0) {
+          await replacePersonTags.mutateAsync({ personId: created.id, ids: tagIds });
+        }
         await qc.invalidateQueries({ queryKey: ["people", projectId] });
         setEditingId(created.id);
         toast.success(t("project.people.saved"));
@@ -246,7 +264,12 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
           <span className="mb-1 block text-sm font-medium text-fg-secondary">
             {t("project.people.birthDate")}
           </span>
-          <DatePicker value={form.birth_date} onChange={(v) => set("birth_date", v)} />
+          <DatePicker
+            value={form.birth_date}
+            onChange={(v) => set("birth_date", v)}
+            captionLayout="dropdown"
+            clearable
+          />
         </div>
 
         <Field.Root>
@@ -258,6 +281,7 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
             onValueChange={(v) => set("age_group", v)}
             options={ageGroupOptions}
             fullWidth
+            clearable
           />
         </Field.Root>
 
@@ -388,6 +412,9 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
           )}
         </div>
       </div>
+
+      <SectionHeading>{t("project.tags.title")}</SectionHeading>
+      <TagPicker projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
     </DrawerShell>
   );
 }

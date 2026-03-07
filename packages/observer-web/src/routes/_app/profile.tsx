@@ -7,6 +7,7 @@ import { Button } from "@/components/button";
 import { FormField } from "@/components/form-field";
 import { PageHeader } from "@/components/page-header";
 import { api, HTTPError } from "@/lib/api";
+import { handleApiError } from "@/lib/form-error";
 import { useAuth } from "@/stores/auth";
 import { useToast } from "@/stores/toast";
 import type { ChangePasswordInput, UpdateProfileInput, User } from "@/types/auth";
@@ -55,12 +56,7 @@ function ProfileForm({ user, setUser }: { user: User | null; setUser: (u: User) 
       setUser(updated);
       toast.success(t("profile.saved"));
     } catch (err) {
-      if (err instanceof HTTPError) {
-        const body = await err.response.json().catch(() => null);
-        setError(body?.error ?? err.message);
-      } else {
-        setError(t("common.unexpectedError"));
-      }
+      setError(await handleApiError(err, t));
     } finally {
       setSaving(false);
     }
@@ -146,7 +142,9 @@ function ChangePasswordForm() {
         if (body?.code === "errors.auth.invalidCredentials") {
           setError(t("profile.wrongPassword"));
         } else {
-          setError(body?.error ?? err.message);
+          const code = body?.code;
+          const translated = code ? t(code, { defaultValue: "" }) : "";
+          setError(translated || body?.error || err.message);
         }
       } else {
         setError(t("common.unexpectedError"));

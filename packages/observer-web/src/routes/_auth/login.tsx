@@ -43,7 +43,9 @@ function LoginPage() {
         if (body?.code === "errors.user.notActive") {
           setError(t("auth.pendingApproval"));
         } else {
-          setError(body?.error ?? err.message);
+          const code = body?.code;
+          const translated = code ? t(code, { defaultValue: "" }) : "";
+          setError(translated || body?.error || err.message);
         }
       } else {
         setError(t("common.unexpectedError"));

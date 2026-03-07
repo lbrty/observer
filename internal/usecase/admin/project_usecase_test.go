@@ -9,23 +9,28 @@ import (
 	"go.uber.org/mock/gomock"
 
 	"github.com/lbrty/observer/internal/domain/project"
+	"github.com/lbrty/observer/internal/domain/user"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
 
-func TestProjectUseCase_List(t *testing.T) {
+func TestProjectUseCase_List_Admin(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
 
 	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*project.Project{
 		{ID: "p1", Name: "Project A", OwnerID: "u1", Status: project.ProjectStatusActive},
 		{ID: "p2", Name: "Project B", OwnerID: "u1", Status: project.ProjectStatusArchived},
 	}, 2, nil)
 
-	out, err := uc.List(context.Background(), ucadmin.ListProjectsInput{Page: 1, PerPage: 20})
+	out, err := uc.List(context.Background(), ucadmin.ListProjectsInput{
+		Page: 1, PerPage: 20,
+		CallerID: "admin1", CallerRole: user.RoleAdmin,
+	})
 	require.NoError(t, err)
 	assert.Len(t, out.Projects, 2)
 	assert.Equal(t, 2, out.Total)
@@ -33,12 +38,54 @@ func TestProjectUseCase_List(t *testing.T) {
 	assert.Equal(t, "active", out.Projects[0].Status)
 }
 
+func TestProjectUseCase_List_Consultant(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+
+	mockPermRepo.EXPECT().ListByUserID(gomock.Any(), "c1").Return([]*project.ProjectPermission{
+		{ProjectID: "p1", UserID: "c1", Role: project.ProjectRoleConsultant},
+	}, nil)
+	mockRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&project.Project{
+		ID: "p1", Name: "Project A", OwnerID: "u1", Status: project.ProjectStatusActive,
+	}, nil)
+
+	out, err := uc.List(context.Background(), ucadmin.ListProjectsInput{
+		CallerID: "c1", CallerRole: user.RoleConsultant,
+	})
+	require.NoError(t, err)
+	assert.Len(t, out.Projects, 1)
+	assert.Equal(t, "Project A", out.Projects[0].Name)
+}
+
+func TestProjectUseCase_List_Guest_NoPermissions(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+
+	mockPermRepo.EXPECT().ListByUserID(gomock.Any(), "g1").Return(nil, nil)
+
+	out, err := uc.List(context.Background(), ucadmin.ListProjectsInput{
+		CallerID: "g1", CallerRole: user.RoleGuest,
+	})
+	require.NoError(t, err)
+	assert.Empty(t, out.Projects)
+	assert.Equal(t, 0, out.Total)
+}
+
 func TestProjectUseCase_Create(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
 
 	mockRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).
@@ -63,7 +110,8 @@ func TestProjectUseCase_Create_DuplicateName(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
 
 	mockRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).
@@ -75,21 +123,56 @@ func TestProjectUseCase_Create_DuplicateName(t *testing.T) {
 	assert.ErrorIs(t, err, project.ErrProjectNameExists)
 }
 
-func TestProjectUseCase_Get(t *testing.T) {
+func TestProjectUseCase_Get_Admin(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&project.Project{
 		ID: "p1", Name: "Project A", OwnerID: "u1", Status: project.ProjectStatusActive,
 	}, nil)
 
-	out, err := uc.Get(context.Background(), "p1")
+	out, err := uc.Get(context.Background(), "p1", "admin1", user.RoleAdmin)
 	require.NoError(t, err)
 	assert.Equal(t, "p1", out.ID)
 	assert.Equal(t, "Project A", out.Name)
+}
+
+func TestProjectUseCase_Get_Consultant_Permitted(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+
+	mockPermRepo.EXPECT().ListByUserID(gomock.Any(), "c1").Return([]*project.ProjectPermission{
+		{ProjectID: "p1", UserID: "c1"},
+	}, nil)
+	mockRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&project.Project{
+		ID: "p1", Name: "Project A", OwnerID: "u1", Status: project.ProjectStatusActive,
+	}, nil)
+
+	out, err := uc.Get(context.Background(), "p1", "c1", user.RoleConsultant)
+	require.NoError(t, err)
+	assert.Equal(t, "p1", out.ID)
+}
+
+func TestProjectUseCase_Get_Guest_NotPermitted(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+
+	mockPermRepo.EXPECT().ListByUserID(gomock.Any(), "g1").Return(nil, nil)
+
+	_, err := uc.Get(context.Background(), "p1", "g1", user.RoleGuest)
+	assert.ErrorIs(t, err, project.ErrProjectNotFound)
 }
 
 func TestProjectUseCase_Get_NotFound(t *testing.T) {
@@ -97,11 +180,12 @@ func TestProjectUseCase_Get_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, project.ErrProjectNotFound)
 
-	_, err := uc.Get(context.Background(), "nonexistent")
+	_, err := uc.Get(context.Background(), "nonexistent", "admin1", user.RoleAdmin)
 	assert.ErrorIs(t, err, project.ErrProjectNotFound)
 }
 
@@ -110,7 +194,8 @@ func TestProjectUseCase_Update_Archive(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo)
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
 
 	existing := &project.Project{
 		ID: "p1", Name: "Project A", OwnerID: "u1", Status: project.ProjectStatusActive,

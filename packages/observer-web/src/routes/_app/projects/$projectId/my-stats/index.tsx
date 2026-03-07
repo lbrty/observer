@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { BarChart, type BarLegendItem } from "@/components/charts/bar-chart";
 import { PieChart } from "@/components/charts/pie-chart";
+import { sphereKeys, typeKeys } from "@/constants/support";
 import {
   SEX_COLORS,
   SUPPORT_TYPE_COLORS,
@@ -30,27 +31,14 @@ export const Route = createFileRoute("/_app/projects/$projectId/my-stats/")({
 });
 
 const labelKeyMap: Record<string, string> = {
-  humanitarian: "project.supportRecords.typeHumanitarian",
-  legal: "project.supportRecords.typeLegal",
-  social: "project.supportRecords.typeSocial",
-  psychological: "project.supportRecords.typePsychological",
-  medical: "project.supportRecords.typeMedical",
-  general: "project.supportRecords.typeGeneral",
-  housing_assistance: "project.supportRecords.sphereHousing",
-  document_recovery: "project.supportRecords.sphereDocumentRecovery",
-  social_benefits: "project.supportRecords.sphereSocialBenefits",
-  property_rights: "project.supportRecords.spherePropertyRights",
-  employment_rights: "project.supportRecords.sphereEmploymentRights",
-  family_law: "project.supportRecords.sphereFamilyLaw",
-  healthcare_access: "project.supportRecords.sphereHealthcareAccess",
-  education_access: "project.supportRecords.sphereEducationAccess",
-  financial_aid: "project.supportRecords.sphereFinancialAid",
-  psychological_support: "project.supportRecords.spherePsychologicalSupport",
-  other: "project.supportRecords.sphereOther",
+  ...typeKeys,
+  ...sphereKeys,
   unspecified: "project.supportRecords.sphereOther",
+  // sex
   male: "project.people.sexMale",
   female: "project.people.sexFemale",
   unknown: "project.people.sexUnknown",
+  // age groups
   infant: "project.people.ageInfant",
   toddler: "project.people.ageToddler",
   pre_school: "project.people.agePreSchool",

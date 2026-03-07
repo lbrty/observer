@@ -28,6 +28,16 @@ type Config struct {
 	Cookie    CookieConfig
 	RateLimit RateLimitConfig
 	Storage   StorageConfig
+	Sentry    SentryConfig
+}
+
+type SentryConfig struct {
+	DSN              string
+	TracesSampleRate float64
+}
+
+func (c SentryConfig) Enabled() bool {
+	return c.DSN != ""
 }
 
 type StorageConfig struct {
@@ -138,6 +148,10 @@ func Load() (*Config, error) {
 		Storage: StorageConfig{
 			Path: getEnv("STORAGE_PATH", "data/uploads"),
 		},
+		Sentry: SentryConfig{
+			DSN:              getEnv("SENTRY_DSN", ""),
+			TracesSampleRate: getEnvFloat("SENTRY_TRACES_SAMPLE_RATE", 0.1),
+		},
 	}, nil
 }
 
@@ -169,6 +183,15 @@ func getEnvBool(key string, def bool) bool {
 func getEnvList(key string, def []string) []string {
 	if v := os.Getenv(key); v != "" {
 		return strings.Split(v, ",")
+	}
+	return def
+}
+
+func getEnvFloat(key string, def float64) float64 {
+	if v := os.Getenv(key); v != "" {
+		if f, err := strconv.ParseFloat(v, 64); err == nil {
+			return f
+		}
 	}
 	return def
 }

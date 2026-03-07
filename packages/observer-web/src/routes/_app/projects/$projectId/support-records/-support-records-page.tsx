@@ -13,6 +13,7 @@ import { Pagination } from "@/components/pagination";
 import { PersonName } from "@/components/person-name";
 import { StatusBadge } from "@/components/status-badge";
 import { SupportRecordDrawer } from "@/components/support-record-drawer";
+import { referralKeys, sphereKeys, typeKeys } from "@/constants/support";
 import { useSupportRecords } from "@/hooks/use-support-records";
 import type { SupportRecord } from "@/types/support-record";
 
@@ -92,12 +93,12 @@ export function SupportRecordsContent({
     {
       key: "type",
       header: t("project.supportRecords.type"),
-      render: (r) => <StatusBadge label={r.type} />,
+      render: (r) => <StatusBadge label={typeKeys[r.type] ? t(typeKeys[r.type]) : r.type} />,
     },
     {
       key: "sphere",
       header: t("project.supportRecords.sphere"),
-      render: (r) => <span className="text-fg-secondary">{r.sphere ?? "\u2014"}</span>,
+      render: (r) => <span className="text-fg-secondary">{r.sphere ? t(sphereKeys[r.sphere] ?? r.sphere) : "\u2014"}</span>,
     },
     {
       key: "provided_at",
@@ -113,7 +114,7 @@ export function SupportRecordsContent({
       header: t("project.supportRecords.referralStatus"),
       render: (r) =>
         r.referral_status ? (
-          <StatusBadge label={r.referral_status} />
+          <StatusBadge label={referralKeys[r.referral_status] ? t(referralKeys[r.referral_status]) : r.referral_status} />
         ) : (
           <span className="text-fg-tertiary">{"\u2014"}</span>
         ),
@@ -150,7 +151,7 @@ export function SupportRecordsContent({
       <Tabs.Root value={typeFilter} className="mb-4">
         <Tabs.List className="flex gap-0 rounded-lg border border-border-secondary bg-bg-secondary p-0.5">
           {supportTypes.map((tab) => (
-            <Tabs.Tab key={tab} value={tab} render={<Link
+            <Tabs.Tab key={tab} value={tab} nativeButton={false} render={<Link
               to={
                 tab
                   ? "/projects/$projectId/support-records/$type"

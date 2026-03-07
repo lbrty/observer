@@ -36,3 +36,45 @@ export function useDeleteTag(projectId: string) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["tags", projectId] }),
   });
 }
+
+export function usePersonTags(projectId: string, personId: string) {
+  return useQuery({
+    queryKey: ["personTags", projectId, personId],
+    queryFn: () =>
+      api.get(`projects/${projectId}/people/${personId}/tags`).json<{ tag_ids: string[] }>(),
+    enabled: !!projectId && !!personId,
+  });
+}
+
+export function useReplacePersonTags(projectId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ personId, ids }: { personId: string; ids: string[] }) =>
+      api
+        .put(`projects/${projectId}/people/${personId}/tags`, { json: { ids } })
+        .json<{ tag_ids: string[] }>(),
+    onSuccess: (_data, { personId }) =>
+      qc.invalidateQueries({ queryKey: ["personTags", projectId, personId] }),
+  });
+}
+
+export function usePetTags(projectId: string, petId: string) {
+  return useQuery({
+    queryKey: ["petTags", projectId, petId],
+    queryFn: () =>
+      api.get(`projects/${projectId}/pets/${petId}/tags`).json<{ tag_ids: string[] }>(),
+    enabled: !!projectId && !!petId,
+  });
+}
+
+export function useReplacePetTags(projectId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ petId, ids }: { petId: string; ids: string[] }) =>
+      api
+        .put(`projects/${projectId}/pets/${petId}/tags`, { json: { ids } })
+        .json<{ tag_ids: string[] }>(),
+    onSuccess: (_data, { petId }) =>
+      qc.invalidateQueries({ queryKey: ["petTags", projectId, petId] }),
+  });
+}

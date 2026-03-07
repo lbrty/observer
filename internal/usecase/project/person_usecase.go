@@ -14,12 +14,13 @@ import (
 
 // PersonUseCase handles person operations within a project.
 type PersonUseCase struct {
-	repo repository.PersonRepository
+	repo    repository.PersonRepository
+	tagRepo repository.PersonTagRepository
 }
 
 // NewPersonUseCase creates a PersonUseCase.
-func NewPersonUseCase(repo repository.PersonRepository) *PersonUseCase {
-	return &PersonUseCase{repo: repo}
+func NewPersonUseCase(repo repository.PersonRepository, tagRepo repository.PersonTagRepository) *PersonUseCase {
+	return &PersonUseCase{repo: repo, tagRepo: tagRepo}
 }
 
 // List returns paginated people with sensitivity-aware redaction.
@@ -29,6 +30,7 @@ func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListP
 		ConsultantID: input.ConsultantID,
 		OfficeID:     input.OfficeID,
 		Search:       input.Search,
+		TagIDs:       input.TagIDs,
 		Page:         input.Page,
 		PerPage:      input.PerPage,
 	}
@@ -42,9 +44,23 @@ func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListP
 		return nil, fmt.Errorf("list people: %w", err)
 	}
 
+	ids := make([]string, len(people))
 	dtos := make([]PersonDTO, len(people))
 	for i, p := range people {
+		ids[i] = p.ID
 		dtos[i] = personToDTO(p, canViewContact, canViewPersonal)
+	}
+
+	tagMap, err := uc.tagRepo.ListBulk(ctx, ids)
+	if err != nil {
+		return nil, fmt.Errorf("list person tags: %w", err)
+	}
+	for i := range dtos {
+		if tags, ok := tagMap[dtos[i].ID]; ok {
+			dtos[i].TagIDs = tags
+		} else {
+			dtos[i].TagIDs = []string{}
+		}
 	}
 
 	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)

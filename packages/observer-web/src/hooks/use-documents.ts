@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
 import type {
-  CreateDocumentInput,
   Document,
   ListDocumentsOutput,
   UpdateDocumentInput,
@@ -25,11 +24,16 @@ export function useDocument(projectId: string, id: string) {
   });
 }
 
-export function useCreateDocument(projectId: string) {
+export function useUploadDocument(projectId: string, personId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateDocumentInput) =>
-      api.post(`projects/${projectId}/documents`, { json: data }).json<Document>(),
+    mutationFn: (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      return api
+        .post(`projects/${projectId}/people/${personId}/documents`, { body: formData })
+        .json<Document>();
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["documents", projectId] }),
   });
 }
@@ -49,4 +53,27 @@ export function useDeleteDocument(projectId: string) {
     mutationFn: (id: string) => api.delete(`projects/${projectId}/documents/${id}`),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["documents", projectId] }),
   });
+}
+
+export function documentDownloadUrl(projectId: string, documentId: string): string {
+  const base = import.meta.env.VITE_API_URL ?? "http://localhost:9000";
+  return `${base}/projects/${projectId}/documents/${documentId}/download`;
+}
+
+export function documentStreamUrl(projectId: string, documentId: string): string {
+  const base = import.meta.env.VITE_API_URL ?? "http://localhost:9000";
+  return `${base}/projects/${projectId}/documents/${documentId}/stream`;
+}
+
+export function documentThumbnailUrl(projectId: string, documentId: string): string {
+  const base = import.meta.env.VITE_API_URL ?? "http://localhost:9000";
+  return `${base}/projects/${projectId}/documents/${documentId}/thumbnail`;
+}
+
+export function isImageMime(mimeType: string): boolean {
+  return mimeType.startsWith("image/");
+}
+
+export function isPdfMime(mimeType: string): boolean {
+  return mimeType === "application/pdf";
 }

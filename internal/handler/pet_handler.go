@@ -10,12 +10,13 @@ import (
 
 // PetHandler exposes pet CRUD HTTP endpoints.
 type PetHandler struct {
-	uc *ucproject.PetUseCase
+	uc    *ucproject.PetUseCase
+	tagUC *ucproject.PetTagUseCase
 }
 
 // NewPetHandler creates a PetHandler.
-func NewPetHandler(uc *ucproject.PetUseCase) *PetHandler {
-	return &PetHandler{uc: uc}
+func NewPetHandler(uc *ucproject.PetUseCase, tagUC *ucproject.PetTagUseCase) *PetHandler {
+	return &PetHandler{uc: uc, tagUC: tagUC}
 }
 
 // List handles GET /projects/:project_id/pets.
@@ -138,5 +139,29 @@ func (h *PetHandler) Delete(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "pet deleted"})
+}
+
+// ListTags handles GET /projects/:project_id/pets/:id/tags.
+func (h *PetHandler) ListTags(c *gin.Context) {
+	ids, err := h.tagUC.List(c.Request.Context(), c.Param("id"))
+	if err != nil {
+		internalError(c, "list pet tags", err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"tag_ids": ids})
+}
+
+// ReplaceTags handles PUT /projects/:project_id/pets/:id/tags.
+func (h *PetHandler) ReplaceTags(c *gin.Context) {
+	var input ucproject.ReplaceIDsInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		return
+	}
+	if err := h.tagUC.Replace(c.Request.Context(), c.Param("id"), input.IDs); err != nil {
+		internalError(c, "replace pet tags", err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"tag_ids": input.IDs})
 }
 

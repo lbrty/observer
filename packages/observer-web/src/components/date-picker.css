@@ -126,3 +126,37 @@
   opacity: 0.3;
   cursor: default;
 }
+
+/* Dropdown caption (year/month selects) */
+.rdp-popup .rdp-month_caption:has(.rdp-dropdowns) .rdp-caption_label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.rdp-popup .rdp-dropdowns {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rdp-popup .rdp-dropdown {
+  height: 28px;
+  padding: 0 4px;
+  border: 1px solid var(--border-secondary);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--fg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.rdp-popup .rdp-dropdown:focus {
+  border-color: var(--accent);
+}
