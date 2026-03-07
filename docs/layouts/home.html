@@ -7,6 +7,7 @@
     <div class="col-lg-9 col-xl-8 text-center">
       <p class="lead">{{ .Params.lead | safeHTML }}</p>
       <a class="btn btn-primary btn-cta rounded-pill btn-lg my-3" href="{{ "docs/guide/introduction/" | relURL }}" role="button">{{ i18n "get_started" }}</a>
+      <a class="btn btn-outline-primary rounded-pill btn-lg my-3 ms-2" href="{{ "features/" | relURL }}" role="button">{{ i18n "see_features" }}</a>
       {{ .Content }}
     </div>
   </div>
@@ -23,16 +24,16 @@
     <div class="container">
       <div class="row justify-content-center text-center">
         <div class="col-lg-4">
-          <h2 class="h4">Role-based access control</h2>
-          <p>Platform roles &times; project roles &times; 3 sensitivity flags. Declarative, schema-enforced, no configuration ceremony.</p>
+          <h2 class="h4">{{ i18n "feature_rbac_title" }}</h2>
+          <p>{{ i18n "feature_rbac_desc" }}</p>
         </div>
         <div class="col-lg-4">
-          <h2 class="h4">Donor-ready reports</h2>
-          <p>12 report dimensions with filterable breakdowns — consultations, demographics, geography, support spheres, and family units. Built to match EU and USAID donor reporting.</p>
+          <h2 class="h4">{{ i18n "feature_reports_title" }}</h2>
+          <p>{{ i18n "feature_reports_desc" }}</p>
         </div>
         <div class="col-lg-4">
-          <h2 class="h4">Movement tracking</h2>
-          <p>Origin and destination places, movement reason, housing at destination. IDP status derived from geography, not hardcoded categories.</p>
+          <h2 class="h4">{{ i18n "feature_movement_title" }}</h2>
+          <p>{{ i18n "feature_movement_desc" }}</p>
         </div>
       </div>
     </div>

@@ -1,2 +1,23 @@
 [get_started]
 other = "Get Started"
+
+[see_features]
+other = "See features"
+
+[feature_rbac_title]
+other = "Role-based access control"
+
+[feature_rbac_desc]
+other = "Platform roles × project roles × 3 sensitivity flags. Declarative, schema-enforced, no configuration ceremony."
+
+[feature_reports_title]
+other = "Donor-ready reports"
+
+[feature_reports_desc]
+other = "12 report dimensions with filterable breakdowns — consultations, demographics, geography, support spheres, and family units. Built to match EU and USAID donor reporting."
+
+[feature_movement_title]
+other = "Movement tracking"
+
+[feature_movement_desc]
+other = "Origin and destination places, movement reason, housing at destination. IDP status derived from geography, not hardcoded categories."

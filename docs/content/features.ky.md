@@ -1,5 +1,5 @@
 ---
-title: Mümdünçülüktör
+title: Mümkünçülüktör
 lead: ÜEU iş başqaruu tobu üçün kerek bolğon bardyğyk nerselerin — qattoo, iş köz saluu, esepdeme cana cetüü başqaruu.
 type: features
 toc: false

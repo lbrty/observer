@@ -56,5 +56,26 @@ other = "Ara"
 [search_title]
 other = "Ara"
 
+[see_features]
+other = "Özellikler"
+
+[feature_rbac_title]
+other = "Rol tabanlı erişim kontrolü"
+
+[feature_rbac_desc]
+other = "Platform rolleri × proje rolleri × 3 hassasiyet bayrağı. Bildirimsel, şema ile zorunlu, yapılandırma gerektirmez."
+
+[feature_reports_title]
+other = "Donörlere hazır raporlar"
+
+[feature_reports_desc]
+other = "12 rapor boyutu ile filtrelenebilir dağılımlar — danışmanlıklar, demografi, coğrafya, destek alanları ve aile birimleri. AB ve USAID donör raporlamasına uygun."
+
+[feature_movement_title]
+other = "Hareket takibi"
+
+[feature_movement_desc]
+other = "Çıkış ve varış yerleri, hareket nedeni, varış yerindeki konut. YEDK durumu coğrafyadan türetilir, elle belirlenmez."
+
 [video_unsupported]
 other = "Tarayıcınız gömülü videoları desteklemiyor, ancak endişelenmeyin, <a href=\"{{ .RelPermalink }}\">indirebilir</a> ve favori video oynatıcınızla izleyebilirsiniz!"

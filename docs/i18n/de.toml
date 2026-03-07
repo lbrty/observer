@@ -1,0 +1,23 @@
+[get_started]
+other = "Loslegen"
+
+[see_features]
+other = "Funktionen"
+
+[feature_rbac_title]
+other = "Rollenbasierte Zugriffskontrolle"
+
+[feature_rbac_desc]
+other = "Plattformrollen × Projektrollen × 3 Sensitivitätsstufen. Deklarativ, schemagestützt, ohne Konfigurationsaufwand."
+
+[feature_reports_title]
+other = "Gebergerechte Berichte"
+
+[feature_reports_desc]
+other = "12 Berichtsdimensionen mit filterbaren Aufschlüsselungen — Beratungen, Demografie, Geografie, Unterstützungsbereiche und Familieneinheiten. Auf EU- und USAID-Geberberichte abgestimmt."
+
+[feature_movement_title]
+other = "Bewegungsverfolgung"
+
+[feature_movement_desc]
+other = "Herkunfts- und Zielorte, Bewegungsgrund, Unterkunft am Zielort. IDP-Status wird aus der Geografie abgeleitet, nicht manuell festgelegt."

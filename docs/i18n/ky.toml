@@ -56,5 +56,26 @@ other = "Izdöö"
 [search_title]
 other = "Izdöö"
 
+[see_features]
+other = "Mümkünçülüktör"
+
+[feature_rbac_title]
+other = "Rolduk cetüü başqaruu"
+
+[feature_rbac_desc]
+other = "Platforma roldoru × proekt roldoru × 3 sezimtaldyq belgisi. Deklarativdüü, sxema menen quralğan, qoşumça yrастоо cerdiği coq."
+
+[feature_reports_title]
+other = "Donorlorğo dajyn esepler"
+
+[feature_reports_desc]
+other = "12 esep ölçömü — konsultasijalar, demografija, geografija, qoldoo sferalary cana üj-bülö birdikteri. EU cana USAID donor eseplerine ılajyqtaştyrylyğan."
+
+[feature_movement_title]
+other = "Köçüü bayqoo"
+
+[feature_movement_desc]
+other = "Çyqqan cana barğan cerler, köçüü sebebi, barğan cerdegi turaq caj. VPL statusu geografijadan alynyp çyğarylat, qoldo belgilenbeyt."
+
 [video_unsupported]
 other = "Sizdin brauzeriñiz video formatty qoldoboyt, biroq any <a href=\"{{ .RelPermalink }}\">cüktöp alyp</a> süjüktüü video ojnotuuçuñuzda körüñüz!"
