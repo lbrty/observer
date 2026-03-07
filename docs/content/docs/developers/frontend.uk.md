@@ -53,10 +53,10 @@ packages/observer-web/
 ## Запуск
 
 ```bash
-just web-install    # встановлення залежностей (bun)
-just web-dev        # запуск dev-сервера (http://localhost:5173)
-just web-build      # продакшен-збірка
-just web-preview    # попередній перегляд продакшен-збірки
+just web-install    # install dependencies (bun)
+just web-dev        # start dev server (http://localhost:5173)
+just web-build      # production build
+just web-preview    # preview production build
 ```
 
 ## Конвенції імпортів
@@ -116,10 +116,10 @@ function MyComponent() {
 t("greeting", { name: "Ali" }); // → "Salam, Ali"
 ```
 
-## Змінні оточення
+## Змінні середовища
 
 | Змінна         | За замовчуванням        | Опис                   |
 | -------------- | ----------------------- | ---------------------- |
-| `VITE_API_URL` | `http://localhost:9000` | Базова URL-адреса API  |
+| `VITE_API_URL` | `http://localhost:9000` | Базова URL-адреса API бекенду |
 
 Vite експонує лише змінні з префіксом `VITE_`.
