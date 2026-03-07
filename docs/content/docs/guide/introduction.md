@@ -58,11 +58,14 @@ Organizations with:
 
 **IDP status is computed, not guessed.** A person's displacement status is derived from their origin location and whether that area is a conflict zone — no manual classification needed.
 
+## Supported languages
+
+The UI ships with six languages: English, Ukrainian, Russian, German, Turkish, and Kyrgyz (Latin script). Kyrgyz uses a custom Latin transliteration because the official Kyrgyz Latin alphabet was adopted in 2023 and standard translation tools don't support it yet — we maintain our own transliteration rules to provide accurate, native-feeling text for Central Asian deployments.
+
 ## What Observer does not do
 
-Observer is built for organizations serving hundreds to low thousands of people. It is not designed for:
+Observer is not designed for:
 
-- Millions of registrations (that's proGres territory)
 - Inter-agency referral workflows (Primero territory)
 - Biometric deduplication
 - Cluster-level 5W/3W aggregate reporting (ActivityInfo territory)

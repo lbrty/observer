@@ -1,0 +1,11 @@
+{{ define "main" }}
+<div class="row justify-content-center">
+  <main class="col-lg-12 col-xl-10 features-page">
+    <div class="page-header text-center mb-5">
+      <h1>{{ .Title }}</h1>
+      <p class="lead">{{ .Params.lead | safeHTML }}</p>
+    </div>
+    {{ .Content }}
+  </main>
+</div>
+{{ end }}

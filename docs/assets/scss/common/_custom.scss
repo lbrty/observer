@@ -1,1 +1,29 @@
-// custom styles
+// sticky footer
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+footer {
+  margin-top: auto;
+}
+
+// search dialog — normalize content font sizes
+#searchResults {
+  .content {
+    h1, h2, h3, h4, h5, h6 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    p, li, code {
+      font-size: 0.875rem;
+    }
+
+    ul, ol {
+      padding-left: 1.25rem;
+    }
+  }
+}
