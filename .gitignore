@@ -1,6 +1,7 @@
 bin/
 *.env
 !.env.example
+!src/lib/
 *.pem
 coverage.out
 coverage.html
