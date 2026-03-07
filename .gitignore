@@ -42,3 +42,5 @@ mocks/
 docs/public/
 docs/resources/_gen/
 docs/.hugo_build.lock
+screenshots
+data
