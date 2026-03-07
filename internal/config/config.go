@@ -27,6 +27,11 @@ type Config struct {
 	CORS      CORSConfig
 	Cookie    CookieConfig
 	RateLimit RateLimitConfig
+	Storage   StorageConfig
+}
+
+type StorageConfig struct {
+	Path string
 }
 
 type RedisConfig struct {
@@ -129,6 +134,9 @@ func Load() (*Config, error) {
 		RateLimit: RateLimitConfig{
 			LoginRate:    getEnvInt("RATE_LIMIT_LOGIN", 10),
 			RegisterRate: getEnvInt("RATE_LIMIT_REGISTER", 5),
+		},
+		Storage: StorageConfig{
+			Path: getEnv("STORAGE_PATH", "data/uploads"),
 		},
 	}, nil
 }

@@ -9,7 +9,9 @@ import (
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
 
-// DocumentHandler exposes document metadata HTTP endpoints.
+const maxUploadSize = 50 << 20 // 50 MB
+
+// DocumentHandler exposes document HTTP endpoints.
 type DocumentHandler struct {
 	uc *ucproject.DocumentUseCase
 }
@@ -20,16 +22,6 @@ func NewDocumentHandler(uc *ucproject.DocumentUseCase) *DocumentHandler {
 }
 
 // List handles GET /projects/:project_id/people/:person_id/documents.
-// @Summary List documents for a person
-// @Tags project-documents
-// @Produce json
-// @Security BearerAuth
-// @Param project_id path string true "Project ID"
-// @Param person_id path string true "Person ID"
-// @Success 200 {object} object "Wrapper with documents array"
-// @Failure 403 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /projects/{project_id}/people/{person_id}/documents [get]
 func (h *DocumentHandler) List(c *gin.Context) {
 	if !middleware.CanViewDocumentsFrom(c) {
 		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
@@ -45,17 +37,6 @@ func (h *DocumentHandler) List(c *gin.Context) {
 }
 
 // Get handles GET /projects/:project_id/documents/:id.
-// @Summary Get a document by ID
-// @Tags project-documents
-// @Produce json
-// @Security BearerAuth
-// @Param project_id path string true "Project ID"
-// @Param id path string true "Document ID"
-// @Success 200 {object} ucproject.DocumentDTO
-// @Failure 403 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /projects/{project_id}/documents/{id} [get]
 func (h *DocumentHandler) Get(c *gin.Context) {
 	if !middleware.CanViewDocumentsFrom(c) {
 		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
@@ -69,33 +50,95 @@ func (h *DocumentHandler) Get(c *gin.Context) {
 	c.JSON(http.StatusOK, out)
 }
 
-// Create handles POST /projects/:project_id/documents.
-// @Summary Create a document
-// @Tags project-documents
-// @Accept json
-// @Produce json
-// @Security BearerAuth
-// @Param project_id path string true "Project ID"
-// @Param input body ucproject.CreateDocumentInput true "Document payload"
-// @Success 201 {object} ucproject.DocumentDTO
-// @Failure 400 {object} ErrorResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /projects/{project_id}/documents [post]
-func (h *DocumentHandler) Create(c *gin.Context) {
-	projectID := c.Param("project_id")
-	var input ucproject.CreateDocumentInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+// Upload handles POST /projects/:project_id/people/:person_id/documents (multipart).
+func (h *DocumentHandler) Upload(c *gin.Context) {
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxUploadSize)
+
+	file, header, err := c.Request.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "file is required"))
 		return
 	}
+	defer file.Close()
+
+	projectID := c.Param("project_id")
+	personID := c.Param("person_id")
 	userID, _ := middleware.UserIDFrom(c)
-	out, err := h.uc.Create(c.Request.Context(), projectID, userID.String(), input)
+
+	mimeType := header.Header.Get("Content-Type")
+	if mimeType == "" {
+		mimeType = "application/octet-stream"
+	}
+
+	out, err := h.uc.Upload(
+		c.Request.Context(),
+		projectID,
+		personID,
+		userID.String(),
+		header.Filename,
+		mimeType,
+		header.Size,
+		file,
+	)
 	if err != nil {
 		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)
+}
+
+// Download handles GET /projects/:project_id/documents/:id/download.
+func (h *DocumentHandler) Download(c *gin.Context) {
+	if !middleware.CanViewDocumentsFrom(c) {
+		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
+		return
+	}
+
+	doc, rc, err := h.uc.Download(c.Request.Context(), c.Param("id"))
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+	defer rc.Close()
+
+	c.Header("Content-Disposition", "attachment; filename=\""+doc.Name+"\"")
+	c.DataFromReader(http.StatusOK, doc.Size, doc.MimeType, rc, nil)
+}
+
+// Stream handles GET /projects/:project_id/documents/:id/stream.
+func (h *DocumentHandler) Stream(c *gin.Context) {
+	if !middleware.CanViewDocumentsFrom(c) {
+		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
+		return
+	}
+
+	doc, rc, err := h.uc.Download(c.Request.Context(), c.Param("id"))
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+	defer rc.Close()
+
+	c.Header("Content-Disposition", "inline; filename=\""+doc.Name+"\"")
+	c.DataFromReader(http.StatusOK, doc.Size, doc.MimeType, rc, nil)
+}
+
+// Thumbnail handles GET /projects/:project_id/documents/:id/thumbnail.
+func (h *DocumentHandler) Thumbnail(c *gin.Context) {
+	if !middleware.CanViewDocumentsFrom(c) {
+		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
+		return
+	}
+
+	_, rc, err := h.uc.Thumbnail(c.Request.Context(), c.Param("id"))
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+	defer rc.Close()
+
+	c.Header("Cache-Control", "public, max-age=86400")
+	c.DataFromReader(http.StatusOK, -1, "image/jpeg", rc, nil)
 }
 
 // Update handles PATCH /projects/:project_id/documents/:id.
@@ -114,16 +157,6 @@ func (h *DocumentHandler) Update(c *gin.Context) {
 }
 
 // Delete handles DELETE /projects/:project_id/documents/:id.
-// @Summary Delete a document
-// @Tags project-documents
-// @Produce json
-// @Security BearerAuth
-// @Param project_id path string true "Project ID"
-// @Param id path string true "Document ID"
-// @Success 200 {object} MessageResponse
-// @Failure 404 {object} ErrorResponse
-// @Failure 500 {object} ErrorResponse
-// @Router /projects/{project_id}/documents/{id} [delete]
 func (h *DocumentHandler) Delete(c *gin.Context) {
 	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
 		HandleError(c, err)
@@ -131,4 +164,3 @@ func (h *DocumentHandler) Delete(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "document deleted"})
 }
-

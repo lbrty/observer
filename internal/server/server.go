@@ -164,6 +164,15 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		adminWrite.PATCH("/categories/:id", categoryHandler.Update)
 	}
 
+	// Project & permission read endpoints — any authenticated user.
+	// Admin/Staff see all; Consultant/Guest see only what they have permissions for.
+	adminAny := s.router.Group("/admin", authMW.Authenticate())
+	{
+		adminAny.GET("/projects", projectHandler.List)
+		adminAny.GET("/projects/:project_id", projectHandler.Get)
+		adminAny.GET("/projects/:project_id/permissions", permHandler.ListPermissions)
+	}
+
 	// Admin-only write endpoints
 	admin := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin))
 	{
@@ -172,12 +181,9 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		admin.POST("/users/:id/reset-password", adminHandler.ResetPassword)
 		admin.POST("/users/:id/unlock", adminHandler.UnlockAccount)
 
-		admin.GET("/projects", projectHandler.List)
-		admin.GET("/projects/:project_id", projectHandler.Get)
 		admin.POST("/projects", projectHandler.Create)
 		admin.PATCH("/projects/:project_id", projectHandler.Update)
 
-		admin.GET("/projects/:project_id/permissions", permHandler.ListPermissions)
 		admin.POST("/projects/:project_id/permissions", permHandler.AssignPermission)
 		admin.PATCH("/projects/:project_id/permissions/:id", permHandler.UpdatePermission)
 		admin.DELETE("/projects/:project_id/permissions/:id", permHandler.RevokePermission)
@@ -223,6 +229,9 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			read.GET("/households", householdHandler.List)
 			read.GET("/households/:id", householdHandler.Get)
 			read.GET("/documents/:id", documentHandler.Get)
+			read.GET("/documents/:id/download", documentHandler.Download)
+			read.GET("/documents/:id/stream", documentHandler.Stream)
+			read.GET("/documents/:id/thumbnail", documentHandler.Thumbnail)
 			read.GET("/pets", petHandler.List)
 			read.GET("/pets/:id", petHandler.Get)
 			read.GET("/reports", reportHandler.Generate)
@@ -240,7 +249,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			create.POST("/support-records", supportHandler.Create)
 			create.POST("/households", householdHandler.Create)
 			create.POST("/households/:id/members", householdHandler.AddMember)
-			create.POST("/documents", documentHandler.Create)
+			create.POST("/people/:person_id/documents", documentHandler.Upload)
 			create.POST("/pets", petHandler.Create)
 		}
 

@@ -123,6 +123,8 @@ func MapDomainError(err error) (int, string) {
 	// Document errors
 	case errors.Is(err, document.ErrDocumentNotFound):
 		return http.StatusNotFound, "errors.document.notFound"
+	case errors.Is(err, document.ErrNotImage):
+		return http.StatusBadRequest, "errors.document.notImage"
 
 	// Pet errors
 	case errors.Is(err, pet.ErrPetNotFound):

@@ -9,6 +9,7 @@ import (
 	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/database"
 	"github.com/lbrty/observer/internal/repository"
+	"github.com/lbrty/observer/internal/storage"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 	ucmy "github.com/lbrty/observer/internal/usecase/my"
@@ -106,6 +107,11 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	petRepo := repository.NewPetRepository(sqlxDB)
 	reportRepo := repository.NewReportRepository(sqlxDB)
 
+	fileStorage, err := storage.NewLocalStorage(cfg.Storage.Path)
+	if err != nil {
+		return nil, fmt.Errorf("create file storage: %w", err)
+	}
+
 	hasher := crypto.NewArgonHasher()
 	tokenGen := crypto.NewRSATokenGenerator(
 		rsaKeys,
@@ -136,7 +142,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	migrationRecordUC := ucproject.NewMigrationRecordUseCase(migrationRepo)
 	householdUC := ucproject.NewHouseholdUseCase(householdRepo, householdMemberRepo)
 	noteUC := ucproject.NewNoteUseCase(noteRepo)
-	documentUC := ucproject.NewDocumentUseCase(documentRepo)
+	documentUC := ucproject.NewDocumentUseCase(documentRepo, fileStorage)
 	petUC := ucproject.NewPetUseCase(petRepo)
 	reportUC := ucreport.NewReportUseCase(reportRepo)
 	loginAttemptStore := repository.NewLoginAttemptStore(redisClient)
