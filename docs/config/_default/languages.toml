@@ -4,8 +4,32 @@
   [en.params]
     footer = 'Built with <a class="text-muted" href="https://getdoks.org/">Doks</a>'
 
+[de]
+  languageName = "Deutsch"
+  weight = 20
+  [de.params]
+    footer = 'Erstellt mit <a class="text-muted" href="https://getdoks.org/">Doks</a>'
+
+[uk]
+  languageName = "Українська"
+  weight = 30
+  [uk.params]
+    footer = 'Створено за допомогою <a class="text-muted" href="https://getdoks.org/">Doks</a>'
+
+[ru]
+  languageName = "Русский"
+  weight = 40
+  [ru.params]
+    footer = 'Создано с помощью <a class="text-muted" href="https://getdoks.org/">Doks</a>'
+
+[tr]
+  languageName = "Türkçe"
+  weight = 50
+  [tr.params]
+    footer = '<a class="text-muted" href="https://getdoks.org/">Doks</a> ile oluşturuldu'
+
 [ky]
   languageName = "Qyrğyzça"
-  weight = 20
+  weight = 60
   [ky.params]
     footer = '<a class="text-muted" href="https://getdoks.org/">Doks</a> menen quralğan'

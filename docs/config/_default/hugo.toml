@@ -9,7 +9,6 @@ languageCode = "en"
 summarylength = 20
 
 defaultContentLanguage = "en"
-disableLanguages = ["de", "nl"]
 defaultContentLanguageInSubdir = false
 
 [build.buildStats]

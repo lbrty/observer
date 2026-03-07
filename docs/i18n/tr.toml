@@ -1,0 +1,60 @@
+[404_text]
+other = "Aradığınız sayfa bulunamadı veya taşınmış."
+
+[404_title]
+other = "Sayfa bulunamadı :("
+
+[browse]
+other = "Göz at"
+
+[chapter_next]
+other = "Sonraki"
+
+[chapter_previous]
+other = "Önceki"
+
+[edit_page]
+other = "Bu sayfayı düzenle"
+
+[get_started]
+other = "Başla"
+
+[home]
+other = "Ana sayfa"
+
+[in]
+other = "içinde"
+
+[by]
+other = "tarafından"
+
+[last_updated]
+other = "Son güncelleme"
+
+[minute]
+one = "dakika"
+other = "dakika"
+
+[on_this_page]
+other = "Bu sayfada"
+
+[reading_time]
+other = "Tahmini okuma süresi"
+
+[search_loading]
+other = "Arama dizini yükleniyor…"
+
+[search_no_recent]
+other = "Son arama yok"
+
+[search_no_results]
+other = "Sonuç bulunamadı"
+
+[search_placeholder]
+other = "Ara"
+
+[search_title]
+other = "Ara"
+
+[video_unsupported]
+other = "Tarayıcınız gömülü videoları desteklemiyor, ancak endişelenmeyin, <a href=\"{{ .RelPermalink }}\">indirebilir</a> ve favori video oynatıcınızla izleyebilirsiniz!"

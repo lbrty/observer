@@ -1,0 +1,60 @@
+[404_text]
+other = "Страница, которую вы ищете, не найдена или была перемещена."
+
+[404_title]
+other = "Страница не найдена :("
+
+[browse]
+other = "Просмотр"
+
+[chapter_next]
+other = "Далее"
+
+[chapter_previous]
+other = "Назад"
+
+[edit_page]
+other = "Редактировать эту страницу на"
+
+[get_started]
+other = "Начать"
+
+[home]
+other = "Главная"
+
+[in]
+other = "в"
+
+[by]
+other = "от"
+
+[last_updated]
+other = "Последнее обновление"
+
+[minute]
+one = "минута"
+other = "минут"
+
+[on_this_page]
+other = "На этой странице"
+
+[reading_time]
+other = "Примерное время чтения"
+
+[search_loading]
+other = "Загрузка поискового индекса…"
+
+[search_no_recent]
+other = "Нет недавних поисков"
+
+[search_no_results]
+other = "Ничего не найдено"
+
+[search_placeholder]
+other = "Поиск"
+
+[search_title]
+other = "Поиск"
+
+[video_unsupported]
+other = "Ваш браузер не поддерживает встроенные видео, но не волнуйтесь, вы можете <a href=\"{{ .RelPermalink }}\">скачать его</a> и посмотреть в вашем любимом видеоплеере!"
