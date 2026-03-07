@@ -1,0 +1,60 @@
+[404_text]
+other = "Siz izdegen bet tabylğan coq ce köçürülgön."
+
+[404_title]
+other = "Bet tabylğan coq :("
+
+[browse]
+other = "Qaruuloo"
+
+[chapter_next]
+other = "Kijinki"
+
+[chapter_previous]
+other = "Murunku"
+
+[edit_page]
+other = "Bu betti özgörtüü"
+
+[get_started]
+other = "Baştoo"
+
+[home]
+other = "Başqy bet"
+
+[in]
+other = "içinde"
+
+[by]
+other = "tarabynan"
+
+[last_updated]
+other = "Aqyrqy cañylanuu"
+
+[minute]
+one = "minuta"
+other = "minuta"
+
+[on_this_page]
+other = "Bu bette"
+
+[reading_time]
+other = "Bocomol oquu ubaqtysy"
+
+[search_loading]
+other = "Izdöö indeksi cüktelüüdö…"
+
+[search_no_recent]
+other = "Aqyrqy izdöölör coq"
+
+[search_no_results]
+other = "Natyjcalar coq"
+
+[search_placeholder]
+other = "Izdöö"
+
+[search_title]
+other = "Izdöö"
+
+[video_unsupported]
+other = "Sizdin brauzeriñiz video formatty qoldoboyt, biroq any <a href=\"{{ .RelPermalink }}\">cüktöp alyp</a> süjüktüü video ojnotuuçuñuzda körüñüz!"

@@ -36,16 +36,16 @@ cp .env.example .env
 
 The most important variables:
 
-| Variable | What it does | Default |
-| --- | --- | --- |
-| `DATABASE_DSN` | How Observer connects to PostgreSQL | _(must be set)_ |
-| `REDIS_URL` | How Observer connects to Redis | `redis://localhost:6379/0` |
-| `JWT_PRIVATE_KEY_PATH` | Where you put the private key from Step 1 | `keys/jwt_rsa` |
-| `JWT_PUBLIC_KEY_PATH` | Where you put the public key from Step 1 | `keys/jwt_rsa.pub` |
-| `CORS_ORIGINS` | Your domain (e.g. `https://observer.yourorg.org`) | `http://localhost:5173` |
-| `COOKIE_SECURE` | Set to `true` when using HTTPS (you should) | `true` |
-| `SERVER_HOST` | Which address to listen on | `localhost` |
-| `SERVER_PORT` | Which port to listen on | `9000` |
+| Variable               | What it does                                      | Default                    |
+| ---------------------- | ------------------------------------------------- | -------------------------- |
+| `DATABASE_DSN`         | How Observer connects to PostgreSQL               | _(must be set)_            |
+| `REDIS_URL`            | How Observer connects to Redis                    | `redis://localhost:6379/0` |
+| `JWT_PRIVATE_KEY_PATH` | Where you put the private key from Step 1         | `keys/jwt_rsa`             |
+| `JWT_PUBLIC_KEY_PATH`  | Where you put the public key from Step 1          | `keys/jwt_rsa.pub`         |
+| `CORS_ORIGINS`         | Your domain (e.g. `https://observer.yourorg.org`) | `http://localhost:5173`    |
+| `COOKIE_SECURE`        | Set to `true` when using HTTPS (you should)       | `true`                     |
+| `SERVER_HOST`          | Which address to listen on                        | `localhost`                |
+| `SERVER_PORT`          | Which port to listen on                           | `9000`                     |
 
 See [Environment Variables](/docs/developers/reference/variables/) for the full list.
 
@@ -64,8 +64,9 @@ curl http://localhost:9000/health
 ```
 
 You should see:
+
 ```json
-{"status":"healthy","database":"connected","timestamp":"..."}
+{ "status": "healthy", "database": "connected", "timestamp": "..." }
 ```
 
 If you see this, Observer is ready. Open your domain in a browser to access the web interface.
@@ -101,5 +102,6 @@ observer.yourorg.org {
 ```
 
 If you use Nginx or another proxy, make sure to set:
+
 - `COOKIE_SECURE=true` in your environment
 - `CORS_ORIGINS` to your actual domain (e.g. `https://observer.yourorg.org`)
