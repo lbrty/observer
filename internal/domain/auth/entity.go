@@ -10,6 +10,7 @@ import (
 var (
 	ErrSessionNotFound = errors.New("session not found")
 	ErrSessionExpired  = errors.New("session expired")
+	ErrInvalidMFACode  = errors.New("invalid MFA code")
 )
 
 // Session represents an authenticated user session.

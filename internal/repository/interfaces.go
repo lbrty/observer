@@ -48,6 +48,7 @@ type CredentialsRepository interface {
 type MFARepository interface {
 	Create(ctx context.Context, cfg *user.MFAConfig) error
 	GetByUserID(ctx context.Context, userID ulid.ULID) (*user.MFAConfig, error)
+	Upsert(ctx context.Context, cfg *user.MFAConfig) error
 }
 
 // VerificationTokenRepository defines persistence operations for verification tokens.

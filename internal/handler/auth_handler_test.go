@@ -235,6 +235,7 @@ func TestAuthHandler_Me_Success(t *testing.T) {
 	}
 
 	d.userRepo.EXPECT().GetByID(gomock.Any(), uid).Return(u, nil)
+	d.mfaRepo.EXPECT().GetByUserID(gomock.Any(), uid).Return(nil, user.ErrUserNotFound)
 
 	c, w := newTestContext(http.MethodGet, "/auth/me", nil)
 	setAuthContext(c, uid)
@@ -244,6 +245,7 @@ func TestAuthHandler_Me_Success(t *testing.T) {
 	resp := parseResponse[map[string]any](w)
 	assert.Equal(t, uid.String(), resp["id"])
 	assert.Equal(t, "test@test.com", resp["email"])
+	assert.Equal(t, false, resp["mfa_enabled"])
 }
 
 // --- RefreshToken ---

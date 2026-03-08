@@ -363,3 +363,20 @@ func (r *mfaRepo) GetByUserID(ctx context.Context, userID ulid.ULID) (*user.MFAC
 
 	return &cfg, nil
 }
+
+func (r *mfaRepo) Upsert(ctx context.Context, cfg *user.MFAConfig) error {
+	const q = `
+		INSERT INTO mfa_configs (user_id, method, secret, phone, is_enabled, created_at)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		ON CONFLICT (user_id) DO UPDATE
+		SET method = EXCLUDED.method, secret = EXCLUDED.secret, phone = EXCLUDED.phone,
+		    is_enabled = EXCLUDED.is_enabled
+	`
+	_, err := r.db.ExecContext(ctx, q,
+		cfg.UserID.String(), cfg.Method, cfg.Secret, cfg.Phone, cfg.IsEnabled, cfg.CreatedAt.UTC(),
+	)
+	if err != nil {
+		return fmt.Errorf("upsert mfa config: %w", err)
+	}
+	return nil
+}

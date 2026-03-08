@@ -12,6 +12,7 @@ interface AuthState {
 
 interface AuthActions {
   login: (input: LoginInput) => Promise<LoginOutput>;
+  verifyMFA: (mfaToken: string, totpCode: string) => Promise<void>;
   register: (input: RegisterInput) => Promise<RegisterOutput>;
   logout: () => Promise<void>;
   setUser: (user: User) => void;
@@ -46,6 +47,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return data;
   }
 
+  async function verifyMFA(mfaToken: string, totpCode: string): Promise<void> {
+    const data = await api
+      .post("auth/mfa", { json: { mfa_token: mfaToken, totp_code: totpCode } })
+      .json<LoginOutput>();
+    if (data.user) setUser(data.user);
+  }
+
   async function register(input: RegisterInput): Promise<RegisterOutput> {
     return api.post("auth/register", { json: input }).json<RegisterOutput>();
   }
@@ -66,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated,
         isLoading,
         login,
+        verifyMFA,
         register,
         logout,
         setUser,

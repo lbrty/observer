@@ -8,8 +8,14 @@ export interface User {
   phone: string;
   role: Role;
   is_verified: boolean;
+  mfa_enabled: boolean;
   office_id?: string;
   created_at: string;
+}
+
+export interface MFASetupData {
+  secret: string;
+  otpauth_url: string;
 }
 
 export interface UpdateProfileInput {

@@ -14,7 +14,10 @@
     "cancel": "İptal",
     "export": "Dışa aktar",
     "dateFrom": "Başlangıç",
-    "dateTo": "Bitiş"
+    "dateTo": "Bitiş",
+    "loading": "Yükleniyor…",
+    "enabled": "Etkin",
+    "disabled": "Devre dışı"
   },
   "auth": {
     "loginTitle": "Giriş yap",
@@ -30,7 +33,13 @@
     "mfaRequired": "MFA doğrulaması gerekli. Henüz desteklenmiyor.",
     "passwordsMismatch": "Şifreler eşleşmiyor",
     "passwordTooShort": "Şifre en az 8 karakter olmalıdır",
-    "pendingApproval": "Hesabınız yönetici onayı bekliyor"
+    "pendingApproval": "Hesabınız yönetici onayı bekliyor",
+    "mfaTitle": "İki faktörlü kimlik doğrulama",
+    "mfaHint": "Kimlik doğrulayıcı uygulamanızdaki 6 haneli kodu girin.",
+    "totpCode": "Kimlik doğrulayıcı kodu",
+    "verifyMFA": "Doğrula",
+    "verifying": "Doğrulanıyor…",
+    "backToLogin": "← Girişe dön"
   },
   "profile": {
     "title": "Profil",
@@ -46,7 +55,22 @@
     "newPassword": "Yeni şifre",
     "passwordChanged": "Şifre başarıyla değiştirildi",
     "wrongPassword": "Mevcut şifre yanlış",
-    "appearance": "Görünüm"
+    "appearance": "Görünüm",
+    "twoFactor": "İki faktörlü kimlik doğrulama",
+    "mfaActive": "İki faktörlü kimlik doğrulama etkin",
+    "mfaActiveHint": "Hesabınız bir kimlik doğrulayıcı uygulamasıyla korunuyor.",
+    "mfaInactive": "İki faktörlü kimlik doğrulama kurulmamış",
+    "mfaInactiveHint": "Hesabınıza ekstra bir güvenlik katmanı ekleyin.",
+    "setupMFA": "Kimlik doğrulayıcı kur",
+    "scanQR": "Bu QR kodu kimlik doğrulayıcı uygulamanızla (Google Authenticator, Authy vb.) tarayın, ardından doğrulamak için aşağıdaki 6 haneli kodu girin.",
+    "cantScanQR": "Tarayamıyor musunuz? Bu anahtarı manuel girin",
+    "enterCode": "Doğrulama kodu",
+    "verifyAndEnable": "Doğrula ve etkinleştir",
+    "disableMFA": "İki faktörlü kimlik doğrulamayı devre dışı bırak",
+    "disableMFAHint": "Onaylamak için mevcut kimlik doğrulayıcı kodunuzu girin.",
+    "confirmDisable": "Devre dışı bırak",
+    "mfaEnabled": "İki faktörlü kimlik doğrulama etkinleştirildi.",
+    "mfaDisabled": "İki faktörlü kimlik doğrulama devre dışı bırakıldı."
   },
   "dashboard": {
     "greeting": "Merhaba",
@@ -655,7 +679,8 @@
       "insufficientPermissions": "Yetersiz yetki",
       "accountLocked": "Çok fazla başarısız giriş denemesi nedeniyle hesap kilitlendi",
       "rateLimiterUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.",
-      "accountDeactivated": "Hesabınız devre dışı bırakıldı. Lütfen yöneticinizle iletişime geçin."
+      "accountDeactivated": "Hesabınız devre dışı bırakıldı. Lütfen yöneticinizle iletişime geçin.",
+      "invalidMFACode": "Geçersiz veya süresi dolmuş MFA kodu."
     },
     "project": {
       "notFound": "Proje bulunamadı",

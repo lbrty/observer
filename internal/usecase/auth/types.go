@@ -70,3 +70,26 @@ type ChangePasswordInput struct {
 	CurrentPassword string `json:"current_password" binding:"required"`
 	NewPassword     string `json:"new_password" binding:"required,min=8"`
 }
+
+// VerifyMFAInput holds data to complete an MFA login step.
+type VerifyMFAInput struct {
+	MFAToken string `json:"mfa_token" binding:"required"`
+	TOTPCode string `json:"totp_code" binding:"required,len=6"`
+}
+
+// MFASetupOutput is returned from GET /auth/mfa/setup.
+type MFASetupOutput struct {
+	Secret     string `json:"secret"`
+	OTPAuthURL string `json:"otpauth_url"`
+}
+
+// EnableMFAInput carries the pending secret and the TOTP code to verify it.
+type EnableMFAInput struct {
+	Secret   string `json:"secret"    binding:"required"`
+	TOTPCode string `json:"totp_code" binding:"required,len=6"`
+}
+
+// DisableMFAInput carries the current TOTP code to disable MFA.
+type DisableMFAInput struct {
+	TOTPCode string `json:"totp_code" binding:"required,len=6"`
+}

@@ -14,7 +14,10 @@
     "cancel": "Cancel",
     "export": "Export",
     "dateFrom": "From",
-    "dateTo": "To"
+    "dateTo": "To",
+    "loading": "Loading…",
+    "enabled": "Enabled",
+    "disabled": "Disabled"
   },
   "auth": {
     "loginTitle": "Sign in",
@@ -30,7 +33,13 @@
     "mfaRequired": "MFA verification required. Not yet supported.",
     "passwordsMismatch": "Passwords do not match",
     "passwordTooShort": "Password must be at least 8 characters",
-    "pendingApproval": "Your account is pending admin approval"
+    "pendingApproval": "Your account is pending admin approval",
+    "mfaTitle": "Two-factor authentication",
+    "mfaHint": "Enter the 6-digit code from your authenticator app.",
+    "totpCode": "Authenticator code",
+    "verifyMFA": "Verify",
+    "verifying": "Verifying…",
+    "backToLogin": "← Back to login"
   },
   "profile": {
     "title": "Profile",
@@ -46,7 +55,22 @@
     "newPassword": "New password",
     "passwordChanged": "Password changed successfully",
     "wrongPassword": "Current password is incorrect",
-    "appearance": "Appearance"
+    "appearance": "Appearance",
+    "twoFactor": "Two-factor authentication",
+    "mfaActive": "Two-factor authentication is active",
+    "mfaActiveHint": "Your account is protected with an authenticator app.",
+    "mfaInactive": "Two-factor authentication is not set up",
+    "mfaInactiveHint": "Add an extra layer of security to your account.",
+    "setupMFA": "Set up authenticator",
+    "scanQR": "Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.), then enter the 6-digit code below to verify.",
+    "cantScanQR": "Can't scan? Enter this key manually",
+    "enterCode": "Verification code",
+    "verifyAndEnable": "Verify and enable",
+    "disableMFA": "Disable two-factor authentication",
+    "disableMFAHint": "Enter your current authenticator code to confirm.",
+    "confirmDisable": "Disable",
+    "mfaEnabled": "Two-factor authentication enabled.",
+    "mfaDisabled": "Two-factor authentication disabled."
   },
   "dashboard": {
     "greeting": "Hello",
@@ -655,7 +679,8 @@
       "insufficientPermissions": "Insufficient permissions",
       "accountLocked": "Account is locked due to too many failed login attempts",
       "rateLimiterUnavailable": "Service temporarily unavailable. Please try again later.",
-      "accountDeactivated": "Your account has been deactivated. Please contact your administrator."
+      "accountDeactivated": "Your account has been deactivated. Please contact your administrator.",
+      "invalidMFACode": "Invalid or expired MFA code."
     },
     "project": {
       "notFound": "Project not found",

@@ -14,7 +14,10 @@
     "cancel": "Baş tartuu",
     "export": "Çyğaruu",
     "dateFrom": "Başyndan",
-    "dateTo": "Aqyryna"
+    "dateTo": "Aqyryna",
+    "loading": "Cüktölüüdö…",
+    "enabled": "Iştetilgen",
+    "disabled": "Öçürülgön"
   },
   "auth": {
     "loginTitle": "Kirüü",
@@ -30,7 +33,13 @@
     "mfaRequired": "MFA ylazym. Azyrynça işke kirgizile elek.",
     "passwordsMismatch": "Syr sözdör daal kelbeyt",
     "passwordTooShort": "Syr söz 8 tamğadan az bolbosun",
-    "pendingApproval": "Sizdin aqqauntunuz admin tarabyndan tastyqtaluunu küttüüdö"
+    "pendingApproval": "Sizdin aqqauntunuz admin tarabyndan tastyqtaluunu küttüüdö",
+    "mfaTitle": "Eki faktorluu autentifikatsija",
+    "mfaHint": "Autentifikator qoldonomonuzdan 6 sandyq kodni kirgiziñiz.",
+    "totpCode": "Autentifikator kodu",
+    "verifyMFA": "Tastyqtoo",
+    "verifying": "Tastyqtaluuda…",
+    "backToLogin": "← Kiriüügö qajtuu"
   },
   "profile": {
     "title": "Profil",
@@ -46,7 +55,22 @@
     "newPassword": "Cañy syr söz",
     "passwordChanged": "Syr söz ijgiliktüü özgörtüldü",
     "wrongPassword": "Azyrqy syr söz tuura emes",
-    "appearance": "Körünüş"
+    "appearance": "Körünüş",
+    "twoFactor": "Eki faktorluu autentifikatsija",
+    "mfaActive": "Eki faktorluu autentifikatsija işke qoşulğan",
+    "mfaActiveHint": "Sizdin aqqauntunuz autentifikator qoldonomо menen qorğolğon.",
+    "mfaInactive": "Eki faktorluu autentifikatsija ornotuluğan coq",
+    "mfaInactiveHint": "Aqqauntunuzğa qaupsüzdüktün qosumça qatmaryn qoşuñuz.",
+    "setupMFA": "Autentifikatordu ornot",
+    "scanQR": "Bul QR kodun autentifikator qoldonomuñuz (Google Authenticator, Authy, j.b.) menen skanerlep, tömöndögü 6 sandyq kodun kirgizip tastyqtañyz.",
+    "cantScanQR": "Skanerlep bolbodubu? Açqyçtu qolmo-qol kirgiziñiz",
+    "enterCode": "Tastyqtoo kodu",
+    "verifyAndEnable": "Tastyqtap iştet",
+    "disableMFA": "Eki faktorluu autentifikatsiyanы öçürüü",
+    "disableMFAHint": "Tastyqtoo üçün azyrqy autentifikator kodunuzdu kirgiziñiz.",
+    "confirmDisable": "Öçür",
+    "mfaEnabled": "Eki faktorluu autentifikatsija işke qoşuldu.",
+    "mfaDisabled": "Eki faktorluu autentifikatsija öçürüldü."
   },
   "dashboard": {
     "greeting": "Salam",
@@ -655,7 +679,8 @@
       "insufficientPermissions": "Uquqtar cetişsiz",
       "accountLocked": "Aqqaunt bekitilgen",
       "rateLimiterUnavailable": "Kyzmat uçurda tejlöögö şarty cok, birazdan kijin qaita kiriñiz.",
-      "accountDeactivated": "Sizdин aqqaunttuñuz öçürüldü. Administratorğa kairılıñız."
+      "accountDeactivated": "Sizdin aqqaunttuñuz öçürüldü. Administratorğo qairylyñyz.",
+      "invalidMFACode": "MFA kodu tuura emes ce mönöt öttü."
     },
     "project": {
       "notFound": "Proekt tabylğan coq",

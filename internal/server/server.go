@@ -111,10 +111,14 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		auth.POST("/register", registerRL, authHandler.Register)
 		auth.POST("/login", loginRL, authHandler.Login)
 		auth.POST("/refresh", authHandler.RefreshToken)
+		auth.POST("/mfa", authHandler.VerifyMFA)
 		auth.GET("/me", authMW.Authenticate(), authHandler.Me)
 		auth.PATCH("/me", authMW.Authenticate(), authHandler.UpdateProfile)
 		auth.POST("/change-password", authMW.Authenticate(), authHandler.ChangePassword)
 		auth.POST("/logout", authMW.Authenticate(), authHandler.Logout)
+		auth.GET("/mfa/setup", authMW.Authenticate(), authHandler.MFASetup)
+		auth.POST("/mfa/enable", authMW.Authenticate(), authHandler.EnableMFA)
+		auth.POST("/mfa/disable", authMW.Authenticate(), authHandler.DisableMFA)
 	}
 
 	// My endpoints — authenticated user's own data

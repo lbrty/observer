@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/oklog/ulid/v2"
+	"github.com/pquerna/otp/totp"
 
 	"github.com/lbrty/observer/internal/crypto"
 	domainauth "github.com/lbrty/observer/internal/domain/auth"
@@ -270,6 +271,98 @@ func (uc *AuthUseCase) UpdateProfile(ctx context.Context, userID ulid.ULID, inpu
 
 	dto := toUserDTO(u)
 	return dto, nil
+}
+
+// IsMFAEnabled reports whether the user has MFA enabled.
+func (uc *AuthUseCase) IsMFAEnabled(ctx context.Context, userID ulid.ULID) bool {
+	cfg, err := uc.mfaRepo.GetByUserID(ctx, userID)
+	return err == nil && cfg.IsEnabled
+}
+
+// VerifyMFA validates an MFA token + TOTP code and issues a full session.
+func (uc *AuthUseCase) VerifyMFA(ctx context.Context, input VerifyMFAInput, userAgent, ip string) (*LoginOutput, error) {
+	claims, err := uc.tokenGen.ValidateMFAToken(input.MFAToken)
+	if err != nil {
+		return nil, domainauth.ErrInvalidMFACode
+	}
+
+	userID, err := iulid.Parse(claims.UserID)
+	if err != nil {
+		return nil, domainauth.ErrInvalidMFACode
+	}
+
+	mfaCfg, err := uc.mfaRepo.GetByUserID(ctx, userID)
+	if err != nil || !mfaCfg.IsEnabled {
+		return nil, domainauth.ErrInvalidMFACode
+	}
+
+	if !totp.Validate(input.TOTPCode, mfaCfg.Secret) {
+		return nil, domainauth.ErrInvalidMFACode
+	}
+
+	u, err := uc.userRepo.GetByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	tokens, err := uc.createSession(ctx, u, userAgent, ip)
+	if err != nil {
+		return nil, fmt.Errorf("create session after MFA: %w", err)
+	}
+
+	return &LoginOutput{
+		RequiresMFA: false,
+		Tokens:      tokens,
+		User:        toUserDTO(u),
+	}, nil
+}
+
+// SetupMFA generates a new TOTP secret for the user (does not save it yet).
+func (uc *AuthUseCase) SetupMFA(ctx context.Context, userID ulid.ULID) (*MFASetupOutput, error) {
+	u, err := uc.userRepo.GetByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	key, err := totp.Generate(totp.GenerateOpts{
+		Issuer:      "Observer",
+		AccountName: u.Email,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("generate totp key: %w", err)
+	}
+	return &MFASetupOutput{
+		Secret:     key.Secret(),
+		OTPAuthURL: key.URL(),
+	}, nil
+}
+
+// EnableMFA verifies the TOTP code against the provided secret and saves the config.
+func (uc *AuthUseCase) EnableMFA(ctx context.Context, userID ulid.ULID, input EnableMFAInput) error {
+	if !totp.Validate(input.TOTPCode, input.Secret) {
+		return domainauth.ErrInvalidMFACode
+	}
+	cfg := &user.MFAConfig{
+		UserID:    userID,
+		Method:    "totp",
+		Secret:    input.Secret,
+		IsEnabled: true,
+		CreatedAt: time.Now().UTC(),
+	}
+	return uc.mfaRepo.Upsert(ctx, cfg)
+}
+
+// DisableMFA verifies the TOTP code and disables MFA for the user.
+func (uc *AuthUseCase) DisableMFA(ctx context.Context, userID ulid.ULID, input DisableMFAInput) error {
+	cfg, err := uc.mfaRepo.GetByUserID(ctx, userID)
+	if err != nil {
+		return err
+	}
+	if !totp.Validate(input.TOTPCode, cfg.Secret) {
+		return domainauth.ErrInvalidMFACode
+	}
+	cfg.IsEnabled = false
+	cfg.Secret = ""
+	return uc.mfaRepo.Upsert(ctx, cfg)
 }
 
 func toUserDTO(u *user.User) *UserDTO {

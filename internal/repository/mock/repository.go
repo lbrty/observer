@@ -321,6 +321,20 @@ func (mr *MockMFARepositoryMockRecorder) GetByUserID(ctx, userID any) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserID", reflect.TypeOf((*MockMFARepository)(nil).GetByUserID), ctx, userID)
 }
 
+// Upsert mocks base method.
+func (m *MockMFARepository) Upsert(ctx context.Context, cfg *user.MFAConfig) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Upsert", ctx, cfg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Upsert indicates an expected call of Upsert.
+func (mr *MockMFARepositoryMockRecorder) Upsert(ctx, cfg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upsert", reflect.TypeOf((*MockMFARepository)(nil).Upsert), ctx, cfg)
+}
+
 // MockVerificationTokenRepository is a mock of VerificationTokenRepository interface.
 type MockVerificationTokenRepository struct {
 	ctrl     *gomock.Controller
