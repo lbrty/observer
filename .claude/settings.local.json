@@ -50,7 +50,7 @@
       "Bash(sips:*)",
       "Bash(xargs basename:*)",
       "Bash(cut -d'\\(' -f1)",
-      "Bash(rsync:*)"
+      "Skill(code-review:code-review)"
     ]
   }
 }
