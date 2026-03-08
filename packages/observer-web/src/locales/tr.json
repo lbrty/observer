@@ -11,7 +11,10 @@
     "themeDark": "Koyu",
     "themeLightHc": "Açık (YK)",
     "themeDarkHc": "Koyu (YK)",
-    "cancel": "İptal"
+    "cancel": "İptal",
+    "export": "Dışa aktar",
+    "dateFrom": "Başlangıç",
+    "dateTo": "Bitiş"
   },
   "auth": {
     "loginTitle": "Giriş yap",
@@ -42,7 +45,8 @@
     "currentPassword": "Mevcut şifre",
     "newPassword": "Yeni şifre",
     "passwordChanged": "Şifre başarıyla değiştirildi",
-    "wrongPassword": "Mevcut şifre yanlış"
+    "wrongPassword": "Mevcut şifre yanlış",
+    "appearance": "Görünüm"
   },
   "dashboard": {
     "greeting": "Merhaba",
@@ -71,7 +75,8 @@
       "reference": "Referans Verileri",
       "countries": "Ülkeler",
       "offices": "Ofisler",
-      "categories": "Kategoriler"
+      "categories": "Kategoriler",
+      "auditLogs": "Denetim Günlüğü"
     },
     "users": {
       "title": "Kullanıcılar",
@@ -258,7 +263,9 @@
       "reports": "Raporlar",
       "reportsPeople": "Kişiler",
       "reportsPets": "Evcil hayvanlar",
-      "myStats": "İstatistiklerim"
+      "reportsCustom": "Özel",
+      "myStats": "İstatistiklerim",
+      "auditLogs": "Denetim Günlüğü"
     },
     "people": {
       "title": "Kişiler",
@@ -301,6 +308,8 @@
       "save": "Kaydet",
       "saving": "Kaydediliyor...",
       "deleteConfirm": "Bu kişiyi silmek istediğinize emin misiniz?",
+      "allSex": "Tüm cinsiyetler",
+      "allAgeGroups": "Tüm yaş grupları",
       "sexMale": "Erkek",
       "sexFemale": "Kadın",
       "sexOther": "Diğer",
@@ -426,6 +435,7 @@
       "referralCompleted": "Tamamlandı",
       "referralDeclined": "Reddedildi",
       "referralNoResponse": "Yanıt yok",
+      "allSpheres": "Tüm alanlar",
       "emptyTitle": "Destek kaydı yok",
       "emptyDescription": "İlk destek kaydını ekleyin"
     },
@@ -454,6 +464,7 @@
       "relationshipGrandparent": "Büyükanne/Büyükbaba",
       "relationshipOtherRelative": "Diğer akraba",
       "relationshipNonRelative": "Akraba olmayan",
+      "search": "Ara...",
       "emptyTitle": "Hane yok",
       "emptyDescription": "İlk haneyi oluşturun"
     },
@@ -576,7 +587,43 @@
       "kpiConsultations": "Danışmalarım",
       "kpiActiveCases": "Aktif vakalar",
       "kpiHouseholds": "Haneler"
+    },
+    "customReport": {
+      "title": "Özel rapor oluşturucu",
+      "metric": "Metrik",
+      "metric_events": "Olaylar",
+      "metric_people": "Kişiler",
+      "metric_units": "Birimler",
+      "metric_pets": "Evcil hayvanlar",
+      "dimensions": "Grupla",
+      "generate": "Oluştur",
+      "generating": "Oluşturuluyor...",
+      "total": "Toplam",
+      "noData": "Seçim için veri bulunamadı",
+      "dimSex": "Cinsiyet",
+      "dimAgeGroup": "Yaş grubu",
+      "dimRegion": "Bölge",
+      "dimConflictZone": "Çatışma bölgesi",
+      "dimOffice": "Ofis",
+      "dimSphere": "Alan",
+      "dimCategory": "Kategori",
+      "dimPersonTag": "Kişi etiketi",
+      "dimPetTag": "Hayvan etiketi",
+      "dimPetStatus": "Hayvan durumu",
+      "supportType_legal": "Hukuki",
+      "supportType_social": "Sosyal"
     }
+  },
+  "audit": {
+    "title": "Denetim Günlüğü",
+    "action": "İşlem",
+    "entityType": "Nesne Türü",
+    "summary": "Özet",
+    "timestamp": "Zaman",
+    "ip": "IP Adresi",
+    "allActions": "Tüm işlemler",
+    "allEntities": "Tüm nesneler",
+    "emptyTitle": "Denetim kaydı yok"
   },
   "errors": {
     "internal": "Sunucu hatası",

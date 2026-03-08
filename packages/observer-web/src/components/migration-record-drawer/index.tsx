@@ -1,15 +1,12 @@
 import { type SyntheticEvent, useEffect } from "react";
 
-import { Field } from "@base-ui/react/field";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import { ErrorBanner } from "@/components/alert-banner";
-import { DatePicker } from "@/components/date-picker";
 import { DrawerShell } from "@/components/drawer-shell";
 import { FormTextarea } from "@/components/form-field";
 import { SectionHeading } from "@/components/section-heading";
-import { UISelect } from "@/components/ui-select";
 import { useCountries } from "@/hooks/use-countries";
 import { useDrawerForm } from "@/hooks/use-drawer-form";
 import {
@@ -20,10 +17,12 @@ import {
 import { usePlaces } from "@/hooks/use-places";
 import { useStates } from "@/hooks/use-states";
 import { handleApiError } from "@/lib/form-error";
-
 import { useToast } from "@/stores/toast";
 
 import type { HousingAtDestination, MovementReason } from "@/types/migration-record";
+
+import { DetailsSection } from "./details-section";
+import { PlaceSection } from "./place-section";
 
 interface MigrationRecordDrawerProps {
   open: boolean;
@@ -89,7 +88,7 @@ export function MigrationRecordDrawer({
   const { data: destStates } = useStates(form.dest_country || undefined);
   const { data: destPlaces } = usePlaces(form.dest_state || undefined);
 
-  // resolve place → state → country when record loads
+  // resolve place -> state -> country when record loads
   useEffect(() => {
     if (!isEdit || !record || !allStates?.states || !allPlaces?.places) return;
 
@@ -189,26 +188,6 @@ export function MigrationRecordDrawer({
     value: p.id,
   }));
 
-  const reasonOptions = [
-    { label: t("project.migrationRecords.reasonConflict"), value: "conflict" },
-    { label: t("project.migrationRecords.reasonSecurity"), value: "security" },
-    { label: t("project.migrationRecords.reasonService"), value: "service_access" },
-    { label: t("project.migrationRecords.reasonReturn"), value: "return" },
-    { label: t("project.migrationRecords.reasonRelocation"), value: "relocation_program" },
-    { label: t("project.migrationRecords.reasonEconomic"), value: "economic" },
-    { label: t("project.migrationRecords.reasonOther"), value: "other" },
-  ];
-
-  const housingOptions = [
-    { label: t("project.migrationRecords.housingOwn"), value: "own_property" },
-    { label: t("project.migrationRecords.housingRenting"), value: "renting" },
-    { label: t("project.migrationRecords.housingRelatives"), value: "with_relatives" },
-    { label: t("project.migrationRecords.housingCollective"), value: "collective_site" },
-    { label: t("project.migrationRecords.housingHotel"), value: "hotel" },
-    { label: t("project.migrationRecords.housingOther"), value: "other" },
-    { label: t("project.migrationRecords.housingUnknown"), value: "unknown" },
-  ];
-
   return (
     <DrawerShell
       open={open}
@@ -225,107 +204,60 @@ export function MigrationRecordDrawer({
     >
       {error && <ErrorBanner message={error} />}
 
-      <SectionHeading>{t("project.migrationRecords.from")}</SectionHeading>
-      <div className="grid grid-cols-3 gap-3">
-        <UISelect
-          value={form.from_country}
-          onValueChange={(v) => {
-            set("from_country", v);
-            set("from_state", "");
-            set("from_place_id", "");
-          }}
-          options={countryOptions}
-          placeholder={t("project.people.selectCountry")}
-          fullWidth
-        />
-        <UISelect
-          value={form.from_state}
-          onValueChange={(v) => {
-            set("from_state", v);
-            set("from_place_id", "");
-          }}
-          options={fromStateOptions}
-          placeholder={t("project.people.selectState")}
-          disabled={!form.from_country}
-          fullWidth
-        />
-        <UISelect
-          value={form.from_place_id}
-          onValueChange={(v) => set("from_place_id", v)}
-          options={fromPlaceOptions}
-          placeholder={t("project.people.selectPlace")}
-          disabled={!form.from_state}
-          fullWidth
-        />
-      </div>
+      <PlaceSection
+        title={t("project.migrationRecords.from")}
+        country={form.from_country}
+        state={form.from_state}
+        place={form.from_place_id}
+        countryOptions={countryOptions}
+        stateOptions={fromStateOptions}
+        placeOptions={fromPlaceOptions}
+        countryPlaceholder={t("project.people.selectCountry")}
+        statePlaceholder={t("project.people.selectState")}
+        placePlaceholder={t("project.people.selectPlace")}
+        onCountryChange={(v) => {
+          set("from_country", v);
+          set("from_state", "");
+          set("from_place_id", "");
+        }}
+        onStateChange={(v) => {
+          set("from_state", v);
+          set("from_place_id", "");
+        }}
+        onPlaceChange={(v) => set("from_place_id", v)}
+      />
 
-      <SectionHeading>{t("project.migrationRecords.to")}</SectionHeading>
-      <div className="grid grid-cols-3 gap-3">
-        <UISelect
-          value={form.dest_country}
-          onValueChange={(v) => {
-            set("dest_country", v);
-            set("dest_state", "");
-            set("destination_place_id", "");
-          }}
-          options={countryOptions}
-          placeholder={t("project.people.selectCountry")}
-          fullWidth
-        />
-        <UISelect
-          value={form.dest_state}
-          onValueChange={(v) => {
-            set("dest_state", v);
-            set("destination_place_id", "");
-          }}
-          options={destStateOptions}
-          placeholder={t("project.people.selectState")}
-          disabled={!form.dest_country}
-          fullWidth
-        />
-        <UISelect
-          value={form.destination_place_id}
-          onValueChange={(v) => set("destination_place_id", v)}
-          options={destPlaceOptions}
-          placeholder={t("project.people.selectPlace")}
-          disabled={!form.dest_state}
-          fullWidth
-        />
-      </div>
+      <PlaceSection
+        title={t("project.migrationRecords.to")}
+        country={form.dest_country}
+        state={form.dest_state}
+        place={form.destination_place_id}
+        countryOptions={countryOptions}
+        stateOptions={destStateOptions}
+        placeOptions={destPlaceOptions}
+        countryPlaceholder={t("project.people.selectCountry")}
+        statePlaceholder={t("project.people.selectState")}
+        placePlaceholder={t("project.people.selectPlace")}
+        onCountryChange={(v) => {
+          set("dest_country", v);
+          set("dest_state", "");
+          set("destination_place_id", "");
+        }}
+        onStateChange={(v) => {
+          set("dest_state", v);
+          set("destination_place_id", "");
+        }}
+        onPlaceChange={(v) => set("destination_place_id", v)}
+      />
 
-      <SectionHeading>{t("project.migrationRecords.details")}</SectionHeading>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div>
-          <span className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("project.migrationRecords.date")}
-          </span>
-          <DatePicker value={form.migration_date} onChange={(v) => set("migration_date", v)} />
-        </div>
-
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("project.migrationRecords.reason")}
-          </Field.Label>
-          <UISelect
-            value={form.movement_reason}
-            onValueChange={(v) => set("movement_reason", v)}
-            options={reasonOptions}
-            fullWidth
-          />
-        </Field.Root>
-
-        <Field.Root>
-          <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-            {t("project.migrationRecords.housing")}
-          </Field.Label>
-          <UISelect
-            value={form.housing_at_destination}
-            onValueChange={(v) => set("housing_at_destination", v)}
-            options={housingOptions}
-            fullWidth
-          />
-        </Field.Root>
-      </div>
+      <DetailsSection
+        migrationDate={form.migration_date}
+        movementReason={form.movement_reason}
+        housingAtDestination={form.housing_at_destination}
+        onDateChange={(v) => set("migration_date", v)}
+        onReasonChange={(v) => set("movement_reason", v)}
+        onHousingChange={(v) => set("housing_at_destination", v)}
+      />
 
       <SectionHeading>{t("project.migrationRecords.notes")}</SectionHeading>
       <FormTextarea

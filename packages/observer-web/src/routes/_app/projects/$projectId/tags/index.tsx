@@ -6,8 +6,8 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { DataTable, type Column } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
+import { type Column } from "@/components/data-table";
+import { DataTablePage } from "@/components/data-table-page";
 import { FormDialog } from "@/components/form-dialog";
 import {
   ArrowsClockwiseIcon,
@@ -16,7 +16,6 @@ import {
   TagIcon,
   TrashIcon,
 } from "@/components/icons";
-import { PageHeader } from "@/components/page-header";
 import { useCreateTag, useDeleteTag, useUpdateTag, useTags } from "@/hooks/use-tags";
 import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";
@@ -218,35 +217,26 @@ function TagsPage() {
   ];
 
   return (
-    <div>
-      <PageHeader
-        title={t("project.tags.title")}
-        action={
-          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
-            {t("project.tags.add")}
-          </Button>
-        }
-      />
-
-      <DataTable
-        columns={columns}
-        data={data?.tags ?? []}
-        keyExtractor={(tag) => tag.id}
-        isLoading={isLoading}
-        emptyState={
-          <EmptyState
-            icon={TagIcon}
-            title={t("project.tags.emptyTitle")}
-            description={t("project.tags.emptyDescription")}
-            action={
-              <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
-                {t("project.tags.add")}
-              </Button>
-            }
-          />
-        }
-      />
-
+    <DataTablePage
+      title={t("project.tags.title")}
+      columns={columns}
+      data={data?.tags ?? []}
+      keyExtractor={(tag) => tag.id}
+      isLoading={isLoading}
+      emptyIcon={TagIcon}
+      emptyTitle={t("project.tags.emptyTitle")}
+      emptyDescription={t("project.tags.emptyDescription")}
+      emptyAction={
+        <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
+          {t("project.tags.add")}
+        </Button>
+      }
+      createAction={
+        <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+          {t("project.tags.add")}
+        </Button>
+      }
+    >
       <FormDialog
         open={formOpen}
         onOpenChange={setFormOpen}
@@ -306,6 +296,6 @@ function TagsPage() {
         onConfirm={handleDelete}
         loading={deleteTag.isPending}
       />
-    </div>
+    </DataTablePage>
   );
 }

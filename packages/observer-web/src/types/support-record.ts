@@ -67,6 +67,8 @@ export interface ListSupportRecordsParams {
   office_id?: string;
   type?: SupportType;
   sphere?: SupportSphere;
+  provided_from?: string;
+  provided_to?: string;
   page?: number;
   per_page?: number;
 }

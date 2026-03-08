@@ -7,14 +7,18 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { EmptyState } from "@/components/empty-state";
-import { HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
+import type { FilterDef } from "@/components/filter-bar";
+import { FilterBar } from "@/components/filter-bar";
+import { DownloadSimpleIcon, HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { PersonName } from "@/components/person-name";
 import { StatusBadge } from "@/components/status-badge";
 import { SupportRecordDrawer } from "@/components/support-record-drawer";
 import { referralKeys, sphereKeys, typeKeys } from "@/constants/support";
+import { useMyProjects } from "@/hooks/use-my-projects";
 import { useSupportRecords } from "@/hooks/use-support-records";
+import { api } from "@/lib/api";
 import type { SupportRecord } from "@/types/support-record";
 
 const supportTypes = [
@@ -28,6 +32,20 @@ const supportTypes = [
 ] as const;
 
 export type SupportType = (typeof supportTypes)[number];
+
+const sphereValues = [
+  "housing_assistance",
+  "document_recovery",
+  "social_benefits",
+  "property_rights",
+  "employment_rights",
+  "family_law",
+  "healthcare_access",
+  "education_access",
+  "financial_aid",
+  "psychological_support",
+  "other",
+] as const;
 
 interface SupportRecordsContentProps {
   projectId: string;
@@ -46,11 +64,22 @@ export function SupportRecordsContent({
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editRecordId, setEditRecordId] = useState<string | null>(null);
+  const [sphere, setSphere] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [exporting, setExporting] = useState(false);
+
+  const { data: projectsData } = useMyProjects();
+  const project = projectsData?.projects.find((p) => p.id === projectId);
+  const canExport = project?.role === "owner" || project?.role === "manager";
 
   const params = {
     page,
     per_page: 20,
     ...(typeFilter && { type: typeFilter as SupportRecord["type"] }),
+    ...(sphere && { sphere: sphere as SupportRecord["sphere"] }),
+    ...(dateFrom && { provided_from: dateFrom }),
+    ...(dateTo && { provided_to: dateTo }),
   };
 
   const { data, isLoading } = useSupportRecords(projectId, params);
@@ -65,6 +94,33 @@ export function SupportRecordsContent({
     general: t("project.supportRecords.typeGeneral"),
   };
 
+  const sphereOptions = [
+    { label: t("project.supportRecords.allSpheres"), value: "" },
+    ...sphereValues.map((s) => ({
+      label: sphereKeys[s] ? t(sphereKeys[s]) : s,
+      value: s,
+    })),
+  ];
+
+  const filters: FilterDef[] = [
+    {
+      type: "select",
+      value: sphere,
+      onValueChange: setSphere,
+      options: sphereOptions,
+      placeholder: t("project.supportRecords.allSpheres"),
+    },
+    {
+      type: "date-range",
+      fromValue: dateFrom,
+      toValue: dateTo,
+      onFromChange: setDateFrom,
+      onToChange: setDateTo,
+      fromPlaceholder: t("common.dateFrom"),
+      toPlaceholder: t("common.dateTo"),
+    },
+  ];
+
   function openCreate() {
     setEditRecordId(null);
     setDrawerOpen(true);
@@ -73,6 +129,28 @@ export function SupportRecordsContent({
   function openEdit(recordId: string) {
     setEditRecordId(recordId);
     setDrawerOpen(true);
+  }
+
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const searchParams: Record<string, string> = {};
+      if (typeFilter) searchParams.type = typeFilter;
+      if (sphere) searchParams.sphere = sphere;
+      if (dateFrom) searchParams.provided_from = dateFrom;
+      if (dateTo) searchParams.provided_to = dateTo;
+
+      const blob = await api.get(`projects/${projectId}/export/support-records`, { searchParams }).blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const date = new Date().toISOString().slice(0, 10);
+      a.download = `support-records-${date}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
   }
 
   const columns: Column<SupportRecord>[] = [
@@ -166,6 +244,22 @@ export function SupportRecordsContent({
           ))}
         </Tabs.List>
       </Tabs.Root>
+
+      <FilterBar
+        filters={filters}
+        trailing={
+          canExport ? (
+            <Button
+              variant="secondary"
+              icon={<DownloadSimpleIcon size={16} />}
+              onClick={handleExport}
+              disabled={exporting}
+            >
+              {t("common.export")}
+            </Button>
+          ) : undefined
+        }
+      />
 
       <DataTable
         columns={columns}

@@ -63,3 +63,23 @@ export interface ReportParams {
   age_group?: string;
   support_type?: string;
 }
+
+export interface CustomReportParams {
+  metric: "events" | "people" | "units" | "pets";
+  group_by: string[];
+  date_from?: string;
+  date_to?: string;
+  support_type?: string;
+}
+
+export interface CustomRow {
+  dimensions: Record<string, string>;
+  count: number;
+}
+
+export interface CustomReportOutput {
+  metric: string;
+  group_by: string[];
+  rows: CustomRow[];
+  total: number;
+}

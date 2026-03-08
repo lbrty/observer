@@ -1,4 +1,4 @@
-import { BuildingsIcon, FolderSimpleIcon, GlobeIcon, TagIcon, UsersIcon } from "@/components/icons";
+import { BuildingsIcon, ClockCounterClockwiseIcon, FolderSimpleIcon, GlobeIcon, TagIcon, UsersIcon } from "@/components/icons";
 import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
@@ -34,6 +34,14 @@ function AdminLayout() {
               to="/admin/projects"
               label={t("admin.nav.projects")}
               icon={FolderSimpleIcon}
+            />
+          )}
+
+          {isAdmin && (
+            <SidebarLink
+              to="/admin/audit-logs"
+              label={t("admin.nav.auditLogs")}
+              icon={ClockCounterClockwiseIcon}
             />
           )}
 

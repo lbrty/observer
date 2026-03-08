@@ -18,9 +18,11 @@ import { Route as AppProfileRouteImport } from './routes/_app/profile'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppAdminIndexRouteImport } from './routes/_app/admin/index'
 import { Route as AppProjectsProjectIdRouteImport } from './routes/_app/projects/$projectId'
+import { Route as AppAdminAuditLogsRouteImport } from './routes/_app/admin/audit-logs'
 import { Route as AppAdminUsersIndexRouteImport } from './routes/_app/admin/users/index'
 import { Route as AppAdminReferenceIndexRouteImport } from './routes/_app/admin/reference/index'
 import { Route as AppAdminProjectsIndexRouteImport } from './routes/_app/admin/projects/index'
+import { Route as AppProjectsProjectIdAuditLogsRouteImport } from './routes/_app/projects/$projectId/audit-logs'
 import { Route as AppAdminUsersUserIdRouteImport } from './routes/_app/admin/users/$userId'
 import { Route as AppAdminReferenceOfficesRouteImport } from './routes/_app/admin/reference/offices'
 import { Route as AppAdminReferenceCountriesRouteImport } from './routes/_app/admin/reference/countries'
@@ -39,6 +41,7 @@ import { Route as AppAdminProjectsProjectIdIndexRouteImport } from './routes/_ap
 import { Route as AppProjectsProjectIdSupportRecordsTypeRouteImport } from './routes/_app/projects/$projectId/support-records/$type'
 import { Route as AppProjectsProjectIdReportsPetsRouteImport } from './routes/_app/projects/$projectId/reports/pets'
 import { Route as AppProjectsProjectIdReportsPeopleRouteImport } from './routes/_app/projects/$projectId/reports/people'
+import { Route as AppProjectsProjectIdReportsCustomRouteImport } from './routes/_app/projects/$projectId/reports/custom'
 import { Route as AppProjectsProjectIdPetsStatusRouteImport } from './routes/_app/projects/$projectId/pets/$status'
 import { Route as AppProjectsProjectIdPeoplePersonIdRouteImport } from './routes/_app/projects/$projectId/people/$personId'
 import { Route as AppAdminReferenceCountriesCountryIdRouteImport } from './routes/_app/admin/reference/countries/$countryId'
@@ -95,6 +98,11 @@ const AppProjectsProjectIdRoute = AppProjectsProjectIdRouteImport.update({
   path: '/projects/$projectId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminAuditLogsRoute = AppAdminAuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 const AppAdminUsersIndexRoute = AppAdminUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -110,6 +118,12 @@ const AppAdminProjectsIndexRoute = AppAdminProjectsIndexRouteImport.update({
   path: '/projects/',
   getParentRoute: () => AppAdminRoute,
 } as any)
+const AppProjectsProjectIdAuditLogsRoute =
+  AppProjectsProjectIdAuditLogsRouteImport.update({
+    id: '/audit-logs',
+    path: '/audit-logs',
+    getParentRoute: () => AppProjectsProjectIdRoute,
+  } as any)
 const AppAdminUsersUserIdRoute = AppAdminUsersUserIdRouteImport.update({
   id: '/users/$userId',
   path: '/users/$userId',
@@ -217,6 +231,12 @@ const AppProjectsProjectIdReportsPeopleRoute =
     path: '/reports/people',
     getParentRoute: () => AppProjectsProjectIdRoute,
   } as any)
+const AppProjectsProjectIdReportsCustomRoute =
+  AppProjectsProjectIdReportsCustomRouteImport.update({
+    id: '/reports/custom',
+    path: '/reports/custom',
+    getParentRoute: () => AppProjectsProjectIdRoute,
+  } as any)
 const AppProjectsProjectIdPetsStatusRoute =
   AppProjectsProjectIdPetsStatusRouteImport.update({
     id: '/pets/$status',
@@ -296,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AppProfileRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/admin/audit-logs': typeof AppAdminAuditLogsRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRouteWithChildren
   '/admin/': typeof AppAdminIndexRoute
   '/admin/projects/$projectId': typeof AppAdminProjectsProjectIdRouteWithChildren
@@ -303,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/admin/reference/countries': typeof AppAdminReferenceCountriesRouteWithChildren
   '/admin/reference/offices': typeof AppAdminReferenceOfficesRoute
   '/admin/users/$userId': typeof AppAdminUsersUserIdRoute
+  '/projects/$projectId/audit-logs': typeof AppProjectsProjectIdAuditLogsRoute
   '/admin/projects/': typeof AppAdminProjectsIndexRoute
   '/admin/reference/': typeof AppAdminReferenceIndexRoute
   '/admin/users/': typeof AppAdminUsersIndexRoute
@@ -310,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/admin/reference/countries/$countryId': typeof AppAdminReferenceCountriesCountryIdRouteWithChildren
   '/projects/$projectId/people/$personId': typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
   '/projects/$projectId/pets/$status': typeof AppProjectsProjectIdPetsStatusRoute
+  '/projects/$projectId/reports/custom': typeof AppProjectsProjectIdReportsCustomRoute
   '/projects/$projectId/reports/people': typeof AppProjectsProjectIdReportsPeopleRoute
   '/projects/$projectId/reports/pets': typeof AppProjectsProjectIdReportsPetsRoute
   '/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
@@ -337,16 +360,19 @@ export interface FileRoutesByTo {
   '/profile': typeof AppProfileRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
+  '/admin/audit-logs': typeof AppAdminAuditLogsRoute
   '/projects/$projectId': typeof AppProjectsProjectIdRouteWithChildren
   '/admin': typeof AppAdminIndexRoute
   '/admin/reference/categories': typeof AppAdminReferenceCategoriesRoute
   '/admin/reference/offices': typeof AppAdminReferenceOfficesRoute
   '/admin/users/$userId': typeof AppAdminUsersUserIdRoute
+  '/projects/$projectId/audit-logs': typeof AppProjectsProjectIdAuditLogsRoute
   '/admin/projects': typeof AppAdminProjectsIndexRoute
   '/admin/reference': typeof AppAdminReferenceIndexRoute
   '/admin/users': typeof AppAdminUsersIndexRoute
   '/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
   '/projects/$projectId/pets/$status': typeof AppProjectsProjectIdPetsStatusRoute
+  '/projects/$projectId/reports/custom': typeof AppProjectsProjectIdReportsCustomRoute
   '/projects/$projectId/reports/people': typeof AppProjectsProjectIdReportsPeopleRoute
   '/projects/$projectId/reports/pets': typeof AppProjectsProjectIdReportsPetsRoute
   '/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
@@ -378,6 +404,7 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/admin/audit-logs': typeof AppAdminAuditLogsRoute
   '/_app/projects/$projectId': typeof AppProjectsProjectIdRouteWithChildren
   '/_app/admin/': typeof AppAdminIndexRoute
   '/_app/admin/projects/$projectId': typeof AppAdminProjectsProjectIdRouteWithChildren
@@ -385,6 +412,7 @@ export interface FileRoutesById {
   '/_app/admin/reference/countries': typeof AppAdminReferenceCountriesRouteWithChildren
   '/_app/admin/reference/offices': typeof AppAdminReferenceOfficesRoute
   '/_app/admin/users/$userId': typeof AppAdminUsersUserIdRoute
+  '/_app/projects/$projectId/audit-logs': typeof AppProjectsProjectIdAuditLogsRoute
   '/_app/admin/projects/': typeof AppAdminProjectsIndexRoute
   '/_app/admin/reference/': typeof AppAdminReferenceIndexRoute
   '/_app/admin/users/': typeof AppAdminUsersIndexRoute
@@ -392,6 +420,7 @@ export interface FileRoutesById {
   '/_app/admin/reference/countries/$countryId': typeof AppAdminReferenceCountriesCountryIdRouteWithChildren
   '/_app/projects/$projectId/people/$personId': typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
   '/_app/projects/$projectId/pets/$status': typeof AppProjectsProjectIdPetsStatusRoute
+  '/_app/projects/$projectId/reports/custom': typeof AppProjectsProjectIdReportsCustomRoute
   '/_app/projects/$projectId/reports/people': typeof AppProjectsProjectIdReportsPeopleRoute
   '/_app/projects/$projectId/reports/pets': typeof AppProjectsProjectIdReportsPetsRoute
   '/_app/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
@@ -422,6 +451,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/login'
     | '/register'
+    | '/admin/audit-logs'
     | '/projects/$projectId'
     | '/admin/'
     | '/admin/projects/$projectId'
@@ -429,6 +459,7 @@ export interface FileRouteTypes {
     | '/admin/reference/countries'
     | '/admin/reference/offices'
     | '/admin/users/$userId'
+    | '/projects/$projectId/audit-logs'
     | '/admin/projects/'
     | '/admin/reference/'
     | '/admin/users/'
@@ -436,6 +467,7 @@ export interface FileRouteTypes {
     | '/admin/reference/countries/$countryId'
     | '/projects/$projectId/people/$personId'
     | '/projects/$projectId/pets/$status'
+    | '/projects/$projectId/reports/custom'
     | '/projects/$projectId/reports/people'
     | '/projects/$projectId/reports/pets'
     | '/projects/$projectId/support-records/$type'
@@ -463,16 +495,19 @@ export interface FileRouteTypes {
     | '/profile'
     | '/login'
     | '/register'
+    | '/admin/audit-logs'
     | '/projects/$projectId'
     | '/admin'
     | '/admin/reference/categories'
     | '/admin/reference/offices'
     | '/admin/users/$userId'
+    | '/projects/$projectId/audit-logs'
     | '/admin/projects'
     | '/admin/reference'
     | '/admin/users'
     | '/admin/projects/$projectId/permissions'
     | '/projects/$projectId/pets/$status'
+    | '/projects/$projectId/reports/custom'
     | '/projects/$projectId/reports/people'
     | '/projects/$projectId/reports/pets'
     | '/projects/$projectId/support-records/$type'
@@ -503,6 +538,7 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/register'
     | '/_app/'
+    | '/_app/admin/audit-logs'
     | '/_app/projects/$projectId'
     | '/_app/admin/'
     | '/_app/admin/projects/$projectId'
@@ -510,6 +546,7 @@ export interface FileRouteTypes {
     | '/_app/admin/reference/countries'
     | '/_app/admin/reference/offices'
     | '/_app/admin/users/$userId'
+    | '/_app/projects/$projectId/audit-logs'
     | '/_app/admin/projects/'
     | '/_app/admin/reference/'
     | '/_app/admin/users/'
@@ -517,6 +554,7 @@ export interface FileRouteTypes {
     | '/_app/admin/reference/countries/$countryId'
     | '/_app/projects/$projectId/people/$personId'
     | '/_app/projects/$projectId/pets/$status'
+    | '/_app/projects/$projectId/reports/custom'
     | '/_app/projects/$projectId/reports/people'
     | '/_app/projects/$projectId/reports/pets'
     | '/_app/projects/$projectId/support-records/$type'
@@ -610,6 +648,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProjectsProjectIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/admin/audit-logs': {
+      id: '/_app/admin/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/admin/audit-logs'
+      preLoaderRoute: typeof AppAdminAuditLogsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
     '/_app/admin/users/': {
       id: '/_app/admin/users/'
       path: '/users'
@@ -630,6 +675,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/projects/'
       preLoaderRoute: typeof AppAdminProjectsIndexRouteImport
       parentRoute: typeof AppAdminRoute
+    }
+    '/_app/projects/$projectId/audit-logs': {
+      id: '/_app/projects/$projectId/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/projects/$projectId/audit-logs'
+      preLoaderRoute: typeof AppProjectsProjectIdAuditLogsRouteImport
+      parentRoute: typeof AppProjectsProjectIdRoute
     }
     '/_app/admin/users/$userId': {
       id: '/_app/admin/users/$userId'
@@ -755,6 +807,13 @@ declare module '@tanstack/react-router' {
       path: '/reports/people'
       fullPath: '/projects/$projectId/reports/people'
       preLoaderRoute: typeof AppProjectsProjectIdReportsPeopleRouteImport
+      parentRoute: typeof AppProjectsProjectIdRoute
+    }
+    '/_app/projects/$projectId/reports/custom': {
+      id: '/_app/projects/$projectId/reports/custom'
+      path: '/reports/custom'
+      fullPath: '/projects/$projectId/reports/custom'
+      preLoaderRoute: typeof AppProjectsProjectIdReportsCustomRouteImport
       parentRoute: typeof AppProjectsProjectIdRoute
     }
     '/_app/projects/$projectId/pets/$status': {
@@ -897,6 +956,7 @@ const AppAdminReferenceCountriesRouteWithChildren =
   )
 
 interface AppAdminRouteChildren {
+  AppAdminAuditLogsRoute: typeof AppAdminAuditLogsRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
   AppAdminProjectsProjectIdRoute: typeof AppAdminProjectsProjectIdRouteWithChildren
   AppAdminReferenceCategoriesRoute: typeof AppAdminReferenceCategoriesRoute
@@ -909,6 +969,7 @@ interface AppAdminRouteChildren {
 }
 
 const AppAdminRouteChildren: AppAdminRouteChildren = {
+  AppAdminAuditLogsRoute: AppAdminAuditLogsRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
   AppAdminProjectsProjectIdRoute: AppAdminProjectsProjectIdRouteWithChildren,
   AppAdminReferenceCategoriesRoute: AppAdminReferenceCategoriesRoute,
@@ -955,8 +1016,10 @@ const AppProjectsProjectIdPeoplePersonIdRouteWithChildren =
   )
 
 interface AppProjectsProjectIdRouteChildren {
+  AppProjectsProjectIdAuditLogsRoute: typeof AppProjectsProjectIdAuditLogsRoute
   AppProjectsProjectIdPeoplePersonIdRoute: typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
   AppProjectsProjectIdPetsStatusRoute: typeof AppProjectsProjectIdPetsStatusRoute
+  AppProjectsProjectIdReportsCustomRoute: typeof AppProjectsProjectIdReportsCustomRoute
   AppProjectsProjectIdReportsPeopleRoute: typeof AppProjectsProjectIdReportsPeopleRoute
   AppProjectsProjectIdReportsPetsRoute: typeof AppProjectsProjectIdReportsPetsRoute
   AppProjectsProjectIdSupportRecordsTypeRoute: typeof AppProjectsProjectIdSupportRecordsTypeRoute
@@ -971,9 +1034,12 @@ interface AppProjectsProjectIdRouteChildren {
 }
 
 const AppProjectsProjectIdRouteChildren: AppProjectsProjectIdRouteChildren = {
+  AppProjectsProjectIdAuditLogsRoute: AppProjectsProjectIdAuditLogsRoute,
   AppProjectsProjectIdPeoplePersonIdRoute:
     AppProjectsProjectIdPeoplePersonIdRouteWithChildren,
   AppProjectsProjectIdPetsStatusRoute: AppProjectsProjectIdPetsStatusRoute,
+  AppProjectsProjectIdReportsCustomRoute:
+    AppProjectsProjectIdReportsCustomRoute,
   AppProjectsProjectIdReportsPeopleRoute:
     AppProjectsProjectIdReportsPeopleRoute,
   AppProjectsProjectIdReportsPetsRoute: AppProjectsProjectIdReportsPetsRoute,

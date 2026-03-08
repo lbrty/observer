@@ -11,7 +11,10 @@
     "themeDark": "Dark",
     "themeLightHc": "Light (HC)",
     "themeDarkHc": "Dark (HC)",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "export": "Export",
+    "dateFrom": "From",
+    "dateTo": "To"
   },
   "auth": {
     "loginTitle": "Sign in",
@@ -42,7 +45,8 @@
     "currentPassword": "Current password",
     "newPassword": "New password",
     "passwordChanged": "Password changed successfully",
-    "wrongPassword": "Current password is incorrect"
+    "wrongPassword": "Current password is incorrect",
+    "appearance": "Appearance"
   },
   "dashboard": {
     "greeting": "Hello",
@@ -71,7 +75,8 @@
       "reference": "Reference Data",
       "countries": "Countries",
       "offices": "Offices",
-      "categories": "Categories"
+      "categories": "Categories",
+      "auditLogs": "Audit Logs"
     },
     "users": {
       "title": "Users",
@@ -258,7 +263,9 @@
       "reports": "Reports",
       "reportsPeople": "People",
       "reportsPets": "Pets",
-      "myStats": "My Statistics"
+      "reportsCustom": "Custom",
+      "myStats": "My Statistics",
+      "auditLogs": "Audit Log"
     },
     "people": {
       "title": "People",
@@ -301,6 +308,8 @@
       "save": "Save",
       "saving": "Saving...",
       "deleteConfirm": "Are you sure you want to delete this person?",
+      "allSex": "All sex",
+      "allAgeGroups": "All age groups",
       "sexMale": "Male",
       "sexFemale": "Female",
       "sexOther": "Other",
@@ -426,6 +435,7 @@
       "referralCompleted": "Completed",
       "referralDeclined": "Declined",
       "referralNoResponse": "No response",
+      "allSpheres": "All spheres",
       "emptyTitle": "No support records",
       "emptyDescription": "Add the first support record"
     },
@@ -454,6 +464,7 @@
       "relationshipGrandparent": "Grandparent",
       "relationshipOtherRelative": "Other relative",
       "relationshipNonRelative": "Non-relative",
+      "search": "Search...",
       "emptyTitle": "No households",
       "emptyDescription": "Create the first household"
     },
@@ -576,7 +587,43 @@
       "kpiConsultations": "My Consultations",
       "kpiActiveCases": "Active Cases",
       "kpiHouseholds": "Households"
+    },
+    "customReport": {
+      "title": "Custom report builder",
+      "metric": "Metric",
+      "metric_events": "Events",
+      "metric_people": "People",
+      "metric_units": "Units",
+      "metric_pets": "Pets",
+      "dimensions": "Group by",
+      "generate": "Generate",
+      "generating": "Generating...",
+      "total": "Total",
+      "noData": "No data for current selection",
+      "dimSex": "Sex",
+      "dimAgeGroup": "Age group",
+      "dimRegion": "Region",
+      "dimConflictZone": "Conflict zone",
+      "dimOffice": "Office",
+      "dimSphere": "Sphere",
+      "dimCategory": "Category",
+      "dimPersonTag": "Person tag",
+      "dimPetTag": "Pet tag",
+      "dimPetStatus": "Pet status",
+      "supportType_legal": "Legal",
+      "supportType_social": "Social"
     }
+  },
+  "audit": {
+    "title": "Audit Log",
+    "action": "Action",
+    "entityType": "Entity Type",
+    "summary": "Summary",
+    "timestamp": "Timestamp",
+    "ip": "IP Address",
+    "allActions": "All Actions",
+    "allEntities": "All Entities",
+    "emptyTitle": "No audit entries"
   },
   "errors": {
     "internal": "Internal server error",

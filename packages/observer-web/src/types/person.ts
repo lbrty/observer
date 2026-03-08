@@ -49,9 +49,13 @@ export interface ListPeopleOutput {
 export interface ListPeopleParams {
   search?: string;
   case_status?: string;
+  sex?: string;
+  age_group?: string;
   office_id?: string;
   consultant_id?: string;
   tag_ids?: string[];
+  registered_from?: string;
+  registered_to?: string;
   page?: number;
   per_page?: number;
 }

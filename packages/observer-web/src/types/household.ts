@@ -41,8 +41,11 @@ export interface AddMemberInput {
 }
 
 export interface ListHouseholdsParams {
+  search?: string;
   page?: number;
   per_page?: number;
+  created_from?: string;
+  created_to?: string;
 }
 
 export interface ListHouseholdsOutput {

@@ -11,7 +11,10 @@
     "themeDark": "Темна",
     "themeLightHc": "Світла (КК)",
     "themeDarkHc": "Темна (КК)",
-    "cancel": "Скасувати"
+    "cancel": "Скасувати",
+    "export": "Експорт",
+    "dateFrom": "Від",
+    "dateTo": "До"
   },
   "auth": {
     "loginTitle": "Вхід",
@@ -42,7 +45,8 @@
     "currentPassword": "Поточний пароль",
     "newPassword": "Новий пароль",
     "passwordChanged": "Пароль успішно змінено",
-    "wrongPassword": "Поточний пароль невірний"
+    "wrongPassword": "Поточний пароль невірний",
+    "appearance": "Зовнішній вигляд"
   },
   "dashboard": {
     "greeting": "Привіт",
@@ -71,7 +75,8 @@
       "reference": "Довідники",
       "countries": "Країни",
       "offices": "Офіси",
-      "categories": "Категорії"
+      "categories": "Категорії",
+      "auditLogs": "Журнал аудиту"
     },
     "users": {
       "title": "Користувачі",
@@ -258,7 +263,9 @@
       "reports": "Звіти",
       "reportsPeople": "Люди",
       "reportsPets": "Тварини",
-      "myStats": "Моя статистика"
+      "reportsCustom": "Власний",
+      "myStats": "Моя статистика",
+      "auditLogs": "Журнал аудиту"
     },
     "people": {
       "title": "Люди",
@@ -301,6 +308,8 @@
       "save": "Зберегти",
       "saving": "Збереження...",
       "deleteConfirm": "Ви впевнені, що хочете видалити цю особу?",
+      "allSex": "Уся стать",
+      "allAgeGroups": "Усі вікові групи",
       "sexMale": "Чоловіча",
       "sexFemale": "Жіноча",
       "sexOther": "Інша",
@@ -426,6 +435,7 @@
       "referralCompleted": "Завершено",
       "referralDeclined": "Відхилено",
       "referralNoResponse": "Без відповіді",
+      "allSpheres": "Усі сфери",
       "emptyTitle": "Немає записів підтримки",
       "emptyDescription": "Додайте перший запис підтримки"
     },
@@ -454,6 +464,7 @@
       "relationshipGrandparent": "Дідусь/бабуся",
       "relationshipOtherRelative": "Інший родич",
       "relationshipNonRelative": "Не родич",
+      "search": "Пошук...",
       "emptyTitle": "Немає домогосподарств",
       "emptyDescription": "Створіть перше домогосподарство"
     },
@@ -576,7 +587,43 @@
       "kpiConsultations": "Мої консультації",
       "kpiActiveCases": "Активні справи",
       "kpiHouseholds": "Домогосподарства"
+    },
+    "customReport": {
+      "title": "Конструктор звітів",
+      "metric": "Метрика",
+      "metric_events": "Звернення",
+      "metric_people": "Люди",
+      "metric_units": "Одиниці",
+      "metric_pets": "Тварини",
+      "dimensions": "Групувати за",
+      "generate": "Сформувати",
+      "generating": "Формування...",
+      "total": "Разом",
+      "noData": "Немає даних для обраних параметрів",
+      "dimSex": "Стать",
+      "dimAgeGroup": "Вікова група",
+      "dimRegion": "Регіон",
+      "dimConflictZone": "Зона конфлікту",
+      "dimOffice": "Офіс",
+      "dimSphere": "Сфера",
+      "dimCategory": "Категорія",
+      "dimPersonTag": "Тег особи",
+      "dimPetTag": "Тег тварини",
+      "dimPetStatus": "Статус тварини",
+      "supportType_legal": "Юридична",
+      "supportType_social": "Соціальна"
     }
+  },
+  "audit": {
+    "title": "Журнал аудиту",
+    "action": "Дія",
+    "entityType": "Тип об'єкта",
+    "summary": "Опис",
+    "timestamp": "Час",
+    "ip": "IP-адреса",
+    "allActions": "Усі дії",
+    "allEntities": "Усі об'єкти",
+    "emptyTitle": "Немає записів аудиту"
   },
   "errors": {
     "internal": "Внутрішня помилка сервера",

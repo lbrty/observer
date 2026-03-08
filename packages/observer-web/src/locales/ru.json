@@ -11,7 +11,10 @@
     "themeDark": "Тёмная",
     "themeLightHc": "Светлая (ВК)",
     "themeDarkHc": "Тёмная (ВК)",
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "export": "Экспорт",
+    "dateFrom": "С",
+    "dateTo": "По"
   },
   "auth": {
     "loginTitle": "Вход",
@@ -42,7 +45,8 @@
     "currentPassword": "Текущий пароль",
     "newPassword": "Новый пароль",
     "passwordChanged": "Пароль успешно изменён",
-    "wrongPassword": "Неверный текущий пароль"
+    "wrongPassword": "Неверный текущий пароль",
+    "appearance": "Оформление"
   },
   "dashboard": {
     "greeting": "Здравствуйте",
@@ -71,7 +75,8 @@
       "reference": "Справочники",
       "countries": "Страны",
       "offices": "Офисы",
-      "categories": "Категории"
+      "categories": "Категории",
+      "auditLogs": "Журнал аудита"
     },
     "users": {
       "title": "Пользователи",
@@ -258,7 +263,9 @@
       "reports": "Отчёты",
       "reportsPeople": "Люди",
       "reportsPets": "Питомцы",
-      "myStats": "Моя статистика"
+      "reportsCustom": "Настраиваемый",
+      "myStats": "Моя статистика",
+      "auditLogs": "Журнал аудита"
     },
     "people": {
       "title": "Люди",
@@ -301,6 +308,8 @@
       "save": "Сохранить",
       "saving": "Сохранение...",
       "deleteConfirm": "Вы уверены, что хотите удалить эту запись?",
+      "allSex": "Все полы",
+      "allAgeGroups": "Все возрастные группы",
       "sexMale": "Мужской",
       "sexFemale": "Женский",
       "sexOther": "Другой",
@@ -426,6 +435,7 @@
       "referralCompleted": "Завершено",
       "referralDeclined": "Отклонено",
       "referralNoResponse": "Без ответа",
+      "allSpheres": "Все сферы",
       "emptyTitle": "Нет записей поддержки",
       "emptyDescription": "Добавьте первую запись поддержки"
     },
@@ -454,6 +464,7 @@
       "relationshipGrandparent": "Дедушка/бабушка",
       "relationshipOtherRelative": "Другой родственник",
       "relationshipNonRelative": "Не родственник",
+      "search": "Поиск...",
       "emptyTitle": "Нет домохозяйств",
       "emptyDescription": "Создайте первое домохозяйство"
     },
@@ -576,7 +587,43 @@
       "kpiConsultations": "Мои консультации",
       "kpiActiveCases": "Активные дела",
       "kpiHouseholds": "Домохозяйства"
+    },
+    "customReport": {
+      "title": "Конструктор отчётов",
+      "metric": "Метрика",
+      "metric_events": "Обращения",
+      "metric_people": "Люди",
+      "metric_units": "Единицы",
+      "metric_pets": "Питомцы",
+      "dimensions": "Группировка",
+      "generate": "Сформировать",
+      "generating": "Формирование...",
+      "total": "Итого",
+      "noData": "Нет данных для выбранных параметров",
+      "dimSex": "Пол",
+      "dimAgeGroup": "Возрастная группа",
+      "dimRegion": "Регион",
+      "dimConflictZone": "Зона конфликта",
+      "dimOffice": "Офис",
+      "dimSphere": "Сфера",
+      "dimCategory": "Категория",
+      "dimPersonTag": "Тег человека",
+      "dimPetTag": "Тег питомца",
+      "dimPetStatus": "Статус питомца",
+      "supportType_legal": "Юридическая",
+      "supportType_social": "Социальная"
     }
+  },
+  "audit": {
+    "title": "Журнал аудита",
+    "action": "Действие",
+    "entityType": "Тип объекта",
+    "summary": "Описание",
+    "timestamp": "Время",
+    "ip": "IP-адрес",
+    "allActions": "Все действия",
+    "allEntities": "Все объекты",
+    "emptyTitle": "Нет записей аудита"
   },
   "errors": {
     "internal": "Внутренняя ошибка сервера",

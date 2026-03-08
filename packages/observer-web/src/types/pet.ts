@@ -34,6 +34,8 @@ export interface ListPetsParams {
   per_page?: number;
   status?: string;
   tag_ids?: string[];
+  created_from?: string;
+  created_to?: string;
 }
 
 export interface ListPetsOutput {

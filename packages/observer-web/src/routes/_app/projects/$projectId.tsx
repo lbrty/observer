@@ -1,9 +1,11 @@
 import {
   ChartBarIcon,
+  ClockCounterClockwiseIcon,
   FilesIcon,
   HandHeartIcon,
   HouseSimpleIcon,
   PawPrintIcon,
+  SlidersHorizontalIcon,
   TagIcon,
   UserCircleIcon,
   UserFocusIcon,
@@ -45,6 +47,11 @@ function ReportsGroup({ projectId }: { projectId: string }) {
           to={`/projects/${projectId}/reports/pets`}
           label={t("project.nav.reportsPets")}
           icon={PawPrintIcon}
+        />
+        <SidebarLink
+          to={`/projects/${projectId}/reports/custom`}
+          label={t("project.nav.reportsCustom")}
+          icon={SlidersHorizontalIcon}
         />
       </div>
     </div>
@@ -105,6 +112,13 @@ function ProjectLayout() {
             icon={PawPrintIcon}
           />
           <ReportsGroup projectId={projectId} />
+          {(project.role === "owner" || project.role === "manager") && (
+            <SidebarLink
+              to={`/projects/${projectId}/audit-logs`}
+              label={t("project.nav.auditLogs")}
+              icon={ClockCounterClockwiseIcon}
+            />
+          )}
           {user?.role === "consultant" && (
             <SidebarLink
               to={`/projects/${projectId}/my-stats`}

@@ -4,13 +4,12 @@ import { type SyntheticEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
-import { DataTable, type Column } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
+import type { Column } from "@/components/data-table";
+import { DataTablePage } from "@/components/data-table-page";
+import type { FilterDef } from "@/components/filter-bar";
 import { FormDialog } from "@/components/form-dialog";
-import { FormField, inputClass } from "@/components/form-field";
-import { MagnifyingGlassIcon, UsersIcon } from "@/components/icons";
-import { PageHeader } from "@/components/page-header";
-import { Pagination } from "@/components/pagination";
+import { FormField } from "@/components/form-field";
+import { UsersIcon } from "@/components/icons";
 import { StatusBadge, StatusDot } from "@/components/status-badge";
 import { UISelect } from "@/components/ui-select";
 import { UISwitch } from "@/components/ui-switch";
@@ -101,78 +100,49 @@ function UsersPage() {
     },
   ];
 
+  const filters: FilterDef[] = [
+    {
+      type: "search",
+      placeholder: t("admin.users.search"),
+      value: search,
+      onChange: (v) => { setSearch(v); setPage(1); },
+    },
+    {
+      type: "select",
+      value: role,
+      onValueChange: (v) => { setRole(v); setPage(1); },
+      options: roleOptions,
+      placeholder: t("admin.users.allRoles"),
+    },
+    {
+      type: "select",
+      value: isActive,
+      onValueChange: (v) => { setIsActive(v); setPage(1); },
+      options: statusOptions,
+      placeholder: t("admin.users.allStatuses"),
+    },
+  ];
+
   return (
-    <div>
-      <PageHeader
-        title={t("admin.users.title")}
-        action={
-          <Button onClick={() => setCreateOpen(true)}>
-            {t("admin.users.add")}
-          </Button>
-        }
-      />
-
-      <div className="mb-4 flex gap-3">
-        <div className="relative">
-          <MagnifyingGlassIcon
-            size={14}
-            className="absolute top-1/2 left-3 -translate-y-1/2 text-fg-tertiary"
-          />
-          <input
-            placeholder={t("admin.users.search")}
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            className="rounded-lg border border-border-secondary bg-bg-secondary py-1.5 pr-3 pl-8 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
-          />
-        </div>
-        <UISelect
-          value={role}
-          onValueChange={(v) => {
-            setRole(v);
-            setPage(1);
-          }}
-          options={roleOptions}
-          placeholder={t("admin.users.allRoles")}
-        />
-        <UISelect
-          value={isActive}
-          onValueChange={(v) => {
-            setIsActive(v);
-            setPage(1);
-          }}
-          options={statusOptions}
-          placeholder={t("admin.users.allStatuses")}
-        />
-      </div>
-
-      <DataTable
-        columns={columns}
-        data={data?.users ?? []}
-        keyExtractor={(u) => u.id}
-        onRowClick={(u) => navigate({ to: "/admin/users/$userId", params: { userId: u.id } })}
-        isLoading={isLoading}
-        emptyState={
-          <EmptyState
-            icon={UsersIcon}
-            title={t("admin.users.emptyTitle")}
-          />
-        }
-      />
-
-      {data && (
-        <Pagination
-          page={data.page}
-          perPage={data.per_page}
-          total={data.total}
-          onChange={setPage}
-        />
-      )}
-
+    <DataTablePage
+      title={t("admin.users.title")}
+      columns={columns}
+      data={data?.users ?? []}
+      keyExtractor={(u) => u.id}
+      onRowClick={(u) => navigate({ to: "/admin/users/$userId", params: { userId: u.id } })}
+      isLoading={isLoading}
+      filters={filters}
+      pagination={data ? { page: data.page, perPage: data.per_page, total: data.total, onChange: setPage } : undefined}
+      emptyIcon={UsersIcon}
+      emptyTitle={t("admin.users.emptyTitle")}
+      createAction={
+        <Button onClick={() => setCreateOpen(true)}>
+          {t("admin.users.add")}
+        </Button>
+      }
+    >
       <CreateUserDialog open={createOpen} onOpenChange={setCreateOpen} />
-    </div>
+    </DataTablePage>
   );
 }
 

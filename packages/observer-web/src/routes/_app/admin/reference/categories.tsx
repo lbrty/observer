@@ -6,11 +6,10 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { DataTable, type Column } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
+import { type Column } from "@/components/data-table";
+import { DataTablePage } from "@/components/data-table-page";
 import { FormDialog } from "@/components/form-dialog";
 import { TagIcon } from "@/components/icons";
-import { PageHeader } from "@/components/page-header";
 import { RowActions } from "@/components/row-actions";
 import {
   useCategories,
@@ -56,35 +55,26 @@ function CategoriesPage() {
   ];
 
   return (
-    <div>
-      <PageHeader
-        title={t("admin.reference.categories.title")}
-        action={
-          <Button onClick={() => setCreateOpen(true)}>
-            {t("admin.reference.categories.add")}
-          </Button>
-        }
-      />
-
-      <DataTable
-        columns={columns}
-        data={data ?? []}
-        keyExtractor={(c) => c.id}
-        isLoading={isLoading}
-        emptyState={
-          <EmptyState
-            icon={TagIcon}
-            title={t("admin.reference.categories.emptyTitle")}
-            description={t("admin.reference.categories.emptyDescription")}
-            action={
-              <Button onClick={() => setCreateOpen(true)}>
-                {t("admin.reference.categories.add")}
-              </Button>
-            }
-          />
-        }
-      />
-
+    <DataTablePage
+      title={t("admin.reference.categories.title")}
+      columns={columns}
+      data={data ?? []}
+      keyExtractor={(c) => c.id}
+      isLoading={isLoading}
+      emptyIcon={TagIcon}
+      emptyTitle={t("admin.reference.categories.emptyTitle")}
+      emptyDescription={t("admin.reference.categories.emptyDescription")}
+      emptyAction={
+        <Button onClick={() => setCreateOpen(true)}>
+          {t("admin.reference.categories.add")}
+        </Button>
+      }
+      createAction={
+        <Button onClick={() => setCreateOpen(true)}>
+          {t("admin.reference.categories.add")}
+        </Button>
+      }
+    >
       <CategoryFormDialog
         open={createOpen}
         onOpenChange={setCreateOpen}
@@ -129,7 +119,7 @@ function CategoriesPage() {
         }}
         loading={deleteCategory.isPending}
       />
-    </div>
+    </DataTablePage>
   );
 }
 

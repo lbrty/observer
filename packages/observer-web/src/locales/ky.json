@@ -11,7 +11,10 @@
     "themeDark": "Qarañğy",
     "themeLightHc": "Caryq (HC)",
     "themeDarkHc": "Qarañğy (HC)",
-    "cancel": "Baş tartuu"
+    "cancel": "Baş tartuu",
+    "export": "Çyğaruu",
+    "dateFrom": "Başyndan",
+    "dateTo": "Aqyryna"
   },
   "auth": {
     "loginTitle": "Kirüü",
@@ -42,7 +45,8 @@
     "currentPassword": "Azyrqy syr söz",
     "newPassword": "Cañy syr söz",
     "passwordChanged": "Syr söz ijgiliktüü özgörtüldü",
-    "wrongPassword": "Azyrqy syr söz tuura emes"
+    "wrongPassword": "Azyrqy syr söz tuura emes",
+    "appearance": "Körünüş"
   },
   "dashboard": {
     "greeting": "Salam",
@@ -71,7 +75,8 @@
       "reference": "Maalymat",
       "countries": "Ölkölör",
       "offices": "Ofister",
-      "categories": "Kategorijalar"
+      "categories": "Kategorijalar",
+      "auditLogs": "Audit kündelügü"
     },
     "users": {
       "title": "Qoldonuuçular",
@@ -258,7 +263,9 @@
       "reports": "Raporlor",
       "reportsPeople": "Adamdar",
       "reportsPets": "Üj canybarlar",
-      "myStats": "Menim statistikam"
+      "reportsCustom": "Özdük",
+      "myStats": "Menim statistikam",
+      "auditLogs": "Audit kündelügü"
     },
     "people": {
       "title": "Adamdar",
@@ -301,6 +308,8 @@
       "save": "Saqta",
       "saving": "Saqtaluuda...",
       "deleteConfirm": "Bu adamdy öçürösüzbü?",
+      "allSex": "Baardyq cynys",
+      "allAgeGroups": "Baardyq caş tobdor",
       "sexMale": "Erkek",
       "sexFemale": "Ayal",
       "sexOther": "Başqa",
@@ -426,6 +435,7 @@
       "referralCompleted": "Ayaqtaldy",
       "referralDeclined": "Baş tartyldy",
       "referralNoResponse": "Cavap coq",
+      "allSpheres": "Baardyq çöjrölör",
       "emptyTitle": "Qoldoo tizmesi coq",
       "emptyDescription": "Birinçi qoldoo cazdysyn qoşuñuz"
     },
@@ -454,6 +464,7 @@
       "relationshipGrandparent": "Çoñ ata/ene",
       "relationshipOtherRelative": "Başqa tuuğan",
       "relationshipNonRelative": "Tuuğan emes",
+      "search": "Izdöö...",
       "emptyTitle": "Üj bölüktörü coq",
       "emptyDescription": "Birinçi üy bölügün tüzüñüz"
     },
@@ -576,7 +587,43 @@
       "kpiConsultations": "Menim konsultatsijalarym",
       "kpiActiveCases": "Aktiv işter",
       "kpiHouseholds": "Üj çarba"
+    },
+    "customReport": {
+      "title": "Özdük rapor qurguçu",
+      "metric": "Metrika",
+      "metric_events": "Oqijalar",
+      "metric_people": "Adamdar",
+      "metric_units": "Birliker",
+      "metric_pets": "Üj canybarlar",
+      "dimensions": "Topto bölüü",
+      "generate": "Tüzüü",
+      "generating": "Tüzülüüdö...",
+      "total": "Carmağy",
+      "noData": "Tandoo boyunça maalymat coq",
+      "dimSex": "Cynys",
+      "dimAgeGroup": "Caş tobu",
+      "dimRegion": "Rayon",
+      "dimConflictZone": "Qakylyş zonasy",
+      "dimOffice": "Ofis",
+      "dimSphere": "Çöjrö",
+      "dimCategory": "Kategorija",
+      "dimPersonTag": "Adam tegi",
+      "dimPetTag": "Canybar tegi",
+      "dimPetStatus": "Canybar statusu",
+      "supportType_legal": "Yuridikalyq",
+      "supportType_social": "Sotsialdyq"
     }
+  },
+  "audit": {
+    "title": "Audit kündelügü",
+    "action": "Araket",
+    "entityType": "Obyekt türü",
+    "summary": "Qysqaça",
+    "timestamp": "Ubaqyty",
+    "ip": "IP daregi",
+    "allActions": "Baardyq araketter",
+    "allEntities": "Baardyq obyektter",
+    "emptyTitle": "Audit cazuulary coq"
   },
   "errors": {
     "internal": "Servernin içki qatasy",

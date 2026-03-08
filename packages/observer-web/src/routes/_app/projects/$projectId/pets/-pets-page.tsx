@@ -7,7 +7,9 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/button";
 import { DataTable, type Column } from "@/components/data-table";
 import { EmptyState } from "@/components/empty-state";
-import { PawPrintIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
+import type { FilterDef } from "@/components/filter-bar";
+import { FilterBar } from "@/components/filter-bar";
+import { DownloadSimpleIcon, PawPrintIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { PersonName } from "@/components/person-name";
@@ -15,7 +17,9 @@ import { PetDrawer } from "@/components/pet-drawer";
 import { StatusBadge } from "@/components/status-badge";
 import { TagChips } from "@/components/tag-chips";
 import { TagFilter } from "@/components/tag-filter";
+import { useMyProjects } from "@/hooks/use-my-projects";
 import { usePets } from "@/hooks/use-pets";
+import { api } from "@/lib/api";
 import type { Pet } from "@/types/pet";
 
 export type PetStatus = "" | "registered" | "adopted" | "owner_found" | "needs_shelter" | "unknown";
@@ -54,12 +58,21 @@ export function PetsContent({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editPetId, setEditPetId] = useState<string | null>(null);
   const [tagIds, setTagIds] = useState<string[]>([]);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [exporting, setExporting] = useState(false);
+
+  const { data: projectsData } = useMyProjects();
+  const project = projectsData?.projects.find((p) => p.id === projectId);
+  const canExport = project?.role === "owner" || project?.role === "manager";
 
   const params = {
     page,
     per_page: 20,
     ...(statusFilter && { status: statusFilter }),
     ...(tagIds.length > 0 && { tag_ids: tagIds }),
+    ...(dateFrom && { created_from: dateFrom }),
+    ...(dateTo && { created_to: dateTo }),
   };
 
   const { data, isLoading } = usePets(projectId, params);
@@ -72,6 +85,18 @@ export function PetsContent({
     unknown: t("project.pets.statusUnknown"),
   };
 
+  const filters: FilterDef[] = [
+    {
+      type: "date-range",
+      fromValue: dateFrom,
+      toValue: dateTo,
+      onFromChange: setDateFrom,
+      onToChange: setDateTo,
+      fromPlaceholder: t("common.dateFrom"),
+      toPlaceholder: t("common.dateTo"),
+    },
+  ];
+
   function openCreate() {
     setEditPetId(null);
     setDrawerOpen(true);
@@ -80,6 +105,27 @@ export function PetsContent({
   function openEdit(petId: string) {
     setEditPetId(petId);
     setDrawerOpen(true);
+  }
+
+  async function handleExport() {
+    setExporting(true);
+    try {
+      const searchParams: Record<string, string> = {};
+      if (statusFilter) searchParams.status = statusFilter;
+      if (dateFrom) searchParams.created_from = dateFrom;
+      if (dateTo) searchParams.created_to = dateTo;
+
+      const blob = await api.get(`projects/${projectId}/export/pets`, { searchParams }).blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const date = new Date().toISOString().slice(0, 10);
+      a.download = `pets-${date}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
   }
 
   const columns: Column<Pet>[] = [
@@ -183,9 +229,24 @@ export function PetsContent({
         </Tabs.List>
       </Tabs.Root>
 
-      <div className="mb-4">
-        <TagFilter projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
-      </div>
+      <FilterBar
+        filters={filters}
+        trailing={
+          <div className="flex items-center gap-2">
+            <TagFilter projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
+            {canExport && (
+              <Button
+                variant="secondary"
+                icon={<DownloadSimpleIcon size={16} />}
+                onClick={handleExport}
+                disabled={exporting}
+              >
+                {t("common.export")}
+              </Button>
+            )}
+          </div>
+        }
+      />
 
       <DataTable
         columns={columns}

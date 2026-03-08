@@ -11,7 +11,10 @@
     "themeDark": "Dunkel",
     "themeLightHc": "Hell (HK)",
     "themeDarkHc": "Dunkel (HK)",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "export": "Exportieren",
+    "dateFrom": "Von",
+    "dateTo": "Bis"
   },
   "auth": {
     "loginTitle": "Anmelden",
@@ -42,7 +45,8 @@
     "currentPassword": "Aktuelles Passwort",
     "newPassword": "Neues Passwort",
     "passwordChanged": "Passwort erfolgreich geändert",
-    "wrongPassword": "Aktuelles Passwort ist falsch"
+    "wrongPassword": "Aktuelles Passwort ist falsch",
+    "appearance": "Darstellung"
   },
   "dashboard": {
     "greeting": "Hallo",
@@ -71,7 +75,8 @@
       "reference": "Stammdaten",
       "countries": "Länder",
       "offices": "Büros",
-      "categories": "Kategorien"
+      "categories": "Kategorien",
+      "auditLogs": "Prüfprotokoll"
     },
     "users": {
       "title": "Benutzer",
@@ -258,7 +263,9 @@
       "reports": "Berichte",
       "reportsPeople": "Personen",
       "reportsPets": "Haustiere",
-      "myStats": "Meine Statistik"
+      "reportsCustom": "Benutzerdefiniert",
+      "myStats": "Meine Statistik",
+      "auditLogs": "Prüfprotokoll"
     },
     "people": {
       "title": "Personen",
@@ -301,6 +308,8 @@
       "save": "Speichern",
       "saving": "Speichern...",
       "deleteConfirm": "Sind Sie sicher, dass Sie diese Person löschen möchten?",
+      "allSex": "Alle Geschlechter",
+      "allAgeGroups": "Alle Altersgruppen",
       "sexMale": "Männlich",
       "sexFemale": "Weiblich",
       "sexOther": "Divers",
@@ -426,6 +435,7 @@
       "referralCompleted": "Abgeschlossen",
       "referralDeclined": "Abgelehnt",
       "referralNoResponse": "Keine Antwort",
+      "allSpheres": "Alle Bereiche",
       "emptyTitle": "Keine Unterstützungseinträge",
       "emptyDescription": "Fügen Sie den ersten Eintrag hinzu"
     },
@@ -454,6 +464,7 @@
       "relationshipGrandparent": "Großelternteil",
       "relationshipOtherRelative": "Anderer Verwandter",
       "relationshipNonRelative": "Nicht verwandt",
+      "search": "Suchen...",
       "emptyTitle": "Keine Haushalte",
       "emptyDescription": "Erstellen Sie den ersten Haushalt"
     },
@@ -576,7 +587,43 @@
       "kpiConsultations": "Meine Beratungen",
       "kpiActiveCases": "Aktive Fälle",
       "kpiHouseholds": "Haushalte"
+    },
+    "customReport": {
+      "title": "Berichtsgenerator",
+      "metric": "Metrik",
+      "metric_events": "Ereignisse",
+      "metric_people": "Personen",
+      "metric_units": "Einheiten",
+      "metric_pets": "Haustiere",
+      "dimensions": "Gruppieren nach",
+      "generate": "Erstellen",
+      "generating": "Wird erstellt...",
+      "total": "Gesamt",
+      "noData": "Keine Daten für die aktuelle Auswahl",
+      "dimSex": "Geschlecht",
+      "dimAgeGroup": "Altersgruppe",
+      "dimRegion": "Region",
+      "dimConflictZone": "Konfliktzone",
+      "dimOffice": "Büro",
+      "dimSphere": "Bereich",
+      "dimCategory": "Kategorie",
+      "dimPersonTag": "Personen-Tag",
+      "dimPetTag": "Haustier-Tag",
+      "dimPetStatus": "Haustierstatus",
+      "supportType_legal": "Rechtlich",
+      "supportType_social": "Sozial"
     }
+  },
+  "audit": {
+    "title": "Prüfprotokoll",
+    "action": "Aktion",
+    "entityType": "Objekttyp",
+    "summary": "Zusammenfassung",
+    "timestamp": "Zeitstempel",
+    "ip": "IP-Adresse",
+    "allActions": "Alle Aktionen",
+    "allEntities": "Alle Objekte",
+    "emptyTitle": "Keine Prüfprotokolleinträge"
   },
   "errors": {
     "internal": "Interner Serverfehler",
