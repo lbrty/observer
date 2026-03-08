@@ -18,17 +18,19 @@ import (
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/storage"
 	"github.com/lbrty/observer/internal/ulid"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 // DocumentUseCase handles document metadata and file storage.
 type DocumentUseCase struct {
-	repo repository.DocumentRepository
-	fs   storage.FileStorage
+	repo    repository.DocumentRepository
+	fs      storage.FileStorage
+	auditUC *ucaudit.AuditUseCase
 }
 
 // NewDocumentUseCase creates a DocumentUseCase.
-func NewDocumentUseCase(repo repository.DocumentRepository, fs storage.FileStorage) *DocumentUseCase {
-	return &DocumentUseCase{repo: repo, fs: fs}
+func NewDocumentUseCase(repo repository.DocumentRepository, fs storage.FileStorage, auditUC *ucaudit.AuditUseCase) *DocumentUseCase {
+	return &DocumentUseCase{repo: repo, fs: fs, auditUC: auditUC}
 }
 
 // List returns all documents for a person.
@@ -155,6 +157,7 @@ func (uc *DocumentUseCase) Upload(ctx context.Context, projectID, personID, uplo
 		_ = uc.fs.Delete(ctx, fpath)
 		return nil, fmt.Errorf("create document: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "document.upload", "document", &d.ID, fmt.Sprintf("Uploaded document %s", d.Name))
 	dto := documentToDTO(d)
 	return &dto, nil
 }
@@ -169,6 +172,7 @@ func (uc *DocumentUseCase) Download(ctx context.Context, id string) (*DocumentDT
 	if err != nil {
 		return nil, nil, fmt.Errorf("open file: %w", err)
 	}
+	uc.auditUC.Record(ctx, &d.ProjectID, "document.download", "document", &d.ID, fmt.Sprintf("Downloaded document %s", d.Name))
 	dto := documentToDTO(d)
 	return &dto, rc, nil
 }
@@ -199,5 +203,6 @@ func (uc *DocumentUseCase) Delete(ctx context.Context, id string) error {
 		return fmt.Errorf("delete document: %w", err)
 	}
 	_ = uc.fs.Delete(ctx, d.Path)
+	uc.auditUC.Record(ctx, &d.ProjectID, "document.delete", "document", &d.ID, fmt.Sprintf("Deleted document %s", d.Name))
 	return nil
 }

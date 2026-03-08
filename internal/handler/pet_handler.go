@@ -134,7 +134,7 @@ func (h *PetHandler) Update(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/pets/{id} [delete]
 func (h *PetHandler) Delete(c *gin.Context) {
-	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
+	if err := h.uc.Delete(c.Request.Context(), c.Param("project_id"), c.Param("id")); err != nil {
 		HandleError(c, err)
 		return
 	}

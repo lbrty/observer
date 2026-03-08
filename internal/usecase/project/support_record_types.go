@@ -51,13 +51,16 @@ type UpdateSupportRecordInput struct {
 
 // ListSupportRecordsInput holds filter parameters.
 type ListSupportRecordsInput struct {
-	PersonID     *string `form:"person_id"`
-	ConsultantID *string `form:"consultant_id"`
-	OfficeID     *string `form:"office_id"`
-	Type         *string `form:"type"`
-	Sphere       *string `form:"sphere"`
-	Page         int     `form:"page"`
-	PerPage      int     `form:"per_page"`
+	PersonID       *string `form:"person_id"`
+	ConsultantID   *string `form:"consultant_id"`
+	OfficeID       *string `form:"office_id"`
+	Type           *string `form:"type"`
+	Sphere         *string `form:"sphere"`
+	ReferralStatus *string `form:"referral_status"`
+	DateFrom       *string `form:"date_from"`
+	DateTo         *string `form:"date_to"`
+	Page           int     `form:"page"`
+	PerPage        int     `form:"per_page"`
 }
 
 // ListSupportRecordsOutput holds paginated results.

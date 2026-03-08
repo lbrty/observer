@@ -148,7 +148,7 @@ func (h *PersonHandler) Update(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/people/{person_id} [delete]
 func (h *PersonHandler) Delete(c *gin.Context) {
-	if err := h.personUC.Delete(c.Request.Context(), c.Param("person_id")); err != nil {
+	if err := h.personUC.Delete(c.Request.Context(), c.Param("project_id"), c.Param("person_id")); err != nil {
 		HandleError(c, err)
 		return
 	}

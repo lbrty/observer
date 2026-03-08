@@ -60,6 +60,11 @@ func (m *AuthMiddleware) Authenticate() gin.HandlerFunc {
 
 		c.Set(string(CtxUserID), userID)
 		c.Set(string(CtxUserRole), claims.Role)
+
+		// Enrich request context with audit metadata for use cases.
+		ctx := WithAuditContext(c.Request.Context(), claims.UserID, c.ClientIP(), c.Request.UserAgent())
+		c.Request = c.Request.WithContext(ctx)
+
 		c.Next()
 	}
 }

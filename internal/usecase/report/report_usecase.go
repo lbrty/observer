@@ -157,6 +157,84 @@ func (uc *ReportUseCase) Generate(ctx context.Context, projectID string, input R
 	return out, nil
 }
 
+// validDimensions is the set of allowed grouping dimensions.
+var validDimensions = map[string]bool{
+	"sex":           true,
+	"age_group":     true,
+	"region":        true,
+	"conflict_zone": true,
+	"office":        true,
+	"sphere":        true,
+	"category":      true,
+	"person_tag":    true,
+	"pet_status":    true,
+	"pet_tag":       true,
+}
+
+// GenerateCustom runs the custom report builder.
+func (uc *ReportUseCase) GenerateCustom(ctx context.Context, projectID string, input CustomReportInput) (*CustomReportOutput, error) {
+	if len(input.GroupBy) == 0 {
+		return nil, fmt.Errorf("at least one dimension required in group_by")
+	}
+	if len(input.GroupBy) > 2 {
+		return nil, fmt.Errorf("at most 2 dimensions allowed in group_by")
+	}
+	for _, dim := range input.GroupBy {
+		if !validDimensions[dim] {
+			return nil, fmt.Errorf("unknown dimension: %s", dim)
+		}
+	}
+
+	f := domainreport.ReportFilter{ProjectID: projectID}
+
+	if input.DateFrom != "" {
+		t, err := time.Parse("2006-01-02", input.DateFrom)
+		if err != nil {
+			return nil, fmt.Errorf("parse date_from: %w", err)
+		}
+		f.DateFrom = &t
+	}
+	if input.DateTo != "" {
+		t, err := time.Parse("2006-01-02", input.DateTo)
+		if err != nil {
+			return nil, fmt.Errorf("parse date_to: %w", err)
+		}
+		f.DateTo = &t
+	}
+	if input.SupportType != "" {
+		f.SupportType = &input.SupportType
+	}
+	if input.OfficeID != "" {
+		f.OfficeID = &input.OfficeID
+	}
+	if input.CategoryID != "" {
+		f.CategoryID = &input.CategoryID
+	}
+	if input.CaseStatus != "" {
+		f.CaseStatus = &input.CaseStatus
+	}
+	if input.Sex != "" {
+		f.Sex = &input.Sex
+	}
+
+	results, total, err := uc.repo.CustomQuery(ctx, projectID, input.Metric, input.GroupBy, f)
+	if err != nil {
+		return nil, fmt.Errorf("custom report: %w", err)
+	}
+
+	rows := make([]CustomRow, len(results))
+	for i, r := range results {
+		rows[i] = CustomRow{Dimensions: r.Dimensions, Count: r.Count}
+	}
+
+	return &CustomReportOutput{
+		Metric:  input.Metric,
+		GroupBy: input.GroupBy,
+		Rows:    rows,
+		Total:   total,
+	}, nil
+}
+
 func toOutput(group string, rows []domainreport.CountResult) ReportOutput {
 	total := 0
 	dtos := make([]CountResultDTO, len(rows))

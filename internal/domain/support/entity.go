@@ -1,6 +1,8 @@
 package support
 
-import "time"
+import (
+	"time"
+)
 
 // SupportType represents the kind of support provided.
 type SupportType string
@@ -62,12 +64,15 @@ type Record struct {
 
 // RecordListFilter holds optional filters for listing support records.
 type RecordListFilter struct {
-	ProjectID    string
-	PersonID     *string
-	ConsultantID *string
-	OfficeID     *string
-	Type         *SupportType
-	Sphere       *SupportSphere
-	Page         int
-	PerPage      int
+	ProjectID      string
+	PersonID       *string
+	ConsultantID   *string
+	OfficeID       *string
+	Type           *SupportType
+	Sphere         *SupportSphere
+	ReferralStatus *ReferralStatus
+	DateFrom       *time.Time
+	DateTo         *time.Time
+	Page           int
+	PerPage        int
 }

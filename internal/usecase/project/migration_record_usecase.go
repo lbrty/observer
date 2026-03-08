@@ -7,16 +7,18 @@ import (
 	"github.com/lbrty/observer/internal/domain/migration"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 // MigrationRecordUseCase handles migration record operations.
 type MigrationRecordUseCase struct {
-	repo repository.MigrationRecordRepository
+	repo    repository.MigrationRecordRepository
+	auditUC *ucaudit.AuditUseCase
 }
 
 // NewMigrationRecordUseCase creates a MigrationRecordUseCase.
-func NewMigrationRecordUseCase(repo repository.MigrationRecordRepository) *MigrationRecordUseCase {
-	return &MigrationRecordUseCase{repo: repo}
+func NewMigrationRecordUseCase(repo repository.MigrationRecordRepository, auditUC *ucaudit.AuditUseCase) *MigrationRecordUseCase {
+	return &MigrationRecordUseCase{repo: repo, auditUC: auditUC}
 }
 
 // ListByPerson returns all migration records for a person.
@@ -43,7 +45,7 @@ func (uc *MigrationRecordUseCase) Get(ctx context.Context, id string) (*Migratio
 }
 
 // Create creates a new migration record.
-func (uc *MigrationRecordUseCase) Create(ctx context.Context, personID string, input CreateMigrationRecordInput) (*MigrationRecordDTO, error) {
+func (uc *MigrationRecordUseCase) Create(ctx context.Context, projectID, personID string, input CreateMigrationRecordInput) (*MigrationRecordDTO, error) {
 	r := &migration.Record{
 		ID:                 ulid.NewString(),
 		PersonID:           personID,
@@ -67,6 +69,7 @@ func (uc *MigrationRecordUseCase) Create(ctx context.Context, personID string, i
 	if err := uc.repo.Create(ctx, r); err != nil {
 		return nil, fmt.Errorf("create migration record: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "migration_record.create", "migration_record", &r.ID, fmt.Sprintf("Created migration record %s", r.ID))
 	dto := migrationRecordToDTO(r)
 	return &dto, nil
 }

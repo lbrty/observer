@@ -34,6 +34,33 @@ type StatusFlowDTO struct {
 	AvgDays    float64 `json:"avg_days"`
 }
 
+// CustomReportInput is the query input for the custom report builder.
+type CustomReportInput struct {
+	Metric      string   `form:"metric" binding:"required,oneof=events people units pets"`
+	GroupBy     []string `form:"group_by"`
+	DateFrom    string   `form:"date_from"`
+	DateTo      string   `form:"date_to"`
+	SupportType string   `form:"support_type"`
+	OfficeID    string   `form:"office_id"`
+	CategoryID  string   `form:"category_id"`
+	CaseStatus  string   `form:"case_status"`
+	Sex         string   `form:"sex"`
+}
+
+// CustomReportOutput wraps the custom report builder result.
+type CustomReportOutput struct {
+	Metric  string      `json:"metric"`
+	GroupBy []string    `json:"group_by"`
+	Rows    []CustomRow `json:"rows"`
+	Total   int         `json:"total"`
+}
+
+// CustomRow is a single row from the custom report builder.
+type CustomRow struct {
+	Dimensions map[string]string `json:"dimensions"`
+	Count      int               `json:"count"`
+}
+
 // FullReportOutput returns all report groups at once.
 type FullReportOutput struct {
 	Consultations ReportOutput    `json:"consultations"`

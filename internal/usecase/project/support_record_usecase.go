@@ -8,16 +8,18 @@ import (
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
 	"github.com/lbrty/observer/internal/usecase"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 // SupportRecordUseCase handles support record operations within a project.
 type SupportRecordUseCase struct {
-	repo repository.SupportRecordRepository
+	repo    repository.SupportRecordRepository
+	auditUC *ucaudit.AuditUseCase
 }
 
 // NewSupportRecordUseCase creates a SupportRecordUseCase.
-func NewSupportRecordUseCase(repo repository.SupportRecordRepository) *SupportRecordUseCase {
-	return &SupportRecordUseCase{repo: repo}
+func NewSupportRecordUseCase(repo repository.SupportRecordRepository, auditUC *ucaudit.AuditUseCase) *SupportRecordUseCase {
+	return &SupportRecordUseCase{repo: repo, auditUC: auditUC}
 }
 
 // List returns paginated support records.
@@ -37,6 +39,16 @@ func (uc *SupportRecordUseCase) List(ctx context.Context, projectID string, inpu
 	if input.Sphere != nil {
 		s := support.SupportSphere(*input.Sphere)
 		filter.Sphere = &s
+	}
+	if input.ReferralStatus != nil {
+		rs := support.ReferralStatus(*input.ReferralStatus)
+		filter.ReferralStatus = &rs
+	}
+	if err := parseDateField(input.DateFrom, &filter.DateFrom); err != nil {
+		return nil, fmt.Errorf("invalid date_from: %w", err)
+	}
+	if err := parseDateField(input.DateTo, &filter.DateTo); err != nil {
+		return nil, fmt.Errorf("invalid date_to: %w", err)
 	}
 
 	records, total, err := uc.repo.List(ctx, filter)
@@ -98,6 +110,7 @@ func (uc *SupportRecordUseCase) Create(ctx context.Context, projectID string, re
 	if err := uc.repo.Create(ctx, r); err != nil {
 		return nil, fmt.Errorf("create support record: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "support_record.create", "support_record", &r.ID, fmt.Sprintf("Created support record %s", r.ID))
 	dto := supportRecordToDTO(r)
 	return &dto, nil
 }
@@ -144,9 +157,10 @@ func (uc *SupportRecordUseCase) Update(ctx context.Context, id string, input Upd
 }
 
 // Delete removes a support record.
-func (uc *SupportRecordUseCase) Delete(ctx context.Context, id string) error {
+func (uc *SupportRecordUseCase) Delete(ctx context.Context, projectID, id string) error {
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete support record: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "support_record.delete", "support_record", &id, fmt.Sprintf("Deleted support record %s", id))
 	return nil
 }

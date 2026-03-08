@@ -14,6 +14,7 @@ import (
 	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 	ucmy "github.com/lbrty/observer/internal/usecase/my"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 	ucreport "github.com/lbrty/observer/internal/usecase/report"
 )
 
@@ -66,6 +67,9 @@ type Container struct {
 	PetUC             *ucproject.PetUseCase
 	PetTagUC          *ucproject.PetTagUseCase
 
+	// Audit Use Case
+	AuditUC *ucaudit.AuditUseCase
+
 	// Report Use Cases
 	ReportUC    *ucreport.ReportUseCase
 	PetReportUC *ucreport.PetReportUseCase
@@ -111,6 +115,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	documentRepo := repository.NewDocumentRepository(sqlxDB)
 	petRepo := repository.NewPetRepository(sqlxDB)
 	petTagRepo := repository.NewPetTagRepository(sqlxDB)
+	auditRepo := repository.NewAuditLogRepository(sqlxDB)
 	reportRepo := repository.NewReportRepository(sqlxDB)
 	petReportRepo := repository.NewPetReportRepository(sqlxDB)
 
@@ -128,9 +133,11 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 		cfg.JWT.Issuer,
 	)
 
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+
 	authUC := ucauth.NewAuthUseCase(userRepo, credRepo, sessionRepo, mfaRepo, hasher, tokenGen)
-	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher)
-	permUC := ucadmin.NewPermissionUseCase(permCRUDRepo, userRepo)
+	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher, auditUC)
+	permUC := ucadmin.NewPermissionUseCase(permCRUDRepo, userRepo, auditUC)
 
 	countryUC := ucadmin.NewCountryUseCase(countryRepo)
 	stateUC := ucadmin.NewStateUseCase(stateRepo)
@@ -140,17 +147,17 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 
 	myProjectsUC := ucmy.NewMyProjectsUseCase(permCRUDRepo, projectRepo)
 
-	projectUC := ucadmin.NewProjectUseCase(projectRepo, permCRUDRepo)
+	projectUC := ucadmin.NewProjectUseCase(projectRepo, permCRUDRepo, auditUC)
 	tagUC := ucproject.NewTagUseCase(tagRepo)
-	personUC := ucproject.NewPersonUseCase(personRepo, personTagRepo)
+	personUC := ucproject.NewPersonUseCase(personRepo, personTagRepo, auditUC)
 	personCategoryUC := ucproject.NewPersonCategoryUseCase(personCatRepo)
 	personTagUC := ucproject.NewPersonTagUseCase(personTagRepo)
-	supportRecordUC := ucproject.NewSupportRecordUseCase(supportRepo)
-	migrationRecordUC := ucproject.NewMigrationRecordUseCase(migrationRepo)
-	householdUC := ucproject.NewHouseholdUseCase(householdRepo, householdMemberRepo)
-	noteUC := ucproject.NewNoteUseCase(noteRepo)
-	documentUC := ucproject.NewDocumentUseCase(documentRepo, fileStorage)
-	petUC := ucproject.NewPetUseCase(petRepo, petTagRepo)
+	supportRecordUC := ucproject.NewSupportRecordUseCase(supportRepo, auditUC)
+	migrationRecordUC := ucproject.NewMigrationRecordUseCase(migrationRepo, auditUC)
+	householdUC := ucproject.NewHouseholdUseCase(householdRepo, householdMemberRepo, auditUC)
+	noteUC := ucproject.NewNoteUseCase(noteRepo, auditUC)
+	documentUC := ucproject.NewDocumentUseCase(documentRepo, fileStorage, auditUC)
+	petUC := ucproject.NewPetUseCase(petRepo, petTagRepo, auditUC)
 	petTagUC := ucproject.NewPetTagUseCase(petTagRepo)
 	reportUC := ucreport.NewReportUseCase(reportRepo)
 	petReportUC := ucreport.NewPetReportUseCase(petReportRepo)
@@ -191,6 +198,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 		DocumentUC:        documentUC,
 		PetUC:             petUC,
 		PetTagUC:          petTagUC,
+		AuditUC:           auditUC,
 		ReportUC:          reportUC,
 		PetReportUC:       petReportUC,
 		ReportRepo:        reportRepo,

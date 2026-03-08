@@ -22,6 +22,12 @@ type CountResult struct {
 	Count int    `json:"count" db:"count"`
 }
 
+// CustomResult represents a single row from the custom report builder.
+type CustomResult struct {
+	Dimensions map[string]string `json:"dimensions"`
+	Count      int               `json:"count"`
+}
+
 // PetReportFilter contains filter parameters for pet reports.
 type PetReportFilter struct {
 	ProjectID string

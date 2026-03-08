@@ -36,3 +36,22 @@ func (h *ReportHandler) Generate(c *gin.Context) {
 
 	c.JSON(http.StatusOK, out)
 }
+
+// GenerateCustom handles GET /projects/:project_id/reports/custom.
+func (h *ReportHandler) GenerateCustom(c *gin.Context) {
+	projectID := c.Param("project_id")
+
+	var input ucreport.CustomReportInput
+	if err := c.ShouldBindQuery(&input); err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		return
+	}
+
+	out, err := h.uc.GenerateCustom(c.Request.Context(), projectID, input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, out)
+}

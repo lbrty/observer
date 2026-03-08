@@ -76,6 +76,21 @@ func (r *supportRecordRepo) List(ctx context.Context, filter support.RecordListF
 		where = append(where, "sphere = $"+strconv.Itoa(ix))
 		args = append(args, string(*filter.Sphere))
 	}
+	if filter.ReferralStatus != nil {
+		ix++
+		where = append(where, "referral_status = $"+strconv.Itoa(ix))
+		args = append(args, string(*filter.ReferralStatus))
+	}
+	if filter.DateFrom != nil {
+		ix++
+		where = append(where, "provided_at >= $"+strconv.Itoa(ix))
+		args = append(args, *filter.DateFrom)
+	}
+	if filter.DateTo != nil {
+		ix++
+		where = append(where, "provided_at <= $"+strconv.Itoa(ix))
+		args = append(args, *filter.DateTo)
+	}
 
 	whereClause := "WHERE " + strings.Join(where, " AND ")
 

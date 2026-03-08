@@ -74,6 +74,11 @@ type PersonListFilter struct {
 	ConsultantID *string
 	OfficeID     *string
 	CaseStatus   *CaseStatus
+	Sex          *Sex
+	AgeGroup     *AgeGroup
+	CategoryID   *string
+	RegionID     *string
+	HasPets      *bool
 	Search       *string
 	TagIDs       []string
 	Page         int

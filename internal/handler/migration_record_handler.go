@@ -74,13 +74,14 @@ func (h *MigrationRecordHandler) Get(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/people/{person_id}/migration-records [post]
 func (h *MigrationRecordHandler) Create(c *gin.Context) {
+	projectID := c.Param("project_id")
 	personID := c.Param("person_id")
 	var input ucproject.CreateMigrationRecordInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
-	out, err := h.uc.Create(c.Request.Context(), personID, input)
+	out, err := h.uc.Create(c.Request.Context(), projectID, personID, input)
 	if err != nil {
 		HandleError(c, err)
 		return

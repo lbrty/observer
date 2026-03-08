@@ -139,7 +139,7 @@ func (h *SupportRecordHandler) Update(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/support-records/{id} [delete]
 func (h *SupportRecordHandler) Delete(c *gin.Context) {
-	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
+	if err := h.uc.Delete(c.Request.Context(), c.Param("project_id"), c.Param("id")); err != nil {
 		HandleError(c, err)
 		return
 	}

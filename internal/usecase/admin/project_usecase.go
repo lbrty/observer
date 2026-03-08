@@ -9,17 +9,19 @@ import (
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
 	"github.com/lbrty/observer/internal/usecase"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 // ProjectUseCase handles CRUD operations for projects.
 type ProjectUseCase struct {
 	repo     repository.ProjectRepository
 	permRepo repository.PermissionRepository
+	auditUC  *ucaudit.AuditUseCase
 }
 
 // NewProjectUseCase creates a ProjectUseCase.
-func NewProjectUseCase(repo repository.ProjectRepository, permRepo repository.PermissionRepository) *ProjectUseCase {
-	return &ProjectUseCase{repo: repo, permRepo: permRepo}
+func NewProjectUseCase(repo repository.ProjectRepository, permRepo repository.PermissionRepository, auditUC *ucaudit.AuditUseCase) *ProjectUseCase {
+	return &ProjectUseCase{repo: repo, permRepo: permRepo, auditUC: auditUC}
 }
 
 // List returns paginated projects with optional filters.
@@ -128,6 +130,7 @@ func (uc *ProjectUseCase) Create(ctx context.Context, ownerID string, input Crea
 	if err := uc.repo.Create(ctx, p); err != nil {
 		return nil, fmt.Errorf("create project: %w", err)
 	}
+	uc.auditUC.Record(ctx, &p.ID, "project.create", "project", &p.ID, fmt.Sprintf("Created project %s", p.Name))
 	dto := projectToDTO(p)
 	return &dto, nil
 }

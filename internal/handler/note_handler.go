@@ -53,6 +53,7 @@ func (h *NoteHandler) List(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/people/{person_id}/notes [post]
 func (h *NoteHandler) Create(c *gin.Context) {
+	projectID := c.Param("project_id")
 	personID := c.Param("person_id")
 	var input ucproject.CreateNoteInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -60,7 +61,7 @@ func (h *NoteHandler) Create(c *gin.Context) {
 		return
 	}
 	userID, _ := middleware.UserIDFrom(c)
-	out, err := h.uc.Create(c.Request.Context(), personID, userID.String(), input)
+	out, err := h.uc.Create(c.Request.Context(), projectID, personID, userID.String(), input)
 	if err != nil {
 		internalError(c, "create note", err)
 		return
@@ -96,7 +97,7 @@ func (h *NoteHandler) Update(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/people/{person_id}/notes/{id} [delete]
 func (h *NoteHandler) Delete(c *gin.Context) {
-	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
+	if err := h.uc.Delete(c.Request.Context(), c.Param("project_id"), c.Param("id")); err != nil {
 		HandleError(c, err)
 		return
 	}

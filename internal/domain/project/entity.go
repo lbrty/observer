@@ -35,6 +35,7 @@ const (
 	ActionUpdate        Action = "update"
 	ActionDelete        Action = "delete"
 	ActionManageMembers Action = "manage_members"
+	ActionExport        Action = "export"
 )
 
 // MinRoleForAction maps each action to its minimum required project role.
@@ -44,6 +45,7 @@ var MinRoleForAction = map[Action]ProjectRole{
 	ActionUpdate:        ProjectRoleConsultant,
 	ActionDelete:        ProjectRoleManager,
 	ActionManageMembers: ProjectRoleManager,
+	ActionExport:        ProjectRoleConsultant,
 }
 
 // Permission holds a user's project-level role and sensitivity flags.

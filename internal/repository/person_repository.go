@@ -69,6 +69,46 @@ func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) (
 		where = append(where, "case_status = $"+strconv.Itoa(ix))
 		args = append(args, string(*filter.CaseStatus))
 	}
+	if filter.Sex != nil {
+		ix++
+		where = append(where, "sex = $"+strconv.Itoa(ix))
+		args = append(args, string(*filter.Sex))
+	}
+	if filter.AgeGroup != nil {
+		ix++
+		where = append(where, "(age_group = $"+strconv.Itoa(ix)+
+			" OR (age_group IS NULL AND birth_date IS NOT NULL AND "+
+			"CASE "+
+			"WHEN EXTRACT(YEAR FROM age(birth_date)) < 1 THEN 'infant' "+
+			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 1 AND 2 THEN 'toddler' "+
+			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 3 AND 5 THEN 'pre_school' "+
+			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 6 AND 11 THEN 'middle_childhood' "+
+			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 12 AND 14 THEN 'young_teen' "+
+			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 15 AND 17 THEN 'teenager' "+
+			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 18 AND 24 THEN 'young_adult' "+
+			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 25 AND 39 THEN 'early_adult' "+
+			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 40 AND 59 THEN 'middle_aged_adult' "+
+			"WHEN EXTRACT(YEAR FROM age(birth_date)) >= 60 THEN 'old_adult' "+
+			"ELSE 'unknown' END = $"+strconv.Itoa(ix)+"))")
+		args = append(args, string(*filter.AgeGroup))
+	}
+	if filter.CategoryID != nil {
+		ix++
+		where = append(where, "id IN (SELECT person_id FROM person_categories WHERE category_id = $"+strconv.Itoa(ix)+")")
+		args = append(args, *filter.CategoryID)
+	}
+	if filter.RegionID != nil {
+		ix++
+		where = append(where, "current_place_id IN (SELECT id FROM places WHERE state_id = $"+strconv.Itoa(ix)+")")
+		args = append(args, *filter.RegionID)
+	}
+	if filter.HasPets != nil {
+		if *filter.HasPets {
+			where = append(where, "id IN (SELECT DISTINCT owner_id FROM pets WHERE owner_id IS NOT NULL)")
+		} else {
+			where = append(where, "id NOT IN (SELECT DISTINCT owner_id FROM pets WHERE owner_id IS NOT NULL)")
+		}
+	}
 	if filter.Search != nil && *filter.Search != "" {
 		ix++
 		where = append(where, "(first_name % $"+strconv.Itoa(ix)+" OR last_name % $"+strconv.Itoa(ix)+")")

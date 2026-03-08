@@ -177,9 +177,12 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		adminAny.GET("/projects/:project_id/permissions", permHandler.ListPermissions)
 	}
 
-	// Admin-only write endpoints
+	// Admin-only endpoints
+	auditHandler := handler.NewAuditHandler(container.AuditUC)
 	admin := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin))
 	{
+		admin.GET("/audit-logs", auditHandler.ListAll)
+
 		admin.POST("/users", adminHandler.CreateUser)
 		admin.PATCH("/users/:id", adminHandler.UpdateUser)
 		admin.POST("/users/:id/reset-password", adminHandler.ResetPassword)
@@ -214,6 +217,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	petHandler := handler.NewPetHandler(container.PetUC, container.PetTagUC)
 	reportHandler := handler.NewReportHandler(container.ReportUC)
 	petReportHandler := handler.NewPetReportHandler(container.PetReportUC)
+	exportHandler := handler.NewExportHandler(container.PersonUC, container.SupportRecordUC, container.PetUC, container.HouseholdUC, container.AuditUC)
 
 	proj := s.router.Group("/projects/:project_id", authMW.Authenticate())
 	{
@@ -241,6 +245,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			read.GET("/pets/:id", petHandler.Get)
 			read.GET("/pets/:id/tags", petHandler.ListTags)
 			read.GET("/reports", reportHandler.Generate)
+			read.GET("/reports/custom", reportHandler.GenerateCustom)
 			read.GET("/reports/pets", petReportHandler.Generate)
 		}
 
@@ -274,9 +279,19 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			update.PATCH("/pets/:id", petHandler.Update)
 		}
 
-		// Delete-level access
+		// Export-level access (consultant+)
+		export := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionExport))
+		{
+			export.GET("/export/people", exportHandler.ExportPeople)
+			export.GET("/export/support-records", exportHandler.ExportSupportRecords)
+			export.GET("/export/pets", exportHandler.ExportPets)
+			export.GET("/export/households", exportHandler.ExportHouseholds)
+		}
+
+		// Delete-level access (manager+)
 		del := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionDelete))
 		{
+			del.GET("/audit-logs", auditHandler.ListByProject)
 			del.DELETE("/tags/:id", tagHandler.Delete)
 			del.DELETE("/people/:person_id", personHandler.Delete)
 			del.DELETE("/people/:person_id/notes/:id", noteHandler.Delete)

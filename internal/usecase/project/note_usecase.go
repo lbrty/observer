@@ -7,16 +7,18 @@ import (
 	"github.com/lbrty/observer/internal/domain/note"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 // NoteUseCase handles person note operations (append-only minus delete).
 type NoteUseCase struct {
-	repo repository.PersonNoteRepository
+	repo    repository.PersonNoteRepository
+	auditUC *ucaudit.AuditUseCase
 }
 
 // NewNoteUseCase creates a NoteUseCase.
-func NewNoteUseCase(repo repository.PersonNoteRepository) *NoteUseCase {
-	return &NoteUseCase{repo: repo}
+func NewNoteUseCase(repo repository.PersonNoteRepository, auditUC *ucaudit.AuditUseCase) *NoteUseCase {
+	return &NoteUseCase{repo: repo, auditUC: auditUC}
 }
 
 // List returns all notes for a person.
@@ -33,7 +35,7 @@ func (uc *NoteUseCase) List(ctx context.Context, personID string) ([]NoteDTO, er
 }
 
 // Create creates a new note. authorID is auto-set from auth context.
-func (uc *NoteUseCase) Create(ctx context.Context, personID, authorID string, input CreateNoteInput) (*NoteDTO, error) {
+func (uc *NoteUseCase) Create(ctx context.Context, projectID, personID, authorID string, input CreateNoteInput) (*NoteDTO, error) {
 	n := &note.Note{
 		ID:       ulid.NewString(),
 		PersonID: personID,
@@ -43,6 +45,7 @@ func (uc *NoteUseCase) Create(ctx context.Context, personID, authorID string, in
 	if err := uc.repo.Create(ctx, n); err != nil {
 		return nil, fmt.Errorf("create note: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "note.create", "note", &n.ID, fmt.Sprintf("Created note %s", n.ID))
 	dto := noteToDTO(n)
 	return &dto, nil
 }
@@ -62,9 +65,10 @@ func (uc *NoteUseCase) Update(ctx context.Context, id string, input UpdateNoteIn
 }
 
 // Delete removes a note.
-func (uc *NoteUseCase) Delete(ctx context.Context, id string) error {
+func (uc *NoteUseCase) Delete(ctx context.Context, projectID, id string) error {
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete note: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "note.delete", "note", &id, fmt.Sprintf("Deleted note %s", id))
 	return nil
 }

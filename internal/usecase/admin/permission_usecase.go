@@ -10,17 +10,19 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/repository"
 	iulid "github.com/lbrty/observer/internal/ulid"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 // PermissionUseCase handles project permission management.
 type PermissionUseCase struct {
 	permRepo repository.PermissionRepository
 	userRepo repository.UserRepository
+	auditUC  *ucaudit.AuditUseCase
 }
 
 // NewPermissionUseCase creates a PermissionUseCase.
-func NewPermissionUseCase(permRepo repository.PermissionRepository, userRepo repository.UserRepository) *PermissionUseCase {
-	return &PermissionUseCase{permRepo: permRepo, userRepo: userRepo}
+func NewPermissionUseCase(permRepo repository.PermissionRepository, userRepo repository.UserRepository, auditUC *ucaudit.AuditUseCase) *PermissionUseCase {
+	return &PermissionUseCase{permRepo: permRepo, userRepo: userRepo, auditUC: auditUC}
 }
 
 // List returns permissions for a project with user details.
@@ -103,6 +105,7 @@ func (uc *PermissionUseCase) Assign(ctx context.Context, projectID string, input
 	if err := uc.permRepo.Create(ctx, perm); err != nil {
 		return nil, fmt.Errorf("assign permission: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "permission.grant", "permission", &perm.ID, fmt.Sprintf("Granted %s to user %s", input.Role, input.UserID))
 
 	dto := permToDTO(perm)
 	return &dto, nil
@@ -141,10 +144,11 @@ func (uc *PermissionUseCase) Update(ctx context.Context, id string, input Update
 }
 
 // Revoke deletes a project permission by ID.
-func (uc *PermissionUseCase) Revoke(ctx context.Context, id string) error {
+func (uc *PermissionUseCase) Revoke(ctx context.Context, projectID, id string) error {
 	if err := uc.permRepo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("revoke permission: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "permission.revoke", "permission", &id, fmt.Sprintf("Revoked permission %s", id))
 	return nil
 }
 

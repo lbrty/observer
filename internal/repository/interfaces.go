@@ -5,6 +5,7 @@ import (
 
 	"github.com/oklog/ulid/v2"
 
+	"github.com/lbrty/observer/internal/domain/audit"
 	"github.com/lbrty/observer/internal/domain/auth"
 	"github.com/lbrty/observer/internal/domain/document"
 	"github.com/lbrty/observer/internal/domain/household"
@@ -20,7 +21,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 )
 
-//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/repository UserRepository,CredentialsRepository,MFARepository,VerificationTokenRepository,SessionRepository,PermissionLoader,PermissionRepository,ProjectRepository,CountryRepository,StateRepository,PlaceRepository,OfficeRepository,CategoryRepository,TagRepository,PersonRepository,PersonCategoryRepository,PersonTagRepository,SupportRecordRepository,MigrationRecordRepository,HouseholdRepository,HouseholdMemberRepository,PersonNoteRepository,DocumentRepository,PetRepository,PetTagRepository,PetReportRepository,ReportRepository
+//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/repository UserRepository,CredentialsRepository,MFARepository,VerificationTokenRepository,SessionRepository,PermissionLoader,PermissionRepository,ProjectRepository,CountryRepository,StateRepository,PlaceRepository,OfficeRepository,CategoryRepository,TagRepository,PersonRepository,PersonCategoryRepository,PersonTagRepository,SupportRecordRepository,MigrationRecordRepository,HouseholdRepository,HouseholdMemberRepository,PersonNoteRepository,DocumentRepository,PetRepository,PetTagRepository,PetReportRepository,ReportRepository,AuditLogRepository
 
 // UserRepository defines persistence operations for users.
 type UserRepository interface {
@@ -239,6 +240,12 @@ type PetReportRepository interface {
 	CountByStatusByMonth(ctx context.Context, f report.PetReportFilter) ([]report.MonthlyStatusCount, error)
 }
 
+// AuditLogRepository defines persistence operations for audit logs.
+type AuditLogRepository interface {
+	Log(ctx context.Context, entry audit.Entry) error
+	List(ctx context.Context, filter audit.Filter) ([]audit.Entry, int, error)
+}
+
 // ReportRepository provides aggregation queries for ADR-005 reports.
 type ReportRepository interface {
 	CountConsultations(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
@@ -255,4 +262,5 @@ type ReportRepository interface {
 	CountFamilyUnits(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 	CountByCaseStatus(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 	StatusFlowReport(ctx context.Context, f report.ReportFilter) ([]report.StatusFlow, error)
+	CustomQuery(ctx context.Context, projectID string, metric string, groupBy []string, filter report.ReportFilter) ([]report.CustomResult, int, error)
 }

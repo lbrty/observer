@@ -11,6 +11,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/usecase"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 	iulid "github.com/lbrty/observer/internal/ulid"
 )
 
@@ -24,6 +25,7 @@ type UserUseCase struct {
 	userRepo repository.UserRepository
 	credRepo repository.CredentialsRepository
 	hasher   crypto.PasswordHasher
+	auditUC  *ucaudit.AuditUseCase
 }
 
 // NewUserUseCase creates a UserUseCase.
@@ -31,11 +33,13 @@ func NewUserUseCase(
 	userRepo repository.UserRepository,
 	credRepo repository.CredentialsRepository,
 	hasher crypto.PasswordHasher,
+	auditUC *ucaudit.AuditUseCase,
 ) *UserUseCase {
 	return &UserUseCase{
 		userRepo: userRepo,
 		credRepo: credRepo,
 		hasher:   hasher,
+		auditUC:  auditUC,
 	}
 }
 
@@ -154,6 +158,8 @@ func (uc *UserUseCase) Update(ctx context.Context, id ulid.ULID, input UpdateUse
 		return nil, fmt.Errorf("get user for update: %w", err)
 	}
 
+	oldRole := u.Role
+
 	if input.FirstName != nil {
 		u.FirstName = *input.FirstName
 	}
@@ -185,6 +191,11 @@ func (uc *UserUseCase) Update(ctx context.Context, id ulid.ULID, input UpdateUse
 
 	if err := uc.userRepo.Update(ctx, u); err != nil {
 		return nil, fmt.Errorf("update user: %w", err)
+	}
+
+	if u.Role != oldRole {
+		uid := id.String()
+		uc.auditUC.Record(ctx, nil, "user.role_change", "user", &uid, fmt.Sprintf("Changed role from %s to %s for user %s", oldRole, u.Role, uid))
 	}
 
 	dto := userToDTO(u)

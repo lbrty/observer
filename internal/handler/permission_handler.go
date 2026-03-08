@@ -122,9 +122,10 @@ func (h *PermissionHandler) UpdatePermission(c *gin.Context) {
 // @Security BearerAuth
 // @Router /admin/projects/{project_id}/permissions/{id} [delete]
 func (h *PermissionHandler) RevokePermission(c *gin.Context) {
+	projectID := c.Param("project_id")
 	id := c.Param("id")
 
-	if err := h.permUC.Revoke(c.Request.Context(), id); err != nil {
+	if err := h.permUC.Revoke(c.Request.Context(), projectID, id); err != nil {
 		HandleError(c, err)
 		return
 	}

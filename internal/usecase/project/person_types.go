@@ -82,6 +82,11 @@ type ListPeopleInput struct {
 	ConsultantID *string  `form:"consultant_id"`
 	OfficeID     *string  `form:"office_id"`
 	CaseStatus   *string  `form:"case_status"`
+	Sex          *string  `form:"sex"`
+	AgeGroup     *string  `form:"age_group"`
+	CategoryID   *string  `form:"category_id"`
+	RegionID     *string  `form:"region_id"`
+	HasPets      *bool    `form:"has_pets"`
 	Search       *string  `form:"search"`
 	TagIDs       []string `form:"tag_ids"`
 	Page         int      `form:"page"`

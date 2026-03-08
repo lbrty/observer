@@ -10,17 +10,19 @@ import (
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
 	"github.com/lbrty/observer/internal/usecase"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 // PersonUseCase handles person operations within a project.
 type PersonUseCase struct {
 	repo    repository.PersonRepository
 	tagRepo repository.PersonTagRepository
+	auditUC *ucaudit.AuditUseCase
 }
 
 // NewPersonUseCase creates a PersonUseCase.
-func NewPersonUseCase(repo repository.PersonRepository, tagRepo repository.PersonTagRepository) *PersonUseCase {
-	return &PersonUseCase{repo: repo, tagRepo: tagRepo}
+func NewPersonUseCase(repo repository.PersonRepository, tagRepo repository.PersonTagRepository, auditUC *ucaudit.AuditUseCase) *PersonUseCase {
+	return &PersonUseCase{repo: repo, tagRepo: tagRepo, auditUC: auditUC}
 }
 
 // List returns paginated people with sensitivity-aware redaction.
@@ -29,6 +31,9 @@ func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListP
 		ProjectID:    projectID,
 		ConsultantID: input.ConsultantID,
 		OfficeID:     input.OfficeID,
+		CategoryID:   input.CategoryID,
+		RegionID:     input.RegionID,
+		HasPets:      input.HasPets,
 		Search:       input.Search,
 		TagIDs:       input.TagIDs,
 		Page:         input.Page,
@@ -37,6 +42,14 @@ func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListP
 	if input.CaseStatus != nil {
 		s := person.CaseStatus(*input.CaseStatus)
 		filter.CaseStatus = &s
+	}
+	if input.Sex != nil {
+		s := person.Sex(*input.Sex)
+		filter.Sex = &s
+	}
+	if input.AgeGroup != nil {
+		ag := person.AgeGroup(*input.AgeGroup)
+		filter.AgeGroup = &ag
 	}
 
 	people, total, err := uc.repo.List(ctx, filter)
@@ -140,6 +153,7 @@ func (uc *PersonUseCase) Create(ctx context.Context, projectID string, input Cre
 	if err := uc.repo.Create(ctx, p); err != nil {
 		return nil, fmt.Errorf("create person: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "person.create", "person", &p.ID, fmt.Sprintf("Created person %s", p.ID))
 	dto := personToDTO(p, true, true)
 	return &dto, nil
 }
@@ -221,10 +235,11 @@ func (uc *PersonUseCase) Update(ctx context.Context, id string, input UpdatePers
 }
 
 // Delete removes a person.
-func (uc *PersonUseCase) Delete(ctx context.Context, id string) error {
+func (uc *PersonUseCase) Delete(ctx context.Context, projectID, id string) error {
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete person: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "person.delete", "person", &id, fmt.Sprintf("Deleted person %s", id))
 	return nil
 }
 

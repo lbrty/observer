@@ -8,17 +8,19 @@ import (
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
 	"github.com/lbrty/observer/internal/usecase"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 // HouseholdUseCase handles household operations within a project.
 type HouseholdUseCase struct {
 	repo       repository.HouseholdRepository
 	memberRepo repository.HouseholdMemberRepository
+	auditUC    *ucaudit.AuditUseCase
 }
 
 // NewHouseholdUseCase creates a HouseholdUseCase.
-func NewHouseholdUseCase(repo repository.HouseholdRepository, memberRepo repository.HouseholdMemberRepository) *HouseholdUseCase {
-	return &HouseholdUseCase{repo: repo, memberRepo: memberRepo}
+func NewHouseholdUseCase(repo repository.HouseholdRepository, memberRepo repository.HouseholdMemberRepository, auditUC *ucaudit.AuditUseCase) *HouseholdUseCase {
+	return &HouseholdUseCase{repo: repo, memberRepo: memberRepo, auditUC: auditUC}
 }
 
 // List returns paginated households with members.
@@ -74,6 +76,7 @@ func (uc *HouseholdUseCase) Create(ctx context.Context, projectID string, input 
 	if err := uc.repo.Create(ctx, h); err != nil {
 		return nil, fmt.Errorf("create household: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "household.create", "household", &h.ID, fmt.Sprintf("Created household %s", h.ID))
 	dto := householdToDTO(h)
 	dto.Members = []HouseholdMemberDTO{}
 	return &dto, nil
@@ -99,10 +102,11 @@ func (uc *HouseholdUseCase) Update(ctx context.Context, id string, input UpdateH
 }
 
 // Delete removes a household.
-func (uc *HouseholdUseCase) Delete(ctx context.Context, id string) error {
+func (uc *HouseholdUseCase) Delete(ctx context.Context, projectID, id string) error {
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete household: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "household.delete", "household", &id, fmt.Sprintf("Deleted household %s", id))
 	return nil
 }
 
