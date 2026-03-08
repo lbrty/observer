@@ -18,17 +18,18 @@ const (
 
 // User is the core user domain entity.
 type User struct {
-	ID         ulid.ULID
-	FirstName  string
-	LastName   string
-	Email      string
-	Phone      string
-	OfficeID   *string
-	Role       Role
-	IsVerified bool
-	IsActive   bool
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID            ulid.ULID
+	FirstName     string
+	LastName      string
+	Email         string
+	Phone         string
+	OfficeID      *string
+	Role          Role
+	IsVerified    bool
+	IsActive      bool
+	DeactivatedAt *time.Time
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 }
 
 // UserListFilter controls pagination and filtering for user listing.
@@ -43,6 +44,9 @@ type UserListFilter struct {
 // CanLogin returns an error if the user is not allowed to log in.
 func (u *User) CanLogin() error {
 	if !u.IsActive {
+		return ErrUserNotActive
+	}
+	if u.DeactivatedAt != nil {
 		return ErrUserNotActive
 	}
 	return nil

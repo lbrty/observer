@@ -46,15 +46,16 @@ type CreateUserInput struct {
 
 // UserDTO is the admin-facing user representation.
 type UserDTO struct {
-	ID         string    `json:"id"`
-	FirstName  string    `json:"first_name"`
-	LastName   string    `json:"last_name"`
-	Email      string    `json:"email"`
-	Phone      string    `json:"phone"`
-	OfficeID   *string   `json:"office_id,omitempty"`
-	Role       string    `json:"role"`
-	IsVerified bool      `json:"is_verified"`
-	IsActive   bool      `json:"is_active"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	ID            string     `json:"id"`
+	FirstName     string     `json:"first_name"`
+	LastName      string     `json:"last_name"`
+	Email         string     `json:"email"`
+	Phone         string     `json:"phone"`
+	OfficeID      *string    `json:"office_id,omitempty"`
+	Role          string     `json:"role"`
+	IsVerified    bool       `json:"is_verified"`
+	IsActive      bool       `json:"is_active"`
+	DeactivatedAt *time.Time `json:"deactivated_at"`
+	CreatedAt     time.Time  `json:"created_at"`
+	UpdatedAt     time.Time  `json:"updated_at"`
 }

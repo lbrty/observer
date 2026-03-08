@@ -23,7 +23,7 @@ func setupAuthContext(c *gin.Context, userID ulid.ULID, role string) {
 }
 
 func TestRequireRole_Allow(t *testing.T) {
-	mw := middleware.NewAuthMiddleware(nil)
+	mw := middleware.NewAuthMiddleware(nil, nil)
 
 	w := httptest.NewRecorder()
 	c, r := gin.CreateTestContext(w)
@@ -42,7 +42,7 @@ func TestRequireRole_Allow(t *testing.T) {
 }
 
 func TestRequireRole_Deny(t *testing.T) {
-	mw := middleware.NewAuthMiddleware(nil)
+	mw := middleware.NewAuthMiddleware(nil, nil)
 
 	w := httptest.NewRecorder()
 	c, r := gin.CreateTestContext(w)
@@ -61,7 +61,7 @@ func TestRequireRole_Deny(t *testing.T) {
 }
 
 func TestRequireRole_NoRole(t *testing.T) {
-	mw := middleware.NewAuthMiddleware(nil)
+	mw := middleware.NewAuthMiddleware(nil, nil)
 
 	w := httptest.NewRecorder()
 	c, r := gin.CreateTestContext(w)

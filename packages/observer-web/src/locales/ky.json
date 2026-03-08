@@ -654,7 +654,8 @@
       "refreshTokenRequired": "Cañyrtuu tokeni kerek",
       "insufficientPermissions": "Uquqtar cetişsiz",
       "accountLocked": "Aqqaunt bekitilgen",
-      "rateLimiterUnavailable": "Kyzmat uçurda tejlöögö şarty cok, birazdan kijin qaita kiriñiz."
+      "rateLimiterUnavailable": "Kyzmat uçurda tejlöögö şarty cok, birazdan kijin qaita kiriñiz.",
+      "accountDeactivated": "Sizdин aqqaunttuñuz öçürüldü. Administratorğa kairılıñız."
     },
     "project": {
       "notFound": "Proekt tabylğan coq",
@@ -701,5 +702,13 @@
   },
   "auditLog": {
     "deletedUser": "Öçürülgön qoldonuuçu"
+  },
+  "users": {
+    "deactivated": "Öçürülgön",
+    "accountAccess": "Aqqauntqa kirüü",
+    "deactivate": "Aqqaunttu öçürüü",
+    "reactivate": "Aqqaunttu qayta işke qoşuu",
+    "deactivateWarning": "Aqqaunttu öçürsöñüz, kirüü dаroo çektelet. Baardyq maаlymat jana audittik izder saqtalat.",
+    "deactivatedSince": "Bul aqqaunt {{date}} künü öçürüldü."
   }
 }

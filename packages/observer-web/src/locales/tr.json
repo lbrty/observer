@@ -654,7 +654,8 @@
       "refreshTokenRequired": "Yenileme tokeni gerekli",
       "insufficientPermissions": "Yetersiz yetki",
       "accountLocked": "Çok fazla başarısız giriş denemesi nedeniyle hesap kilitlendi",
-      "rateLimiterUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin."
+      "rateLimiterUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.",
+      "accountDeactivated": "Hesabınız devre dışı bırakıldı. Lütfen yöneticinizle iletişime geçin."
     },
     "project": {
       "notFound": "Proje bulunamadı",
@@ -701,5 +702,13 @@
   },
   "auditLog": {
     "deletedUser": "Silinmiş kullanıcı"
+  },
+  "users": {
+    "deactivated": "Devre dışı",
+    "accountAccess": "Hesap erişimi",
+    "deactivate": "Hesabı devre dışı bırak",
+    "reactivate": "Hesabı yeniden etkinleştir",
+    "deactivateWarning": "Bu hesabı devre dışı bırakmak erişimi hemen iptal eder. Mevcut veriler ve denetim izi korunur.",
+    "deactivatedSince": "Bu hesap {{date}} tarihinde devre dışı bırakıldı."
   }
 }

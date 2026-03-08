@@ -654,7 +654,8 @@
       "refreshTokenRequired": "Aktualisierungstoken erforderlich",
       "insufficientPermissions": "Unzureichende Berechtigungen",
       "accountLocked": "Konto ist aufgrund zu vieler fehlgeschlagener Anmeldeversuche gesperrt",
-      "rateLimiterUnavailable": "Dienst vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut."
+      "rateLimiterUnavailable": "Dienst vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.",
+      "accountDeactivated": "Ihr Konto wurde deaktiviert. Bitte wenden Sie sich an Ihren Administrator."
     },
     "project": {
       "notFound": "Projekt nicht gefunden",
@@ -701,5 +702,13 @@
   },
   "auditLog": {
     "deletedUser": "Gelöschter Benutzer"
+  },
+  "users": {
+    "deactivated": "Deaktiviert",
+    "accountAccess": "Kontozugang",
+    "deactivate": "Konto deaktivieren",
+    "reactivate": "Konto reaktivieren",
+    "deactivateWarning": "Durch die Deaktivierung wird der Zugriff sofort entzogen. Bestehende Daten und das Prüfprotokoll bleiben erhalten.",
+    "deactivatedSince": "Dieses Konto wurde am {{date}} deaktiviert."
   }
 }

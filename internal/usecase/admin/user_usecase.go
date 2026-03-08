@@ -136,19 +136,8 @@ func (uc *UserUseCase) Create(ctx context.Context, input CreateUserInput) (*User
 		return nil, fmt.Errorf("create credentials: %w", err)
 	}
 
-	return &UserDTO{
-		ID:         userID.String(),
-		FirstName:  newUser.FirstName,
-		LastName:   newUser.LastName,
-		Email:      newUser.Email,
-		Phone:      newUser.Phone,
-		OfficeID:   newUser.OfficeID,
-		Role:       string(newUser.Role),
-		IsVerified: newUser.IsVerified,
-		IsActive:   newUser.IsActive,
-		CreatedAt:  newUser.CreatedAt,
-		UpdatedAt:  newUser.UpdatedAt,
-	}, nil
+	dto := userToDTO(newUser)
+	return &dto, nil
 }
 
 // Update applies a partial update to the user and returns the updated DTO.
@@ -223,18 +212,49 @@ func (uc *UserUseCase) ResetPassword(ctx context.Context, userID ulid.ULID, inpu
 	return nil
 }
 
+// DeactivateUser sets deactivated_at on the user and records an audit entry.
+func (uc *UserUseCase) DeactivateUser(ctx context.Context, id ulid.ULID) (*UserDTO, error) {
+	if err := uc.userRepo.Deactivate(ctx, id); err != nil {
+		return nil, fmt.Errorf("deactivate user: %w", err)
+	}
+	uid := id.String()
+	uc.auditUC.Record(ctx, nil, "user.deactivate", "user", &uid, "User account deactivated")
+	u, err := uc.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	dto := userToDTO(u)
+	return &dto, nil
+}
+
+// ReactivateUser clears deactivated_at on the user and records an audit entry.
+func (uc *UserUseCase) ReactivateUser(ctx context.Context, id ulid.ULID) (*UserDTO, error) {
+	if err := uc.userRepo.Reactivate(ctx, id); err != nil {
+		return nil, fmt.Errorf("reactivate user: %w", err)
+	}
+	uid := id.String()
+	uc.auditUC.Record(ctx, nil, "user.reactivate", "user", &uid, "User account reactivated")
+	u, err := uc.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	dto := userToDTO(u)
+	return &dto, nil
+}
+
 func userToDTO(u *user.User) UserDTO {
 	return UserDTO{
-		ID:         u.ID.String(),
-		FirstName:  u.FirstName,
-		LastName:   u.LastName,
-		Email:      u.Email,
-		Phone:      u.Phone,
-		OfficeID:   u.OfficeID,
-		Role:       string(u.Role),
-		IsVerified: u.IsVerified,
-		IsActive:   u.IsActive,
-		CreatedAt:  u.CreatedAt,
-		UpdatedAt:  u.UpdatedAt,
+		ID:            u.ID.String(),
+		FirstName:     u.FirstName,
+		LastName:      u.LastName,
+		Email:         u.Email,
+		Phone:         u.Phone,
+		OfficeID:      u.OfficeID,
+		Role:          string(u.Role),
+		IsVerified:    u.IsVerified,
+		IsActive:      u.IsActive,
+		DeactivatedAt: u.DeactivatedAt,
+		CreatedAt:     u.CreatedAt,
+		UpdatedAt:     u.UpdatedAt,
 	}
 }

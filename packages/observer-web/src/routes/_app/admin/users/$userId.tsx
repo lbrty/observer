@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/page-header";
 import { UISelect } from "@/components/ui-select";
 import { UISwitch } from "@/components/ui-switch";
 import { useOffices } from "@/hooks/use-offices";
-import { useUpdateUser, useUser } from "@/hooks/use-users";
+import { useDeactivateUser, useReactivateUser, useUpdateUser, useUser } from "@/hooks/use-users";
 import { api } from "@/lib/api";
 import { handleApiError } from "@/lib/form-error";
 
@@ -162,7 +162,53 @@ function UserDetailPage() {
 
       <div className="mt-6 h-px bg-border-secondary" />
 
+      <AccountAccessSection userId={userId} user={user} />
+
+      <div className="mt-6 h-px bg-border-secondary" />
+
       <ResetPasswordSection userId={userId} />
+    </div>
+  );
+}
+
+function AccountAccessSection({ userId, user }: { userId: string; user: import("@/types/admin").AdminUser }) {
+  const { t } = useTranslation();
+  const deactivate = useDeactivateUser();
+  const reactivate = useReactivateUser();
+  const isDeactivated = !!user.deactivated_at;
+
+  return (
+    <div className="mt-4 space-y-3">
+      <h2 className="text-sm font-semibold text-fg">{t("users.accountAccess")}</h2>
+      {isDeactivated ? (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
+          <p className="text-sm text-amber-800 dark:text-amber-200">
+            {t("users.deactivatedSince", {
+              date: new Date(user.deactivated_at!).toLocaleDateString("en-CA"),
+            })}
+          </p>
+          <Button
+            variant="secondary"
+            className="mt-3"
+            disabled={reactivate.isPending}
+            onClick={() => reactivate.mutate(userId)}
+          >
+            {t("users.reactivate")}
+          </Button>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-border-secondary p-4">
+          <p className="text-sm text-fg-secondary">{t("users.deactivateWarning")}</p>
+          <Button
+            variant="danger"
+            className="mt-3"
+            disabled={deactivate.isPending}
+            onClick={() => deactivate.mutate(userId)}
+          >
+            {t("users.deactivate")}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

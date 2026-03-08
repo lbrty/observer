@@ -32,6 +32,8 @@ type UserRepository interface {
 	GetByPhone(ctx context.Context, phone string) (*user.User, error)
 	Update(ctx context.Context, u *user.User) error
 	UpdateVerified(ctx context.Context, id ulid.ULID, verified bool) error
+	Deactivate(ctx context.Context, id ulid.ULID) error
+	Reactivate(ctx context.Context, id ulid.ULID) error
 	List(ctx context.Context, filter user.UserListFilter) ([]*user.User, int, error)
 }
 

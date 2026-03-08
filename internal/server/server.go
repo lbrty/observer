@@ -92,7 +92,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	healthHandler := health.NewHandler(db)
 	s.router.GET("/health", healthHandler.Health)
 
-	authMW := middleware.NewAuthMiddleware(container.TokenGenerator)
+	authMW := middleware.NewAuthMiddleware(container.TokenGenerator, container.UserRepo)
 	projectAuthMW := middleware.NewProjectAuthMiddleware(container.PermissionRepo)
 
 	authHandler := handler.NewAuthHandler(
@@ -187,6 +187,8 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		admin.PATCH("/users/:id", adminHandler.UpdateUser)
 		admin.POST("/users/:id/reset-password", adminHandler.ResetPassword)
 		admin.POST("/users/:id/unlock", adminHandler.UnlockAccount)
+		admin.PATCH("/users/:id/deactivate", adminHandler.DeactivateUser)
+		admin.PATCH("/users/:id/reactivate", adminHandler.ReactivateUser)
 
 		admin.POST("/projects", projectHandler.Create)
 		admin.PATCH("/projects/:project_id", projectHandler.Update)

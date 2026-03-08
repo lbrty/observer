@@ -9,6 +9,7 @@ import (
 
 	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
+	"github.com/lbrty/observer/internal/repository"
 )
 
 // ctxKey is a typed key for Gin context values.
@@ -27,11 +28,12 @@ const (
 // AuthMiddleware provides JWT-based authentication handlers.
 type AuthMiddleware struct {
 	tokenGen crypto.TokenGenerator
+	userRepo repository.UserRepository
 }
 
 // NewAuthMiddleware creates an AuthMiddleware.
-func NewAuthMiddleware(tokenGen crypto.TokenGenerator) *AuthMiddleware {
-	return &AuthMiddleware{tokenGen: tokenGen}
+func NewAuthMiddleware(tokenGen crypto.TokenGenerator, userRepo repository.UserRepository) *AuthMiddleware {
+	return &AuthMiddleware{tokenGen: tokenGen, userRepo: userRepo}
 }
 
 // Authenticate validates the Bearer token (header or cookie) and sets user_id / user_role in context.
@@ -54,6 +56,14 @@ func (m *AuthMiddleware) Authenticate() gin.HandlerFunc {
 		userID, err := ulid.Parse(claims.UserID)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user ID in token", "code": "errors.auth.invalidToken"})
+			c.Abort()
+			return
+		}
+
+		// Reject deactivated users.
+		u, err := m.userRepo.GetByID(c.Request.Context(), userID)
+		if err != nil || u.DeactivatedAt != nil {
+			c.JSON(http.StatusForbidden, gin.H{"error": "account deactivated", "code": "errors.auth.accountDeactivated"})
 			c.Abort()
 			return
 		}

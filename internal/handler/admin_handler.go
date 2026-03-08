@@ -188,3 +188,33 @@ func (h *AdminHandler) UnlockAccount(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "account unlocked"})
 }
 
+// DeactivateUser handles PATCH /admin/users/:id/deactivate.
+func (h *AdminHandler) DeactivateUser(c *gin.Context) {
+	id, err := ulid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "invalid user ID"))
+		return
+	}
+	out, err := h.userUC.DeactivateUser(c.Request.Context(), id)
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, out)
+}
+
+// ReactivateUser handles PATCH /admin/users/:id/reactivate.
+func (h *AdminHandler) ReactivateUser(c *gin.Context) {
+	id, err := ulid.Parse(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "invalid user ID"))
+		return
+	}
+	out, err := h.userUC.ReactivateUser(c.Request.Context(), id)
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, out)
+}
+

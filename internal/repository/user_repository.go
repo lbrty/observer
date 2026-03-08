@@ -25,7 +25,7 @@ func NewUserRepository(db *sqlx.DB) UserRepository {
 	return &userRepo{db: db}
 }
 
-const userColumns = `id, first_name, last_name, email, phone, office_id, role, is_verified, is_active, created_at, updated_at`
+const userColumns = `id, first_name, last_name, email, phone, office_id, role, is_verified, is_active, deactivated_at, created_at, updated_at`
 
 func (r *userRepo) Create(ctx context.Context, u *user.User) error {
 	const q = `
@@ -162,6 +162,26 @@ func (r *userRepo) List(ctx context.Context, filter user.UserListFilter) ([]*use
 	return users, total, nil
 }
 
+func (r *userRepo) Deactivate(ctx context.Context, id ulid.ULID) error {
+	res, err := r.db.ExecContext(ctx,
+		`UPDATE users SET deactivated_at = NOW(), updated_at = NOW() WHERE id = $1`,
+		id.String())
+	if err != nil {
+		return fmt.Errorf("deactivate user: %w", err)
+	}
+	return CheckRowsAffected(res, user.ErrUserNotFound)
+}
+
+func (r *userRepo) Reactivate(ctx context.Context, id ulid.ULID) error {
+	res, err := r.db.ExecContext(ctx,
+		`UPDATE users SET deactivated_at = NULL, updated_at = NOW() WHERE id = $1`,
+		id.String())
+	if err != nil {
+		return fmt.Errorf("reactivate user: %w", err)
+	}
+	return CheckRowsAffected(res, user.ErrUserNotFound)
+}
+
 func (r *userRepo) scanUser(row *sql.Row) (*user.User, error) {
 	var u user.User
 	var idStr string
@@ -169,7 +189,7 @@ func (r *userRepo) scanUser(row *sql.Row) (*user.User, error) {
 	var createdAt, updatedAt time.Time
 
 	err := row.Scan(&idStr, &u.FirstName, &u.LastName, &u.Email, &u.Phone, &u.OfficeID,
-		&role, &u.IsVerified, &u.IsActive, &createdAt, &updatedAt)
+		&role, &u.IsVerified, &u.IsActive, &u.DeactivatedAt, &createdAt, &updatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, user.ErrUserNotFound
@@ -200,7 +220,7 @@ func (r *userRepo) scanUsers(rows *sql.Rows) ([]*user.User, error) {
 		var createdAt, updatedAt time.Time
 
 		err := rows.Scan(&idStr, &u.FirstName, &u.LastName, &u.Email, &u.Phone, &u.OfficeID,
-			&role, &u.IsVerified, &u.IsActive, &createdAt, &updatedAt)
+			&role, &u.IsVerified, &u.IsActive, &u.DeactivatedAt, &createdAt, &updatedAt)
 		if err != nil {
 			return nil, fmt.Errorf("scan user row: %w", err)
 		}

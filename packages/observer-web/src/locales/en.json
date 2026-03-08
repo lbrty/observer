@@ -654,7 +654,8 @@
       "refreshTokenRequired": "Refresh token is required",
       "insufficientPermissions": "Insufficient permissions",
       "accountLocked": "Account is locked due to too many failed login attempts",
-      "rateLimiterUnavailable": "Service temporarily unavailable. Please try again later."
+      "rateLimiterUnavailable": "Service temporarily unavailable. Please try again later.",
+      "accountDeactivated": "Your account has been deactivated. Please contact your administrator."
     },
     "project": {
       "notFound": "Project not found",
@@ -701,5 +702,13 @@
   },
   "auditLog": {
     "deletedUser": "Deleted user"
+  },
+  "users": {
+    "deactivated": "Deactivated",
+    "accountAccess": "Account access",
+    "deactivate": "Deactivate account",
+    "reactivate": "Reactivate account",
+    "deactivateWarning": "Deactivating this account will immediately revoke access. Existing data and audit trail are preserved.",
+    "deactivatedSince": "This account was deactivated on {{date}}."
   }
 }

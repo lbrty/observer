@@ -82,7 +82,15 @@ function UsersPage() {
     {
       key: "active",
       header: t("admin.users.active"),
-      render: (u) => <StatusDot active={u.is_active} />,
+      render: (u) =>
+        u.deactivated_at ? (
+          <span className="inline-flex items-center gap-1 text-xs text-amber-600">
+            <span className="size-1.5 rounded-full bg-amber-500" />
+            {t("users.deactivated")}
+          </span>
+        ) : (
+          <StatusDot active={u.is_active} />
+        ),
     },
     {
       key: "verified",

@@ -69,6 +69,20 @@ func (mr *MockUserRepositoryMockRecorder) Create(ctx, u any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepository)(nil).Create), ctx, u)
 }
 
+// Deactivate mocks base method.
+func (m *MockUserRepository) Deactivate(ctx context.Context, id ulid.ULID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Deactivate", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Deactivate indicates an expected call of Deactivate.
+func (mr *MockUserRepositoryMockRecorder) Deactivate(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Deactivate", reflect.TypeOf((*MockUserRepository)(nil).Deactivate), ctx, id)
+}
+
 // GetByEmail mocks base method.
 func (m *MockUserRepository) GetByEmail(ctx context.Context, email string) (*user.User, error) {
 	m.ctrl.T.Helper()
@@ -143,6 +157,20 @@ func (m *MockUserRepository) List(ctx context.Context, filter user.UserListFilte
 func (mr *MockUserRepositoryMockRecorder) List(ctx, filter any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockUserRepository)(nil).List), ctx, filter)
+}
+
+// Reactivate mocks base method.
+func (m *MockUserRepository) Reactivate(ctx context.Context, id ulid.ULID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Reactivate", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Reactivate indicates an expected call of Reactivate.
+func (mr *MockUserRepositoryMockRecorder) Reactivate(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Reactivate", reflect.TypeOf((*MockUserRepository)(nil).Reactivate), ctx, id)
 }
 
 // Update mocks base method.

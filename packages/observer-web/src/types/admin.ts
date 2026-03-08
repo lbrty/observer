@@ -10,6 +10,7 @@ export interface AdminUser {
   role: Role;
   is_verified: boolean;
   is_active: boolean;
+  deactivated_at: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -59,3 +59,25 @@ export function useUpdateUser() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["users"] }),
   });
 }
+
+export function useDeactivateUser() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.patch(`admin/users/${id}/deactivate`).json<AdminUser>(),
+    onSuccess: (_, id) => {
+      qc.invalidateQueries({ queryKey: ["users"] });
+      qc.invalidateQueries({ queryKey: ["users", id] });
+    },
+  });
+}
+
+export function useReactivateUser() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.patch(`admin/users/${id}/reactivate`).json<AdminUser>(),
+    onSuccess: (_, id) => {
+      qc.invalidateQueries({ queryKey: ["users"] });
+      qc.invalidateQueries({ queryKey: ["users", id] });
+    },
+  });
+}
