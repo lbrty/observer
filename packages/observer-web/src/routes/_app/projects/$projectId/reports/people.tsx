@@ -11,7 +11,7 @@ import {
   IDP_STATUS_COLORS,
   AGE_GROUP_COLORS,
 } from "@/components/charts/colors";
-import { DatePicker } from "@/components/date-picker";
+import { DateRangePicker } from "@/components/date-picker";
 import {
   CaretDownIcon,
   CaretUpIcon,
@@ -156,33 +156,22 @@ function ReportsPage() {
               ))}
             </div>
 
-            {/* Filter grid */}
-            <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
-              <FilterField label={t("project.reports.dateFrom")}>
-                <DatePicker
-                  value={params.date_from ?? ""}
-                  onChange={(v) => {
-                    setParams((p) => ({ ...p, date_from: v || undefined }));
-                    clearDatePreset();
-                  }}
-                />
-              </FilterField>
-              <FilterField label={t("project.reports.dateTo")}>
-                <DatePicker
-                  value={params.date_to ?? ""}
-                  onChange={(v) => {
-                    setParams((p) => ({ ...p, date_to: v || undefined }));
-                    clearDatePreset();
-                  }}
-                />
-              </FilterField>
+            {/* Filter row */}
+            <div className="flex flex-wrap items-end gap-4">
+              <DateRangePicker
+                from={params.date_from ?? ""}
+                to={params.date_to ?? ""}
+                onChange={(range) => {
+                  setParams((p) => ({ ...p, date_from: range.from || undefined, date_to: range.to || undefined }));
+                  clearDatePreset();
+                }}
+              />
               <FilterField label={t("project.reports.filterOffice")}>
                 <UISelect
                   value={params.office_id ?? ""}
                   onValueChange={(v) => setParams((p) => ({ ...p, office_id: v || undefined }))}
                   options={[{ label: t("project.reports.allValues"), value: "" }, ...officeOptions]}
                   placeholder={t("project.reports.allValues")}
-                  fullWidth
                 />
               </FilterField>
               <FilterField label={t("project.reports.filterCategory")}>
@@ -191,7 +180,6 @@ function ReportsPage() {
                   onValueChange={(v) => setParams((p) => ({ ...p, category_id: v || undefined }))}
                   options={[{ label: t("project.reports.allValues"), value: "" }, ...categoryOptions]}
                   placeholder={t("project.reports.allValues")}
-                  fullWidth
                 />
               </FilterField>
               <FilterField label={t("project.reports.filterCaseStatus")}>
@@ -200,7 +188,6 @@ function ReportsPage() {
                   onValueChange={(v) => setParams((p) => ({ ...p, case_status: v || undefined }))}
                   options={[{ label: t("project.reports.allValues"), value: "" }, ...caseStatusOptions]}
                   placeholder={t("project.reports.allValues")}
-                  fullWidth
                 />
               </FilterField>
               <FilterField label={t("project.reports.filterSex")}>
@@ -209,7 +196,6 @@ function ReportsPage() {
                   onValueChange={(v) => setParams((p) => ({ ...p, sex: v || undefined }))}
                   options={[{ label: t("project.reports.allValues"), value: "" }, ...sexOptions]}
                   placeholder={t("project.reports.allValues")}
-                  fullWidth
                 />
               </FilterField>
               <FilterField label={t("project.reports.filterAgeGroup")}>
@@ -218,7 +204,6 @@ function ReportsPage() {
                   onValueChange={(v) => setParams((p) => ({ ...p, age_group: v || undefined }))}
                   options={[{ label: t("project.reports.allValues"), value: "" }, ...ageGroupOptions]}
                   placeholder={t("project.reports.allValues")}
-                  fullWidth
                 />
               </FilterField>
               <FilterField label={t("project.reports.filterSupportType")}>
@@ -227,7 +212,6 @@ function ReportsPage() {
                   onValueChange={(v) => setParams((p) => ({ ...p, support_type: v || undefined }))}
                   options={[{ label: t("project.reports.allValues"), value: "" }, ...supportTypeOptions]}
                   placeholder={t("project.reports.allValues")}
-                  fullWidth
                 />
               </FilterField>
             </div>

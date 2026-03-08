@@ -166,6 +166,9 @@ export function DateRangePicker({
           <Popover.Popup className="rdp-popup rounded-xl border border-border-secondary bg-bg-secondary p-3 shadow-elevated outline-none">
             <DayPicker
               mode="range"
+              captionLayout="dropdown"
+              startMonth={new Date(2000, 0)}
+              endMonth={new Date(new Date().getFullYear() + 1, 11)}
               selected={selected}
               onSelect={(range) => {
                 clickCount.current += 1;

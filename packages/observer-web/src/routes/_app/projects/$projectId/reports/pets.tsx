@@ -3,7 +3,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { DatePicker } from "@/components/date-picker";
+import { DateRangePicker } from "@/components/date-picker";
 import { BarChart } from "@/components/charts/bar-chart";
 import { PieChart } from "@/components/charts/pie-chart";
 import {
@@ -316,32 +316,21 @@ function PetReportsPage() {
               ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
-              <FilterField label={t("project.reports.dateFrom")}>
-                <DatePicker
-                  value={params.date_from ?? ""}
-                  onChange={(v) => {
-                    setParams((p) => ({ ...p, date_from: v || undefined }));
-                    clearDatePreset();
-                  }}
-                />
-              </FilterField>
-              <FilterField label={t("project.reports.dateTo")}>
-                <DatePicker
-                  value={params.date_to ?? ""}
-                  onChange={(v) => {
-                    setParams((p) => ({ ...p, date_to: v || undefined }));
-                    clearDatePreset();
-                  }}
-                />
-              </FilterField>
+            <div className="flex flex-wrap items-end gap-4">
+              <DateRangePicker
+                from={params.date_from ?? ""}
+                to={params.date_to ?? ""}
+                onChange={(range) => {
+                  setParams((p) => ({ ...p, date_from: range.from || undefined, date_to: range.to || undefined }));
+                  clearDatePreset();
+                }}
+              />
               <FilterField label={t("project.petReports.filterStatus")}>
                 <UISelect
                   value={params.status ?? ""}
                   onValueChange={(v) => setParams((p) => ({ ...p, status: v || undefined }))}
                   options={[{ label: t("project.reports.allValues"), value: "" }, ...statusOptions]}
                   placeholder={t("project.reports.allValues")}
-                  fullWidth
                 />
               </FilterField>
             </div>

@@ -3,9 +3,11 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { DatePicker } from "@/components/date-picker";
+import { DateRangePicker } from "@/components/date-picker";
 import { DownloadSimpleIcon } from "@/components/icons";
+import { labelKeyMap } from "@/components/report";
 import { UISelect } from "@/components/ui-select";
+import { typeKeys } from "@/constants/support";
 import { useCustomReport } from "@/hooks/use-reports";
 import type { CustomReportParams } from "@/types/report";
 
@@ -28,7 +30,7 @@ const DIMENSIONS = [
   "pet_status",
 ] as const;
 
-const SUPPORT_TYPE_OPTIONS = ["legal", "social"] as const;
+const SUPPORT_TYPE_OPTIONS = Object.keys(typeKeys);
 
 const DIMENSION_LABEL_KEYS: Record<string, string> = {
   sex: "project.customReport.dimSex",
@@ -162,26 +164,17 @@ function CustomReportPage() {
           </div>
 
           {/* Date range + support type */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <div className="space-y-1.5">
-              <span className="block text-xs font-medium text-fg-secondary">
-                {t("project.reports.dateFrom")}
-              </span>
-              <DatePicker
-                value={dateFrom}
-                onChange={(v) => { setDateFrom(v); setSubmitted(false); }}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <span className="block text-xs font-medium text-fg-secondary">
-                {t("project.reports.dateTo")}
-              </span>
-              <DatePicker
-                value={dateTo}
-                onChange={(v) => { setDateTo(v); setSubmitted(false); }}
-              />
-            </div>
-            <div className="space-y-1.5">
+          <div className="flex flex-wrap items-end gap-4">
+            <DateRangePicker
+              from={dateFrom}
+              to={dateTo}
+              onChange={(range) => {
+                setDateFrom(range.from ?? "");
+                setDateTo(range.to ?? "");
+                setSubmitted(false);
+              }}
+            />
+            <div className="min-w-56 space-y-1.5">
               <span className="block text-xs font-medium text-fg-secondary">
                 {t("project.reports.filterSupportType")}
               </span>
@@ -191,7 +184,7 @@ function CustomReportPage() {
                 options={[
                   { label: t("project.reports.allValues"), value: "" },
                   ...SUPPORT_TYPE_OPTIONS.map((s) => ({
-                    label: t(`project.customReport.supportType_${s}`),
+                    label: t(typeKeys[s]),
                     value: s,
                   })),
                 ]}
@@ -264,7 +257,12 @@ function CustomReportPage() {
                     <tr key={ix} className="border-b border-border-secondary last:border-b-0">
                       {data.group_by.map((dim) => (
                         <td key={dim} className="px-4 py-2.5 text-fg">
-                          {row.dimensions[dim] ?? "\u2014"}
+                          {(() => {
+                            const val = row.dimensions[dim];
+                            if (!val) return "\u2014";
+                            const key = labelKeyMap[val];
+                            return key ? t(key) : val;
+                          })()}
                         </td>
                       ))}
                       <td className="px-4 py-2.5 text-right tabular-nums font-medium text-fg">

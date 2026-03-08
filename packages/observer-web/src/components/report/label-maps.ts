@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
 
-import { typeKeys, sphereKeys, referralKeys } from "@/constants/support";
+import { petStatusKeys } from "@/constants/pet";
 import { sexKeys, ageGroupKeys, AGE_RANGE_MAP as AGE_RANGES } from "@/constants/person";
+import { typeKeys, sphereKeys, referralKeys } from "@/constants/support";
 import type { CountResult } from "@/types/report";
 
 export { AGE_RANGES as AGE_RANGE_MAP };
@@ -13,6 +14,7 @@ export const labelKeyMap: Record<string, string> = {
   ...referralKeys,
   ...sexKeys,
   ...ageGroupKeys,
+  ...petStatusKeys,
 };
 
 export function useTranslatedRows(rows: CountResult[]): CountResult[] {
