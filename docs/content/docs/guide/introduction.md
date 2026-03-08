@@ -52,6 +52,8 @@ Organizations with:
 
 **Access control is built in.** Platform roles (admin, staff, consultant, guest) combine with project roles (owner, manager, consultant, viewer) and sensitivity flags that control who sees contact info, personal details, and documents.
 
+**Two-factor authentication is supported.** Every user can enable TOTP-based 2FA from their profile. Login requires a 6-digit code from an authenticator app alongside the password.
+
 **Reports match what donors actually ask for.** 12 report dimensions — consultation counts, IDP origin, sex/age disaggregation, support sphere, vulnerability category, region, office, tags, family units, and case status — each filterable by date range, support type, and demographic criteria.
 
 **Families are tracked as units.** Typed household relationships (head, spouse, child, parent, sibling) power family-level reporting.

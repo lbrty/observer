@@ -110,6 +110,10 @@ Dieselbe Seite sieht je nach Rolle unterschiedlich aus. Plattformrollen (Admin, 
   </div>
 </div>
 
+## Zwei-Faktor-Authentifizierung
+
+Jeder Benutzer kann TOTP-basierte Zwei-Faktor-Authentifizierung für sein Konto aktivieren. Nach der Aktivierung ist für die Anmeldung zusätzlich zu E-Mail und Passwort ein 6-stelliger Code aus einer beliebigen Authenticator-App erforderlich. Die 2FA-Verwaltung erfolgt über die Profilseite.
+
 ## Unterstützte Sprachen
 
 Die Benutzeroberfläche wird mit sechs Sprachen ausgeliefert: Englisch, Ukrainisch, Russisch, Deutsch, Türkisch und Kirgisisch (lateinische Schrift). Kirgisisch verwendet eine eigene lateinische Transliteration, da das offizielle kirgisische Lateinalphabet 2023 eingeführt wurde und von gängigen Übersetzungstools noch nicht unterstützt wird — wir pflegen eigene Transliterationsregeln, um akkuraten, natürlich klingenden Text für zentralasiatische Einsätze bereitzustellen.

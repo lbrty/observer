@@ -52,6 +52,8 @@ Temel sunucu bilgisine sahip bir kişi, bir saatten kısa sürede kurabilir.
 
 **Erişim kontrolü yerleşiktir.** Platform rolleri (admin, staff, consultant, guest), proje rolleri (owner, manager, consultant, viewer) ve iletişim bilgileri, kişisel detaylar ve belgeleri kimin göreceğini kontrol eden hassasiyet bayraklarıyla birleşir.
 
+**İki faktörlü kimlik doğrulama desteklenir.** Her kullanıcı profilinden TOTP-2FA'yı etkinleştirebilir. Etkinleştirildikten sonra giriş için kimlik doğrulayıcı uygulamasından 6 haneli kod gerekir.
+
 **Raporlar, bağışçıların gerçekte istediğiyle eşleşir.** 12 rapor boyutu — danışmanlık sayıları, YEE kökeni, cinsiyet/yaş ayrıştırması, destek alanı, kırılganlık kategorisi, bölge, ofis, etiketler, aile birimleri ve vaka durumu — her biri tarih aralığı, destek türü ve demografik kriterlere göre filtrelenebilir.
 
 **Aileler birim olarak takip edilir.** Türlendirilmiş hanehalkı ilişkileri (hane reisi, eş, çocuk, ebeveyn, kardeş) aile düzeyinde raporlamayı destekler.

@@ -52,6 +52,8 @@ Organisationen mit:
 
 **Zugriffskontrolle ist integriert.** Plattformrollen (Admin, Mitarbeiter, Berater, Gast) werden mit Projektrollen (Eigentümer, Manager, Berater, Betrachter) und Sensitivitätsstufen kombiniert, die steuern, wer Kontaktdaten, persönliche Details und Dokumente sehen darf.
 
+**Zwei-Faktor-Authentifizierung wird unterstützt.** Jeder Benutzer kann TOTP-2FA in seinem Profil aktivieren. Nach der Aktivierung ist für die Anmeldung ein 6-stelliger Code aus einer Authenticator-App erforderlich.
+
 **Berichte entsprechen dem, was Geber tatsächlich verlangen.** 12 Berichtsdimensionen — Beratungszahlen, IDP-Herkunft, Geschlechts-/Altersdisaggregation, Unterstützungsbereich, Vulnerabilitätskategorie, Region, Büro, Tags, Familieneinheiten und Fallstatus — jeweils filterbar nach Zeitraum, Unterstützungsart und demografischen Kriterien.
 
 **Familien werden als Einheiten erfasst.** Typisierte Haushaltsbeziehungen (Haushaltsvorstand, Ehepartner, Kind, Elternteil, Geschwister) ermöglichen Berichte auf Familienebene.

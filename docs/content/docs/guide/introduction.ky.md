@@ -52,6 +52,8 @@ Myndaj ujumdar üçün:
 
 **Cetüü başqaruu kirgizilgen.** Platforma roldoru (admin, qyzmatker, konsultant, qonoq) proekt roldoru (eesi, başqaruuçu, konsultant, köröörçü) cana sezimtaldyq belgileri menen kim bajlanyş maalymatyn, ceke maalymattardy cana dokumentterdi körörün başqarat.
 
+**Eki faktorduk autentifikasija qoldolot.** Ar bir qoldonuuçu profilinnen TOTP-2FA iştete alat. Iştetilgenden kijin, kirüü üçün autentifikator qoldonmosunan 6 orunduu kod talap qylynat.
+
 **Esepdemeler donorlor çyndap surağanğa tuura kelet.** 12 esepdeme ölçömü — konsultasija sanağy, IDP çyqqan ceri, cynys/caş bölüştürüü, qoldoo çöjrösü, aldap qaluu kategorijasy, region, ofis, tegder, üj-bülö birlikteri cana iş statusu — ar biri küñ aralyğy, qoldoo türü cana demografikalyq kriterija bojunça süzgülönöt.
 
 **Üj-bülölör birlik katary köz salynat.** Tiptüü üj çarba bajlanyştary (başçy, colduq, bala, ata-ene, bor-tuuğan) üj-bülö deñgeeliñdegi esepdeme üçün qoldonulat.

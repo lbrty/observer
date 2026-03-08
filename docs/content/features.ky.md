@@ -110,6 +110,10 @@ Bir ele bet siziñ rolüñüzğa caraşa başqaça körünöt. Platforma roldoru
   </div>
 </div>
 
+## Eki faktorduk autentifikasija
+
+Ar bir qoldonuuçu öz akkaunttunda TOTP-tabanduu değen eki faktorduk autentifikasijanı iştete alat. Iştetilgenden kijin, kirüü üçün elektronduk poçta cana syr sözdön tyşqary qaalağan autentifikator qoldonmosunan 6 orunduu kod talap qylynat. 2FA qoldonuuçunun profil barağynan başqarylat.
+
 ## Qoldolğon tilder
 
 UI alty tilde cetkililiktüü: Anglisçe, Ukrainçe, Orusça, Nemisçe, Türkçö cana Qyrğyzça (latyn tamğasy). Qyrğyz tili özdük latyn transliterasijasyn qoldonot, antkeni rasmij qyrğyz latyn tamgasy 2023-cyly qabyl alynğan cana standart qotormo quraldary tarabynan al qoldolboyt - biz Borborduq Azija üçün taq cana tabigij tekstterdi kamsyz qyluu üçün öz transliterasija erejeleribizdi qoldonobuz.

@@ -110,6 +110,10 @@ The same page looks different depending on your role. Platform roles (admin, sta
   </div>
 </div>
 
+## Two-Factor Authentication
+
+Each user can enable TOTP-based two-factor authentication on their account. Once enabled, login requires a 6-digit code from any authenticator app in addition to the email and password. 2FA can be managed from the user's profile page.
+
 ## Supported Languages
 
 The UI ships with six languages: English, Ukrainian, Russian, German, Turkish, and Kyrgyz (Latin script). Kyrgyz uses a custom Latin transliteration because the official Kyrgyz Latin alphabet was adopted in 2023 and is not yet supported by standard translation tools — we maintain our own transliteration rules to provide accurate, native-feeling text for Central Asian deployments.

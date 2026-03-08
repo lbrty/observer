@@ -110,6 +110,10 @@ Aynı sayfa, rolünüze göre farklı görünür. Platform rolleri (admin, staff
   </div>
 </div>
 
+## İki Faktörlü Kimlik Doğrulama
+
+Her kullanıcı, hesabı için TOTP tabanlı iki faktörlü kimlik doğrulamayı etkinleştirebilir. Etkinleştirildikten sonra giriş için e-posta ve parolaya ek olarak herhangi bir kimlik doğrulayıcı uygulamasından 6 haneli kod gerekir. 2FA yönetimine profil sayfasından ulaşılabilir.
+
 ## Desteklenen Diller
 
 Arayüz altı dil ile sunulur: İngilizce, Ukraynaca, Rusça, Almanca, Türkçe ve Kırgızca (Latin alfabesi). Kırgızca, resmi Kırgız Latin alfabesi 2023'te kabul edildiği ve henüz standart çeviri araçları tarafından desteklenmediği için özel bir Latin transliterasyonu kullanır — Orta Asya dağıtımları için doğal hissettiren, doğru metinler sunmak amacıyla kendi transliterasyon kurallarımızı sürdürüyoruz.
