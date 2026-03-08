@@ -16,6 +16,7 @@ mock.module("@/lib/api", () => ({
     }),
     delete: () => Promise.resolve(),
   },
+  HTTPError: class extends Error {},
 }));
 
 const { useNotes, useCreateNote, useUpdateNote, useDeleteNote } = await import("@/hooks/use-notes");

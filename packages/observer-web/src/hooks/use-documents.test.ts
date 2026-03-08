@@ -26,6 +26,7 @@ mock.module("@/lib/api", () => ({
     }),
     delete: () => Promise.resolve(),
   },
+  HTTPError: class extends Error {},
 }));
 
 const { useDocuments, useUploadDocument, useUpdateDocument, useDeleteDocument } = await import(

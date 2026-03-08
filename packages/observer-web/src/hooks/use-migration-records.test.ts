@@ -16,6 +16,7 @@ mock.module("@/lib/api", () => ({
       json: () => Promise.resolve({ id: "mr1", person_id: "p1", movement_reason: "economic" }),
     }),
   },
+  HTTPError: class extends Error {},
 }));
 
 // Import after mocking
