@@ -1,12 +1,12 @@
 bin/
 *.env
 !.env.example
-!src/lib/
 *.pem
 coverage.out
 coverage.html
 vendor/
 keys
+data/
 idp-archive/
 .DS_Store
 # Logs
@@ -38,10 +38,17 @@ dist-ssr
 *.sw?
 mocks/
 .serena/
+.worktrees/
 
 # Hugo
 docs/public/
 docs/resources/_gen/
 docs/.hugo_build.lock
-screenshots
+
+# Screenshots (generated output)
+docs/screenshots/out/
+docs/screenshots/test-results/
 data
+
+# Override global gitignore lib/ rule for frontend src/lib
+!packages/observer-web/src/lib/

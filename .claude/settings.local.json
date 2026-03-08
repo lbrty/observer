@@ -44,7 +44,13 @@
       "Bash(bun pm:*)",
       "WebFetch(domain:api.github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "WebFetch(domain:lbrty.github.io)",
+      "Bash(docker ps --format '{{.Names}}')",
+      "Bash(sips:*)",
+      "Bash(xargs basename:*)",
+      "Bash(cut -d'\\(' -f1)",
+      "Bash(rsync:*)"
     ]
   }
 }

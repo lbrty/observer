@@ -1,0 +1,12 @@
+{
+  "name": "@observer/screenshots",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture": "bunx playwright test",
+    "install-browsers": "bunx playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}
