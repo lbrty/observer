@@ -11,6 +11,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 
+	"github.com/lbrty/observer/internal/database"
 	"github.com/lbrty/observer/internal/domain/person"
 )
 
@@ -205,7 +206,7 @@ func (r *personRepo) Create(ctx context.Context, p *person.Person) error {
 	now := time.Now().UTC()
 	p.CreatedAt = now
 	p.UpdatedAt = now
-	_, err := r.db.ExecContext(ctx, q,
+	_, err := database.ExecCtx(ctx, r.db).ExecContext(ctx, q,
 		p.ID, p.ProjectID, p.ConsultantID, p.OfficeID, p.CurrentPlaceID, p.OriginPlaceID,
 		p.ExternalID, p.FirstName, p.LastName, p.Patronymic, p.Email, p.BirthDate, p.Sex, p.AgeGroup,
 		p.PrimaryPhone, p.PhoneNumbers, p.CaseStatus, p.ConsentGiven, p.ConsentDate, p.RegisteredAt,
@@ -228,7 +229,7 @@ func (r *personRepo) Update(ctx context.Context, p *person.Person) error {
 		case_status=$16, consent_given=$17, consent_date=$18, registered_at=$19, updated_at=$20
 	WHERE id=$1`
 	p.UpdatedAt = time.Now().UTC()
-	res, err := r.db.ExecContext(ctx, q,
+	res, err := database.ExecCtx(ctx, r.db).ExecContext(ctx, q,
 		p.ID, p.ConsultantID, p.OfficeID, p.CurrentPlaceID, p.OriginPlaceID,
 		p.ExternalID, p.FirstName, p.LastName, p.Patronymic, p.Email,
 		p.BirthDate, p.Sex, p.AgeGroup, p.PrimaryPhone, p.PhoneNumbers,
@@ -245,7 +246,7 @@ func (r *personRepo) Update(ctx context.Context, p *person.Person) error {
 
 func (r *personRepo) Delete(ctx context.Context, id string) error {
 	const q = `DELETE FROM people WHERE id = $1`
-	res, err := r.db.ExecContext(ctx, q, id)
+	res, err := database.ExecCtx(ctx, r.db).ExecContext(ctx, q, id)
 	if err != nil {
 		return fmt.Errorf("delete person: %w", err)
 	}

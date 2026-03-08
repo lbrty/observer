@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 
+	mock_db "github.com/lbrty/observer/internal/database/mock"
 	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/handler"
 	"github.com/lbrty/observer/internal/middleware"
@@ -30,8 +32,14 @@ func newPersonTestDeps(ctrl *gomock.Controller) *personTestDeps {
 	tagRepo := repomock.NewMockPersonTagRepository(ctrl)
 	catRepo := repomock.NewMockPersonCategoryRepository(ctrl)
 
+	db := mock_db.NewMockDB(ctrl)
+	db.EXPECT().WithTx(gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, fn func(context.Context) error) error {
+			return fn(ctx)
+		}).AnyTimes()
+
 	h := handler.NewPersonHandler(
-		ucproject.NewPersonUseCase(personRepo, tagRepo, nil),
+		ucproject.NewPersonUseCase(db, personRepo, tagRepo, nil),
 		ucproject.NewPersonCategoryUseCase(catRepo),
 		ucproject.NewPersonTagUseCase(tagRepo),
 	)

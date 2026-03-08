@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
+	mock_db "github.com/lbrty/observer/internal/database/mock"
 	"github.com/lbrty/observer/internal/domain/person"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
@@ -17,6 +18,16 @@ import (
 )
 
 func ptr[T any](v T) *T { return &v }
+
+// withTxPassthrough returns a mock DB whose WithTx calls fn(ctx) directly.
+func withTxPassthrough(ctrl *gomock.Controller) *mock_db.MockDB {
+	db := mock_db.NewMockDB(ctrl)
+	db.EXPECT().WithTx(gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, fn func(context.Context) error) error {
+			return fn(ctx)
+		}).AnyTimes()
+	return db
+}
 
 func TestPersonUseCase_List(t *testing.T) {
 	ctrl := gomock.NewController(t)
@@ -27,7 +38,7 @@ func TestPersonUseCase_List(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucproject.NewPersonUseCase(mockRepo, mockTagRepo, auditUC)
+	uc := ucproject.NewPersonUseCase(nil, mockRepo, mockTagRepo, auditUC)
 
 	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*person.Person{
 		{ID: "p1", ProjectID: "proj1", FirstName: "Aida", Sex: person.SexFemale, CaseStatus: person.CaseStatusActive, PhoneNumbers: json.RawMessage("[]")},
@@ -54,7 +65,7 @@ func TestPersonUseCase_Get_WithRedaction(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucproject.NewPersonUseCase(mockRepo, nil, auditUC)
+	uc := ucproject.NewPersonUseCase(nil, mockRepo, nil, auditUC)
 
 	email := "aida@example.com"
 	phone := "+996555111222"
@@ -93,7 +104,7 @@ func TestPersonUseCase_Get_FullVisibility(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucproject.NewPersonUseCase(mockRepo, nil, auditUC)
+	uc := ucproject.NewPersonUseCase(nil, mockRepo, nil, auditUC)
 
 	email := "aida@example.com"
 	phone := "+996555111222"
@@ -127,7 +138,7 @@ func TestPersonUseCase_Create(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucproject.NewPersonUseCase(mockRepo, nil, auditUC)
+	uc := ucproject.NewPersonUseCase(withTxPassthrough(ctrl), mockRepo, nil, auditUC)
 
 	mockRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).
@@ -157,7 +168,7 @@ func TestPersonUseCase_Create_AgeConstraint(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucproject.NewPersonUseCase(mockRepo, nil, auditUC)
+	uc := ucproject.NewPersonUseCase(nil, mockRepo, nil, auditUC)
 
 	// Both birth_date and age_group should fail validation
 	_, err := uc.Create(context.Background(), "proj1", ucproject.CreatePersonInput{
@@ -176,7 +187,7 @@ func TestPersonUseCase_Create_ConsentConstraint(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucproject.NewPersonUseCase(mockRepo, nil, auditUC)
+	uc := ucproject.NewPersonUseCase(nil, mockRepo, nil, auditUC)
 
 	// consent_date without consent_given=true should fail
 	_, err := uc.Create(context.Background(), "proj1", ucproject.CreatePersonInput{
@@ -194,7 +205,7 @@ func TestPersonUseCase_Create_ExternalIDConflict(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucproject.NewPersonUseCase(mockRepo, nil, auditUC)
+	uc := ucproject.NewPersonUseCase(withTxPassthrough(ctrl), mockRepo, nil, auditUC)
 
 	mockRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).
@@ -215,7 +226,7 @@ func TestPersonUseCase_Delete(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucproject.NewPersonUseCase(mockRepo, nil, auditUC)
+	uc := ucproject.NewPersonUseCase(nil, mockRepo, nil, auditUC)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "p1").Return(nil)
 
@@ -231,7 +242,7 @@ func TestPersonUseCase_Delete_NotFound(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucproject.NewPersonUseCase(mockRepo, nil, auditUC)
+	uc := ucproject.NewPersonUseCase(nil, mockRepo, nil, auditUC)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(person.ErrPersonNotFound)
 

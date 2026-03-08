@@ -93,7 +93,10 @@ func (uc *AuthUseCase) Register(ctx context.Context, input RegisterInput) (*Regi
 	}, nil
 }
 
-// Login authenticates a user and returns tokens or an MFA challenge.
+// Login authenticates a user with email + password and returns one of two outcomes:
+//   - MFA enabled: issues a short-lived MFA token (no session yet) and sets RequiresMFA=true.
+//     The client must follow up with POST /auth/mfa { mfa_token, totp_code } to complete login.
+//   - MFA disabled: creates a full session and returns access + refresh tokens immediately.
 func (uc *AuthUseCase) Login(ctx context.Context, input LoginInput, userAgent, ip string) (*LoginOutput, error) {
 	u, err := uc.userRepo.GetByEmail(ctx, input.Email)
 	if err != nil {
@@ -279,7 +282,12 @@ func (uc *AuthUseCase) IsMFAEnabled(ctx context.Context, userID ulid.ULID) bool 
 	return err == nil && cfg.IsEnabled
 }
 
-// VerifyMFA validates an MFA token + TOTP code and issues a full session.
+// VerifyMFA completes the two-step login flow:
+//  1. Validates the short-lived MFA JWT issued by Login (proves the password was correct).
+//  2. Checks the 6-digit TOTP code against the stored secret (RFC 6238, 30-second window).
+//  3. On success, creates a full session and returns access + refresh tokens.
+//
+// The TOTP secret is never re-transmitted here — only the ephemeral 6-digit code is sent.
 func (uc *AuthUseCase) VerifyMFA(ctx context.Context, input VerifyMFAInput, userAgent, ip string) (*LoginOutput, error) {
 	claims, err := uc.tokenGen.ValidateMFAToken(input.MFAToken)
 	if err != nil {
@@ -317,7 +325,10 @@ func (uc *AuthUseCase) VerifyMFA(ctx context.Context, input VerifyMFAInput, user
 	}, nil
 }
 
-// SetupMFA generates a new TOTP secret for the user (does not save it yet).
+// SetupMFA generates a new TOTP secret and OTPAuth URL for the given user.
+// It does NOT save anything — the secret is returned to the frontend exactly once so
+// the user can scan the QR code. EnableMFA must be called with the secret + a valid
+// TOTP code to persist and activate it.
 func (uc *AuthUseCase) SetupMFA(ctx context.Context, userID ulid.ULID) (*MFASetupOutput, error) {
 	u, err := uc.userRepo.GetByID(ctx, userID)
 	if err != nil {
@@ -336,7 +347,11 @@ func (uc *AuthUseCase) SetupMFA(ctx context.Context, userID ulid.ULID) (*MFASetu
 	}, nil
 }
 
-// EnableMFA verifies the TOTP code against the provided secret and saves the config.
+// EnableMFA activates TOTP-based MFA for the user:
+//  1. Verifies the provided TOTP code against the secret (confirms the user's app is synced).
+//  2. Upserts the mfa_configs row with is_enabled=true.
+//
+// After this call, Login will return RequiresMFA=true for this user.
 func (uc *AuthUseCase) EnableMFA(ctx context.Context, userID ulid.ULID, input EnableMFAInput) error {
 	if !totp.Validate(input.TOTPCode, input.Secret) {
 		return domainauth.ErrInvalidMFACode
@@ -351,7 +366,8 @@ func (uc *AuthUseCase) EnableMFA(ctx context.Context, userID ulid.ULID, input En
 	return uc.mfaRepo.Upsert(ctx, cfg)
 }
 
-// DisableMFA verifies the TOTP code and disables MFA for the user.
+// DisableMFA requires a valid TOTP code to confirm intent, then clears the secret
+// and sets is_enabled=false. Future logins will skip the MFA challenge.
 func (uc *AuthUseCase) DisableMFA(ctx context.Context, userID ulid.ULID, input DisableMFAInput) error {
 	cfg, err := uc.mfaRepo.GetByUserID(ctx, userID)
 	if err != nil {
