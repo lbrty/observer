@@ -34,7 +34,7 @@ func newPermissionTestDeps(ctrl *gomock.Controller) *permissionTestDeps {
 }
 
 func (d *permissionTestDeps) permissionUseCase() *ucadmin.PermissionUseCase {
-	return ucadmin.NewPermissionUseCase(d.permRepo, d.userRepo)
+	return ucadmin.NewPermissionUseCase(d.permRepo, d.userRepo, nil)
 }
 
 func newPermissionHandler(d *permissionTestDeps) *handler.PermissionHandler {

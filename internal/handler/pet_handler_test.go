@@ -19,7 +19,7 @@ import (
 func newPetHandler(ctrl *gomock.Controller) (*handler.PetHandler, *repomock.MockPetRepository, *repomock.MockPetTagRepository) {
 	petRepo := repomock.NewMockPetRepository(ctrl)
 	petTagRepo := repomock.NewMockPetTagRepository(ctrl)
-	uc := ucproject.NewPetUseCase(petRepo, petTagRepo)
+	uc := ucproject.NewPetUseCase(petRepo, petTagRepo, nil)
 	tagUC := ucproject.NewPetTagUseCase(petTagRepo)
 	return handler.NewPetHandler(uc, tagUC), petRepo, petTagRepo
 }

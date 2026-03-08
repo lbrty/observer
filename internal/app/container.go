@@ -148,7 +148,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	myProjectsUC := ucmy.NewMyProjectsUseCase(permCRUDRepo, projectRepo)
 
 	projectUC := ucadmin.NewProjectUseCase(projectRepo, permCRUDRepo, auditUC)
-	tagUC := ucproject.NewTagUseCase(tagRepo)
+	tagUC := ucproject.NewTagUseCase(tagRepo, auditUC)
 	personUC := ucproject.NewPersonUseCase(personRepo, personTagRepo, auditUC)
 	personCategoryUC := ucproject.NewPersonCategoryUseCase(personCatRepo)
 	personTagUC := ucproject.NewPersonTagUseCase(personTagRepo)

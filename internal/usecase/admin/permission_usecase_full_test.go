@@ -22,7 +22,7 @@ func TestPermissionUseCase_List_Admin(t *testing.T) {
 
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
 
 	ctx := context.Background()
 	userID := ulid.Make()
@@ -49,7 +49,7 @@ func TestPermissionUseCase_List_NonMember_Empty(t *testing.T) {
 
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
 
 	ctx := context.Background()
 
@@ -69,7 +69,7 @@ func TestPermissionUseCase_List_RepoError(t *testing.T) {
 
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
 
 	ctx := context.Background()
 
@@ -86,7 +86,7 @@ func TestPermissionUseCase_Update_Success(t *testing.T) {
 
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
 
 	ctx := context.Background()
 
@@ -121,7 +121,7 @@ func TestPermissionUseCase_Update_NotFound(t *testing.T) {
 
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
 
 	mockPermRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, project.ErrPermissionNotFound)
 
@@ -137,7 +137,7 @@ func TestPermissionUseCase_Update_InvalidRole(t *testing.T) {
 
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
 
 	existing := &project.ProjectPermission{
 		ID:        "perm-1",
@@ -159,11 +159,11 @@ func TestPermissionUseCase_Revoke_Success(t *testing.T) {
 
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
 
 	mockPermRepo.EXPECT().Delete(gomock.Any(), "perm-1").Return(nil)
 
-	err := uc.Revoke(context.Background(), "perm-1")
+	err := uc.Revoke(context.Background(), "proj-1", "perm-1")
 	require.NoError(t, err)
 }
 
@@ -173,10 +173,10 @@ func TestPermissionUseCase_Revoke_NotFound(t *testing.T) {
 
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
 
 	mockPermRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(project.ErrPermissionNotFound)
 
-	err := uc.Revoke(context.Background(), "nonexistent")
+	err := uc.Revoke(context.Background(), "proj-1", "nonexistent")
 	assert.ErrorIs(t, err, project.ErrPermissionNotFound)
 }

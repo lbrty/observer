@@ -19,7 +19,7 @@ import (
 func newHouseholdHandler(ctrl *gomock.Controller) (*handler.HouseholdHandler, *repomock.MockHouseholdRepository, *repomock.MockHouseholdMemberRepository) {
 	repo := repomock.NewMockHouseholdRepository(ctrl)
 	memberRepo := repomock.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(repo, memberRepo)
+	uc := ucproject.NewHouseholdUseCase(repo, memberRepo, nil)
 	return handler.NewHouseholdHandler(uc), repo, memberRepo
 }
 

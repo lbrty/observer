@@ -33,7 +33,7 @@ func newProjectTestDeps(ctrl *gomock.Controller) *projectTestDeps {
 }
 
 func (d *projectTestDeps) projectUseCase() *ucadmin.ProjectUseCase {
-	return ucadmin.NewProjectUseCase(d.projectRepo, d.permRepo)
+	return ucadmin.NewProjectUseCase(d.projectRepo, d.permRepo, nil)
 }
 
 func newProjectHandler(d *projectTestDeps) *handler.ProjectHandler {

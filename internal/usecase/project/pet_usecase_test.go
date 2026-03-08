@@ -21,7 +21,7 @@ func TestPetUseCase_List_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
 	mockTagRepo := mock_repo.NewMockPetTagRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, mockTagRepo)
+	uc := ucproject.NewPetUseCase(mockRepo, mockTagRepo, nil)
 
 	now := time.Now().UTC()
 	ownerID := "p1"
@@ -48,7 +48,7 @@ func TestPetUseCase_List_RepoError(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
 	mockTagRepo := mock_repo.NewMockPetTagRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, mockTagRepo)
+	uc := ucproject.NewPetUseCase(mockRepo, mockTagRepo, nil)
 
 	repoErr := errors.New("db error")
 	mockRepo.EXPECT().List(gomock.Any(), "proj1", gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, 0, repoErr)
@@ -63,7 +63,7 @@ func TestPetUseCase_List_TagRepoError(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
 	mockTagRepo := mock_repo.NewMockPetTagRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, mockTagRepo)
+	uc := ucproject.NewPetUseCase(mockRepo, mockTagRepo, nil)
 
 	now := time.Now().UTC()
 	mockRepo.EXPECT().List(gomock.Any(), "proj1", gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return([]*pet.Pet{
@@ -82,7 +82,7 @@ func TestPetUseCase_Get_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, nil)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
 
 	now := time.Now().UTC()
 	ownerID := "p1"
@@ -110,7 +110,7 @@ func TestPetUseCase_Get_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, nil)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, pet.ErrPetNotFound)
 
@@ -123,7 +123,7 @@ func TestPetUseCase_Create_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, nil)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
 
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, p *pet.Pet) error {
 		assert.NotEmpty(t, p.ID)
@@ -148,7 +148,7 @@ func TestPetUseCase_Create_DefaultStatus(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, nil)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
 
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, p *pet.Pet) error {
 		assert.Equal(t, pet.PetStatusUnknown, p.Status)
@@ -167,7 +167,7 @@ func TestPetUseCase_Create_RepoError(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, nil)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
 
 	repoErr := errors.New("insert failed")
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(repoErr)
@@ -181,7 +181,7 @@ func TestPetUseCase_Update_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, nil)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
 
 	now := time.Now().UTC()
 	existing := &pet.Pet{
@@ -213,7 +213,7 @@ func TestPetUseCase_Update_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, nil)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, pet.ErrPetNotFound)
 
@@ -226,11 +226,11 @@ func TestPetUseCase_Delete_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, nil)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "pet1").Return(nil)
 
-	err := uc.Delete(context.Background(), "pet1")
+	err := uc.Delete(context.Background(), "proj1", "pet1")
 	require.NoError(t, err)
 }
 
@@ -239,10 +239,10 @@ func TestPetUseCase_Delete_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, nil)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(pet.ErrPetNotFound)
 
-	err := uc.Delete(context.Background(), "nonexistent")
+	err := uc.Delete(context.Background(), "proj1", "nonexistent")
 	assert.ErrorIs(t, err, pet.ErrPetNotFound)
 }

@@ -21,7 +21,7 @@ func TestHouseholdUseCase_List_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	now := time.Now().UTC()
 	mockRepo.EXPECT().List(gomock.Any(), "proj1", gomock.Any(), gomock.Any()).Return([]*household.Household{
@@ -43,7 +43,7 @@ func TestHouseholdUseCase_List_RepoError(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	repoErr := errors.New("db error")
 	mockRepo.EXPECT().List(gomock.Any(), "proj1", gomock.Any(), gomock.Any()).Return(nil, 0, repoErr)
@@ -58,7 +58,7 @@ func TestHouseholdUseCase_Get_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	now := time.Now().UTC()
 	headID := "p1"
@@ -91,7 +91,7 @@ func TestHouseholdUseCase_Get_NotFound(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, household.ErrHouseholdNotFound)
 
@@ -105,7 +105,7 @@ func TestHouseholdUseCase_Create_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, h *household.Household) error {
 		assert.NotEmpty(t, h.ID)
@@ -131,7 +131,7 @@ func TestHouseholdUseCase_Create_RepoError(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	repoErr := errors.New("insert failed")
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(repoErr)
@@ -146,7 +146,7 @@ func TestHouseholdUseCase_Update_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	now := time.Now().UTC()
 	existing := &household.Household{
@@ -175,7 +175,7 @@ func TestHouseholdUseCase_Update_NotFound(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, household.ErrHouseholdNotFound)
 
@@ -189,11 +189,11 @@ func TestHouseholdUseCase_Delete_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "h1").Return(nil)
 
-	err := uc.Delete(context.Background(), "h1")
+	err := uc.Delete(context.Background(), "proj1", "h1")
 	require.NoError(t, err)
 }
 
@@ -203,11 +203,11 @@ func TestHouseholdUseCase_Delete_NotFound(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(household.ErrHouseholdNotFound)
 
-	err := uc.Delete(context.Background(), "nonexistent")
+	err := uc.Delete(context.Background(), "proj1", "nonexistent")
 	assert.ErrorIs(t, err, household.ErrHouseholdNotFound)
 }
 
@@ -217,7 +217,7 @@ func TestHouseholdUseCase_AddMember_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	mockMemberRepo.EXPECT().Add(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, m *household.Member) error {
 		assert.Equal(t, "h1", m.HouseholdID)
@@ -241,7 +241,7 @@ func TestHouseholdUseCase_AddMember_AlreadyExists(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	mockMemberRepo.EXPECT().Add(gomock.Any(), gomock.Any()).Return(household.ErrMemberExists)
 
@@ -258,7 +258,7 @@ func TestHouseholdUseCase_RemoveMember_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	mockMemberRepo.EXPECT().Remove(gomock.Any(), "h1", "p3").Return(nil)
 
@@ -272,7 +272,7 @@ func TestHouseholdUseCase_RemoveMember_NotFound(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	mockMemberRepo.EXPECT().Remove(gomock.Any(), "h1", "nonexistent").Return(household.ErrMemberNotFound)
 

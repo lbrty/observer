@@ -18,7 +18,7 @@ import (
 
 func newTagHandler(ctrl *gomock.Controller) (*handler.TagHandler, *repomock.MockTagRepository) {
 	repo := repomock.NewMockTagRepository(ctrl)
-	uc := ucproject.NewTagUseCase(repo)
+	uc := ucproject.NewTagUseCase(repo, nil)
 	return handler.NewTagHandler(uc), repo
 }
 

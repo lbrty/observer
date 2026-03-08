@@ -21,7 +21,7 @@ import (
 func newDocumentHandler(ctrl *gomock.Controller) (*handler.DocumentHandler, *repomock.MockDocumentRepository, *storagemock.MockFileStorage) {
 	docRepo := repomock.NewMockDocumentRepository(ctrl)
 	fs := storagemock.NewMockFileStorage(ctrl)
-	uc := ucproject.NewDocumentUseCase(docRepo, fs)
+	uc := ucproject.NewDocumentUseCase(docRepo, fs, nil)
 	return handler.NewDocumentHandler(uc), docRepo, fs
 }
 

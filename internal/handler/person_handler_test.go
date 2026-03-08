@@ -31,7 +31,7 @@ func newPersonTestDeps(ctrl *gomock.Controller) *personTestDeps {
 	catRepo := repomock.NewMockPersonCategoryRepository(ctrl)
 
 	h := handler.NewPersonHandler(
-		ucproject.NewPersonUseCase(personRepo, tagRepo),
+		ucproject.NewPersonUseCase(personRepo, tagRepo, nil),
 		ucproject.NewPersonCategoryUseCase(catRepo),
 		ucproject.NewPersonTagUseCase(tagRepo),
 	)

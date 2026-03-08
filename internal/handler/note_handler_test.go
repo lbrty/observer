@@ -18,7 +18,7 @@ import (
 
 func newNoteHandler(ctrl *gomock.Controller) (*handler.NoteHandler, *repomock.MockPersonNoteRepository) {
 	repo := repomock.NewMockPersonNoteRepository(ctrl)
-	uc := ucproject.NewNoteUseCase(repo)
+	uc := ucproject.NewNoteUseCase(repo, nil)
 	return handler.NewNoteHandler(uc), repo
 }
 

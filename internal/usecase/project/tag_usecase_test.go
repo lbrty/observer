@@ -20,7 +20,7 @@ func TestTagUseCase_List_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockTagRepository(ctrl)
-	uc := ucproject.NewTagUseCase(mockRepo)
+	uc := ucproject.NewTagUseCase(mockRepo, nil)
 
 	now := time.Now().UTC()
 	mockRepo.EXPECT().List(gomock.Any(), "proj1").Return([]*tag.Tag{
@@ -42,7 +42,7 @@ func TestTagUseCase_List_RepoError(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockTagRepository(ctrl)
-	uc := ucproject.NewTagUseCase(mockRepo)
+	uc := ucproject.NewTagUseCase(mockRepo, nil)
 
 	repoErr := errors.New("db connection lost")
 	mockRepo.EXPECT().List(gomock.Any(), "proj1").Return(nil, repoErr)
@@ -56,7 +56,7 @@ func TestTagUseCase_Create_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockTagRepository(ctrl)
-	uc := ucproject.NewTagUseCase(mockRepo)
+	uc := ucproject.NewTagUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, tg *tag.Tag) error {
 		assert.NotEmpty(t, tg.ID)
@@ -81,7 +81,7 @@ func TestTagUseCase_Create_DuplicateName(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockTagRepository(ctrl)
-	uc := ucproject.NewTagUseCase(mockRepo)
+	uc := ucproject.NewTagUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(tag.ErrTagNameExists)
 
@@ -94,7 +94,7 @@ func TestTagUseCase_Update_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockTagRepository(ctrl)
-	uc := ucproject.NewTagUseCase(mockRepo)
+	uc := ucproject.NewTagUseCase(mockRepo, nil)
 
 	existing := &tag.Tag{ID: "t1", ProjectID: "proj1", Name: "urgent", Color: "#ff0000"}
 	mockRepo.EXPECT().GetByID(gomock.Any(), "t1").Return(existing, nil)
@@ -118,7 +118,7 @@ func TestTagUseCase_Update_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockTagRepository(ctrl)
-	uc := ucproject.NewTagUseCase(mockRepo)
+	uc := ucproject.NewTagUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, tag.ErrTagNotFound)
 
@@ -131,11 +131,11 @@ func TestTagUseCase_Delete_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockTagRepository(ctrl)
-	uc := ucproject.NewTagUseCase(mockRepo)
+	uc := ucproject.NewTagUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "t1").Return(nil)
 
-	err := uc.Delete(context.Background(), "t1")
+	err := uc.Delete(context.Background(), "proj1", "t1")
 	require.NoError(t, err)
 }
 
@@ -144,10 +144,10 @@ func TestTagUseCase_Delete_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockTagRepository(ctrl)
-	uc := ucproject.NewTagUseCase(mockRepo)
+	uc := ucproject.NewTagUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(tag.ErrTagNotFound)
 
-	err := uc.Delete(context.Background(), "nonexistent")
+	err := uc.Delete(context.Background(), "proj1", "nonexistent")
 	assert.ErrorIs(t, err, tag.ErrTagNotFound)
 }

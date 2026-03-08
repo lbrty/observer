@@ -20,7 +20,7 @@ func TestSupportRecordUseCase_List_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
 
 	now := time.Now().UTC()
 	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*support.Record{
@@ -41,7 +41,7 @@ func TestSupportRecordUseCase_List_RepoError(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
 
 	repoErr := errors.New("db error")
 	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, repoErr)
@@ -55,7 +55,7 @@ func TestSupportRecordUseCase_Get_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
 
 	now := time.Now().UTC()
 	sphere := support.SphereHousingAssistance
@@ -82,7 +82,7 @@ func TestSupportRecordUseCase_Get_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, support.ErrRecordNotFound)
 
@@ -95,7 +95,7 @@ func TestSupportRecordUseCase_Create_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, r *support.Record) error {
 		assert.NotEmpty(t, r.ID)
@@ -122,7 +122,7 @@ func TestSupportRecordUseCase_Create_RepoError(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
 
 	repoErr := errors.New("insert failed")
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(repoErr)
@@ -139,7 +139,7 @@ func TestSupportRecordUseCase_Update_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
 
 	now := time.Now().UTC()
 	existing := &support.Record{
@@ -168,7 +168,7 @@ func TestSupportRecordUseCase_Update_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, support.ErrRecordNotFound)
 
@@ -181,11 +181,11 @@ func TestSupportRecordUseCase_Delete_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "sr1").Return(nil)
 
-	err := uc.Delete(context.Background(), "sr1")
+	err := uc.Delete(context.Background(), "proj1", "sr1")
 	require.NoError(t, err)
 }
 
@@ -194,10 +194,10 @@ func TestSupportRecordUseCase_Delete_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
 
 	mockRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(support.ErrRecordNotFound)
 
-	err := uc.Delete(context.Background(), "nonexistent")
+	err := uc.Delete(context.Background(), "proj1", "nonexistent")
 	assert.ErrorIs(t, err, support.ErrRecordNotFound)
 }

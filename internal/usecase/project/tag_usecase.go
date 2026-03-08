@@ -7,16 +7,18 @@ import (
 	"github.com/lbrty/observer/internal/domain/tag"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 // TagUseCase handles tag operations within a project.
 type TagUseCase struct {
-	repo repository.TagRepository
+	repo    repository.TagRepository
+	auditUC *ucaudit.AuditUseCase
 }
 
 // NewTagUseCase creates a TagUseCase.
-func NewTagUseCase(repo repository.TagRepository) *TagUseCase {
-	return &TagUseCase{repo: repo}
+func NewTagUseCase(repo repository.TagRepository, auditUC *ucaudit.AuditUseCase) *TagUseCase {
+	return &TagUseCase{repo: repo, auditUC: auditUC}
 }
 
 // List returns all tags for a project.
@@ -43,6 +45,7 @@ func (uc *TagUseCase) Create(ctx context.Context, projectID string, input Create
 	if err := uc.repo.Create(ctx, t); err != nil {
 		return nil, fmt.Errorf("create tag: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "tag.create", "tag", &t.ID, fmt.Sprintf("Created tag %s", t.Name))
 	dto := tagToDTO(t)
 	return &dto, nil
 }
@@ -67,9 +70,10 @@ func (uc *TagUseCase) Update(ctx context.Context, id string, input UpdateTagInpu
 }
 
 // Delete removes a tag.
-func (uc *TagUseCase) Delete(ctx context.Context, id string) error {
+func (uc *TagUseCase) Delete(ctx context.Context, projectID, id string) error {
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete tag: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "tag.delete", "tag", &id, fmt.Sprintf("Deleted tag %s", id))
 	return nil
 }

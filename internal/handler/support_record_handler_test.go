@@ -18,7 +18,7 @@ import (
 
 func newSupportRecordHandler(ctrl *gomock.Controller) (*handler.SupportRecordHandler, *repomock.MockSupportRecordRepository) {
 	repo := repomock.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(repo)
+	uc := ucproject.NewSupportRecordUseCase(repo, nil)
 	return handler.NewSupportRecordHandler(uc), repo
 }
 

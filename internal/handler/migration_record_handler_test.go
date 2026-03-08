@@ -18,7 +18,7 @@ import (
 
 func newMigrationRecordHandler(ctrl *gomock.Controller) (*handler.MigrationRecordHandler, *repomock.MockMigrationRecordRepository) {
 	repo := repomock.NewMockMigrationRecordRepository(ctrl)
-	uc := ucproject.NewMigrationRecordUseCase(repo)
+	uc := ucproject.NewMigrationRecordUseCase(repo, nil)
 	return handler.NewMigrationRecordHandler(uc), repo
 }
 
