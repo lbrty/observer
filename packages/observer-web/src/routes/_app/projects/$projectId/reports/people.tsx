@@ -179,21 +179,24 @@ function ReportsPage() {
             </div>
 
             {/* Filter row */}
-            <div className="flex flex-wrap items-end gap-4">
-              <DateRangePicker
-                from={params.date_from ?? ""}
-                to={params.date_to ?? ""}
-                onChange={(range) => {
-                  setParams((p) => ({
-                    ...p,
-                    date_from: range.from || undefined,
-                    date_to: range.to || undefined,
-                  }));
-                  clearDatePreset();
-                }}
-              />
+            <div className="flex flex-wrap items-start gap-4">
+              <FilterField label={t("project.reports.dateRange")}>
+                <DateRangePicker
+                  from={params.date_from ?? ""}
+                  to={params.date_to ?? ""}
+                  onChange={(range) => {
+                    setParams((p) => ({
+                      ...p,
+                      date_from: range.from || undefined,
+                      date_to: range.to || undefined,
+                    }));
+                    clearDatePreset();
+                  }}
+                />
+              </FilterField>
               <FilterField label={t("project.reports.filterOffice")}>
                 <UISelect
+                  fullWidth
                   value={params.office_id ?? ""}
                   onValueChange={(v) => setParams((p) => ({ ...p, office_id: v || undefined }))}
                   options={[{ label: t("project.reports.allValues"), value: "" }, ...officeOptions]}
@@ -202,6 +205,7 @@ function ReportsPage() {
               </FilterField>
               <FilterField label={t("project.reports.filterCategory")}>
                 <UISelect
+                  fullWidth
                   value={params.category_id ?? ""}
                   onValueChange={(v) => setParams((p) => ({ ...p, category_id: v || undefined }))}
                   options={[
@@ -213,6 +217,7 @@ function ReportsPage() {
               </FilterField>
               <FilterField label={t("project.reports.filterCaseStatus")}>
                 <UISelect
+                  fullWidth
                   value={params.case_status ?? ""}
                   onValueChange={(v) => setParams((p) => ({ ...p, case_status: v || undefined }))}
                   options={[
@@ -224,6 +229,7 @@ function ReportsPage() {
               </FilterField>
               <FilterField label={t("project.reports.filterSex")}>
                 <UISelect
+                  fullWidth
                   value={params.sex ?? ""}
                   onValueChange={(v) => setParams((p) => ({ ...p, sex: v || undefined }))}
                   options={[{ label: t("project.reports.allValues"), value: "" }, ...sexOptions]}
@@ -232,6 +238,7 @@ function ReportsPage() {
               </FilterField>
               <FilterField label={t("project.reports.filterAgeGroup")}>
                 <UISelect
+                  fullWidth
                   value={params.age_group ?? ""}
                   onValueChange={(v) => setParams((p) => ({ ...p, age_group: v || undefined }))}
                   options={[
@@ -243,6 +250,7 @@ function ReportsPage() {
               </FilterField>
               <FilterField label={t("project.reports.filterSupportType")}>
                 <UISelect
+                  fullWidth
                   value={params.support_type ?? ""}
                   onValueChange={(v) => setParams((p) => ({ ...p, support_type: v || undefined }))}
                   options={[

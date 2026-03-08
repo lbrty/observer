@@ -15,6 +15,7 @@
     "export": "Dışa aktar",
     "dateFrom": "Başlangıç",
     "dateTo": "Bitiş",
+    "dateRange": "Tarih aralığı",
     "loading": "Yükleniyor…",
     "enabled": "Etkin",
     "disabled": "Devre dışı"
@@ -552,6 +553,7 @@
       "title": "Raporlar",
       "dateFrom": "Başlangıç",
       "dateTo": "Bitiş",
+      "dateRange": "Tarih aralığı",
       "consultations": "Danışmanlıklar",
       "byCaseStatus": "Vaka durumuna göre",
       "bySex": "Cinsiyete göre",

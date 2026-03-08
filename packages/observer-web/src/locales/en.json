@@ -15,6 +15,7 @@
     "export": "Export",
     "dateFrom": "From",
     "dateTo": "To",
+    "dateRange": "Date range",
     "loading": "Loading…",
     "enabled": "Enabled",
     "disabled": "Disabled"
@@ -552,6 +553,7 @@
       "title": "Reports",
       "dateFrom": "From",
       "dateTo": "To",
+      "dateRange": "Date range",
       "consultations": "Consultations",
       "byCaseStatus": "By case status",
       "bySex": "By sex",

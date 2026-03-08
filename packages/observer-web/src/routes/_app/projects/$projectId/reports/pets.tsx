@@ -166,7 +166,7 @@ function ReportCard({
 
 function FilterField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-1.5">
+    <div className="min-w-48 space-y-1.5">
       <span className="block text-xs font-medium text-fg-secondary">{label}</span>
       {children}
     </div>
@@ -313,21 +313,24 @@ function PetReportsPage() {
               ))}
             </div>
 
-            <div className="flex flex-wrap items-end gap-4">
-              <DateRangePicker
-                from={params.date_from ?? ""}
-                to={params.date_to ?? ""}
-                onChange={(range) => {
-                  setParams((p) => ({
-                    ...p,
-                    date_from: range.from || undefined,
-                    date_to: range.to || undefined,
-                  }));
-                  clearDatePreset();
-                }}
-              />
+            <div className="flex flex-wrap items-start gap-4">
+              <FilterField label={t("project.reports.dateRange")}>
+                <DateRangePicker
+                  from={params.date_from ?? ""}
+                  to={params.date_to ?? ""}
+                  onChange={(range) => {
+                    setParams((p) => ({
+                      ...p,
+                      date_from: range.from || undefined,
+                      date_to: range.to || undefined,
+                    }));
+                    clearDatePreset();
+                  }}
+                />
+              </FilterField>
               <FilterField label={t("project.petReports.filterStatus")}>
                 <UISelect
+                  fullWidth
                   value={params.status ?? ""}
                   onValueChange={(v) => setParams((p) => ({ ...p, status: v || undefined }))}
                   options={[{ label: t("project.reports.allValues"), value: "" }, ...statusOptions]}

@@ -15,6 +15,7 @@
     "export": "Exportieren",
     "dateFrom": "Von",
     "dateTo": "Bis",
+    "dateRange": "Datumsbereich",
     "loading": "Laden…",
     "enabled": "Aktiviert",
     "disabled": "Deaktiviert"
@@ -552,6 +553,7 @@
       "title": "Berichte",
       "dateFrom": "Von",
       "dateTo": "Bis",
+      "dateRange": "Datumsbereich",
       "consultations": "Beratungen",
       "byCaseStatus": "Nach Fallstatus",
       "bySex": "Nach Geschlecht",

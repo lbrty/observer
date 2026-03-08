@@ -15,6 +15,7 @@
     "export": "Экспорт",
     "dateFrom": "С",
     "dateTo": "По",
+    "dateRange": "Диапазон дат",
     "loading": "Загрузка…",
     "enabled": "Включено",
     "disabled": "Отключено"
@@ -552,6 +553,7 @@
       "title": "Отчёты",
       "dateFrom": "С",
       "dateTo": "По",
+      "dateRange": "Диапазон дат",
       "consultations": "Консультации",
       "byCaseStatus": "По статусу дела",
       "bySex": "По полу",

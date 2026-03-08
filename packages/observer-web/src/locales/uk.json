@@ -15,6 +15,7 @@
     "export": "Експорт",
     "dateFrom": "Від",
     "dateTo": "До",
+    "dateRange": "Діапазон дат",
     "loading": "Завантаження…",
     "enabled": "Увімкнено",
     "disabled": "Вимкнено"
@@ -552,6 +553,7 @@
       "title": "Звіти",
       "dateFrom": "Від",
       "dateTo": "До",
+      "dateRange": "Діапазон дат",
       "consultations": "Консультації",
       "byCaseStatus": "За статусом справи",
       "bySex": "За статтю",

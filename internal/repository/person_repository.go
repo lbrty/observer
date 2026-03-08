@@ -77,7 +77,7 @@ func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) (
 	}
 	if filter.AgeGroup != nil {
 		ix++
-		where = append(where, "(age_group = $"+strconv.Itoa(ix)+
+		where = append(where, "(age_group::text = $"+strconv.Itoa(ix)+
 			" OR (age_group IS NULL AND birth_date IS NOT NULL AND "+
 			"CASE "+
 			"WHEN EXTRACT(YEAR FROM age(birth_date)) < 1 THEN 'infant' "+
