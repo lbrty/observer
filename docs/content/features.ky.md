@@ -106,7 +106,7 @@ Bir ele bet siziñ rolüñüzğa caraşa başqaça körünöt. Platforma roldoru
   </div>
   <div class="mb-4">
     <p class="text-center fw-semibold mb-2">Qonoq</p>
-    {{< screenshot src="images/screenshots/people-list-guest.png" alt="Adamdar tizmesi — qonoq körünüşü" class="rounded shadow" >}}
+    {{< screenshot src="images/screenshots/people-list-guest.png" alt="Adamdar tizmesi — bejtarap körünüşü" class="rounded shadow" >}}
   </div>
 </div>
 
