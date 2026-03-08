@@ -15,7 +15,7 @@ import {
   FileAudioIcon,
   FileCsvIcon,
   FileDocIcon,
-  FileIcon,
+  FileDashedIcon,
   FileImageIcon,
   FilePdfIcon,
   FilePngIcon,
@@ -61,6 +61,7 @@ function mimeIcon(mime: string): Icon {
   if (mime === "application/pdf") return FilePdfIcon;
   if (mime.startsWith("image/png")) return FilePngIcon;
   if (mime.startsWith("image/svg")) return FileSvgIcon;
+  if (mime === "image/avif" || mime === "image/heif" || mime === "image/heic") return FileDashedIcon;
   if (mime.startsWith("image/")) return FileImageIcon;
   if (mime.startsWith("video/")) return FileVideoIcon;
   if (mime.startsWith("audio/")) return FileAudioIcon;
@@ -83,7 +84,7 @@ function mimeIcon(mime: string): Icon {
     return FilePptIcon;
   if (mime === "application/zip" || mime === "application/x-rar-compressed" || mime === "application/gzip")
     return FileArchiveIcon;
-  return FileIcon;
+  return FileDashedIcon;
 }
 
 function PersonDocuments() {

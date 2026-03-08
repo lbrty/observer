@@ -70,8 +70,10 @@ export function documentThumbnailUrl(projectId: string, documentId: string): str
   return `${base}/projects/${projectId}/documents/${documentId}/thumbnail`;
 }
 
+const unsupportedImageFormats = new Set(["image/avif", "image/heif", "image/heic"]);
+
 export function isImageMime(mimeType: string): boolean {
-  return mimeType.startsWith("image/");
+  return mimeType.startsWith("image/") && !unsupportedImageFormats.has(mimeType);
 }
 
 export function isPdfMime(mimeType: string): boolean {

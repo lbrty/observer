@@ -20,6 +20,7 @@ export {
   FileArchiveIcon,
   FileAudioIcon,
   FileCsvIcon,
+  FileDashedIcon,
   FileDocIcon,
   FileIcon,
   FileImageIcon,
