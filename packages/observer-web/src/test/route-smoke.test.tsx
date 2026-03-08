@@ -212,11 +212,6 @@ describe("route imports", () => {
     expect(mod).toBeDefined();
   });
 
-  it("imports projects/$projectId/documents/index", async () => {
-    const mod = await import("@/routes/_app/projects/$projectId/documents/index");
-    expect(mod).toBeDefined();
-  });
-
   it("imports projects/$projectId/reports/index", async () => {
     const mod = await import("@/routes/_app/projects/$projectId/reports/index");
     expect(mod).toBeDefined();

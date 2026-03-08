@@ -1,7 +1,6 @@
 import {
   ChartBarIcon,
   ClockCounterClockwiseIcon,
-  FilesIcon,
   HandHeartIcon,
   HouseSimpleIcon,
   PawPrintIcon,
@@ -99,13 +98,6 @@ function ProjectLayout() {
             label={t("project.nav.tags")}
             icon={TagIcon}
           />
-          {project.can_view_documents && (
-            <SidebarLink
-              to={`/projects/${projectId}/documents`}
-              label={t("project.nav.documents")}
-              icon={FilesIcon}
-            />
-          )}
           <SidebarLink
             to={`/projects/${projectId}/pets`}
             label={t("project.nav.pets")}

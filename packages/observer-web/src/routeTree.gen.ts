@@ -35,7 +35,6 @@ import { Route as AppProjectsProjectIdPetsIndexRouteImport } from './routes/_app
 import { Route as AppProjectsProjectIdPeopleIndexRouteImport } from './routes/_app/projects/$projectId/people/index'
 import { Route as AppProjectsProjectIdMyStatsIndexRouteImport } from './routes/_app/projects/$projectId/my-stats/index'
 import { Route as AppProjectsProjectIdHouseholdsIndexRouteImport } from './routes/_app/projects/$projectId/households/index'
-import { Route as AppProjectsProjectIdDocumentsIndexRouteImport } from './routes/_app/projects/$projectId/documents/index'
 import { Route as AppAdminReferenceCountriesIndexRouteImport } from './routes/_app/admin/reference/countries/index'
 import { Route as AppAdminProjectsProjectIdIndexRouteImport } from './routes/_app/admin/projects/$projectId/index'
 import { Route as AppProjectsProjectIdSupportRecordsTypeRouteImport } from './routes/_app/projects/$projectId/support-records/$type'
@@ -195,12 +194,6 @@ const AppProjectsProjectIdHouseholdsIndexRoute =
     path: '/households/',
     getParentRoute: () => AppProjectsProjectIdRoute,
   } as any)
-const AppProjectsProjectIdDocumentsIndexRoute =
-  AppProjectsProjectIdDocumentsIndexRouteImport.update({
-    id: '/documents/',
-    path: '/documents/',
-    getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
 const AppAdminReferenceCountriesIndexRoute =
   AppAdminReferenceCountriesIndexRouteImport.update({
     id: '/',
@@ -338,7 +331,6 @@ export interface FileRoutesByFullPath {
   '/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
   '/admin/projects/$projectId/': typeof AppAdminProjectsProjectIdIndexRoute
   '/admin/reference/countries/': typeof AppAdminReferenceCountriesIndexRoute
-  '/projects/$projectId/documents/': typeof AppProjectsProjectIdDocumentsIndexRoute
   '/projects/$projectId/households/': typeof AppProjectsProjectIdHouseholdsIndexRoute
   '/projects/$projectId/my-stats/': typeof AppProjectsProjectIdMyStatsIndexRoute
   '/projects/$projectId/people/': typeof AppProjectsProjectIdPeopleIndexRoute
@@ -378,7 +370,6 @@ export interface FileRoutesByTo {
   '/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
   '/admin/projects/$projectId': typeof AppAdminProjectsProjectIdIndexRoute
   '/admin/reference/countries': typeof AppAdminReferenceCountriesIndexRoute
-  '/projects/$projectId/documents': typeof AppProjectsProjectIdDocumentsIndexRoute
   '/projects/$projectId/households': typeof AppProjectsProjectIdHouseholdsIndexRoute
   '/projects/$projectId/my-stats': typeof AppProjectsProjectIdMyStatsIndexRoute
   '/projects/$projectId/people': typeof AppProjectsProjectIdPeopleIndexRoute
@@ -426,7 +417,6 @@ export interface FileRoutesById {
   '/_app/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
   '/_app/admin/projects/$projectId/': typeof AppAdminProjectsProjectIdIndexRoute
   '/_app/admin/reference/countries/': typeof AppAdminReferenceCountriesIndexRoute
-  '/_app/projects/$projectId/documents/': typeof AppProjectsProjectIdDocumentsIndexRoute
   '/_app/projects/$projectId/households/': typeof AppProjectsProjectIdHouseholdsIndexRoute
   '/_app/projects/$projectId/my-stats/': typeof AppProjectsProjectIdMyStatsIndexRoute
   '/_app/projects/$projectId/people/': typeof AppProjectsProjectIdPeopleIndexRoute
@@ -473,7 +463,6 @@ export interface FileRouteTypes {
     | '/projects/$projectId/support-records/$type'
     | '/admin/projects/$projectId/'
     | '/admin/reference/countries/'
-    | '/projects/$projectId/documents/'
     | '/projects/$projectId/households/'
     | '/projects/$projectId/my-stats/'
     | '/projects/$projectId/people/'
@@ -513,7 +502,6 @@ export interface FileRouteTypes {
     | '/projects/$projectId/support-records/$type'
     | '/admin/projects/$projectId'
     | '/admin/reference/countries'
-    | '/projects/$projectId/documents'
     | '/projects/$projectId/households'
     | '/projects/$projectId/my-stats'
     | '/projects/$projectId/people'
@@ -560,7 +548,6 @@ export interface FileRouteTypes {
     | '/_app/projects/$projectId/support-records/$type'
     | '/_app/admin/projects/$projectId/'
     | '/_app/admin/reference/countries/'
-    | '/_app/projects/$projectId/documents/'
     | '/_app/projects/$projectId/households/'
     | '/_app/projects/$projectId/my-stats/'
     | '/_app/projects/$projectId/people/'
@@ -765,13 +752,6 @@ declare module '@tanstack/react-router' {
       path: '/households'
       fullPath: '/projects/$projectId/households/'
       preLoaderRoute: typeof AppProjectsProjectIdHouseholdsIndexRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/documents/': {
-      id: '/_app/projects/$projectId/documents/'
-      path: '/documents'
-      fullPath: '/projects/$projectId/documents/'
-      preLoaderRoute: typeof AppProjectsProjectIdDocumentsIndexRouteImport
       parentRoute: typeof AppProjectsProjectIdRoute
     }
     '/_app/admin/reference/countries/': {
@@ -1023,7 +1003,6 @@ interface AppProjectsProjectIdRouteChildren {
   AppProjectsProjectIdReportsPeopleRoute: typeof AppProjectsProjectIdReportsPeopleRoute
   AppProjectsProjectIdReportsPetsRoute: typeof AppProjectsProjectIdReportsPetsRoute
   AppProjectsProjectIdSupportRecordsTypeRoute: typeof AppProjectsProjectIdSupportRecordsTypeRoute
-  AppProjectsProjectIdDocumentsIndexRoute: typeof AppProjectsProjectIdDocumentsIndexRoute
   AppProjectsProjectIdHouseholdsIndexRoute: typeof AppProjectsProjectIdHouseholdsIndexRoute
   AppProjectsProjectIdMyStatsIndexRoute: typeof AppProjectsProjectIdMyStatsIndexRoute
   AppProjectsProjectIdPeopleIndexRoute: typeof AppProjectsProjectIdPeopleIndexRoute
@@ -1045,8 +1024,6 @@ const AppProjectsProjectIdRouteChildren: AppProjectsProjectIdRouteChildren = {
   AppProjectsProjectIdReportsPetsRoute: AppProjectsProjectIdReportsPetsRoute,
   AppProjectsProjectIdSupportRecordsTypeRoute:
     AppProjectsProjectIdSupportRecordsTypeRoute,
-  AppProjectsProjectIdDocumentsIndexRoute:
-    AppProjectsProjectIdDocumentsIndexRoute,
   AppProjectsProjectIdHouseholdsIndexRoute:
     AppProjectsProjectIdHouseholdsIndexRoute,
   AppProjectsProjectIdMyStatsIndexRoute: AppProjectsProjectIdMyStatsIndexRoute,
