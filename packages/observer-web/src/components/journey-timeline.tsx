@@ -87,19 +87,21 @@ export function JourneyTimeline({ records, places, onEdit }: JourneyTimelineProp
                     </>
                   ) : to ? (
                     <>
-                      <span className="text-fg-tertiary">{t("project.migrationRecords.arrivedAt")}</span>
+                      <span className="text-fg-tertiary">
+                        {t("project.migrationRecords.arrivedAt")}
+                      </span>
                       <span className="font-medium text-fg">{to}</span>
                     </>
                   ) : (
-                    <span className="text-fg-tertiary">{t("project.migrationRecords.movement")}</span>
+                    <span className="text-fg-tertiary">
+                      {t("project.migrationRecords.movement")}
+                    </span>
                   )}
                 </div>
 
                 {/* badges row */}
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {record.movement_reason && (
-                    <StatusBadge label={record.movement_reason} />
-                  )}
+                  {record.movement_reason && <StatusBadge label={record.movement_reason} />}
                   {record.housing_at_destination && (
                     <span className="inline-flex items-center rounded-full bg-bg-tertiary px-2.5 py-0.5 text-xs font-medium text-fg-secondary">
                       {record.housing_at_destination.replaceAll("_", " ")}

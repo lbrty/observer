@@ -36,16 +36,16 @@ cp .env.example .env
 
 Die wichtigsten Variablen:
 
-| Variable               | Wofür sie da ist                                  | Standard                   |
-| ---------------------- | ------------------------------------------------- | -------------------------- |
-| `DATABASE_DSN`         | Wie Observer sich mit PostgreSQL verbindet         | _(muss gesetzt werden)_    |
-| `REDIS_URL`            | Wie Observer sich mit Redis verbindet              | `redis://localhost:6379/0` |
-| `JWT_PRIVATE_KEY_PATH` | Wo Sie den privaten Schlüssel aus Schritt 1 abgelegt haben | `keys/jwt_rsa`     |
-| `JWT_PUBLIC_KEY_PATH`  | Wo Sie den öffentlichen Schlüssel aus Schritt 1 abgelegt haben | `keys/jwt_rsa.pub` |
-| `CORS_ORIGINS`         | Ihre Domain (z.B. `https://observer.yourorg.org`) | `http://localhost:5173`    |
-| `COOKIE_SECURE`        | Auf `true` setzen bei HTTPS (sollten Sie)         | `true`                     |
-| `SERVER_HOST`          | Auf welcher Adresse gelauscht wird                | `localhost`                |
-| `SERVER_PORT`          | Auf welchem Port gelauscht wird                   | `9000`                     |
+| Variable               | Wofür sie da ist                                               | Standard                   |
+| ---------------------- | -------------------------------------------------------------- | -------------------------- |
+| `DATABASE_DSN`         | Wie Observer sich mit PostgreSQL verbindet                     | _(muss gesetzt werden)_    |
+| `REDIS_URL`            | Wie Observer sich mit Redis verbindet                          | `redis://localhost:6379/0` |
+| `JWT_PRIVATE_KEY_PATH` | Wo Sie den privaten Schlüssel aus Schritt 1 abgelegt haben     | `keys/jwt_rsa`             |
+| `JWT_PUBLIC_KEY_PATH`  | Wo Sie den öffentlichen Schlüssel aus Schritt 1 abgelegt haben | `keys/jwt_rsa.pub`         |
+| `CORS_ORIGINS`         | Ihre Domain (z.B. `https://observer.yourorg.org`)              | `http://localhost:5173`    |
+| `COOKIE_SECURE`        | Auf `true` setzen bei HTTPS (sollten Sie)                      | `true`                     |
+| `SERVER_HOST`          | Auf welcher Adresse gelauscht wird                             | `localhost`                |
+| `SERVER_PORT`          | Auf welchem Port gelauscht wird                                | `9000`                     |
 
 Siehe [Umgebungsvariablen](/docs/developers/reference/variables/) für die vollständige Liste.
 

@@ -25,8 +25,8 @@ HTTP sunucusunu başlatır.
 observer serve [flags]
 ```
 
-| Flag     | Type   | Default     | Açıklama                                          |
-| -------- | ------ | ----------- | ------------------------------------------------- |
+| Flag     | Type   | Default     | Açıklama                                                     |
+| -------- | ------ | ----------- | ------------------------------------------------------------ |
 | `--host` | string | `localhost` | Sunucu adresi (`SERVER_HOST` env değişkenini geçersiz kılar) |
 | `--port` | int    | `9000`      | Sunucu portu (`SERVER_PORT` env değişkenini geçersiz kılar)  |
 
@@ -59,9 +59,9 @@ Bekleyen tüm geçişleri uygular.
 observer migrate up [flags]
 ```
 
-| Flag     | Type   | Default      | Açıklama                      |
-| -------- | ------ | ------------ | ----------------------------- |
-| `--path` | string | `migrations` | Geçiş dosyaları dizin yolu    |
+| Flag     | Type   | Default      | Açıklama                   |
+| -------- | ------ | ------------ | -------------------------- |
+| `--path` | string | `migrations` | Geçiş dosyaları dizin yolu |
 
 ```bash
 # Bekleyen tüm geçişleri uygula
@@ -79,10 +79,10 @@ Yeni bir ileri-yönlü geçiş dosyası oluşturur.
 observer migrate create [name] [flags]
 ```
 
-| Flag     | Type   | Default      | Açıklama                      |
-| -------- | ------ | ------------ | ----------------------------- |
-| `--path` | string | `migrations` | Geçiş dosyaları dizin yolu    |
-| `--seq`  | uint   | auto         | Açık sıra numarası            |
+| Flag     | Type   | Default      | Açıklama                   |
+| -------- | ------ | ------------ | -------------------------- |
+| `--path` | string | `migrations` | Geçiş dosyaları dizin yolu |
+| `--seq`  | uint   | auto         | Açık sıra numarası         |
 
 ```bash
 # Geçiş oluştur (otomatik numaralandırma)
@@ -100,9 +100,9 @@ Mevcut geçiş sürümünü gösterir.
 observer migrate version [flags]
 ```
 
-| Flag     | Type   | Default      | Açıklama                      |
-| -------- | ------ | ------------ | ----------------------------- |
-| `--path` | string | `migrations` | Geçiş dosyaları dizin yolu    |
+| Flag     | Type   | Default      | Açıklama                   |
+| -------- | ------ | ------------ | -------------------------- |
+| `--path` | string | `migrations` | Geçiş dosyaları dizin yolu |
 
 ---
 
@@ -114,10 +114,10 @@ JWT imzalama için RSA anahtar çifti üretir.
 observer keygen [flags]
 ```
 
-| Flag       | Type   | Default | Açıklama                             |
-| ---------- | ------ | ------- | ------------------------------------ |
-| `--bits`   | int    | `4096`  | RSA anahtar boyutu (minimum 4096)    |
-| `--output` | string | `.`     | Anahtar dosyaları için çıktı dizini  |
+| Flag       | Type   | Default | Açıklama                            |
+| ---------- | ------ | ------- | ----------------------------------- |
+| `--bits`   | int    | `4096`  | RSA anahtar boyutu (minimum 4096)   |
+| `--output` | string | `.`     | Anahtar dosyaları için çıktı dizini |
 
 **Örnekler:**
 
@@ -141,13 +141,13 @@ Platform yönetici hesabı oluşturur.
 observer create-admin [flags]
 ```
 
-| Flag           | Type   | Zorunlu | Açıklama                              |
-| -------------- | ------ | ------- | ------------------------------------- |
-| `--email`      | string | evet    | Yönetici e-posta adresi               |
-| `--password`   | string | evet    | Yönetici parolası (min 8 karakter)    |
-| `--first-name` | string | hayır   | Ad                                    |
-| `--last-name`  | string | hayır   | Soyad                                 |
-| `--phone`      | string | hayır   | Telefon numarası                      |
+| Flag           | Type   | Zorunlu | Açıklama                           |
+| -------------- | ------ | ------- | ---------------------------------- |
+| `--email`      | string | evet    | Yönetici e-posta adresi            |
+| `--password`   | string | evet    | Yönetici parolası (min 8 karakter) |
+| `--first-name` | string | hayır   | Ad                                 |
+| `--last-name`  | string | hayır   | Soyad                              |
+| `--phone`      | string | hayır   | Telefon numarası                   |
 
 **Örnekler:**
 
@@ -176,11 +176,11 @@ Geliştirme için veritabanını gerçekçi test verileriyle doldurur.
 observer seed [flags]
 ```
 
-| Flag         | Type  | Default | Açıklama                           |
-| ------------ | ----- | ------- | ---------------------------------- |
-| `--people`   | int   | `50`    | Proje başına kişi sayısı           |
-| `--projects` | int   | `2`     | Proje sayısı                       |
-| `--seed`     | int64 | `0`     | Rastgele tohum (0 = rastgele)      |
+| Flag         | Type  | Default | Açıklama                      |
+| ------------ | ----- | ------- | ----------------------------- |
+| `--people`   | int   | `50`    | Proje başına kişi sayısı      |
+| `--projects` | int   | `2`     | Proje sayısı                  |
+| `--seed`     | int64 | `0`     | Rastgele tohum (0 = rastgele) |
 
 **Örnekler:**
 

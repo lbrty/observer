@@ -15,6 +15,7 @@
 **Step 1: Add the dependency**
 
 Run:
+
 ```bash
 go get golang.org/x/image
 ```
@@ -22,9 +23,11 @@ go get golang.org/x/image
 **Step 2: Verify it's in go.mod**
 
 Run:
+
 ```bash
 grep 'golang.org/x/image' go.mod
 ```
+
 Expected: a line with `golang.org/x/image`
 
 **Step 3: Commit**
@@ -39,6 +42,7 @@ git commit -m "add golang.org/x/image dependency for thumbnail resizing"
 ### Task 2: Add `ErrNotImage` domain error
 
 **Files:**
+
 - Modify: `internal/domain/document/errors.go`
 
 **Step 1: Add error**
@@ -73,10 +77,12 @@ git commit -m "add ErrNotImage domain error for thumbnail requests on non-image 
 ### Task 3: Add `Thumbnail` method to `DocumentUseCase` with tests
 
 **Files:**
+
 - Modify: `internal/usecase/project/document_usecase.go`
 - Modify: `internal/usecase/project/document_usecase_test.go`
 
 The `Thumbnail` method:
+
 1. Fetches document metadata from repo
 2. Checks if MIME type starts with `image/` — returns `document.ErrNotImage` if not
 3. Builds the thumbnail path: same as original but with `_thumb.jpg` suffix appended
@@ -250,9 +256,11 @@ Add `"io"`, `"strings"` to test imports.
 **Step 6: Run tests**
 
 Run:
+
 ```bash
 just test
 ```
+
 Expected: all pass
 
 **Step 7: Commit**
@@ -267,6 +275,7 @@ git commit -m "add Thumbnail use case method with cache-hit and non-image tests"
 ### Task 4: Add `Stream` and `Thumbnail` handler methods
 
 **Files:**
+
 - Modify: `internal/handler/document_handler.go`
 
 **Step 1: Add `Stream` method**
@@ -325,6 +334,7 @@ git commit -m "add Stream and Thumbnail handler methods"
 ### Task 5: Register new routes
 
 **Files:**
+
 - Modify: `internal/server/server.go` (~line 232)
 
 **Step 1: Add routes**
@@ -339,17 +349,21 @@ read.GET("/documents/:id/thumbnail", documentHandler.Thumbnail)
 **Step 2: Verify build**
 
 Run:
+
 ```bash
 go build ./...
 ```
+
 Expected: no errors
 
 **Step 3: Run all tests**
 
 Run:
+
 ```bash
 just test
 ```
+
 Expected: all pass
 
 **Step 4: Commit**
@@ -363,12 +377,12 @@ git commit -m "register /stream and /thumbnail document routes"
 
 ### Summary of changes
 
-| File | Change |
-|------|--------|
-| `go.mod` / `go.sum` | Add `golang.org/x/image` |
-| `internal/domain/document/errors.go` | Add `ErrNotImage` |
-| `internal/handler/errors.go` | Map `ErrNotImage` → 400 |
-| `internal/usecase/project/document_usecase.go` | Add `thumbnailPath`, `isImage`, `generateThumbnail`, `Thumbnail` |
-| `internal/usecase/project/document_usecase_test.go` | Add 3 thumbnail tests |
-| `internal/handler/document_handler.go` | Add `Stream`, `Thumbnail` methods |
-| `internal/server/server.go` | Register 2 new routes |
+| File                                                | Change                                                           |
+| --------------------------------------------------- | ---------------------------------------------------------------- |
+| `go.mod` / `go.sum`                                 | Add `golang.org/x/image`                                         |
+| `internal/domain/document/errors.go`                | Add `ErrNotImage`                                                |
+| `internal/handler/errors.go`                        | Map `ErrNotImage` → 400                                          |
+| `internal/usecase/project/document_usecase.go`      | Add `thumbnailPath`, `isImage`, `generateThumbnail`, `Thumbnail` |
+| `internal/usecase/project/document_usecase_test.go` | Add 3 thumbnail tests                                            |
+| `internal/handler/document_handler.go`              | Add `Stream`, `Thumbnail` methods                                |
+| `internal/server/server.go`                         | Register 2 new routes                                            |

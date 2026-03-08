@@ -39,11 +39,11 @@ Tüm bunlar tek bir makinede çalışır. Üretim ortamında, herhangi bir sunuc
 
 "Deniyorum" aşamasından "ekibim bunu her gün kullanıyor" aşamasına geçmek için şunlara ihtiyacınız var:
 
-| Ne | Neden |
-| --- | --- |
+| Ne                            | Neden                                                                           |
+| ----------------------------- | ------------------------------------------------------------------------------- |
 | Bir sunucu (VPS veya yerinde) | Observer kendi sunucunuzda barındırılır — verileriniz altyapınızdan asla çıkmaz |
-| PostgreSQL | Observer'ın ihtiyaç duyduğu tek harici hizmet |
-| Yaklaşık 30 dakika | Alan adınız yönlendirilmiş bir sunucuda `docker compose up` çalıştırın |
+| PostgreSQL                    | Observer'ın ihtiyaç duyduğu tek harici hizmet                                   |
+| Yaklaşık 30 dakika            | Alan adınız yönlendirilmiş bir sunucuda `docker compose up` çalıştırın          |
 
 Abonelik yok. Kullanıcı başına ücret yok. Satıcı bağımlılığı yok. Verilerin ve dağıtımın sahibi sizsiniz.
 
@@ -53,12 +53,12 @@ Adım adım üretim kurulumu için [Dağıtım](/docs/guide/deployment/) sayfas�
 
 Observer'ın kendisi üzerinde çalışmak istiyorsanız, şu araçların kurulu olması gerekir:
 
-| Araç | Sürüm | Kurulum |
-| --- | --- | --- |
-| Go | 1.25.* | https://go.dev/dl/ |
-| Bun | latest | https://bun.sh/ |
-| Docker + Compose | latest | https://docs.docker.com/get-docker/ |
-| Just | latest | https://github.com/casey/just#installation |
+| Araç             | Sürüm   | Kurulum                                    |
+| ---------------- | ------- | ------------------------------------------ |
+| Go               | 1.25.\* | https://go.dev/dl/                         |
+| Bun              | latest  | https://bun.sh/                            |
+| Docker + Compose | latest  | https://docs.docker.com/get-docker/        |
+| Just             | latest  | https://github.com/casey/just#installation |
 
 ### 1. Klonlayın ve bağımlılıkları yükleyin
 

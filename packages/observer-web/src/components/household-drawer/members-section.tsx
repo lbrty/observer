@@ -71,10 +71,7 @@ export function MembersSection({
             </thead>
             <tbody>
               {household.members.map((m) => (
-                <tr
-                  key={m.person_id}
-                  className="border-b border-border-secondary last:border-b-0"
-                >
+                <tr key={m.person_id} className="border-b border-border-secondary last:border-b-0">
                   <td className="px-3 py-2 text-sm">
                     <Link
                       to="/projects/$projectId/people/$personId"
@@ -105,14 +102,10 @@ export function MembersSection({
           </table>
         </div>
       ) : (
-        <p className="text-sm text-fg-tertiary">
-          {t("project.households.noMembers")}
-        </p>
+        <p className="text-sm text-fg-tertiary">{t("project.households.noMembers")}</p>
       )}
 
-      <p className="text-xs font-medium text-fg-tertiary">
-        {t("project.households.addMember")}
-      </p>
+      <p className="text-xs font-medium text-fg-tertiary">{t("project.households.addMember")}</p>
       <div className="flex items-end gap-3">
         <div className="flex-1">
           <label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -120,9 +113,7 @@ export function MembersSection({
           </label>
           {memberForm.person_id ? (
             <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
-              <span className="flex-1 truncate text-sm text-fg">
-                {memberPersonLabel}
-              </span>
+              <span className="flex-1 truncate text-sm text-fg">{memberPersonLabel}</span>
               <button
                 type="button"
                 onClick={() => {

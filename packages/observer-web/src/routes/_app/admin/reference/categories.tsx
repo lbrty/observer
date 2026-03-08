@@ -65,14 +65,10 @@ function CategoriesPage() {
       emptyTitle={t("admin.reference.categories.emptyTitle")}
       emptyDescription={t("admin.reference.categories.emptyDescription")}
       emptyAction={
-        <Button onClick={() => setCreateOpen(true)}>
-          {t("admin.reference.categories.add")}
-        </Button>
+        <Button onClick={() => setCreateOpen(true)}>{t("admin.reference.categories.add")}</Button>
       }
       createAction={
-        <Button onClick={() => setCreateOpen(true)}>
-          {t("admin.reference.categories.add")}
-        </Button>
+        <Button onClick={() => setCreateOpen(true)}>{t("admin.reference.categories.add")}</Button>
       }
     >
       <CategoryFormDialog

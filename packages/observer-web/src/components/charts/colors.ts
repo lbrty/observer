@@ -69,16 +69,21 @@ export const PET_OWNERSHIP_COLORS: Record<string, string> = {
 };
 
 export const FALLBACK_PALETTE = [
-  "#6366f1", "#f59e0b", "#10b981", "#ef4444",
-  "#8b5cf6", "#ec4899", "#14b8a6", "#f97316",
-  "#3b82f6", "#84cc16", "#e879f9", "#06b6d4",
+  "#6366f1",
+  "#f59e0b",
+  "#10b981",
+  "#ef4444",
+  "#8b5cf6",
+  "#ec4899",
+  "#14b8a6",
+  "#f97316",
+  "#3b82f6",
+  "#84cc16",
+  "#e879f9",
+  "#06b6d4",
 ];
 
-export function getColor(
-  label: string,
-  colorMap?: Record<string, string>,
-  index?: number,
-): string {
+export function getColor(label: string, colorMap?: Record<string, string>, index?: number): string {
   if (colorMap?.[label]) return colorMap[label];
   return FALLBACK_PALETTE[(index ?? 0) % FALLBACK_PALETTE.length];
 }

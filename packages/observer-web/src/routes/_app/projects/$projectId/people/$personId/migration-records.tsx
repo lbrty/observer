@@ -36,7 +36,11 @@ function PersonMigrationRecords() {
   const [editId, setEditId] = useState<string | null>(null);
 
   function setView(v: string) {
-    navigate({ from: Route.fullPath, search: { view: v === "timeline" ? undefined : v }, replace: true });
+    navigate({
+      from: Route.fullPath,
+      search: { view: v === "timeline" ? undefined : v },
+      replace: true,
+    });
   }
 
   const records = data?.records ?? [];
@@ -130,9 +134,7 @@ function PersonMigrationRecords() {
                 type="button"
                 onClick={() => setView("table")}
                 className={`cursor-pointer rounded-sm px-3 py-1 text-xs font-medium transition-colors ${
-                  view === "table"
-                    ? "bg-bg text-fg shadow-card"
-                    : "text-fg-tertiary hover:text-fg"
+                  view === "table" ? "bg-bg text-fg shadow-card" : "text-fg-tertiary hover:text-fg"
                 }`}
               >
                 {t("project.migrationRecords.tableView")}

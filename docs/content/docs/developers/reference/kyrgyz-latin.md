@@ -25,7 +25,7 @@ weight: 2
 | 9   | Ğ ğ | ғ          | /ɣ/  | back vowels ONLY                      |
 | 10  | H h | х          | /x/  |                                       |
 | 11  | I i | и          | /i/  | front vowel                           |
-| 12  | J j | й          | /j/  | Only for Й (semivowel). NOT for Ж.   |
+| 12  | J j | й          | /j/  | Only for Й (semivowel). NOT for Ж.    |
 | 13  | K k | к          | /k/  | front vowels ONLY                     |
 | 14  | Q q | қ          | /q/  | back vowels ONLY                      |
 | 15  | L l | л          | /l/  |                                       |
@@ -51,11 +51,11 @@ Extra letter for loanwords: **Ž ž** — Ж in loanwords/proper names only, /ʒ
 
 Native Kyrgyz Ж is always **C c** /dʒ/. The letter **J j** is only for **Й** /j/.
 
-| Source | Latin | When | Examples |
-| ------ | ----- | ---- | -------- |
-| Ж | **C c** | Native Kyrgyz | жок→coq, жер→cer, жаңы→cañy, жабуу→cabuu |
-| Ж | **Ž ž** | Loanwords, proper names | журнал→žurnal, Брежнев→Brežnev |
-| Й | **J j** | Always (semivowel) | бай→baj, ой→oj, кайда→qajda |
+| Source | Latin   | When                    | Examples                                 |
+| ------ | ------- | ----------------------- | ---------------------------------------- |
+| Ж      | **C c** | Native Kyrgyz           | жок→coq, жер→cer, жаңы→cañy, жабуу→cabuu |
+| Ж      | **Ž ž** | Loanwords, proper names | журнал→žurnal, Брежнев→Brežnev           |
+| Й      | **J j** | Always (semivowel)      | бай→baj, ой→oj, кайда→qajda              |
 
 ### Common native Ж words
 

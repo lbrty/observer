@@ -6,10 +6,7 @@ import { useTranslation } from "react-i18next";
 import { DateRangePicker } from "@/components/date-picker";
 import { BarChart } from "@/components/charts/bar-chart";
 import { PieChart } from "@/components/charts/pie-chart";
-import {
-  PET_STATUS_COLORS,
-  PET_OWNERSHIP_COLORS,
-} from "@/components/charts/colors";
+import { PET_STATUS_COLORS, PET_OWNERSHIP_COLORS } from "@/components/charts/colors";
 import { UISelect } from "@/components/ui-select";
 import {
   CaretDownIcon,
@@ -56,13 +53,8 @@ function useTranslatedRows(rows: CountResult[], keyMap: Record<string, string>):
   });
 }
 
-function extractMonthlySeriesForStatus(
-  data: MonthlyStatusCount[],
-  status: string,
-): CountResult[] {
-  return data
-    .filter((r) => r.status === status)
-    .map((r) => ({ label: r.month, count: r.count }));
+function extractMonthlySeriesForStatus(data: MonthlyStatusCount[], status: string): CountResult[] {
+  return data.filter((r) => r.status === status).map((r) => ({ label: r.month, count: r.count }));
 }
 
 function extractMonthlyTotals(data: MonthlyStatusCount[]): CountResult[] {
@@ -238,11 +230,13 @@ function PetReportsPage() {
 
   const needsShelterCount =
     data?.by_status.rows.find((r) => r.label === "needs_shelter")?.count ?? 0;
-  const adoptedCount =
-    data?.by_status.rows.find((r) => r.label === "adopted")?.count ?? 0;
+  const adoptedCount = data?.by_status.rows.find((r) => r.label === "adopted")?.count ?? 0;
 
   const translatedStatus = useTranslatedRows(data?.by_status.rows ?? [], statusLabelKeyMap);
-  const translatedOwnership = useTranslatedRows(data?.by_ownership.rows ?? [], ownershipLabelKeyMap);
+  const translatedOwnership = useTranslatedRows(
+    data?.by_ownership.rows ?? [],
+    ownershipLabelKeyMap,
+  );
 
   const needsShelterMonthly = data
     ? extractMonthlySeriesForStatus(data.by_status_by_month, "needs_shelter")
@@ -265,7 +259,10 @@ function PetReportsPage() {
       </div>
 
       {/* Header + filter panel */}
-      <div data-print-hide className="mb-6 rounded-xl border border-border-secondary bg-bg-secondary">
+      <div
+        data-print-hide
+        className="mb-6 rounded-xl border border-border-secondary bg-bg-secondary"
+      >
         <div className="flex items-center justify-between px-5 py-3">
           <h1 className="font-serif text-xl font-bold tracking-tight text-fg">
             {t("project.petReports.title")}
@@ -321,7 +318,11 @@ function PetReportsPage() {
                 from={params.date_from ?? ""}
                 to={params.date_to ?? ""}
                 onChange={(range) => {
-                  setParams((p) => ({ ...p, date_from: range.from || undefined, date_to: range.to || undefined }));
+                  setParams((p) => ({
+                    ...p,
+                    date_from: range.from || undefined,
+                    date_to: range.to || undefined,
+                  }));
                   clearDatePreset();
                 }}
               />
@@ -406,7 +407,9 @@ function PetReportsPage() {
             chart="pie"
             colorMap={PET_OWNERSHIP_COLORS}
             total={data.by_ownership.total}
-            onExport={() => exportGroupCSV(t("project.petReports.byOwnership"), translatedOwnership)}
+            onExport={() =>
+              exportGroupCSV(t("project.petReports.byOwnership"), translatedOwnership)
+            }
           />
 
           {/* Monthly trends */}
@@ -436,7 +439,9 @@ function PetReportsPage() {
             rows={needsShelterMonthly}
             chart="bar"
             yAxisLabel={axisLabel}
-            colorMap={{ ...Object.fromEntries(needsShelterMonthly.map((r) => [r.label, "#ef4444"])) }}
+            colorMap={{
+              ...Object.fromEntries(needsShelterMonthly.map((r) => [r.label, "#ef4444"])),
+            }}
             onExport={() =>
               exportGroupCSV(t("project.petReports.needsShelterByMonth"), needsShelterMonthly)
             }
@@ -447,9 +452,7 @@ function PetReportsPage() {
             chart="bar"
             yAxisLabel={axisLabel}
             colorMap={{ ...Object.fromEntries(adoptedMonthly.map((r) => [r.label, "#10b981"])) }}
-            onExport={() =>
-              exportGroupCSV(t("project.petReports.adoptedByMonth"), adoptedMonthly)
-            }
+            onExport={() => exportGroupCSV(t("project.petReports.adoptedByMonth"), adoptedMonthly)}
           />
         </div>
       )}

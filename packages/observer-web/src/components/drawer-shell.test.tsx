@@ -2,9 +2,7 @@ import { describe, it, expect, mock } from "bun:test";
 import { render, screen, fireEvent } from "@testing-library/react";
 
 mock.module("@base-ui/react/drawer", () => {
-  const Passthrough = ({ children, ...props }: any) => (
-    <div {...props}>{children}</div>
-  );
+  const Passthrough = ({ children, ...props }: any) => <div {...props}>{children}</div>;
   const Close = ({ children, ...props }: any) => (
     <button type="button" {...props}>
       {children}

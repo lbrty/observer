@@ -25,8 +25,8 @@ go install github.com/lbrty/observer/cmd/observer@latest
 observer serve [flags]
 ```
 
-| Flag     | Type   | Default     | Описание                                          |
-| -------- | ------ | ----------- | ------------------------------------------------- |
+| Flag     | Type   | Default     | Описание                                               |
+| -------- | ------ | ----------- | ------------------------------------------------------ |
 | `--host` | string | `localhost` | Хост сервера (переопределяет переменную `SERVER_HOST`) |
 | `--port` | int    | `9000`      | Порт сервера (переопределяет переменную `SERVER_PORT`) |
 
@@ -59,9 +59,9 @@ DATABASE_DSN="postgres://..." REDIS_URL="redis://..." observer serve
 observer migrate up [flags]
 ```
 
-| Flag     | Type   | Default      | Описание                        |
-| -------- | ------ | ------------ | ------------------------------- |
-| `--path` | string | `migrations` | Путь к директории с миграциями  |
+| Flag     | Type   | Default      | Описание                       |
+| -------- | ------ | ------------ | ------------------------------ |
+| `--path` | string | `migrations` | Путь к директории с миграциями |
 
 ```bash
 # Apply all pending migrations
@@ -79,10 +79,10 @@ observer migrate up --path ./db/migrations
 observer migrate create [name] [flags]
 ```
 
-| Flag     | Type   | Default      | Описание                        |
-| -------- | ------ | ------------ | ------------------------------- |
-| `--path` | string | `migrations` | Путь к директории с миграциями  |
-| `--seq`  | uint   | auto         | Явный порядковый номер          |
+| Flag     | Type   | Default      | Описание                       |
+| -------- | ------ | ------------ | ------------------------------ |
+| `--path` | string | `migrations` | Путь к директории с миграциями |
+| `--seq`  | uint   | auto         | Явный порядковый номер         |
 
 ```bash
 # Create a migration (auto-numbered)
@@ -100,9 +100,9 @@ observer migrate create add_audit_log --seq 25
 observer migrate version [flags]
 ```
 
-| Flag     | Type   | Default      | Описание                        |
-| -------- | ------ | ------------ | ------------------------------- |
-| `--path` | string | `migrations` | Путь к директории с миграциями  |
+| Flag     | Type   | Default      | Описание                       |
+| -------- | ------ | ------------ | ------------------------------ |
+| `--path` | string | `migrations` | Путь к директории с миграциями |
 
 ---
 
@@ -141,13 +141,13 @@ observer keygen --bits 8192 --output keys
 observer create-admin [flags]
 ```
 
-| Flag           | Type   | Required | Описание                         |
-| -------------- | ------ | -------- | -------------------------------- |
-| `--email`      | string | yes      | Email администратора             |
-| `--password`   | string | yes      | Пароль (минимум 8 символов)      |
-| `--first-name` | string | no       | Имя                              |
-| `--last-name`  | string | no       | Фамилия                          |
-| `--phone`      | string | no       | Номер телефона                   |
+| Flag           | Type   | Required | Описание                    |
+| -------------- | ------ | -------- | --------------------------- |
+| `--email`      | string | yes      | Email администратора        |
+| `--password`   | string | yes      | Пароль (минимум 8 символов) |
+| `--first-name` | string | no       | Имя                         |
+| `--last-name`  | string | no       | Фамилия                     |
+| `--phone`      | string | no       | Номер телефона              |
 
 **Примеры:**
 
@@ -176,11 +176,11 @@ observer create-admin \
 observer seed [flags]
 ```
 
-| Flag         | Type  | Default | Описание                              |
-| ------------ | ----- | ------- | ------------------------------------- |
-| `--people`   | int   | `50`    | Количество людей на проект            |
-| `--projects` | int   | `2`     | Количество проектов                   |
-| `--seed`     | int64 | `0`     | Зерно генератора (0 = случайное)      |
+| Flag         | Type  | Default | Описание                         |
+| ------------ | ----- | ------- | -------------------------------- |
+| `--people`   | int   | `50`    | Количество людей на проект       |
+| `--projects` | int   | `2`     | Количество проектов              |
+| `--seed`     | int64 | `0`     | Зерно генератора (0 = случайное) |
 
 **Примеры:**
 

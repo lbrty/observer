@@ -32,18 +32,18 @@ Open `http://localhost:5173` and log in with `admin@example.com` / `password`.
 
 ## What the seed command creates
 
-| What                   | Details                                              |
-| ---------------------- | ---------------------------------------------------- |
-| **Reference data**     | Countries, states, places, offices, categories       |
-| **Users**              | Admin + staff accounts, all with password `password`  |
-| **Projects**           | 2 projects (configurable with `--projects`)          |
-| **People**             | 50 per project (configurable with `--people`)        |
-| **Support records**    | Consultation records linked to people                |
-| **Migration records**  | Movement history with origin/destination places      |
-| **Households**         | Family groupings with members                        |
-| **Notes**              | Case notes attached to people                        |
-| **Pets**               | Pet records with tags                                |
-| **Tags**               | Project-scoped labels for categorization             |
+| What                  | Details                                              |
+| --------------------- | ---------------------------------------------------- |
+| **Reference data**    | Countries, states, places, offices, categories       |
+| **Users**             | Admin + staff accounts, all with password `password` |
+| **Projects**          | 2 projects (configurable with `--projects`)          |
+| **People**            | 50 per project (configurable with `--people`)        |
+| **Support records**   | Consultation records linked to people                |
+| **Migration records** | Movement history with origin/destination places      |
+| **Households**        | Family groupings with members                        |
+| **Notes**             | Case notes attached to people                        |
+| **Pets**              | Pet records with tags                                |
+| **Tags**              | Project-scoped labels for categorization             |
 
 ### Default credentials
 

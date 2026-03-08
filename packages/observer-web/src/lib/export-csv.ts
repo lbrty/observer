@@ -30,10 +30,7 @@ export function exportGroupCSV(title: string, rows: CountResult[]) {
 export function exportReportCSV(data: FullReport, projectId: string) {
   const rows: string[] = ["Group,Label,Count"];
 
-  const groups: [
-    string,
-    { rows: { label: string; count: number }[]; total: number },
-  ][] = [
+  const groups: [string, { rows: { label: string; count: number }[]; total: number }][] = [
     ["Consultations", data.consultations],
     ["By Sex", data.by_sex],
     ["By IDP Status", data.by_idp_status],

@@ -19,9 +19,8 @@ mock.module("@/lib/api", () => ({
   HTTPError: class extends Error {},
 }));
 
-const { useOffices, useCreateOffice, useUpdateOffice, useDeleteOffice } = await import(
-  "@/hooks/use-offices"
-);
+const { useOffices, useCreateOffice, useUpdateOffice, useDeleteOffice } =
+  await import("@/hooks/use-offices");
 
 describe("useOffices", () => {
   it("fetches offices", async () => {

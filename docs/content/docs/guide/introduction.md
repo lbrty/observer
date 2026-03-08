@@ -37,12 +37,12 @@ Organizations with:
 
 ## Why not the alternatives
 
-| System | Barrier |
-| --- | --- |
-| **proGres v4** | Requires UNHCR partnership; not self-hostable |
-| **Primero** | Requires UNICEF/IRC technical partner for deployment |
+| System           | Barrier                                                                            |
+| ---------------- | ---------------------------------------------------------------------------------- |
+| **proGres v4**   | Requires UNHCR partnership; not self-hostable                                      |
+| **Primero**      | Requires UNICEF/IRC technical partner for deployment                               |
 | **ActivityInfo** | SaaS with per-user pricing; designed for aggregate monitoring, not case management |
-| **KoBoToolbox** | Data collection only — no persistent case records |
+| **KoBoToolbox**  | Data collection only — no persistent case records                                  |
 
 ## What makes Observer different
 

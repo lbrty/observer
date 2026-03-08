@@ -38,14 +38,14 @@ cp .env.example .env
 
 | Переменная             | Назначение                                        | По умолчанию               |
 | ---------------------- | ------------------------------------------------- | -------------------------- |
-| `DATABASE_DSN`         | Подключение Observer к PostgreSQL                  | _(обязательна)_            |
-| `REDIS_URL`            | Подключение Observer к Redis                       | `redis://localhost:6379/0` |
-| `JWT_PRIVATE_KEY_PATH` | Путь к приватному ключу из шага 1                  | `keys/jwt_rsa`             |
-| `JWT_PUBLIC_KEY_PATH`  | Путь к публичному ключу из шага 1                  | `keys/jwt_rsa.pub`         |
+| `DATABASE_DSN`         | Подключение Observer к PostgreSQL                 | _(обязательна)_            |
+| `REDIS_URL`            | Подключение Observer к Redis                      | `redis://localhost:6379/0` |
+| `JWT_PRIVATE_KEY_PATH` | Путь к приватному ключу из шага 1                 | `keys/jwt_rsa`             |
+| `JWT_PUBLIC_KEY_PATH`  | Путь к публичному ключу из шага 1                 | `keys/jwt_rsa.pub`         |
 | `CORS_ORIGINS`         | Ваш домен (напр. `https://observer.yourorg.org`)  | `http://localhost:5173`    |
-| `COOKIE_SECURE`        | Установите `true` при использовании HTTPS (нужно)  | `true`                     |
-| `SERVER_HOST`          | Адрес для прослушивания                            | `localhost`                |
-| `SERVER_PORT`          | Порт для прослушивания                             | `9000`                     |
+| `COOKIE_SECURE`        | Установите `true` при использовании HTTPS (нужно) | `true`                     |
+| `SERVER_HOST`          | Адрес для прослушивания                           | `localhost`                |
+| `SERVER_PORT`          | Порт для прослушивания                            | `9000`                     |
 
 Полный список см. в разделе [Переменные окружения](/docs/developers/reference/variables/).
 

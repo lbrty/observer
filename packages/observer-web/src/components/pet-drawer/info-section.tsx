@@ -105,11 +105,7 @@ export function InfoSection({
           </div>
 
           <div className="mt-4">
-            <FormTextarea
-              label={t("project.pets.notes")}
-              value={notes}
-              onChange={onNotesChange}
-            />
+            <FormTextarea label={t("project.pets.notes")} value={notes} onChange={onNotesChange} />
           </div>
         </div>
       </FormSection>

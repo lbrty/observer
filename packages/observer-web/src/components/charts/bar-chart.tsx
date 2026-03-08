@@ -50,7 +50,11 @@ export function BarChart({
   const [selectedLabel, setSelectedLabel] = useState<string | null>(null);
 
   const resolvedDirection =
-    direction === "auto" ? (data.length > 6 ? "horizontal" : "vertical") : (direction ?? "vertical");
+    direction === "auto"
+      ? data.length > 6
+        ? "horizontal"
+        : "vertical"
+      : (direction ?? "vertical");
 
   const resolvedHeight =
     resolvedDirection === "horizontal" ? Math.max(200, data.length * 24) : height;
@@ -108,7 +112,10 @@ export function BarChart({
         .nice()
         .range([0, w]);
 
-      const xAxis = g.append("g").attr("transform", `translate(0,${h})`).call(d3.axisBottom(xLinear).ticks(5));
+      const xAxis = g
+        .append("g")
+        .attr("transform", `translate(0,${h})`)
+        .call(d3.axisBottom(xLinear).ticks(5));
       xAxis.selectAll("text").style("font-size", "9px").style("fill", axisColor);
       xAxis.selectAll("line").style("stroke", axisColor);
       xAxis.select(".domain").style("stroke", axisColor);
@@ -250,7 +257,17 @@ export function BarChart({
         .attr("opacity", opacityFn)
         .text((d) => d.count);
     }
-  }, [data, width, height, resolvedHeight, yAxisLabel, selectedLabel, resolvedDirection, colorMap, clipId]);
+  }, [
+    data,
+    width,
+    height,
+    resolvedHeight,
+    yAxisLabel,
+    selectedLabel,
+    resolvedDirection,
+    colorMap,
+    clipId,
+  ]);
 
   if (data.length === 0) return null;
 

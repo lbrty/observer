@@ -76,14 +76,10 @@ function CountriesPage() {
       emptyTitle={t("admin.reference.countries.emptyTitle")}
       emptyDescription={t("admin.reference.countries.emptyDescription")}
       emptyAction={
-        <Button onClick={() => setCreateOpen(true)}>
-          {t("admin.reference.countries.add")}
-        </Button>
+        <Button onClick={() => setCreateOpen(true)}>{t("admin.reference.countries.add")}</Button>
       }
       createAction={
-        <Button onClick={() => setCreateOpen(true)}>
-          {t("admin.reference.countries.add")}
-        </Button>
+        <Button onClick={() => setCreateOpen(true)}>{t("admin.reference.countries.add")}</Button>
       }
     >
       <CountryFormDialog

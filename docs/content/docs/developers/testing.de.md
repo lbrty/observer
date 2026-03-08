@@ -30,12 +30,12 @@ just generate-mocks    # Mock-Dateien neu generieren
 
 ## Konventionen für Testdateien
 
-| Muster            | Zweck                                          |
-| ----------------- | ---------------------------------------------- |
-| `*_test.go`       | Testdatei im selben Paket                      |
-| `testing.Short()` | Integrationstests in `just test` überspringen  |
-| `t.Helper()`      | Funktionen als Testhelfer markieren             |
-| `testutil.Setup*` | Container-Setup für Integrationstests          |
+| Muster            | Zweck                                         |
+| ----------------- | --------------------------------------------- |
+| `*_test.go`       | Testdatei im selben Paket                     |
+| `testing.Short()` | Integrationstests in `just test` überspringen |
+| `t.Helper()`      | Funktionen als Testhelfer markieren           |
+| `testutil.Setup*` | Container-Setup für Integrationstests         |
 
 ## 1. Unit-Tests mit Testify
 
@@ -431,32 +431,32 @@ func TestAuthFlow_E2E(t *testing.T) {
 
 ### Auth-Domain
 
-| Test                               | Typ  | Was geprüft wird                            |
-| ---------------------------------- | ---- | ------------------------------------------- |
-| Registrierung mit gültigen Daten   | Unit | Benutzer + Anmeldedaten erstellt            |
-| Registrierung mit doppelter E-Mail | Unit | Gibt `ErrEmailExists` zurück               |
-| Registrierung mit doppeltem Telefon| Unit | Gibt `ErrPhoneExists` zurück               |
-| Registrierung mit ungültiger Rolle | Unit | Gibt `ErrInvalidRole` zurück               |
-| Anmeldung mit gültigen Daten       | Unit | Gibt Token-Paar zurück                     |
-| Anmeldung mit falschem Passwort    | Unit | Gibt `ErrInvalidCredentials` zurück        |
-| Anmeldung inaktiver Benutzer       | Unit | Gibt `ErrUserNotActive` zurück             |
-| Gültigen Token aktualisieren       | Unit | Alte Session gelöscht, neues Paar ausgegeben|
-| Abgelaufene Session aktualisieren  | Unit | Gibt `ErrSessionExpired` zurück            |
-| Token-Generierung + Validierung    | Unit | Claims stimmen überein, Ablauf funktioniert |
-| Token-Typ-Mismatch                 | Unit | Access-Token als MFA abgelehnt             |
-| Passwort-Hash-Einzigartigkeit      | Unit | Gleiches Passwort -> verschiedene Hashes   |
+| Test                                | Typ  | Was geprüft wird                             |
+| ----------------------------------- | ---- | -------------------------------------------- |
+| Registrierung mit gültigen Daten    | Unit | Benutzer + Anmeldedaten erstellt             |
+| Registrierung mit doppelter E-Mail  | Unit | Gibt `ErrEmailExists` zurück                 |
+| Registrierung mit doppeltem Telefon | Unit | Gibt `ErrPhoneExists` zurück                 |
+| Registrierung mit ungültiger Rolle  | Unit | Gibt `ErrInvalidRole` zurück                 |
+| Anmeldung mit gültigen Daten        | Unit | Gibt Token-Paar zurück                       |
+| Anmeldung mit falschem Passwort     | Unit | Gibt `ErrInvalidCredentials` zurück          |
+| Anmeldung inaktiver Benutzer        | Unit | Gibt `ErrUserNotActive` zurück               |
+| Gültigen Token aktualisieren        | Unit | Alte Session gelöscht, neues Paar ausgegeben |
+| Abgelaufene Session aktualisieren   | Unit | Gibt `ErrSessionExpired` zurück              |
+| Token-Generierung + Validierung     | Unit | Claims stimmen überein, Ablauf funktioniert  |
+| Token-Typ-Mismatch                  | Unit | Access-Token als MFA abgelehnt               |
+| Passwort-Hash-Einzigartigkeit       | Unit | Gleiches Passwort -> verschiedene Hashes     |
 
 ### Infrastruktur
 
-| Test                        | Typ         | Was geprüft wird                         |
-| --------------------------- | ----------- | ---------------------------------------- |
-| DB-Verbindung + Ping        | Integration | Testcontainer-Postgres funktioniert      |
-| Health-Endpunkt              | Unit        | Gibt 200 `{"status":"ok"}` zurück        |
-| Request-ID-Middleware        | Unit        | X-Request-ID-Header ist 26-Zeichen-ULID  |
-| Graceful Shutdown            | Unit        | Server fährt fehlerfrei herunter         |
-| Config-Standardwerte         | Unit        | Sinnvolle Standardwerte geladen          |
-| Config-Umgebungsüberschreibung | Unit      | Umgebungsvariablen überschreiben Standardwerte |
-| ULID-Einzigartigkeit         | Unit        | Keine Kollisionen über Goroutinen hinweg  |
+| Test                           | Typ         | Was geprüft wird                               |
+| ------------------------------ | ----------- | ---------------------------------------------- |
+| DB-Verbindung + Ping           | Integration | Testcontainer-Postgres funktioniert            |
+| Health-Endpunkt                | Unit        | Gibt 200 `{"status":"ok"}` zurück              |
+| Request-ID-Middleware          | Unit        | X-Request-ID-Header ist 26-Zeichen-ULID        |
+| Graceful Shutdown              | Unit        | Server fährt fehlerfrei herunter               |
+| Config-Standardwerte           | Unit        | Sinnvolle Standardwerte geladen                |
+| Config-Umgebungsüberschreibung | Unit        | Umgebungsvariablen überschreiben Standardwerte |
+| ULID-Einzigartigkeit           | Unit        | Keine Kollisionen über Goroutinen hinweg       |
 
 ## 7. Testorganisation
 

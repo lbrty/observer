@@ -193,9 +193,7 @@ export function MigrationRecordDrawer({
       open={open}
       onOpenChange={onOpenChange}
       title={
-        isEdit
-          ? t("project.migrationRecords.editTitle")
-          : t("project.migrationRecords.addTitle")
+        isEdit ? t("project.migrationRecords.editTitle") : t("project.migrationRecords.addTitle")
       }
       onSubmit={handleSubmit}
       isPending={isPending}
@@ -260,12 +258,7 @@ export function MigrationRecordDrawer({
       />
 
       <SectionHeading>{t("project.migrationRecords.notes")}</SectionHeading>
-      <FormTextarea
-        label=""
-        value={form.notes}
-        onChange={(v) => set("notes", v)}
-        rows={4}
-      />
+      <FormTextarea label="" value={form.notes} onChange={(v) => set("notes", v)} rows={4} />
     </DrawerShell>
   );
 }

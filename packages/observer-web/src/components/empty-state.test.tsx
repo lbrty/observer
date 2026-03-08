@@ -30,9 +30,7 @@ describe("EmptyState", () => {
   });
 
   it("renders action slot when provided", () => {
-    render(
-      <EmptyState icon={FakeIcon} title="No items" action={<button>Add item</button>} />,
-    );
+    render(<EmptyState icon={FakeIcon} title="No items" action={<button>Add item</button>} />);
 
     expect(screen.getByText("Add item")).toBeDefined();
   });

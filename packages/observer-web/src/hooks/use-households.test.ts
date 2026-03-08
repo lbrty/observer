@@ -6,8 +6,7 @@ import { TestWrapper } from "@/test/wrapper";
 mock.module("@/lib/api", () => ({
   api: {
     get: () => ({
-      json: () =>
-        Promise.resolve({ households: [{ id: "h1", member_count: 3 }], total: 1 }),
+      json: () => Promise.resolve({ households: [{ id: "h1", member_count: 3 }], total: 1 }),
     }),
     post: () => ({
       json: () => Promise.resolve({ id: "h-new", member_count: 0 }),

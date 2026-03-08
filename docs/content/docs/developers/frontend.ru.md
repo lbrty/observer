@@ -5,18 +5,18 @@ weight: 3
 
 ## Стек
 
-| Область         | Выбор                                    |
-| --------------- | ---------------------------------------- |
-| Фреймворк       | React 19 + React Compiler                |
-| Сборщик         | Vite 6                                   |
-| Пакетный менеджер | Bun (workspace monorepo)               |
-| Маршрутизация   | TanStack Router (file-based)             |
-| Загрузка данных | TanStack Query v5                        |
-| Стилизация      | Tailwind CSS v4                          |
-| Headless UI     | Base UI (`@base-ui/react`)               |
-| Иконки          | Phosphor Icons (`@phosphor-icons/react`) |
-| i18n            | i18next + react-i18next                  |
-| Проверка типов  | TypeScript 5.7 (strict)                  |
+| Область           | Выбор                                    |
+| ----------------- | ---------------------------------------- |
+| Фреймворк         | React 19 + React Compiler                |
+| Сборщик           | Vite 6                                   |
+| Пакетный менеджер | Bun (workspace monorepo)                 |
+| Маршрутизация     | TanStack Router (file-based)             |
+| Загрузка данных   | TanStack Query v5                        |
+| Стилизация        | Tailwind CSS v4                          |
+| Headless UI       | Base UI (`@base-ui/react`)               |
+| Иконки            | Phosphor Icons (`@phosphor-icons/react`) |
+| i18n              | i18next + react-i18next                  |
+| Проверка типов    | TypeScript 5.7 (strict)                  |
 
 ## Структура проекта
 
@@ -118,8 +118,8 @@ t("greeting", { name: "Ali" }); // → "Salam, Ali"
 
 ## Переменные окружения
 
-| Переменная     | По умолчанию            | Описание                |
-| -------------- | ----------------------- | ----------------------- |
-| `VITE_API_URL` | `http://localhost:9000` | Базовый URL бэкенд API  |
+| Переменная     | По умолчанию            | Описание               |
+| -------------- | ----------------------- | ---------------------- |
+| `VITE_API_URL` | `http://localhost:9000` | Базовый URL бэкенд API |
 
 Vite предоставляет доступ только к переменным с префиксом `VITE_`.

@@ -19,9 +19,8 @@ mock.module("@/lib/api", () => ({
   HTTPError: class extends Error {},
 }));
 
-const { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } = await import(
-  "@/hooks/use-categories"
-);
+const { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } =
+  await import("@/hooks/use-categories");
 
 describe("useCategories", () => {
   it("fetches categories", async () => {

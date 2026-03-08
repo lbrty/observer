@@ -1,7 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import type { CustomReportOutput, CustomReportParams, FullReport, ReportParams } from "@/types/report";
+import type {
+  CustomReportOutput,
+  CustomReportParams,
+  FullReport,
+  ReportParams,
+} from "@/types/report";
 
 export function useReport(projectId: string, params: ReportParams = {}) {
   return useQuery({

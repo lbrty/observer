@@ -37,12 +37,12 @@ Organisationen mit:
 
 ## Warum nicht die Alternativen
 
-| System | Hürde |
-| --- | --- |
-| **proGres v4** | Erfordert UNHCR-Partnerschaft; nicht selbst hostbar |
-| **Primero** | Erfordert UNICEF/IRC als technischen Partner für die Bereitstellung |
+| System           | Hürde                                                                                                      |
+| ---------------- | ---------------------------------------------------------------------------------------------------------- |
+| **proGres v4**   | Erfordert UNHCR-Partnerschaft; nicht selbst hostbar                                                        |
+| **Primero**      | Erfordert UNICEF/IRC als technischen Partner für die Bereitstellung                                        |
 | **ActivityInfo** | SaaS mit nutzerbezogener Preisgestaltung; für aggregiertes Monitoring konzipiert, nicht für Fallverwaltung |
-| **KoBoToolbox** | Nur Datenerfassung — keine dauerhaften Fallakten |
+| **KoBoToolbox**  | Nur Datenerfassung — keine dauerhaften Fallakten                                                           |
 
 ## Was Observer besonders macht
 

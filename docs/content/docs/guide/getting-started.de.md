@@ -39,11 +39,11 @@ All das läuft auf einem einzelnen Rechner. In der Produktion wird es zu einer e
 
 Um von „Ausprobieren" zu „Mein Team nutzt das täglich" zu kommen, brauchen Sie:
 
-| Was | Warum |
-| --- | --- |
-| Einen Server (VPS oder lokal) | Observer ist selbst gehostet — Ihre Daten verlassen nie Ihre Infrastruktur |
-| PostgreSQL | Der einzige externe Dienst, den Observer benötigt |
-| Etwa 30 Minuten | Führen Sie `docker compose up` auf einem Server aus, auf den Ihre Domain verweist |
+| Was                           | Warum                                                                             |
+| ----------------------------- | --------------------------------------------------------------------------------- |
+| Einen Server (VPS oder lokal) | Observer ist selbst gehostet — Ihre Daten verlassen nie Ihre Infrastruktur        |
+| PostgreSQL                    | Der einzige externe Dienst, den Observer benötigt                                 |
+| Etwa 30 Minuten               | Führen Sie `docker compose up` auf einem Server aus, auf den Ihre Domain verweist |
 
 Kein Abonnement. Keine nutzerbezogenen Gebühren. Kein Vendor Lock-in. Die Daten und die Bereitstellung gehören Ihnen.
 
@@ -53,12 +53,12 @@ Siehe [Bereitstellung](/docs/guide/deployment/) für die schrittweise Produktion
 
 Wenn Sie an Observer selbst arbeiten möchten, benötigen Sie folgende Tools:
 
-| Tool | Version | Installation |
-| --- | --- | --- |
-| Go | 1.25.* | https://go.dev/dl/ |
-| Bun | latest | https://bun.sh/ |
-| Docker + Compose | latest | https://docs.docker.com/get-docker/ |
-| Just | latest | https://github.com/casey/just#installation |
+| Tool             | Version | Installation                               |
+| ---------------- | ------- | ------------------------------------------ |
+| Go               | 1.25.\* | https://go.dev/dl/                         |
+| Bun              | latest  | https://bun.sh/                            |
+| Docker + Compose | latest  | https://docs.docker.com/get-docker/        |
+| Just             | latest  | https://github.com/casey/just#installation |
 
 ### 1. Klonen und Abhängigkeiten installieren
 

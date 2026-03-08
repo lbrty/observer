@@ -25,8 +25,8 @@ HTTP-Server starten.
 observer serve [flags]
 ```
 
-| Flag     | Type   | Default     | Beschreibung                                       |
-| -------- | ------ | ----------- | -------------------------------------------------- |
+| Flag     | Type   | Default     | Beschreibung                                                   |
+| -------- | ------ | ----------- | -------------------------------------------------------------- |
 | `--host` | string | `localhost` | Server-Host (überschreibt die Umgebungsvariable `SERVER_HOST`) |
 | `--port` | int    | `9000`      | Server-Port (überschreibt die Umgebungsvariable `SERVER_PORT`) |
 
@@ -59,8 +59,8 @@ Alle ausstehenden Migrationen anwenden.
 observer migrate up [flags]
 ```
 
-| Flag     | Type   | Default      | Beschreibung                  |
-| -------- | ------ | ------------ | ----------------------------- |
+| Flag     | Type   | Default      | Beschreibung                   |
+| -------- | ------ | ------------ | ------------------------------ |
 | `--path` | string | `migrations` | Pfad zum Migrationsverzeichnis |
 
 ```bash
@@ -79,10 +79,10 @@ Eine neue vorwärtsgerichtete Migrationsdatei erstellen.
 observer migrate create [name] [flags]
 ```
 
-| Flag     | Type   | Default      | Beschreibung                     |
-| -------- | ------ | ------------ | -------------------------------- |
-| `--path` | string | `migrations` | Pfad zum Migrationsverzeichnis   |
-| `--seq`  | uint   | auto         | Explizite Sequenznummer          |
+| Flag     | Type   | Default      | Beschreibung                   |
+| -------- | ------ | ------------ | ------------------------------ |
+| `--path` | string | `migrations` | Pfad zum Migrationsverzeichnis |
+| `--seq`  | uint   | auto         | Explizite Sequenznummer        |
 
 ```bash
 # Create a migration (auto-numbered)
@@ -100,8 +100,8 @@ Aktuelle Migrationsversion anzeigen.
 observer migrate version [flags]
 ```
 
-| Flag     | Type   | Default      | Beschreibung                  |
-| -------- | ------ | ------------ | ----------------------------- |
+| Flag     | Type   | Default      | Beschreibung                   |
+| -------- | ------ | ------------ | ------------------------------ |
 | `--path` | string | `migrations` | Pfad zum Migrationsverzeichnis |
 
 ---
@@ -114,9 +114,9 @@ RSA-Schlüsselpaar für JWT-Signierung generieren.
 observer keygen [flags]
 ```
 
-| Flag       | Type   | Default | Beschreibung                          |
-| ---------- | ------ | ------- | ------------------------------------- |
-| `--bits`   | int    | `4096`  | RSA-Schlüsselgröße (mindestens 4096) |
+| Flag       | Type   | Default | Beschreibung                            |
+| ---------- | ------ | ------- | --------------------------------------- |
+| `--bits`   | int    | `4096`  | RSA-Schlüsselgröße (mindestens 4096)    |
 | `--output` | string | `.`     | Ausgabeverzeichnis für Schlüsseldateien |
 
 **Beispiele:**
@@ -141,13 +141,13 @@ Ein Plattform-Administratorkonto erstellen.
 observer create-admin [flags]
 ```
 
-| Flag           | Type   | Erforderlich | Beschreibung                         |
-| -------------- | ------ | ------------ | ------------------------------------ |
-| `--email`      | string | ja           | Admin-E-Mail                         |
-| `--password`   | string | ja           | Admin-Passwort (min. 8 Zeichen)      |
-| `--first-name` | string | nein         | Vorname                              |
-| `--last-name`  | string | nein         | Nachname                             |
-| `--phone`      | string | nein         | Telefonnummer                        |
+| Flag           | Type   | Erforderlich | Beschreibung                    |
+| -------------- | ------ | ------------ | ------------------------------- |
+| `--email`      | string | ja           | Admin-E-Mail                    |
+| `--password`   | string | ja           | Admin-Passwort (min. 8 Zeichen) |
+| `--first-name` | string | nein         | Vorname                         |
+| `--last-name`  | string | nein         | Nachname                        |
+| `--phone`      | string | nein         | Telefonnummer                   |
 
 **Beispiele:**
 
@@ -176,11 +176,11 @@ Datenbank mit realistischen Testdaten für die Entwicklung befüllen.
 observer seed [flags]
 ```
 
-| Flag         | Type  | Default | Beschreibung                       |
-| ------------ | ----- | ------- | ---------------------------------- |
-| `--people`   | int   | `50`    | Anzahl der Personen pro Projekt    |
-| `--projects` | int   | `2`     | Anzahl der Projekte                |
-| `--seed`     | int64 | `0`     | Zufallsseed (0 = zufällig)        |
+| Flag         | Type  | Default | Beschreibung                    |
+| ------------ | ----- | ------- | ------------------------------- |
+| `--people`   | int   | `50`    | Anzahl der Personen pro Projekt |
+| `--projects` | int   | `2`     | Anzahl der Projekte             |
+| `--seed`     | int64 | `0`     | Zufallsseed (0 = zufällig)      |
 
 **Beispiele:**
 

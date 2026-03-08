@@ -19,9 +19,8 @@ mock.module("@/lib/api", () => ({
   HTTPError: class extends Error {},
 }));
 
-const { useCountries, useCreateCountry, useUpdateCountry, useDeleteCountry } = await import(
-  "@/hooks/use-countries"
-);
+const { useCountries, useCreateCountry, useUpdateCountry, useDeleteCountry } =
+  await import("@/hooks/use-countries");
 
 describe("useCountries", () => {
   it("fetches countries", async () => {

@@ -126,9 +126,7 @@ function PermissionsPage() {
       <PageHeader
         title={t("admin.permissions.title")}
         action={
-          <Button onClick={() => setAssignOpen(true)}>
-            {t("admin.permissions.addMember")}
-          </Button>
+          <Button onClick={() => setAssignOpen(true)}>{t("admin.permissions.addMember")}</Button>
         }
       />
 

@@ -9,7 +9,12 @@ import { EmptyState } from "@/components/empty-state";
 import type { FilterDef } from "@/components/filter-bar";
 import { FilterBar } from "@/components/filter-bar";
 import { HouseholdDrawer } from "@/components/household-drawer";
-import { DownloadSimpleIcon, HouseSimpleIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
+import {
+  DownloadSimpleIcon,
+  HouseSimpleIcon,
+  PencilSimpleIcon,
+  PlusIcon,
+} from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { PersonName } from "@/components/person-name";
@@ -84,7 +89,9 @@ function HouseholdsListPage() {
       if (dateFrom) searchParams.created_from = dateFrom;
       if (dateTo) searchParams.created_to = dateTo;
 
-      const blob = await api.get(`projects/${projectId}/export/households`, { searchParams }).blob();
+      const blob = await api
+        .get(`projects/${projectId}/export/households`, { searchParams })
+        .blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

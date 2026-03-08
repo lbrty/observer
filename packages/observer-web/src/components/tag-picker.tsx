@@ -24,8 +24,7 @@ export function TagPicker({ projectId, selectedIds, onChange }: TagPickerProps) 
   const selectedTags = selectedIds.map((id) => tagMap.get(id)).filter(Boolean) as Tag[];
 
   const filtered = allTags.filter(
-    (tag) =>
-      !selectedIds.includes(tag.id) && tag.name.toLowerCase().includes(search.toLowerCase()),
+    (tag) => !selectedIds.includes(tag.id) && tag.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   function add(tag: Tag) {

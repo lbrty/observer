@@ -5,7 +5,6 @@
 | Date   | 2026-03-08 |
 | Status | Approved   |
 
-
 ## 1. Reports — Consolidated Presets + Custom Builder
 
 ### Approach
@@ -16,22 +15,22 @@ ADR-005's 39 reports collapse into 14 presets. The former Group 9 (tag search) m
 
 ### Preset Reports (14)
 
-| #  | Preset                                  | Metric         | Grouped by                | Filters    |
-| -- | --------------------------------------- | -------------- | ------------------------- | ---------- |
-| 1  | Consultation totals                     | Events         | type                      | date range |
-| 2  | Registrations by sex                    | People         | sex                       | date range |
-| 3  | Consultations by sex                    | People         | sex x type                | date range |
-| 4  | Registrations by IDP status             | People         | conflict_zone             | date range |
-| 5  | Consultations by IDP status             | People         | conflict_zone x type      | date range |
-| 6  | Registrations by region                 | People         | current region            | date range |
-| 7  | Consultations by region                 | People         | current region x type     | date range |
-| 8  | Consultations by sphere                 | Events + People| sphere x type             | date range |
-| 9  | Consultations by office                 | Events         | office x type             | date range |
-| 10 | Consultations by age group              | Events + People| age_group x type          | date range |
-| 11 | Consultations by vulnerability category | People         | category x type           | date range |
-| 12 | Family unit summary                     | People + Units | type                      | date range |
-| 13 | People with pets                        | People         | pet status                | date range |
-| 14 | Pet counts by status                    | Pets           | pet status                | date range |
+| #   | Preset                                  | Metric          | Grouped by            | Filters    |
+| --- | --------------------------------------- | --------------- | --------------------- | ---------- |
+| 1   | Consultation totals                     | Events          | type                  | date range |
+| 2   | Registrations by sex                    | People          | sex                   | date range |
+| 3   | Consultations by sex                    | People          | sex x type            | date range |
+| 4   | Registrations by IDP status             | People          | conflict_zone         | date range |
+| 5   | Consultations by IDP status             | People          | conflict_zone x type  | date range |
+| 6   | Registrations by region                 | People          | current region        | date range |
+| 7   | Consultations by region                 | People          | current region x type | date range |
+| 8   | Consultations by sphere                 | Events + People | sphere x type         | date range |
+| 9   | Consultations by office                 | Events          | office x type         | date range |
+| 10  | Consultations by age group              | Events + People | age_group x type      | date range |
+| 11  | Consultations by vulnerability category | People          | category x type       | date range |
+| 12  | Family unit summary                     | People + Units  | type                  | date range |
+| 13  | People with pets                        | People          | pet status            | date range |
+| 14  | Pet counts by status                    | Pets            | pet status            | date range |
 
 ### Custom Report Builder
 
@@ -46,7 +45,6 @@ Form-based UI:
 
 Single `ReportUseCase` with `GenerateReport(params ReportParams)`. Presets are named parameter constants, not separate query paths. Dynamic SQL generation with parameterized filters (no string concatenation — safe from injection).
 
-
 ## 2. Data Table Filters + Export
 
 ### Filters
@@ -57,13 +55,13 @@ Filter bar above every data table. Filter state stored in URL search params (sha
 
 **Per-table filters:**
 
-| Table             | Additional filters                                              |
-| ----------------- | --------------------------------------------------------------- |
+| Table             | Additional filters                                                     |
+| ----------------- | ---------------------------------------------------------------------- |
 | People            | sex, age group, case status, conflict zone, region, category, has pets |
-| Support records   | type (legal/social), sphere, office, referral status            |
-| Migration records | movement reason, housing at destination                         |
-| Pets              | pet status, pet tags                                            |
-| Households        | member count range                                              |
+| Support records   | type (legal/social), sphere, office, referral status                   |
+| Migration records | movement reason, housing at destination                                |
+| Pets              | pet status, pet tags                                                   |
+| Households        | member count range                                                     |
 
 ### Filter mechanics
 
@@ -78,7 +76,6 @@ Filter bar above every data table. Filter state stored in URL search params (sha
 - **Permission**: `ActionExport` (see below)
 - Export button hidden when user lacks permission
 
-
 ## 3. Export Permission
 
 New project-scoped action: `ActionExport`
@@ -88,7 +85,6 @@ New project-scoped action: `ActionExport`
 - Added to `MinRoleForAction` map
 - Enforced in export endpoints via `RequireProjectRole(ActionExport)`
 - Viewers cannot export; consultants, managers, owners can
-
 
 ## 4. Theme & Language in Profile
 
@@ -104,7 +100,6 @@ New project-scoped action: `ActionExport`
 - User info (name, email) — read-only display
 - Theme selection (radio group or segmented control)
 - Language selection (dropdown)
-
 
 ## 5. Audit Logs
 
@@ -131,12 +126,12 @@ CREATE INDEX ix_audit_logs_action_time  ON audit_logs (action, created_at);
 
 ### Audited Actions
 
-| Bucket           | Actions                                                                                    |
-| ---------------- | ------------------------------------------------------------------------------------------ |
-| Data export      | export.people, export.support_records, export.migration_records, export.households, export.pets |
-| Documents        | document.upload, document.download, document.delete                                        |
+| Bucket           | Actions                                                                                                                                                                                  |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Data export      | export.people, export.support_records, export.migration_records, export.households, export.pets                                                                                          |
+| Documents        | document.upload, document.download, document.delete                                                                                                                                      |
 | Record lifecycle | person.create, person.delete, pet.create, pet.delete, household.create, household.delete, support_record.create, support_record.delete, migration_record.create, migration_record.delete |
-| Admin            | user.role_change, project.create, project.delete, permission.grant, permission.revoke      |
+| Admin            | user.role_change, project.create, project.delete, permission.grant, permission.revoke                                                                                                    |
 
 ### Implementation
 

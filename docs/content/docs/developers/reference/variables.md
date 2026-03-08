@@ -7,7 +7,7 @@ weight: 1
 
 - project name: `observer`
 - package name: `github.com/lbrty/observer`
-- go version: 1.25.*
+- go version: 1.25.\*
 - default UI language: Kyrgyz Latin (`ky`)
 
 ## Backend environment variables

@@ -5,45 +5,45 @@ weight: 2
 
 ## Vokalklassifikation
 
-| Typ          | Vokale             | Verwendet mit |
-| ------------ | ------------------ | ------------- |
-| Hintere (жоон)  | A a, O o, U u, Y y | Q q, Ğ ğ  |
-| Vordere (ичке) | E e, Ö ö, Ü ü, I i | K k, G g  |
+| Typ            | Vokale             | Verwendet mit |
+| -------------- | ------------------ | ------------- |
+| Hintere (жоон) | A a, O o, U u, Y y | Q q, Ğ ğ      |
+| Vordere (ичке) | E e, Ö ö, Ü ü, I i | K k, G g      |
 
 ## Alphabet (30 Buchstaben)
 
-| #   | Lat | Cyr        | IPA  | Anmerkung                             |
-| --- | --- | ---------- | ---- | ------------------------------------- |
-| 1   | A a | а          | /ɑ/  | Hintervokal                           |
-| 2   | B b | б          | /b/  |                                       |
-| 3   | C c | ж (nativ)  | /dʒ/ | Natives kirgisisches Ж. NICHT englisches "s"/"k". |
-| 4   | Ç ç | ч          | /tʃ/ | "tsch"-Laut                           |
-| 5   | D d | д          | /d/  |                                       |
-| 6   | E e | е          | /e/  | Vordervokal                           |
-| 7   | F f | ф          | /f/  |                                       |
-| 8   | G g | г          | /g/  | NUR bei Vordervokalen                 |
-| 9   | Ğ ğ | ғ          | /ɣ/  | NUR bei Hintervokalen                 |
-| 10  | H h | х          | /x/  |                                       |
-| 11  | I i | и          | /i/  | Vordervokal                           |
-| 12  | J j | й          | /j/  | Nur für Й (Halbvokal). NICHT für Ж.  |
-| 13  | K k | к          | /k/  | NUR bei Vordervokalen                 |
-| 14  | Q q | қ          | /q/  | NUR bei Hintervokalen                 |
-| 15  | L l | л          | /l/  |                                       |
-| 16  | M m | м          | /m/  |                                       |
-| 17  | N n | н          | /n/  |                                       |
-| 18  | Ñ ñ | ң          | /ŋ/  | Velarer Nasal "ng"                    |
-| 19  | O o | о          | /o/  | Hintervokal                           |
-| 20  | Ö ö | ө          | /ø/  | Vordervokal                           |
-| 21  | P p | п          | /p/  |                                       |
-| 22  | R r | р          | /r/  |                                       |
-| 23  | S s | с          | /s/  |                                       |
-| 24  | Ş ş | ш          | /ʃ/  | "sch"-Laut                            |
-| 25  | T t | т          | /t/  |                                       |
-| 26  | U u | у          | /u/  | Hintervokal                           |
-| 27  | Ü ü | ү          | /y/  | Vordervokal                           |
-| 28  | V v | в          | /v/  |                                       |
-| 29  | Y y | ы          | /ɯ/  | NICHT englisches "y" — es ist der Hintervokal ы |
-| 30  | Z z | з          | /z/  |                                       |
+| #   | Lat | Cyr       | IPA  | Anmerkung                                         |
+| --- | --- | --------- | ---- | ------------------------------------------------- |
+| 1   | A a | а         | /ɑ/  | Hintervokal                                       |
+| 2   | B b | б         | /b/  |                                                   |
+| 3   | C c | ж (nativ) | /dʒ/ | Natives kirgisisches Ж. NICHT englisches "s"/"k". |
+| 4   | Ç ç | ч         | /tʃ/ | "tsch"-Laut                                       |
+| 5   | D d | д         | /d/  |                                                   |
+| 6   | E e | е         | /e/  | Vordervokal                                       |
+| 7   | F f | ф         | /f/  |                                                   |
+| 8   | G g | г         | /g/  | NUR bei Vordervokalen                             |
+| 9   | Ğ ğ | ғ         | /ɣ/  | NUR bei Hintervokalen                             |
+| 10  | H h | х         | /x/  |                                                   |
+| 11  | I i | и         | /i/  | Vordervokal                                       |
+| 12  | J j | й         | /j/  | Nur für Й (Halbvokal). NICHT für Ж.               |
+| 13  | K k | к         | /k/  | NUR bei Vordervokalen                             |
+| 14  | Q q | қ         | /q/  | NUR bei Hintervokalen                             |
+| 15  | L l | л         | /l/  |                                                   |
+| 16  | M m | м         | /m/  |                                                   |
+| 17  | N n | н         | /n/  |                                                   |
+| 18  | Ñ ñ | ң         | /ŋ/  | Velarer Nasal "ng"                                |
+| 19  | O o | о         | /o/  | Hintervokal                                       |
+| 20  | Ö ö | ө         | /ø/  | Vordervokal                                       |
+| 21  | P p | п         | /p/  |                                                   |
+| 22  | R r | р         | /r/  |                                                   |
+| 23  | S s | с         | /s/  |                                                   |
+| 24  | Ş ş | ш         | /ʃ/  | "sch"-Laut                                        |
+| 25  | T t | т         | /t/  |                                                   |
+| 26  | U u | у         | /u/  | Hintervokal                                       |
+| 27  | Ü ü | ү         | /y/  | Vordervokal                                       |
+| 28  | V v | в         | /v/  |                                                   |
+| 29  | Y y | ы         | /ɯ/  | NICHT englisches "y" — es ist der Hintervokal ы   |
+| 30  | Z z | з         | /z/  |                                                   |
 
 Zusätzlicher Buchstabe für Lehnwörter: **Ž ž** — Ж nur in Lehnwörtern/Eigennamen, /ʒ/
 
@@ -51,11 +51,11 @@ Zusätzlicher Buchstabe für Lehnwörter: **Ž ž** — Ж nur in Lehnwörtern/E
 
 Das native kirgisische Ж ist immer **C c** /dʒ/. Der Buchstabe **J j** steht nur für **Й** /j/.
 
-| Quelle | Latein | Wann | Beispiele |
-| ------ | ------ | ---- | --------- |
-| Ж | **C c** | Natives Kirgisisch | жок→coq, жер→cer, жаңы→cañy, жабуу→cabuu |
-| Ж | **Ž ž** | Lehnwörter, Eigennamen | журнал→žurnal, Брежнев→Brežnev |
-| Й | **J j** | Immer (Halbvokal) | бай→baj, ой→oj, кайда→qajda |
+| Quelle | Latein  | Wann                   | Beispiele                                |
+| ------ | ------- | ---------------------- | ---------------------------------------- |
+| Ж      | **C c** | Natives Kirgisisch     | жок→coq, жер→cer, жаңы→cañy, жабуу→cabuu |
+| Ж      | **Ž ž** | Lehnwörter, Eigennamen | журнал→žurnal, Брежнев→Brežnev           |
+| Й      | **J j** | Immer (Halbvokal)      | бай→baj, ой→oj, кайда→qajda              |
 
 ### Häufige native Ж-Wörter
 
@@ -131,39 +131,39 @@ Die Position bestimmt die lateinische Darstellung.
 
 ### Nach Vokalen oder am Wortanfang → ja, jo, ju
 
-| Kyrillisch | Latein | Kontext                  |
-| ---------- | ------ | ------------------------ |
-| Юра        | Jura   | Wortanfang               |
-| оюн        | ojun   | nach Vokal               |
-| аюу        | ajuu   | nach Vokal               |
-| Аякс       | Ajaqs  | Wortanfang               |
-| карыя      | qaryja | nach Vokal               |
-| боёк       | bojoq  | nach Vokal               |
-| Юлия       | Julija | Wortanfang + nach Vokal  |
+| Kyrillisch | Latein | Kontext                 |
+| ---------- | ------ | ----------------------- |
+| Юра        | Jura   | Wortanfang              |
+| оюн        | ojun   | nach Vokal              |
+| аюу        | ajuu   | nach Vokal              |
+| Аякс       | Ajaqs  | Wortanfang              |
+| карыя      | qaryja | nach Vokal              |
+| боёк       | bojoq  | nach Vokal              |
+| Юлия       | Julija | Wortanfang + nach Vokal |
 
 ### Nach Konsonanten → ä, ö, ü
 
-| Kyrillisch | Latein     | Kontext                              |
-| ---------- | ---------- | ------------------------------------ |
-| Кёльн      | Köln       | nach Konsonant                       |
-| жюри       | žüri       | nach Konsonant                       |
-| бюро       | büro       | nach Konsonant                       |
-| меню       | menü       | nach Konsonant                       |
-| лямбда     | lämbda     | nach Konsonant                       |
-| Семён      | Semön      | nach Konsonant                       |
-| Пётр       | Pötr       | nach Konsonant                       |
-| Брянск     | Bränsk     | nach Konsonant                       |
+| Kyrillisch | Latein     | Kontext                                |
+| ---------- | ---------- | -------------------------------------- |
+| Кёльн      | Köln       | nach Konsonant                         |
+| жюри       | žüri       | nach Konsonant                         |
+| бюро       | büro       | nach Konsonant                         |
+| меню       | menü       | nach Konsonant                         |
+| лямбда     | lämbda     | nach Konsonant                         |
+| Семён      | Semön      | nach Konsonant                         |
+| Пётр       | Pötr       | nach Konsonant                         |
+| Брянск     | Bränsk     | nach Konsonant                         |
 | революция  | revolüsija | gemischt (ю nach Kons., ия nach Vokal) |
-| Финляндия  | Finländija | gemischt                             |
-| Женя       | Ženä       | nach Konsonant                       |
+| Финляндия  | Finländija | gemischt                               |
+| Женя       | Ženä       | nach Konsonant                         |
 
 ## Regel 4: Dialektbuchstaben
 
 Kommen in Dialekttexten vor (südlicher/Osch-Dialekt, afghanisch-kirgisische Folklore).
 
-| Buchstabe | Laut           | Beispiele                                  |
-| --------- | -------------- | ------------------------------------------ |
+| Buchstabe | Laut                 | Beispiele                                  |
+| --------- | -------------------- | ------------------------------------------ |
 | Ä ä       | offener vorderer /æ/ | asäl (= bal), gäp (= kep), mäkä (= cügörü) |
-| W w       | labialer /w/   | nur dialektal                              |
+| W w       | labialer /w/         | nur dialektal                              |
 
 Quellen: Murza Gaparov "Kyştakça", Sulajman Qajypovs afghanisch-kirgisische Folklorarbeiten, C. Muqambaevs Dialektwörterbuch.

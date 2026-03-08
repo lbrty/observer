@@ -1,6 +1,14 @@
 import { XIcon } from "@/components/icons";
 
-export function FilterChip({ label, value, onRemove }: { label: string; value: string; onRemove: () => void }) {
+export function FilterChip({
+  label,
+  value,
+  onRemove,
+}: {
+  label: string;
+  value: string;
+  onRemove: () => void;
+}) {
   return (
     <button
       type="button"

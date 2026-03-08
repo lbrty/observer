@@ -25,10 +25,10 @@ HTTP serverdi iştetüü.
 observer serve [flags]
 ```
 
-| Flag     | Type   | Default     | Süröttömö                                          |
-| -------- | ------ | ----------- | -------------------------------------------------- |
-| `--host` | string | `localhost` | Server hostu (`SERVER_HOST` env özgörtöt)          |
-| `--port` | int    | `9000`      | Server portu (`SERVER_PORT` env özgörtöt)          |
+| Flag     | Type   | Default     | Süröttömö                                 |
+| -------- | ------ | ----------- | ----------------------------------------- |
+| `--host` | string | `localhost` | Server hostu (`SERVER_HOST` env özgörtöt) |
+| `--port` | int    | `9000`      | Server portu (`SERVER_PORT` env özgörtöt) |
 
 **Misaldar:**
 
@@ -59,9 +59,9 @@ Bardyq kütülgön migratsijalardy qoldonuu.
 observer migrate up [flags]
 ```
 
-| Flag     | Type   | Default      | Süröttömö                       |
-| -------- | ------ | ------------ | ------------------------------- |
-| `--path` | string | `migrations` | Migratsijalar qataloqunun colu  |
+| Flag     | Type   | Default      | Süröttömö                      |
+| -------- | ------ | ------------ | ------------------------------ |
+| `--path` | string | `migrations` | Migratsijalar qataloqunun colu |
 
 ```bash
 # Bardyq kütülgön migratsijalardy qoldonuu
@@ -79,10 +79,10 @@ Cañy aldyğa ğana migratsija fajlyn tüzüü.
 observer migrate create [name] [flags]
 ```
 
-| Flag     | Type   | Default      | Süröttömö                       |
-| -------- | ------ | ------------ | ------------------------------- |
-| `--path` | string | `migrations` | Migratsijalar qataloqunun colu  |
-| `--seq`  | uint   | auto         | Açyq yraattululuq nomeri        |
+| Flag     | Type   | Default      | Süröttömö                      |
+| -------- | ------ | ------------ | ------------------------------ |
+| `--path` | string | `migrations` | Migratsijalar qataloqunun colu |
+| `--seq`  | uint   | auto         | Açyq yraattululuq nomeri       |
 
 ```bash
 # Migratsija tüzüü (avtomattyq nomerlengen)
@@ -100,9 +100,9 @@ Uçurdağy migratsija versijasyn körsötüü.
 observer migrate version [flags]
 ```
 
-| Flag     | Type   | Default      | Süröttömö                       |
-| -------- | ------ | ------------ | ------------------------------- |
-| `--path` | string | `migrations` | Migratsijalar qataloqunun colu  |
+| Flag     | Type   | Default      | Süröttömö                      |
+| -------- | ------ | ------------ | ------------------------------ |
+| `--path` | string | `migrations` | Migratsijalar qataloqunun colu |
 
 ---
 
@@ -114,10 +114,10 @@ JWT qol qojuu üçün RSA açqyç cupttaryn generatsijaaloo.
 observer keygen [flags]
 ```
 
-| Flag       | Type   | Default | Süröttömö                              |
-| ---------- | ------ | ------- | -------------------------------------- |
-| `--bits`   | int    | `4096`  | RSA açqyç ölçömü (minimum 4096)       |
-| `--output` | string | `.`     | Açqyç fajldary üçün çyğaruu qataloqu  |
+| Flag       | Type   | Default | Süröttömö                            |
+| ---------- | ------ | ------- | ------------------------------------ |
+| `--bits`   | int    | `4096`  | RSA açqyç ölçömü (minimum 4096)      |
+| `--output` | string | `.`     | Açqyç fajldary üçün çyğaruu qataloqu |
 
 **Misaldar:**
 
@@ -141,13 +141,13 @@ Platforma administrator akkauntun tüzüü.
 observer create-admin [flags]
 ```
 
-| Flag           | Type   | Required | Süröttömö                          |
-| -------------- | ------ | -------- | ---------------------------------- |
-| `--email`      | string | ooba     | Administrator email                |
-| `--password`   | string | ooba     | Administrator syrsözü (min 8 belgi)|
-| `--first-name` | string | coq      | Aty                                |
-| `--last-name`  | string | coq      | Familijasy                         |
-| `--phone`      | string | coq      | Telefon nomeri                     |
+| Flag           | Type   | Required | Süröttömö                           |
+| -------------- | ------ | -------- | ----------------------------------- |
+| `--email`      | string | ooba     | Administrator email                 |
+| `--password`   | string | ooba     | Administrator syrsözü (min 8 belgi) |
+| `--first-name` | string | coq      | Aty                                 |
+| `--last-name`  | string | coq      | Familijasy                          |
+| `--phone`      | string | coq      | Telefon nomeri                      |
 
 **Misaldar:**
 
@@ -176,11 +176,11 @@ Maalymatter bazasyna tutaşat, syrsözdü Argon2id menen heştejt cana qoldonuu�
 observer seed [flags]
 ```
 
-| Flag         | Type  | Default | Süröttömö                               |
-| ------------ | ----- | ------- | --------------------------------------- |
-| `--people`   | int   | `50`    | Ar bir proekt üçün adamdardyn sany      |
-| `--projects` | int   | `2`     | Proektterdiin sany                      |
-| `--seed`     | int64 | `0`     | Tuş keldi seed (0 = tuş keldi)          |
+| Flag         | Type  | Default | Süröttömö                          |
+| ------------ | ----- | ------- | ---------------------------------- |
+| `--people`   | int   | `50`    | Ar bir proekt üçün adamdardyn sany |
+| `--projects` | int   | `2`     | Proektterdiin sany                 |
+| `--seed`     | int64 | `0`     | Tuş keldi seed (0 = tuş keldi)     |
 
 **Misaldar:**
 

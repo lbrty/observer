@@ -4,47 +4,47 @@ description = "Self-hosted case management for displaced persons"
 mainSections = ["docs"]
 
 [doks]
-  colorMode = "auto"
-  colorModeToggler = true
-  navbarSticky = true
-  containerBreakpoint = "fluid"
-  flexSearch = true
-  searchExclKinds = []
-  searchExclTypes = []
-  showSearch = []
-  indexSummary = false
-  showDate = false
-  showSummary = true
-  searchLimit = 99
-  bootstrapJavascript = false
-  sectionNav = ["docs"]
-  toTopButton = false
-  breadcrumbTrail = false
-  headlineHash = true
-  scrollSpy = true
-  multilingualMode = true
-  headerBar = false
-  backgroundDots = false
-  sectionFooter = false
-  editPage = false
-  lastMod = false
-  repoHost = "GitHub"
-  docsRepo = "https://github.com/lbrty/observer"
-  docsRepoBranch = "main"
-  docsRepoSubPath = "docs"
+colorMode = "auto"
+colorModeToggler = true
+navbarSticky = true
+containerBreakpoint = "fluid"
+flexSearch = true
+searchExclKinds = []
+searchExclTypes = []
+showSearch = []
+indexSummary = false
+showDate = false
+showSummary = true
+searchLimit = 99
+bootstrapJavascript = false
+sectionNav = ["docs"]
+toTopButton = false
+breadcrumbTrail = false
+headlineHash = true
+scrollSpy = true
+multilingualMode = true
+headerBar = false
+backgroundDots = false
+sectionFooter = false
+editPage = false
+lastMod = false
+repoHost = "GitHub"
+docsRepo = "https://github.com/lbrty/observer"
+docsRepoBranch = "main"
+docsRepoSubPath = "docs"
 
 [inline_svg]
-  iconSetDir = "tabler-icons"
-  iconSetVariant = "outline"
+iconSetDir = "tabler-icons"
+iconSetVariant = "outline"
 
 [seo]
-  [seo.title]
-    separator = "|"
-    suffix = "Observer"
-  [seo.favicons]
-    icon = "favicon.png"
-    svgIcon = "favicon.svg"
-  [seo.schemas]
-    type = "Organization"
-    name = "Observer"
-    images = ["cover.png"]
+[seo.title]
+separator = "|"
+suffix = "Observer"
+[seo.favicons]
+icon = "favicon.png"
+svgIcon = "favicon.svg"
+[seo.schemas]
+type = "Organization"
+name = "Observer"
+images = ["cover.png"]

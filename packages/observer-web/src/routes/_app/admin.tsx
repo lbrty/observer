@@ -1,4 +1,11 @@
-import { BuildingsIcon, ClockCounterClockwiseIcon, FolderSimpleIcon, GlobeIcon, TagIcon, UsersIcon } from "@/components/icons";
+import {
+  BuildingsIcon,
+  ClockCounterClockwiseIcon,
+  FolderSimpleIcon,
+  GlobeIcon,
+  TagIcon,
+  UsersIcon,
+} from "@/components/icons";
 import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 

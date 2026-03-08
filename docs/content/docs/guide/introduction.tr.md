@@ -37,12 +37,12 @@ Temel sunucu bilgisine sahip bir kişi, bir saatten kısa sürede kurabilir.
 
 ## Neden alternatifler değil
 
-| Sistem | Engel |
-| --- | --- |
-| **proGres v4** | UNHCR ortaklığı gerektirir; kendi sunucunuzda barındırılamaz |
-| **Primero** | Dağıtım için UNICEF/IRC teknik partneri gerektirir |
+| Sistem           | Engel                                                                                  |
+| ---------------- | -------------------------------------------------------------------------------------- |
+| **proGres v4**   | UNHCR ortaklığı gerektirir; kendi sunucunuzda barındırılamaz                           |
+| **Primero**      | Dağıtım için UNICEF/IRC teknik partneri gerektirir                                     |
 | **ActivityInfo** | Kullanıcı başına ücretli SaaS; toplu izleme için tasarlanmış, vaka yönetimi için değil |
-| **KoBoToolbox** | Yalnızca veri toplama — kalıcı vaka kayıtları yok |
+| **KoBoToolbox**  | Yalnızca veri toplama — kalıcı vaka kayıtları yok                                      |
 
 ## Observer'ı farklı kılan nedir
 

@@ -76,9 +76,7 @@ function StatesPage() {
       <PageHeader
         title={t("admin.reference.states.title")}
         action={
-          <Button onClick={() => setCreateOpen(true)}>
-            {t("admin.reference.states.add")}
-          </Button>
+          <Button onClick={() => setCreateOpen(true)}>{t("admin.reference.states.add")}</Button>
         }
       />
 
@@ -99,9 +97,7 @@ function StatesPage() {
             title={t("admin.reference.states.emptyTitle")}
             description={t("admin.reference.states.emptyDescription")}
             action={
-              <Button onClick={() => setCreateOpen(true)}>
-                {t("admin.reference.states.add")}
-              </Button>
+              <Button onClick={() => setCreateOpen(true)}>{t("admin.reference.states.add")}</Button>
             }
           />
         }

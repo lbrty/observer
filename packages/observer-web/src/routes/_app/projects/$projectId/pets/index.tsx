@@ -15,15 +15,12 @@ function PetsPage() {
   const { page = 1 } = Route.useSearch();
 
   function setPage(value: number) {
-    navigate({ from: Route.fullPath, search: { page: value > 1 ? value : undefined }, replace: true });
+    navigate({
+      from: Route.fullPath,
+      search: { page: value > 1 ? value : undefined },
+      replace: true,
+    });
   }
 
-  return (
-    <PetsContent
-      projectId={projectId}
-      statusFilter=""
-      page={page}
-      onPageChange={setPage}
-    />
-  );
+  return <PetsContent projectId={projectId} statusFilter="" page={page} onPageChange={setPage} />;
 }

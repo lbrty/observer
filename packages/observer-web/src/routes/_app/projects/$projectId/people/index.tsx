@@ -56,7 +56,11 @@ function PeopleListPage() {
   }
 
   function setPage(value: number) {
-    navigate({ from: Route.fullPath, search: (prev) => ({ ...prev, page: value > 1 ? value : undefined }), replace: true });
+    navigate({
+      from: Route.fullPath,
+      search: (prev) => ({ ...prev, page: value > 1 ? value : undefined }),
+      replace: true,
+    });
   }
 
   const params = {
@@ -201,7 +205,12 @@ function PeopleListPage() {
           closed: "rose",
           archived: "neutral",
         };
-        return <StatusBadge label={statusLabels[p.case_status] ?? p.case_status} variant={caseVariants[p.case_status]} />;
+        return (
+          <StatusBadge
+            label={statusLabels[p.case_status] ?? p.case_status}
+            variant={caseVariants[p.case_status]}
+          />
+        );
       },
     },
     {

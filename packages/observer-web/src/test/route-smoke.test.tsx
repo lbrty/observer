@@ -102,9 +102,7 @@ describe("route imports", () => {
   });
 
   it("imports admin/reference/countries/$countryId/states/$stateId", async () => {
-    const mod = await import(
-      "@/routes/_app/admin/reference/countries/$countryId/states/$stateId"
-    );
+    const mod = await import("@/routes/_app/admin/reference/countries/$countryId/states/$stateId");
     expect(mod).toBeDefined();
   });
 
@@ -139,30 +137,23 @@ describe("route imports", () => {
   });
 
   it("imports projects/$projectId/people/$personId/documents", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/people/$personId/documents"
-    );
+    const mod = await import("@/routes/_app/projects/$projectId/people/$personId/documents");
     expect(mod).toBeDefined();
   });
 
   it("imports projects/$projectId/people/$personId/migration-records", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/people/$personId/migration-records"
-    );
+    const mod =
+      await import("@/routes/_app/projects/$projectId/people/$personId/migration-records");
     expect(mod).toBeDefined();
   });
 
   it("imports projects/$projectId/people/$personId/support-records", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/people/$personId/support-records"
-    );
+    const mod = await import("@/routes/_app/projects/$projectId/people/$personId/support-records");
     expect(mod).toBeDefined();
   });
 
   it("imports projects/$projectId/people/$personId/stats", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/people/$personId/stats"
-    );
+    const mod = await import("@/routes/_app/projects/$projectId/people/$personId/stats");
     expect(mod).toBeDefined();
   });
 
@@ -192,23 +183,18 @@ describe("route imports", () => {
   });
 
   it("imports projects/$projectId/support-records/index", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/support-records/index"
-    );
+    const mod = await import("@/routes/_app/projects/$projectId/support-records/index");
     expect(mod).toBeDefined();
   });
 
   it("imports projects/$projectId/support-records/$type", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/support-records/$type"
-    );
+    const mod = await import("@/routes/_app/projects/$projectId/support-records/$type");
     expect(mod).toBeDefined();
   });
 
   it("imports projects/$projectId/support-records/-support-records-page", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/support-records/-support-records-page"
-    );
+    const mod =
+      await import("@/routes/_app/projects/$projectId/support-records/-support-records-page");
     expect(mod).toBeDefined();
   });
 

@@ -70,9 +70,7 @@ function PlacesPage() {
       <PageHeader
         title={t("admin.reference.places.title")}
         action={
-          <Button onClick={() => setCreateOpen(true)}>
-            {t("admin.reference.places.add")}
-          </Button>
+          <Button onClick={() => setCreateOpen(true)}>{t("admin.reference.places.add")}</Button>
         }
       />
 
@@ -87,9 +85,7 @@ function PlacesPage() {
             title={t("admin.reference.places.emptyTitle")}
             description={t("admin.reference.places.emptyDescription")}
             action={
-              <Button onClick={() => setCreateOpen(true)}>
-                {t("admin.reference.places.add")}
-              </Button>
+              <Button onClick={() => setCreateOpen(true)}>{t("admin.reference.places.add")}</Button>
             }
           />
         }

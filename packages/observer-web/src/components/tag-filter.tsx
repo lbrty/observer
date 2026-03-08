@@ -100,11 +100,7 @@ export function TagFilter({ projectId, selectedIds, onChange }: TagFilterProps) 
   );
 }
 
-export function SelectedTagChips({
-  projectId,
-  selectedIds,
-  onChange,
-}: TagFilterProps) {
+export function SelectedTagChips({ projectId, selectedIds, onChange }: TagFilterProps) {
   const { data } = useTags(projectId);
   const tagMap = useMemo(() => new Map((data?.tags ?? []).map((t) => [t.id, t])), [data?.tags]);
   const selectedTags = selectedIds.map((id) => tagMap.get(id)).filter(Boolean) as Tag[];

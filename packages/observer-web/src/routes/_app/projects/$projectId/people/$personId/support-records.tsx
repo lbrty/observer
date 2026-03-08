@@ -57,7 +57,11 @@ function PersonSupportRecords() {
     {
       key: "sphere",
       header: t("project.supportRecords.sphere"),
-      render: (r) => <span className="text-fg-secondary">{r.sphere ? t(sphereKeys[r.sphere] ?? r.sphere) : "\u2014"}</span>,
+      render: (r) => (
+        <span className="text-fg-secondary">
+          {r.sphere ? t(sphereKeys[r.sphere] ?? r.sphere) : "\u2014"}
+        </span>
+      ),
     },
     {
       key: "provided_at",
@@ -73,7 +77,13 @@ function PersonSupportRecords() {
       header: t("project.supportRecords.referralStatus"),
       render: (r) =>
         r.referral_status ? (
-          <StatusBadge label={referralKeys[r.referral_status] ? t(referralKeys[r.referral_status]) : r.referral_status} />
+          <StatusBadge
+            label={
+              referralKeys[r.referral_status]
+                ? t(referralKeys[r.referral_status])
+                : r.referral_status
+            }
+          />
         ) : (
           <span className="text-fg-tertiary">{"\u2014"}</span>
         ),

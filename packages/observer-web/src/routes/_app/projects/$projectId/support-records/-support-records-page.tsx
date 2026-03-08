@@ -140,7 +140,9 @@ export function SupportRecordsContent({
       if (dateFrom) searchParams.provided_from = dateFrom;
       if (dateTo) searchParams.provided_to = dateTo;
 
-      const blob = await api.get(`projects/${projectId}/export/support-records`, { searchParams }).blob();
+      const blob = await api
+        .get(`projects/${projectId}/export/support-records`, { searchParams })
+        .blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -176,7 +178,11 @@ export function SupportRecordsContent({
     {
       key: "sphere",
       header: t("project.supportRecords.sphere"),
-      render: (r) => <span className="text-fg-secondary">{r.sphere ? t(sphereKeys[r.sphere] ?? r.sphere) : "\u2014"}</span>,
+      render: (r) => (
+        <span className="text-fg-secondary">
+          {r.sphere ? t(sphereKeys[r.sphere] ?? r.sphere) : "\u2014"}
+        </span>
+      ),
     },
     {
       key: "provided_at",
@@ -192,7 +198,13 @@ export function SupportRecordsContent({
       header: t("project.supportRecords.referralStatus"),
       render: (r) =>
         r.referral_status ? (
-          <StatusBadge label={referralKeys[r.referral_status] ? t(referralKeys[r.referral_status]) : r.referral_status} />
+          <StatusBadge
+            label={
+              referralKeys[r.referral_status]
+                ? t(referralKeys[r.referral_status])
+                : r.referral_status
+            }
+          />
         ) : (
           <span className="text-fg-tertiary">{"\u2014"}</span>
         ),
@@ -229,14 +241,20 @@ export function SupportRecordsContent({
       <Tabs.Root value={typeFilter} className="mb-4">
         <Tabs.List className="flex gap-0 rounded-lg border border-border-secondary bg-bg-secondary p-0.5">
           {supportTypes.map((tab) => (
-            <Tabs.Tab key={tab} value={tab} nativeButton={false} render={<Link
-              to={
-                tab
-                  ? "/projects/$projectId/support-records/$type"
-                  : "/projects/$projectId/support-records"
+            <Tabs.Tab
+              key={tab}
+              value={tab}
+              nativeButton={false}
+              render={
+                <Link
+                  to={
+                    tab
+                      ? "/projects/$projectId/support-records/$type"
+                      : "/projects/$projectId/support-records"
+                  }
+                  params={tab ? { projectId, type: tab } : { projectId }}
+                />
               }
-              params={tab ? { projectId, type: tab } : { projectId }}
-            />}
               className="cursor-pointer rounded-sm px-4 py-1.5 m-0.5 text-sm font-medium text-fg-tertiary transition-colors hover:text-fg data-active:bg-bg data-active:text-fg data-active:shadow-card"
             >
               {tabLabels[tab]}

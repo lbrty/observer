@@ -11,12 +11,7 @@ import {
   AGE_GROUP_COLORS,
 } from "@/components/charts/colors";
 import { DatePicker } from "@/components/date-picker";
-import {
-  CaretDownIcon,
-  CaretUpIcon,
-  DownloadSimpleIcon,
-  FunnelIcon,
-} from "@/components/icons";
+import { CaretDownIcon, CaretUpIcon, DownloadSimpleIcon, FunnelIcon } from "@/components/icons";
 import {
   ReportCard,
   KpiCard,
@@ -39,7 +34,14 @@ export const Route = createFileRoute("/_app/projects/$projectId/my-stats/")({
   component: MyStatsPage,
 });
 
-const SUPPORT_TYPE_OPTIONS = ["humanitarian", "legal", "social", "psychological", "medical", "general"] as const;
+const SUPPORT_TYPE_OPTIONS = [
+  "humanitarian",
+  "legal",
+  "social",
+  "psychological",
+  "medical",
+  "general",
+] as const;
 
 function MyStatsPage() {
   const { t } = useTranslation();
@@ -143,7 +145,10 @@ function MyStatsPage() {
                 <UISelect
                   value={params.support_type ?? ""}
                   onValueChange={(v) => setParams((p) => ({ ...p, support_type: v || undefined }))}
-                  options={[{ label: t("project.reports.allValues"), value: "" }, ...supportTypeOptions]}
+                  options={[
+                    { label: t("project.reports.allValues"), value: "" },
+                    ...supportTypeOptions,
+                  ]}
                   placeholder={t("project.reports.allValues")}
                   fullWidth
                 />
@@ -158,26 +163,38 @@ function MyStatsPage() {
               <FilterChip
                 label={t("project.reports.dateFrom")}
                 value={params.date_from}
-                onRemove={() => { setParams((p) => ({ ...p, date_from: undefined })); clearDatePreset(); }}
+                onRemove={() => {
+                  setParams((p) => ({ ...p, date_from: undefined }));
+                  clearDatePreset();
+                }}
               />
             )}
             {params.date_to && (
               <FilterChip
                 label={t("project.reports.dateTo")}
                 value={params.date_to}
-                onRemove={() => { setParams((p) => ({ ...p, date_to: undefined })); clearDatePreset(); }}
+                onRemove={() => {
+                  setParams((p) => ({ ...p, date_to: undefined }));
+                  clearDatePreset();
+                }}
               />
             )}
             {params.support_type && (
               <FilterChip
                 label={t("project.reports.filterSupportType")}
-                value={supportTypeOptions.find((s) => s.value === params.support_type)?.label ?? params.support_type}
+                value={
+                  supportTypeOptions.find((s) => s.value === params.support_type)?.label ??
+                  params.support_type
+                }
                 onRemove={() => setParams((p) => ({ ...p, support_type: undefined }))}
               />
             )}
             <button
               type="button"
-              onClick={() => { setParams({}); clearDatePreset(); }}
+              onClick={() => {
+                setParams({});
+                clearDatePreset();
+              }}
               className="ml-1 text-xs font-medium text-fg-tertiary underline transition-colors hover:text-fg"
             >
               {t("project.reports.clearAll")}
@@ -193,7 +210,10 @@ function MyStatsPage() {
           {/* KPI overview */}
           <div className="col-span-full grid grid-cols-2 gap-3 sm:grid-cols-4">
             <KpiCard label={t("project.myStats.kpiPeople")} value={data.by_sex.total} />
-            <KpiCard label={t("project.myStats.kpiConsultations")} value={data.consultations.total} />
+            <KpiCard
+              label={t("project.myStats.kpiConsultations")}
+              value={data.consultations.total}
+            />
             <KpiCard
               label={t("project.myStats.kpiActiveCases")}
               value={data.by_case_status?.rows.find((r) => r.label === "active")?.count ?? 0}
@@ -203,17 +223,53 @@ function MyStatsPage() {
 
           {/* Consultations */}
           <div className="col-span-full">
-            <ReportCard group={data.consultations} title={t("project.reports.consultations")} chart="bar" yAxisLabel={axisLabel} colorMap={SUPPORT_TYPE_COLORS} />
+            <ReportCard
+              group={data.consultations}
+              title={t("project.reports.consultations")}
+              chart="bar"
+              yAxisLabel={axisLabel}
+              colorMap={SUPPORT_TYPE_COLORS}
+            />
           </div>
 
           {/* Service breakdown */}
-          <ReportCard group={data.by_sphere} title={t("project.reports.bySphere")} chart="bar" yAxisLabel={axisLabel} colorMap={SPHERE_COLORS} direction="auto" />
-          <ReportCard group={data.by_office} title={t("project.reports.byOffice")} chart="bar" yAxisLabel={axisLabel} direction="auto" />
-          <ReportCard group={data.by_region} title={t("project.reports.byRegion")} chart="bar" yAxisLabel={axisLabel} direction="auto" />
+          <ReportCard
+            group={data.by_sphere}
+            title={t("project.reports.bySphere")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            colorMap={SPHERE_COLORS}
+            direction="auto"
+          />
+          <ReportCard
+            group={data.by_office}
+            title={t("project.reports.byOffice")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            direction="auto"
+          />
+          <ReportCard
+            group={data.by_region}
+            title={t("project.reports.byRegion")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            direction="auto"
+          />
 
           {/* Demographics */}
-          <ReportCard group={data.by_sex} title={t("project.reports.bySex")} chart="pie" colorMap={SEX_COLORS} />
-          <ReportCard group={data.by_case_status} title={t("project.reports.byCaseStatus")} chart="bar" yAxisLabel={axisLabel} direction="auto" />
+          <ReportCard
+            group={data.by_sex}
+            title={t("project.reports.bySex")}
+            chart="pie"
+            colorMap={SEX_COLORS}
+          />
+          <ReportCard
+            group={data.by_case_status}
+            title={t("project.reports.byCaseStatus")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            direction="auto"
+          />
 
           {/* Age distribution */}
           <div className="col-span-full">
@@ -230,8 +286,20 @@ function MyStatsPage() {
           </div>
 
           {/* Categories & tags */}
-          <ReportCard group={data.by_category} title={t("project.reports.byCategory")} chart="bar" yAxisLabel={axisLabel} direction="auto" />
-          <ReportCard group={data.by_tag} title={t("project.reports.byTag")} chart="bar" yAxisLabel={axisLabel} direction="auto" />
+          <ReportCard
+            group={data.by_category}
+            title={t("project.reports.byCategory")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            direction="auto"
+          />
+          <ReportCard
+            group={data.by_tag}
+            title={t("project.reports.byTag")}
+            chart="bar"
+            yAxisLabel={axisLabel}
+            direction="auto"
+          />
         </div>
       )}
     </div>

@@ -17,6 +17,7 @@ Foundation for export and audit features. No external dependencies.
 ### Task 1: Add ActionExport to domain
 
 **Files:**
+
 - Modify: `internal/domain/project/entity.go`
 - Modify: `internal/middleware/project_auth.go` (no code change needed — it reads from MinRoleForAction dynamically)
 
@@ -69,6 +70,7 @@ New feature end-to-end: migration → domain → repository → use case → han
 ### Task 2: Create audit_logs migration
 
 **Files:**
+
 - Create: `migrations/000028_create_audit_logs.up.sql`
 
 **Step 1: Write the migration**
@@ -107,6 +109,7 @@ git commit -m "add audit_logs table migration"
 ### Task 3: Audit log domain types
 
 **Files:**
+
 - Create: `internal/domain/audit/entity.go`
 - Create: `internal/domain/audit/errors.go`
 
@@ -164,6 +167,7 @@ git commit -m "add audit log domain types"
 ### Task 4: Audit log repository interface + implementation
 
 **Files:**
+
 - Modify: `internal/repository/interfaces.go` — add AuditLogRepository interface
 - Create: `internal/repository/audit_repository.go` — Postgres implementation
 
@@ -307,6 +311,7 @@ git commit -m "add audit log repository interface and Postgres implementation"
 ### Task 5: Audit logger use case
 
 **Files:**
+
 - Create: `internal/usecase/audit/audit_usecase.go`
 - Create: `internal/usecase/audit/types.go`
 
@@ -460,6 +465,7 @@ git commit -m "add audit log use case with Log and List methods"
 ### Task 6: Audit log handler + routes
 
 **Files:**
+
 - Create: `internal/handler/audit_handler.go`
 - Modify: `internal/server/server.go` — register audit routes
 - Modify: `internal/app/container.go` — wire AuditUseCase
@@ -529,12 +535,14 @@ container.AuditUC = ucaudit.NewAuditUseCase(auditRepo)
 **Step 3: Register routes in `internal/server/server.go`**
 
 Admin route group:
+
 ```go
 auditHandler := handler.NewAuditHandler(container.AuditUC)
 admin.GET("/audit-logs", auditHandler.ListAll)
 ```
 
 Project route group (under the manager-level or read-level group — managers+ only):
+
 ```go
 // Inside the project routes, under a group requiring ActionRead at minimum
 // but the handler scopes by project_id automatically
@@ -558,6 +566,7 @@ git commit -m "add audit log handler and routes for admin and project scope"
 ### Task 7: Integrate audit logging into existing use cases
 
 **Files:**
+
 - Modify: `internal/usecase/project/person_usecase.go` — add audit on create/delete
 - Modify: `internal/usecase/project/pet_usecase.go` — add audit on create/delete
 - Modify: `internal/usecase/project/household_usecase.go` — add audit on create/delete
@@ -615,6 +624,7 @@ git commit -m "integrate audit logging into record lifecycle, document, admin, a
 ### Task 8: Extend list filter types
 
 **Files:**
+
 - Modify: `internal/domain/person/entity.go` — extend PersonListFilter
 - Modify: `internal/domain/support/entity.go` — extend RecordListFilter
 - Modify: `internal/domain/migration/entity.go` — extend RecordListFilter (if exists)
@@ -660,6 +670,7 @@ git commit -m "extend list filters for people, support records, migration record
 ### Task 9: CSV export endpoints
 
 **Files:**
+
 - Create: `internal/handler/export_handler.go`
 - Modify: `internal/server/server.go` — register export routes under ActionExport
 - Modify: `internal/app/container.go` — wire if needed
@@ -759,6 +770,7 @@ git commit -m "add CSV export endpoints gated by ActionExport permission"
 ### Task 10: Custom report builder endpoint
 
 **Files:**
+
 - Modify: `internal/usecase/report/types.go` — add CustomReportInput/Output
 - Modify: `internal/usecase/report/report_usecase.go` — add GenerateCustom method
 - Modify: `internal/repository/interfaces.go` — add CustomQuery method to ReportRepository
@@ -850,6 +862,7 @@ git commit -m "add custom report builder with dynamic dimension grouping"
 ### Task 11: Create profile settings page
 
 **Files:**
+
 - Create: `packages/observer-web/src/routes/_app/settings.tsx` (layout if needed)
 - Create: `packages/observer-web/src/routes/_app/settings/profile.tsx`
 - Modify: `packages/observer-web/src/routes/_app.tsx` — remove theme/language from AvatarMenu, add profile link
@@ -900,6 +913,7 @@ git commit -m "move theme and language selection to profile settings page"
 ### Task 12: Build generic filter bar component
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/filter-bar.tsx`
 
 **Step 1: Create reusable filter bar**
@@ -908,16 +922,16 @@ A composable filter bar that accepts filter field definitions and syncs state wi
 
 ```tsx
 interface FilterField {
-  key: string
-  label: string
-  type: "select" | "multi-select" | "date-range" | "search" | "boolean"
-  options?: { value: string; label: string }[]
+  key: string;
+  label: string;
+  type: "select" | "multi-select" | "date-range" | "search" | "boolean";
+  options?: { value: string; label: string }[];
 }
 
 interface FilterBarProps {
-  fields: FilterField[]
-  values: Record<string, any>
-  onChange: (values: Record<string, any>) => void
+  fields: FilterField[];
+  values: Record<string, any>;
+  onChange: (values: Record<string, any>) => void;
 }
 ```
 
@@ -937,6 +951,7 @@ git commit -m "add reusable filter bar component with URL param sync"
 ### Task 13: Add filters to people table
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/projects.$projectId/people/index.tsx`
 - Modify: `packages/observer-web/src/hooks/use-people.ts` — pass filter params to API
 
@@ -964,6 +979,7 @@ git commit -m "add filter bar and export button to people table"
 ### Task 14: Add filters to remaining tables
 
 **Files:**
+
 - Modify: support records table + hook
 - Modify: migration records table + hook
 - Modify: pets table + hook
@@ -989,6 +1005,7 @@ git commit -m "add filter bars and export buttons to all data tables"
 ### Task 15: Custom report builder page
 
 **Files:**
+
 - Create: `packages/observer-web/src/routes/_app/projects.$projectId/reports/custom.tsx`
 - Modify: `packages/observer-web/src/hooks/use-reports.ts` — add useCustomReport hook
 - Modify: `packages/observer-web/src/types/report.ts` — add CustomReport types
@@ -997,25 +1014,25 @@ git commit -m "add filter bars and export buttons to all data tables"
 
 ```typescript
 interface CustomReportParams {
-  metric: "events" | "people" | "units" | "pets"
-  group_by: string[]
-  date_from?: string
-  date_to?: string
-  support_type?: string
-  tag_ids?: string[]
-  has_pets?: boolean
+  metric: "events" | "people" | "units" | "pets";
+  group_by: string[];
+  date_from?: string;
+  date_to?: string;
+  support_type?: string;
+  tag_ids?: string[];
+  has_pets?: boolean;
 }
 
 interface CustomRow {
-  dimensions: Record<string, string>
-  count: number
+  dimensions: Record<string, string>;
+  count: number;
 }
 
 interface CustomReportOutput {
-  metric: string
-  group_by: string[]
-  rows: CustomRow[]
-  total: number
+  metric: string;
+  group_by: string[];
+  rows: CustomRow[];
+  total: number;
 }
 ```
 
@@ -1041,6 +1058,7 @@ git commit -m "add custom report builder page with form-based dimension selectio
 ### Task 16: Admin audit log page
 
 **Files:**
+
 - Create: `packages/observer-web/src/routes/_app/admin/audit-logs.tsx`
 - Create: `packages/observer-web/src/hooks/use-audit-logs.ts`
 - Create: `packages/observer-web/src/types/audit.ts`
@@ -1049,23 +1067,23 @@ git commit -m "add custom report builder page with form-based dimension selectio
 
 ```typescript
 interface AuditEntry {
-  id: string
-  project_id: string | null
-  user_id: string
-  action: string
-  entity_type: string
-  entity_id: string | null
-  summary: string
-  ip: string
-  user_agent: string
-  created_at: string
+  id: string;
+  project_id: string | null;
+  user_id: string;
+  action: string;
+  entity_type: string;
+  entity_id: string | null;
+  summary: string;
+  ip: string;
+  user_agent: string;
+  created_at: string;
 }
 
 interface AuditListOutput {
-  entries: AuditEntry[]
-  total: number
-  page: number
-  per_page: number
+  entries: AuditEntry[];
+  total: number;
+  page: number;
+  per_page: number;
 }
 ```
 
@@ -1076,7 +1094,7 @@ export function useAuditLogs(params: AuditListParams) {
   return useQuery({
     queryKey: ["audit-logs", params],
     queryFn: () => api.get("admin/audit-logs", { searchParams: params }).json<AuditListOutput>(),
-  })
+  });
 }
 ```
 
@@ -1100,6 +1118,7 @@ git commit -m "add admin audit log page with filters"
 ### Task 17: Project-scoped audit log page
 
 **Files:**
+
 - Create: `packages/observer-web/src/routes/_app/projects.$projectId/audit-logs.tsx`
 
 **Step 1: Build project audit log page**
@@ -1126,11 +1145,13 @@ git commit -m "add project-scoped audit log page for managers"
 ### Task 18: Integration tests for audit logs
 
 **Files:**
+
 - Create: `internal/repository/audit_repository_test.go`
 
 **Step 1: Write integration tests**
 
 Using testcontainers-go (Postgres), test:
+
 - `Log()` inserts entry and returns no error
 - `List()` with no filters returns all entries paginated
 - `List()` with project_id filter returns scoped entries
@@ -1154,11 +1175,13 @@ git commit -m "add integration tests for audit log repository"
 ### Task 19: Integration tests for export endpoints
 
 **Files:**
+
 - Create: `internal/handler/export_handler_test.go`
 
 **Step 1: Write handler tests**
 
 Test CSV export endpoints:
+
 - Returns 200 with CSV content-type and valid CSV body
 - Returns 403 when user lacks ActionExport permission
 - Respects filter params in exported data
@@ -1179,11 +1202,13 @@ git commit -m "add integration tests for CSV export endpoints"
 ### Task 20: Unit tests for custom report builder
 
 **Files:**
+
 - Create: `internal/usecase/report/report_usecase_test.go` (or extend existing)
 
 **Step 1: Write unit tests**
 
 Using gomock for ReportRepository:
+
 - `GenerateCustom()` with valid single dimension
 - `GenerateCustom()` with two dimensions
 - `GenerateCustom()` rejects invalid dimension names

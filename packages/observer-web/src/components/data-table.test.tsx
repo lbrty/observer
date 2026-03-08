@@ -23,9 +23,7 @@ const keyExtractor = (item: Item) => item.id;
 
 describe("DataTable", () => {
   it("renders column headers and data rows", () => {
-    render(
-      <DataTable columns={columns} data={data} keyExtractor={keyExtractor} />,
-    );
+    render(<DataTable columns={columns} data={data} keyExtractor={keyExtractor} />);
 
     expect(screen.getByText("Name")).toBeDefined();
     expect(screen.getByText("Email")).toBeDefined();
@@ -35,12 +33,7 @@ describe("DataTable", () => {
 
   it("renders skeleton rows when isLoading is true", () => {
     const { container } = render(
-      <DataTable
-        columns={columns}
-        data={[]}
-        keyExtractor={keyExtractor}
-        isLoading
-      />,
+      <DataTable columns={columns} data={[]} keyExtractor={keyExtractor} isLoading />,
     );
 
     const skeletonCells = container.querySelectorAll(".animate-pulse");
@@ -48,9 +41,7 @@ describe("DataTable", () => {
   });
 
   it("renders default empty state when data is empty", () => {
-    render(
-      <DataTable columns={columns} data={[]} keyExtractor={keyExtractor} />,
-    );
+    render(<DataTable columns={columns} data={[]} keyExtractor={keyExtractor} />);
 
     expect(screen.getByText("admin.common.noData")).toBeDefined();
   });

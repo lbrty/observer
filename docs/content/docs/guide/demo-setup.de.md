@@ -32,18 +32,18 @@ bun run dev
 
 ## Was der seed-Befehl erstellt
 
-| Was                        | Details                                                |
-| -------------------------- | ------------------------------------------------------ |
-| **Referenzdaten**          | Länder, Bundesländer, Orte, Büros, Kategorien          |
-| **Benutzer**               | Admin- + Mitarbeiterkonten, alle mit Passwort `password`|
-| **Projekte**               | 2 Projekte (konfigurierbar mit `--projects`)           |
-| **Personen**               | 50 pro Projekt (konfigurierbar mit `--people`)         |
-| **Unterstützungseinträge** | Beratungsdatensätze, verknüpft mit Personen            |
-| **Migrationseinträge**     | Bewegungsverlauf mit Herkunfts-/Zielorten              |
-| **Haushalte**              | Familiengruppen mit Mitgliedern                        |
-| **Notizen**                | Fallnotizen zu Personen                                |
-| **Haustiere**              | Haustiereinträge mit Tags                              |
-| **Tags**                   | Projektbezogene Labels zur Kategorisierung             |
+| Was                        | Details                                                  |
+| -------------------------- | -------------------------------------------------------- |
+| **Referenzdaten**          | Länder, Bundesländer, Orte, Büros, Kategorien            |
+| **Benutzer**               | Admin- + Mitarbeiterkonten, alle mit Passwort `password` |
+| **Projekte**               | 2 Projekte (konfigurierbar mit `--projects`)             |
+| **Personen**               | 50 pro Projekt (konfigurierbar mit `--people`)           |
+| **Unterstützungseinträge** | Beratungsdatensätze, verknüpft mit Personen              |
+| **Migrationseinträge**     | Bewegungsverlauf mit Herkunfts-/Zielorten                |
+| **Haushalte**              | Familiengruppen mit Mitgliedern                          |
+| **Notizen**                | Fallnotizen zu Personen                                  |
+| **Haustiere**              | Haustiereinträge mit Tags                                |
+| **Tags**                   | Projektbezogene Labels zur Kategorisierung               |
 
 ### Standard-Anmeldedaten
 

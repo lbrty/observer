@@ -33,18 +33,27 @@ interface DataTablePageProps<T> {
 }
 
 export function DataTablePage<T>({
-  title, columns, data, keyExtractor, isLoading, onRowClick,
-  pagination, filters, filterTrailing,
-  emptyIcon, emptyTitle, emptyDescription, emptyAction,
-  createAction, children,
+  title,
+  columns,
+  data,
+  keyExtractor,
+  isLoading,
+  onRowClick,
+  pagination,
+  filters,
+  filterTrailing,
+  emptyIcon,
+  emptyTitle,
+  emptyDescription,
+  emptyAction,
+  createAction,
+  children,
 }: DataTablePageProps<T>) {
   return (
     <div>
       <PageHeader title={title} action={createAction} />
 
-      {filters && filters.length > 0 && (
-        <FilterBar filters={filters} trailing={filterTrailing} />
-      )}
+      {filters && filters.length > 0 && <FilterBar filters={filters} trailing={filterTrailing} />}
 
       <DataTable
         columns={columns}

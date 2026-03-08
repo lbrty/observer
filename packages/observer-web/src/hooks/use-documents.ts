@@ -1,11 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
-import type {
-  Document,
-  ListDocumentsOutput,
-  UpdateDocumentInput,
-} from "@/types/document";
+import type { Document, ListDocumentsOutput, UpdateDocumentInput } from "@/types/document";
 
 export function useDocuments(projectId: string, personId: string) {
   return useQuery({

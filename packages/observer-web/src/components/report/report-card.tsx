@@ -18,7 +18,15 @@ interface ReportCardProps {
 }
 
 export function ReportCard({
-  group, title, chart, yAxisLabel, legend, mapLabel, skipTranslation, colorMap, direction,
+  group,
+  title,
+  chart,
+  yAxisLabel,
+  legend,
+  mapLabel,
+  skipTranslation,
+  colorMap,
+  direction,
 }: ReportCardProps) {
   const translated = useTranslatedRows(group.rows);
   const source = skipTranslation ? group.rows : translated;
@@ -43,7 +51,13 @@ export function ReportCard({
       </div>
       {rows.length > 0 ? (
         chart === "bar" ? (
-          <BarChart data={rows} yAxisLabel={yAxisLabel} legend={legend} colorMap={colorMap} direction={direction} />
+          <BarChart
+            data={rows}
+            yAxisLabel={yAxisLabel}
+            legend={legend}
+            colorMap={colorMap}
+            direction={direction}
+          />
         ) : (
           <PieChart data={rows} colorMap={colorMap} />
         )

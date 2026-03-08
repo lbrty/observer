@@ -32,8 +32,7 @@ const buttonVariants = cva(
 );
 
 interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  extends ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
   loading?: boolean;
   icon?: ReactNode;
   asChild?: boolean;
@@ -62,10 +61,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
       className: buttonVariants({
         variant,
         size,
-        className: [
-          (children.props as { className?: string }).className,
-          className,
-        ]
+        className: [(children.props as { className?: string }).className, className]
           .filter(Boolean)
           .join(" "),
       }),

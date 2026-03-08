@@ -19,9 +19,8 @@ mock.module("@/lib/api", () => ({
   HTTPError: class extends Error {},
 }));
 
-const { usePlaces, useCreatePlace, useUpdatePlace, useDeletePlace } = await import(
-  "@/hooks/use-places"
-);
+const { usePlaces, useCreatePlace, useUpdatePlace, useDeletePlace } =
+  await import("@/hooks/use-places");
 
 describe("usePlaces", () => {
   it("fetches places", async () => {

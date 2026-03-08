@@ -32,18 +32,18 @@ bun run dev
 
 ## Seed komutu ne oluşturur
 
-| Ne                     | Ayrıntılar                                           |
-| ---------------------- | ---------------------------------------------------- |
-| **Reference data**     | Ülkeler, eyaletler, yerleşim yerleri, ofisler, kategoriler |
-| **Users**              | Admin + personel hesapları, hepsinin şifresi `password` |
-| **Projects**           | 2 proje (`--projects` ile yapılandırılabilir)        |
-| **People**             | Proje başına 50 kişi (`--people` ile yapılandırılabilir) |
-| **Support records**    | Kişilere bağlı danışma kayıtları                     |
-| **Migration records**  | Çıkış/varış noktalarıyla hareket geçmişi             |
-| **Households**         | Üyelerle birlikte aile grupları                      |
-| **Notes**              | Kişilere eklenmiş vaka notları                       |
-| **Pets**               | Etiketli evcil hayvan kayıtları                      |
-| **Tags**               | Sınıflandırma için projeye özgü etiketler            |
+| Ne                    | Ayrıntılar                                                 |
+| --------------------- | ---------------------------------------------------------- |
+| **Reference data**    | Ülkeler, eyaletler, yerleşim yerleri, ofisler, kategoriler |
+| **Users**             | Admin + personel hesapları, hepsinin şifresi `password`    |
+| **Projects**          | 2 proje (`--projects` ile yapılandırılabilir)              |
+| **People**            | Proje başına 50 kişi (`--people` ile yapılandırılabilir)   |
+| **Support records**   | Kişilere bağlı danışma kayıtları                           |
+| **Migration records** | Çıkış/varış noktalarıyla hareket geçmişi                   |
+| **Households**        | Üyelerle birlikte aile grupları                            |
+| **Notes**             | Kişilere eklenmiş vaka notları                             |
+| **Pets**              | Etiketli evcil hayvan kayıtları                            |
+| **Tags**              | Sınıflandırma için projeye özgü etiketler                  |
 
 ### Varsayılan kimlik bilgileri
 

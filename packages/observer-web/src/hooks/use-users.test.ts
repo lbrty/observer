@@ -6,8 +6,7 @@ import { TestWrapper } from "@/test/wrapper";
 mock.module("@/lib/api", () => ({
   api: {
     get: () => ({
-      json: () =>
-        Promise.resolve({ users: [{ id: "u1", email: "test@test.com" }], total: 1 }),
+      json: () => Promise.resolve({ users: [{ id: "u1", email: "test@test.com" }], total: 1 }),
     }),
     post: () => ({
       json: () => Promise.resolve({ id: "u-new", email: "new@test.com" }),
@@ -19,9 +18,8 @@ mock.module("@/lib/api", () => ({
   HTTPError: class extends Error {},
 }));
 
-const { useUsers, useUser, useSearchUsers, useCreateUser, useUpdateUser } = await import(
-  "@/hooks/use-users"
-);
+const { useUsers, useUser, useSearchUsers, useCreateUser, useUpdateUser } =
+  await import("@/hooks/use-users");
 
 describe("useUsers", () => {
   it("fetches users", async () => {

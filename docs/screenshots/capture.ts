@@ -4,11 +4,7 @@ import { join } from "node:path";
 
 const OUT = join(import.meta.dirname!, "out");
 
-type PageEntry = [
-  name: string,
-  path: string,
-  setup?: (page: Page) => Promise<void>,
-];
+type PageEntry = [name: string, path: string, setup?: (page: Page) => Promise<void>];
 
 const PROJECT = "01KJZDSG53QYEJ5JHD7YRHERV7";
 const USER = "01KJZDSG33GM2VRF33K8Y5JZ0M";
@@ -46,20 +42,40 @@ const APP_PAGES: PageEntry[] = [
   ["dashboard", "/"],
   ["profile", "/profile"],
   ["project-people", `/projects/${PROJECT}/people`],
-  ["project-people-drawer", `/projects/${PROJECT}/people`, (p) => openDrawer(p, /register person/i)],
+  [
+    "project-people-drawer",
+    `/projects/${PROJECT}/people`,
+    (p) => openDrawer(p, /register person/i),
+  ],
   ["project-person-detail", `/projects/${PROJECT}/people/${PERSON}`],
   ["project-person-documents", `/projects/${PROJECT}/people/${PERSON}/documents`],
   ["project-person-support-records", `/projects/${PROJECT}/people/${PERSON}/support-records`],
-  ["project-person-support-records-drawer", `/projects/${PROJECT}/people/${PERSON}/support-records`, (p) => openDrawer(p, /new record/i)],
+  [
+    "project-person-support-records-drawer",
+    `/projects/${PROJECT}/people/${PERSON}/support-records`,
+    (p) => openDrawer(p, /new record/i),
+  ],
   ["project-person-migration-records", `/projects/${PROJECT}/people/${PERSON}/migration-records`],
-  ["project-person-migration-records-drawer", `/projects/${PROJECT}/people/${PERSON}/migration-records`, (p) => openDrawer(p, /^add$/i)],
+  [
+    "project-person-migration-records-drawer",
+    `/projects/${PROJECT}/people/${PERSON}/migration-records`,
+    (p) => openDrawer(p, /^add$/i),
+  ],
   ["project-person-notes", `/projects/${PROJECT}/people/${PERSON}/notes`],
   ["project-person-stats", `/projects/${PROJECT}/people/${PERSON}/stats`],
   ["project-documents", `/projects/${PROJECT}/documents`],
   ["project-support-records", `/projects/${PROJECT}/support-records`],
-  ["project-support-records-drawer", `/projects/${PROJECT}/support-records`, (p) => openDrawer(p, /new record/i)],
+  [
+    "project-support-records-drawer",
+    `/projects/${PROJECT}/support-records`,
+    (p) => openDrawer(p, /new record/i),
+  ],
   ["project-households", `/projects/${PROJECT}/households`],
-  ["project-households-drawer", `/projects/${PROJECT}/households`, (p) => openDrawer(p, /new household/i)],
+  [
+    "project-households-drawer",
+    `/projects/${PROJECT}/households`,
+    (p) => openDrawer(p, /new household/i),
+  ],
   ["project-tags", `/projects/${PROJECT}/tags`],
   ["project-tags-drawer", `/projects/${PROJECT}/tags`, (p) => openDrawer(p, /add tag/i)],
   ["project-pets", `/projects/${PROJECT}/pets`],
@@ -123,8 +139,7 @@ for (const account of ACCOUNTS) {
     await setupPage(page);
     await login(page, account.email, account.password);
 
-    const pages =
-      account.role === "admin" ? [...APP_PAGES, ...ADMIN_PAGES] : APP_PAGES;
+    const pages = account.role === "admin" ? [...APP_PAGES, ...ADMIN_PAGES] : APP_PAGES;
 
     await capture(page, join(OUT, account.role), pages);
   });

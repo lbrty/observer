@@ -5,18 +5,18 @@ weight: 3
 
 ## Стек
 
-| Напрямок        | Вибір                                    |
-| --------------- | ---------------------------------------- |
-| Фреймворк       | React 19 + React Compiler                |
-| Збірник         | Vite 6                                   |
-| Пакетний менеджер | Bun (workspace monorepo)               |
-| Маршрутизація   | TanStack Router (file-based)             |
-| Отримання даних | TanStack Query v5                        |
-| Стилізація      | Tailwind CSS v4                          |
-| Headless UI     | Base UI (`@base-ui/react`)               |
-| Іконки          | Phosphor Icons (`@phosphor-icons/react`) |
-| i18n            | i18next + react-i18next                  |
-| Перевірка типів | TypeScript 5.7 (strict)                  |
+| Напрямок          | Вибір                                    |
+| ----------------- | ---------------------------------------- |
+| Фреймворк         | React 19 + React Compiler                |
+| Збірник           | Vite 6                                   |
+| Пакетний менеджер | Bun (workspace monorepo)                 |
+| Маршрутизація     | TanStack Router (file-based)             |
+| Отримання даних   | TanStack Query v5                        |
+| Стилізація        | Tailwind CSS v4                          |
+| Headless UI       | Base UI (`@base-ui/react`)               |
+| Іконки            | Phosphor Icons (`@phosphor-icons/react`) |
+| i18n              | i18next + react-i18next                  |
+| Перевірка типів   | TypeScript 5.7 (strict)                  |
 
 ## Структура проєкту
 
@@ -118,8 +118,8 @@ t("greeting", { name: "Ali" }); // → "Salam, Ali"
 
 ## Змінні середовища
 
-| Змінна         | За замовчуванням        | Опис                   |
-| -------------- | ----------------------- | ---------------------- |
+| Змінна         | За замовчуванням        | Опис                          |
+| -------------- | ----------------------- | ----------------------------- |
 | `VITE_API_URL` | `http://localhost:9000` | Базова URL-адреса API бекенду |
 
 Vite експонує лише змінні з префіксом `VITE_`.

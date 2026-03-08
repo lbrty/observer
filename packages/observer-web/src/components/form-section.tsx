@@ -19,9 +19,7 @@ export function FormSection({ title, columns = 2, children, className }: FormSec
   return (
     <>
       <SectionHeading>{title}</SectionHeading>
-      <div className={`grid gap-4 ${gridCols[columns]} ${className ?? ""}`}>
-        {children}
-      </div>
+      <div className={`grid gap-4 ${gridCols[columns]} ${className ?? ""}`}>{children}</div>
     </>
   );
 }

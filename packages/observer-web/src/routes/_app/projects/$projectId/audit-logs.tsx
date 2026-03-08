@@ -13,12 +13,7 @@ export const Route = createFileRoute("/_app/projects/$projectId/audit-logs")({
   component: ProjectAuditLogsPage,
 });
 
-const ACTION_VALUES = [
-  "create",
-  "update",
-  "delete",
-  "export",
-];
+const ACTION_VALUES = ["create", "update", "delete", "export"];
 
 const ENTITY_TYPE_VALUES = [
   "person",
@@ -104,23 +99,17 @@ function ProjectAuditLogsPage() {
     {
       key: "entity_type",
       header: t("audit.entityType"),
-      render: (e) => (
-        <span className="text-sm text-fg-secondary">{e.entity_type}</span>
-      ),
+      render: (e) => <span className="text-sm text-fg-secondary">{e.entity_type}</span>,
     },
     {
       key: "summary",
       header: t("audit.summary"),
-      render: (e) => (
-        <span className="max-w-xs truncate text-sm text-fg">{e.summary}</span>
-      ),
+      render: (e) => <span className="max-w-xs truncate text-sm text-fg">{e.summary}</span>,
     },
     {
       key: "ip",
       header: t("audit.ip"),
-      render: (e) => (
-        <span className="font-mono text-xs text-fg-tertiary">{e.ip}</span>
-      ),
+      render: (e) => <span className="font-mono text-xs text-fg-tertiary">{e.ip}</span>,
     },
   ];
 
@@ -128,14 +117,20 @@ function ProjectAuditLogsPage() {
     {
       type: "select",
       value: action,
-      onValueChange: (v) => { setAction(v); setPage(1); },
+      onValueChange: (v) => {
+        setAction(v);
+        setPage(1);
+      },
       options: actionOptions,
       placeholder: t("audit.allActions"),
     },
     {
       type: "select",
       value: entityType,
-      onValueChange: (v) => { setEntityType(v); setPage(1); },
+      onValueChange: (v) => {
+        setEntityType(v);
+        setPage(1);
+      },
       options: entityOptions,
       placeholder: t("audit.allEntities"),
     },
@@ -143,8 +138,14 @@ function ProjectAuditLogsPage() {
       type: "date-range",
       fromValue: dateFrom,
       toValue: dateTo,
-      onFromChange: (v) => { setDateFrom(v); setPage(1); },
-      onToChange: (v) => { setDateTo(v); setPage(1); },
+      onFromChange: (v) => {
+        setDateFrom(v);
+        setPage(1);
+      },
+      onToChange: (v) => {
+        setDateTo(v);
+        setPage(1);
+      },
       fromPlaceholder: t("common.dateFrom"),
       toPlaceholder: t("common.dateTo"),
     },
@@ -158,7 +159,11 @@ function ProjectAuditLogsPage() {
       keyExtractor={(e) => e.id}
       isLoading={isLoading}
       filters={filters}
-      pagination={data ? { page: data.page, perPage: data.per_page, total: data.total, onChange: setPage } : undefined}
+      pagination={
+        data
+          ? { page: data.page, perPage: data.per_page, total: data.total, onChange: setPage }
+          : undefined
+      }
       emptyIcon={ClockCounterClockwiseIcon}
       emptyTitle={t("audit.emptyTitle")}
     />

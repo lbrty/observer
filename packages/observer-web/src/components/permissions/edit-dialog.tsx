@@ -55,7 +55,10 @@ export function EditDialog({
           </Dialog.Title>
 
           <div className="mt-3 flex items-center gap-3 rounded-lg border border-border-secondary bg-bg px-3 py-2">
-            <UserInitials firstName={permission.user_first_name} lastName={permission.user_last_name} />
+            <UserInitials
+              firstName={permission.user_first_name}
+              lastName={permission.user_last_name}
+            />
             <div>
               <p className="text-sm font-medium text-fg">
                 {permission.user_first_name} {permission.user_last_name}

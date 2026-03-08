@@ -30,12 +30,12 @@ just generate-mocks    # mock dosyalarını yeniden oluştur
 
 ## Test Dosyası Kuralları
 
-| Desen             | Amaç                                 |
-| ----------------- | ------------------------------------- |
-| `*_test.go`       | Aynı paketteki test dosyası          |
-| `testing.Short()` | `just test`'te entegrasyon testlerini atla |
+| Desen             | Amaç                                          |
+| ----------------- | --------------------------------------------- |
+| `*_test.go`       | Aynı paketteki test dosyası                   |
+| `testing.Short()` | `just test`'te entegrasyon testlerini atla    |
 | `t.Helper()`      | Fonksiyonları test yardımcısı olarak işaretle |
-| `testutil.Setup*` | Entegrasyon testleri için konteyner kurulumu |
+| `testutil.Setup*` | Entegrasyon testleri için konteyner kurulumu  |
 
 ## 1. Testify ile Birim Testleri
 
@@ -431,32 +431,32 @@ func TestAuthFlow_E2E(t *testing.T) {
 
 ### Auth Domain
 
-| Test                          | Tür  | Neyi doğrular                        |
-| ----------------------------- | ---- | ------------------------------------ |
-| Geçerli verilerle kayıt       | Birim | Kullanıcı + kimlik bilgileri oluşturuldu |
-| Tekrar eden e-posta ile kayıt | Birim | `ErrEmailExists` döner               |
-| Tekrar eden telefon ile kayıt | Birim | `ErrPhoneExists` döner               |
-| Geçersiz rol ile kayıt        | Birim | `ErrInvalidRole` döner               |
-| Geçerli kimlik bilgileriyle giriş | Birim | Token çifti döner                |
-| Yanlış parola ile giriş       | Birim | `ErrInvalidCredentials` döner        |
-| Aktif olmayan kullanıcı girişi | Birim | `ErrUserNotActive` döner            |
-| Geçerli token yenileme        | Birim | Eski oturum silinir, yeni çift verilir |
-| Süresi dolmuş oturum yenileme | Birim | `ErrSessionExpired` döner            |
-| Token oluşturma + doğrulama   | Birim | Claim'ler eşleşir, süre dolumu çalışır |
-| Token türü uyumsuzluğu        | Birim | Access token MFA olarak reddedilir   |
-| Parola hash benzersizliği     | Birim | Aynı parola -> farklı hash'ler       |
+| Test                              | Tür   | Neyi doğrular                            |
+| --------------------------------- | ----- | ---------------------------------------- |
+| Geçerli verilerle kayıt           | Birim | Kullanıcı + kimlik bilgileri oluşturuldu |
+| Tekrar eden e-posta ile kayıt     | Birim | `ErrEmailExists` döner                   |
+| Tekrar eden telefon ile kayıt     | Birim | `ErrPhoneExists` döner                   |
+| Geçersiz rol ile kayıt            | Birim | `ErrInvalidRole` döner                   |
+| Geçerli kimlik bilgileriyle giriş | Birim | Token çifti döner                        |
+| Yanlış parola ile giriş           | Birim | `ErrInvalidCredentials` döner            |
+| Aktif olmayan kullanıcı girişi    | Birim | `ErrUserNotActive` döner                 |
+| Geçerli token yenileme            | Birim | Eski oturum silinir, yeni çift verilir   |
+| Süresi dolmuş oturum yenileme     | Birim | `ErrSessionExpired` döner                |
+| Token oluşturma + doğrulama       | Birim | Claim'ler eşleşir, süre dolumu çalışır   |
+| Token türü uyumsuzluğu            | Birim | Access token MFA olarak reddedilir       |
+| Parola hash benzersizliği         | Birim | Aynı parola -> farklı hash'ler           |
 
 ### Altyapı
 
-| Test                  | Tür         | Neyi doğrular                       |
-| --------------------- | ----------- | ----------------------------------- |
-| DB bağlantı + ping    | Entegrasyon | Testcontainer Postgres çalışır      |
-| Health uç noktası     | Birim       | 200 `{"status":"ok"}` döner         |
-| Request ID middleware  | Birim       | X-Request-ID başlığı 26 karakterlik ULID |
-| Düzgün kapanma        | Birim       | Sunucu hatasız kapanır              |
-| Config varsayılanları  | Birim       | Anlamlı varsayılanlar yüklenir      |
-| Config env geçersiz kılma | Birim   | Ortam değişkenleri varsayılanları geçersiz kılar |
-| ULID benzersizliği     | Birim       | Goroutine'ler arasında çakışma yok  |
+| Test                      | Tür         | Neyi doğrular                                    |
+| ------------------------- | ----------- | ------------------------------------------------ |
+| DB bağlantı + ping        | Entegrasyon | Testcontainer Postgres çalışır                   |
+| Health uç noktası         | Birim       | 200 `{"status":"ok"}` döner                      |
+| Request ID middleware     | Birim       | X-Request-ID başlığı 26 karakterlik ULID         |
+| Düzgün kapanma            | Birim       | Sunucu hatasız kapanır                           |
+| Config varsayılanları     | Birim       | Anlamlı varsayılanlar yüklenir                   |
+| Config env geçersiz kılma | Birim       | Ortam değişkenleri varsayılanları geçersiz kılar |
+| ULID benzersizliği        | Birim       | Goroutine'ler arasında çakışma yok               |
 
 ## 7. Test Organizasyonu
 

@@ -61,7 +61,8 @@ function PersonStats() {
     personId,
   );
 
-  const isLoading = loadingSupport || loadingNotes || loadingMigration || (canViewDocuments && loadingDocs);
+  const isLoading =
+    loadingSupport || loadingNotes || loadingMigration || (canViewDocuments && loadingDocs);
 
   if (isLoading) {
     return (

@@ -26,7 +26,11 @@ function SupportRecordsByType() {
   const typeFilter: SupportType = validTypes.has(type) ? (type as SupportType) : "";
 
   function setPage(value: number) {
-    navigate({ from: Route.fullPath, search: { page: value > 1 ? value : undefined }, replace: true });
+    navigate({
+      from: Route.fullPath,
+      search: { page: value > 1 ? value : undefined },
+      replace: true,
+    });
   }
 
   return (

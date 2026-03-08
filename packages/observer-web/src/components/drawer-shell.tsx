@@ -45,7 +45,9 @@ export function DrawerShell({
       <Drawer.Portal>
         <Drawer.Backdrop className="fixed inset-0 z-50 bg-black/25 backdrop-blur-xs transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0" />
         <Drawer.Viewport className="fixed inset-0 z-50">
-          <Drawer.Popup className={`fixed top-0 right-0 flex h-dvh w-full flex-col border-l border-border-secondary bg-bg-secondary shadow-elevated transition-transform duration-200 ease-out data-ending-style:translate-x-full data-starting-style:translate-x-full ${sizeClasses[size]}`}>
+          <Drawer.Popup
+            className={`fixed top-0 right-0 flex h-dvh w-full flex-col border-l border-border-secondary bg-bg-secondary shadow-elevated transition-transform duration-200 ease-out data-ending-style:translate-x-full data-starting-style:translate-x-full ${sizeClasses[size]}`}
+          >
             <div className="flex shrink-0 items-center justify-between border-b border-border-secondary px-6 py-4">
               <Drawer.Title className="font-serif text-lg font-semibold text-fg">
                 {title}

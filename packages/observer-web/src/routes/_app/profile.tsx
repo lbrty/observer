@@ -78,30 +78,13 @@ function ProfileForm({ user, setUser }: { user: User | null; setUser: (u: User) 
       <ErrorBanner message={error} />
 
       <div className="grid grid-cols-2 gap-3">
-        <FormField
-          label={t("profile.firstName")}
-          value={firstName}
-          onChange={setFirstName}
-        />
-        <FormField
-          label={t("profile.lastName")}
-          value={lastName}
-          onChange={setLastName}
-        />
+        <FormField label={t("profile.firstName")} value={firstName} onChange={setFirstName} />
+        <FormField label={t("profile.lastName")} value={lastName} onChange={setLastName} />
       </div>
 
-      <FormField
-        label={t("common.email")}
-        value={user?.email ?? ""}
-        onChange={() => {}}
-        disabled
-      />
+      <FormField label={t("common.email")} value={user?.email ?? ""} onChange={() => {}} disabled />
 
-      <FormField
-        label={t("profile.phone")}
-        value={phone}
-        onChange={setPhone}
-      />
+      <FormField label={t("profile.phone")} value={phone} onChange={setPhone} />
 
       <Button type="submit" disabled={saving}>
         {saving ? t("profile.saving") : t("profile.save")}
@@ -112,12 +95,8 @@ function ProfileForm({ user, setUser }: { user: User | null; setUser: (u: User) 
 
 function AppearanceSettings() {
   const { t, i18n } = useTranslation();
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem(THEME_KEY) || "system",
-  );
-  const [lang, setLang] = useState(
-    () => localStorage.getItem(LANG_KEY) || "ky",
-  );
+  const [theme, setTheme] = useState(() => localStorage.getItem(THEME_KEY) || "system");
+  const [lang, setLang] = useState(() => localStorage.getItem(LANG_KEY) || "ky");
 
   const themeOptions = [
     { value: "system", label: t("common.themeSystem") },
@@ -147,15 +126,11 @@ function AppearanceSettings() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-sm font-semibold text-fg">
-        {t("profile.appearance")}
-      </h2>
+      <h2 className="text-sm font-semibold text-fg">{t("profile.appearance")}</h2>
 
       <div className="space-y-3">
         <div className="space-y-1.5">
-          <label className="text-sm text-fg-secondary">
-            {t("common.theme")}
-          </label>
+          <label className="text-sm text-fg-secondary">{t("common.theme")}</label>
           <div className="flex flex-wrap gap-2">
             {themeOptions.map((opt) => (
               <button
@@ -176,14 +151,8 @@ function AppearanceSettings() {
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm text-fg-secondary">
-            {t("common.language")}
-          </label>
-          <UISelect
-            value={lang}
-            onValueChange={handleLangChange}
-            options={LANGUAGES}
-          />
+          <label className="text-sm text-fg-secondary">{t("common.language")}</label>
+          <UISelect value={lang} onValueChange={handleLangChange} options={LANGUAGES} />
         </div>
       </div>
     </div>
@@ -306,9 +275,7 @@ function MFASettings() {
             <div className="mt-4 space-y-4">
               <p className="text-sm text-fg-secondary">{t("profile.scanQR")}</p>
 
-              {setup.isLoading && (
-                <p className="text-sm text-fg-tertiary">{t("common.loading")}</p>
-              )}
+              {setup.isLoading && <p className="text-sm text-fg-tertiary">{t("common.loading")}</p>}
 
               {qrDataURL && (
                 <div className="flex flex-col items-start gap-3">
@@ -338,10 +305,7 @@ function MFASettings() {
                     required
                   />
                   <div className="flex gap-2">
-                    <Button
-                      type="submit"
-                      disabled={enableMFA.isPending || totpCode.length !== 6}
-                    >
+                    <Button type="submit" disabled={enableMFA.isPending || totpCode.length !== 6}>
                       {t("profile.verifyAndEnable")}
                     </Button>
                     <Button

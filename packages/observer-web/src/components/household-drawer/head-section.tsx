@@ -38,9 +38,7 @@ export function HeadSection({
         </span>
         {headPersonId ? (
           <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
-            <span className="flex-1 truncate text-sm text-fg">
-              {headPersonLabel}
-            </span>
+            <span className="flex-1 truncate text-sm text-fg">{headPersonLabel}</span>
             <button
               type="button"
               onClick={onHeadPersonClear}

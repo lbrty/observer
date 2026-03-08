@@ -17,6 +17,7 @@
 This is the shared layout used by all drawer sections. It replaces the repeated `SectionHeading + grid` pattern.
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/form-section.tsx`
 
 **Step 1: Create FormSection**
@@ -42,9 +43,7 @@ export function FormSection({ title, columns = 2, children, className }: FormSec
   return (
     <>
       <SectionHeading>{title}</SectionHeading>
-      <div className={`grid gap-4 ${gridCols[columns]} ${className ?? ""}`}>
-        {children}
-      </div>
+      <div className={`grid gap-4 ${gridCols[columns]} ${className ?? ""}`}>{children}</div>
     </>
   );
 }
@@ -69,6 +68,7 @@ git commit -m "add FormSection compound component"
 Extract the sex, age-group, and case-status option arrays that are duplicated in person-drawer, reports, and my-stats.
 
 **Files:**
+
 - Create: `packages/observer-web/src/constants/person.ts`
 
 **Step 1: Create person constants**
@@ -150,6 +150,7 @@ git commit -m "extract person domain constants"
 ### Task 3: Extract domain constants — migration, household, pet, user
 
 **Files:**
+
 - Create: `packages/observer-web/src/constants/migration.ts`
 - Create: `packages/observer-web/src/constants/household.ts`
 - Create: `packages/observer-web/src/constants/pet.ts`
@@ -253,6 +254,7 @@ The reports/people.tsx (741 lines) and my-stats/index.tsx (503 lines) share heav
 ### Task 4: Extract shared report utilities and label maps
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/report/label-maps.ts`
 
 **Step 1: Create shared label maps and utilities**
@@ -340,6 +342,7 @@ git commit -m "extract shared report label maps and date utilities"
 ### Task 5: Extract ReportCard, KpiCard, FilterChip, FilterField, ReportSkeleton
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/report/report-card.tsx`
 - Create: `packages/observer-web/src/components/report/kpi-card.tsx`
 - Create: `packages/observer-web/src/components/report/filter-chip.tsx`
@@ -489,10 +492,18 @@ export function FilterField({ label, children }: { label: string; children: Reac
 A configurable version combining reports/people.tsx:179-195 and my-stats/index.tsx:158-173:
 
 ```tsx
-export function ReportSkeleton({ kpiCount = 6, chartCount = 4 }: { kpiCount?: number; chartCount?: number }) {
+export function ReportSkeleton({
+  kpiCount = 6,
+  chartCount = 4,
+}: {
+  kpiCount?: number;
+  chartCount?: number;
+}) {
   return (
     <div className="space-y-6">
-      <div className={`grid gap-4 ${kpiCount > 4 ? "grid-cols-3 lg:grid-cols-6" : "grid-cols-2 sm:grid-cols-4"}`}>
+      <div
+        className={`grid gap-4 ${kpiCount > 4 ? "grid-cols-3 lg:grid-cols-6" : "grid-cols-2 sm:grid-cols-4"}`}
+      >
         {Array.from({ length: kpiCount }).map((_, i) => (
           <div key={i} className="h-20 animate-pulse rounded-xl bg-bg-tertiary" />
         ))}
@@ -515,7 +526,13 @@ export { KpiCard } from "./kpi-card";
 export { FilterChip } from "./filter-chip";
 export { FilterField } from "./filter-field";
 export { ReportSkeleton } from "./report-skeleton";
-export { labelKeyMap, useTranslatedRows, getPresetDates, PRESET_KEYS, AGE_RANGE_MAP } from "./label-maps";
+export {
+  labelKeyMap,
+  useTranslatedRows,
+  getPresetDates,
+  PRESET_KEYS,
+  AGE_RANGE_MAP,
+} from "./label-maps";
 export type { DatePreset } from "./label-maps";
 ```
 
@@ -535,6 +552,7 @@ git commit -m "extract shared report components"
 ### Task 6: Refactor reports/people.tsx to use shared report components
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/projects/$projectId/reports/people.tsx`
 
 **Step 1: Replace inline components with imports**
@@ -544,6 +562,7 @@ Update imports at the top of the file. Remove the duplicated `ReportCard`, `KpiC
 The `SectionHeader` component (reports/people.tsx:141-147) stays inline since it's report-specific layout (border-bottom separator), or can be extracted to `@/components/report/section-header.tsx`.
 
 After refactoring, the page file should contain only:
+
 1. Route definition
 2. `ReportsPage` function with state, hooks, option arrays, and JSX composition
 3. `SectionHeader` (if kept inline)
@@ -571,6 +590,7 @@ git commit -m "refactor reports/people to use shared report components"
 ### Task 7: Refactor my-stats to use shared report components
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/projects/$projectId/my-stats/index.tsx`
 
 **Step 1: Replace inline components with imports**
@@ -602,6 +622,7 @@ git commit -m "refactor my-stats to use shared report components"
 ### Task 8: Create FilterBar component
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/filter-bar.tsx`
 
 **Step 1: Create FilterBar**
@@ -688,6 +709,7 @@ git commit -m "add FilterBar component"
 ### Task 9: Create DataTablePage compound component
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/data-table-page.tsx`
 
 **Step 1: Create DataTablePage**
@@ -750,9 +772,7 @@ export function DataTablePage<T>({
     <div>
       <PageHeader title={title} action={createAction} />
 
-      {filters && filters.length > 0 && (
-        <FilterBar filters={filters} trailing={filterTrailing} />
-      )}
+      {filters && filters.length > 0 && <FilterBar filters={filters} trailing={filterTrailing} />}
 
       <DataTable
         columns={columns}
@@ -803,6 +823,7 @@ git commit -m "add DataTablePage compound component"
 ### Task 10: Refactor admin/users page to use DataTablePage
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/admin/users/index.tsx`
 
 **Step 1: Replace manual layout with DataTablePage**
@@ -810,6 +831,7 @@ git commit -m "add DataTablePage compound component"
 Replace the manual `PageHeader` + search input + UISelect filters + `DataTable` + `Pagination` block (lines 104-176) with a single `<DataTablePage>` call. Keep the `CreateUserDialog` as-is (it's already a separate function).
 
 The page should drop from ~327 to ~200 lines. The `UsersPage` function body becomes:
+
 1. State (page, search, role, isActive, createOpen)
 2. Hook calls (useUsers, useNavigate)
 3. Option arrays
@@ -839,6 +861,7 @@ git commit -m "refactor admin/users to use DataTablePage"
 Apply the same `DataTablePage` refactoring to all other list pages that follow the pattern. These are independent and can be done in one batch or one at a time.
 
 **Files to modify:**
+
 - `packages/observer-web/src/routes/_app/admin/projects/index.tsx`
 - `packages/observer-web/src/routes/_app/admin/reference/countries/index.tsx`
 - `packages/observer-web/src/routes/_app/admin/reference/countries/$countryId/index.tsx` (states list)
@@ -878,6 +901,7 @@ git commit -m "refactor project list pages to use DataTablePage"
 ### Task 12: Extract person-drawer into folder with sections
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/person-drawer/identity-section.tsx`
 - Create: `packages/observer-web/src/components/person-drawer/location-section.tsx`
 - Create: `packages/observer-web/src/components/person-drawer/case-section.tsx`
@@ -1037,9 +1061,7 @@ export function LocationSection({
         </span>
         {originPlaceId ? (
           <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
-            <span className="flex-1 truncate text-sm text-fg">
-              {originLabel || originPlaceId}
-            </span>
+            <span className="flex-1 truncate text-sm text-fg">{originLabel || originPlaceId}</span>
             <button
               type="button"
               onClick={onOriginClear}
@@ -1228,6 +1250,7 @@ git commit -m "extract person-drawer into folder with section components"
 Same pattern as Task 12. Extract from the 393-line file.
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/support-record-drawer/info-section.tsx` (lines 270-350: type, sphere, date, person picker)
 - Create: `packages/observer-web/src/components/support-record-drawer/referral-section.tsx` (lines 352-381: referral status, office)
 - Move: `packages/observer-web/src/components/support-record-drawer.tsx` → `packages/observer-web/src/components/support-record-drawer/index.tsx`
@@ -1263,6 +1286,7 @@ git commit -m "extract support-record-drawer into folder with section components
 ### Task 14: Extract household-drawer into folder with sections
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/household-drawer/head-section.tsx` (lines 192-229: reference number, head person picker)
 - Create: `packages/observer-web/src/components/household-drawer/members-section.tsx` (lines 231-352: member table, add member form)
 - Move: `packages/observer-web/src/components/household-drawer.tsx` → `packages/observer-web/src/components/household-drawer/index.tsx`
@@ -1297,6 +1321,7 @@ git commit -m "extract household-drawer into folder with section components"
 ### Task 15: Extract migration-record-drawer into folder with sections
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/migration-record-drawer/place-section.tsx` (shared component for both origin and destination — lines 228-294 follow the same 3-column country→state→place pattern)
 - Create: `packages/observer-web/src/components/migration-record-drawer/details-section.tsx` (lines 296-328: date, reason, housing)
 - Move: `packages/observer-web/src/components/migration-record-drawer.tsx` → `packages/observer-web/src/components/migration-record-drawer/index.tsx`
@@ -1397,6 +1422,7 @@ git commit -m "extract migration-record-drawer into folder with section componen
 ### Task 16: Extract pet-drawer into folder with sections
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/pet-drawer/info-section.tsx` (lines 137-206: name, status, owner, registration ID, notes)
 - Move: `packages/observer-web/src/components/pet-drawer.tsx` → `packages/observer-web/src/components/pet-drawer/index.tsx`
 
@@ -1430,6 +1456,7 @@ git commit -m "extract pet-drawer into folder with section components"
 The permissions page (486 lines) has two large dialog functions (AssignDialog: 140 lines, EditDialog: 118 lines) that can be moved to their own files.
 
 **Files:**
+
 - Create: `packages/observer-web/src/routes/_app/admin/projects/$projectId/permissions/assign-dialog.tsx`
 - Create: `packages/observer-web/src/routes/_app/admin/projects/$projectId/permissions/edit-dialog.tsx`
 - Create: `packages/observer-web/src/routes/_app/admin/projects/$projectId/permissions/role-select.tsx`
@@ -1501,6 +1528,7 @@ Expected: no errors
 
 Run: `cd packages/observer-web && bun run dev`
 Check these pages:
+
 - /admin/users — table, filters, create dialog
 - /admin/projects — table
 - Any project's people page — drawer sections

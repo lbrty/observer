@@ -56,17 +56,16 @@ export function HouseholdDrawer({
   const removeMember = useRemoveHouseholdMember(projectId);
 
   const toast = useToast();
-  const { form, set, error, setError, editingId, setEditingId } =
-    useDrawerForm({
-      initial: emptyForm,
-      open,
-      isEdit,
-      data: household,
-      mapData: (d) => ({
-        reference_number: (d.reference_number as string) ?? "",
-        head_person_id: (d.head_person_id as string) ?? "",
-      }),
-    });
+  const { form, set, error, setError, editingId, setEditingId } = useDrawerForm({
+    initial: emptyForm,
+    open,
+    isEdit,
+    data: household,
+    mapData: (d) => ({
+      reference_number: (d.reference_number as string) ?? "",
+      head_person_id: (d.head_person_id as string) ?? "",
+    }),
+  });
 
   const [memberForm, setMemberForm] = useState(emptyMemberForm);
   const [headPersonName, setHeadPersonName] = useState("");
@@ -77,8 +76,9 @@ export function HouseholdDrawer({
     isEdit && form.head_person_id && !headPersonName ? form.head_person_id : "",
   );
 
-  const resolvedHeadName = headPersonName
-    || (headPerson ? `${headPerson.first_name} ${headPerson.last_name ?? ""}`.trim() : "");
+  const resolvedHeadName =
+    headPersonName ||
+    (headPerson ? `${headPerson.first_name} ${headPerson.last_name ?? ""}`.trim() : "");
   const headPersonLabel = resolvedHeadName || form.head_person_id;
 
   const isPending = createHousehold.isPending || updateHousehold.isPending;

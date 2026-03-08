@@ -113,19 +113,28 @@ function UsersPage() {
       type: "search",
       placeholder: t("admin.users.search"),
       value: search,
-      onChange: (v) => { setSearch(v); setPage(1); },
+      onChange: (v) => {
+        setSearch(v);
+        setPage(1);
+      },
     },
     {
       type: "select",
       value: role,
-      onValueChange: (v) => { setRole(v); setPage(1); },
+      onValueChange: (v) => {
+        setRole(v);
+        setPage(1);
+      },
       options: roleOptions,
       placeholder: t("admin.users.allRoles"),
     },
     {
       type: "select",
       value: isActive,
-      onValueChange: (v) => { setIsActive(v); setPage(1); },
+      onValueChange: (v) => {
+        setIsActive(v);
+        setPage(1);
+      },
       options: statusOptions,
       placeholder: t("admin.users.allStatuses"),
     },
@@ -140,14 +149,14 @@ function UsersPage() {
       onRowClick={(u) => navigate({ to: "/admin/users/$userId", params: { userId: u.id } })}
       isLoading={isLoading}
       filters={filters}
-      pagination={data ? { page: data.page, perPage: data.per_page, total: data.total, onChange: setPage } : undefined}
+      pagination={
+        data
+          ? { page: data.page, perPage: data.per_page, total: data.total, onChange: setPage }
+          : undefined
+      }
       emptyIcon={UsersIcon}
       emptyTitle={t("admin.users.emptyTitle")}
-      createAction={
-        <Button onClick={() => setCreateOpen(true)}>
-          {t("admin.users.add")}
-        </Button>
-      }
+      createAction={<Button onClick={() => setCreateOpen(true)}>{t("admin.users.add")}</Button>}
     >
       <CreateUserDialog open={createOpen} onOpenChange={setCreateOpen} />
     </DataTablePage>

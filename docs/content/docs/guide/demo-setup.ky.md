@@ -32,18 +32,18 @@ bun run dev
 
 ## Seed buyruğu emne tuzdayt
 
-| Emne                   | Çoo malımat                                          |
-| ---------------------- | ---------------------------------------------------- |
-| **Spravka malımatı**   | Ölkölör, oblusttar, cerler, ofister, kategoriyalar   |
-| **Koldonuuçular**      | Admin + kızmatker akkaunttar, baarının sırsozu `password` |
-| **Proyektter**         | 2 proyekt (`--projects` menen öztürgö bolot)         |
-| **Adamdar**            | Ar proyektke 50 (`--people` menen öztürgö bolot)     |
-| **Koldoo jazuuları**   | Adamdarga baylanışkan konsultatsiya jazuuları         |
-| **Köçüü jazuuları**    | Çıkkaan/baruuçu cerler menen kozğoluu tarıhı         |
-| **Üy bölüktörü**       | Müçölörü menen üy-bülö toptoşturuuları               |
-| **Beleşmeler**         | Adamdarga tirkölgön iş beleşmeleri                   |
-| **Üy aybandarı**       | Tegder menen ayban jazuuları                          |
-| **Tegder**             | Proyekt çegindegi kategoriyalöö tegderi               |
+| Emne                 | Çoo malımat                                               |
+| -------------------- | --------------------------------------------------------- |
+| **Spravka malımatı** | Ölkölör, oblusttar, cerler, ofister, kategoriyalar        |
+| **Koldonuuçular**    | Admin + kızmatker akkaunttar, baarının sırsozu `password` |
+| **Proyektter**       | 2 proyekt (`--projects` menen öztürgö bolot)              |
+| **Adamdar**          | Ar proyektke 50 (`--people` menen öztürgö bolot)          |
+| **Koldoo jazuuları** | Adamdarga baylanışkan konsultatsiya jazuuları             |
+| **Köçüü jazuuları**  | Çıkkaan/baruuçu cerler menen kozğoluu tarıhı              |
+| **Üy bölüktörü**     | Müçölörü menen üy-bülö toptoşturuuları                    |
+| **Beleşmeler**       | Adamdarga tirkölgön iş beleşmeleri                        |
+| **Üy aybandarı**     | Tegder menen ayban jazuuları                              |
+| **Tegder**           | Proyekt çegindegi kategoriyalöö tegderi                   |
 
 ### Baştapkı kiriş malımattar
 

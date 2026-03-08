@@ -28,9 +28,7 @@ function ReportsGroup({ projectId }: { projectId: string }) {
     <div>
       <div
         className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
-          isActive
-            ? "font-medium text-accent"
-            : "text-fg-secondary"
+          isActive ? "font-medium text-accent" : "text-fg-secondary"
         }`}
       >
         <ChartBarIcon size={18} weight={isActive ? "fill" : "regular"} />

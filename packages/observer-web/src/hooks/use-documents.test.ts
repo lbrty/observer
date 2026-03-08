@@ -29,9 +29,8 @@ mock.module("@/lib/api", () => ({
   HTTPError: class extends Error {},
 }));
 
-const { useDocuments, useUploadDocument, useUpdateDocument, useDeleteDocument } = await import(
-  "@/hooks/use-documents"
-);
+const { useDocuments, useUploadDocument, useUpdateDocument, useDeleteDocument } =
+  await import("@/hooks/use-documents");
 
 describe("useDocuments", () => {
   it("fetches documents for a person", async () => {

@@ -12,7 +12,10 @@ export const Route = createFileRoute("/_auth/login")({
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function parseLoginError(err: unknown, t: (k: string, opts?: any) => string): Promise<string> {
+async function parseLoginError(
+  err: unknown,
+  t: (k: string, opts?: any) => string,
+): Promise<string> {
   if (err instanceof HTTPError) {
     const body = await err.response.json().catch(() => null);
     if (body?.code === "errors.user.notActive") return t("auth.pendingApproval");
@@ -79,9 +82,7 @@ function LoginPage() {
         <h1 className="font-serif text-xl font-semibold text-fg">
           {step === "mfa" ? t("auth.mfaTitle") : t("auth.loginTitle")}
         </h1>
-        {step === "mfa" && (
-          <p className="mt-1 text-sm text-fg-secondary">{t("auth.mfaHint")}</p>
-        )}
+        {step === "mfa" && <p className="mt-1 text-sm text-fg-secondary">{t("auth.mfaHint")}</p>}
       </div>
 
       {error && (

@@ -20,9 +20,8 @@ mock.module("@/lib/api", () => ({
 }));
 
 // Import after mocking
-const { useMigrationRecords, useCreateMigrationRecord, useUpdateMigrationRecord } = await import(
-  "@/hooks/use-migration-records"
-);
+const { useMigrationRecords, useCreateMigrationRecord, useUpdateMigrationRecord } =
+  await import("@/hooks/use-migration-records");
 
 describe("useMigrationRecords", () => {
   it("fetches migration records for a person", async () => {

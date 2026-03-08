@@ -17,9 +17,7 @@ export function useAuditLogs(params: AuditListParams) {
   return useQuery({
     queryKey: ["audit-logs", params],
     queryFn: () =>
-      api
-        .get("admin/audit-logs", { searchParams: cleanParams(params) })
-        .json<AuditListOutput>(),
+      api.get("admin/audit-logs", { searchParams: cleanParams(params) }).json<AuditListOutput>(),
     placeholderData: keepPreviousData,
   });
 }

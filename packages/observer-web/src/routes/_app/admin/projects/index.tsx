@@ -44,7 +44,11 @@ function ProjectsPage() {
   }
 
   function setPage(value: number) {
-    navigate({ from: Route.fullPath, search: (prev) => ({ ...prev, page: value > 1 ? value : undefined }), replace: true });
+    navigate({
+      from: Route.fullPath,
+      search: (prev) => ({ ...prev, page: value > 1 ? value : undefined }),
+      replace: true,
+    });
   }
 
   const params = {

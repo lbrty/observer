@@ -146,7 +146,12 @@ export function PetsContent({
     {
       key: "status",
       header: t("project.pets.status"),
-      render: (p) => <StatusBadge label={statusLabels[p.status] ?? p.status} variant={statusVariants[p.status]} />,
+      render: (p) => (
+        <StatusBadge
+          label={statusLabels[p.status] ?? p.status}
+          variant={statusVariants[p.status]}
+        />
+      ),
     },
     {
       key: "owner_id",

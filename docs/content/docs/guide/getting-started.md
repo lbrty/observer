@@ -39,11 +39,11 @@ All of this runs on a single machine. In production, it compiles down to one fil
 
 To move from "trying it out" to "my team uses this every day," you need:
 
-| What | Why |
-| --- | --- |
+| What                         | Why                                                                  |
+| ---------------------------- | -------------------------------------------------------------------- |
 | A server (VPS or on-premise) | Observer is self-hosted — your data never leaves your infrastructure |
-| PostgreSQL | The only external service Observer needs |
-| About 30 minutes | Run `docker compose up` on a server with your domain pointed at it |
+| PostgreSQL                   | The only external service Observer needs                             |
+| About 30 minutes             | Run `docker compose up` on a server with your domain pointed at it   |
 
 No subscription. No per-user fees. No vendor lock-in. You own the data and the deployment.
 
@@ -53,12 +53,12 @@ See [Deployment](/docs/guide/deployment/) for the step-by-step production setup.
 
 If you want to work on Observer itself, you'll need these tools installed:
 
-| Tool | Version | Install |
-| --- | --- | --- |
-| Go | 1.25.* | https://go.dev/dl/ |
-| Bun | latest | https://bun.sh/ |
-| Docker + Compose | latest | https://docs.docker.com/get-docker/ |
-| Just | latest | https://github.com/casey/just#installation |
+| Tool             | Version | Install                                    |
+| ---------------- | ------- | ------------------------------------------ |
+| Go               | 1.25.\* | https://go.dev/dl/                         |
+| Bun              | latest  | https://bun.sh/                            |
+| Docker + Compose | latest  | https://docs.docker.com/get-docker/        |
+| Just             | latest  | https://github.com/casey/just#installation |
 
 ### 1. Clone and install dependencies
 

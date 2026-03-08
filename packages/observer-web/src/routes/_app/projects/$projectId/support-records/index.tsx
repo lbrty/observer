@@ -15,15 +15,14 @@ function SupportRecordsPage() {
   const { page = 1 } = Route.useSearch();
 
   function setPage(value: number) {
-    navigate({ from: Route.fullPath, search: { page: value > 1 ? value : undefined }, replace: true });
+    navigate({
+      from: Route.fullPath,
+      search: { page: value > 1 ? value : undefined },
+      replace: true,
+    });
   }
 
   return (
-    <SupportRecordsContent
-      projectId={projectId}
-      typeFilter=""
-      page={page}
-      onPageChange={setPage}
-    />
+    <SupportRecordsContent projectId={projectId} typeFilter="" page={page} onPageChange={setPage} />
   );
 }

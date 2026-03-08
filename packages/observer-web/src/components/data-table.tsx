@@ -1,12 +1,7 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { type ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 
 export interface Column<T> {
   key: string;
@@ -67,10 +62,7 @@ export function DataTable<T>({
       <table className="w-full text-left text-sm">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr
-              key={headerGroup.id}
-              className="border-b border-border-secondary bg-bg-tertiary/60"
-            >
+            <tr key={headerGroup.id} className="border-b border-border-secondary bg-bg-tertiary/60">
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
@@ -78,10 +70,7 @@ export function DataTable<T>({
                 >
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
             </tr>
@@ -104,9 +93,7 @@ export function DataTable<T>({
             table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                onClick={
-                  onRowClick ? () => onRowClick(row.original) : undefined
-                }
+                onClick={onRowClick ? () => onRowClick(row.original) : undefined}
                 className={`transition-colors ${onRowClick ? "cursor-pointer hover:bg-bg-tertiary/40" : ""}`}
               >
                 {row.getVisibleCells().map((cell) => (

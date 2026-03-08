@@ -224,7 +224,11 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
         }}
       />
 
-      <CaseSection form={form} set={(k, v) => set(k as keyof typeof form, v)} officeOptions={officeOptions} />
+      <CaseSection
+        form={form}
+        set={(k, v) => set(k as keyof typeof form, v)}
+        officeOptions={officeOptions}
+      />
 
       <SectionHeading>{t("project.tags.title")}</SectionHeading>
       <TagPicker projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />

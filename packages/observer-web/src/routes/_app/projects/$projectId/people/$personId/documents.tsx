@@ -61,7 +61,8 @@ function mimeIcon(mime: string): Icon {
   if (mime === "application/pdf") return FilePdfIcon;
   if (mime.startsWith("image/png")) return FilePngIcon;
   if (mime.startsWith("image/svg")) return FileSvgIcon;
-  if (mime === "image/avif" || mime === "image/heif" || mime === "image/heic") return FileDashedIcon;
+  if (mime === "image/avif" || mime === "image/heif" || mime === "image/heic")
+    return FileDashedIcon;
   if (mime.startsWith("image/")) return FileImageIcon;
   if (mime.startsWith("video/")) return FileVideoIcon;
   if (mime.startsWith("audio/")) return FileAudioIcon;
@@ -82,7 +83,11 @@ function mimeIcon(mime: string): Icon {
     mime === "application/vnd.openxmlformats-officedocument.presentationml.presentation"
   )
     return FilePptIcon;
-  if (mime === "application/zip" || mime === "application/x-rar-compressed" || mime === "application/gzip")
+  if (
+    mime === "application/zip" ||
+    mime === "application/x-rar-compressed" ||
+    mime === "application/gzip"
+  )
     return FileArchiveIcon;
   return FileDashedIcon;
 }
@@ -281,9 +286,7 @@ function PersonDocuments() {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-serif text-lg font-semibold text-fg">
-          {t("project.documents.title")}
-        </h2>
+        <h2 className="font-serif text-lg font-semibold text-fg">{t("project.documents.title")}</h2>
         <div>
           <input
             ref={fileInputRef}

@@ -25,7 +25,11 @@ function PetsByStatus() {
   const statusFilter: PetStatus = validStatuses.has(status) ? (status as PetStatus) : "";
 
   function setPage(value: number) {
-    navigate({ from: Route.fullPath, search: { page: value > 1 ? value : undefined }, replace: true });
+    navigate({
+      from: Route.fullPath,
+      search: { page: value > 1 ? value : undefined },
+      replace: true,
+    });
   }
 
   return (

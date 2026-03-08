@@ -25,10 +25,10 @@ go install github.com/lbrty/observer/cmd/observer@latest
 observer serve [flags]
 ```
 
-| Flag     | Type   | Default     | Опис                                              |
-| -------- | ------ | ----------- | ------------------------------------------------- |
-| `--host` | string | `localhost` | Хост сервера (перевизначає змінну `SERVER_HOST`)  |
-| `--port` | int    | `9000`      | Порт сервера (перевизначає змінну `SERVER_PORT`)  |
+| Flag     | Type   | Default     | Опис                                             |
+| -------- | ------ | ----------- | ------------------------------------------------ |
+| `--host` | string | `localhost` | Хост сервера (перевизначає змінну `SERVER_HOST`) |
+| `--port` | int    | `9000`      | Порт сервера (перевизначає змінну `SERVER_PORT`) |
 
 **Приклади:**
 
@@ -59,9 +59,9 @@ DATABASE_DSN="postgres://..." REDIS_URL="redis://..." observer serve
 observer migrate up [flags]
 ```
 
-| Flag     | Type   | Default      | Опис                          |
-| -------- | ------ | ------------ | ----------------------------- |
-| `--path` | string | `migrations` | Шлях до директорії міграцій   |
+| Flag     | Type   | Default      | Опис                        |
+| -------- | ------ | ------------ | --------------------------- |
+| `--path` | string | `migrations` | Шлях до директорії міграцій |
 
 ```bash
 # Apply all pending migrations
@@ -79,10 +79,10 @@ observer migrate up --path ./db/migrations
 observer migrate create [name] [flags]
 ```
 
-| Flag     | Type   | Default      | Опис                          |
-| -------- | ------ | ------------ | ----------------------------- |
-| `--path` | string | `migrations` | Шлях до директорії міграцій   |
-| `--seq`  | uint   | auto         | Явний порядковий номер        |
+| Flag     | Type   | Default      | Опис                        |
+| -------- | ------ | ------------ | --------------------------- |
+| `--path` | string | `migrations` | Шлях до директорії міграцій |
+| `--seq`  | uint   | auto         | Явний порядковий номер      |
 
 ```bash
 # Create a migration (auto-numbered)
@@ -100,9 +100,9 @@ observer migrate create add_audit_log --seq 25
 observer migrate version [flags]
 ```
 
-| Flag     | Type   | Default      | Опис                          |
-| -------- | ------ | ------------ | ----------------------------- |
-| `--path` | string | `migrations` | Шлях до директорії міграцій   |
+| Flag     | Type   | Default      | Опис                        |
+| -------- | ------ | ------------ | --------------------------- |
+| `--path` | string | `migrations` | Шлях до директорії міграцій |
 
 ---
 
@@ -114,10 +114,10 @@ observer migrate version [flags]
 observer keygen [flags]
 ```
 
-| Flag       | Type   | Default | Опис                                  |
-| ---------- | ------ | ------- | ------------------------------------- |
-| `--bits`   | int    | `4096`  | Розмір RSA-ключа (мінімум 4096)       |
-| `--output` | string | `.`     | Директорія для збереження файлів      |
+| Flag       | Type   | Default | Опис                             |
+| ---------- | ------ | ------- | -------------------------------- |
+| `--bits`   | int    | `4096`  | Розмір RSA-ключа (мінімум 4096)  |
+| `--output` | string | `.`     | Директорія для збереження файлів |
 
 **Приклади:**
 
@@ -141,13 +141,13 @@ observer keygen --bits 8192 --output keys
 observer create-admin [flags]
 ```
 
-| Flag           | Type   | Required | Опис                                 |
-| -------------- | ------ | -------- | ------------------------------------ |
-| `--email`      | string | yes      | Email адміністратора                 |
-| `--password`   | string | yes      | Пароль (мінімум 8 символів)          |
-| `--first-name` | string | no       | Ім'я                                 |
-| `--last-name`  | string | no       | Прізвище                             |
-| `--phone`      | string | no       | Номер телефону                       |
+| Flag           | Type   | Required | Опис                        |
+| -------------- | ------ | -------- | --------------------------- |
+| `--email`      | string | yes      | Email адміністратора        |
+| `--password`   | string | yes      | Пароль (мінімум 8 символів) |
+| `--first-name` | string | no       | Ім'я                        |
+| `--last-name`  | string | no       | Прізвище                    |
+| `--phone`      | string | no       | Номер телефону              |
 
 **Приклади:**
 
@@ -176,11 +176,11 @@ observer create-admin \
 observer seed [flags]
 ```
 
-| Flag         | Type  | Default | Опис                                |
-| ------------ | ----- | ------- | ----------------------------------- |
+| Flag         | Type  | Default | Опис                               |
+| ------------ | ----- | ------- | ---------------------------------- |
 | `--people`   | int   | `50`    | Кількість людей на проєкт          |
 | `--projects` | int   | `2`     | Кількість проєктів                 |
-| `--seed`     | int64 | `0`     | Початкове значення (0 = випадкове)  |
+| `--seed`     | int64 | `0`     | Початкове значення (0 = випадкове) |
 
 **Приклади:**
 

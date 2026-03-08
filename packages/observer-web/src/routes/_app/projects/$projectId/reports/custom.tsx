@@ -119,7 +119,10 @@ function CustomReportPage() {
                 <button
                   key={m}
                   type="button"
-                  onClick={() => { setMetric(m); setSubmitted(false); }}
+                  onClick={() => {
+                    setMetric(m);
+                    setSubmitted(false);
+                  }}
                   className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                     metric === m
                       ? "bg-accent text-accent-fg"
@@ -180,7 +183,10 @@ function CustomReportPage() {
               </span>
               <UISelect
                 value={supportType}
-                onValueChange={(v) => { setSupportType(v); setSubmitted(false); }}
+                onValueChange={(v) => {
+                  setSupportType(v);
+                  setSubmitted(false);
+                }}
                 options={[
                   { label: t("project.reports.allValues"), value: "" },
                   ...SUPPORT_TYPE_OPTIONS.map((s) => ({
@@ -219,7 +225,9 @@ function CustomReportPage() {
           {/* Total + export */}
           <div className="flex items-center justify-between px-5 py-4">
             <div>
-              <p className="text-3xl font-bold tabular-nums text-fg">{data.total.toLocaleString()}</p>
+              <p className="text-3xl font-bold tabular-nums text-fg">
+                {data.total.toLocaleString()}
+              </p>
               <p className="mt-0.5 text-xs font-medium text-fg-tertiary">
                 {t("project.customReport.total")}
               </p>

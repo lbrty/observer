@@ -15,6 +15,7 @@
 ### Task 1: Create handler test helper
 
 **Files:**
+
 - Create: `internal/handler/testhelpers_test.go`
 
 **Step 1: Write the test helper**
@@ -97,12 +98,14 @@ Each handler follows the same pattern: mock the use case, call the handler metho
 ### Task 2: Auth handler tests
 
 **Files:**
+
 - Create: `internal/handler/auth_handler_test.go`
 - Reference: `internal/handler/auth_handler.go`
 
 **Step 1: Write tests**
 
 Test cases (error-path heavy):
+
 - `TestAuthHandler_Register_ValidationError` — missing/invalid fields → 400
 - `TestAuthHandler_Register_DuplicateEmail` — use case returns ErrEmailTaken → 409
 - `TestAuthHandler_Register_Success` — valid input → 201
@@ -140,12 +143,14 @@ git commit -m "add auth handler tests with error path coverage"
 ### Task 3: Admin handler tests
 
 **Files:**
+
 - Create: `internal/handler/admin_handler_test.go`
 - Reference: `internal/handler/admin_handler.go`
 
 **Step 1: Write tests**
 
 Test cases:
+
 - `TestAdminHandler_ListUsers_Success` — returns user list → 200
 - `TestAdminHandler_ListUsers_InternalError` — use case fails → 500
 - `TestAdminHandler_GetUser_NotFound` — unknown ID → 404
@@ -173,6 +178,7 @@ git commit -m "add admin handler tests"
 ### Task 4: Reference handler tests (country, state, place, office, category)
 
 **Files:**
+
 - Create: `internal/handler/country_handler_test.go`
 - Create: `internal/handler/state_handler_test.go`
 - Create: `internal/handler/place_handler_test.go`
@@ -182,6 +188,7 @@ git commit -m "add admin handler tests"
 **Step 1: Write tests**
 
 All reference handlers follow the same CRUD pattern. For each handler, test:
+
 - `List_Success` → 200
 - `List_InternalError` → 500
 - `Get_NotFound` → 404
@@ -212,6 +219,7 @@ git commit -m "add reference data handler tests (country, state, place, office, 
 ### Task 5: Project handler tests
 
 **Files:**
+
 - Create: `internal/handler/project_handler_test.go`
 
 **Step 1: Write tests**
@@ -229,6 +237,7 @@ git commit -m "add reference data handler tests (country, state, place, office, 
 ### Task 6: Permission handler tests
 
 **Files:**
+
 - Create: `internal/handler/permission_handler_test.go`
 
 **Step 1: Write tests**
@@ -247,6 +256,7 @@ git commit -m "add reference data handler tests (country, state, place, office, 
 ### Task 7: Tag handler tests
 
 **Files:**
+
 - Create: `internal/handler/tag_handler_test.go`
 
 **Step 1: Write tests**
@@ -265,11 +275,13 @@ git commit -m "add reference data handler tests (country, state, place, office, 
 ### Task 8: Person handler tests
 
 **Files:**
+
 - Create: `internal/handler/person_handler_test.go`
 
 **Step 1: Write tests**
 
 PersonHandler has 3 use cases (personUC, categoryUC, tagUC). Tests:
+
 - `TestPersonHandler_List_Success` → 200
 - `TestPersonHandler_List_WithFilters` → query params → 200
 - `TestPersonHandler_Get_NotFound` → 404
@@ -290,6 +302,7 @@ PersonHandler has 3 use cases (personUC, categoryUC, tagUC). Tests:
 ### Task 9: Support record handler tests
 
 **Files:**
+
 - Create: `internal/handler/support_record_handler_test.go`
 
 **Step 1: Write tests**
@@ -309,6 +322,7 @@ PersonHandler has 3 use cases (personUC, categoryUC, tagUC). Tests:
 ### Task 10: Migration record handler tests
 
 **Files:**
+
 - Create: `internal/handler/migration_record_handler_test.go`
 
 Same CRUD pattern as support records.
@@ -316,9 +330,11 @@ Same CRUD pattern as support records.
 ### Task 11: Household handler tests
 
 **Files:**
+
 - Create: `internal/handler/household_handler_test.go`
 
 CRUD + AddMember/RemoveMember:
+
 - Standard CRUD tests (list, get, create, update, delete)
 - `TestHouseholdHandler_AddMember_ValidationError` → 400
 - `TestHouseholdHandler_AddMember_Success` → 201
@@ -328,6 +344,7 @@ CRUD + AddMember/RemoveMember:
 ### Task 12: Note handler tests
 
 **Files:**
+
 - Create: `internal/handler/note_handler_test.go`
 
 Standard CRUD pattern.
@@ -335,9 +352,11 @@ Standard CRUD pattern.
 ### Task 13: Document handler tests
 
 **Files:**
+
 - Create: `internal/handler/document_handler_test.go`
 
 CRUD + Upload/Download:
+
 - Standard CRUD tests
 - `TestDocumentHandler_Upload_NoFile` → 400
 - `TestDocumentHandler_Upload_Success` → 201
@@ -349,6 +368,7 @@ CRUD + Upload/Download:
 ### Task 14: Pet handler tests
 
 **Files:**
+
 - Create: `internal/handler/pet_handler_test.go`
 
 CRUD + tag management (similar to person handler with tags).
@@ -356,6 +376,7 @@ CRUD + tag management (similar to person handler with tags).
 ### Task 15: Report handler tests
 
 **Files:**
+
 - Create: `internal/handler/report_handler_test.go`
 - Create: `internal/handler/pet_report_handler_test.go`
 
@@ -366,6 +387,7 @@ CRUD + tag management (similar to person handler with tags).
 ### Task 16: My handler tests
 
 **Files:**
+
 - Create: `internal/handler/my_handler_test.go`
 
 - `TestMyHandler_ListProjects_Success` → 200
@@ -377,6 +399,7 @@ Run: `go test ./internal/handler/ -v`
 Expected: all PASS
 
 **Commit:**
+
 ```bash
 git add internal/handler/*_test.go
 git commit -m "add handler tests for all remaining handlers"
@@ -389,6 +412,7 @@ git commit -m "add handler tests for all remaining handlers"
 ### Task 17: Tag use case tests
 
 **Files:**
+
 - Create: `internal/usecase/project/tag_usecase_test.go`
 
 **Step 1: Write tests**
@@ -416,9 +440,11 @@ Run: `go test ./internal/usecase/project/ -run TestTagUseCase -v`
 ### Task 18: Person category use case tests
 
 **Files:**
+
 - Create: `internal/usecase/project/person_category_usecase_test.go`
 
 Tests:
+
 - `TestPersonCategoryUseCase_List_Success`
 - `TestPersonCategoryUseCase_List_RepoError`
 - `TestPersonCategoryUseCase_Replace_Success`
@@ -427,6 +453,7 @@ Tests:
 ### Task 19: Person tag use case tests
 
 **Files:**
+
 - Create: `internal/usecase/project/person_tag_usecase_test.go`
 
 Same pattern as person category.
@@ -434,9 +461,11 @@ Same pattern as person category.
 ### Task 20: Support record use case tests
 
 **Files:**
+
 - Create: `internal/usecase/project/support_record_usecase_test.go`
 
 Tests:
+
 - `TestSupportRecordUseCase_List_Success`
 - `TestSupportRecordUseCase_List_RepoError`
 - `TestSupportRecordUseCase_Get_Success`
@@ -451,9 +480,11 @@ Tests:
 ### Task 21: Household use case tests
 
 **Files:**
+
 - Create: `internal/usecase/project/household_usecase_test.go`
 
 CRUD + member management:
+
 - Standard CRUD tests
 - `TestHouseholdUseCase_AddMember_Success`
 - `TestHouseholdUseCase_AddMember_RepoError`
@@ -463,6 +494,7 @@ CRUD + member management:
 ### Task 22: Pet use case tests
 
 **Files:**
+
 - Create: `internal/usecase/project/pet_usecase_test.go`
 
 Standard CRUD pattern + tag interactions.
@@ -470,6 +502,7 @@ Standard CRUD pattern + tag interactions.
 ### Task 23: Pet tag use case tests
 
 **Files:**
+
 - Create: `internal/usecase/project/pet_tag_usecase_test.go`
 
 Same pattern as person tag.
@@ -477,6 +510,7 @@ Same pattern as person tag.
 ### Task 24: Migration record use case tests
 
 **Files:**
+
 - Create: `internal/usecase/project/migration_record_usecase_test.go`
 
 CRUD pattern — ListByPerson, Get, Create, Update.
@@ -484,6 +518,7 @@ CRUD pattern — ListByPerson, Get, Create, Update.
 ### Task 25: Report use case tests
 
 **Files:**
+
 - Create: `internal/usecase/report/report_usecase_test.go`
 - Create: `internal/usecase/report/pet_report_usecase_test.go`
 
@@ -492,6 +527,7 @@ Test Generate method with various inputs and repo errors.
 ### Task 26: My projects use case tests
 
 **Files:**
+
 - Create: `internal/usecase/my/projects_usecase_test.go`
 
 - `TestMyProjectsUseCase_Execute_Admin` — returns all projects
@@ -501,6 +537,7 @@ Test Generate method with various inputs and repo errors.
 ### Task 27: Remaining admin use case tests
 
 Check what's already tested. Fill gaps for:
+
 - `state_usecase_test.go` (if missing)
 - `place_usecase_test.go` (if missing)
 - `office_usecase_test.go` (if missing)
@@ -514,6 +551,7 @@ Run: `go test ./internal/usecase/... -v`
 Expected: all PASS
 
 **Commit:**
+
 ```bash
 git add internal/usecase/**/*_test.go
 git commit -m "add missing use case tests for tag, person category/tag, support, household, pet, migration, reports, my projects"
@@ -526,6 +564,7 @@ git commit -m "add missing use case tests for tag, person category/tag, support,
 ### Task 28: Create repository integration test infrastructure
 
 **Files:**
+
 - Create: `internal/repository/integration_test.go`
 
 **Step 1: Write test infrastructure**
@@ -598,9 +637,11 @@ Run: `go test ./internal/repository/ -run TestSetup -v` (without -short)
 ### Task 29: User repository integration tests
 
 **Files:**
+
 - Create: `internal/repository/user_repository_integration_test.go`
 
 Tests:
+
 - Create user → read back
 - Create duplicate email → unique violation
 - GetByEmail → found / not found
@@ -610,9 +651,11 @@ Tests:
 ### Task 30: Auth repository integration tests
 
 **Files:**
+
 - Create: `internal/repository/auth_repository_integration_test.go`
 
 Tests:
+
 - Create session → get by refresh token
 - Delete session
 - Create credentials → get by user ID
@@ -621,9 +664,11 @@ Tests:
 ### Task 31: Reference repository integration tests
 
 **Files:**
+
 - Create: `internal/repository/reference_repository_integration_test.go`
 
 Tests for country, state, place, office, category repos:
+
 - CRUD cycle
 - Cascade delete (delete country → states deleted)
 - Unique name constraints
@@ -631,9 +676,11 @@ Tests for country, state, place, office, category repos:
 ### Task 32: Project & permission repository integration tests
 
 **Files:**
+
 - Create: `internal/repository/project_repository_integration_test.go`
 
 Tests:
+
 - Project CRUD
 - Permission assignment / revocation
 - List projects filtered by permission
@@ -641,10 +688,12 @@ Tests:
 ### Task 33: Person, tag, support, migration, household, note, document, pet repository integration tests
 
 **Files:**
+
 - Create: `internal/repository/person_repository_integration_test.go`
 - Create: `internal/repository/records_repository_integration_test.go`
 
 Test full CRUD cycles with real Postgres. Focus on:
+
 - Foreign key constraints
 - Pagination
 - Filter combinations
@@ -655,6 +704,7 @@ Test full CRUD cycles with real Postgres. Focus on:
 Run: `go test ./internal/repository/ -v` (no -short flag, Docker required)
 
 **Commit:**
+
 ```bash
 git add internal/repository/*_integration_test.go internal/repository/integration_test.go
 git commit -m "add repository integration tests with testcontainers"
@@ -669,6 +719,7 @@ git commit -m "add repository integration tests with testcontainers"
 Many hooks follow the same pattern (CRUD via ky). Create a helper to reduce boilerplate.
 
 **Files:**
+
 - Create: `packages/observer-web/src/test/hook-helpers.ts`
 
 ```typescript
@@ -708,9 +759,11 @@ export function mockApiError(method: string, status: number) {
 ### Task 35: Test use-people hook
 
 **Files:**
+
 - Create: `packages/observer-web/src/hooks/use-people.test.ts`
 
 Test pattern (matching existing use-notes.test.ts):
+
 - `usePeople` — fetches people list, handles empty, handles enabled=false
 - `useCreatePerson` — returns mutation
 - `useUpdatePerson` — returns mutation
@@ -719,36 +772,43 @@ Test pattern (matching existing use-notes.test.ts):
 ### Task 36: Test use-tags hook
 
 **Files:**
+
 - Create: `packages/observer-web/src/hooks/use-tags.test.ts`
 
 ### Task 37: Test use-pets hook
 
 **Files:**
+
 - Create: `packages/observer-web/src/hooks/use-pets.test.ts`
 
 ### Task 38: Test use-households hook
 
 **Files:**
+
 - Create: `packages/observer-web/src/hooks/use-households.test.ts`
 
 ### Task 39: Test use-support-records hook
 
 **Files:**
+
 - Create: `packages/observer-web/src/hooks/use-support-records.test.ts`
 
 ### Task 40: Test use-projects hook
 
 **Files:**
+
 - Create: `packages/observer-web/src/hooks/use-projects.test.ts`
 
 ### Task 41: Test use-users hook
 
 **Files:**
+
 - Create: `packages/observer-web/src/hooks/use-users.test.ts`
 
 ### Task 42: Test remaining hooks
 
 **Files:**
+
 - Create: `packages/observer-web/src/hooks/use-categories.test.ts`
 - Create: `packages/observer-web/src/hooks/use-countries.test.ts`
 - Create: `packages/observer-web/src/hooks/use-states.test.ts`
@@ -767,6 +827,7 @@ Run: `cd packages/observer-web && bun test src/hooks/`
 Expected: all PASS
 
 **Commit:**
+
 ```bash
 git add packages/observer-web/src/hooks/*.test.ts packages/observer-web/src/test/hook-helpers.ts
 git commit -m "add tests for all frontend hooks"
@@ -779,10 +840,12 @@ git commit -m "add tests for all frontend hooks"
 ### Task 43: Test auth components (login/register forms)
 
 **Files:**
+
 - Create: `packages/observer-web/src/routes/_auth/login.test.tsx`
 - Create: `packages/observer-web/src/routes/_auth/register.test.tsx`
 
 Tests:
+
 - Renders form fields
 - Shows validation errors on empty submit
 - Shows error message on API failure (401, 500)
@@ -793,9 +856,11 @@ Use `@testing-library/react` render + `@testing-library/user-event` for interact
 ### Task 44: Test data-table component
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/data-table.test.tsx`
 
 Tests:
+
 - Renders with data
 - Renders empty state when no data
 - Renders loading state
@@ -804,11 +869,13 @@ Tests:
 ### Task 45: Test form components
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/confirm-dialog.test.tsx`
 - Create: `packages/observer-web/src/components/form-field.test.tsx`
 - Create: `packages/observer-web/src/components/drawer-shell.test.tsx`
 
 Tests:
+
 - ConfirmDialog: renders, calls onConfirm/onCancel
 - FormField: renders label, shows error
 - DrawerShell: renders children, close button works
@@ -816,10 +883,12 @@ Tests:
 ### Task 46: Test chart components
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/charts/bar-chart.test.tsx`
 - Create: `packages/observer-web/src/components/charts/pie-chart.test.tsx`
 
 Tests:
+
 - Renders without crashing with valid data
 - Renders without crashing with empty data
 - Renders without crashing with single data point
@@ -827,12 +896,14 @@ Tests:
 ### Task 47: Test utility components
 
 **Files:**
+
 - Create: `packages/observer-web/src/components/empty-state.test.tsx`
 - Create: `packages/observer-web/src/components/status-badge.test.tsx`
 - Create: `packages/observer-web/src/components/pagination.test.tsx`
 - Create: `packages/observer-web/src/components/alert-banner.test.tsx`
 
 Tests:
+
 - EmptyState: renders message
 - StatusBadge: renders correct variant for each status
 - Pagination: renders page numbers, calls onChange
@@ -844,6 +915,7 @@ Run: `cd packages/observer-web && bun test src/components/ src/routes/_auth/`
 Expected: all PASS
 
 **Commit:**
+
 ```bash
 git add packages/observer-web/src/components/*.test.tsx packages/observer-web/src/components/**/*.test.tsx packages/observer-web/src/routes/_auth/*.test.tsx
 git commit -m "add frontend component tests for auth forms, data table, charts, utility components"
@@ -856,6 +928,7 @@ git commit -m "add frontend component tests for auth forms, data table, charts, 
 ### Task 48: Create route smoke test infrastructure
 
 **Files:**
+
 - Create: `packages/observer-web/src/test/route-smoke.test.tsx`
 
 Test that each route component can be imported and rendered in isolation (with mocked data/hooks). This catches import errors, missing providers, and render crashes.
@@ -863,6 +936,7 @@ Test that each route component can be imported and rendered in isolation (with m
 For app routes that need auth context, mock the auth store. For routes that fetch data, mock the hooks.
 
 Test cases:
+
 - Login route renders
 - Register route renders
 - App index (dashboard) renders with mocked data
@@ -882,6 +956,7 @@ Run: `cd packages/observer-web && bun test src/test/route-smoke`
 Expected: all PASS
 
 **Commit:**
+
 ```bash
 git add packages/observer-web/src/test/route-smoke.test.tsx
 git commit -m "add route smoke tests for all frontend routes"
@@ -894,6 +969,7 @@ git commit -m "add route smoke tests for all frontend routes"
 ### Task 49: Enhance cobra command help text
 
 **Files:**
+
 - Modify: `cmd/observer/cmd/serve.go`
 - Modify: `cmd/observer/cmd/migrate.go`
 - Modify: `cmd/observer/cmd/keygen.go`
@@ -902,10 +978,12 @@ git commit -m "add route smoke tests for all frontend routes"
 - Modify: `cmd/observer/main.go`
 
 For each command, add/improve:
+
 - `Long` description with clear explanation
 - `Example` field with realistic usage examples
 
 Example for serve:
+
 ```go
 Long: `Start the Observer HTTP server.
 
@@ -930,6 +1008,7 @@ Run: `go run ./cmd/observer serve --help`
 Expected: shows Long description and examples
 
 **Commit:**
+
 ```bash
 git add cmd/observer/cmd/*.go cmd/observer/main.go
 git commit -m "improve CLI --help with descriptions and usage examples"
@@ -942,6 +1021,7 @@ git commit -m "improve CLI --help with descriptions and usage examples"
 ### Task 50: Write docs/guides/cli.md
 
 **Files:**
+
 - Create: `docs/guides/cli.md`
 
 **Content structure:**
@@ -950,52 +1030,72 @@ git commit -m "improve CLI --help with descriptions and usage examples"
 # Observer CLI Reference
 
 ## Overview
+
 Observer provides a CLI for managing the server, database migrations, and development utilities.
 
 ## Installation
+
 go install github.com/lbrty/observer/cmd/observer@latest
+
 # or build from source
+
 just build
 
 ## Commands
 
 ### serve
+
 Start the HTTP server.
 [flags table, env vars table, examples]
 
 ### migrate
+
 Database migration management.
+
 #### migrate up
+
 [flags, examples]
+
 #### migrate create
+
 [flags, examples]
+
 #### migrate version
+
 [flags, examples]
 
 ### keygen
+
 Generate RSA key pair for JWT signing.
 [flags, examples]
 
 ### create-admin
+
 Create a platform administrator account.
 [flags, examples]
 
 ### seed
+
 Seed database with development data (destructive).
 [flags, examples]
 
 ## Common Workflows
 
 ### First-time setup
+
 ### Adding a new migration
+
 ### Seeding development data
+
 ### Generating new JWT keys
 
 ## Environment Variables
+
 [complete table of all env vars from config.go]
 ```
 
 **Commit:**
+
 ```bash
 git add docs/guides/cli.md
 git commit -m "add CLI reference documentation"
@@ -1008,10 +1108,12 @@ git commit -m "add CLI reference documentation"
 ### Task 51: Create the setup command
 
 **Files:**
+
 - Create: `cmd/observer/cmd/setup.go`
 - Modify: `cmd/observer/main.go` (register command)
 
 **What it does:**
+
 1. Generates `.env` with sensible defaults for all config vars
 2. Auto-generates RSA keys into `keys/` directory (calls keygen logic)
 3. Prompts for admin email + password (stdin), creates admin user
@@ -1056,6 +1158,7 @@ The function should:
 
 1. **Check if `.env` already exists** — if so, ask to overwrite or skip
 2. **Write `.env`** with these defaults:
+
 ```env
 # Server
 SERVER_HOST=localhost
@@ -1093,6 +1196,7 @@ LOG_LEVEL=info
 4. **Create required directories** — `keys/`, `data/uploads/`
 5. **Prompt for admin** — read email from stdin, read password with `term.ReadPassword` (hidden input), confirm password matches, then create admin (reuse create-admin logic: connect DB, hash password, insert user)
 6. **Print next-steps:**
+
 ```
 Setup complete!
 
@@ -1116,9 +1220,11 @@ Useful links:
 **Step 3: Write tests**
 
 **Files:**
+
 - Create: `cmd/observer/cmd/setup_test.go`
 
 Test cases:
+
 - `TestSetup_WritesEnvFile` — verify `.env` content written correctly (use temp dir)
 - `TestSetup_SkipsExistingEnv` — when `.env` exists and user declines overwrite
 - `TestSetup_GeneratesKeys` — verify key files created in temp dir
@@ -1149,15 +1255,18 @@ git commit -m "add observer setup command for first-time project initialization"
 ### Task 52: Update CLI docs with setup command
 
 **Files:**
+
 - Modify: `docs/guides/cli.md` (add setup section)
 
 Add `setup` command documentation:
+
 - Description
 - What it generates (.env, keys, admin user)
 - Example output
 - Move "First-time setup" workflow to reference `observer setup`
 
 **Commit:**
+
 ```bash
 git add docs/guides/cli.md
 git commit -m "add setup command to CLI documentation"
@@ -1167,15 +1276,15 @@ git commit -m "add setup command to CLI documentation"
 
 ## Execution Order Summary
 
-| Phase | Tasks | Description |
-|-------|-------|-------------|
-| 1 | 1 | Handler test infrastructure |
-| 2 | 2–16 | Handler tests (all 17 handlers) |
-| 3 | 17–27 | Use case tests (fill gaps) |
-| 4 | 28–33 | Repository integration tests |
-| 5 | 34–42 | Frontend hook tests |
-| 6 | 43–47 | Frontend component tests |
-| 7 | 48 | Frontend route smoke tests |
-| 8 | 49 | CLI --help improvements |
-| 9 | 50 | CLI docs/guides/cli.md |
-| 10 | 51–52 | `observer setup` command + docs |
+| Phase | Tasks | Description                     |
+| ----- | ----- | ------------------------------- |
+| 1     | 1     | Handler test infrastructure     |
+| 2     | 2–16  | Handler tests (all 17 handlers) |
+| 3     | 17–27 | Use case tests (fill gaps)      |
+| 4     | 28–33 | Repository integration tests    |
+| 5     | 34–42 | Frontend hook tests             |
+| 6     | 43–47 | Frontend component tests        |
+| 7     | 48    | Frontend route smoke tests      |
+| 8     | 49    | CLI --help improvements         |
+| 9     | 50    | CLI docs/guides/cli.md          |
+| 10    | 51–52 | `observer setup` command + docs |

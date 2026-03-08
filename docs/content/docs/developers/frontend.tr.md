@@ -5,18 +5,18 @@ weight: 3
 
 ## Teknoloji Yığını
 
-| Konu            | Tercih                                   |
-| --------------- | ---------------------------------------- |
-| Framework       | React 19 + React Compiler                |
-| Bundler         | Vite 6                                   |
+| Konu             | Tercih                                   |
+| ---------------- | ---------------------------------------- |
+| Framework        | React 19 + React Compiler                |
+| Bundler          | Vite 6                                   |
 | Paket yöneticisi | Bun (workspace monorepo)                 |
-| Yönlendirme     | TanStack Router (dosya tabanlı)          |
-| Veri çekme      | TanStack Query v5                        |
-| Stillendirme    | Tailwind CSS v4                          |
-| Headless UI     | Base UI (`@base-ui/react`)               |
-| İkonlar         | Phosphor Icons (`@phosphor-icons/react`) |
-| i18n            | i18next + react-i18next                  |
-| Tür kontrolü    | TypeScript 5.7 (strict)                  |
+| Yönlendirme      | TanStack Router (dosya tabanlı)          |
+| Veri çekme       | TanStack Query v5                        |
+| Stillendirme     | Tailwind CSS v4                          |
+| Headless UI      | Base UI (`@base-ui/react`)               |
+| İkonlar          | Phosphor Icons (`@phosphor-icons/react`) |
+| i18n             | i18next + react-i18next                  |
+| Tür kontrolü     | TypeScript 5.7 (strict)                  |
 
 ## Proje yapısı
 
@@ -118,8 +118,8 @@ t("greeting", { name: "Ali" }); // → "Salam, Ali"
 
 ## Ortam değişkenleri
 
-| Değişken       | Varsayılan              | Açıklama             |
-| -------------- | ----------------------- | -------------------- |
+| Değişken       | Varsayılan              | Açıklama                |
+| -------------- | ----------------------- | ----------------------- |
 | `VITE_API_URL` | `http://localhost:9000` | Backend API temel URL'i |
 
 Vite yalnızca `VITE_` önekli değişkenleri dışa açar.

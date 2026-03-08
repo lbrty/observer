@@ -52,4 +52,3 @@ export function useUpdateSupportRecord(projectId: string) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["support-records", projectId] }),
   });
 }
-

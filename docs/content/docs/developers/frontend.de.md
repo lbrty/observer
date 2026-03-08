@@ -5,18 +5,18 @@ weight: 3
 
 ## Stack
 
-| Bereich         | Auswahl                                  |
-| --------------- | ---------------------------------------- |
-| Framework       | React 19 + React Compiler                |
-| Bundler         | Vite 6                                   |
-| Paketmanager    | Bun (Workspace-Monorepo)                 |
-| Routing         | TanStack Router (dateibasiert)           |
-| Datenabruf      | TanStack Query v5                        |
-| Styling         | Tailwind CSS v4                          |
-| Headless UI     | Base UI (`@base-ui/react`)               |
-| Icons           | Phosphor Icons (`@phosphor-icons/react`) |
-| i18n            | i18next + react-i18next                  |
-| Typprüfung      | TypeScript 5.7 (strict)                  |
+| Bereich      | Auswahl                                  |
+| ------------ | ---------------------------------------- |
+| Framework    | React 19 + React Compiler                |
+| Bundler      | Vite 6                                   |
+| Paketmanager | Bun (Workspace-Monorepo)                 |
+| Routing      | TanStack Router (dateibasiert)           |
+| Datenabruf   | TanStack Query v5                        |
+| Styling      | Tailwind CSS v4                          |
+| Headless UI  | Base UI (`@base-ui/react`)               |
+| Icons        | Phosphor Icons (`@phosphor-icons/react`) |
+| i18n         | i18next + react-i18next                  |
+| Typprüfung   | TypeScript 5.7 (strict)                  |
 
 ## Projektstruktur
 
@@ -118,8 +118,8 @@ t("greeting", { name: "Ali" }); // → "Salam, Ali"
 
 ## Umgebungsvariablen
 
-| Variable       | Standard                | Beschreibung             |
-| -------------- | ----------------------- | ------------------------ |
-| `VITE_API_URL` | `http://localhost:9000` | Backend-API-Basis-URL    |
+| Variable       | Standard                | Beschreibung          |
+| -------------- | ----------------------- | --------------------- |
+| `VITE_API_URL` | `http://localhost:9000` | Backend-API-Basis-URL |
 
 Vite stellt nur Variablen mit dem Präfix `VITE_` bereit.

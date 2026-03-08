@@ -68,24 +68,23 @@ export function SupportRecordDrawer({
   };
 
   const toast = useToast();
-  const { form, set, error, setError, editingId, setEditingId, setForm } =
-    useDrawerForm({
-      initial,
-      open,
-      isEdit,
-      data: record,
-      mapData: (data) => ({
-        type: (data.type as string) ?? "general",
-        sphere: (data.sphere as string) ?? "",
-        provided_at: (data.provided_at as string) ?? "",
-        person_id: (data.person_id as string) ?? "",
-        referral_status: (data.referral_status as string) ?? "",
-        referred_to_office: (data.referred_to_office as string) ?? "",
-        consultant_id: (data.consultant_id as string) ?? "",
-        office_id: (data.office_id as string) ?? "",
-        notes: (data.notes as string) ?? "",
-      }),
-    });
+  const { form, set, error, setError, editingId, setEditingId, setForm } = useDrawerForm({
+    initial,
+    open,
+    isEdit,
+    data: record,
+    mapData: (data) => ({
+      type: (data.type as string) ?? "general",
+      sphere: (data.sphere as string) ?? "",
+      provided_at: (data.provided_at as string) ?? "",
+      person_id: (data.person_id as string) ?? "",
+      referral_status: (data.referral_status as string) ?? "",
+      referred_to_office: (data.referred_to_office as string) ?? "",
+      consultant_id: (data.consultant_id as string) ?? "",
+      office_id: (data.office_id as string) ?? "",
+      notes: (data.notes as string) ?? "",
+    }),
+  });
 
   const [personName, setPersonName] = useState("");
   const { data: personData } = usePerson(projectId, form.person_id);
@@ -199,15 +198,14 @@ export function SupportRecordDrawer({
         }}
       />
 
-      <ReferralSection form={form} set={(k, v) => set(k as keyof typeof form, v)} officeOptions={officeOptions} />
+      <ReferralSection
+        form={form}
+        set={(k, v) => set(k as keyof typeof form, v)}
+        officeOptions={officeOptions}
+      />
 
       <SectionHeading>{t("project.supportRecords.notesSection")}</SectionHeading>
-      <FormTextarea
-        label=""
-        value={form.notes}
-        onChange={(v) => set("notes", v)}
-        rows={4}
-      />
+      <FormTextarea label="" value={form.notes} onChange={(v) => set("notes", v)} rows={4} />
     </DrawerShell>
   );
 }

@@ -38,14 +38,14 @@ cp .env.example .env
 
 | Змінна                 | Призначення                                       | За замовчуванням           |
 | ---------------------- | ------------------------------------------------- | -------------------------- |
-| `DATABASE_DSN`         | Як Observer підключається до PostgreSQL            | _(обов'язково вказати)_    |
-| `REDIS_URL`            | Як Observer підключається до Redis                 | `redis://localhost:6379/0` |
-| `JWT_PRIVATE_KEY_PATH` | Де знаходиться приватний ключ із Кроку 1           | `keys/jwt_rsa`             |
-| `JWT_PUBLIC_KEY_PATH`  | Де знаходиться публічний ключ із Кроку 1           | `keys/jwt_rsa.pub`         |
+| `DATABASE_DSN`         | Як Observer підключається до PostgreSQL           | _(обов'язково вказати)_    |
+| `REDIS_URL`            | Як Observer підключається до Redis                | `redis://localhost:6379/0` |
+| `JWT_PRIVATE_KEY_PATH` | Де знаходиться приватний ключ із Кроку 1          | `keys/jwt_rsa`             |
+| `JWT_PUBLIC_KEY_PATH`  | Де знаходиться публічний ключ із Кроку 1          | `keys/jwt_rsa.pub`         |
 | `CORS_ORIGINS`         | Ваш домен (напр. `https://observer.yourorg.org`)  | `http://localhost:5173`    |
-| `COOKIE_SECURE`        | Встановіть `true` при використанні HTTPS (бажано)  | `true`                     |
-| `SERVER_HOST`          | На якій адресі слухати                             | `localhost`                |
-| `SERVER_PORT`          | На якому порту слухати                             | `9000`                     |
+| `COOKIE_SECURE`        | Встановіть `true` при використанні HTTPS (бажано) | `true`                     |
+| `SERVER_HOST`          | На якій адресі слухати                            | `localhost`                |
+| `SERVER_PORT`          | На якому порту слухати                            | `9000`                     |
 
 Дивіться [Змінні середовища](/docs/developers/reference/variables/) для повного списку.
 

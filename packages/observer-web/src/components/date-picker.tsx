@@ -55,7 +55,10 @@ export function DatePicker({
   const selected = parseISO(value);
 
   const now = new Date();
-  const useDropdown = captionLayout === "dropdown" || captionLayout === "dropdown-months" || captionLayout === "dropdown-years";
+  const useDropdown =
+    captionLayout === "dropdown" ||
+    captionLayout === "dropdown-months" ||
+    captionLayout === "dropdown-years";
   const startMonth = useDropdown ? new Date(startYear ?? 1920, 0) : undefined;
   const endMonth = useDropdown ? new Date(endYear ?? now.getFullYear(), 11) : undefined;
 

@@ -36,16 +36,16 @@ cp .env.example .env
 
 En önemli değişkenler:
 
-| Değişken               | Ne işe yarar                                      | Varsayılan                    |
-| ---------------------- | ------------------------------------------------- | -------------------------- |
-| `DATABASE_DSN`         | Observer'ın PostgreSQL'e nasıl bağlanacağı               | _(ayarlanmalı)_            |
-| `REDIS_URL`            | Observer'ın Redis'e nasıl bağlanacağı                    | `redis://localhost:6379/0` |
-| `JWT_PRIVATE_KEY_PATH` | Adım 1'deki özel anahtarın konumu         | `keys/jwt_rsa`             |
-| `JWT_PUBLIC_KEY_PATH`  | Adım 1'deki genel anahtarın konumu          | `keys/jwt_rsa.pub`         |
-| `CORS_ORIGINS`         | Alan adınız (ör. `https://observer.yourorg.org`) | `http://localhost:5173`    |
-| `COOKIE_SECURE`        | HTTPS kullanırken `true` olarak ayarlayın (ayarlamalısınız)       | `true`                     |
-| `SERVER_HOST`          | Dinlenecek adres                        | `localhost`                |
-| `SERVER_PORT`          | Dinlenecek port                           | `9000`                     |
+| Değişken               | Ne işe yarar                                                | Varsayılan                 |
+| ---------------------- | ----------------------------------------------------------- | -------------------------- |
+| `DATABASE_DSN`         | Observer'ın PostgreSQL'e nasıl bağlanacağı                  | _(ayarlanmalı)_            |
+| `REDIS_URL`            | Observer'ın Redis'e nasıl bağlanacağı                       | `redis://localhost:6379/0` |
+| `JWT_PRIVATE_KEY_PATH` | Adım 1'deki özel anahtarın konumu                           | `keys/jwt_rsa`             |
+| `JWT_PUBLIC_KEY_PATH`  | Adım 1'deki genel anahtarın konumu                          | `keys/jwt_rsa.pub`         |
+| `CORS_ORIGINS`         | Alan adınız (ör. `https://observer.yourorg.org`)            | `http://localhost:5173`    |
+| `COOKIE_SECURE`        | HTTPS kullanırken `true` olarak ayarlayın (ayarlamalısınız) | `true`                     |
+| `SERVER_HOST`          | Dinlenecek adres                                            | `localhost`                |
+| `SERVER_PORT`          | Dinlenecek port                                             | `9000`                     |
 
 Tam liste için [Ortam Değişkenleri](/docs/developers/reference/variables/) sayfasına bakın.
 

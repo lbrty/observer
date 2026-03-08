@@ -54,7 +54,10 @@ mock.module("ky", () => ({
   default: kyInstance,
   HTTPError: class extends Error {
     response: any;
-    constructor(r: any) { super("HTTP Error"); this.response = r; }
+    constructor(r: any) {
+      super("HTTP Error");
+      this.response = r;
+    }
   },
 }));
 
@@ -62,7 +65,10 @@ mock.module("@/lib/api", () => ({
   api: kyInstance,
   HTTPError: class extends Error {
     response: any;
-    constructor(r: any) { super("HTTP Error"); this.response = r; }
+    constructor(r: any) {
+      super("HTTP Error");
+      this.response = r;
+    }
   },
 }));
 

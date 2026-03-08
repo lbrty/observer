@@ -171,7 +171,13 @@ function UserDetailPage() {
   );
 }
 
-function AccountAccessSection({ userId, user }: { userId: string; user: import("@/types/admin").AdminUser }) {
+function AccountAccessSection({
+  userId,
+  user,
+}: {
+  userId: string;
+  user: import("@/types/admin").AdminUser;
+}) {
   const { t } = useTranslation();
   const deactivate = useDeactivateUser();
   const reactivate = useReactivateUser();

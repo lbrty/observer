@@ -66,14 +66,10 @@ function OfficesPage() {
       emptyTitle={t("admin.reference.offices.emptyTitle")}
       emptyDescription={t("admin.reference.offices.emptyDescription")}
       emptyAction={
-        <Button onClick={() => setCreateOpen(true)}>
-          {t("admin.reference.offices.add")}
-        </Button>
+        <Button onClick={() => setCreateOpen(true)}>{t("admin.reference.offices.add")}</Button>
       }
       createAction={
-        <Button onClick={() => setCreateOpen(true)}>
-          {t("admin.reference.offices.add")}
-        </Button>
+        <Button onClick={() => setCreateOpen(true)}>{t("admin.reference.offices.add")}</Button>
       }
     >
       <OfficeFormDialog
