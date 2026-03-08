@@ -413,12 +413,12 @@ func dimensionJoins(dim, metric string) string {
 		if metric == "pets" {
 			return ""
 		}
-		return " LEFT JOIN pets ON pets.person_id = p.id"
+		return " LEFT JOIN pets ON pets.owner_id = p.id"
 	case "pet_tag":
 		if metric == "pets" {
 			return " LEFT JOIN pet_tags ptg ON ptg.pet_id = pets.id LEFT JOIN tags pt_tag ON pt_tag.id = ptg.tag_id"
 		}
-		return " LEFT JOIN pets ON pets.person_id = p.id LEFT JOIN pet_tags ptg ON ptg.pet_id = pets.id LEFT JOIN tags pt_tag ON pt_tag.id = ptg.tag_id"
+		return " LEFT JOIN pets ON pets.owner_id = p.id LEFT JOIN pet_tags ptg ON ptg.pet_id = pets.id LEFT JOIN tags pt_tag ON pt_tag.id = ptg.tag_id"
 	default:
 		return ""
 	}
@@ -451,7 +451,7 @@ func (r *reportRepo) CustomQuery(ctx context.Context, projectID string, metric s
 		projectCol = "h.project_id"
 		dateCol = "p.registered_at"
 	case "pets":
-		from = "pets JOIN people p ON p.id = pets.person_id"
+		from = "pets JOIN people p ON p.id = pets.owner_id"
 		countExpr = "COUNT(pets.id)"
 		projectCol = "p.project_id"
 		dateCol = "pets.created_at"
