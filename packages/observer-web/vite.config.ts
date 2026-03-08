@@ -13,7 +13,9 @@ export default defineConfig({
       },
     }),
     tailwindcss(),
-    tanstackRouter(),
+    tanstackRouter({
+      routeFileIgnorePattern: ".+\\.test\\.tsx$",
+    }),
   ],
   resolve: {
     alias: {
