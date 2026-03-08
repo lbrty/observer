@@ -31,8 +31,8 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
-      <ReactQueryDevtools buttonPosition="bottom-right" />
-      <TanStackRouterDevtools router={router} />
+      {import.meta.env.DEV && <ReactQueryDevtools buttonPosition="bottom-right" />}
+      {import.meta.env.DEV && <TanStackRouterDevtools router={router} />}
     </QueryClientProvider>
   </StrictMode>,
 );

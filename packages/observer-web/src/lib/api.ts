@@ -4,6 +4,12 @@ const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:9000";
 
 let refreshPromise: Promise<void> | null = null;
 
+// Registered by AuthProvider to clear auth state when session cannot be recovered.
+let onUnauthorized: (() => void) | null = null;
+export function setOnUnauthorized(fn: () => void) {
+  onUnauthorized = fn;
+}
+
 async function refreshTokens(): Promise<void> {
   const res = await fetch(`${BASE_URL}/auth/refresh`, {
     method: "POST",
@@ -33,6 +39,7 @@ export const api = ky.create({
           return ky(request, { credentials: "include" });
         } catch {
           refreshPromise = null;
+          onUnauthorized?.();
           return response;
         }
       },

@@ -115,14 +115,16 @@ export function PetsContent({
       if (dateFrom) searchParams.created_from = dateFrom;
       if (dateTo) searchParams.created_to = dateTo;
 
-      const blob = await api.get(`projects/${projectId}/export/pets`, { searchParams }).blob();
+      const serverBlob = await api.get(`projects/${projectId}/export/pets`, { searchParams }).blob();
+      const text = await serverBlob.text();
+      const blob = new Blob(["\uFEFF" + text], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       const date = new Date().toISOString().slice(0, 10);
       a.download = `pets-${date}.csv`;
       a.click();
-      URL.revokeObjectURL(url);
+      setTimeout(() => URL.revokeObjectURL(url), 100);
     } finally {
       setExporting(false);
     }

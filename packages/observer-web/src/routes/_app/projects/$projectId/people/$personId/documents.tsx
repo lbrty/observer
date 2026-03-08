@@ -292,6 +292,7 @@ function PersonDocuments() {
             ref={fileInputRef}
             type="file"
             multiple
+            accept=".pdf,image/*,video/*,audio/*,text/*,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.gz"
             onChange={handleFileSelect}
             className="hidden"
           />

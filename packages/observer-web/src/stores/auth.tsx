@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
-import { api, HTTPError } from "@/lib/api";
+import { api, HTTPError, setOnUnauthorized } from "@/lib/api";
 import type { LoginInput, LoginOutput, RegisterInput, RegisterOutput, User } from "@/types/auth";
 
 interface AuthState {
@@ -27,6 +27,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const isAuthenticated = user !== null;
+
+  useEffect(() => {
+    setOnUnauthorized(() => setUser(null));
+  }, []);
 
   useEffect(() => {
     api

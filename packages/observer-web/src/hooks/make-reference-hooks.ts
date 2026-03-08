@@ -33,7 +33,7 @@ export function makeReferenceHooks<T extends { id: string }, C, U>(resource: str
   function useDelete() {
     const qc = useQueryClient();
     return useMutation({
-      mutationFn: (id: string) => api.delete(`admin/${resource}/${id}`).json(),
+      mutationFn: (id: string) => api.delete(`admin/${resource}/${id}`),
       onSuccess: () => qc.invalidateQueries({ queryKey: [resource] }),
     });
   }

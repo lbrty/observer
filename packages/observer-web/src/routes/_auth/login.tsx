@@ -4,26 +4,12 @@ import { type SyntheticEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
-import { HTTPError } from "@/lib/api";
+import { handleApiError } from "@/lib/form-error";
 import { useAuth } from "@/stores/auth";
 
 export const Route = createFileRoute("/_auth/login")({
   component: LoginPage,
 });
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function parseLoginError(
-  err: unknown,
-  t: (k: string, opts?: any) => string,
-): Promise<string> {
-  if (err instanceof HTTPError) {
-    const body = await err.response.json().catch(() => null);
-    if (body?.code === "errors.user.notActive") return t("auth.pendingApproval");
-    const translated = body?.code ? t(body.code, { defaultValue: "" }) : "";
-    return translated || body?.error || (err as Error).message;
-  }
-  return t("common.unexpectedError");
-}
 
 function LoginPage() {
   const { t } = useTranslation();
@@ -52,7 +38,7 @@ function LoginPage() {
         navigate({ to: "/" });
       }
     } catch (err) {
-      setError(await parseLoginError(err, t));
+      setError(await handleApiError(err, t, { "errors.user.notActive": t("auth.pendingApproval") }));
     } finally {
       setSubmitting(false);
     }
@@ -67,7 +53,7 @@ function LoginPage() {
       await verifyMFA(mfaToken, form.get("totp_code") as string);
       navigate({ to: "/" });
     } catch (err) {
-      setError(await parseLoginError(err, t));
+      setError(await handleApiError(err, t, { "errors.user.notActive": t("auth.pendingApproval") }));
     } finally {
       setSubmitting(false);
     }
