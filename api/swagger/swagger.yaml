@@ -465,27 +465,6 @@ definitions:
     - person_id
     - relationship
     type: object
-  github_com_lbrty_observer_internal_usecase_project.CreateDocumentInput:
-    properties:
-      encryption_key_ref:
-        type: string
-      mime_type:
-        type: string
-      name:
-        type: string
-      path:
-        type: string
-      person_id:
-        type: string
-      size:
-        type: integer
-    required:
-    - mime_type
-    - name
-    - path
-    - person_id
-    - size
-    type: object
   github_com_lbrty_observer_internal_usecase_project.CreateHouseholdInput:
     properties:
       head_person_id:
@@ -605,31 +584,6 @@ definitions:
         type: string
     required:
     - name
-    type: object
-  github_com_lbrty_observer_internal_usecase_project.DocumentDTO:
-    properties:
-      created_at:
-        type: string
-      encryption_key_ref:
-        type: string
-      id:
-        type: string
-      mime_type:
-        type: string
-      name:
-        type: string
-      path:
-        type: string
-      person_id:
-        type: string
-      project_id:
-        type: string
-      size:
-        type: integer
-      updated_at:
-        type: string
-      uploaded_by:
-        type: string
     type: object
   github_com_lbrty_observer_internal_usecase_project.HouseholdDTO:
     properties:
@@ -795,6 +749,10 @@ definitions:
         type: string
       sex:
         type: string
+      tag_ids:
+        items:
+          type: string
+        type: array
       updated_at:
         type: string
     type: object
@@ -816,6 +774,10 @@ definitions:
         type: string
       status:
         type: string
+      tag_ids:
+        items:
+          type: string
+        type: array
       updated_at:
         type: string
     type: object
@@ -973,13 +935,6 @@ definitions:
       message:
         example: deleted
         type: string
-    type: object
-  internal_handler.PermissionListResponse:
-    properties:
-      permissions:
-        items:
-          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.PermissionMemberDTO'
-        type: array
     type: object
 host: localhost:9000
 info:
@@ -1743,7 +1698,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_handler.PermissionListResponse'
+            items:
+              $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_admin.PermissionMemberDTO'
+            type: array
         "500":
           description: Internal Server Error
           schema:
@@ -2358,115 +2315,6 @@ paths:
       summary: Health check
       tags:
       - health
-  /projects/{project_id}/documents:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Project ID
-        in: path
-        name: project_id
-        required: true
-        type: string
-      - description: Document payload
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.CreateDocumentInput'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.DocumentDTO'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/internal_handler.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/internal_handler.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_handler.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Create a document
-      tags:
-      - project-documents
-  /projects/{project_id}/documents/{id}:
-    delete:
-      parameters:
-      - description: Project ID
-        in: path
-        name: project_id
-        required: true
-        type: string
-      - description: Document ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/internal_handler.MessageResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/internal_handler.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_handler.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Delete a document
-      tags:
-      - project-documents
-    get:
-      parameters:
-      - description: Project ID
-        in: path
-        name: project_id
-        required: true
-        type: string
-      - description: Document ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_lbrty_observer_internal_usecase_project.DocumentDTO'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/internal_handler.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/internal_handler.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_handler.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: Get a document by ID
-      tags:
-      - project-documents
   /projects/{project_id}/households:
     get:
       parameters:
@@ -3003,39 +2851,6 @@ paths:
       summary: Replace category IDs for a person
       tags:
       - project-people
-  /projects/{project_id}/people/{person_id}/documents:
-    get:
-      parameters:
-      - description: Project ID
-        in: path
-        name: project_id
-        required: true
-        type: string
-      - description: Person ID
-        in: path
-        name: person_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Wrapper with documents array
-          schema:
-            type: object
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/internal_handler.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_handler.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: List documents for a person
-      tags:
-      - project-documents
   /projects/{project_id}/people/{person_id}/migration-records:
     get:
       parameters:

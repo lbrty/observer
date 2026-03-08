@@ -27,7 +27,7 @@ func NewPermissionHandler(permUC *ucadmin.PermissionUseCase) *PermissionHandler 
 // @Accept json
 // @Produce json
 // @Param project_id path string true "Project ID"
-// @Success 200 {object} PermissionListResponse
+// @Success 200 {object} []ucadmin.PermissionMemberDTO
 // @Failure 500 {object} ErrorResponse
 // @Security BearerAuth
 // @Router /admin/projects/{project_id}/permissions [get]
