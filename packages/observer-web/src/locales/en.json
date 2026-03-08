@@ -653,7 +653,8 @@
       "sessionExpired": "Session expired",
       "refreshTokenRequired": "Refresh token is required",
       "insufficientPermissions": "Insufficient permissions",
-      "accountLocked": "Account is locked due to too many failed login attempts"
+      "accountLocked": "Account is locked due to too many failed login attempts",
+      "rateLimiterUnavailable": "Service temporarily unavailable. Please try again later."
     },
     "project": {
       "notFound": "Project not found",

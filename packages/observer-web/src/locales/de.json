@@ -653,7 +653,8 @@
       "sessionExpired": "Sitzung abgelaufen",
       "refreshTokenRequired": "Aktualisierungstoken erforderlich",
       "insufficientPermissions": "Unzureichende Berechtigungen",
-      "accountLocked": "Konto ist aufgrund zu vieler fehlgeschlagener Anmeldeversuche gesperrt"
+      "accountLocked": "Konto ist aufgrund zu vieler fehlgeschlagener Anmeldeversuche gesperrt",
+      "rateLimiterUnavailable": "Dienst vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut."
     },
     "project": {
       "notFound": "Projekt nicht gefunden",

@@ -653,7 +653,8 @@
       "sessionExpired": "Sessijanyn möönötü büttü",
       "refreshTokenRequired": "Cañyrtuu tokeni kerek",
       "insufficientPermissions": "Uquqtar cetişsiz",
-      "accountLocked": "Aqqaunt bekitilgen"
+      "accountLocked": "Aqqaunt bekitilgen",
+      "rateLimiterUnavailable": "Kyzmat waqqytça qoldoboo bolup jatqanda. Keyin qayta araketteniñiz."
     },
     "project": {
       "notFound": "Proekt tabylğan coq",

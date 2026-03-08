@@ -92,10 +92,14 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// Check if the account is locked out.
-	if remaining, err := h.loginAttempts.IsLocked(c.Request.Context(), input.Email); err != nil {
+	// Check if the account is locked out. Fail closed: if the store is unavailable, deny access.
+	remaining, err := h.loginAttempts.IsLocked(c.Request.Context(), input.Email)
+	if err != nil {
 		slog.Error("check login lockout", slog.Any("err", err))
-	} else if remaining != 0 {
+		c.JSON(http.StatusServiceUnavailable, errJSON("errors.auth.rateLimiterUnavailable", "rate limiter unavailable, try again later"))
+		return
+	}
+	if remaining != 0 {
 		msg := "account temporarily locked"
 		if remaining == -1 {
 			msg = "account locked, contact administrator"

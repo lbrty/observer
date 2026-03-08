@@ -1,6 +1,7 @@
 package handler_test
 
 import (
+	"errors"
 	"net/http"
 	"testing"
 	"time"
@@ -463,4 +464,24 @@ func TestAuthHandler_ChangePassword_Success(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 	resp := parseResponse[map[string]any](w)
 	require.Equal(t, "password changed successfully", resp["message"])
+}
+
+func TestAuthHandler_Login_RedisDown_FailsClosed(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	d := newAuthTestDeps(ctrl)
+	h := newAuthHandler(d)
+
+	d.loginAttempts.EXPECT().
+		IsLocked(gomock.Any(), "user@test.com").
+		Return(time.Duration(0), errors.New("redis: connection refused"))
+
+	c, w := newTestContext(http.MethodPost, "/auth/login", map[string]string{
+		"email":    "user@test.com",
+		"password": "password123",
+	})
+	h.Login(c)
+
+	assert.Equal(t, http.StatusServiceUnavailable, w.Code)
+	resp := parseResponse[map[string]any](w)
+	assert.Equal(t, "errors.auth.rateLimiterUnavailable", resp["code"])
 }

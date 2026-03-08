@@ -653,7 +653,8 @@
       "sessionExpired": "Oturum süresi dolmuş",
       "refreshTokenRequired": "Yenileme tokeni gerekli",
       "insufficientPermissions": "Yetersiz yetki",
-      "accountLocked": "Çok fazla başarısız giriş denemesi nedeniyle hesap kilitlendi"
+      "accountLocked": "Çok fazla başarısız giriş denemesi nedeniyle hesap kilitlendi",
+      "rateLimiterUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin."
     },
     "project": {
       "notFound": "Proje bulunamadı",
