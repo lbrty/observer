@@ -23,16 +23,19 @@ type ListInput struct {
 }
 
 type EntryDTO struct {
-	ID         string  `json:"id"`
-	ProjectID  *string `json:"project_id"`
-	UserID     string  `json:"user_id"`
-	Action     string  `json:"action"`
-	EntityType string  `json:"entity_type"`
-	EntityID   *string `json:"entity_id"`
-	Summary    string  `json:"summary"`
-	IP         string  `json:"ip"`
-	UserAgent  string  `json:"user_agent"`
-	CreatedAt  string  `json:"created_at"`
+	ID            string  `json:"id"`
+	ProjectID     *string `json:"project_id"`
+	UserID        string  `json:"user_id"`
+	Action        string  `json:"action"`
+	EntityType    string  `json:"entity_type"`
+	EntityID      *string `json:"entity_id"`
+	Summary       string  `json:"summary"`
+	IP            string  `json:"ip"`
+	UserAgent     string  `json:"user_agent"`
+	CreatedAt     string  `json:"created_at"`
+	UserFirstName string  `json:"user_first_name"`
+	UserLastName  string  `json:"user_last_name"`
+	UserEmail     string  `json:"user_email"`
 }
 
 type ListOutput struct {

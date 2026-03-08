@@ -73,16 +73,19 @@ func (uc *AuditUseCase) List(ctx context.Context, input ListInput) (*ListOutput,
 	dtos := make([]EntryDTO, len(entries))
 	for i, e := range entries {
 		dtos[i] = EntryDTO{
-			ID:         e.ID,
-			ProjectID:  e.ProjectID,
-			UserID:     e.UserID,
-			Action:     e.Action,
-			EntityType: e.EntityType,
-			EntityID:   e.EntityID,
-			Summary:    e.Summary,
-			IP:         e.IP,
-			UserAgent:  e.UserAgent,
-			CreatedAt:  e.CreatedAt.Format(time.RFC3339),
+			ID:            e.ID,
+			ProjectID:     e.ProjectID,
+			UserID:        e.UserID,
+			Action:        e.Action,
+			EntityType:    e.EntityType,
+			EntityID:      e.EntityID,
+			Summary:       e.Summary,
+			IP:            e.IP,
+			UserAgent:     e.UserAgent,
+			CreatedAt:     e.CreatedAt.Format(time.RFC3339),
+			UserFirstName: e.UserFirstName,
+			UserLastName:  e.UserLastName,
+			UserEmail:     e.UserEmail,
 		}
 	}
 	return &ListOutput{Entries: dtos, Total: total, Page: page, PerPage: perPage}, nil
@@ -90,6 +93,9 @@ func (uc *AuditUseCase) List(ctx context.Context, input ListInput) (*ListOutput,
 
 // Record logs an audit event using metadata from context. Failures are logged but not returned.
 func (uc *AuditUseCase) Record(ctx context.Context, projectID *string, action, entityType string, entityID *string, summary string) {
+	if uc == nil {
+		return
+	}
 	entry := domainaudit.Entry{
 		ProjectID:  projectID,
 		UserID:     middleware.AuditUserID(ctx),

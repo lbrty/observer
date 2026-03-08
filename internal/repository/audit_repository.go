@@ -34,49 +34,50 @@ func (r *auditLogRepo) Log(ctx context.Context, entry audit.Entry) error {
 }
 
 func (r *auditLogRepo) List(ctx context.Context, filter audit.Filter) ([]audit.Entry, int, error) {
-	q := `SELECT id, project_id, user_id, action, entity_type, entity_id, summary, ip, user_agent, created_at
-	      FROM audit_logs WHERE 1=1`
-	countQ := `SELECT COUNT(*) FROM audit_logs WHERE 1=1`
+	q := `SELECT a.id, a.project_id, a.user_id, a.action, a.entity_type, a.entity_id, a.summary, a.ip, a.user_agent, a.created_at,
+	             COALESCE(u.first_name, '') AS user_first_name, COALESCE(u.last_name, '') AS user_last_name, COALESCE(u.email, '') AS user_email
+	      FROM audit_logs a LEFT JOIN users u ON u.id = a.user_id WHERE 1=1`
+	countQ := `SELECT COUNT(*) FROM audit_logs a WHERE 1=1`
 	args := []any{}
 	ix := 1
 
 	if filter.ProjectID != nil {
-		clause := fmt.Sprintf(" AND project_id = $%d", ix)
+		clause := fmt.Sprintf(" AND a.project_id = $%d", ix)
 		q += clause
 		countQ += clause
 		args = append(args, *filter.ProjectID)
 		ix++
 	}
 	if filter.UserID != nil {
-		clause := fmt.Sprintf(" AND user_id = $%d", ix)
+		clause := fmt.Sprintf(" AND a.user_id = $%d", ix)
 		q += clause
 		countQ += clause
 		args = append(args, *filter.UserID)
 		ix++
 	}
 	if filter.Action != nil {
-		clause := fmt.Sprintf(" AND action = $%d", ix)
+		clause := fmt.Sprintf(" AND a.action = $%d", ix)
 		q += clause
 		countQ += clause
 		args = append(args, *filter.Action)
 		ix++
 	}
 	if filter.EntityType != nil {
-		clause := fmt.Sprintf(" AND entity_type = $%d", ix)
+		clause := fmt.Sprintf(" AND a.entity_type = $%d", ix)
 		q += clause
 		countQ += clause
 		args = append(args, *filter.EntityType)
 		ix++
 	}
 	if filter.DateFrom != nil {
-		clause := fmt.Sprintf(" AND created_at >= $%d", ix)
+		clause := fmt.Sprintf(" AND a.created_at >= $%d", ix)
 		q += clause
 		countQ += clause
 		args = append(args, *filter.DateFrom)
 		ix++
 	}
 	if filter.DateTo != nil {
-		clause := fmt.Sprintf(" AND created_at <= $%d", ix)
+		clause := fmt.Sprintf(" AND a.created_at <= $%d", ix)
 		q += clause
 		countQ += clause
 		args = append(args, *filter.DateTo)
@@ -88,7 +89,7 @@ func (r *auditLogRepo) List(ctx context.Context, filter audit.Filter) ([]audit.E
 		return nil, 0, fmt.Errorf("count audit logs: %w", err)
 	}
 
-	q += " ORDER BY created_at DESC"
+	q += " ORDER BY a.created_at DESC"
 	offset := (filter.Page - 1) * filter.PerPage
 	q += fmt.Sprintf(" LIMIT $%d", ix)
 	args = append(args, filter.PerPage)
