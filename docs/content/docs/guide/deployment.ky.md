@@ -1,6 +1,6 @@
 ---
 title: Ornotuu
-weight: 4
+weight: 5
 ---
 
 Bul qoldonmo Observerdi komandañyz qoldono ala turğan serverge ornottoonu cetektejt. Tereñ tehnikalyq bilim kerek emes — eger serverge SSH qylyp, biraz komanda iştete alsañyz, munu qyla alasyz.
@@ -66,7 +66,7 @@ curl http://localhost:9000/health
 Munu körüşüñüz kerek:
 
 ```json
-{ "status": "healthy", "database": "connected", "timestamp": "..." }
+{ "status": "healthy", "timestamp": "..." }
 ```
 
 Eger munu körsöñüz, Observer dajyn. Web interfejske cetüü üçün domeniñizdi brauzerde açyñyz.

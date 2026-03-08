@@ -1,6 +1,6 @@
 ---
 title: Bereitstellung
-weight: 4
+weight: 5
 ---
 
 Diese Anleitung führt Sie durch die Installation von Observer auf einem Server, den Ihr Team nutzen kann. Sie brauchen kein tiefes technisches Wissen — wenn Sie sich per SSH auf einem Server einloggen und ein paar Befehle ausführen können, schaffen Sie das.
@@ -66,7 +66,7 @@ curl http://localhost:9000/health
 Sie sollten sehen:
 
 ```json
-{ "status": "healthy", "database": "connected", "timestamp": "..." }
+{ "status": "healthy", "timestamp": "..." }
 ```
 
 Wenn Sie das sehen, ist Observer bereit. Öffnen Sie Ihre Domain im Browser, um auf die Weboberfläche zuzugreifen.

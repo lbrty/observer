@@ -1,6 +1,7 @@
-# Observer CLI Reference
-
-## Overview
+---
+title: CLI Reference
+weight: 4
+---
 
 Observer provides a CLI for managing the server, database migrations, key generation, user administration, and development utilities.
 
@@ -24,12 +25,10 @@ Start the HTTP server.
 observer serve [flags]
 ```
 
-**Flags:**
-
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
+| Flag     | Type   | Default     | Description                               |
+| -------- | ------ | ----------- | ----------------------------------------- |
 | `--host` | string | `localhost` | Server host (overrides `SERVER_HOST` env) |
-| `--port` | int | `9000` | Server port (overrides `SERVER_PORT` env) |
+| `--port` | int    | `9000`      | Server port (overrides `SERVER_PORT` env) |
 
 **Examples:**
 
@@ -60,8 +59,8 @@ Apply all pending migrations.
 observer migrate up [flags]
 ```
 
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
+| Flag     | Type   | Default      | Description                  |
+| -------- | ------ | ------------ | ---------------------------- |
 | `--path` | string | `migrations` | Path to migrations directory |
 
 ```bash
@@ -80,10 +79,10 @@ Create a new forward-only migration file.
 observer migrate create [name] [flags]
 ```
 
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
+| Flag     | Type   | Default      | Description                  |
+| -------- | ------ | ------------ | ---------------------------- |
 | `--path` | string | `migrations` | Path to migrations directory |
-| `--seq` | uint | auto | Explicit sequence number |
+| `--seq`  | uint   | auto         | Explicit sequence number     |
 
 ```bash
 # Create a migration (auto-numbered)
@@ -101,8 +100,8 @@ Show the current migration version.
 observer migrate version [flags]
 ```
 
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
+| Flag     | Type   | Default      | Description                  |
+| -------- | ------ | ------------ | ---------------------------- |
 | `--path` | string | `migrations` | Path to migrations directory |
 
 ---
@@ -115,10 +114,10 @@ Generate an RSA key pair for JWT signing.
 observer keygen [flags]
 ```
 
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
-| `--bits` | int | `4096` | RSA key size (minimum 4096) |
-| `--output` | string | `.` | Output directory for key files |
+| Flag       | Type   | Default | Description                    |
+| ---------- | ------ | ------- | ------------------------------ |
+| `--bits`   | int    | `4096`  | RSA key size (minimum 4096)    |
+| `--output` | string | `.`     | Output directory for key files |
 
 **Examples:**
 
@@ -142,13 +141,13 @@ Create a platform administrator account.
 observer create-admin [flags]
 ```
 
-| Flag | Type | Required | Description |
-|------|------|----------|-------------|
-| `--email` | string | yes | Admin email |
-| `--password` | string | yes | Admin password (min 8 chars) |
-| `--first-name` | string | no | First name |
-| `--last-name` | string | no | Last name |
-| `--phone` | string | no | Phone number |
+| Flag           | Type   | Required | Description                  |
+| -------------- | ------ | -------- | ---------------------------- |
+| `--email`      | string | yes      | Admin email                  |
+| `--password`   | string | yes      | Admin password (min 8 chars) |
+| `--first-name` | string | no       | First name                   |
+| `--last-name`  | string | no       | Last name                    |
+| `--phone`      | string | no       | Phone number                 |
 
 **Examples:**
 
@@ -177,11 +176,11 @@ Seed the database with realistic mock data for development.
 observer seed [flags]
 ```
 
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
-| `--people` | int | `50` | Number of people per project |
-| `--projects` | int | `2` | Number of projects |
-| `--seed` | int64 | `0` | Random seed (0 = random) |
+| Flag         | Type  | Default | Description                  |
+| ------------ | ----- | ------- | ---------------------------- |
+| `--people`   | int   | `50`    | Number of people per project |
+| `--projects` | int   | `2`     | Number of projects           |
+| `--seed`     | int64 | `0`     | Random seed (0 = random)     |
 
 **Examples:**
 
@@ -196,7 +195,9 @@ observer seed --projects 5 --people 200
 observer seed --seed 42
 ```
 
-**WARNING:** This command truncates ALL tables before inserting data. Do not run against a production database.
+{{% callout type="warning" %}}
+This command truncates ALL tables before inserting data. Do not run against a production database.
+{{% /callout %}}
 
 Creates reference data (countries, states, places, offices, categories), users with known passwords (`password`), projects with permissions, and populates people with support records, migration records, notes, pets, and households.
 
@@ -245,91 +246,6 @@ Next steps:
 
 ---
 
-## Environment Variables
-
-All configuration is read from environment variables. A `.env` file in the working directory is loaded automatically via [godotenv](https://github.com/joho/godotenv).
-
-### Server
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SERVER_HOST` | `localhost` | Bind address |
-| `SERVER_PORT` | `9000` | Listen port |
-| `SERVER_READ_TIMEOUT` | `30s` | HTTP read timeout |
-| `SERVER_WRITE_TIMEOUT` | `30s` | HTTP write timeout |
-
-### Database
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DATABASE_DSN` | _(none)_ | PostgreSQL connection string |
-
-### Redis
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `REDIS_URL` | `redis://localhost:6379/0` | Redis connection URL |
-
-### JWT
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `JWT_PRIVATE_KEY_PATH` | `keys/jwt_rsa` | Path to RSA private key |
-| `JWT_PUBLIC_KEY_PATH` | `keys/jwt_rsa.pub` | Path to RSA public key |
-| `JWT_ACCESS_TTL` | `15m` | Access token lifetime |
-| `JWT_REFRESH_TTL` | `168h` | Refresh token lifetime (7 days) |
-| `JWT_MFA_TEMP_TTL` | `5m` | MFA temporary token lifetime |
-| `JWT_ISSUER` | `observer` | JWT issuer claim |
-
-### CORS
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `CORS_ORIGINS` | `http://localhost:5173` | Comma-separated allowed origins |
-
-### Cookies
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `COOKIE_DOMAIN` | _(empty)_ | Cookie domain |
-| `COOKIE_SECURE` | `true` | Set Secure flag on cookies |
-| `COOKIE_SAME_SITE` | `lax` | SameSite policy (`lax`, `strict`, `none`) |
-| `COOKIE_MAX_AGE` | `2h` | Cookie max age |
-
-### Rate Limiting
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `RATE_LIMIT_LOGIN` | `10` | Login attempts per window |
-| `RATE_LIMIT_REGISTER` | `5` | Registration attempts per window |
-
-### Storage
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `STORAGE_PATH` | `data/uploads` | Root directory for file uploads |
-
-### Logging
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `LOG_LEVEL` | `info` | Log level (`debug`, `info`, `warn`, `error`) |
-
-### Swagger
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SWAGGER_ENABLED` | `false` | Enable Swagger UI at `/swagger/` |
-
-### Sentry
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SENTRY_DSN` | _(empty)_ | Sentry DSN (empty = disabled) |
-| `SENTRY_TRACES_SAMPLE_RATE` | `0.1` | Sentry traces sample rate |
-
----
-
 ## Common Workflows
 
 ### First-time setup
@@ -350,6 +266,8 @@ observer create-admin --email admin@example.com --password "your-password"
 # 5. Start the server
 observer serve
 ```
+
+For a full demo setup with sample data, see the [demo setup guide](/docs/guide/demo-setup/).
 
 ### Adding a new migration
 

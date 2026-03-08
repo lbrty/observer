@@ -1,6 +1,6 @@
 ---
 title: Deployment
-weight: 4
+weight: 5
 ---
 
 This guide walks you through putting Observer on a server where your team can use it. You don't need deep technical knowledge — if you can SSH into a server and run a few commands, you can do this.
@@ -66,7 +66,7 @@ curl http://localhost:9000/health
 You should see:
 
 ```json
-{ "status": "healthy", "database": "connected", "timestamp": "..." }
+{ "status": "healthy", "timestamp": "..." }
 ```
 
 If you see this, Observer is ready. Open your domain in a browser to access the web interface.

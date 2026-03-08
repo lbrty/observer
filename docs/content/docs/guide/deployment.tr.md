@@ -1,6 +1,6 @@
 ---
 title: Dağıtım
-weight: 4
+weight: 5
 ---
 
 Bu rehber, Observer'ı ekibinizin kullanabileceği bir sunucuya kurma sürecinde size yol gösterir. Derin teknik bilgiye ihtiyacınız yok — bir sunucuya SSH ile bağlanıp birkaç komut çalıştırabiliyorsanız, bunu yapabilirsiniz.
@@ -66,7 +66,7 @@ curl http://localhost:9000/health
 Şunu görmelisiniz:
 
 ```json
-{ "status": "healthy", "database": "connected", "timestamp": "..." }
+{ "status": "healthy", "timestamp": "..." }
 ```
 
 Bunu görüyorsanız, Observer hazırdır. Web arayüzüne erişmek için alan adınızı tarayıcıda açın.
