@@ -9,6 +9,33 @@ footer {
   margin-top: auto;
 }
 
+// callout blocks
+.callout {
+  border-left: 4px solid;
+  border-radius: 0.25rem;
+  margin: 1.5rem 0;
+  padding: 0.875rem 1rem;
+
+  .callout-body > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+.callout-warning {
+  border-color: #f59e0b;
+  background-color: rgba(245, 158, 11, 0.08);
+}
+
+.callout-note {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.08);
+}
+
+.callout-danger {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.08);
+}
+
 // search dialog — normalize content font sizes
 #searchResults {
   .content {
