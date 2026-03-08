@@ -190,6 +190,17 @@
   --shadow-overlay: rgba(26, 25, 22, 0.08);
 }
 
+/* Autofill override — prevent browser from overriding theme bg/fg */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg) inset !important;
+  -webkit-text-fill-color: var(--fg) !important;
+  caret-color: var(--fg);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 /* Base typography */
 body {
   font-feature-settings:

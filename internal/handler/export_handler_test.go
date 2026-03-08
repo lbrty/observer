@@ -255,7 +255,7 @@ func TestExportHandler_ExportHouseholds_Success(t *testing.T) {
 	ref := "HH-001"
 	headID := testID().String()
 
-	deps.householdRepo.EXPECT().List(gomock.Any(), projectID, gomock.Any(), gomock.Any()).Return([]*household.Household{
+	deps.householdRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*household.Household{
 		{
 			ID:              "hh-1",
 			ProjectID:       projectID,
@@ -288,7 +288,7 @@ func TestExportHandler_ExportHouseholds_RepoError(t *testing.T) {
 
 	projectID := testID().String()
 
-	deps.householdRepo.EXPECT().List(gomock.Any(), projectID, gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
+	deps.householdRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
 
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/households", nil, gin.Params{
 		{Key: "project_id", Value: projectID},

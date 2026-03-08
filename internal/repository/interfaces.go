@@ -187,7 +187,7 @@ type MigrationRecordRepository interface {
 
 // HouseholdRepository defines persistence operations for households.
 type HouseholdRepository interface {
-	List(ctx context.Context, projectID string, page, perPage int) ([]*household.Household, int, error)
+	List(ctx context.Context, filter household.HouseholdListFilter) ([]*household.Household, int, error)
 	GetByID(ctx context.Context, id string) (*household.Household, error)
 	Create(ctx context.Context, h *household.Household) error
 	Update(ctx context.Context, h *household.Household) error

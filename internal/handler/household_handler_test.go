@@ -29,7 +29,7 @@ func TestHouseholdHandler_List_Success(t *testing.T) {
 
 	projectID := testID().String()
 	now := time.Now().UTC()
-	repo.EXPECT().List(gomock.Any(), projectID, 1, 20).Return([]*household.Household{
+	repo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*household.Household{
 		{ID: testID().String(), ProjectID: projectID, CreatedAt: now, UpdatedAt: now},
 		{ID: testID().String(), ProjectID: projectID, CreatedAt: now, UpdatedAt: now},
 	}, 2, nil)
@@ -51,7 +51,7 @@ func TestHouseholdHandler_List_InternalError(t *testing.T) {
 	h, repo, _ := newHouseholdHandler(ctrl)
 
 	projectID := testID().String()
-	repo.EXPECT().List(gomock.Any(), projectID, 1, 20).Return(nil, 0, fmt.Errorf("db error"))
+	repo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
 
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/households", nil, gin.Params{
 		{Key: "project_id", Value: projectID},

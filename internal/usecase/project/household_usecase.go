@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/lbrty/observer/internal/domain/household"
 	"github.com/lbrty/observer/internal/repository"
@@ -27,7 +28,27 @@ func NewHouseholdUseCase(repo repository.HouseholdRepository, memberRepo reposit
 func (uc *HouseholdUseCase) List(ctx context.Context, projectID string, input ListHouseholdsInput) (*ListHouseholdsOutput, error) {
 	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
-	households, total, err := uc.repo.List(ctx, projectID, page, perPage)
+	filter := household.HouseholdListFilter{
+		ProjectID: projectID,
+		Page:      page,
+		PerPage:   perPage,
+	}
+	if input.Search != "" {
+		filter.Search = &input.Search
+	}
+	if input.CreatedFrom != "" {
+		if t, err := time.Parse("2006-01-02", input.CreatedFrom); err == nil {
+			filter.CreatedFrom = &t
+		}
+	}
+	if input.CreatedTo != "" {
+		if t, err := time.Parse("2006-01-02", input.CreatedTo); err == nil {
+			end := t.Add(24*time.Hour - time.Nanosecond)
+			filter.CreatedTo = &end
+		}
+	}
+
+	households, total, err := uc.repo.List(ctx, filter)
 	if err != nil {
 		return nil, fmt.Errorf("list households: %w", err)
 	}

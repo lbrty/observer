@@ -1802,9 +1802,9 @@ func (mr *MockHouseholdRepositoryMockRecorder) GetByID(ctx, id any) *gomock.Call
 }
 
 // List mocks base method.
-func (m *MockHouseholdRepository) List(ctx context.Context, projectID string, page, perPage int) ([]*household.Household, int, error) {
+func (m *MockHouseholdRepository) List(ctx context.Context, filter household.HouseholdListFilter) ([]*household.Household, int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "List", ctx, projectID, page, perPage)
+	ret := m.ctrl.Call(m, "List", ctx, filter)
 	ret0, _ := ret[0].([]*household.Household)
 	ret1, _ := ret[1].(int)
 	ret2, _ := ret[2].(error)
@@ -1812,9 +1812,9 @@ func (m *MockHouseholdRepository) List(ctx context.Context, projectID string, pa
 }
 
 // List indicates an expected call of List.
-func (mr *MockHouseholdRepositoryMockRecorder) List(ctx, projectID, page, perPage any) *gomock.Call {
+func (mr *MockHouseholdRepositoryMockRecorder) List(ctx, filter any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockHouseholdRepository)(nil).List), ctx, projectID, page, perPage)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockHouseholdRepository)(nil).List), ctx, filter)
 }
 
 // Update mocks base method.

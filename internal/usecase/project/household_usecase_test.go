@@ -24,7 +24,7 @@ func TestHouseholdUseCase_List_Success(t *testing.T) {
 	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	now := time.Now().UTC()
-	mockRepo.EXPECT().List(gomock.Any(), "proj1", gomock.Any(), gomock.Any()).Return([]*household.Household{
+	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*household.Household{
 		{ID: "h1", ProjectID: "proj1", MemberCount: 3, CreatedAt: now, UpdatedAt: now},
 		{ID: "h2", ProjectID: "proj1", MemberCount: 1, CreatedAt: now, UpdatedAt: now},
 	}, 2, nil)
@@ -46,7 +46,7 @@ func TestHouseholdUseCase_List_RepoError(t *testing.T) {
 	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
 	repoErr := errors.New("db error")
-	mockRepo.EXPECT().List(gomock.Any(), "proj1", gomock.Any(), gomock.Any()).Return(nil, 0, repoErr)
+	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, repoErr)
 
 	_, err := uc.List(context.Background(), "proj1", ucproject.ListHouseholdsInput{})
 	assert.ErrorIs(t, err, repoErr)

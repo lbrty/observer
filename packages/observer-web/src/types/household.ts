@@ -19,6 +19,7 @@ export interface Household {
   project_id: string;
   reference_number?: string;
   head_person_id?: string;
+  head_person_name?: string;
   member_count: number;
   members?: HouseholdMember[];
   created_at: string;

@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -32,7 +34,7 @@ func scanHousehold(row interface{ Scan(dest ...any) error }) (*household.Househo
 
 func scanHouseholdWithCount(row interface{ Scan(dest ...any) error }) (*household.Household, error) {
 	var h household.Household
-	if err := row.Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &h.MemberCount, &h.CreatedAt, &h.UpdatedAt); err != nil {
+	if err := row.Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &h.HeadPersonName, &h.MemberCount, &h.CreatedAt, &h.UpdatedAt); err != nil {
 		return nil, err
 	}
 	TimesToUTC(&h.CreatedAt, &h.UpdatedAt)
@@ -47,25 +49,65 @@ func scanMember(row interface{ Scan(dest ...any) error }) (*household.Member, er
 	return &m, nil
 }
 
-func (r *householdRepo) List(ctx context.Context, projectID string, page, perPage int) ([]*household.Household, int, error) {
+func (r *householdRepo) List(ctx context.Context, filter household.HouseholdListFilter) ([]*household.Household, int, error) {
+	page := filter.Page
 	if page < 1 {
 		page = 1
 	}
+	perPage := filter.PerPage
 	if perPage < 1 {
 		perPage = 20
 	}
 
+	var (
+		where []string
+		args  []any
+		ix    int
+	)
+
+	ix++
+	where = append(where, "h.project_id = $"+strconv.Itoa(ix))
+	args = append(args, filter.ProjectID)
+
+	if filter.Search != nil && *filter.Search != "" {
+		ix++
+		where = append(where, "h.reference_number ILIKE '%' || $"+strconv.Itoa(ix)+" || '%'")
+		args = append(args, *filter.Search)
+	}
+	if filter.CreatedFrom != nil {
+		ix++
+		where = append(where, "h.created_at >= $"+strconv.Itoa(ix))
+		args = append(args, *filter.CreatedFrom)
+	}
+	if filter.CreatedTo != nil {
+		ix++
+		where = append(where, "h.created_at <= $"+strconv.Itoa(ix))
+		args = append(args, *filter.CreatedTo)
+	}
+
+	whereClause := "WHERE " + strings.Join(where, " AND ")
+
 	var total int
-	if err := r.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM households WHERE project_id = $1`, projectID).Scan(&total); err != nil {
+	if err := r.db.QueryRowContext(ctx, "SELECT COUNT(*) FROM households h "+whereClause, args...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count households: %w", err)
 	}
 
 	offset := (page - 1) * perPage
-	const q = `SELECT h.id, h.project_id, h.reference_number, h.head_person_id,
+	ix++
+	args = append(args, perPage)
+	limitParam := "$" + strconv.Itoa(ix)
+	ix++
+	args = append(args, offset)
+	offsetParam := "$" + strconv.Itoa(ix)
+
+	q := `SELECT h.id, h.project_id, h.reference_number, h.head_person_id,
+			NULLIF(TRIM(COALESCE(p.first_name, '') || ' ' || COALESCE(p.last_name, '')), '') AS head_person_name,
 			COALESCE((SELECT COUNT(*) FROM household_members hm WHERE hm.household_id = h.id), 0) AS member_count,
 			h.created_at, h.updated_at
-		FROM households h WHERE h.project_id = $1 ORDER BY h.created_at DESC LIMIT $2 OFFSET $3`
-	rows, err := r.db.QueryContext(ctx, q, projectID, perPage, offset)
+		FROM households h
+		LEFT JOIN people p ON p.id = h.head_person_id
+		` + whereClause + ` ORDER BY h.created_at DESC LIMIT ` + limitParam + ` OFFSET ` + offsetParam
+	rows, err := r.db.QueryContext(ctx, q, args...)
 	if err != nil {
 		return nil, 0, fmt.Errorf("list households: %w", err)
 	}

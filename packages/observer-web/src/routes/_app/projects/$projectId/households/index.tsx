@@ -17,7 +17,6 @@ import {
 } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
-import { PersonName } from "@/components/person-name";
 import { useHouseholds } from "@/hooks/use-households";
 import { useMyProjects } from "@/hooks/use-my-projects";
 import { api } from "@/lib/api";
@@ -58,14 +57,23 @@ function HouseholdsListPage() {
       type: "search",
       placeholder: t("project.households.search"),
       value: search,
-      onChange: setSearch,
+      onChange: (v) => {
+        setSearch(v);
+        setPage(1);
+      },
     },
     {
       type: "date-range",
       fromValue: dateFrom,
       toValue: dateTo,
-      onFromChange: setDateFrom,
-      onToChange: setDateTo,
+      onFromChange: (v) => {
+        setDateFrom(v);
+        setPage(1);
+      },
+      onToChange: (v) => {
+        setDateTo(v);
+        setPage(1);
+      },
       fromPlaceholder: t("common.dateFrom"),
       toPlaceholder: t("common.dateTo"),
     },
@@ -109,10 +117,8 @@ function HouseholdsListPage() {
       key: "head_person_id",
       header: t("project.households.headPerson"),
       render: (h) =>
-        h.head_person_id ? (
-          <span className="text-sm text-fg-secondary">
-            <PersonName projectId={projectId} personId={h.head_person_id} />
-          </span>
+        h.head_person_name ? (
+          <span className="text-sm text-fg-secondary">{h.head_person_name}</span>
         ) : (
           <span className="text-fg-tertiary">—</span>
         ),

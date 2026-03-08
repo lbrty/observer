@@ -117,7 +117,7 @@ function LoginPage() {
               pattern="[0-9]{6}"
               maxLength={6}
               required
-              autoComplete="one-time-code"
+              autoComplete="off"
               autoFocus
               className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-center text-lg tracking-widest text-fg outline-none focus:border-accent"
             />

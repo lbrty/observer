@@ -23,6 +23,7 @@ type Household struct {
 	ProjectID       string
 	ReferenceNumber *string
 	HeadPersonID    *string
+	HeadPersonName  *string
 	MemberCount     int
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
@@ -33,4 +34,14 @@ type Member struct {
 	HouseholdID  string
 	PersonID     string
 	Relationship Relationship
+}
+
+// HouseholdListFilter holds filter options for listing households.
+type HouseholdListFilter struct {
+	ProjectID   string
+	Page        int
+	PerPage     int
+	Search      *string
+	CreatedFrom *time.Time
+	CreatedTo   *time.Time
 }
