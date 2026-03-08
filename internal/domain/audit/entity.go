@@ -5,7 +5,7 @@ import "time"
 type Entry struct {
 	ID            string    `db:"id"`
 	ProjectID     *string   `db:"project_id"`
-	UserID        string    `db:"user_id"`
+	UserID        *string   `db:"user_id"` // nil when the user has been deleted
 	Action        string    `db:"action"`
 	EntityType    string    `db:"entity_type"`
 	EntityID      *string   `db:"entity_id"`

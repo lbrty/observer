@@ -697,5 +697,8 @@
     "pet": {
       "notFound": "Üj canybary tabylğan coq"
     }
+  },
+  "auditLog": {
+    "deletedUser": "Öçürülgön qoldonuuçu"
   }
 }

@@ -75,7 +75,7 @@ func (uc *AuditUseCase) List(ctx context.Context, input ListInput) (*ListOutput,
 		dtos[i] = EntryDTO{
 			ID:            e.ID,
 			ProjectID:     e.ProjectID,
-			UserID:        e.UserID,
+			UserID:        e.UserID, // *string — nil when user was deleted
 			Action:        e.Action,
 			EntityType:    e.EntityType,
 			EntityID:      e.EntityID,
@@ -96,9 +96,13 @@ func (uc *AuditUseCase) Record(ctx context.Context, projectID *string, action, e
 	if uc == nil {
 		return
 	}
+	var userID *string
+	if uid := middleware.AuditUserID(ctx); uid != "" {
+		userID = &uid
+	}
 	entry := domainaudit.Entry{
 		ProjectID:  projectID,
-		UserID:     middleware.AuditUserID(ctx),
+		UserID:     userID,
 		Action:     action,
 		EntityType: entityType,
 		EntityID:   entityID,

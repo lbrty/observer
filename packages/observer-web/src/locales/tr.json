@@ -697,5 +697,8 @@
     "pet": {
       "notFound": "Evcil hayvan bulunamadı"
     }
+  },
+  "auditLog": {
+    "deletedUser": "Silinmiş kullanıcı"
   }
 }

@@ -80,7 +80,7 @@ func TestAuditLogRepository_Log(t *testing.T) {
 	projID := "proj1"
 	err := f.repo.Log(context.Background(), audit.Entry{
 		ProjectID:  &projID,
-		UserID:     f.userID,
+		UserID:     &f.userID,
 		Action:     "create",
 		EntityType: "person",
 		Summary:    "created person",
@@ -98,7 +98,7 @@ func TestAuditLogRepository_List_NoFilters(t *testing.T) {
 	for i := 0; i < 3; i++ {
 		require.NoError(t, f.repo.Log(ctx, audit.Entry{
 			ProjectID:  &projID,
-			UserID:     f.userID,
+			UserID:     &f.userID,
 			Action:     "create",
 			EntityType: "person",
 			Summary:    "entry",
@@ -122,7 +122,7 @@ func TestAuditLogRepository_List_ByProjectID(t *testing.T) {
 	for i := 0; i < 2; i++ {
 		require.NoError(t, f.repo.Log(ctx, audit.Entry{
 			ProjectID:  &proj1,
-			UserID:     f.userID,
+			UserID:     &f.userID,
 			Action:     "create",
 			EntityType: "person",
 			Summary:    "entry",
@@ -130,7 +130,7 @@ func TestAuditLogRepository_List_ByProjectID(t *testing.T) {
 	}
 	require.NoError(t, f.repo.Log(ctx, audit.Entry{
 		ProjectID:  &proj2,
-		UserID:     f.userID,
+		UserID:     &f.userID,
 		Action:     "update",
 		EntityType: "person",
 		Summary:    "entry",
@@ -153,13 +153,13 @@ func TestAuditLogRepository_List_ByAction(t *testing.T) {
 	projID := "proj1"
 
 	require.NoError(t, f.repo.Log(ctx, audit.Entry{
-		ProjectID: &projID, UserID: f.userID, Action: "create", EntityType: "person", Summary: "a",
+		ProjectID: &projID, UserID: &f.userID, Action: "create", EntityType: "person", Summary: "a",
 	}))
 	require.NoError(t, f.repo.Log(ctx, audit.Entry{
-		ProjectID: &projID, UserID: f.userID, Action: "delete", EntityType: "person", Summary: "b",
+		ProjectID: &projID, UserID: &f.userID, Action: "delete", EntityType: "person", Summary: "b",
 	}))
 	require.NoError(t, f.repo.Log(ctx, audit.Entry{
-		ProjectID: &projID, UserID: f.userID, Action: "create", EntityType: "person", Summary: "c",
+		ProjectID: &projID, UserID: &f.userID, Action: "create", EntityType: "person", Summary: "c",
 	}))
 
 	action := "create"

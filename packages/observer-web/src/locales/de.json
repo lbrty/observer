@@ -697,5 +697,8 @@
     "pet": {
       "notFound": "Haustier nicht gefunden"
     }
+  },
+  "auditLog": {
+    "deletedUser": "Gelöschter Benutzer"
   }
 }

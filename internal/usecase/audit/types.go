@@ -2,7 +2,7 @@ package audit
 
 type LogInput struct {
 	ProjectID  *string
-	UserID     string
+	UserID     *string
 	Action     string
 	EntityType string
 	EntityID   *string
@@ -25,7 +25,7 @@ type ListInput struct {
 type EntryDTO struct {
 	ID            string  `json:"id"`
 	ProjectID     *string `json:"project_id"`
-	UserID        string  `json:"user_id"`
+	UserID        *string `json:"user_id"`
 	Action        string  `json:"action"`
 	EntityType    string  `json:"entity_type"`
 	EntityID      *string `json:"entity_id"`

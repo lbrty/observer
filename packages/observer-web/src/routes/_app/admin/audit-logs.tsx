@@ -89,15 +89,18 @@ function AuditLogsPage() {
     {
       key: "user",
       header: t("audit.user"),
-      render: (e) => (
-        <div className="min-w-0">
-          <p className="truncate text-sm text-fg">
-            {e.user_first_name}
-            {e.user_last_name ? ` ${e.user_last_name}` : ""}
-          </p>
-          <p className="truncate text-xs text-fg-tertiary">{e.user_email}</p>
-        </div>
-      ),
+      render: (e) =>
+        e.user_id ? (
+          <div className="min-w-0">
+            <p className="truncate text-sm text-fg">
+              {e.user_first_name}
+              {e.user_last_name ? ` ${e.user_last_name}` : ""}
+            </p>
+            <p className="truncate text-xs text-fg-tertiary">{e.user_email}</p>
+          </div>
+        ) : (
+          <span className="text-sm italic text-fg-tertiary">{t("auditLog.deletedUser")}</span>
+        ),
     },
     {
       key: "action",
