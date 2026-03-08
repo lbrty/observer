@@ -13,6 +13,7 @@
     "themeDarkHc": "Koyu (YK)",
     "cancel": "İptal",
     "export": "Dışa aktar",
+    "downloadCsv": "CSV indir",
     "dateFrom": "Başlangıç",
     "dateTo": "Bitiş",
     "dateRange": "Tarih aralığı",
@@ -71,7 +72,8 @@
     "disableMFAHint": "Onaylamak için mevcut kimlik doğrulayıcı kodunuzu girin.",
     "confirmDisable": "Devre dışı bırak",
     "mfaEnabled": "İki faktörlü kimlik doğrulama etkinleştirildi.",
-    "mfaDisabled": "İki faktörlü kimlik doğrulama devre dışı bırakıldı."
+    "mfaDisabled": "İki faktörlü kimlik doğrulama devre dışı bırakıldı.",
+    "totpQrCodeAlt": "TOTP QR kodu"
   },
   "dashboard": {
     "greeting": "Merhaba",

@@ -60,7 +60,7 @@ describe("DataTable", () => {
   });
 
   it("calls onRowClick when row is clicked", () => {
-    const handleClick = mock(() => {});
+    const handleClick = mock((_item: Item) => {});
 
     const { container } = render(
       <DataTable

@@ -13,6 +13,7 @@
     "themeDarkHc": "Dark (HC)",
     "cancel": "Cancel",
     "export": "Export",
+    "downloadCsv": "Download CSV",
     "dateFrom": "From",
     "dateTo": "To",
     "dateRange": "Date range",
@@ -71,7 +72,8 @@
     "disableMFAHint": "Enter your current authenticator code to confirm.",
     "confirmDisable": "Disable",
     "mfaEnabled": "Two-factor authentication enabled.",
-    "mfaDisabled": "Two-factor authentication disabled."
+    "mfaDisabled": "Two-factor authentication disabled.",
+    "totpQrCodeAlt": "TOTP QR code"
   },
   "dashboard": {
     "greeting": "Hello",

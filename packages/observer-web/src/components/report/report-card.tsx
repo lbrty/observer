@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { BarChart, type BarLegendItem } from "@/components/charts/bar-chart";
 import { PieChart } from "@/components/charts/pie-chart";
 import { DownloadSimpleIcon } from "@/components/icons";
@@ -28,6 +30,7 @@ export function ReportCard({
   colorMap,
   direction,
 }: ReportCardProps) {
+  const { t } = useTranslation();
   const translated = useTranslatedRows(group.rows);
   const source = skipTranslation ? group.rows : translated;
   const rows = mapLabel ? source.map((r) => ({ ...r, label: mapLabel(r.label) })) : source;
@@ -40,7 +43,7 @@ export function ReportCard({
             type="button"
             onClick={() => exportGroupCSV(title, rows)}
             className="text-fg-tertiary transition-colors hover:text-fg"
-            title="Download CSV"
+            title={t("common.downloadCsv")}
           >
             <DownloadSimpleIcon size={14} />
           </button>

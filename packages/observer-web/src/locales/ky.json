@@ -13,6 +13,7 @@
     "themeDarkHc": "Qarañğy (HC)",
     "cancel": "Baş tartuu",
     "export": "Çyğaruu",
+    "downloadCsv": "Eksport CSV",
     "dateFrom": "Başyndan",
     "dateTo": "Aqyryna",
     "dateRange": "Ubakyt aralyğy",
@@ -71,7 +72,8 @@
     "disableMFAHint": "Tastyqtoo üçün azyrqy autentifikator kodunuzdu kirgiziñiz.",
     "confirmDisable": "Öçür",
     "mfaEnabled": "Eki faktorluu autentifikatsija işke qoşuldu.",
-    "mfaDisabled": "Eki faktorluu autentifikatsija öçürüldü."
+    "mfaDisabled": "Eki faktorluu autentifikatsija öçürüldü.",
+    "totpQrCodeAlt": "TOTP QR kodu"
   },
   "dashboard": {
     "greeting": "Salam",
@@ -546,13 +548,14 @@
       "statusOwnerFound": "Eesi tabylğan",
       "statusNeedsShelter": "Bayaq kerek",
       "statusUnknown": "Belgisiz",
-      "emptyTitle": "Qattalğan üj candyqtary coq",
-      "emptyDescription": "Birinçi üy candyğyn qattañyz"
+      "emptyTitle": "Qattalğan üj canybarlary coq",
+      "emptyDescription": "Birinçi üy canybaryn qattañyz"
     },
     "reports": {
       "title": "Raporlor",
       "dateFrom": "Başyndan",
       "dateTo": "Aqyryna",
+      "dateRange": "Ubakyt aralyğy",
       "consultations": "Konsultatsijalar",
       "byCaseStatus": "İş statusu boyunça",
       "bySex": "Cynys boyunça",

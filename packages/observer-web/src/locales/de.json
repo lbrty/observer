@@ -13,6 +13,7 @@
     "themeDarkHc": "Dunkel (HK)",
     "cancel": "Abbrechen",
     "export": "Exportieren",
+    "downloadCsv": "CSV herunterladen",
     "dateFrom": "Von",
     "dateTo": "Bis",
     "dateRange": "Datumsbereich",
@@ -71,7 +72,8 @@
     "disableMFAHint": "Geben Sie Ihren aktuellen Authentifikator-Code zur Bestätigung ein.",
     "confirmDisable": "Deaktivieren",
     "mfaEnabled": "Zwei-Faktor-Authentifizierung aktiviert.",
-    "mfaDisabled": "Zwei-Faktor-Authentifizierung deaktiviert."
+    "mfaDisabled": "Zwei-Faktor-Authentifizierung deaktiviert.",
+    "totpQrCodeAlt": "TOTP QR-Code"
   },
   "dashboard": {
     "greeting": "Hallo",

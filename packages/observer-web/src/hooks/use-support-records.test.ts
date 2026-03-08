@@ -6,13 +6,13 @@ import { TestWrapper } from "@/test/wrapper";
 mock.module("@/lib/api", () => ({
   api: {
     get: () => ({
-      json: () => Promise.resolve({ records: [{ id: "sr1", type: "consultation" }], total: 1 }),
+      json: () => Promise.resolve({ records: [{ id: "sr1", type: "humanitarian" }], total: 1 }),
     }),
     post: () => ({
-      json: () => Promise.resolve({ id: "sr-new", type: "consultation" }),
+      json: () => Promise.resolve({ id: "sr-new", type: "humanitarian" }),
     }),
     patch: () => ({
-      json: () => Promise.resolve({ id: "sr1", type: "consultation" }),
+      json: () => Promise.resolve({ id: "sr1", type: "humanitarian" }),
     }),
   },
   HTTPError: class extends Error {},
@@ -29,7 +29,7 @@ describe("useSupportRecords", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data?.records).toHaveLength(1);
-    expect(result.current.data?.records[0].type).toBe("consultation");
+    expect(result.current.data?.records[0].type).toBe("humanitarian");
   });
 
   it("does not fetch when projectId is empty", () => {

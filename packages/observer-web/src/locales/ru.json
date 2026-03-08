@@ -13,6 +13,7 @@
     "themeDarkHc": "Тёмная (ВК)",
     "cancel": "Отмена",
     "export": "Экспорт",
+    "downloadCsv": "Скачать CSV",
     "dateFrom": "С",
     "dateTo": "По",
     "dateRange": "Диапазон дат",
@@ -71,7 +72,8 @@
     "disableMFAHint": "Введите текущий код аутентификатора для подтверждения.",
     "confirmDisable": "Отключить",
     "mfaEnabled": "Двухфакторная аутентификация включена.",
-    "mfaDisabled": "Двухфакторная аутентификация отключена."
+    "mfaDisabled": "Двухфакторная аутентификация отключена.",
+    "totpQrCodeAlt": "TOTP QR-код"
   },
   "dashboard": {
     "greeting": "Здравствуйте",

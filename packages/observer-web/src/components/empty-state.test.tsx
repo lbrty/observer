@@ -1,11 +1,13 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import { cleanup, render, screen } from "@testing-library/react";
 
+import type { Icon } from "@/components/icons";
 import { EmptyState } from "@/components/empty-state";
 
-function FakeIcon({ size }: { size: number }) {
+function FakeIconFn({ size }: { size: number }) {
   return <svg data-testid="icon" data-size={size} />;
 }
+const FakeIcon = FakeIconFn as unknown as Icon;
 
 afterEach(cleanup);
 

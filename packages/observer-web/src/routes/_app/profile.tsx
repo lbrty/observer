@@ -281,7 +281,7 @@ function MFASettings() {
                 <div className="flex flex-col items-start gap-3">
                   <img
                     src={qrDataURL}
-                    alt="TOTP QR code"
+                    alt={t("profile.totpQrCodeAlt")}
                     className="rounded-lg border border-border-secondary"
                     width={180}
                     height={180}

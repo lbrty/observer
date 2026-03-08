@@ -129,6 +129,7 @@ function ReportCard({
   onExport?: () => void;
   total?: number;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-xl border border-border-secondary bg-bg-secondary p-5">
       <div className="mb-3 flex items-center justify-between">
@@ -139,7 +140,7 @@ function ReportCard({
               type="button"
               onClick={onExport}
               className="text-fg-tertiary transition-colors hover:text-fg"
-              title="Download CSV"
+              title={t("common.downloadCsv")}
             >
               <DownloadSimpleIcon size={14} />
             </button>
