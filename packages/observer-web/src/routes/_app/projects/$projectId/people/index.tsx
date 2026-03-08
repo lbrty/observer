@@ -15,7 +15,7 @@ import { Pagination } from "@/components/pagination";
 import { PersonDrawer } from "@/components/person-drawer";
 import { StatusBadge } from "@/components/status-badge";
 import { TagChips } from "@/components/tag-chips";
-import { TagFilter } from "@/components/tag-filter";
+import { SelectedTagChips, TagFilter } from "@/components/tag-filter";
 import { useMyProjects } from "@/hooks/use-my-projects";
 import { usePeople } from "@/hooks/use-people";
 import { api } from "@/lib/api";
@@ -194,7 +194,15 @@ function PeopleListPage() {
     {
       key: "case_status",
       header: t("project.people.caseStatus"),
-      render: (p) => <StatusBadge label={statusLabels[p.case_status] ?? p.case_status} />,
+      render: (p) => {
+        const caseVariants: Record<string, "foam" | "gold" | "rose" | "neutral"> = {
+          new: "gold",
+          active: "foam",
+          closed: "rose",
+          archived: "neutral",
+        };
+        return <StatusBadge label={statusLabels[p.case_status] ?? p.case_status} variant={caseVariants[p.case_status]} />;
+      },
     },
     {
       key: "tags",
@@ -257,6 +265,7 @@ function PeopleListPage() {
           </div>
         }
       />
+      <SelectedTagChips projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
 
       <Tabs.Root
         defaultValue=""

@@ -47,7 +47,7 @@ export function TagFilter({ projectId, selectedIds, onChange }: TagFilterProps) 
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 text-sm text-fg-secondary transition-colors hover:bg-bg-tertiary hover:text-fg"
+        className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg-secondary transition-colors hover:bg-bg-tertiary hover:text-fg"
       >
         <FunnelIcon size={14} />
         {t("project.tags.filterByTags")}
@@ -57,27 +57,6 @@ export function TagFilter({ projectId, selectedIds, onChange }: TagFilterProps) 
           </span>
         )}
       </button>
-
-      {selectedTags.length > 0 && (
-        <div className="ml-2 inline-flex flex-wrap gap-1.5">
-          {selectedTags.map((tag) => (
-            <span
-              key={tag.id}
-              className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium text-white"
-              style={{ backgroundColor: tag.color || "#888" }}
-            >
-              {tag.name}
-              <button
-                type="button"
-                onClick={() => remove(tag.id)}
-                className="ml-0.5 cursor-pointer rounded-sm p-0.5 hover:bg-black/20"
-              >
-                <XIcon size={10} />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
 
       {open && (
         <>
@@ -117,6 +96,39 @@ export function TagFilter({ projectId, selectedIds, onChange }: TagFilterProps) 
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+export function SelectedTagChips({
+  projectId,
+  selectedIds,
+  onChange,
+}: TagFilterProps) {
+  const { data } = useTags(projectId);
+  const tagMap = useMemo(() => new Map((data?.tags ?? []).map((t) => [t.id, t])), [data?.tags]);
+  const selectedTags = selectedIds.map((id) => tagMap.get(id)).filter(Boolean) as Tag[];
+
+  if (selectedTags.length === 0) return null;
+
+  return (
+    <div className="mb-3 flex flex-wrap items-center gap-1.5">
+      {selectedTags.map((tag) => (
+        <span
+          key={tag.id}
+          className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium text-white"
+          style={{ backgroundColor: tag.color || "#888" }}
+        >
+          {tag.name}
+          <button
+            type="button"
+            onClick={() => onChange(selectedIds.filter((v) => v !== tag.id))}
+            className="ml-0.5 cursor-pointer rounded-sm p-0.5 hover:bg-black/20"
+          >
+            <XIcon size={10} />
+          </button>
+        </span>
+      ))}
     </div>
   );
 }

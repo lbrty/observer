@@ -16,7 +16,7 @@ import { PersonName } from "@/components/person-name";
 import { PetDrawer } from "@/components/pet-drawer";
 import { StatusBadge } from "@/components/status-badge";
 import { TagChips } from "@/components/tag-chips";
-import { TagFilter } from "@/components/tag-filter";
+import { SelectedTagChips, TagFilter } from "@/components/tag-filter";
 import { useMyProjects } from "@/hooks/use-my-projects";
 import { usePets } from "@/hooks/use-pets";
 import { api } from "@/lib/api";
@@ -247,6 +247,7 @@ export function PetsContent({
           </div>
         }
       />
+      <SelectedTagChips projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
 
       <DataTable
         columns={columns}
