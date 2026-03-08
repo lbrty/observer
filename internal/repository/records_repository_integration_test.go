@@ -135,7 +135,7 @@ func TestHouseholdRepo_CRUD(t *testing.T) {
 	assert.Equal(t, proj.ID, got.ProjectID)
 
 	// List
-	list, total, err := hhRepo.List(ctx, proj.ID, 1, 10)
+	list, total, err := hhRepo.List(ctx, household.HouseholdListFilter{ProjectID: proj.ID, Page: 1, PerPage: 10})
 	require.NoError(t, err)
 	assert.Equal(t, 1, total)
 	assert.Len(t, list, 1)
