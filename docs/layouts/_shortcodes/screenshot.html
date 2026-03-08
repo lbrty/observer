@@ -1,6 +1,4 @@
-{{- $src := .Get "src" -}} {{- $alt := .Get "alt" | default "" -}} {{- $class := .Get "class" |
-default "" -}} {{- $r := resources.Get $src -}} {{- if $r -}} {{- $webp := $r.Resize "1440x webp
-q85" -}}
+{{- $src := .Get "src" -}} {{- $alt := .Get "alt" | default "" -}} {{- $class := .Get "class" | default "" -}} {{- $r := resources.Get $src -}} {{- if $r -}} {{- $webp := $r.Resize "1440x webp q85" -}}
 <img
   src="{{ $webp.RelPermalink }}"
   alt="{{ $alt }}"
