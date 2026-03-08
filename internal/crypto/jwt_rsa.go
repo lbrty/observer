@@ -1,7 +1,9 @@
 package crypto
 
 import (
+	"crypto/rand"
 	"crypto/rsa"
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -75,9 +77,13 @@ func (g *RSATokenGenerator) GenerateAccessToken(userID ulid.ULID, role string) (
 	return tokenStr, expiresAt, nil
 }
 
-// GenerateRefreshToken returns a secure random ULID string as the refresh token.
+// GenerateRefreshToken returns a cryptographically random 32-byte hex string.
 func (g *RSATokenGenerator) GenerateRefreshToken() (string, error) {
-	return ulid.Make().String(), nil
+	b := make([]byte, 32)
+	if _, err := rand.Read(b); err != nil {
+		return "", fmt.Errorf("generate refresh token: %w", err)
+	}
+	return hex.EncodeToString(b), nil
 }
 
 // GenerateMFAToken creates a short-lived JWT for MFA verification.

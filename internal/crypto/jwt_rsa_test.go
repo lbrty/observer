@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/pem"
 	"os"
 	"path/filepath"
@@ -99,4 +100,23 @@ func TestRSATokenGenerator_RefreshToken(t *testing.T) {
 	assert.NotEmpty(t, token1)
 	assert.NotEmpty(t, token2)
 	assert.NotEqual(t, token1, token2)
+}
+
+func TestGenerateRefreshToken_Entropy(t *testing.T) {
+	keys := setupRSAKeys(t)
+	gen := crypto.NewRSATokenGenerator(keys, time.Hour, 7*24*time.Hour, 5*time.Minute, "test")
+
+	tok1, err := gen.GenerateRefreshToken()
+	require.NoError(t, err)
+
+	tok2, err := gen.GenerateRefreshToken()
+	require.NoError(t, err)
+
+	// Must be hex-encoded 32 bytes = 64 chars
+	assert.Len(t, tok1, 64, "refresh token must be 64 hex chars (32 random bytes)")
+	assert.Len(t, tok2, 64)
+	assert.NotEqual(t, tok1, tok2)
+
+	_, err = hex.DecodeString(tok1)
+	assert.NoError(t, err, "refresh token must be valid hex")
 }
