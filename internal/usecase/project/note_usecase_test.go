@@ -12,6 +12,7 @@ import (
 
 	"github.com/lbrty/observer/internal/domain/note"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
 
@@ -20,7 +21,10 @@ func TestNoteUseCase_Update(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonNoteRepository(ctrl)
-	uc := ucproject.NewNoteUseCase(mockRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewNoteUseCase(mockRepo, auditUC)
 
 	author := "user1"
 	existing := &note.Note{
@@ -49,7 +53,10 @@ func TestNoteUseCase_Update_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonNoteRepository(ctrl)
-	uc := ucproject.NewNoteUseCase(mockRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewNoteUseCase(mockRepo, auditUC)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "n1").Return(nil, errors.New("not found"))
 
@@ -63,11 +70,14 @@ func TestNoteUseCase_Create(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPersonNoteRepository(ctrl)
-	uc := ucproject.NewNoteUseCase(mockRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewNoteUseCase(mockRepo, auditUC)
 
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
 
-	out, err := uc.Create(context.Background(), "p1", "author1", ucproject.CreateNoteInput{Body: "hello"})
+	out, err := uc.Create(context.Background(), "proj1", "p1", "author1", ucproject.CreateNoteInput{Body: "hello"})
 	require.NoError(t, err)
 	assert.Equal(t, "p1", out.PersonID)
 	assert.Equal(t, "hello", out.Body)

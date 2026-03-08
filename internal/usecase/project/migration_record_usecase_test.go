@@ -12,6 +12,7 @@ import (
 
 	"github.com/lbrty/observer/internal/domain/migration"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
 
@@ -20,7 +21,10 @@ func TestMigrationRecordUseCase_Update(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockMigrationRecordRepository(ctrl)
-	uc := ucproject.NewMigrationRecordUseCase(mockRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewMigrationRecordUseCase(mockRepo, auditUC)
 
 	reason := migration.ReasonConflict
 	existing := &migration.Record{
@@ -51,7 +55,10 @@ func TestMigrationRecordUseCase_Update_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockMigrationRecordRepository(ctrl)
-	uc := ucproject.NewMigrationRecordUseCase(mockRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewMigrationRecordUseCase(mockRepo, auditUC)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "mr1").Return(nil, errors.New("not found"))
 
@@ -65,7 +72,10 @@ func TestMigrationRecordUseCase_Update_PartialFields(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockMigrationRecordRepository(ctrl)
-	uc := ucproject.NewMigrationRecordUseCase(mockRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewMigrationRecordUseCase(mockRepo, auditUC)
 
 	fromPlace := "place1"
 	existing := &migration.Record{

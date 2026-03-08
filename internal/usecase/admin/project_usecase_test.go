@@ -12,6 +12,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 func TestProjectUseCase_List_Admin(t *testing.T) {
@@ -20,7 +21,10 @@ func TestProjectUseCase_List_Admin(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo, auditUC)
 
 	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*project.Project{
 		{ID: "p1", Name: "Project A", OwnerID: "u1", Status: project.ProjectStatusActive},
@@ -44,7 +48,10 @@ func TestProjectUseCase_List_Consultant(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo, auditUC)
 
 	mockPermRepo.EXPECT().ListByUserID(gomock.Any(), "c1").Return([]*project.ProjectPermission{
 		{ProjectID: "p1", UserID: "c1", Role: project.ProjectRoleConsultant},
@@ -67,7 +74,10 @@ func TestProjectUseCase_List_Guest_NoPermissions(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo, auditUC)
 
 	mockPermRepo.EXPECT().ListByUserID(gomock.Any(), "g1").Return(nil, nil)
 
@@ -85,7 +95,10 @@ func TestProjectUseCase_Create(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo, auditUC)
 
 	mockRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).
@@ -111,7 +124,10 @@ func TestProjectUseCase_Create_DuplicateName(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo, auditUC)
 
 	mockRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).
@@ -129,7 +145,10 @@ func TestProjectUseCase_Get_Admin(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo, auditUC)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&project.Project{
 		ID: "p1", Name: "Project A", OwnerID: "u1", Status: project.ProjectStatusActive,
@@ -147,7 +166,10 @@ func TestProjectUseCase_Get_Consultant_Permitted(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo, auditUC)
 
 	mockPermRepo.EXPECT().ListByUserID(gomock.Any(), "c1").Return([]*project.ProjectPermission{
 		{ProjectID: "p1", UserID: "c1"},
@@ -167,7 +189,10 @@ func TestProjectUseCase_Get_Guest_NotPermitted(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo, auditUC)
 
 	mockPermRepo.EXPECT().ListByUserID(gomock.Any(), "g1").Return(nil, nil)
 
@@ -181,7 +206,10 @@ func TestProjectUseCase_Get_NotFound(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo, auditUC)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, project.ErrProjectNotFound)
 
@@ -195,7 +223,10 @@ func TestProjectUseCase_Update_Archive(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockProjectRepository(ctrl)
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewProjectUseCase(mockRepo, mockPermRepo, auditUC)
 
 	existing := &project.Project{
 		ID: "p1", Name: "Project A", OwnerID: "u1", Status: project.ProjectStatusActive,

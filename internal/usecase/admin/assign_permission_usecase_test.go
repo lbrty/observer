@@ -11,6 +11,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/project"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 func TestPermissionUseCase_Assign_Success(t *testing.T) {
@@ -19,7 +20,10 @@ func TestPermissionUseCase_Assign_Success(t *testing.T) {
 
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, auditUC)
 
 	ctx := context.Background()
 
@@ -52,7 +56,10 @@ func TestPermissionUseCase_Assign_InvalidRole(t *testing.T) {
 
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, auditUC)
 
 	_, err := uc.Assign(context.Background(), "proj-1", ucadmin.AssignPermissionInput{
 		UserID: "user-1",
@@ -67,7 +74,10 @@ func TestPermissionUseCase_Assign_DuplicateDetection(t *testing.T) {
 
 	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, auditUC)
 
 	mockPermRepo.EXPECT().
 		Create(gomock.Any(), gomock.Any()).

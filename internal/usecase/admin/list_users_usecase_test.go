@@ -14,6 +14,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 func newUserUC(t *testing.T) (*ucadmin.UserUseCase, *mock_repo.MockUserRepository) {
@@ -22,7 +23,10 @@ func newUserUC(t *testing.T) (*ucadmin.UserUseCase, *mock_repo.MockUserRepositor
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, auditUC)
 	return uc, mockUserRepo
 }
 

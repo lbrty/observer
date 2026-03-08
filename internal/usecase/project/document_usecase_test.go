@@ -15,6 +15,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/document"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	mock_storage "github.com/lbrty/observer/internal/storage/mock"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
 
@@ -24,7 +25,10 @@ func TestDocumentUseCase_Update(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
 	mockFS := mock_storage.NewMockFileStorage(ctrl)
-	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, auditUC)
 
 	existing := &document.Document{
 		ID:        "d1",
@@ -57,7 +61,10 @@ func TestDocumentUseCase_Update_NotFound(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
 	mockFS := mock_storage.NewMockFileStorage(ctrl)
-	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, auditUC)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(nil, errors.New("not found"))
 
@@ -72,7 +79,10 @@ func TestDocumentUseCase_Update_NilName(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
 	mockFS := mock_storage.NewMockFileStorage(ctrl)
-	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, auditUC)
 
 	existing := &document.Document{
 		ID:        "d1",
@@ -102,7 +112,10 @@ func TestDocumentUseCase_Delete(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
 	mockFS := mock_storage.NewMockFileStorage(ctrl)
-	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, auditUC)
 
 	existing := &document.Document{
 		ID:   "d1",
@@ -123,7 +136,10 @@ func TestDocumentUseCase_Thumbnail_NotImage(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
 	mockFS := mock_storage.NewMockFileStorage(ctrl)
-	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, auditUC)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(&document.Document{
 		ID:       "d1",
@@ -141,7 +157,10 @@ func TestDocumentUseCase_Thumbnail_CacheHit(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
 	mockFS := mock_storage.NewMockFileStorage(ctrl)
-	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, auditUC)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(&document.Document{
 		ID:        "d1",
@@ -168,7 +187,10 @@ func TestDocumentUseCase_Thumbnail_NotFound(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
 	mockFS := mock_storage.NewMockFileStorage(ctrl)
-	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, auditUC)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(nil, document.ErrDocumentNotFound)
 

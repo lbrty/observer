@@ -14,6 +14,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
 func ptr[T any](v T) *T { return &v }
@@ -25,7 +26,10 @@ func TestUserUseCase_Update_PartialUpdate(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, auditUC)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
@@ -68,7 +72,10 @@ func TestUserUseCase_Update_RoleChange(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, auditUC)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
@@ -100,7 +107,10 @@ func TestUserUseCase_Update_InvalidRole(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, auditUC)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
@@ -130,7 +140,10 @@ func TestUserUseCase_Update_NotFound(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, auditUC)
 
 	uid := ulid.MustNew(ulid.Now(), nil)
 	mockUserRepo.EXPECT().GetByID(gomock.Any(), uid).Return(nil, user.ErrUserNotFound)
@@ -148,7 +161,10 @@ func TestUserUseCase_Update_Deactivate(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, auditUC)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
