@@ -19,7 +19,22 @@ import (
 var CreateAdminCmd = &cobra.Command{
 	Use:   "create-admin",
 	Short: "Create an admin user",
-	RunE:  runCreateAdmin,
+	Long: `Create a platform administrator account.
+
+Connects to the database, hashes the password with Argon2id, and inserts
+the user with admin role, verified and active. Requires DATABASE_DSN
+to be set. Rejects duplicate emails and phone numbers.`,
+	Example: `  # Create an admin with required fields
+  observer create-admin --email admin@example.com --password "s3cure-p4ss"
+
+  # With optional profile fields
+  observer create-admin \
+    --email admin@example.com \
+    --password "s3cure-p4ss" \
+    --first-name Admin \
+    --last-name User \
+    --phone "+1234567890"`,
+	RunE: runCreateAdmin,
 }
 
 func init() {

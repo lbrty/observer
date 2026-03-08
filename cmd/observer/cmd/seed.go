@@ -31,7 +31,24 @@ import (
 var SeedCmd = &cobra.Command{
 	Use:   "seed",
 	Short: "Seed database with mock data (destructive — truncates all tables first)",
-	RunE:  runSeed,
+	Long: `Seed the database with realistic mock data for development and testing.
+
+WARNING: This command truncates ALL tables before inserting data.
+Do not run against a production database.
+
+Creates reference data (countries, states, places, offices, categories),
+users with known passwords, projects with permissions, and populates
+people with support records, migration records, notes, pets, and
+households. All user passwords are set to "password".`,
+	Example: `  # Seed with defaults (2 projects, 50 people each)
+  observer seed
+
+  # Custom counts
+  observer seed --projects 5 --people 200
+
+  # Reproducible seed
+  observer seed --seed 42`,
+	RunE: runSeed,
 }
 
 func init() {

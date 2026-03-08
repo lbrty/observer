@@ -30,7 +30,21 @@ import (
 var ServeCmd = &cobra.Command{
 	Use:   "serve",
 	Short: "Start the HTTP server",
-	RunE:  runServe,
+	Long: `Start the Observer HTTP server.
+
+Reads configuration from environment variables (DATABASE_DSN, REDIS_URL, etc.)
+or a .env file. In production builds, embedded migrations are applied
+automatically on startup. Graceful shutdown on SIGINT/SIGTERM with a
+30-second timeout.`,
+	Example: `  # Start with defaults (localhost:9000)
+  observer serve
+
+  # Custom host and port
+  observer serve --host 0.0.0.0 --port 8080
+
+  # With environment configuration
+  DATABASE_DSN="postgres://..." REDIS_URL="redis://..." observer serve`,
+	RunE: runServe,
 }
 
 func init() {

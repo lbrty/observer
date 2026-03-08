@@ -16,7 +16,17 @@ import (
 var KeygenCmd = &cobra.Command{
 	Use:   "keygen",
 	Short: "Generate RSA key pair for JWT signing",
-	RunE:  runKeygen,
+	Long: `Generate an RSA key pair for signing and verifying JWT tokens.
+
+Writes private_key.pem and public_key.pem to the output directory.
+Minimum key size is 4096 bits. Set JWT_PRIVATE_KEY_PATH and
+JWT_PUBLIC_KEY_PATH in your .env to point to the generated files.`,
+	Example: `  # Generate keys in the current directory
+  observer keygen
+
+  # Generate 8192-bit keys in the keys/ directory
+  observer keygen --bits 8192 --output keys`,
+	RunE: runKeygen,
 }
 
 func init() {

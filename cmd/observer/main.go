@@ -23,7 +23,13 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "observer",
-	Short: "Observer - IDP platform",
+	Short: "Observer - IDP case management platform",
+	Long: `Observer is a self-hosted case management platform for organizations
+working with internally displaced persons (IDPs) and refugees.
+
+It provides project-scoped people tracking, support records, migration
+history, household management, document storage, and reporting — all
+behind a dual-level RBAC system (platform role + project role).`,
 }
 
 func init() {
@@ -34,6 +40,7 @@ func init() {
 	rootCmd.AddCommand(cmd.KeygenCmd)
 	rootCmd.AddCommand(cmd.CreateAdminCmd)
 	rootCmd.AddCommand(cmd.SeedCmd)
+	rootCmd.AddCommand(cmd.SetupCmd)
 }
 
 func initConfig() {
