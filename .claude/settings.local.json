@@ -50,7 +50,8 @@
       "Bash(sips:*)",
       "Bash(xargs basename:*)",
       "Bash(cut -d'\\(' -f1)",
-      "Skill(code-review:code-review)"
+      "Skill(code-review:code-review)",
+      "Bash(sed:*)"
     ]
   }
 }
