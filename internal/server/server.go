@@ -85,15 +85,25 @@ func (s *Server) setupMiddleware(cfg *config.Config, log *slog.Logger) {
 		s.router.Use(sentrygin.New(sentrygin.Options{Repanic: true}))
 	}
 	s.router.Use(gin.Recovery())
-	s.router.Use(cors.New(cors.Config{
-		AllowOrigins:     cfg.CORS.Origins,
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-CSRF-Token"},
-		ExposeHeaders:    []string{"X-Request-ID"},
-		AllowCredentials: true,
-	}))
-	s.router.Use(middleware.SecurityHeaders())
-	s.router.Use(middleware.CSRFProtection())
+	if cfg.DevMode {
+		s.router.Use(cors.New(cors.Config{
+			AllowOriginFunc:  func(_ string) bool { return true },
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-CSRF-Token"},
+			ExposeHeaders:    []string{"X-Request-ID"},
+			AllowCredentials: true,
+		}))
+	} else {
+		s.router.Use(cors.New(cors.Config{
+			AllowOrigins:     cfg.CORS.Origins,
+			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-CSRF-Token"},
+			ExposeHeaders:    []string{"X-Request-ID"},
+			AllowCredentials: true,
+		}))
+		s.router.Use(middleware.SecurityHeaders())
+		s.router.Use(middleware.CSRFProtection())
+	}
 }
 
 func registerCustomValidators() {

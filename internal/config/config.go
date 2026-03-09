@@ -18,6 +18,7 @@ const (
 )
 
 type Config struct {
+	DevMode   bool
 	Server    ServerConfig
 	Database  DatabaseConfig
 	Redis     RedisConfig
@@ -106,6 +107,7 @@ type JWTConfig struct {
 
 func Load() (*Config, error) {
 	return &Config{
+		DevMode: getEnvBool("DEV_MODE", false),
 		Server: ServerConfig{
 			Host:         getEnv("SERVER_HOST", DefaultServerHost),
 			Port:         getEnvInt("SERVER_PORT", DefaultServerPort),
