@@ -139,6 +139,9 @@ func (uc *UserUseCase) Create(ctx context.Context, input CreateUserInput) (*User
 		return nil, fmt.Errorf("create credentials: %w", err)
 	}
 
+	uid := userID.String()
+	uc.auditUC.Record(ctx, nil, "admin.user.create", "user", &uid, fmt.Sprintf("Created user %s with role %s", newUser.Email, newUser.Role))
+
 	dto := userToDTO(newUser)
 	return &dto, nil
 }
@@ -215,6 +218,9 @@ func (uc *UserUseCase) ResetPassword(ctx context.Context, userID ulid.ULID, inpu
 	if err := uc.sessionRepo.DeleteByUserID(ctx, userID); err != nil {
 		return fmt.Errorf("invalidate sessions: %w", err)
 	}
+
+	uid := userID.String()
+	uc.auditUC.Record(ctx, nil, "admin.user.reset_password", "user", &uid, fmt.Sprintf("Password reset for user %s", uid))
 
 	return nil
 }

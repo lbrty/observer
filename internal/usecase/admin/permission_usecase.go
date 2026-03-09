@@ -113,10 +113,13 @@ func (uc *PermissionUseCase) Assign(ctx context.Context, projectID string, input
 }
 
 // Update applies a partial update to a project permission.
-func (uc *PermissionUseCase) Update(ctx context.Context, id string, input UpdatePermissionInput) (*PermissionDTO, error) {
+func (uc *PermissionUseCase) Update(ctx context.Context, projectID, id string, input UpdatePermissionInput) (*PermissionDTO, error) {
 	perm, err := uc.permRepo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get permission for update: %w", err)
+	}
+	if perm.ProjectID != projectID {
+		return nil, project.ErrPermissionNotFound
 	}
 
 	if input.Role != nil {
@@ -142,6 +145,8 @@ func (uc *PermissionUseCase) Update(ctx context.Context, id string, input Update
 	if err := uc.permRepo.Update(ctx, perm); err != nil {
 		return nil, fmt.Errorf("update permission: %w", err)
 	}
+
+	uc.auditUC.Record(ctx, &projectID, "admin.permission.update", "permission", &id, fmt.Sprintf("Updated permission %s", id))
 
 	dto := permToDTO(perm)
 	return &dto, nil
