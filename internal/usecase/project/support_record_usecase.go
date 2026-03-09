@@ -24,13 +24,15 @@ func NewSupportRecordUseCase(repo repository.SupportRecordRepository, auditUC *u
 
 // List returns paginated support records.
 func (uc *SupportRecordUseCase) List(ctx context.Context, projectID string, input ListSupportRecordsInput) (*ListSupportRecordsOutput, error) {
+	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
+
 	filter := support.RecordListFilter{
 		ProjectID:    projectID,
 		PersonID:     input.PersonID,
 		ConsultantID: input.ConsultantID,
 		OfficeID:     input.OfficeID,
-		Page:         input.Page,
-		PerPage:      input.PerPage,
+		Page:         page,
+		PerPage:      perPage,
 	}
 	if input.Type != nil {
 		t := support.SupportType(*input.Type)
@@ -60,8 +62,6 @@ func (uc *SupportRecordUseCase) List(ctx context.Context, projectID string, inpu
 	for i, r := range records {
 		dtos[i] = supportRecordToDTO(r)
 	}
-
-	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
 	return &ListSupportRecordsOutput{
 		Records: dtos,

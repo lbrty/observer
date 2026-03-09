@@ -29,6 +29,8 @@ func NewPersonUseCase(db database.DB, repo repository.PersonRepository, tagRepo 
 
 // List returns paginated people with sensitivity-aware redaction.
 func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListPeopleInput, canViewContact, canViewPersonal bool) (*ListPeopleOutput, error) {
+	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
+
 	filter := person.PersonListFilter{
 		ProjectID:    projectID,
 		ConsultantID: input.ConsultantID,
@@ -38,8 +40,8 @@ func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListP
 		HasPets:      input.HasPets,
 		Search:       input.Search,
 		TagIDs:       input.TagIDs,
-		Page:         input.Page,
-		PerPage:      input.PerPage,
+		Page:         page,
+		PerPage:      perPage,
 	}
 	if input.CaseStatus != nil {
 		s := person.CaseStatus(*input.CaseStatus)
@@ -77,8 +79,6 @@ func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListP
 			dtos[i].TagIDs = []string{}
 		}
 	}
-
-	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
 	return &ListPeopleOutput{
 		People:  dtos,

@@ -142,7 +142,11 @@ func HandleError(c *gin.Context, err error) {
 	status, code := MapDomainError(err)
 	if status == http.StatusInternalServerError {
 		slog.ErrorContext(c.Request.Context(), "unexpected error",
-			"error", err, "path", c.Request.URL.Path)
+			"error", err,
+			"path", c.Request.URL.Path,
+		)
+		c.JSON(status, errJSON(code, "internal server error"))
+		return
 	}
 	c.JSON(status, errJSON(code, err.Error()))
 }

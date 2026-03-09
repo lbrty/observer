@@ -26,7 +26,7 @@ type ArgonHasher struct {
 // NewArgonHasher creates an ArgonHasher with sensible defaults.
 func NewArgonHasher() *ArgonHasher {
 	return &ArgonHasher{
-		time:    1,
+		time:    2, // OWASP recommends t≥2 at 64 MB memory
 		memory:  64 * 1024, // 64 MB
 		threads: 4,
 		keyLen:  32,
