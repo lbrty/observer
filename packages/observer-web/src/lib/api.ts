@@ -1,6 +1,8 @@
 import ky, { HTTPError } from "ky";
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:9000";
+export const apiBase = import.meta.env.VITE_API_URL ?? "http://localhost:9000";
+
+const BASE_URL = apiBase;
 
 let refreshPromise: Promise<void> | null = null;
 
@@ -25,6 +27,12 @@ export const api = ky.create({
   prefixUrl: BASE_URL,
   credentials: "include",
   hooks: {
+    beforeRequest: [
+      (request) => {
+        const csrf = document.cookie.match(/csrf_token=([^;]+)/)?.[1];
+        if (csrf) request.headers.set("X-CSRF-Token", csrf);
+      },
+    ],
     afterResponse: [
       async (request, _options, response) => {
         if (response.status !== 401) return response;

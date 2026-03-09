@@ -1,13 +1,14 @@
 # Stage 1: build frontend
-FROM oven/bun:1 AS frontend
+FROM oven/bun:1.3 AS frontend
 
 WORKDIR /app
 COPY package.json bun.lock ./
-COPY packages/observer-web/package.json observer-web/
-RUN bun install --frozen-lockfile
+COPY packages/observer-web/package.json packages/observer-web/
+COPY packages/observer-web/bunfig.toml packages/observer-web/
+RUN bun install
 
-COPY packages/observer-web/ observer-web/
-RUN cd observer-web && bun run build
+COPY packages/observer-web/ packages/observer-web/
+RUN cd packages/observer-web && bun run build
 
 # Stage 2: build backend with embedded frontend
 FROM golang:1.25 AS backend
@@ -17,7 +18,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-COPY --from=frontend /app/observer-web/dist internal/spa/dist
+COPY --from=frontend /app/packages/observer-web/dist internal/spa/dist
 RUN CGO_ENABLED=0 GOOS=linux go build -tags production -ldflags="-s -w" -o /observer ./cmd/observer
 
 # Stage 3: final image

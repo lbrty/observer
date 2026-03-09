@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { api } from "@/lib/api";
+import { api, apiBase } from "@/lib/api";
 import type { Document, ListDocumentsOutput, UpdateDocumentInput } from "@/types/document";
 
 export function useDocuments(projectId: string, personId: string) {
@@ -52,18 +52,15 @@ export function useDeleteDocument(projectId: string) {
 }
 
 export function documentDownloadUrl(projectId: string, documentId: string): string {
-  const base = import.meta.env.VITE_API_URL ?? "http://localhost:9000";
-  return `${base}/projects/${projectId}/documents/${documentId}/download`;
+  return `${apiBase}/projects/${projectId}/documents/${documentId}/download`;
 }
 
 export function documentStreamUrl(projectId: string, documentId: string): string {
-  const base = import.meta.env.VITE_API_URL ?? "http://localhost:9000";
-  return `${base}/projects/${projectId}/documents/${documentId}/stream`;
+  return `${apiBase}/projects/${projectId}/documents/${documentId}/stream`;
 }
 
 export function documentThumbnailUrl(projectId: string, documentId: string): string {
-  const base = import.meta.env.VITE_API_URL ?? "http://localhost:9000";
-  return `${base}/projects/${projectId}/documents/${documentId}/thumbnail`;
+  return `${apiBase}/projects/${projectId}/documents/${documentId}/thumbnail`;
 }
 
 const unsupportedImageFormats = new Set(["image/avif", "image/heif", "image/heic"]);
