@@ -1,4 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { UseQueryOptions } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
 import type {
@@ -9,7 +10,10 @@ import type {
   UpdateProjectInput,
 } from "@/types/project";
 
-export function useProjects(params: ListProjectsParams = {}) {
+export function useProjects(
+  params: ListProjectsParams = {},
+  options?: Partial<UseQueryOptions<ListProjectsOutput>>,
+) {
   return useQuery({
     queryKey: ["projects", params],
     queryFn: () =>
@@ -19,6 +23,7 @@ export function useProjects(params: ListProjectsParams = {}) {
         })
         .json<ListProjectsOutput>(),
     placeholderData: keepPreviousData,
+    ...options,
   });
 }
 

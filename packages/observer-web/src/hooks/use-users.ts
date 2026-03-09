@@ -1,4 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { UseQueryOptions } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
 import type {
@@ -9,7 +10,10 @@ import type {
   UpdateUserInput,
 } from "@/types/admin";
 
-export function useUsers(params: ListUsersParams = {}) {
+export function useUsers(
+  params: ListUsersParams = {},
+  options?: Partial<UseQueryOptions<ListUsersOutput>>,
+) {
   return useQuery({
     queryKey: ["users", params],
     queryFn: () =>
@@ -17,6 +21,7 @@ export function useUsers(params: ListUsersParams = {}) {
         .get("admin/users", { searchParams: params as Record<string, string> })
         .json<ListUsersOutput>(),
     placeholderData: keepPreviousData,
+    ...options,
   });
 }
 
