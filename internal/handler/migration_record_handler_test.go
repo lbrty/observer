@@ -88,6 +88,7 @@ func TestMigrationRecordHandler_Get_Success(t *testing.T) {
 	}, nil)
 
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/migration-records/"+id, nil, gin.Params{
+		{Key: "person_id", Value: personID},
 		{Key: "id", Value: id},
 	})
 	h.Get(c)
@@ -158,6 +159,7 @@ func TestMigrationRecordHandler_Update_Success(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodPatch, "/projects/x/people/"+personID+"/migration-records/"+id, map[string]any{
 		"notes": notes,
 	}, gin.Params{
+		{Key: "person_id", Value: personID},
 		{Key: "id", Value: id},
 	})
 	h.Update(c)

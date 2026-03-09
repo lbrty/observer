@@ -22,10 +22,11 @@ func TestRegister_Success(t *testing.T) {
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
 	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
+	mockRecoveryRepo := mock_repo.NewMockMFARecoveryCodeRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen)
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen)
 
 	ctx := context.Background()
 	input := ucauth.RegisterInput{
@@ -59,10 +60,11 @@ func TestRegister_AlwaysCreatesGuestRole(t *testing.T) {
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
 	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
+	mockRecoveryRepo := mock_repo.NewMockMFARecoveryCodeRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen)
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen)
 
 	ctx := context.Background()
 
@@ -97,10 +99,11 @@ func TestRegister_DuplicateEmailReturnsSuccess(t *testing.T) {
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
 	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
+	mockRecoveryRepo := mock_repo.NewMockMFARecoveryCodeRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen)
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen)
 
 	// GetByEmail returns an existing user (no error) — simulates duplicate email.
 	mockUserRepo.EXPECT().

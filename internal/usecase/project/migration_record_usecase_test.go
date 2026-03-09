@@ -39,7 +39,7 @@ func TestMigrationRecordUseCase_Update(t *testing.T) {
 
 	newReason := "economic"
 	notes := "updated notes"
-	out, err := uc.Update(context.Background(), "mr1", ucproject.UpdateMigrationRecordInput{
+	out, err := uc.Update(context.Background(), "p1", "mr1", ucproject.UpdateMigrationRecordInput{
 		MovementReason: &newReason,
 		Notes:          &notes,
 	})
@@ -62,7 +62,7 @@ func TestMigrationRecordUseCase_Update_NotFound(t *testing.T) {
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "mr1").Return(nil, errors.New("not found"))
 
-	_, err := uc.Update(context.Background(), "mr1", ucproject.UpdateMigrationRecordInput{})
+	_, err := uc.Update(context.Background(), "p1", "mr1", ucproject.UpdateMigrationRecordInput{})
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "get migration record for update")
 }
@@ -95,8 +95,38 @@ func TestMigrationRecordUseCase_Update_PartialFields(t *testing.T) {
 	})
 
 	dest := "place2"
-	_, err := uc.Update(context.Background(), "mr1", ucproject.UpdateMigrationRecordInput{
+	_, err := uc.Update(context.Background(), "p1", "mr1", ucproject.UpdateMigrationRecordInput{
 		DestinationPlaceID: &dest,
 	})
 	require.NoError(t, err)
+}
+
+func TestMigrationRecordUseCase_Get_CrossPersonIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockMigrationRecordRepository(ctrl)
+	uc := ucproject.NewMigrationRecordUseCase(mockRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "mr1").Return(&migration.Record{
+		ID: "mr1", PersonID: "other-person",
+	}, nil)
+
+	_, err := uc.Get(context.Background(), "p1", "mr1")
+	assert.ErrorIs(t, err, migration.ErrRecordNotFound)
+}
+
+func TestMigrationRecordUseCase_Update_CrossPersonIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockMigrationRecordRepository(ctrl)
+	uc := ucproject.NewMigrationRecordUseCase(mockRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "mr1").Return(&migration.Record{
+		ID: "mr1", PersonID: "other-person",
+	}, nil)
+
+	_, err := uc.Update(context.Background(), "p1", "mr1", ucproject.UpdateMigrationRecordInput{})
+	assert.ErrorIs(t, err, migration.ErrRecordNotFound)
 }

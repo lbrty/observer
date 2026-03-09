@@ -96,7 +96,7 @@ func TestPetUseCase_Get_Success(t *testing.T) {
 		UpdatedAt: now,
 	}, nil)
 
-	dto, err := uc.Get(context.Background(), "pet1")
+	dto, err := uc.Get(context.Background(), "proj1", "pet1")
 	require.NoError(t, err)
 	assert.Equal(t, "pet1", dto.ID)
 	assert.Equal(t, "Buddy", dto.Name)
@@ -114,7 +114,7 @@ func TestPetUseCase_Get_NotFound(t *testing.T) {
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, pet.ErrPetNotFound)
 
-	_, err := uc.Get(context.Background(), "nonexistent")
+	_, err := uc.Get(context.Background(), "proj1", "nonexistent")
 	assert.ErrorIs(t, err, pet.ErrPetNotFound)
 }
 
@@ -199,7 +199,7 @@ func TestPetUseCase_Update_Success(t *testing.T) {
 		return nil
 	})
 
-	dto, err := uc.Update(context.Background(), "pet1", ucproject.UpdatePetInput{
+	dto, err := uc.Update(context.Background(), "proj1", "pet1", ucproject.UpdatePetInput{
 		Name:   ptr("Rex"),
 		Status: ptr("adopted"),
 	})
@@ -217,7 +217,7 @@ func TestPetUseCase_Update_NotFound(t *testing.T) {
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, pet.ErrPetNotFound)
 
-	_, err := uc.Update(context.Background(), "nonexistent", ucproject.UpdatePetInput{})
+	_, err := uc.Update(context.Background(), "proj1", "nonexistent", ucproject.UpdatePetInput{})
 	assert.ErrorIs(t, err, pet.ErrPetNotFound)
 }
 
@@ -228,6 +228,7 @@ func TestPetUseCase_Delete_Success(t *testing.T) {
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
 	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
 
+	mockRepo.EXPECT().GetByID(gomock.Any(), "pet1").Return(&pet.Pet{ID: "pet1", ProjectID: "proj1"}, nil)
 	mockRepo.EXPECT().Delete(gomock.Any(), "pet1").Return(nil)
 
 	err := uc.Delete(context.Background(), "proj1", "pet1")
@@ -241,8 +242,53 @@ func TestPetUseCase_Delete_NotFound(t *testing.T) {
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
 	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
 
-	mockRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(pet.ErrPetNotFound)
+	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, pet.ErrPetNotFound)
 
 	err := uc.Delete(context.Background(), "proj1", "nonexistent")
+	assert.ErrorIs(t, err, pet.ErrPetNotFound)
+}
+
+func TestPetUseCase_Get_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockPetRepository(ctrl)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "pet1").Return(&pet.Pet{
+		ID: "pet1", ProjectID: "other-project",
+	}, nil)
+
+	_, err := uc.Get(context.Background(), "proj1", "pet1")
+	assert.ErrorIs(t, err, pet.ErrPetNotFound)
+}
+
+func TestPetUseCase_Update_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockPetRepository(ctrl)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "pet1").Return(&pet.Pet{
+		ID: "pet1", ProjectID: "other-project",
+	}, nil)
+
+	_, err := uc.Update(context.Background(), "proj1", "pet1", ucproject.UpdatePetInput{})
+	assert.ErrorIs(t, err, pet.ErrPetNotFound)
+}
+
+func TestPetUseCase_Delete_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockPetRepository(ctrl)
+	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "pet1").Return(&pet.Pet{
+		ID: "pet1", ProjectID: "other-project",
+	}, nil)
+
+	err := uc.Delete(context.Background(), "proj1", "pet1")
 	assert.ErrorIs(t, err, pet.ErrPetNotFound)
 }

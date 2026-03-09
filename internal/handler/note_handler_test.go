@@ -138,6 +138,7 @@ func TestNoteHandler_Update_Success(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodPatch, "/projects/x/people/"+personID+"/notes/"+id, map[string]any{
 		"body": "new body",
 	}, gin.Params{
+		{Key: "person_id", Value: personID},
 		{Key: "id", Value: id},
 	})
 	h.Update(c)
@@ -153,9 +154,11 @@ func TestNoteHandler_Delete_NotFound(t *testing.T) {
 	h, repo := newNoteHandler(ctrl)
 
 	id := testID().String()
-	repo.EXPECT().Delete(gomock.Any(), id).Return(note.ErrNoteNotFound)
+	personID := testID().String()
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(nil, note.ErrNoteNotFound)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/people/y/notes/"+id, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/people/"+personID+"/notes/"+id, nil, gin.Params{
+		{Key: "person_id", Value: personID},
 		{Key: "id", Value: id},
 	})
 	h.Delete(c)
@@ -168,9 +171,12 @@ func TestNoteHandler_Delete_Success(t *testing.T) {
 	h, repo := newNoteHandler(ctrl)
 
 	id := testID().String()
+	personID := testID().String()
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(&note.Note{ID: id, PersonID: personID}, nil)
 	repo.EXPECT().Delete(gomock.Any(), id).Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/people/y/notes/"+id, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/people/"+personID+"/notes/"+id, nil, gin.Params{
+		{Key: "person_id", Value: personID},
 		{Key: "id", Value: id},
 	})
 	h.Delete(c)

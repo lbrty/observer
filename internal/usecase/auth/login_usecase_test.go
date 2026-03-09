@@ -34,11 +34,12 @@ func setupAuthUseCase(t *testing.T) (
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
 	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
+	mockRecoveryRepo := mock_repo.NewMockMFARecoveryCodeRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
 	uc := ucauth.NewAuthUseCase(
-		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen,
+		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen,
 	)
 	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher
 }
@@ -61,11 +62,12 @@ func setupAuthUseCaseWithTokenGen(t *testing.T) (
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
 	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
+	mockRecoveryRepo := mock_repo.NewMockMFARecoveryCodeRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
 	uc := ucauth.NewAuthUseCase(
-		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen,
+		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen,
 	)
 	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen
 }

@@ -5,9 +5,12 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	validator "github.com/go-playground/validator/v10"
 	"github.com/oklog/ulid/v2"
 	"go.uber.org/mock/gomock"
 
@@ -21,6 +24,14 @@ import (
 
 func init() {
 	gin.SetMode(gin.TestMode)
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("strongpassword", func(fl validator.FieldLevel) bool { //nolint:errcheck
+			p := fl.Field().String()
+			hasDigit := strings.ContainsAny(p, "0123456789")
+			hasSpecial := strings.ContainsAny(p, "!@#$%^&*()-_=+[]{}|;:',.<>?/`~")
+			return hasDigit && hasSpecial
+		})
+	}
 }
 
 func newTestContext(method, path string, body any) (*gin.Context, *httptest.ResponseRecorder) {
@@ -82,6 +93,7 @@ type authTestDeps struct {
 	credRepo      *repomock.MockCredentialsRepository
 	sessionRepo   *repomock.MockSessionRepository
 	mfaRepo       *repomock.MockMFARepository
+	recoveryRepo  *repomock.MockMFARecoveryCodeRepository
 	hasher        *cryptomock.MockPasswordHasher
 	tokenGen      *cryptomock.MockTokenGenerator
 	loginAttempts *repomock.MockLoginAttemptStore
@@ -94,6 +106,7 @@ func newAuthTestDeps(ctrl *gomock.Controller) *authTestDeps {
 		credRepo:      repomock.NewMockCredentialsRepository(ctrl),
 		sessionRepo:   repomock.NewMockSessionRepository(ctrl),
 		mfaRepo:       repomock.NewMockMFARepository(ctrl),
+		recoveryRepo:  repomock.NewMockMFARecoveryCodeRepository(ctrl),
 		hasher:        cryptomock.NewMockPasswordHasher(ctrl),
 		tokenGen:      cryptomock.NewMockTokenGenerator(ctrl),
 		loginAttempts: repomock.NewMockLoginAttemptStore(ctrl),
@@ -101,7 +114,7 @@ func newAuthTestDeps(ctrl *gomock.Controller) *authTestDeps {
 }
 
 func (d *authTestDeps) authUseCase() *ucauth.AuthUseCase {
-	return ucauth.NewAuthUseCase(d.userRepo, d.credRepo, d.sessionRepo, d.mfaRepo, d.hasher, d.tokenGen)
+	return ucauth.NewAuthUseCase(d.userRepo, d.credRepo, d.sessionRepo, d.mfaRepo, d.recoveryRepo, d.hasher, d.tokenGen)
 }
 
 // adminTestDeps holds all mocks needed to construct an AdminHandler.

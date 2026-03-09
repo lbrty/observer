@@ -75,7 +75,7 @@ func TestHouseholdUseCase_Get_Success(t *testing.T) {
 		{HouseholdID: "h1", PersonID: "p2", Relationship: household.RelationshipSpouse},
 	}, nil)
 
-	dto, err := uc.Get(context.Background(), "h1")
+	dto, err := uc.Get(context.Background(), "proj1", "h1")
 	require.NoError(t, err)
 	assert.Equal(t, "h1", dto.ID)
 	require.NotNil(t, dto.HeadPersonID)
@@ -95,7 +95,7 @@ func TestHouseholdUseCase_Get_NotFound(t *testing.T) {
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, household.ErrHouseholdNotFound)
 
-	_, err := uc.Get(context.Background(), "nonexistent")
+	_, err := uc.Get(context.Background(), "proj1", "nonexistent")
 	assert.ErrorIs(t, err, household.ErrHouseholdNotFound)
 }
 
@@ -162,7 +162,7 @@ func TestHouseholdUseCase_Update_Success(t *testing.T) {
 		return nil
 	})
 
-	dto, err := uc.Update(context.Background(), "h1", ucproject.UpdateHouseholdInput{
+	dto, err := uc.Update(context.Background(), "proj1", "h1", ucproject.UpdateHouseholdInput{
 		ReferenceNumber: ptr("REF-002"),
 	})
 	require.NoError(t, err)
@@ -179,7 +179,7 @@ func TestHouseholdUseCase_Update_NotFound(t *testing.T) {
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, household.ErrHouseholdNotFound)
 
-	_, err := uc.Update(context.Background(), "nonexistent", ucproject.UpdateHouseholdInput{})
+	_, err := uc.Update(context.Background(), "proj1", "nonexistent", ucproject.UpdateHouseholdInput{})
 	assert.ErrorIs(t, err, household.ErrHouseholdNotFound)
 }
 
@@ -191,6 +191,7 @@ func TestHouseholdUseCase_Delete_Success(t *testing.T) {
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
 	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "proj1"}, nil)
 	mockRepo.EXPECT().Delete(gomock.Any(), "h1").Return(nil)
 
 	err := uc.Delete(context.Background(), "proj1", "h1")
@@ -205,9 +206,57 @@ func TestHouseholdUseCase_Delete_NotFound(t *testing.T) {
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
 	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
-	mockRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(household.ErrHouseholdNotFound)
+	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, household.ErrHouseholdNotFound)
 
 	err := uc.Delete(context.Background(), "proj1", "nonexistent")
+	assert.ErrorIs(t, err, household.ErrHouseholdNotFound)
+}
+
+func TestHouseholdUseCase_Get_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
+	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{
+		ID: "h1", ProjectID: "other-project",
+	}, nil)
+
+	_, err := uc.Get(context.Background(), "proj1", "h1")
+	assert.ErrorIs(t, err, household.ErrHouseholdNotFound)
+}
+
+func TestHouseholdUseCase_Update_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
+	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{
+		ID: "h1", ProjectID: "other-project",
+	}, nil)
+
+	_, err := uc.Update(context.Background(), "proj1", "h1", ucproject.UpdateHouseholdInput{})
+	assert.ErrorIs(t, err, household.ErrHouseholdNotFound)
+}
+
+func TestHouseholdUseCase_Delete_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
+	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{
+		ID: "h1", ProjectID: "other-project",
+	}, nil)
+
+	err := uc.Delete(context.Background(), "proj1", "h1")
 	assert.ErrorIs(t, err, household.ErrHouseholdNotFound)
 }
 

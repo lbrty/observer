@@ -92,6 +92,7 @@ func TestHouseholdHandler_Get_Success(t *testing.T) {
 	memberRepo.EXPECT().List(gomock.Any(), id).Return([]*household.Member{}, nil)
 
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/households/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Get(c)
@@ -163,6 +164,7 @@ func TestHouseholdHandler_Update_Success(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodPatch, "/projects/"+projectID+"/households/"+id, map[string]any{
 		"reference_number": refNum,
 	}, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Update(c)
@@ -178,9 +180,11 @@ func TestHouseholdHandler_Delete_NotFound(t *testing.T) {
 	h, repo, _ := newHouseholdHandler(ctrl)
 
 	id := testID().String()
-	repo.EXPECT().Delete(gomock.Any(), id).Return(household.ErrHouseholdNotFound)
+	projectID := testID().String()
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(nil, household.ErrHouseholdNotFound)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/households/"+id, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/households/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Delete(c)
@@ -193,9 +197,12 @@ func TestHouseholdHandler_Delete_Success(t *testing.T) {
 	h, repo, _ := newHouseholdHandler(ctrl)
 
 	id := testID().String()
+	projectID := testID().String()
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(&household.Household{ID: id, ProjectID: projectID}, nil)
 	repo.EXPECT().Delete(gomock.Any(), id).Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/households/"+id, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/households/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Delete(c)

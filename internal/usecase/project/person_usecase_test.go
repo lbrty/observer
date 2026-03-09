@@ -309,3 +309,24 @@ func TestPersonUseCase_Delete_NotFound(t *testing.T) {
 	err := uc.Delete(context.Background(), "proj1", "nonexistent")
 	assert.ErrorIs(t, err, person.ErrPersonNotFound)
 }
+
+func TestPersonList_ClampsPerPage(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
+	mockTagRepo := mock_repo.NewMockPersonTagRepository(ctrl)
+	uc := ucproject.NewPersonUseCase(nil, mockRepo, mockTagRepo, nil)
+
+	// Expect the clamped filter (PerPage = 100, not 999999)
+	mockRepo.EXPECT().List(gomock.Any(), person.PersonListFilter{
+		ProjectID: "proj-1",
+		Page:      1,
+		PerPage:   100,
+	}).Return([]*person.Person{}, 0, nil)
+	mockTagRepo.EXPECT().ListBulk(gomock.Any(), []string{}).Return(map[string][]string{}, nil)
+
+	out, err := uc.List(context.Background(), "proj-1", ucproject.ListPeopleInput{Page: 1, PerPage: 999999}, true, true)
+	require.NoError(t, err)
+	assert.Equal(t, 100, out.PerPage)
+}

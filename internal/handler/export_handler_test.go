@@ -101,6 +101,7 @@ func TestExportHandler_ExportPeople_Success(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/people", nil, gin.Params{
 		{Key: "project_id", Value: projectID},
 	})
+	c.Set(string(middleware.CtxCanExport), true)
 	c.Set(string(middleware.CtxCanViewContact), true)
 	c.Set(string(middleware.CtxCanViewPersonal), true)
 	deps.handler.ExportPeople(c)
@@ -129,6 +130,7 @@ func TestExportHandler_ExportPeople_RepoError(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/people", nil, gin.Params{
 		{Key: "project_id", Value: projectID},
 	})
+	c.Set(string(middleware.CtxCanExport), true)
 	c.Set(string(middleware.CtxCanViewContact), false)
 	c.Set(string(middleware.CtxCanViewPersonal), false)
 	deps.handler.ExportPeople(c)
@@ -162,6 +164,7 @@ func TestExportHandler_ExportSupportRecords_Success(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/support-records", nil, gin.Params{
 		{Key: "project_id", Value: projectID},
 	})
+	c.Set(string(middleware.CtxCanExport), true)
 	deps.handler.ExportSupportRecords(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -186,6 +189,7 @@ func TestExportHandler_ExportSupportRecords_RepoError(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/support-records", nil, gin.Params{
 		{Key: "project_id", Value: projectID},
 	})
+	c.Set(string(middleware.CtxCanExport), true)
 	deps.handler.ExportSupportRecords(c)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -215,6 +219,7 @@ func TestExportHandler_ExportPets_Success(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/pets", nil, gin.Params{
 		{Key: "project_id", Value: projectID},
 	})
+	c.Set(string(middleware.CtxCanExport), true)
 	deps.handler.ExportPets(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -239,6 +244,7 @@ func TestExportHandler_ExportPets_RepoError(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/pets", nil, gin.Params{
 		{Key: "project_id", Value: projectID},
 	})
+	c.Set(string(middleware.CtxCanExport), true)
 	deps.handler.ExportPets(c)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
@@ -269,6 +275,7 @@ func TestExportHandler_ExportHouseholds_Success(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/households", nil, gin.Params{
 		{Key: "project_id", Value: projectID},
 	})
+	c.Set(string(middleware.CtxCanExport), true)
 	deps.handler.ExportHouseholds(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -293,6 +300,7 @@ func TestExportHandler_ExportHouseholds_RepoError(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/households", nil, gin.Params{
 		{Key: "project_id", Value: projectID},
 	})
+	c.Set(string(middleware.CtxCanExport), true)
 	deps.handler.ExportHouseholds(c)
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)

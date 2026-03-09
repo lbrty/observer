@@ -45,7 +45,7 @@ func TestAuthHandler_Register_DuplicateEmail(t *testing.T) {
 
 	c, w := newTestContext(http.MethodPost, "/auth/register", map[string]string{
 		"email":    "taken@test.com",
-		"password": "password123",
+		"password": "P@ssword123!",
 	})
 	h.Register(c)
 
@@ -60,13 +60,13 @@ func TestAuthHandler_Register_Success(t *testing.T) {
 	h := newAuthHandler(d)
 
 	d.userRepo.EXPECT().GetByEmail(gomock.Any(), "new@test.com").Return(nil, user.ErrUserNotFound)
-	d.hasher.EXPECT().Hash("password123").Return("hashed", "salt", nil)
+	d.hasher.EXPECT().Hash("P@ssword123!").Return("hashed", "salt", nil)
 	d.userRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
 	d.credRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
 
 	c, w := newTestContext(http.MethodPost, "/auth/register", map[string]string{
 		"email":    "new@test.com",
-		"password": "password123",
+		"password": "P@ssword123!",
 		"role":     "staff",
 	})
 	h.Register(c)
@@ -432,7 +432,7 @@ func TestAuthHandler_ChangePassword_WrongCurrent(t *testing.T) {
 
 	c, w := newTestContext(http.MethodPost, "/auth/change-password", map[string]string{
 		"current_password": "wrong",
-		"new_password":     "newpassword123",
+		"new_password":     "NewP@ssword123",
 	})
 	setAuthContext(c, uid)
 	h.ChangePassword(c)
@@ -454,13 +454,13 @@ func TestAuthHandler_ChangePassword_Success(t *testing.T) {
 
 	d.credRepo.EXPECT().GetByUserID(gomock.Any(), uid).Return(cred, nil)
 	d.hasher.EXPECT().Verify("oldpassword", "hash", "salt").Return(nil)
-	d.hasher.EXPECT().Hash("newpassword123").Return("newhash", "newsalt", nil)
+	d.hasher.EXPECT().Hash("NewP@ssword123").Return("newhash", "newsalt", nil)
 	d.credRepo.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
 	d.sessionRepo.EXPECT().DeleteByUserID(gomock.Any(), uid).Return(nil)
 
 	c, w := newTestContext(http.MethodPost, "/auth/change-password", map[string]string{
 		"current_password": "oldpassword",
-		"new_password":     "newpassword123",
+		"new_password":     "NewP@ssword123",
 	})
 	setAuthContext(c, uid)
 	h.ChangePassword(c)

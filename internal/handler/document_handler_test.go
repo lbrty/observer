@@ -1,8 +1,11 @@
 package handler_test
 
 import (
+	"bytes"
 	"fmt"
+	"mime/multipart"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -17,6 +20,26 @@ import (
 	storagemock "github.com/lbrty/observer/internal/storage/mock"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
+
+func newMultipartUploadContext(filename string, content []byte, projectID, personID string) (*gin.Context, *httptest.ResponseRecorder) {
+	var buf bytes.Buffer
+	mw := multipart.NewWriter(&buf)
+	fw, _ := mw.CreateFormFile("file", filename)
+	fw.Write(content)
+	mw.Close()
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/projects/"+projectID+"/people/"+personID+"/documents", &buf)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+
+	c, _ := gin.CreateTestContext(w)
+	c.Request = req
+	c.Params = gin.Params{
+		{Key: "project_id", Value: projectID},
+		{Key: "person_id", Value: personID},
+	}
+	return c, w
+}
 
 func newDocumentHandler(ctrl *gomock.Controller) (*handler.DocumentHandler, *repomock.MockDocumentRepository, *storagemock.MockFileStorage) {
 	docRepo := repomock.NewMockDocumentRepository(ctrl)
@@ -117,14 +140,16 @@ func TestDocumentHandler_Get_Success(t *testing.T) {
 	h, docRepo, _ := newDocumentHandler(ctrl)
 
 	id := testID().String()
+	projectID := testID().String()
 	now := time.Now().UTC()
 
 	docRepo.EXPECT().GetByID(gomock.Any(), id).Return(&document.Document{
-		ID: id, PersonID: testID().String(), ProjectID: testID().String(),
+		ID: id, PersonID: testID().String(), ProjectID: projectID,
 		Name: "passport.pdf", Path: "a/b/c", MimeType: "application/pdf", Size: 1024, CreatedAt: now,
 	}, nil)
 
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/x/documents/"+id, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/documents/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	setCanViewDocuments(c, true)
@@ -159,18 +184,20 @@ func TestDocumentHandler_Update_Success(t *testing.T) {
 	h, docRepo, _ := newDocumentHandler(ctrl)
 
 	id := testID().String()
+	projectID := testID().String()
 	now := time.Now().UTC()
 	existing := &document.Document{
-		ID: id, PersonID: testID().String(), ProjectID: testID().String(),
+		ID: id, PersonID: testID().String(), ProjectID: projectID,
 		Name: "passport.pdf", Path: "a/b/c", MimeType: "application/pdf", Size: 1024, CreatedAt: now,
 	}
 
 	docRepo.EXPECT().GetByID(gomock.Any(), id).Return(existing, nil)
 	docRepo.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodPatch, "/projects/x/documents/"+id, map[string]any{
+	c, w := newTestContextWithParams(http.MethodPatch, "/projects/"+projectID+"/documents/"+id, map[string]any{
 		"name": "renamed.pdf",
 	}, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Update(c)
@@ -201,9 +228,10 @@ func TestDocumentHandler_Delete_Success(t *testing.T) {
 	h, docRepo, fs := newDocumentHandler(ctrl)
 
 	id := testID().String()
+	projectID := testID().String()
 	now := time.Now().UTC()
 	existing := &document.Document{
-		ID: id, PersonID: testID().String(), ProjectID: testID().String(),
+		ID: id, PersonID: testID().String(), ProjectID: projectID,
 		Name: "passport.pdf", Path: "a/b/c", MimeType: "application/pdf", Size: 1024, CreatedAt: now,
 	}
 
@@ -211,7 +239,8 @@ func TestDocumentHandler_Delete_Success(t *testing.T) {
 	docRepo.EXPECT().Delete(gomock.Any(), id).Return(nil)
 	fs.EXPECT().Delete(gomock.Any(), "a/b/c").Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/documents/"+id, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/documents/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Delete(c)
@@ -219,4 +248,40 @@ func TestDocumentHandler_Delete_Success(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 	resp := parseResponse[map[string]any](w)
 	assert.Equal(t, "document deleted", resp["message"])
+}
+
+func TestDocumentHandler_Upload_RejectsForbiddenMIME(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	h, _, _ := newDocumentHandler(ctrl)
+
+	projectID := testID().String()
+	personID := testID().String()
+
+	// HTML content is detected as text/html; charset=utf-8
+	htmlContent := []byte("<html><body><script>alert(1)</script></body></html>")
+	c, w := newMultipartUploadContext("evil.html", htmlContent, projectID, personID)
+	setAuthContext(c, testID())
+	h.Upload(c)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
+func TestDocumentHandler_Upload_SanitizesFilename(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	h, docRepo, fs := newDocumentHandler(ctrl)
+
+	projectID := testID().String()
+	personID := testID().String()
+
+	// The use case should receive "passwd", not "../../etc/passwd"
+	docRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
+	fs.EXPECT().Save(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
+
+	pngHeader := []byte("\x89PNG\r\n\x1a\n" + string(make([]byte, 504)))
+	c, w := newMultipartUploadContext("../../etc/passwd", pngHeader, projectID, personID)
+	setAuthContext(c, testID())
+	h.Upload(c)
+
+	// Should succeed (not path traversal), uploading as "passwd"
+	assert.Equal(t, http.StatusCreated, w.Code)
 }

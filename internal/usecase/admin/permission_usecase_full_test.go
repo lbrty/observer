@@ -106,7 +106,7 @@ func TestPermissionUseCase_Update_Success(t *testing.T) {
 		return nil
 	})
 
-	out, err := uc.Update(ctx, "perm-1", ucadmin.UpdatePermissionInput{
+	out, err := uc.Update(ctx, "proj-1", "perm-1", ucadmin.UpdatePermissionInput{
 		Role:           ptr("manager"),
 		CanViewContact: ptr(true),
 	})
@@ -125,7 +125,7 @@ func TestPermissionUseCase_Update_NotFound(t *testing.T) {
 
 	mockPermRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, project.ErrPermissionNotFound)
 
-	_, err := uc.Update(context.Background(), "nonexistent", ucadmin.UpdatePermissionInput{
+	_, err := uc.Update(context.Background(), "proj-1", "nonexistent", ucadmin.UpdatePermissionInput{
 		Role: ptr("manager"),
 	})
 	assert.ErrorIs(t, err, project.ErrPermissionNotFound)
@@ -147,10 +147,26 @@ func TestPermissionUseCase_Update_InvalidRole(t *testing.T) {
 	}
 	mockPermRepo.EXPECT().GetByID(gomock.Any(), "perm-1").Return(existing, nil)
 
-	_, err := uc.Update(context.Background(), "perm-1", ucadmin.UpdatePermissionInput{
+	_, err := uc.Update(context.Background(), "proj-1", "perm-1", ucadmin.UpdatePermissionInput{
 		Role: ptr("superadmin"),
 	})
 	assert.ErrorIs(t, err, project.ErrInvalidProjectRole)
+}
+
+func TestPermissionUseCase_Update_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
+
+	mockPermRepo.EXPECT().GetByID(gomock.Any(), "perm-1").Return(&project.ProjectPermission{
+		ID: "perm-1", ProjectID: "other-project",
+	}, nil)
+
+	_, err := uc.Update(context.Background(), "proj-1", "perm-1", ucadmin.UpdatePermissionInput{})
+	assert.ErrorIs(t, err, project.ErrPermissionNotFound)
 }
 
 func TestPermissionUseCase_Revoke_Success(t *testing.T) {

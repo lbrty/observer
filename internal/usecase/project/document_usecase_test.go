@@ -49,7 +49,7 @@ func TestDocumentUseCase_Update(t *testing.T) {
 	})
 
 	newName := "new-name.pdf"
-	out, err := uc.Update(context.Background(), "d1", ucproject.UpdateDocumentInput{Name: &newName})
+	out, err := uc.Update(context.Background(), "proj1", "d1", ucproject.UpdateDocumentInput{Name: &newName})
 	require.NoError(t, err)
 	assert.Equal(t, "d1", out.ID)
 	assert.Equal(t, "new-name.pdf", out.Name)
@@ -68,7 +68,7 @@ func TestDocumentUseCase_Update_NotFound(t *testing.T) {
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(nil, errors.New("not found"))
 
-	_, err := uc.Update(context.Background(), "d1", ucproject.UpdateDocumentInput{})
+	_, err := uc.Update(context.Background(), "proj1", "d1", ucproject.UpdateDocumentInput{})
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "get document for update")
 }
@@ -101,7 +101,7 @@ func TestDocumentUseCase_Update_NilName(t *testing.T) {
 		return nil
 	})
 
-	out, err := uc.Update(context.Background(), "d1", ucproject.UpdateDocumentInput{})
+	out, err := uc.Update(context.Background(), "proj1", "d1", ucproject.UpdateDocumentInput{})
 	require.NoError(t, err)
 	assert.Equal(t, "unchanged.pdf", out.Name)
 }
@@ -118,15 +118,16 @@ func TestDocumentUseCase_Delete(t *testing.T) {
 	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, auditUC)
 
 	existing := &document.Document{
-		ID:   "d1",
-		Path: "proj1/p1/d1_test.pdf",
+		ID:        "d1",
+		ProjectID: "proj1",
+		Path:      "proj1/p1/d1_test.pdf",
 	}
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(existing, nil)
 	mockRepo.EXPECT().Delete(gomock.Any(), "d1").Return(nil)
 	mockFS.EXPECT().Delete(gomock.Any(), "proj1/p1/d1_test.pdf").Return(nil)
 
-	err := uc.Delete(context.Background(), "d1")
+	err := uc.Delete(context.Background(), "proj1", "d1")
 	require.NoError(t, err)
 }
 
@@ -142,12 +143,13 @@ func TestDocumentUseCase_Thumbnail_NotImage(t *testing.T) {
 	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, auditUC)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(&document.Document{
-		ID:       "d1",
-		Path:     "proj1/p1/d1_test.pdf",
-		MimeType: "application/pdf",
+		ID:        "d1",
+		ProjectID: "proj1",
+		Path:      "proj1/p1/d1_test.pdf",
+		MimeType:  "application/pdf",
 	}, nil)
 
-	_, _, err := uc.Thumbnail(context.Background(), "d1")
+	_, _, err := uc.Thumbnail(context.Background(), "proj1", "d1")
 	require.ErrorIs(t, err, document.ErrNotImage)
 }
 
@@ -175,7 +177,7 @@ func TestDocumentUseCase_Thumbnail_CacheHit(t *testing.T) {
 	thumbReader := io.NopCloser(strings.NewReader("thumb-data"))
 	mockFS.EXPECT().Open(gomock.Any(), "proj1/p1/d1_photo.jpg_thumb.jpg").Return(thumbReader, nil)
 
-	dto, rc, err := uc.Thumbnail(context.Background(), "d1")
+	dto, rc, err := uc.Thumbnail(context.Background(), "proj1", "d1")
 	require.NoError(t, err)
 	defer rc.Close()
 	assert.Equal(t, "d1", dto.ID)
@@ -194,7 +196,55 @@ func TestDocumentUseCase_Thumbnail_NotFound(t *testing.T) {
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(nil, document.ErrDocumentNotFound)
 
-	_, _, err := uc.Thumbnail(context.Background(), "d1")
+	_, _, err := uc.Thumbnail(context.Background(), "proj1", "d1")
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "get document")
+}
+
+func TestDocumentUseCase_Get_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
+	mockFS := mock_storage.NewMockFileStorage(ctrl)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(&document.Document{
+		ID: "d1", ProjectID: "other-project",
+	}, nil)
+
+	_, err := uc.Get(context.Background(), "proj1", "d1")
+	assert.ErrorIs(t, err, document.ErrDocumentNotFound)
+}
+
+func TestDocumentUseCase_Update_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
+	mockFS := mock_storage.NewMockFileStorage(ctrl)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(&document.Document{
+		ID: "d1", ProjectID: "other-project",
+	}, nil)
+
+	_, err := uc.Update(context.Background(), "proj1", "d1", ucproject.UpdateDocumentInput{})
+	assert.ErrorIs(t, err, document.ErrDocumentNotFound)
+}
+
+func TestDocumentUseCase_Delete_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
+	mockFS := mock_storage.NewMockFileStorage(ctrl)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(&document.Document{
+		ID: "d1", ProjectID: "other-project",
+	}, nil)
+
+	err := uc.Delete(context.Background(), "proj1", "d1")
+	assert.ErrorIs(t, err, document.ErrDocumentNotFound)
 }

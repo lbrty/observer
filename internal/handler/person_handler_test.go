@@ -140,6 +140,7 @@ func TestPersonHandler_Get_Success(t *testing.T) {
 	deps.personRepo.EXPECT().GetByID(gomock.Any(), p.ID).Return(p, nil)
 
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/people/"+p.ID, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "person_id", Value: p.ID},
 	})
 	setSensitivityContext(c)
@@ -218,6 +219,7 @@ func TestPersonHandler_Update_Success(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodPatch, "/projects/"+projectID+"/people/"+p.ID, map[string]any{
 		"first_name": "Updated",
 	}, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "person_id", Value: p.ID},
 	})
 	deps.handler.Update(c)
@@ -233,10 +235,12 @@ func TestPersonHandler_Delete_NotFound(t *testing.T) {
 	deps := newPersonTestDeps(ctrl)
 
 	personID := testID().String()
+	projectID := testID().String()
 
-	deps.personRepo.EXPECT().Delete(gomock.Any(), personID).Return(person.ErrPersonNotFound)
+	deps.personRepo.EXPECT().GetByID(gomock.Any(), personID).Return(nil, person.ErrPersonNotFound)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/people/"+personID, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/people/"+personID, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "person_id", Value: personID},
 	})
 	deps.handler.Delete(c)
@@ -248,12 +252,15 @@ func TestPersonHandler_Delete_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	deps := newPersonTestDeps(ctrl)
 
-	personID := testID().String()
+	projectID := testID().String()
+	p := samplePerson(projectID)
 
-	deps.personRepo.EXPECT().Delete(gomock.Any(), personID).Return(nil)
+	deps.personRepo.EXPECT().GetByID(gomock.Any(), p.ID).Return(p, nil)
+	deps.personRepo.EXPECT().Delete(gomock.Any(), p.ID).Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/people/"+personID, nil, gin.Params{
-		{Key: "person_id", Value: personID},
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/people/"+p.ID, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
+		{Key: "person_id", Value: p.ID},
 	})
 	deps.handler.Delete(c)
 

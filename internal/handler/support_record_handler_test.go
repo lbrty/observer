@@ -92,6 +92,7 @@ func TestSupportRecordHandler_Get_Success(t *testing.T) {
 	}, nil)
 
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/support-records/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Get(c)
@@ -184,6 +185,7 @@ func TestSupportRecordHandler_Update_Success(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodPatch, "/projects/"+projectID+"/support-records/"+id, map[string]any{
 		"type": newType,
 	}, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Update(c)
@@ -199,9 +201,11 @@ func TestSupportRecordHandler_Delete_NotFound(t *testing.T) {
 	h, repo := newSupportRecordHandler(ctrl)
 
 	id := testID().String()
-	repo.EXPECT().Delete(gomock.Any(), id).Return(support.ErrRecordNotFound)
+	projectID := testID().String()
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(nil, support.ErrRecordNotFound)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/support-records/"+id, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/support-records/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Delete(c)
@@ -214,9 +218,12 @@ func TestSupportRecordHandler_Delete_Success(t *testing.T) {
 	h, repo := newSupportRecordHandler(ctrl)
 
 	id := testID().String()
+	projectID := testID().String()
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(&support.Record{ID: id, ProjectID: projectID}, nil)
 	repo.EXPECT().Delete(gomock.Any(), id).Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/support-records/"+id, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/support-records/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Delete(c)

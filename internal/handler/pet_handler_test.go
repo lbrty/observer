@@ -97,6 +97,7 @@ func TestPetHandler_Get_Success(t *testing.T) {
 	}, nil)
 
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/pets/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Get(c)
@@ -176,6 +177,7 @@ func TestPetHandler_Update_Success(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodPatch, "/projects/"+projectID+"/pets/"+id, map[string]any{
 		"name": "Rex Jr",
 	}, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Update(c)
@@ -191,9 +193,11 @@ func TestPetHandler_Delete_NotFound(t *testing.T) {
 	h, petRepo, _ := newPetHandler(ctrl)
 
 	id := testID().String()
-	petRepo.EXPECT().Delete(gomock.Any(), id).Return(pet.ErrPetNotFound)
+	projectID := testID().String()
+	petRepo.EXPECT().GetByID(gomock.Any(), id).Return(nil, pet.ErrPetNotFound)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/pets/"+id, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/pets/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Delete(c)
@@ -206,9 +210,12 @@ func TestPetHandler_Delete_Success(t *testing.T) {
 	h, petRepo, _ := newPetHandler(ctrl)
 
 	id := testID().String()
+	projectID := testID().String()
+	petRepo.EXPECT().GetByID(gomock.Any(), id).Return(&pet.Pet{ID: id, ProjectID: projectID}, nil)
 	petRepo.EXPECT().Delete(gomock.Any(), id).Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/pets/"+id, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/pets/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Delete(c)
