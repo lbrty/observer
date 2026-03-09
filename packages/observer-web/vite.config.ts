@@ -7,6 +7,10 @@ import { defineConfig } from "vite";
 
 export default defineConfig(() => {
   return {
+    build: {
+      outDir: "../../internal/spa/dist",
+      emptyOutDir: true,
+    },
     plugins: [
       react({
         babel: {
