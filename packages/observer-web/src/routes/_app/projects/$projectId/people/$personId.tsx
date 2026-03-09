@@ -9,6 +9,7 @@ import { PersonDrawer } from "@/components/person-drawer";
 import { StatusBadge } from "@/components/status-badge";
 import { useMyProjects } from "@/hooks/use-my-projects";
 import { usePerson } from "@/hooks/use-people";
+import { useProjectRole } from "@/hooks/use-project-role";
 
 export const Route = createFileRoute("/_app/projects/$projectId/people/$personId")({
   component: PersonDetailLayout,
@@ -20,6 +21,7 @@ function PersonDetailLayout() {
   const { data: person, isLoading } = usePerson(projectId, personId);
   const { data: projectsData } = useMyProjects();
   const project = projectsData?.projects.find((p) => p.id === projectId);
+  const { canWrite } = useProjectRole(projectId);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -82,14 +84,16 @@ function PersonDetailLayout() {
       <div className="mb-6 flex items-center gap-3">
         <h1 className="font-serif text-xl font-bold tracking-tight text-fg">{fullName}</h1>
         <StatusBadge label={t(`project.people.${person.case_status}`)} />
-        <button
-          type="button"
-          onClick={() => setDrawerOpen(true)}
-          className="ml-auto rounded-lg p-1.5 text-fg-tertiary transition-colors hover:bg-bg-tertiary hover:text-fg"
-          title={t("project.people.editTitle")}
-        >
-          <PencilSimpleIcon size={18} />
-        </button>
+        {canWrite && (
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(true)}
+            className="ml-auto rounded-lg p-1.5 text-fg-tertiary transition-colors hover:bg-bg-tertiary hover:text-fg"
+            title={t("project.people.editTitle")}
+          >
+            <PencilSimpleIcon size={18} />
+          </button>
+        )}
       </div>
 
       <div className="mb-6 flex gap-0 rounded-lg border border-border-secondary bg-bg-secondary p-0.5">

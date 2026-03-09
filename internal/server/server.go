@@ -143,17 +143,6 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	{
 		adminRead.GET("/users", adminHandler.ListUsers)
 		adminRead.GET("/users/:id", adminHandler.GetUser)
-
-		adminRead.GET("/countries", countryHandler.List)
-		adminRead.GET("/countries/:id", countryHandler.Get)
-		adminRead.GET("/states", stateHandler.List)
-		adminRead.GET("/states/:id", stateHandler.Get)
-		adminRead.GET("/places", placeHandler.List)
-		adminRead.GET("/places/:id", placeHandler.Get)
-		adminRead.GET("/offices", officeHandler.List)
-		adminRead.GET("/offices/:id", officeHandler.Get)
-		adminRead.GET("/categories", categoryHandler.List)
-		adminRead.GET("/categories/:id", categoryHandler.Get)
 	}
 
 	// Reference data write endpoints (admin + staff + consultant)
@@ -179,6 +168,18 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		adminAny.GET("/projects", projectHandler.List)
 		adminAny.GET("/projects/:project_id", projectHandler.Get)
 		adminAny.GET("/projects/:project_id/permissions", permHandler.ListPermissions)
+
+		// Reference data — readable by all authenticated users including guests.
+		adminAny.GET("/countries", countryHandler.List)
+		adminAny.GET("/countries/:id", countryHandler.Get)
+		adminAny.GET("/states", stateHandler.List)
+		adminAny.GET("/states/:id", stateHandler.Get)
+		adminAny.GET("/places", placeHandler.List)
+		adminAny.GET("/places/:id", placeHandler.Get)
+		adminAny.GET("/offices", officeHandler.List)
+		adminAny.GET("/offices/:id", officeHandler.Get)
+		adminAny.GET("/categories", categoryHandler.List)
+		adminAny.GET("/categories/:id", categoryHandler.Get)
 	}
 
 	// Admin-only endpoints

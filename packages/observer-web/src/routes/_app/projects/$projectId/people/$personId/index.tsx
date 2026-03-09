@@ -10,6 +10,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { UISelect } from "@/components/ui-select";
 import { useOffices } from "@/hooks/use-offices";
 import { usePerson } from "@/hooks/use-people";
+import { useProjectRole } from "@/hooks/use-project-role";
 import { sphereKeys, typeKeys } from "@/constants/support";
 import { useCreateSupportRecord } from "@/hooks/use-support-records";
 import { handleApiError } from "@/lib/form-error";
@@ -65,6 +66,7 @@ function PersonOverview() {
   const { projectId, personId } = Route.useParams();
   const { data: person, isLoading } = usePerson(projectId, personId);
   const { data: offices } = useOffices();
+  const { canWrite } = useProjectRole(projectId);
 
   const officeName = person?.office_id
     ? offices?.find((o) => o.id === person.office_id)?.name
@@ -199,7 +201,7 @@ function PersonOverview() {
         </dl>
       </section>
 
-      {!formOpen && (
+      {canWrite && !formOpen && (
         <Button
           variant="ghost"
           icon={<PlusIcon size={16} weight="bold" />}
