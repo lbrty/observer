@@ -45,13 +45,14 @@ func NewAuthUseCase(
 }
 
 // Register registers a new user.
+// Email enumeration is prevented by returning success silently when the address is already registered.
+// Role is always set to RoleGuest — admin promotes users via /admin/users/:id.
 func (uc *AuthUseCase) Register(ctx context.Context, input RegisterInput) (*RegisterOutput, error) {
-	if _, err := user.ValidateRole(input.Role); err != nil {
-		return nil, err
-	}
-
+	// Email already registered — return success silently to prevent enumeration.
 	if _, err := uc.userRepo.GetByEmail(ctx, input.Email); err == nil {
-		return nil, user.ErrEmailExists
+		return &RegisterOutput{
+			Message: "Registration successful. Your account is pending admin approval.",
+		}, nil
 	}
 
 	hash, salt, err := uc.hasher.Hash(input.Password)
@@ -65,7 +66,7 @@ func (uc *AuthUseCase) Register(ctx context.Context, input RegisterInput) (*Regi
 	newUser := &user.User{
 		ID:         userID,
 		Email:      input.Email,
-		Role:       user.Role(input.Role),
+		Role:       user.RoleGuest, // always guest; admin promotes via /admin/users/:id
 		IsVerified: false,
 		IsActive:   false,
 		CreatedAt:  now,
@@ -189,6 +190,9 @@ func (uc *AuthUseCase) RefreshToken(ctx context.Context, input RefreshTokenInput
 	if err != nil {
 		return nil, fmt.Errorf("get user: %w", err)
 	}
+	if err := u.CanLogin(); err != nil {
+		return nil, err
+	}
 
 	accessToken, expiresAt, err := uc.tokenGen.GenerateAccessToken(u.ID, string(u.Role))
 	if err != nil {
@@ -310,6 +314,9 @@ func (uc *AuthUseCase) VerifyMFA(ctx context.Context, input VerifyMFAInput, user
 
 	u, err := uc.userRepo.GetByID(ctx, userID)
 	if err != nil {
+		return nil, err
+	}
+	if err := u.CanLogin(); err != nil {
 		return nil, err
 	}
 

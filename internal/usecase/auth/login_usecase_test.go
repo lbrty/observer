@@ -4,12 +4,15 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
+	"github.com/pquerna/otp/totp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
 	"github.com/lbrty/observer/internal/crypto"
+	domainauth "github.com/lbrty/observer/internal/domain/auth"
 	"github.com/lbrty/observer/internal/domain/user"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	"github.com/lbrty/observer/internal/ulid"
@@ -40,13 +43,40 @@ func setupAuthUseCase(t *testing.T) (
 	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher
 }
 
+// setupAuthUseCaseWithTokenGen is like setupAuthUseCase but also returns the TokenGenerator
+// so tests can produce valid MFA tokens for use case calls.
+func setupAuthUseCaseWithTokenGen(t *testing.T) (
+	*ucauth.AuthUseCase,
+	*mock_repo.MockUserRepository,
+	*mock_repo.MockCredentialsRepository,
+	*mock_repo.MockSessionRepository,
+	*mock_repo.MockMFARepository,
+	crypto.PasswordHasher,
+	crypto.TokenGenerator,
+) {
+	t.Helper()
+	ctrl := gomock.NewController(t)
+
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
+	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
+	hasher := crypto.NewArgonHasher()
+	tokenGen := newTestTokenGen(t)
+
+	uc := ucauth.NewAuthUseCase(
+		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen,
+	)
+	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen
+}
+
 func newTestTokenGen(t *testing.T) crypto.TokenGenerator {
 	t.Helper()
 	tmpDir := t.TempDir()
 	privPath, pubPath := generateTestKeys(t, tmpDir)
 	keys, err := crypto.LoadRSAKeys(privPath, pubPath)
 	require.NoError(t, err)
-	return crypto.NewRSATokenGenerator(keys, 0, 0, 0, "test")
+	return crypto.NewRSATokenGenerator(keys, 0, 0, 5*time.Minute, "test")
 }
 
 func TestLogin_Success(t *testing.T) {
@@ -99,4 +129,74 @@ func TestLogin_InactiveUser(t *testing.T) {
 		Email: u.Email, Password: "pass",
 	}, "", "")
 	assert.ErrorIs(t, err, user.ErrUserNotActive)
+}
+
+func TestVerifyMFA_BlocksDeactivatedUser(t *testing.T) {
+	uc, mockUserRepo, _, _, mockMFARepo, _, tokenGen := setupAuthUseCaseWithTokenGen(t)
+
+	ctx := context.Background()
+	uid := ulid.New()
+
+	mfaToken, err := tokenGen.GenerateMFAToken(uid)
+	require.NoError(t, err)
+
+	key, err := totp.Generate(totp.GenerateOpts{Issuer: "test", AccountName: "test@example.com"})
+	require.NoError(t, err)
+	code, err := totp.GenerateCode(key.Secret(), time.Now())
+	require.NoError(t, err)
+
+	mockMFARepo.EXPECT().GetByUserID(ctx, uid).Return(&user.MFAConfig{
+		UserID:    uid,
+		Secret:    key.Secret(),
+		IsEnabled: true,
+	}, nil)
+
+	deactivatedAt := time.Now()
+	mockUserRepo.EXPECT().GetByID(ctx, uid).Return(&user.User{
+		ID:            uid,
+		IsActive:      false,
+		DeactivatedAt: &deactivatedAt,
+	}, nil)
+
+	_, err = uc.VerifyMFA(ctx, ucauth.VerifyMFAInput{
+		MFAToken: mfaToken,
+		TOTPCode: code,
+	}, "ua", "127.0.0.1")
+	require.Error(t, err)
+}
+
+func TestRefreshToken_BlocksDeactivatedUser(t *testing.T) {
+	uc, mockUserRepo, _, mockSessionRepo, _, _ := setupAuthUseCase(t)
+
+	ctx := context.Background()
+	uid := ulid.New()
+	sessionID := ulid.New()
+
+	session := &domainauth.Session{
+		ID:           sessionID,
+		UserID:       uid,
+		RefreshToken: "test-refresh-token",
+		ExpiresAt:    time.Now().Add(time.Hour),
+		CreatedAt:    time.Now(),
+	}
+
+	mockSessionRepo.EXPECT().
+		GetByRefreshToken(ctx, "test-refresh-token").
+		Return(session, nil)
+
+	mockSessionRepo.EXPECT().
+		Delete(ctx, sessionID).
+		Return(nil)
+
+	deactivatedAt := time.Now()
+	mockUserRepo.EXPECT().GetByID(ctx, uid).Return(&user.User{
+		ID:            uid,
+		IsActive:      false,
+		DeactivatedAt: &deactivatedAt,
+	}, nil)
+
+	_, err := uc.RefreshToken(ctx, ucauth.RefreshTokenInput{
+		RefreshToken: "test-refresh-token",
+	})
+	require.Error(t, err)
 }

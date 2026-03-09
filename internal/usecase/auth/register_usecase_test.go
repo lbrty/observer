@@ -31,7 +31,6 @@ func TestRegister_Success(t *testing.T) {
 	input := ucauth.RegisterInput{
 		Email:    "test@example.com",
 		Password: "securepassword",
-		Role:     "consultant",
 	}
 
 	mockUserRepo.EXPECT().
@@ -52,7 +51,7 @@ func TestRegister_Success(t *testing.T) {
 	assert.Contains(t, out.Message, "Registration successful")
 }
 
-func TestRegister_EmailExists(t *testing.T) {
+func TestRegister_AlwaysCreatesGuestRole(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -64,20 +63,33 @@ func TestRegister_EmailExists(t *testing.T) {
 	tokenGen := newTestTokenGen(t)
 
 	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen)
+
+	ctx := context.Background()
 
 	mockUserRepo.EXPECT().
-		GetByEmail(gomock.Any(), "taken@example.com").
-		Return(&user.User{}, nil)
+		GetByEmail(ctx, "attacker@example.com").
+		Return(nil, user.ErrUserNotFound)
 
-	_, err := uc.Register(context.Background(), ucauth.RegisterInput{
-		Email:    "taken@example.com",
-		Password: "securepassword",
-		Role:     "consultant",
+	mockUserRepo.EXPECT().
+		Create(ctx, gomock.AssignableToTypeOf(&user.User{})).
+		DoAndReturn(func(_ context.Context, u *user.User) error {
+			assert.Equal(t, user.RoleGuest, u.Role, "new users must always be created with RoleGuest")
+			return nil
+		})
+
+	mockCredRepo.EXPECT().
+		Create(ctx, gomock.Any()).
+		Return(nil)
+
+	out, err := uc.Register(ctx, ucauth.RegisterInput{
+		Email:    "attacker@example.com",
+		Password: "Password1!",
 	})
-	assert.ErrorIs(t, err, user.ErrEmailExists)
+	require.NoError(t, err)
+	assert.NotEmpty(t, out.Message)
 }
 
-func TestRegister_InvalidRole(t *testing.T) {
+func TestRegister_DuplicateEmailReturnsSuccess(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -90,10 +102,15 @@ func TestRegister_InvalidRole(t *testing.T) {
 
 	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen)
 
-	_, err := uc.Register(context.Background(), ucauth.RegisterInput{
-		Email:    "test@example.com",
+	// GetByEmail returns an existing user (no error) — simulates duplicate email.
+	mockUserRepo.EXPECT().
+		GetByEmail(gomock.Any(), "existing@example.com").
+		Return(&user.User{}, nil)
+
+	out, err := uc.Register(context.Background(), ucauth.RegisterInput{
+		Email:    "existing@example.com",
 		Password: "securepassword",
-		Role:     "superadmin",
 	})
-	assert.ErrorIs(t, err, user.ErrInvalidRole)
+	require.NoError(t, err, "duplicate email must NOT return an error to the caller")
+	assert.NotEmpty(t, out.Message)
 }

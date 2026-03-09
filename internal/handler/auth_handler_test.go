@@ -40,18 +40,18 @@ func TestAuthHandler_Register_DuplicateEmail(t *testing.T) {
 	d := newAuthTestDeps(ctrl)
 	h := newAuthHandler(d)
 
+	// Duplicate email returns 201 success silently to prevent email enumeration.
 	d.userRepo.EXPECT().GetByEmail(gomock.Any(), "taken@test.com").Return(&user.User{}, nil)
 
 	c, w := newTestContext(http.MethodPost, "/auth/register", map[string]string{
 		"email":    "taken@test.com",
 		"password": "password123",
-		"role":     "staff",
 	})
 	h.Register(c)
 
-	assert.Equal(t, http.StatusConflict, w.Code)
+	assert.Equal(t, http.StatusCreated, w.Code)
 	resp := parseResponse[map[string]any](w)
-	assert.Equal(t, "errors.user.emailExists", resp["code"])
+	assert.NotEmpty(t, resp["message"])
 }
 
 func TestAuthHandler_Register_Success(t *testing.T) {
@@ -290,8 +290,9 @@ func TestAuthHandler_RefreshToken_Success(t *testing.T) {
 		ExpiresAt:    time.Now().Add(24 * time.Hour),
 	}
 	activeUser := &user.User{
-		ID:   uid,
-		Role: user.RoleStaff,
+		ID:       uid,
+		Role:     user.RoleStaff,
+		IsActive: true,
 	}
 	expiresAt := time.Now().Add(15 * time.Minute)
 

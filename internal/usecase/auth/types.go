@@ -4,9 +4,8 @@ import "time"
 
 // RegisterInput holds data for user registration.
 type RegisterInput struct {
-	Email    string `json:"email" binding:"required,email"`
+	Email    string `json:"email"    binding:"required,email"`
 	Password string `json:"password" binding:"required,min=8"`
-	Role     string `json:"role" binding:"required"`
 }
 
 // RegisterOutput is the response after a successful registration.
