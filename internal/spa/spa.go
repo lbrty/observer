@@ -3,33 +3,32 @@ package spa
 import (
 	"io/fs"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-// Handler returns a Gin handler that serves a single-page application
-// from the given filesystem. Requests matching a static file are served
-// directly; everything else falls back to index.html for client-side routing.
-func Handler(fsys fs.FS) gin.HandlerFunc {
+// Mount registers a NoRoute handler that serves the embedded SPA:
+//   - known static files are served with correct MIME types via http.FileServer
+//   - everything else falls back to index.html for client-side routing
+func Mount(r *gin.Engine, fsys fs.FS) {
+	index, _ := fs.ReadFile(fsys, "index.html")
 	fileServer := http.FileServer(http.FS(fsys))
 
-	return func(c *gin.Context) {
-		p := c.Request.URL.Path
-		if p == "/" {
+	r.NoRoute(func(c *gin.Context) {
+		// fs.FS requires relative paths (no leading slash).
+		p := strings.TrimPrefix(c.Request.URL.Path, "/")
+		if p == "" {
 			p = "index.html"
 		}
 
-		// Try to open the exact file.
 		if f, err := fsys.Open(p); err == nil {
 			f.Close()
 			fileServer.ServeHTTP(c.Writer, c.Request)
-			c.Abort()
 			return
 		}
 
-		// Fallback to index.html for client-side routing.
-		c.Request.URL.Path = "/"
-		fileServer.ServeHTTP(c.Writer, c.Request)
-		c.Abort()
-	}
+		// Unknown path → serve index.html so the SPA router takes over.
+		c.Data(http.StatusOK, "text/html; charset=utf-8", index)
+	})
 }

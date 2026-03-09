@@ -18,6 +18,9 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	healthHandler := health.NewHandler(db)
 	s.router.GET("/health", healthHandler.Health)
 
+	// All API routes live under /api so the SPA can own everything else.
+	api := s.router.Group("/api")
+
 	authMW := middleware.NewAuthMiddleware(container.TokenGenerator, container.UserRepo)
 	projectAuthMW := middleware.NewProjectAuthMiddleware(container.PermissionRepo)
 
@@ -32,7 +35,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	loginRL := middleware.RateLimit(float64(cfg.RateLimit.LoginRate)/60.0, cfg.RateLimit.LoginRate)
 	registerRL := middleware.RateLimit(float64(cfg.RateLimit.RegisterRate)/60.0, cfg.RateLimit.RegisterRate)
 
-	auth := s.router.Group("/auth")
+	auth := api.Group("/auth")
 	{
 		auth.POST("/register", registerRL, authHandler.Register)
 		auth.POST("/login", loginRL, authHandler.Login)
@@ -49,7 +52,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 
 	// My endpoints — authenticated user's own data
 	myHandler := handler.NewMyHandler(container.MyProjectsUC)
-	my := s.router.Group("/my", authMW.Authenticate())
+	my := api.Group("/my", authMW.Authenticate())
 	{
 		my.GET("/projects", myHandler.Projects)
 	}
@@ -65,14 +68,14 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	projectHandler := handler.NewProjectHandler(container.ProjectUC)
 
 	// Admin endpoints readable by admin + staff + consultant
-	adminRead := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff, user.RoleConsultant))
+	adminRead := api.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff, user.RoleConsultant))
 	{
 		adminRead.GET("/users", adminHandler.ListUsers)
 		adminRead.GET("/users/:id", adminHandler.GetUser)
 	}
 
 	// Reference data write endpoints (admin + staff + consultant)
-	adminWrite := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff, user.RoleConsultant))
+	adminWrite := api.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff, user.RoleConsultant))
 	{
 		adminWrite.POST("/countries", countryHandler.Create)
 		adminWrite.PATCH("/countries/:id", countryHandler.Update)
@@ -89,7 +92,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 
 	// Project & permission read endpoints — any authenticated user.
 	// Admin/Staff see all; Consultant/Guest see only what they have permissions for.
-	adminAny := s.router.Group("/admin", authMW.Authenticate())
+	adminAny := api.Group("/admin", authMW.Authenticate())
 	{
 		adminAny.GET("/projects", projectHandler.List)
 		adminAny.GET("/projects/:project_id", projectHandler.Get)
@@ -110,7 +113,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 
 	// Admin-only endpoints
 	auditHandler := handler.NewAuditHandler(container.AuditUC)
-	admin := s.router.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin))
+	admin := api.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin))
 	{
 		admin.GET("/audit-logs", auditHandler.ListAll)
 
@@ -152,7 +155,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	petReportHandler := handler.NewPetReportHandler(container.PetReportUC)
 	exportHandler := handler.NewExportHandler(container.PersonUC, container.SupportRecordUC, container.PetUC, container.HouseholdUC, container.AuditUC)
 
-	proj := s.router.Group("/projects/:project_id", authMW.Authenticate())
+	proj := api.Group("/projects/:project_id", authMW.Authenticate())
 	{
 		// Read-level access
 		read := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionRead))
@@ -243,7 +246,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			slog.Error("failed to load embedded SPA", slog.Any("err", err))
 		} else {
 			slog.Info("serving embedded SPA")
-			s.router.NoRoute(spa.Handler(spaFS))
+			spa.Mount(s.router, spaFS)
 		}
 	}
 }
