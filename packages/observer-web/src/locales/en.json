@@ -20,7 +20,8 @@
     "loading": "Loading…",
     "enabled": "Enabled",
     "disabled": "Disabled",
-    "search": "Search"
+    "search": "Search",
+    "schemaDrift": "Database schema is {{pending}} migration(s) behind. Run `observer migrate up` to apply."
   },
   "auth": {
     "loginTitle": "Sign in",

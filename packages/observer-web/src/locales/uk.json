@@ -20,7 +20,8 @@
     "loading": "Завантаження…",
     "enabled": "Увімкнено",
     "disabled": "Вимкнено",
-    "search": "Пошук"
+    "search": "Пошук",
+    "schemaDrift": "Схема бази даних відстає на {{pending}} міграц. Виконайте `observer migrate up`."
   },
   "auth": {
     "loginTitle": "Вхід",

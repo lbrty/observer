@@ -20,7 +20,8 @@
     "loading": "Cüktölüüdö…",
     "enabled": "Iştetilgen",
     "disabled": "Öçürülgön",
-    "search": "Izdöö"
+    "search": "Izdöö",
+    "schemaDrift": "Маалымат базасынын схемасы {{pending}} миграция(лар) артта. Колдонуу үчүн `observer migrate up` иштетиңиз."
   },
   "auth": {
     "loginTitle": "Kirüü",

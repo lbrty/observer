@@ -20,7 +20,8 @@
     "loading": "Laden…",
     "enabled": "Aktiviert",
     "disabled": "Deaktiviert",
-    "search": "Suchen"
+    "search": "Suchen",
+    "schemaDrift": "Das Datenbankschema ist um {{pending}} Migration(en) veraltet. Führen Sie `observer migrate up` aus."
   },
   "auth": {
     "loginTitle": "Anmelden",

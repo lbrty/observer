@@ -19,6 +19,7 @@ import (
 	"github.com/lbrty/observer/internal/app"
 	"github.com/lbrty/observer/internal/config"
 	"github.com/lbrty/observer/internal/database"
+	"github.com/lbrty/observer/internal/handler"
 	"github.com/lbrty/observer/internal/logger"
 	"github.com/lbrty/observer/internal/middleware"
 	"github.com/lbrty/observer/internal/ulid"
@@ -32,14 +33,14 @@ type Server struct {
 }
 
 // New creates and configures a new Server.
-func New(cfg *config.Config, db database.DB, log *slog.Logger, container *app.Container) *Server {
+func New(cfg *config.Config, db database.DB, log *slog.Logger, container *app.Container, schemaStatus handler.SchemaStatus) *Server {
 	gin.SetMode(gin.ReleaseMode)
 	registerCustomValidators()
 	router := gin.New()
 
 	s := &Server{router: router, cfg: &cfg.Server}
 	s.setupMiddleware(cfg, log)
-	s.setupRoutes(cfg, db, container)
+	s.setupRoutes(cfg, db, container, schemaStatus)
 
 	if cfg.Swagger.Enabled {
 		router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

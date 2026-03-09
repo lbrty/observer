@@ -1,8 +1,11 @@
-import { SignOutIcon, UserCircleIcon } from "@/components/icons";
+import { useState } from "react";
+
 import { Menu } from "@base-ui/react/menu";
 import { createFileRoute, Link, Navigate, Outlet } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { SignOutIcon, UserCircleIcon, WarningIcon, XIcon } from "@/components/icons";
+import { useSchemaStatus } from "@/hooks/use-schema-status";
 import { useAuth } from "@/stores/auth";
 
 export const Route = createFileRoute("/_app")({
@@ -12,12 +15,16 @@ export const Route = createFileRoute("/_app")({
 function AppLayout() {
   const { t } = useTranslation();
   const { isAuthenticated, isLoading, user, logout } = useAuth();
+  const { data: schemaStatus } = useSchemaStatus();
+  const [driftDismissed, setDriftDismissed] = useState(false);
 
   if (isLoading) return null;
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
+
+  const showDriftBanner = !driftDismissed && schemaStatus && schemaStatus.pending > 0;
 
   return (
     <div className="flex min-h-screen flex-col bg-bg">
@@ -35,6 +42,21 @@ function AppLayout() {
           <AvatarMenu email={user?.email ?? ""} onLogout={logout} />
         </div>
       </header>
+      {showDriftBanner && (
+        <div className="flex items-center gap-3 border-b border-gold/30 bg-gold/10 px-5 py-2.5 text-sm text-gold">
+          <WarningIcon size={16} className="shrink-0" />
+          <span className="flex-1">
+            {t("common.schemaDrift", { pending: schemaStatus.pending })}
+          </span>
+          <button
+            type="button"
+            onClick={() => setDriftDismissed(true)}
+            className="shrink-0 cursor-pointer rounded p-0.5 hover:bg-gold/20"
+          >
+            <XIcon size={14} />
+          </button>
+        </div>
+      )}
       <div className="flex flex-1">
         <Outlet />
       </div>

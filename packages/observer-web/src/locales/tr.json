@@ -20,7 +20,8 @@
     "loading": "Yükleniyor…",
     "enabled": "Etkin",
     "disabled": "Devre dışı",
-    "search": "Ara"
+    "search": "Ara",
+    "schemaDrift": "Veritabanı şeması {{pending}} migrasyon geride. `observer migrate up` komutunu çalıştırın."
   },
   "auth": {
     "loginTitle": "Giriş yap",

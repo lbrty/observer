@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
@@ -22,6 +23,7 @@ import (
 	"github.com/lbrty/observer/internal/app"
 	"github.com/lbrty/observer/internal/config"
 	"github.com/lbrty/observer/internal/database"
+	"github.com/lbrty/observer/internal/handler"
 	"github.com/lbrty/observer/internal/logger"
 	"github.com/lbrty/observer/internal/server"
 	"github.com/lbrty/observer/migrations"
@@ -108,12 +110,14 @@ func runServe(cmd *cobra.Command, _ []string) error {
 		}
 	}
 
+	schemaStatus := checkMigrationDrift(cfg.Database.DSN, log)
+
 	container, err := app.NewContainer(cfg, db, redisClient)
 	if err != nil {
 		return err
 	}
 
-	srv := server.New(cfg, db, log, container)
+	srv := server.New(cfg, db, log, container, schemaStatus)
 
 	vacuumCtx, vacuumCancel := context.WithCancel(context.Background())
 	defer vacuumCancel()
@@ -137,6 +141,87 @@ func runServe(cmd *cobra.Command, _ []string) error {
 	defer cancel()
 
 	return srv.Shutdown(ctx)
+}
+
+// checkMigrationDrift computes how many migrations are pending without applying them.
+// On any error it logs a warning and returns a zero-valued status so the server still starts.
+func checkMigrationDrift(dsn string, log *slog.Logger) handler.SchemaStatus {
+	var s handler.SchemaStatus
+
+	var m *migrate.Migrate
+	var err error
+
+	if migrations.Embedded() {
+		fsys, ferr := migrations.FS()
+		if ferr != nil {
+			log.Warn("schema drift check: embedded fs unavailable", slog.Any("err", ferr))
+			return s
+		}
+		d, derr := iofs.New(fsys, ".")
+		if derr != nil {
+			log.Warn("schema drift check: iofs source", slog.Any("err", derr))
+			return s
+		}
+		m, err = migrate.NewWithSourceInstance("iofs", d, dsn)
+		if err != nil {
+			log.Warn("schema drift check: migrate init", slog.Any("err", err))
+			return s
+		}
+		defer m.Close()
+		s.LatestVersion = scanMaxVersionFS(fsys)
+	} else {
+		m, err = migrate.New("file://migrations", dsn)
+		if err != nil {
+			log.Warn("schema drift check: migrate init", slog.Any("err", err))
+			return s
+		}
+		defer m.Close()
+		s.LatestVersion = scanMaxVersionDir("migrations")
+	}
+
+	v, dirty, verr := m.Version()
+	if verr != nil && verr != migrate.ErrNilVersion {
+		log.Warn("schema drift check: version query", slog.Any("err", verr))
+		return s
+	}
+	s.CurrentVersion = v
+	s.Dirty = dirty
+
+	if s.LatestVersion > s.CurrentVersion {
+		s.Pending = int(s.LatestVersion - s.CurrentVersion)
+		log.Warn("database schema is behind",
+			slog.Uint64("current", uint64(s.CurrentVersion)),
+			slog.Uint64("latest", uint64(s.LatestVersion)),
+			slog.Int("pending", s.Pending),
+		)
+	}
+
+	return s
+}
+
+func scanMaxVersionFS(fsys fs.FS) uint {
+	entries, _ := fs.ReadDir(fsys, ".")
+	return maxMigrationSeq(entries)
+}
+
+func scanMaxVersionDir(dir string) uint {
+	entries, _ := os.ReadDir(dir)
+	result := make([]fs.DirEntry, len(entries))
+	for i, e := range entries {
+		result[i] = e
+	}
+	return maxMigrationSeq(result)
+}
+
+func maxMigrationSeq(entries []fs.DirEntry) uint {
+	var max uint
+	for _, e := range entries {
+		var n uint
+		if _, err := fmt.Sscanf(e.Name(), "%06d", &n); err == nil && n > max {
+			max = n
+		}
+	}
+	return max
 }
 
 func autoMigrate(dsn string, log *slog.Logger) error {

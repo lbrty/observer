@@ -14,7 +14,7 @@ import (
 	"github.com/lbrty/observer/internal/spa"
 )
 
-func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.Container) {
+func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.Container, schemaStatus handler.SchemaStatus) {
 	healthHandler := health.NewHandler(db)
 	s.router.GET("/health", healthHandler.Health)
 
@@ -113,8 +113,10 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 
 	// Admin-only endpoints
 	auditHandler := handler.NewAuditHandler(container.AuditUC)
+	schemaHandler := handler.NewSchemaHandler(schemaStatus)
 	admin := api.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin))
 	{
+		admin.GET("/schema/status", schemaHandler.Status)
 		admin.GET("/audit-logs", auditHandler.ListAll)
 
 		admin.POST("/users", adminHandler.CreateUser)
