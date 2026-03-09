@@ -6,6 +6,11 @@ default:
 build:
     go build -o bin/observer ./cmd/observer
 
+# Build frontend + Go binary with embedded SPA (production)
+build-prod:
+    cd packages/observer-web && bun run build
+    go build -tags production -o bin/observer ./cmd/observer
+
 # Run the server
 run:
     SWAGGER_ENABLED=true go run ./cmd/observer serve
