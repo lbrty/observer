@@ -78,3 +78,12 @@ func joinStrings(ss []string, sep string) string {
 	}
 	return out
 }
+
+// appendIf appends a SQL clause with a positional arg if v is non-nil.
+// clause must contain a single %d verb for the parameter index, e.g. " AND p.sex = $%d".
+func appendIf[T any](q string, args []any, ix int, clause string, v *T) (string, []any, int) {
+	if v == nil {
+		return q, args, ix
+	}
+	return q + fmt.Sprintf(clause, ix), append(args, *v), ix + 1
+}

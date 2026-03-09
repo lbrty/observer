@@ -22,79 +22,27 @@ func NewReportRepository(db *sqlx.DB) ReportRepository {
 // applyPeopleFilters appends WHERE clauses for people-based queries.
 // dateCol is the column used for date range filtering (e.g. "p.registered_at").
 func applyPeopleFilters(q string, f report.ReportFilter, dateCol string, args []any, ix int) (string, []any, int) {
-	if f.DateFrom != nil {
-		q += fmt.Sprintf(" AND %s >= $%d", dateCol, ix)
-		args = append(args, *f.DateFrom)
-		ix++
-	}
-	if f.DateTo != nil {
-		q += fmt.Sprintf(" AND %s <= $%d", dateCol, ix)
-		args = append(args, *f.DateTo)
-		ix++
-	}
-	if f.CaseStatus != nil {
-		q += fmt.Sprintf(" AND p.case_status = $%d", ix)
-		args = append(args, *f.CaseStatus)
-		ix++
-	}
-	if f.Sex != nil {
-		q += fmt.Sprintf(" AND p.sex = $%d", ix)
-		args = append(args, *f.Sex)
-		ix++
-	}
-	if f.CategoryID != nil {
-		q += fmt.Sprintf(" AND p.id IN (SELECT person_id FROM person_categories WHERE category_id = $%d)", ix)
-		args = append(args, *f.CategoryID)
-		ix++
-	}
-	if f.OfficeID != nil {
-		q += fmt.Sprintf(" AND p.office_id = $%d", ix)
-		args = append(args, *f.OfficeID)
-		ix++
-	}
-	if f.ConsultantID != nil {
-		q += fmt.Sprintf(" AND p.consultant_id = $%d", ix)
-		args = append(args, *f.ConsultantID)
-		ix++
-	}
-	if f.SupportType != nil {
-		q += fmt.Sprintf(" AND p.id IN (SELECT sr2.person_id FROM support_records sr2 WHERE sr2.project_id = $1 AND sr2.type = $%d)", ix)
-		args = append(args, *f.SupportType)
-		ix++
-	}
+	q, args, ix = appendIf(q, args, ix, " AND "+dateCol+" >= $%d", f.DateFrom)
+	q, args, ix = appendIf(q, args, ix, " AND "+dateCol+" <= $%d", f.DateTo)
+	q, args, ix = appendIf(q, args, ix, " AND p.case_status = $%d", f.CaseStatus)
+	q, args, ix = appendIf(q, args, ix, " AND p.sex = $%d", f.Sex)
+	q, args, ix = appendIf(q, args, ix, " AND p.id IN (SELECT person_id FROM person_categories WHERE category_id = $%d)", f.CategoryID)
+	q, args, ix = appendIf(q, args, ix, " AND p.office_id = $%d", f.OfficeID)
+	q, args, ix = appendIf(q, args, ix, " AND p.consultant_id = $%d", f.ConsultantID)
+	q, args, ix = appendIf(q, args, ix, " AND p.id IN (SELECT sr2.person_id FROM support_records sr2 WHERE sr2.project_id = $1 AND sr2.type = $%d)", f.SupportType)
 	return q, args, ix
 }
 
 // applySupportFilters appends WHERE clauses for support_records-based queries.
 // dateCol is the column used for date range filtering (e.g. "sr.provided_at").
 func applySupportFilters(q string, f report.ReportFilter, dateCol string, args []any, ix int) (string, []any, int) {
-	if f.DateFrom != nil {
-		q += fmt.Sprintf(" AND %s >= $%d", dateCol, ix)
-		args = append(args, *f.DateFrom)
-		ix++
-	}
-	if f.DateTo != nil {
-		q += fmt.Sprintf(" AND %s <= $%d", dateCol, ix)
-		args = append(args, *f.DateTo)
-		ix++
-	}
-	if f.OfficeID != nil {
-		q += fmt.Sprintf(" AND sr.office_id = $%d", ix)
-		args = append(args, *f.OfficeID)
-		ix++
-	}
-	if f.ConsultantID != nil {
-		q += fmt.Sprintf(" AND sr.consultant_id = $%d", ix)
-		args = append(args, *f.ConsultantID)
-		ix++
-	}
-	if f.SupportType != nil {
-		q += fmt.Sprintf(" AND sr.type = $%d", ix)
-		args = append(args, *f.SupportType)
-		ix++
-	}
+	q, args, ix = appendIf(q, args, ix, " AND "+dateCol+" >= $%d", f.DateFrom)
+	q, args, ix = appendIf(q, args, ix, " AND "+dateCol+" <= $%d", f.DateTo)
+	q, args, ix = appendIf(q, args, ix, " AND sr.office_id = $%d", f.OfficeID)
+	q, args, ix = appendIf(q, args, ix, " AND sr.consultant_id = $%d", f.ConsultantID)
+	q, args, ix = appendIf(q, args, ix, " AND sr.type = $%d", f.SupportType)
 
-	// For person-related filters on support queries, use a subquery on people.
+	// Person-level filters via subquery — multi-clause, kept explicit.
 	var personClauses []string
 	var personArgs []any
 	if f.CategoryID != nil {
@@ -120,8 +68,7 @@ func applySupportFilters(q string, f report.ReportFilter, dateCol string, args [
 			}
 			sub += clause
 		}
-		sub += ")"
-		q += sub
+		q += sub + ")"
 		args = append(args, personArgs...)
 	}
 
