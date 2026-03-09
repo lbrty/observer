@@ -17,8 +17,8 @@ i18n.use(initReactI18next).init({
     de: { translation: de },
     tr: { translation: tr },
   },
-  lng: localStorage.getItem("observer-lang") || "ky",
-  fallbackLng: "ky",
+  lng: localStorage.getItem("observer-lang") || "en",
+  fallbackLng: "en",
   interpolation: {
     escapeValue: false,
   },
