@@ -57,7 +57,7 @@ function AppLayout() {
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
-              className="flex h-8 w-full max-w-[400px] cursor-pointer items-center gap-2.5 rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg-tertiary transition-colors hover:border-border hover:bg-bg-tertiary"
+              className="flex h-8 w-full max-w-100 cursor-pointer items-center gap-2.5 rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg-tertiary transition-colors hover:border-border hover:bg-bg-tertiary"
             >
               <MagnifyingGlassIcon size={14} className="shrink-0" />
               <span className="flex-1 text-left">{t("search.placeholder")}</span>

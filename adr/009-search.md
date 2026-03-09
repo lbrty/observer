@@ -1,19 +1,17 @@
 # ADR-009: Global Search
 
-| Field      | Value                                          |
-| ---------- | ---------------------------------------------- |
-| Status     | Accepted                                       |
-| Date       | 2026-03-09                                     |
-| Supersedes | —                                              |
+| Field      | Value                                           |
+| ---------- | ----------------------------------------------- |
+| Status     | Accepted                                        |
+| Date       | 2026-03-09                                      |
+| Supersedes | —                                               |
 | Components | observer (search endpoint), observer-web (cmdk) |
-
 
 ## Decision
 
 Implement global search using a single `GET /search?q=<query>` endpoint backed by a
 two-stage authorization filter, returning grouped results (people, pets) per project.
 The frontend uses [cmdk](https://cmdk.paco.me/) triggered by `⌘K` / `Ctrl+K`.
-
 
 ## Scope
 
@@ -23,7 +21,6 @@ This lets users find any record from anywhere in the app without first navigatin
 a project.
 
 Searchable entities (Phase 1): **people**, **pets**, **projects**.
-
 
 ## Backend Design
 
@@ -86,9 +83,7 @@ case layer before returning.
     {
       "project_id": "01J...",
       "project_name": "Lviv Program 2025",
-      "people": [
-        { "id": "01J...", "first_name": "Roxanne", "last_name": "Doe" }
-      ],
+      "people": [{ "id": "01J...", "first_name": "Roxanne", "last_name": "Doe" }],
       "pets": [],
       "projects": []
     }
@@ -114,7 +109,6 @@ No project scoping parameter — authorization determines the scope.
 - Repository method: `SearchRepository.Search(ctx, projectIDs []ulid.ULID, query string) (*SearchResults, error)`
 - Use case: `internal/usecase/search/search_usecase.go` — resolves project IDs, fans out queries, merges results
 - Handler: `internal/handler/search_handler.go` — thin adapter, validates `q` param
-
 
 ## Frontend Design
 
@@ -171,7 +165,6 @@ export function useSearch(query: string) {
   });
 }
 ```
-
 
 ## Alternatives Considered
 
