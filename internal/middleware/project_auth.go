@@ -90,8 +90,7 @@ func (m *ProjectAuthMiddleware) RequireProjectRole(action project.Action) gin.Ha
 			return
 		}
 
-		// Staff platform role always gets export access regardless of per-permission flag.
-		canExport := perm.CanExport || userRole == user.RoleStaff
+		canExport := perm.CanExport
 		setProjectContext(c, projectID, perm.Role, perm.CanViewContact, perm.CanViewPersonal, perm.CanViewDocuments, canExport)
 		c.Next()
 	}
@@ -135,4 +134,19 @@ func CanViewDocumentsFrom(c *gin.Context) bool {
 	val, _ := c.Get(string(CtxCanViewDocuments))
 	b, _ := val.(bool)
 	return b
+}
+
+// RequireExport returns middleware that aborts with 403 when the user lacks the export flag.
+// Must be placed after RequireProjectRole so the context flag is already set.
+func (m *ProjectAuthMiddleware) RequireExport() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		val, _ := c.Get(string(CtxCanExport))
+		canExport, _ := val.(bool)
+		if !canExport {
+			c.JSON(http.StatusForbidden, gin.H{"error": "export not allowed", "code": "errors.project.permissionDenied"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
 }
