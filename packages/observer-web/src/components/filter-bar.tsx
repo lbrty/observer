@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 
+import { useTranslation } from "react-i18next";
+
+import { Button } from "@/components/button";
 import { DateRangePicker } from "@/components/date-picker";
 import { MagnifyingGlassIcon } from "@/components/icons";
 import { UISelect } from "@/components/ui-select";
@@ -34,9 +37,11 @@ export type FilterDef = SearchFilter | SelectFilter | DateRangeFilter;
 interface FilterBarProps {
   filters: FilterDef[];
   trailing?: ReactNode;
+  onSearch?: () => void;
 }
 
-export function FilterBar({ filters, trailing }: FilterBarProps) {
+export function FilterBar({ filters, trailing, onSearch }: FilterBarProps) {
+  const { t } = useTranslation();
   return (
     <div className="mb-4 flex flex-wrap items-center gap-3">
       {filters.map((f, i) => {
@@ -82,6 +87,11 @@ export function FilterBar({ filters, trailing }: FilterBarProps) {
         );
       })}
       {trailing}
+      {onSearch && (
+        <Button variant="secondary" onClick={onSearch}>
+          {t("common.search")}
+        </Button>
+      )}
     </div>
   );
 }

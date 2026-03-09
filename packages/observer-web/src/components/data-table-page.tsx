@@ -24,6 +24,7 @@ interface DataTablePageProps<T> {
   pagination?: PaginationConfig;
   filters?: FilterDef[];
   filterTrailing?: ReactNode;
+  onSearch?: () => void;
   emptyIcon?: Icon;
   emptyTitle?: string;
   emptyDescription?: string;
@@ -42,6 +43,7 @@ export function DataTablePage<T>({
   pagination,
   filters,
   filterTrailing,
+  onSearch,
   emptyIcon,
   emptyTitle,
   emptyDescription,
@@ -53,7 +55,7 @@ export function DataTablePage<T>({
     <div>
       <PageHeader title={title} action={createAction} />
 
-      {filters && filters.length > 0 && <FilterBar filters={filters} trailing={filterTrailing} />}
+      {filters && filters.length > 0 && <FilterBar filters={filters} trailing={filterTrailing} onSearch={onSearch} />}
 
       <DataTable
         columns={columns}
