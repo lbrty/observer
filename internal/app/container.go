@@ -95,6 +95,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	credRepo := repository.NewCredentialsRepository(sqlxDB)
 	sessionRepo := repository.NewSessionRepository(sqlxDB)
 	mfaRepo := repository.NewMFARepository(sqlxDB)
+	mfaRecoveryRepo := repository.NewMFARecoveryCodeRepository(sqlxDB)
 	permRepo := repository.NewPermissionRepository(sqlxDB)
 	permCRUDRepo := repository.NewProjectPermissionRepository(sqlxDB)
 	countryRepo := repository.NewCountryRepository(sqlxDB)
@@ -135,7 +136,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
 
-	authUC := ucauth.NewAuthUseCase(userRepo, credRepo, sessionRepo, mfaRepo, hasher, tokenGen)
+	authUC := ucauth.NewAuthUseCase(userRepo, credRepo, sessionRepo, mfaRepo, mfaRecoveryRepo, hasher, tokenGen)
 	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher, sessionRepo, auditUC)
 	permUC := ucadmin.NewPermissionUseCase(permCRUDRepo, userRepo, auditUC)
 
@@ -161,7 +162,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	petTagUC := ucproject.NewPetTagUseCase(petTagRepo)
 	reportUC := ucreport.NewReportUseCase(reportRepo)
 	petReportUC := ucreport.NewPetReportUseCase(petReportRepo)
-	loginAttemptStore := repository.NewLoginAttemptStore(redisClient)
+	loginAttemptStore := repository.NewLoginAttemptStore(redisClient, userRepo)
 
 	return &Container{
 		UserRepo:          userRepo,

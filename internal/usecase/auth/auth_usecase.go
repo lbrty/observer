@@ -2,7 +2,10 @@ package auth
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/oklog/ulid/v2"
@@ -17,12 +20,13 @@ import (
 
 // AuthUseCase handles authentication, session management, and user profile operations.
 type AuthUseCase struct {
-	userRepo    repository.UserRepository
-	credRepo    repository.CredentialsRepository
-	sessionRepo repository.SessionRepository
-	mfaRepo     repository.MFARepository
-	hasher      crypto.PasswordHasher
-	tokenGen    crypto.TokenGenerator
+	userRepo     repository.UserRepository
+	credRepo     repository.CredentialsRepository
+	sessionRepo  repository.SessionRepository
+	mfaRepo      repository.MFARepository
+	recoveryRepo repository.MFARecoveryCodeRepository
+	hasher       crypto.PasswordHasher
+	tokenGen     crypto.TokenGenerator
 }
 
 // NewAuthUseCase creates an AuthUseCase.
@@ -31,16 +35,18 @@ func NewAuthUseCase(
 	credRepo repository.CredentialsRepository,
 	sessionRepo repository.SessionRepository,
 	mfaRepo repository.MFARepository,
+	recoveryRepo repository.MFARecoveryCodeRepository,
 	hasher crypto.PasswordHasher,
 	tokenGen crypto.TokenGenerator,
 ) *AuthUseCase {
 	return &AuthUseCase{
-		userRepo:    userRepo,
-		credRepo:    credRepo,
-		sessionRepo: sessionRepo,
-		mfaRepo:     mfaRepo,
-		hasher:      hasher,
-		tokenGen:    tokenGen,
+		userRepo:     userRepo,
+		credRepo:     credRepo,
+		sessionRepo:  sessionRepo,
+		mfaRepo:      mfaRepo,
+		recoveryRepo: recoveryRepo,
+		hasher:       hasher,
+		tokenGen:     tokenGen,
 	}
 }
 
@@ -182,6 +188,19 @@ func (uc *AuthUseCase) RefreshToken(ctx context.Context, input RefreshTokenInput
 		return nil, domainauth.ErrSessionExpired
 	}
 
+	if input.IP != "" && session.IP != input.IP {
+		slog.Warn("token refresh from new IP",
+			slog.String("session_ip", session.IP),
+			slog.String("request_ip", input.IP),
+			slog.String("user_id", session.UserID.String()),
+		)
+	}
+	if input.UserAgent != "" && session.UserAgent != input.UserAgent {
+		slog.Warn("token refresh from new user-agent",
+			slog.String("user_id", session.UserID.String()),
+		)
+	}
+
 	if err := uc.sessionRepo.Delete(ctx, session.ID); err != nil {
 		return nil, fmt.Errorf("delete old session: %w", err)
 	}
@@ -313,7 +332,16 @@ func (uc *AuthUseCase) VerifyMFA(ctx context.Context, input VerifyMFAInput, user
 	}
 
 	if !totp.Validate(input.TOTPCode, mfaCfg.Secret) {
-		return nil, domainauth.ErrInvalidMFACode
+		// Try as a single-use recovery code.
+		hash, _, hashErr := uc.hasher.Hash(input.TOTPCode)
+		if hashErr != nil {
+			return nil, domainauth.ErrInvalidMFACode
+		}
+		rc, rcErr := uc.recoveryRepo.FindUnused(ctx, userID, hash)
+		if rcErr != nil {
+			return nil, domainauth.ErrInvalidMFACode
+		}
+		_ = uc.recoveryRepo.MarkUsed(ctx, rc.ID)
 	}
 
 	u, err := uc.userRepo.GetByID(ctx, userID)
@@ -361,11 +389,12 @@ func (uc *AuthUseCase) SetupMFA(ctx context.Context, userID ulid.ULID) (*MFASetu
 // EnableMFA activates TOTP-based MFA for the user:
 //  1. Verifies the provided TOTP code against the secret (confirms the user's app is synced).
 //  2. Upserts the mfa_configs row with is_enabled=true.
+//  3. Generates 8 single-use recovery codes and returns them (shown once only).
 //
 // After this call, Login will return RequiresMFA=true for this user.
-func (uc *AuthUseCase) EnableMFA(ctx context.Context, userID ulid.ULID, input EnableMFAInput) error {
+func (uc *AuthUseCase) EnableMFA(ctx context.Context, userID ulid.ULID, input EnableMFAInput) (*EnableMFAOutput, error) {
 	if !totp.Validate(input.TOTPCode, input.Secret) {
-		return domainauth.ErrInvalidMFACode
+		return nil, domainauth.ErrInvalidMFACode
 	}
 	cfg := &user.MFAConfig{
 		UserID:    userID,
@@ -374,11 +403,48 @@ func (uc *AuthUseCase) EnableMFA(ctx context.Context, userID ulid.ULID, input En
 		IsEnabled: true,
 		CreatedAt: time.Now().UTC(),
 	}
-	return uc.mfaRepo.Upsert(ctx, cfg)
+	if err := uc.mfaRepo.Upsert(ctx, cfg); err != nil {
+		return nil, err
+	}
+
+	plainCodes, records, err := generateRecoveryCodes(8, userID, uc.hasher)
+	if err != nil {
+		return nil, fmt.Errorf("generate recovery codes: %w", err)
+	}
+	if err := uc.recoveryRepo.CreateBatch(ctx, records); err != nil {
+		return nil, fmt.Errorf("store recovery codes: %w", err)
+	}
+	return &EnableMFAOutput{RecoveryCodes: plainCodes}, nil
 }
 
-// DisableMFA requires a valid TOTP code to confirm intent, then clears the secret
-// and sets is_enabled=false. Future logins will skip the MFA challenge.
+// generateRecoveryCodes returns n plain-text codes and their hashed records.
+func generateRecoveryCodes(n int, userID ulid.ULID, hasher crypto.PasswordHasher) ([]string, []*user.MFARecoveryCode, error) {
+	now := time.Now().UTC()
+	plainCodes := make([]string, n)
+	records := make([]*user.MFARecoveryCode, n)
+	for i := range plainCodes {
+		b := make([]byte, 8)
+		if _, err := rand.Read(b); err != nil {
+			return nil, nil, err
+		}
+		plain := hex.EncodeToString(b)
+		hash, _, err := hasher.Hash(plain)
+		if err != nil {
+			return nil, nil, err
+		}
+		plainCodes[i] = plain
+		records[i] = &user.MFARecoveryCode{
+			ID:        iulid.NewString(),
+			UserID:    userID,
+			CodeHash:  hash,
+			CreatedAt: now,
+		}
+	}
+	return plainCodes, records, nil
+}
+
+// DisableMFA requires a valid TOTP code to confirm intent, then clears the secret,
+// sets is_enabled=false, and deletes all recovery codes. Future logins skip the MFA challenge.
 func (uc *AuthUseCase) DisableMFA(ctx context.Context, userID ulid.ULID, input DisableMFAInput) error {
 	cfg, err := uc.mfaRepo.GetByUserID(ctx, userID)
 	if err != nil {
@@ -389,7 +455,11 @@ func (uc *AuthUseCase) DisableMFA(ctx context.Context, userID ulid.ULID, input D
 	}
 	cfg.IsEnabled = false
 	cfg.Secret = ""
-	return uc.mfaRepo.Upsert(ctx, cfg)
+	if err := uc.mfaRepo.Upsert(ctx, cfg); err != nil {
+		return err
+	}
+	_ = uc.recoveryRepo.DeleteByUserID(ctx, userID)
+	return nil
 }
 
 func toUserDTO(u *user.User) *UserDTO {

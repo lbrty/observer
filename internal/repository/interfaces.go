@@ -21,7 +21,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 )
 
-//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/repository UserRepository,CredentialsRepository,MFARepository,VerificationTokenRepository,SessionRepository,PermissionLoader,PermissionRepository,ProjectRepository,CountryRepository,StateRepository,PlaceRepository,OfficeRepository,CategoryRepository,TagRepository,PersonRepository,PersonCategoryRepository,PersonTagRepository,SupportRecordRepository,MigrationRecordRepository,HouseholdRepository,HouseholdMemberRepository,PersonNoteRepository,DocumentRepository,PetRepository,PetTagRepository,PetReportRepository,ReportRepository,AuditLogRepository
+//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/repository UserRepository,CredentialsRepository,MFARepository,MFARecoveryCodeRepository,VerificationTokenRepository,SessionRepository,PermissionLoader,PermissionRepository,ProjectRepository,CountryRepository,StateRepository,PlaceRepository,OfficeRepository,CategoryRepository,TagRepository,PersonRepository,PersonCategoryRepository,PersonTagRepository,SupportRecordRepository,MigrationRecordRepository,HouseholdRepository,HouseholdMemberRepository,PersonNoteRepository,DocumentRepository,PetRepository,PetTagRepository,PetReportRepository,ReportRepository,AuditLogRepository
 
 // UserRepository defines persistence operations for users.
 type UserRepository interface {
@@ -34,6 +34,7 @@ type UserRepository interface {
 	UpdateVerified(ctx context.Context, id ulid.ULID, verified bool) error
 	Deactivate(ctx context.Context, id ulid.ULID) error
 	Reactivate(ctx context.Context, id ulid.ULID) error
+	LockPermanently(ctx context.Context, email string) error
 	List(ctx context.Context, filter user.UserListFilter) ([]*user.User, int, error)
 }
 
@@ -49,6 +50,18 @@ type MFARepository interface {
 	Create(ctx context.Context, cfg *user.MFAConfig) error
 	GetByUserID(ctx context.Context, userID ulid.ULID) (*user.MFAConfig, error)
 	Upsert(ctx context.Context, cfg *user.MFAConfig) error
+}
+
+// MFARecoveryCodeRepository persists and validates MFA recovery codes.
+type MFARecoveryCodeRepository interface {
+	// CreateBatch stores a set of hashed recovery codes for a user.
+	CreateBatch(ctx context.Context, codes []*user.MFARecoveryCode) error
+	// FindUnused returns the first unused code matching the given hash.
+	FindUnused(ctx context.Context, userID ulid.ULID, codeHash string) (*user.MFARecoveryCode, error)
+	// MarkUsed marks a code as used (sets used_at = now).
+	MarkUsed(ctx context.Context, id string) error
+	// DeleteByUserID removes all recovery codes for a user (called on MFA disable).
+	DeleteByUserID(ctx context.Context, userID ulid.ULID) error
 }
 
 // VerificationTokenRepository defines persistence operations for verification tokens.

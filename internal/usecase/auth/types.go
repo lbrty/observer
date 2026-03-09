@@ -5,7 +5,7 @@ import "time"
 // RegisterInput holds data for user registration.
 type RegisterInput struct {
 	Email    string `json:"email"    binding:"required,email"`
-	Password string `json:"password" binding:"required,min=8"`
+	Password string `json:"password" binding:"required,min=12,strongpassword"`
 }
 
 // RegisterOutput is the response after a successful registration.
@@ -38,6 +38,8 @@ type TokenPair struct {
 // RefreshTokenInput carries the refresh token for renewal.
 type RefreshTokenInput struct {
 	RefreshToken string `json:"refresh_token" binding:"required"`
+	UserAgent    string `json:"-"` // from request headers, not body
+	IP           string `json:"-"` // from request, not body
 }
 
 // LogoutInput carries the refresh token to invalidate.
@@ -67,7 +69,7 @@ type UpdateProfileInput struct {
 // ChangePasswordInput holds data for a password change.
 type ChangePasswordInput struct {
 	CurrentPassword string `json:"current_password" binding:"required"`
-	NewPassword     string `json:"new_password" binding:"required,min=8"`
+	NewPassword     string `json:"new_password" binding:"required,min=12,strongpassword"`
 }
 
 // VerifyMFAInput holds data to complete an MFA login step.
@@ -91,4 +93,10 @@ type EnableMFAInput struct {
 // DisableMFAInput carries the current TOTP code to disable MFA.
 type DisableMFAInput struct {
 	TOTPCode string `json:"totp_code" binding:"required,len=6"`
+}
+
+// EnableMFAOutput is returned from POST /auth/mfa/enable.
+// RecoveryCodes are shown exactly once and must be stored by the user.
+type EnableMFAOutput struct {
+	RecoveryCodes []string `json:"recovery_codes"`
 }
