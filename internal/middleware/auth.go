@@ -23,6 +23,7 @@ const (
 	CtxCanViewContact   ctxKey = "can_view_contact"
 	CtxCanViewPersonal  ctxKey = "can_view_personal"
 	CtxCanViewDocuments ctxKey = "can_view_documents"
+	CtxCanExport        ctxKey = "can_export"
 )
 
 // AuthMiddleware provides JWT-based authentication handlers.
@@ -128,6 +129,13 @@ func UserIDFrom(c *gin.Context) (ulid.ULID, bool) {
 	}
 	id, ok := val.(ulid.ULID)
 	return id, ok
+}
+
+// CanExportFrom extracts the can_export flag from the Gin context.
+func CanExportFrom(c *gin.Context) bool {
+	val, _ := c.Get(string(CtxCanExport))
+	b, _ := val.(bool)
+	return b
 }
 
 // UserRoleFrom extracts the authenticated user's platform role from the Gin context.

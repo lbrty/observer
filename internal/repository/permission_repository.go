@@ -38,14 +38,14 @@ func (r *permissionLoaderRepo) IsProjectOwner(ctx context.Context, userID ulid.U
 
 func (r *permissionLoaderRepo) GetPermission(ctx context.Context, userID ulid.ULID, projectID string) (*project.Permission, error) {
 	const q = `
-		SELECT role, can_view_contact, can_view_personal, can_view_documents
+		SELECT role, can_view_contact, can_view_personal, can_view_documents, can_export
 		FROM project_permissions
 		WHERE user_id = $1 AND project_id = $2
 	`
 	var role string
 	var perm project.Permission
 	err := r.db.QueryRowContext(ctx, q, userID.String(), projectID).Scan(
-		&role, &perm.CanViewContact, &perm.CanViewPersonal, &perm.CanViewDocuments,
+		&role, &perm.CanViewContact, &perm.CanViewPersonal, &perm.CanViewDocuments, &perm.CanExport,
 	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -69,7 +69,7 @@ func NewProjectPermissionRepository(db *sqlx.DB) PermissionRepository {
 
 func (r *projectPermissionRepo) List(ctx context.Context, projectID string) ([]*project.ProjectPermission, error) {
 	const q = `
-		SELECT id, project_id, user_id, role, can_view_contact, can_view_personal, can_view_documents, created_at, updated_at
+		SELECT id, project_id, user_id, role, can_view_contact, can_view_personal, can_view_documents, can_export, created_at, updated_at
 		FROM project_permissions
 		WHERE project_id = $1
 		ORDER BY created_at
@@ -93,7 +93,7 @@ func (r *projectPermissionRepo) List(ctx context.Context, projectID string) ([]*
 
 func (r *projectPermissionRepo) ListByUserID(ctx context.Context, userID string) ([]*project.ProjectPermission, error) {
 	const q = `
-		SELECT id, project_id, user_id, role, can_view_contact, can_view_personal, can_view_documents, created_at, updated_at
+		SELECT id, project_id, user_id, role, can_view_contact, can_view_personal, can_view_documents, can_export, created_at, updated_at
 		FROM project_permissions
 		WHERE user_id = $1
 		ORDER BY created_at
@@ -117,7 +117,7 @@ func (r *projectPermissionRepo) ListByUserID(ctx context.Context, userID string)
 
 func (r *projectPermissionRepo) GetByID(ctx context.Context, id string) (*project.ProjectPermission, error) {
 	const q = `
-		SELECT id, project_id, user_id, role, can_view_contact, can_view_personal, can_view_documents, created_at, updated_at
+		SELECT id, project_id, user_id, role, can_view_contact, can_view_personal, can_view_documents, can_export, created_at, updated_at
 		FROM project_permissions
 		WHERE id = $1
 	`
@@ -125,7 +125,7 @@ func (r *projectPermissionRepo) GetByID(ctx context.Context, id string) (*projec
 	var role string
 	err := r.db.QueryRowContext(ctx, q, id).Scan(
 		&p.ID, &p.ProjectID, &p.UserID, &role,
-		&p.CanViewContact, &p.CanViewPersonal, &p.CanViewDocuments,
+		&p.CanViewContact, &p.CanViewPersonal, &p.CanViewDocuments, &p.CanExport,
 		&p.CreatedAt, &p.UpdatedAt,
 	)
 	if err != nil {
@@ -141,15 +141,15 @@ func (r *projectPermissionRepo) GetByID(ctx context.Context, id string) (*projec
 
 func (r *projectPermissionRepo) Create(ctx context.Context, p *project.ProjectPermission) error {
 	const q = `
-		INSERT INTO project_permissions (id, project_id, user_id, role, can_view_contact, can_view_personal, can_view_documents, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		INSERT INTO project_permissions (id, project_id, user_id, role, can_view_contact, can_view_personal, can_view_documents, can_export, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 	`
 	now := time.Now().UTC()
 	p.CreatedAt = now
 	p.UpdatedAt = now
 	_, err := r.db.ExecContext(ctx, q,
 		p.ID, p.ProjectID, p.UserID, string(p.Role),
-		p.CanViewContact, p.CanViewPersonal, p.CanViewDocuments,
+		p.CanViewContact, p.CanViewPersonal, p.CanViewDocuments, p.CanExport,
 		p.CreatedAt, p.UpdatedAt,
 	)
 	if err != nil {
@@ -164,13 +164,13 @@ func (r *projectPermissionRepo) Create(ctx context.Context, p *project.ProjectPe
 func (r *projectPermissionRepo) Update(ctx context.Context, p *project.ProjectPermission) error {
 	const q = `
 		UPDATE project_permissions
-		SET role=$2, can_view_contact=$3, can_view_personal=$4, can_view_documents=$5, updated_at=$6
+		SET role=$2, can_view_contact=$3, can_view_personal=$4, can_view_documents=$5, can_export=$6, updated_at=$7
 		WHERE id=$1
 	`
 	p.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q,
 		p.ID, string(p.Role),
-		p.CanViewContact, p.CanViewPersonal, p.CanViewDocuments,
+		p.CanViewContact, p.CanViewPersonal, p.CanViewDocuments, p.CanExport,
 		p.UpdatedAt,
 	)
 	if err != nil {
@@ -193,7 +193,7 @@ func (r *projectPermissionRepo) scanPermissionRow(rows *sql.Rows) (*project.Proj
 	var role string
 	err := rows.Scan(
 		&p.ID, &p.ProjectID, &p.UserID, &role,
-		&p.CanViewContact, &p.CanViewPersonal, &p.CanViewDocuments,
+		&p.CanViewContact, &p.CanViewPersonal, &p.CanViewDocuments, &p.CanExport,
 		&p.CreatedAt, &p.UpdatedAt,
 	)
 	if err != nil {

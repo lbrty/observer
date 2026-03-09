@@ -54,4 +54,5 @@ type Permission struct {
 	CanViewContact   bool
 	CanViewPersonal  bool
 	CanViewDocuments bool
+	CanExport        bool
 }

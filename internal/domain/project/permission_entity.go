@@ -11,6 +11,7 @@ type ProjectPermission struct {
 	CanViewContact   bool
 	CanViewPersonal  bool
 	CanViewDocuments bool
+	CanExport        bool
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 }

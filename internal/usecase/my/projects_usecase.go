@@ -50,6 +50,7 @@ func (uc *MyProjectsUseCase) adminProjects(ctx context.Context) (*MyProjectsOutp
 			CanViewContact:   true,
 			CanViewPersonal:  true,
 			CanViewDocuments: true,
+			CanExport:        true,
 			CreatedAt:        p.CreatedAt,
 			UpdatedAt:        p.UpdatedAt,
 		})
@@ -81,6 +82,7 @@ func (uc *MyProjectsUseCase) userProjects(ctx context.Context, userID string) (*
 			CanViewContact:   perm.CanViewContact,
 			CanViewPersonal:  perm.CanViewPersonal,
 			CanViewDocuments: perm.CanViewDocuments,
+			CanExport:        perm.CanExport,
 			CreatedAt:        p.CreatedAt,
 			UpdatedAt:        p.UpdatedAt,
 		})

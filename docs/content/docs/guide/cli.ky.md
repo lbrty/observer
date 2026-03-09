@@ -3,7 +3,7 @@ title: CLI Şilteme
 weight: 4
 ---
 
-Observer serverdi, maалymatter bazasyn, açqyç generatsijasyn, qoldonuuçu başqaruusun cana iştep çyğaruu quraldaryn başqaruu üçün CLI beret.
+Observer serverdi, maalymatter bazasyn, açqyç generatsijasyn, qoldonuuçu başqaruusun cana iştep çyğaruu quraldaryn başqaruu üçün CLI beret.
 
 ## Ornotuu
 
@@ -170,7 +170,7 @@ Maalymatter bazasyna tutaşat, syrsözdü Argon2id menen heştejt cana qoldonuu�
 
 ### seed
 
-İştep çyğaruu üçün maalymatter bazasyn realduu test maалymattary menen toltuuruu.
+İştep çyğaruu üçün maalymatter bazasyn realduu test maalymattary menen toltuuruu.
 
 ```bash
 observer seed [flags]

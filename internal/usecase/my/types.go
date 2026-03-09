@@ -12,6 +12,7 @@ type MyProjectDTO struct {
 	CanViewContact   bool      `json:"can_view_contact"`
 	CanViewPersonal  bool      `json:"can_view_personal"`
 	CanViewDocuments bool      `json:"can_view_documents"`
+	CanExport        bool      `json:"can_export"`
 	CreatedAt        time.Time `json:"created_at"`
 	UpdatedAt        time.Time `json:"updated_at"`
 }

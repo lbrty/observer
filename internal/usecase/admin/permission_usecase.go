@@ -100,6 +100,7 @@ func (uc *PermissionUseCase) Assign(ctx context.Context, projectID string, input
 		CanViewContact:   input.CanViewContact,
 		CanViewPersonal:  input.CanViewPersonal,
 		CanViewDocuments: input.CanViewDocuments,
+		CanExport:        input.CanExport,
 	}
 
 	if err := uc.permRepo.Create(ctx, perm); err != nil {
@@ -134,6 +135,9 @@ func (uc *PermissionUseCase) Update(ctx context.Context, id string, input Update
 	if input.CanViewDocuments != nil {
 		perm.CanViewDocuments = *input.CanViewDocuments
 	}
+	if input.CanExport != nil {
+		perm.CanExport = *input.CanExport
+	}
 
 	if err := uc.permRepo.Update(ctx, perm); err != nil {
 		return nil, fmt.Errorf("update permission: %w", err)
@@ -161,6 +165,7 @@ func permToMemberDTO(p *project.ProjectPermission, u *user.User) PermissionMembe
 		CanViewContact:   p.CanViewContact,
 		CanViewPersonal:  p.CanViewPersonal,
 		CanViewDocuments: p.CanViewDocuments,
+		CanExport:        p.CanExport,
 		CreatedAt:        p.CreatedAt,
 		UpdatedAt:        p.UpdatedAt,
 	}

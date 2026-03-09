@@ -86,6 +86,10 @@ clean:
     rm -f *.pem
     rm -f coverage.out coverage.html
 
+# Seed the database with realistic demo data
+seed *args='':
+    go run ./cmd/observer seed {{args}}
+
 # Start frontend dev server
 web-dev:
     cd packages/observer-web && bun run dev

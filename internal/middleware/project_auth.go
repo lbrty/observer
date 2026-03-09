@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/lbrty/observer/internal/domain/project"
+	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/repository"
 )
 
@@ -46,8 +47,8 @@ func (m *ProjectAuthMiddleware) RequireProjectRole(action project.Action) gin.Ha
 		userRole, _ := UserRoleFrom(c)
 
 		// Platform admin bypass — implicit owner on all projects.
-		if userRole == "admin" {
-			setProjectContext(c, projectID, project.ProjectRoleOwner, true, true, true)
+		if userRole == user.RoleAdmin {
+			setProjectContext(c, projectID, project.ProjectRoleOwner, true, true, true, true)
 			c.Next()
 			return
 		}
@@ -65,7 +66,7 @@ func (m *ProjectAuthMiddleware) RequireProjectRole(action project.Action) gin.Ha
 			return
 		}
 		if isOwner {
-			setProjectContext(c, projectID, project.ProjectRoleOwner, true, true, true)
+			setProjectContext(c, projectID, project.ProjectRoleOwner, true, true, true, true)
 			c.Next()
 			return
 		}
@@ -89,17 +90,20 @@ func (m *ProjectAuthMiddleware) RequireProjectRole(action project.Action) gin.Ha
 			return
 		}
 
-		setProjectContext(c, projectID, perm.Role, perm.CanViewContact, perm.CanViewPersonal, perm.CanViewDocuments)
+		// Staff platform role always gets export access regardless of per-permission flag.
+		canExport := perm.CanExport || userRole == user.RoleStaff
+		setProjectContext(c, projectID, perm.Role, perm.CanViewContact, perm.CanViewPersonal, perm.CanViewDocuments, canExport)
 		c.Next()
 	}
 }
 
-func setProjectContext(c *gin.Context, projectID string, role project.ProjectRole, contact, personal, documents bool) {
+func setProjectContext(c *gin.Context, projectID string, role project.ProjectRole, contact, personal, documents, export bool) {
 	c.Set(string(CtxProjectID), projectID)
 	c.Set(string(CtxProjectRole), string(role))
 	c.Set(string(CtxCanViewContact), contact)
 	c.Set(string(CtxCanViewPersonal), personal)
 	c.Set(string(CtxCanViewDocuments), documents)
+	c.Set(string(CtxCanExport), export)
 }
 
 // ProjectRoleFrom extracts the project role from the Gin context.

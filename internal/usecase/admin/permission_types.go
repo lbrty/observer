@@ -13,6 +13,7 @@ type AssignPermissionInput struct {
 	CanViewContact   bool   `json:"can_view_contact"`
 	CanViewPersonal  bool   `json:"can_view_personal"`
 	CanViewDocuments bool   `json:"can_view_documents"`
+	CanExport        bool   `json:"can_export"`
 }
 
 // UpdatePermissionInput holds fields for updating a project permission.
@@ -21,6 +22,7 @@ type UpdatePermissionInput struct {
 	CanViewContact   *bool   `json:"can_view_contact"`
 	CanViewPersonal  *bool   `json:"can_view_personal"`
 	CanViewDocuments *bool   `json:"can_view_documents"`
+	CanExport        *bool   `json:"can_export"`
 }
 
 // PermissionDTO is the admin-facing project permission representation.
@@ -32,6 +34,7 @@ type PermissionDTO struct {
 	CanViewContact   bool      `json:"can_view_contact"`
 	CanViewPersonal  bool      `json:"can_view_personal"`
 	CanViewDocuments bool      `json:"can_view_documents"`
+	CanExport        bool      `json:"can_export"`
 	CreatedAt        time.Time `json:"created_at"`
 	UpdatedAt        time.Time `json:"updated_at"`
 }
@@ -45,6 +48,7 @@ func permToDTO(p *project.ProjectPermission) PermissionDTO {
 		CanViewContact:   p.CanViewContact,
 		CanViewPersonal:  p.CanViewPersonal,
 		CanViewDocuments: p.CanViewDocuments,
+		CanExport:        p.CanExport,
 		CreatedAt:        p.CreatedAt,
 		UpdatedAt:        p.UpdatedAt,
 	}
@@ -63,6 +67,7 @@ type PermissionMemberDTO struct {
 	CanViewContact   bool      `json:"can_view_contact"`
 	CanViewPersonal  bool      `json:"can_view_personal"`
 	CanViewDocuments bool      `json:"can_view_documents"`
+	CanExport        bool      `json:"can_export"`
 	CreatedAt        time.Time `json:"created_at"`
 	UpdatedAt        time.Time `json:"updated_at"`
 }

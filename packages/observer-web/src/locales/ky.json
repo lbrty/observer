@@ -60,7 +60,7 @@
     "appearance": "Körünüş",
     "twoFactor": "Eki faktorluu autentifikatsija",
     "mfaActive": "Eki faktorluu autentifikatsija işke qoşulğan",
-    "mfaActiveHint": "Sizdin aqqauntunuz autentifikator qoldonomо menen qorğolğon.",
+    "mfaActiveHint": "Sizdin aqqauntunuz autentifikator qoldonomo menen qorğolğon.",
     "mfaInactive": "Eki faktorluu autentifikatsija ornotuluğan coq",
     "mfaInactiveHint": "Aqqauntunuzğa qaupsüzdüktün qosumça qatmaryn qoşuñuz.",
     "setupMFA": "Autentifikatordu ornot",
@@ -68,7 +68,7 @@
     "cantScanQR": "Skanerlep bolbodubu? Açqyçtu qolmo-qol kirgiziñiz",
     "enterCode": "Tastyqtoo kodu",
     "verifyAndEnable": "Tastyqtap iştet",
-    "disableMFA": "Eki faktorluu autentifikatsiyanы öçürüü",
+    "disableMFA": "Eki faktorluu autentifikatsiyany öçürüü",
     "disableMFAHint": "Tastyqtoo üçün azyrqy autentifikator kodunuzdu kirgiziñiz.",
     "confirmDisable": "Öçür",
     "mfaEnabled": "Eki faktorluu autentifikatsija işke qoşuldu.",
@@ -737,7 +737,7 @@
     "accountAccess": "Aqqauntqa kirüü",
     "deactivate": "Aqqaunttu öçürüü",
     "reactivate": "Aqqaunttu qayta işke qoşuu",
-    "deactivateWarning": "Aqqaunttu öçürsöñüz, kirüü dаroo çektelet. Baardyq maаlymat jana audittik izder saqtalat.",
+    "deactivateWarning": "Aqqaunttu öçürsöñüz, kirüü daroo çektelet. Baardyq maalymat jana audittik izder saqtalat.",
     "deactivatedSince": "Bul aqqaunt {{date}} künü öçürüldü."
   }
 }

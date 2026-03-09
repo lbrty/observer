@@ -48,6 +48,10 @@ func ptrStr(s *string) string {
 
 // ExportPeople streams people as a CSV download.
 func (h *ExportHandler) ExportPeople(c *gin.Context) {
+	if !middleware.CanExportFrom(c) {
+		c.JSON(http.StatusForbidden, errJSON("errors.project.permissionDenied", "export not allowed"))
+		return
+	}
 	projectID := c.Param("project_id")
 
 	var input ucproject.ListPeopleInput
@@ -99,6 +103,10 @@ func (h *ExportHandler) ExportPeople(c *gin.Context) {
 
 // ExportSupportRecords streams support records as a CSV download.
 func (h *ExportHandler) ExportSupportRecords(c *gin.Context) {
+	if !middleware.CanExportFrom(c) {
+		c.JSON(http.StatusForbidden, errJSON("errors.project.permissionDenied", "export not allowed"))
+		return
+	}
 	projectID := c.Param("project_id")
 
 	var input ucproject.ListSupportRecordsInput
@@ -143,6 +151,10 @@ func (h *ExportHandler) ExportSupportRecords(c *gin.Context) {
 
 // ExportPets streams pets as a CSV download.
 func (h *ExportHandler) ExportPets(c *gin.Context) {
+	if !middleware.CanExportFrom(c) {
+		c.JSON(http.StatusForbidden, errJSON("errors.project.permissionDenied", "export not allowed"))
+		return
+	}
 	projectID := c.Param("project_id")
 
 	var input ucproject.ListPetsInput
@@ -184,6 +196,10 @@ func (h *ExportHandler) ExportPets(c *gin.Context) {
 
 // ExportHouseholds streams households as a CSV download.
 func (h *ExportHandler) ExportHouseholds(c *gin.Context) {
+	if !middleware.CanExportFrom(c) {
+		c.JSON(http.StatusForbidden, errJSON("errors.project.permissionDenied", "export not allowed"))
+		return
+	}
 	projectID := c.Param("project_id")
 
 	var input ucproject.ListHouseholdsInput
