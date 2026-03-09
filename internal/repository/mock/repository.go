@@ -468,6 +468,35 @@ func (mr *MockSessionRepositoryMockRecorder) DeleteByRefreshToken(ctx, token any
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByRefreshToken", reflect.TypeOf((*MockSessionRepository)(nil).DeleteByRefreshToken), ctx, token)
 }
 
+// DeleteByUserID mocks base method.
+func (m *MockSessionRepository) DeleteByUserID(ctx context.Context, userID ulid.ULID) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteByUserID", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteByUserID indicates an expected call of DeleteByUserID.
+func (mr *MockSessionRepositoryMockRecorder) DeleteByUserID(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteByUserID", reflect.TypeOf((*MockSessionRepository)(nil).DeleteByUserID), ctx, userID)
+}
+
+// DeleteExpired mocks base method.
+func (m *MockSessionRepository) DeleteExpired(ctx context.Context) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteExpired", ctx)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteExpired indicates an expected call of DeleteExpired.
+func (mr *MockSessionRepositoryMockRecorder) DeleteExpired(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteExpired", reflect.TypeOf((*MockSessionRepository)(nil).DeleteExpired), ctx)
+}
+
 // GetByRefreshToken mocks base method.
 func (m *MockSessionRepository) GetByRefreshToken(ctx context.Context, token string) (*auth.Session, error) {
 	m.ctrl.T.Helper()

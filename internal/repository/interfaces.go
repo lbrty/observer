@@ -64,6 +64,10 @@ type SessionRepository interface {
 	GetByRefreshToken(ctx context.Context, token string) (*auth.Session, error)
 	Delete(ctx context.Context, id ulid.ULID) error
 	DeleteByRefreshToken(ctx context.Context, token string) error
+	// DeleteByUserID removes all sessions for a user (call after password change/reset).
+	DeleteByUserID(ctx context.Context, userID ulid.ULID) error
+	// DeleteExpired removes sessions whose expires_at is in the past.
+	DeleteExpired(ctx context.Context) (int64, error)
 }
 
 // PermissionLoader loads project-level permissions for authorization.

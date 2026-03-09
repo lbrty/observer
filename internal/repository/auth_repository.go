@@ -64,6 +64,24 @@ func (r *sessionRepo) DeleteByRefreshToken(ctx context.Context, token string) er
 	return nil
 }
 
+func (r *sessionRepo) DeleteByUserID(ctx context.Context, userID ulid.ULID) error {
+	const q = `DELETE FROM sessions WHERE user_id = $1`
+	_, err := r.db.ExecContext(ctx, q, userID.String())
+	if err != nil {
+		return fmt.Errorf("delete sessions by user: %w", err)
+	}
+	return nil
+}
+
+func (r *sessionRepo) DeleteExpired(ctx context.Context) (int64, error) {
+	result, err := r.db.ExecContext(ctx, `DELETE FROM sessions WHERE expires_at < NOW()`)
+	if err != nil {
+		return 0, err
+	}
+	n, _ := result.RowsAffected()
+	return n, nil
+}
+
 func (r *sessionRepo) scanSession(row *sql.Row) (*auth.Session, error) {
 	var s auth.Session
 	var idStr, userIDStr string
