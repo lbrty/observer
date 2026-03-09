@@ -46,7 +46,7 @@ export function DatePicker({
   placeholder = "dd.mm.yyyy",
   disabled,
   clearable,
-  captionLayout,
+  captionLayout = "dropdown",
   startYear,
   endYear,
   className,
@@ -60,7 +60,7 @@ export function DatePicker({
     captionLayout === "dropdown-months" ||
     captionLayout === "dropdown-years";
   const startMonth = useDropdown ? new Date(startYear ?? 1920, 0) : undefined;
-  const endMonth = useDropdown ? new Date(endYear ?? now.getFullYear(), 11) : undefined;
+  const endMonth = useDropdown ? new Date(endYear ?? now.getFullYear() + 1, 11) : undefined;
 
   return (
     <div className="flex items-center gap-1">

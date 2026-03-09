@@ -63,17 +63,28 @@ export function DrawerShell({
             </div>
 
             <form onSubmit={isGuest ? (e) => e.preventDefault() : onSubmit} className="flex min-h-0 flex-1 flex-col">
-              <div className="flex-1 space-y-5 overflow-y-auto px-6 py-5">{children}</div>
+              <div
+                inert={isGuest || undefined}
+                className="flex-1 space-y-5 overflow-y-auto px-6 py-5"
+              >
+                {children}
+              </div>
 
               {footer ?? (
                 <div className="flex shrink-0 items-center justify-end gap-2 border-t border-border-secondary px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-                  <Button variant="secondary" asChild>
-                    <Drawer.Close>{t("admin.common.cancel")}</Drawer.Close>
-                  </Button>
-                  {!isGuest && (
-                    <Button type="submit" disabled={isPending}>
-                      {isPending ? savingText : saveText}
+                  {isGuest ? (
+                    <Button variant="secondary" asChild>
+                      <Drawer.Close>{t("admin.common.close")}</Drawer.Close>
                     </Button>
+                  ) : (
+                    <>
+                      <Button variant="secondary" asChild>
+                        <Drawer.Close>{t("admin.common.cancel")}</Drawer.Close>
+                      </Button>
+                      <Button type="submit" disabled={isPending}>
+                        {isPending ? savingText : saveText}
+                      </Button>
+                    </>
                   )}
                 </div>
               )}

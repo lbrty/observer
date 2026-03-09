@@ -16,6 +16,7 @@ type Variant = keyof typeof variants;
 
 interface StatusBadgeProps {
   label: string;
+  statusKey?: string;
   variant?: Variant;
   dot?: boolean;
 }
@@ -39,8 +40,9 @@ const statusVariants: Record<string, Variant> = {
   false: "neutral",
 };
 
-export function StatusBadge({ label, variant, dot }: StatusBadgeProps) {
-  const resolved = variant ?? roleVariants[label] ?? statusVariants[label] ?? "neutral";
+export function StatusBadge({ label, statusKey, variant, dot }: StatusBadgeProps) {
+  const key = statusKey ?? label;
+  const resolved = variant ?? roleVariants[key] ?? statusVariants[key] ?? "neutral";
 
   return (
     <span

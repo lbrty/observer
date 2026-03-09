@@ -88,7 +88,7 @@ function DashboardPage() {
   const myProjects = myProjectsData?.projects ?? [];
 
   return (
-    <div className="mx-auto w-full max-w-[1080px] px-10 py-8">
+    <div className="mx-auto w-full max-w-270 px-10 py-8">
       <div className="pb-8">
         <h1 className="font-serif text-3xl font-bold tracking-tight text-fg">
           {t("dashboard.greeting")}

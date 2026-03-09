@@ -47,68 +47,62 @@ export function InfoSection({
   }));
 
   return (
-    <fieldset className="space-y-3">
-      <FormSection title={t("project.pets.title")}>
-        <div className="col-span-full rounded-xl border border-border-secondary bg-bg p-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <FormField
-              label={t("project.pets.name")}
-              value={name}
-              onChange={onNameChange}
-              required
-            />
+    <FormSection title={t("project.pets.title")}>
+      <FormField
+        label={t("project.pets.name")}
+        value={name}
+        onChange={onNameChange}
+        required
+      />
 
-            <Field.Root>
-              <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-                {t("project.pets.status")}
-              </Field.Label>
-              <UISelect
-                value={status}
-                onValueChange={onStatusChange}
-                options={statusOptions}
-                fullWidth
-              />
-            </Field.Root>
+      <Field.Root>
+        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
+          {t("project.pets.status")}
+        </Field.Label>
+        <UISelect
+          value={status}
+          onValueChange={onStatusChange}
+          options={statusOptions}
+          fullWidth
+        />
+      </Field.Root>
 
-            <div>
-              <span className="mb-1 block text-sm font-medium text-fg-secondary">
-                {t("project.pets.ownerId")}
-              </span>
-              {ownerId ? (
-                <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
-                  <span className="flex-1 truncate text-sm text-fg">
-                    {ownerName || <PersonName projectId={projectId} personId={ownerId} />}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={onOwnerClear}
-                    className="shrink-0 cursor-pointer text-fg-tertiary hover:text-fg"
-                  >
-                    ×
-                  </button>
-                </div>
-              ) : (
-                <PersonCombobox
-                  projectId={projectId}
-                  onSelect={(p) =>
-                    onOwnerSelect(p.id, `${p.first_name} ${p.last_name ?? ""}`.trim())
-                  }
-                />
-              )}
-            </div>
-
-            <FormField
-              label={t("project.pets.registrationId")}
-              value={registrationId}
-              onChange={onRegistrationIdChange}
-            />
+      <div>
+        <span className="mb-1 block text-sm font-medium text-fg-secondary">
+          {t("project.pets.ownerId")}
+        </span>
+        {ownerId ? (
+          <div className="flex h-9 items-center gap-2 rounded-lg border border-border-secondary bg-bg-secondary px-3">
+            <span className="flex-1 truncate text-sm text-fg">
+              {ownerName || <PersonName projectId={projectId} personId={ownerId} />}
+            </span>
+            <button
+              type="button"
+              onClick={onOwnerClear}
+              className="shrink-0 cursor-pointer text-fg-tertiary hover:text-fg"
+            >
+              ×
+            </button>
           </div>
+        ) : (
+          <PersonCombobox
+            projectId={projectId}
+            onSelect={(p) =>
+              onOwnerSelect(p.id, `${p.first_name} ${p.last_name ?? ""}`.trim())
+            }
+          />
+        )}
+      </div>
 
-          <div className="mt-4">
-            <FormTextarea label={t("project.pets.notes")} value={notes} onChange={onNotesChange} />
-          </div>
-        </div>
-      </FormSection>
-    </fieldset>
+      <FormField
+        label={t("project.pets.registrationId")}
+        value={registrationId}
+        onChange={onRegistrationIdChange}
+      />
+
+      <div className="col-span-full">
+        <FormTextarea label={t("project.pets.notes")} value={notes} onChange={onNotesChange} />
+      </div>
+    </FormSection>
   );
 }

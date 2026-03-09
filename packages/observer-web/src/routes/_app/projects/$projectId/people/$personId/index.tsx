@@ -180,7 +180,7 @@ function PersonOverview() {
               {t("project.people.caseStatusLabel")}
             </dt>
             <dd className="mt-1">
-              <StatusBadge label={t(`project.people.${person.case_status}`)} />
+              <StatusBadge label={t(`project.people.${person.case_status}`)} statusKey={person.case_status} />
             </dd>
           </div>
           <Detail label={t("project.people.externalId")} value={person.external_id} />

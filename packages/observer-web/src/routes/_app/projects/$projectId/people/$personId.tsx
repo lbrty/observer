@@ -83,7 +83,7 @@ function PersonDetailLayout() {
 
       <div className="mb-6 flex items-center gap-3">
         <h1 className="font-serif text-xl font-bold tracking-tight text-fg">{fullName}</h1>
-        <StatusBadge label={t(`project.people.${person.case_status}`)} />
+        <StatusBadge label={t(`project.people.${person.case_status}`)} statusKey={person.case_status} />
         {canWrite && (
           <button
             type="button"
