@@ -19,7 +19,8 @@
     "dateRange": "Tarih aralığı",
     "loading": "Yükleniyor…",
     "enabled": "Etkin",
-    "disabled": "Devre dışı"
+    "disabled": "Devre dışı",
+    "search": "Ara"
   },
   "auth": {
     "loginTitle": "Giriş yap",

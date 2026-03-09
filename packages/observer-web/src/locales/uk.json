@@ -19,7 +19,8 @@
     "dateRange": "Діапазон дат",
     "loading": "Завантаження…",
     "enabled": "Увімкнено",
-    "disabled": "Вимкнено"
+    "disabled": "Вимкнено",
+    "search": "Пошук"
   },
   "auth": {
     "loginTitle": "Вхід",

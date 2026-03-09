@@ -19,7 +19,8 @@
     "dateRange": "Datumsbereich",
     "loading": "Laden…",
     "enabled": "Aktiviert",
-    "disabled": "Deaktiviert"
+    "disabled": "Deaktiviert",
+    "search": "Suchen"
   },
   "auth": {
     "loginTitle": "Anmelden",

@@ -19,7 +19,8 @@
     "dateRange": "Date range",
     "loading": "Loading…",
     "enabled": "Enabled",
-    "disabled": "Disabled"
+    "disabled": "Disabled",
+    "search": "Search"
   },
   "auth": {
     "loginTitle": "Sign in",
