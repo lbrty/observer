@@ -10,6 +10,10 @@ build:
 run:
     SWAGGER_ENABLED=true go run ./cmd/observer serve
 
+# Run backend and frontend dev servers concurrently
+dev:
+    SWAGGER_ENABLED=true COOKIE_SECURE=false COOKIE_SAME_SITE=none go run ./cmd/observer serve & just web-dev
+
 # Create new migration
 migrate-create name:
     go run ./cmd/observer migrate create {{name}}
