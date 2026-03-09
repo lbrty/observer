@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -68,6 +69,13 @@ func runServe(cmd *cobra.Command, _ []string) error {
 	log := logger.New(cfg.Log.Level)
 	slog.SetDefault(log)
 
+	for _, origin := range cfg.CORS.Origins {
+		if strings.Contains(origin, "localhost") || strings.Contains(origin, "127.0.0.1") {
+			slog.Warn("CORS_ORIGINS contains a localhost entry — ensure this is intentional in production",
+				slog.String("origin", origin))
+		}
+	}
+
 	if cfg.Sentry.Enabled() {
 		err := sentry.Init(sentry.ClientOptions{
 			Dsn:              cfg.Sentry.DSN,
@@ -106,6 +114,10 @@ func runServe(cmd *cobra.Command, _ []string) error {
 	}
 
 	srv := server.New(cfg, db, log, container)
+
+	vacuumCtx, vacuumCancel := context.WithCancel(context.Background())
+	defer vacuumCancel()
+	app.StartSessionVacuum(vacuumCtx, container.SessionRepo)
 
 	go func() {
 		log.Info("server starting", slog.String("addr", cfg.Server.Host), slog.Int("port", cfg.Server.Port))
