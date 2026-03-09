@@ -11,9 +11,7 @@ export default defineConfig(({ mode }) => {
   if (mode !== "development" && mode !== "test") {
     const apiUrl = env.VITE_API_URL ?? "";
     if (!apiUrl.startsWith("https://")) {
-      throw new Error(
-        `VITE_API_URL must start with https:// for ${mode} builds. Got: "${apiUrl}"`,
-      );
+      throw new Error(`VITE_API_URL must start with https:// for ${mode} builds. Got: "${apiUrl}"`);
     }
   }
 

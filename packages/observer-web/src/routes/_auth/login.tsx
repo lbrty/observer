@@ -38,7 +38,9 @@ function LoginPage() {
         navigate({ to: "/" });
       }
     } catch (err) {
-      setError(await handleApiError(err, t, { "errors.user.notActive": t("auth.pendingApproval") }));
+      setError(
+        await handleApiError(err, t, { "errors.user.notActive": t("auth.pendingApproval") }),
+      );
     } finally {
       setSubmitting(false);
     }
@@ -53,7 +55,9 @@ function LoginPage() {
       await verifyMFA(mfaToken, form.get("totp_code") as string);
       navigate({ to: "/" });
     } catch (err) {
-      setError(await handleApiError(err, t, { "errors.user.notActive": t("auth.pendingApproval") }));
+      setError(
+        await handleApiError(err, t, { "errors.user.notActive": t("auth.pendingApproval") }),
+      );
     } finally {
       setSubmitting(false);
     }

@@ -8,944 +8,920 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/_auth'
-import { Route as AppRouteImport } from './routes/_app'
-import { Route as AppIndexRouteImport } from './routes/_app/index'
-import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
-import { Route as AuthLoginRouteImport } from './routes/_auth/login'
-import { Route as AppProfileRouteImport } from './routes/_app/profile'
-import { Route as AppAdminRouteImport } from './routes/_app/admin'
-import { Route as AppAdminIndexRouteImport } from './routes/_app/admin/index'
-import { Route as AppProjectsProjectIdRouteImport } from './routes/_app/projects/$projectId'
-import { Route as AppAdminAuditLogsRouteImport } from './routes/_app/admin/audit-logs'
-import { Route as AppAdminUsersIndexRouteImport } from './routes/_app/admin/users/index'
-import { Route as AppAdminReferenceIndexRouteImport } from './routes/_app/admin/reference/index'
-import { Route as AppAdminProjectsIndexRouteImport } from './routes/_app/admin/projects/index'
-import { Route as AppProjectsProjectIdAuditLogsRouteImport } from './routes/_app/projects/$projectId/audit-logs'
-import { Route as AppAdminUsersUserIdRouteImport } from './routes/_app/admin/users/$userId'
-import { Route as AppAdminReferenceOfficesRouteImport } from './routes/_app/admin/reference/offices'
-import { Route as AppAdminReferenceCountriesRouteImport } from './routes/_app/admin/reference/countries'
-import { Route as AppAdminReferenceCategoriesRouteImport } from './routes/_app/admin/reference/categories'
-import { Route as AppAdminProjectsProjectIdRouteImport } from './routes/_app/admin/projects/$projectId'
-import { Route as AppProjectsProjectIdTagsIndexRouteImport } from './routes/_app/projects/$projectId/tags/index'
-import { Route as AppProjectsProjectIdSupportRecordsIndexRouteImport } from './routes/_app/projects/$projectId/support-records/index'
-import { Route as AppProjectsProjectIdReportsIndexRouteImport } from './routes/_app/projects/$projectId/reports/index'
-import { Route as AppProjectsProjectIdPetsIndexRouteImport } from './routes/_app/projects/$projectId/pets/index'
-import { Route as AppProjectsProjectIdPeopleIndexRouteImport } from './routes/_app/projects/$projectId/people/index'
-import { Route as AppProjectsProjectIdMyStatsIndexRouteImport } from './routes/_app/projects/$projectId/my-stats/index'
-import { Route as AppProjectsProjectIdHouseholdsIndexRouteImport } from './routes/_app/projects/$projectId/households/index'
-import { Route as AppAdminReferenceCountriesIndexRouteImport } from './routes/_app/admin/reference/countries/index'
-import { Route as AppAdminProjectsProjectIdIndexRouteImport } from './routes/_app/admin/projects/$projectId/index'
-import { Route as AppProjectsProjectIdSupportRecordsTypeRouteImport } from './routes/_app/projects/$projectId/support-records/$type'
-import { Route as AppProjectsProjectIdReportsPetsRouteImport } from './routes/_app/projects/$projectId/reports/pets'
-import { Route as AppProjectsProjectIdReportsPeopleRouteImport } from './routes/_app/projects/$projectId/reports/people'
-import { Route as AppProjectsProjectIdReportsCustomRouteImport } from './routes/_app/projects/$projectId/reports/custom'
-import { Route as AppProjectsProjectIdPetsStatusRouteImport } from './routes/_app/projects/$projectId/pets/$status'
-import { Route as AppProjectsProjectIdPeoplePersonIdRouteImport } from './routes/_app/projects/$projectId/people/$personId'
-import { Route as AppAdminReferenceCountriesCountryIdRouteImport } from './routes/_app/admin/reference/countries/$countryId'
-import { Route as AppAdminProjectsProjectIdPermissionsRouteImport } from './routes/_app/admin/projects/$projectId/permissions'
-import { Route as AppProjectsProjectIdPeoplePersonIdIndexRouteImport } from './routes/_app/projects/$projectId/people/$personId/index'
-import { Route as AppAdminReferenceCountriesCountryIdIndexRouteImport } from './routes/_app/admin/reference/countries/$countryId/index'
-import { Route as AppProjectsProjectIdPeoplePersonIdSupportRecordsRouteImport } from './routes/_app/projects/$projectId/people/$personId/support-records'
-import { Route as AppProjectsProjectIdPeoplePersonIdStatsRouteImport } from './routes/_app/projects/$projectId/people/$personId/stats'
-import { Route as AppProjectsProjectIdPeoplePersonIdNotesRouteImport } from './routes/_app/projects/$projectId/people/$personId/notes'
-import { Route as AppProjectsProjectIdPeoplePersonIdMigrationRecordsRouteImport } from './routes/_app/projects/$projectId/people/$personId/migration-records'
-import { Route as AppProjectsProjectIdPeoplePersonIdDocumentsRouteImport } from './routes/_app/projects/$projectId/people/$personId/documents'
-import { Route as AppAdminReferenceCountriesCountryIdStatesStateIdRouteImport } from './routes/_app/admin/reference/countries/$countryId/states/$stateId'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as AuthRouteImport } from "./routes/_auth";
+import { Route as AppRouteImport } from "./routes/_app";
+import { Route as AppIndexRouteImport } from "./routes/_app/index";
+import { Route as AuthRegisterRouteImport } from "./routes/_auth/register";
+import { Route as AuthLoginRouteImport } from "./routes/_auth/login";
+import { Route as AppProfileRouteImport } from "./routes/_app/profile";
+import { Route as AppAdminRouteImport } from "./routes/_app/admin";
+import { Route as AppAdminIndexRouteImport } from "./routes/_app/admin/index";
+import { Route as AppProjectsProjectIdRouteImport } from "./routes/_app/projects/$projectId";
+import { Route as AppAdminAuditLogsRouteImport } from "./routes/_app/admin/audit-logs";
+import { Route as AppAdminUsersIndexRouteImport } from "./routes/_app/admin/users/index";
+import { Route as AppAdminReferenceIndexRouteImport } from "./routes/_app/admin/reference/index";
+import { Route as AppAdminProjectsIndexRouteImport } from "./routes/_app/admin/projects/index";
+import { Route as AppProjectsProjectIdAuditLogsRouteImport } from "./routes/_app/projects/$projectId/audit-logs";
+import { Route as AppAdminUsersUserIdRouteImport } from "./routes/_app/admin/users/$userId";
+import { Route as AppAdminReferenceOfficesRouteImport } from "./routes/_app/admin/reference/offices";
+import { Route as AppAdminReferenceCountriesRouteImport } from "./routes/_app/admin/reference/countries";
+import { Route as AppAdminReferenceCategoriesRouteImport } from "./routes/_app/admin/reference/categories";
+import { Route as AppAdminProjectsProjectIdRouteImport } from "./routes/_app/admin/projects/$projectId";
+import { Route as AppProjectsProjectIdTagsIndexRouteImport } from "./routes/_app/projects/$projectId/tags/index";
+import { Route as AppProjectsProjectIdSupportRecordsIndexRouteImport } from "./routes/_app/projects/$projectId/support-records/index";
+import { Route as AppProjectsProjectIdReportsIndexRouteImport } from "./routes/_app/projects/$projectId/reports/index";
+import { Route as AppProjectsProjectIdPetsIndexRouteImport } from "./routes/_app/projects/$projectId/pets/index";
+import { Route as AppProjectsProjectIdPeopleIndexRouteImport } from "./routes/_app/projects/$projectId/people/index";
+import { Route as AppProjectsProjectIdMyStatsIndexRouteImport } from "./routes/_app/projects/$projectId/my-stats/index";
+import { Route as AppProjectsProjectIdHouseholdsIndexRouteImport } from "./routes/_app/projects/$projectId/households/index";
+import { Route as AppAdminReferenceCountriesIndexRouteImport } from "./routes/_app/admin/reference/countries/index";
+import { Route as AppAdminProjectsProjectIdIndexRouteImport } from "./routes/_app/admin/projects/$projectId/index";
+import { Route as AppProjectsProjectIdSupportRecordsTypeRouteImport } from "./routes/_app/projects/$projectId/support-records/$type";
+import { Route as AppProjectsProjectIdReportsPetsRouteImport } from "./routes/_app/projects/$projectId/reports/pets";
+import { Route as AppProjectsProjectIdReportsPeopleRouteImport } from "./routes/_app/projects/$projectId/reports/people";
+import { Route as AppProjectsProjectIdReportsCustomRouteImport } from "./routes/_app/projects/$projectId/reports/custom";
+import { Route as AppProjectsProjectIdPetsStatusRouteImport } from "./routes/_app/projects/$projectId/pets/$status";
+import { Route as AppProjectsProjectIdPeoplePersonIdRouteImport } from "./routes/_app/projects/$projectId/people/$personId";
+import { Route as AppAdminReferenceCountriesCountryIdRouteImport } from "./routes/_app/admin/reference/countries/$countryId";
+import { Route as AppAdminProjectsProjectIdPermissionsRouteImport } from "./routes/_app/admin/projects/$projectId/permissions";
+import { Route as AppProjectsProjectIdPeoplePersonIdIndexRouteImport } from "./routes/_app/projects/$projectId/people/$personId/index";
+import { Route as AppAdminReferenceCountriesCountryIdIndexRouteImport } from "./routes/_app/admin/reference/countries/$countryId/index";
+import { Route as AppProjectsProjectIdPeoplePersonIdSupportRecordsRouteImport } from "./routes/_app/projects/$projectId/people/$personId/support-records";
+import { Route as AppProjectsProjectIdPeoplePersonIdStatsRouteImport } from "./routes/_app/projects/$projectId/people/$personId/stats";
+import { Route as AppProjectsProjectIdPeoplePersonIdNotesRouteImport } from "./routes/_app/projects/$projectId/people/$personId/notes";
+import { Route as AppProjectsProjectIdPeoplePersonIdMigrationRecordsRouteImport } from "./routes/_app/projects/$projectId/people/$personId/migration-records";
+import { Route as AppProjectsProjectIdPeoplePersonIdDocumentsRouteImport } from "./routes/_app/projects/$projectId/people/$personId/documents";
+import { Route as AppAdminReferenceCountriesCountryIdStatesStateIdRouteImport } from "./routes/_app/admin/reference/countries/$countryId/states/$stateId";
 
 const AuthRoute = AuthRouteImport.update({
-  id: '/_auth',
+  id: "/_auth",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AppRoute = AppRouteImport.update({
-  id: '/_app',
+  id: "/_app",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AppIndexRoute = AppIndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => AppRoute,
-} as any)
+} as any);
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
+  id: "/register",
+  path: "/register",
   getParentRoute: () => AuthRoute,
-} as any)
+} as any);
 const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+  id: "/login",
+  path: "/login",
   getParentRoute: () => AuthRoute,
-} as any)
+} as any);
 const AppProfileRoute = AppProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
+  id: "/profile",
+  path: "/profile",
   getParentRoute: () => AppRoute,
-} as any)
+} as any);
 const AppAdminRoute = AppAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+  id: "/admin",
+  path: "/admin",
   getParentRoute: () => AppRoute,
-} as any)
+} as any);
 const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => AppAdminRoute,
-} as any)
+} as any);
 const AppProjectsProjectIdRoute = AppProjectsProjectIdRouteImport.update({
-  id: '/projects/$projectId',
-  path: '/projects/$projectId',
+  id: "/projects/$projectId",
+  path: "/projects/$projectId",
   getParentRoute: () => AppRoute,
-} as any)
+} as any);
 const AppAdminAuditLogsRoute = AppAdminAuditLogsRouteImport.update({
-  id: '/audit-logs',
-  path: '/audit-logs',
+  id: "/audit-logs",
+  path: "/audit-logs",
   getParentRoute: () => AppAdminRoute,
-} as any)
+} as any);
 const AppAdminUsersIndexRoute = AppAdminUsersIndexRouteImport.update({
-  id: '/users/',
-  path: '/users/',
+  id: "/users/",
+  path: "/users/",
   getParentRoute: () => AppAdminRoute,
-} as any)
+} as any);
 const AppAdminReferenceIndexRoute = AppAdminReferenceIndexRouteImport.update({
-  id: '/reference/',
-  path: '/reference/',
+  id: "/reference/",
+  path: "/reference/",
   getParentRoute: () => AppAdminRoute,
-} as any)
+} as any);
 const AppAdminProjectsIndexRoute = AppAdminProjectsIndexRouteImport.update({
-  id: '/projects/',
-  path: '/projects/',
+  id: "/projects/",
+  path: "/projects/",
   getParentRoute: () => AppAdminRoute,
-} as any)
-const AppProjectsProjectIdAuditLogsRoute =
-  AppProjectsProjectIdAuditLogsRouteImport.update({
-    id: '/audit-logs',
-    path: '/audit-logs',
-    getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
+} as any);
+const AppProjectsProjectIdAuditLogsRoute = AppProjectsProjectIdAuditLogsRouteImport.update({
+  id: "/audit-logs",
+  path: "/audit-logs",
+  getParentRoute: () => AppProjectsProjectIdRoute,
+} as any);
 const AppAdminUsersUserIdRoute = AppAdminUsersUserIdRouteImport.update({
-  id: '/users/$userId',
-  path: '/users/$userId',
+  id: "/users/$userId",
+  path: "/users/$userId",
   getParentRoute: () => AppAdminRoute,
-} as any)
-const AppAdminReferenceOfficesRoute =
-  AppAdminReferenceOfficesRouteImport.update({
-    id: '/reference/offices',
-    path: '/reference/offices',
-    getParentRoute: () => AppAdminRoute,
-  } as any)
-const AppAdminReferenceCountriesRoute =
-  AppAdminReferenceCountriesRouteImport.update({
-    id: '/reference/countries',
-    path: '/reference/countries',
-    getParentRoute: () => AppAdminRoute,
-  } as any)
-const AppAdminReferenceCategoriesRoute =
-  AppAdminReferenceCategoriesRouteImport.update({
-    id: '/reference/categories',
-    path: '/reference/categories',
-    getParentRoute: () => AppAdminRoute,
-  } as any)
-const AppAdminProjectsProjectIdRoute =
-  AppAdminProjectsProjectIdRouteImport.update({
-    id: '/projects/$projectId',
-    path: '/projects/$projectId',
-    getParentRoute: () => AppAdminRoute,
-  } as any)
-const AppProjectsProjectIdTagsIndexRoute =
-  AppProjectsProjectIdTagsIndexRouteImport.update({
-    id: '/tags/',
-    path: '/tags/',
-    getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
+} as any);
+const AppAdminReferenceOfficesRoute = AppAdminReferenceOfficesRouteImport.update({
+  id: "/reference/offices",
+  path: "/reference/offices",
+  getParentRoute: () => AppAdminRoute,
+} as any);
+const AppAdminReferenceCountriesRoute = AppAdminReferenceCountriesRouteImport.update({
+  id: "/reference/countries",
+  path: "/reference/countries",
+  getParentRoute: () => AppAdminRoute,
+} as any);
+const AppAdminReferenceCategoriesRoute = AppAdminReferenceCategoriesRouteImport.update({
+  id: "/reference/categories",
+  path: "/reference/categories",
+  getParentRoute: () => AppAdminRoute,
+} as any);
+const AppAdminProjectsProjectIdRoute = AppAdminProjectsProjectIdRouteImport.update({
+  id: "/projects/$projectId",
+  path: "/projects/$projectId",
+  getParentRoute: () => AppAdminRoute,
+} as any);
+const AppProjectsProjectIdTagsIndexRoute = AppProjectsProjectIdTagsIndexRouteImport.update({
+  id: "/tags/",
+  path: "/tags/",
+  getParentRoute: () => AppProjectsProjectIdRoute,
+} as any);
 const AppProjectsProjectIdSupportRecordsIndexRoute =
   AppProjectsProjectIdSupportRecordsIndexRouteImport.update({
-    id: '/support-records/',
-    path: '/support-records/',
+    id: "/support-records/",
+    path: "/support-records/",
     getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
-const AppProjectsProjectIdReportsIndexRoute =
-  AppProjectsProjectIdReportsIndexRouteImport.update({
-    id: '/reports/',
-    path: '/reports/',
-    getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
-const AppProjectsProjectIdPetsIndexRoute =
-  AppProjectsProjectIdPetsIndexRouteImport.update({
-    id: '/pets/',
-    path: '/pets/',
-    getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
-const AppProjectsProjectIdPeopleIndexRoute =
-  AppProjectsProjectIdPeopleIndexRouteImport.update({
-    id: '/people/',
-    path: '/people/',
-    getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
-const AppProjectsProjectIdMyStatsIndexRoute =
-  AppProjectsProjectIdMyStatsIndexRouteImport.update({
-    id: '/my-stats/',
-    path: '/my-stats/',
-    getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
+  } as any);
+const AppProjectsProjectIdReportsIndexRoute = AppProjectsProjectIdReportsIndexRouteImport.update({
+  id: "/reports/",
+  path: "/reports/",
+  getParentRoute: () => AppProjectsProjectIdRoute,
+} as any);
+const AppProjectsProjectIdPetsIndexRoute = AppProjectsProjectIdPetsIndexRouteImport.update({
+  id: "/pets/",
+  path: "/pets/",
+  getParentRoute: () => AppProjectsProjectIdRoute,
+} as any);
+const AppProjectsProjectIdPeopleIndexRoute = AppProjectsProjectIdPeopleIndexRouteImport.update({
+  id: "/people/",
+  path: "/people/",
+  getParentRoute: () => AppProjectsProjectIdRoute,
+} as any);
+const AppProjectsProjectIdMyStatsIndexRoute = AppProjectsProjectIdMyStatsIndexRouteImport.update({
+  id: "/my-stats/",
+  path: "/my-stats/",
+  getParentRoute: () => AppProjectsProjectIdRoute,
+} as any);
 const AppProjectsProjectIdHouseholdsIndexRoute =
   AppProjectsProjectIdHouseholdsIndexRouteImport.update({
-    id: '/households/',
-    path: '/households/',
+    id: "/households/",
+    path: "/households/",
     getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
-const AppAdminReferenceCountriesIndexRoute =
-  AppAdminReferenceCountriesIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AppAdminReferenceCountriesRoute,
-  } as any)
-const AppAdminProjectsProjectIdIndexRoute =
-  AppAdminProjectsProjectIdIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AppAdminProjectsProjectIdRoute,
-  } as any)
+  } as any);
+const AppAdminReferenceCountriesIndexRoute = AppAdminReferenceCountriesIndexRouteImport.update({
+  id: "/",
+  path: "/",
+  getParentRoute: () => AppAdminReferenceCountriesRoute,
+} as any);
+const AppAdminProjectsProjectIdIndexRoute = AppAdminProjectsProjectIdIndexRouteImport.update({
+  id: "/",
+  path: "/",
+  getParentRoute: () => AppAdminProjectsProjectIdRoute,
+} as any);
 const AppProjectsProjectIdSupportRecordsTypeRoute =
   AppProjectsProjectIdSupportRecordsTypeRouteImport.update({
-    id: '/support-records/$type',
-    path: '/support-records/$type',
+    id: "/support-records/$type",
+    path: "/support-records/$type",
     getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
-const AppProjectsProjectIdReportsPetsRoute =
-  AppProjectsProjectIdReportsPetsRouteImport.update({
-    id: '/reports/pets',
-    path: '/reports/pets',
-    getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
-const AppProjectsProjectIdReportsPeopleRoute =
-  AppProjectsProjectIdReportsPeopleRouteImport.update({
-    id: '/reports/people',
-    path: '/reports/people',
-    getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
-const AppProjectsProjectIdReportsCustomRoute =
-  AppProjectsProjectIdReportsCustomRouteImport.update({
-    id: '/reports/custom',
-    path: '/reports/custom',
-    getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
-const AppProjectsProjectIdPetsStatusRoute =
-  AppProjectsProjectIdPetsStatusRouteImport.update({
-    id: '/pets/$status',
-    path: '/pets/$status',
-    getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
+  } as any);
+const AppProjectsProjectIdReportsPetsRoute = AppProjectsProjectIdReportsPetsRouteImport.update({
+  id: "/reports/pets",
+  path: "/reports/pets",
+  getParentRoute: () => AppProjectsProjectIdRoute,
+} as any);
+const AppProjectsProjectIdReportsPeopleRoute = AppProjectsProjectIdReportsPeopleRouteImport.update({
+  id: "/reports/people",
+  path: "/reports/people",
+  getParentRoute: () => AppProjectsProjectIdRoute,
+} as any);
+const AppProjectsProjectIdReportsCustomRoute = AppProjectsProjectIdReportsCustomRouteImport.update({
+  id: "/reports/custom",
+  path: "/reports/custom",
+  getParentRoute: () => AppProjectsProjectIdRoute,
+} as any);
+const AppProjectsProjectIdPetsStatusRoute = AppProjectsProjectIdPetsStatusRouteImport.update({
+  id: "/pets/$status",
+  path: "/pets/$status",
+  getParentRoute: () => AppProjectsProjectIdRoute,
+} as any);
 const AppProjectsProjectIdPeoplePersonIdRoute =
   AppProjectsProjectIdPeoplePersonIdRouteImport.update({
-    id: '/people/$personId',
-    path: '/people/$personId',
+    id: "/people/$personId",
+    path: "/people/$personId",
     getParentRoute: () => AppProjectsProjectIdRoute,
-  } as any)
+  } as any);
 const AppAdminReferenceCountriesCountryIdRoute =
   AppAdminReferenceCountriesCountryIdRouteImport.update({
-    id: '/$countryId',
-    path: '/$countryId',
+    id: "/$countryId",
+    path: "/$countryId",
     getParentRoute: () => AppAdminReferenceCountriesRoute,
-  } as any)
+  } as any);
 const AppAdminProjectsProjectIdPermissionsRoute =
   AppAdminProjectsProjectIdPermissionsRouteImport.update({
-    id: '/permissions',
-    path: '/permissions',
+    id: "/permissions",
+    path: "/permissions",
     getParentRoute: () => AppAdminProjectsProjectIdRoute,
-  } as any)
+  } as any);
 const AppProjectsProjectIdPeoplePersonIdIndexRoute =
   AppProjectsProjectIdPeoplePersonIdIndexRouteImport.update({
-    id: '/',
-    path: '/',
+    id: "/",
+    path: "/",
     getParentRoute: () => AppProjectsProjectIdPeoplePersonIdRoute,
-  } as any)
+  } as any);
 const AppAdminReferenceCountriesCountryIdIndexRoute =
   AppAdminReferenceCountriesCountryIdIndexRouteImport.update({
-    id: '/',
-    path: '/',
+    id: "/",
+    path: "/",
     getParentRoute: () => AppAdminReferenceCountriesCountryIdRoute,
-  } as any)
+  } as any);
 const AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute =
   AppProjectsProjectIdPeoplePersonIdSupportRecordsRouteImport.update({
-    id: '/support-records',
-    path: '/support-records',
+    id: "/support-records",
+    path: "/support-records",
     getParentRoute: () => AppProjectsProjectIdPeoplePersonIdRoute,
-  } as any)
+  } as any);
 const AppProjectsProjectIdPeoplePersonIdStatsRoute =
   AppProjectsProjectIdPeoplePersonIdStatsRouteImport.update({
-    id: '/stats',
-    path: '/stats',
+    id: "/stats",
+    path: "/stats",
     getParentRoute: () => AppProjectsProjectIdPeoplePersonIdRoute,
-  } as any)
+  } as any);
 const AppProjectsProjectIdPeoplePersonIdNotesRoute =
   AppProjectsProjectIdPeoplePersonIdNotesRouteImport.update({
-    id: '/notes',
-    path: '/notes',
+    id: "/notes",
+    path: "/notes",
     getParentRoute: () => AppProjectsProjectIdPeoplePersonIdRoute,
-  } as any)
+  } as any);
 const AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute =
   AppProjectsProjectIdPeoplePersonIdMigrationRecordsRouteImport.update({
-    id: '/migration-records',
-    path: '/migration-records',
+    id: "/migration-records",
+    path: "/migration-records",
     getParentRoute: () => AppProjectsProjectIdPeoplePersonIdRoute,
-  } as any)
+  } as any);
 const AppProjectsProjectIdPeoplePersonIdDocumentsRoute =
   AppProjectsProjectIdPeoplePersonIdDocumentsRouteImport.update({
-    id: '/documents',
-    path: '/documents',
+    id: "/documents",
+    path: "/documents",
     getParentRoute: () => AppProjectsProjectIdPeoplePersonIdRoute,
-  } as any)
+  } as any);
 const AppAdminReferenceCountriesCountryIdStatesStateIdRoute =
   AppAdminReferenceCountriesCountryIdStatesStateIdRouteImport.update({
-    id: '/states/$stateId',
-    path: '/states/$stateId',
+    id: "/states/$stateId",
+    path: "/states/$stateId",
     getParentRoute: () => AppAdminReferenceCountriesCountryIdRoute,
-  } as any)
+  } as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof AppIndexRoute
-  '/admin': typeof AppAdminRouteWithChildren
-  '/profile': typeof AppProfileRoute
-  '/login': typeof AuthLoginRoute
-  '/register': typeof AuthRegisterRoute
-  '/admin/audit-logs': typeof AppAdminAuditLogsRoute
-  '/projects/$projectId': typeof AppProjectsProjectIdRouteWithChildren
-  '/admin/': typeof AppAdminIndexRoute
-  '/admin/projects/$projectId': typeof AppAdminProjectsProjectIdRouteWithChildren
-  '/admin/reference/categories': typeof AppAdminReferenceCategoriesRoute
-  '/admin/reference/countries': typeof AppAdminReferenceCountriesRouteWithChildren
-  '/admin/reference/offices': typeof AppAdminReferenceOfficesRoute
-  '/admin/users/$userId': typeof AppAdminUsersUserIdRoute
-  '/projects/$projectId/audit-logs': typeof AppProjectsProjectIdAuditLogsRoute
-  '/admin/projects/': typeof AppAdminProjectsIndexRoute
-  '/admin/reference/': typeof AppAdminReferenceIndexRoute
-  '/admin/users/': typeof AppAdminUsersIndexRoute
-  '/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
-  '/admin/reference/countries/$countryId': typeof AppAdminReferenceCountriesCountryIdRouteWithChildren
-  '/projects/$projectId/people/$personId': typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
-  '/projects/$projectId/pets/$status': typeof AppProjectsProjectIdPetsStatusRoute
-  '/projects/$projectId/reports/custom': typeof AppProjectsProjectIdReportsCustomRoute
-  '/projects/$projectId/reports/people': typeof AppProjectsProjectIdReportsPeopleRoute
-  '/projects/$projectId/reports/pets': typeof AppProjectsProjectIdReportsPetsRoute
-  '/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
-  '/admin/projects/$projectId/': typeof AppAdminProjectsProjectIdIndexRoute
-  '/admin/reference/countries/': typeof AppAdminReferenceCountriesIndexRoute
-  '/projects/$projectId/households/': typeof AppProjectsProjectIdHouseholdsIndexRoute
-  '/projects/$projectId/my-stats/': typeof AppProjectsProjectIdMyStatsIndexRoute
-  '/projects/$projectId/people/': typeof AppProjectsProjectIdPeopleIndexRoute
-  '/projects/$projectId/pets/': typeof AppProjectsProjectIdPetsIndexRoute
-  '/projects/$projectId/reports/': typeof AppProjectsProjectIdReportsIndexRoute
-  '/projects/$projectId/support-records/': typeof AppProjectsProjectIdSupportRecordsIndexRoute
-  '/projects/$projectId/tags/': typeof AppProjectsProjectIdTagsIndexRoute
-  '/projects/$projectId/people/$personId/documents': typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute
-  '/projects/$projectId/people/$personId/migration-records': typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute
-  '/projects/$projectId/people/$personId/notes': typeof AppProjectsProjectIdPeoplePersonIdNotesRoute
-  '/projects/$projectId/people/$personId/stats': typeof AppProjectsProjectIdPeoplePersonIdStatsRoute
-  '/projects/$projectId/people/$personId/support-records': typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute
-  '/admin/reference/countries/$countryId/': typeof AppAdminReferenceCountriesCountryIdIndexRoute
-  '/projects/$projectId/people/$personId/': typeof AppProjectsProjectIdPeoplePersonIdIndexRoute
-  '/admin/reference/countries/$countryId/states/$stateId': typeof AppAdminReferenceCountriesCountryIdStatesStateIdRoute
+  "/": typeof AppIndexRoute;
+  "/admin": typeof AppAdminRouteWithChildren;
+  "/profile": typeof AppProfileRoute;
+  "/login": typeof AuthLoginRoute;
+  "/register": typeof AuthRegisterRoute;
+  "/admin/audit-logs": typeof AppAdminAuditLogsRoute;
+  "/projects/$projectId": typeof AppProjectsProjectIdRouteWithChildren;
+  "/admin/": typeof AppAdminIndexRoute;
+  "/admin/projects/$projectId": typeof AppAdminProjectsProjectIdRouteWithChildren;
+  "/admin/reference/categories": typeof AppAdminReferenceCategoriesRoute;
+  "/admin/reference/countries": typeof AppAdminReferenceCountriesRouteWithChildren;
+  "/admin/reference/offices": typeof AppAdminReferenceOfficesRoute;
+  "/admin/users/$userId": typeof AppAdminUsersUserIdRoute;
+  "/projects/$projectId/audit-logs": typeof AppProjectsProjectIdAuditLogsRoute;
+  "/admin/projects/": typeof AppAdminProjectsIndexRoute;
+  "/admin/reference/": typeof AppAdminReferenceIndexRoute;
+  "/admin/users/": typeof AppAdminUsersIndexRoute;
+  "/admin/projects/$projectId/permissions": typeof AppAdminProjectsProjectIdPermissionsRoute;
+  "/admin/reference/countries/$countryId": typeof AppAdminReferenceCountriesCountryIdRouteWithChildren;
+  "/projects/$projectId/people/$personId": typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren;
+  "/projects/$projectId/pets/$status": typeof AppProjectsProjectIdPetsStatusRoute;
+  "/projects/$projectId/reports/custom": typeof AppProjectsProjectIdReportsCustomRoute;
+  "/projects/$projectId/reports/people": typeof AppProjectsProjectIdReportsPeopleRoute;
+  "/projects/$projectId/reports/pets": typeof AppProjectsProjectIdReportsPetsRoute;
+  "/projects/$projectId/support-records/$type": typeof AppProjectsProjectIdSupportRecordsTypeRoute;
+  "/admin/projects/$projectId/": typeof AppAdminProjectsProjectIdIndexRoute;
+  "/admin/reference/countries/": typeof AppAdminReferenceCountriesIndexRoute;
+  "/projects/$projectId/households/": typeof AppProjectsProjectIdHouseholdsIndexRoute;
+  "/projects/$projectId/my-stats/": typeof AppProjectsProjectIdMyStatsIndexRoute;
+  "/projects/$projectId/people/": typeof AppProjectsProjectIdPeopleIndexRoute;
+  "/projects/$projectId/pets/": typeof AppProjectsProjectIdPetsIndexRoute;
+  "/projects/$projectId/reports/": typeof AppProjectsProjectIdReportsIndexRoute;
+  "/projects/$projectId/support-records/": typeof AppProjectsProjectIdSupportRecordsIndexRoute;
+  "/projects/$projectId/tags/": typeof AppProjectsProjectIdTagsIndexRoute;
+  "/projects/$projectId/people/$personId/documents": typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute;
+  "/projects/$projectId/people/$personId/migration-records": typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute;
+  "/projects/$projectId/people/$personId/notes": typeof AppProjectsProjectIdPeoplePersonIdNotesRoute;
+  "/projects/$projectId/people/$personId/stats": typeof AppProjectsProjectIdPeoplePersonIdStatsRoute;
+  "/projects/$projectId/people/$personId/support-records": typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute;
+  "/admin/reference/countries/$countryId/": typeof AppAdminReferenceCountriesCountryIdIndexRoute;
+  "/projects/$projectId/people/$personId/": typeof AppProjectsProjectIdPeoplePersonIdIndexRoute;
+  "/admin/reference/countries/$countryId/states/$stateId": typeof AppAdminReferenceCountriesCountryIdStatesStateIdRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof AppIndexRoute
-  '/profile': typeof AppProfileRoute
-  '/login': typeof AuthLoginRoute
-  '/register': typeof AuthRegisterRoute
-  '/admin/audit-logs': typeof AppAdminAuditLogsRoute
-  '/projects/$projectId': typeof AppProjectsProjectIdRouteWithChildren
-  '/admin': typeof AppAdminIndexRoute
-  '/admin/reference/categories': typeof AppAdminReferenceCategoriesRoute
-  '/admin/reference/offices': typeof AppAdminReferenceOfficesRoute
-  '/admin/users/$userId': typeof AppAdminUsersUserIdRoute
-  '/projects/$projectId/audit-logs': typeof AppProjectsProjectIdAuditLogsRoute
-  '/admin/projects': typeof AppAdminProjectsIndexRoute
-  '/admin/reference': typeof AppAdminReferenceIndexRoute
-  '/admin/users': typeof AppAdminUsersIndexRoute
-  '/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
-  '/projects/$projectId/pets/$status': typeof AppProjectsProjectIdPetsStatusRoute
-  '/projects/$projectId/reports/custom': typeof AppProjectsProjectIdReportsCustomRoute
-  '/projects/$projectId/reports/people': typeof AppProjectsProjectIdReportsPeopleRoute
-  '/projects/$projectId/reports/pets': typeof AppProjectsProjectIdReportsPetsRoute
-  '/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
-  '/admin/projects/$projectId': typeof AppAdminProjectsProjectIdIndexRoute
-  '/admin/reference/countries': typeof AppAdminReferenceCountriesIndexRoute
-  '/projects/$projectId/households': typeof AppProjectsProjectIdHouseholdsIndexRoute
-  '/projects/$projectId/my-stats': typeof AppProjectsProjectIdMyStatsIndexRoute
-  '/projects/$projectId/people': typeof AppProjectsProjectIdPeopleIndexRoute
-  '/projects/$projectId/pets': typeof AppProjectsProjectIdPetsIndexRoute
-  '/projects/$projectId/reports': typeof AppProjectsProjectIdReportsIndexRoute
-  '/projects/$projectId/support-records': typeof AppProjectsProjectIdSupportRecordsIndexRoute
-  '/projects/$projectId/tags': typeof AppProjectsProjectIdTagsIndexRoute
-  '/projects/$projectId/people/$personId/documents': typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute
-  '/projects/$projectId/people/$personId/migration-records': typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute
-  '/projects/$projectId/people/$personId/notes': typeof AppProjectsProjectIdPeoplePersonIdNotesRoute
-  '/projects/$projectId/people/$personId/stats': typeof AppProjectsProjectIdPeoplePersonIdStatsRoute
-  '/projects/$projectId/people/$personId/support-records': typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute
-  '/admin/reference/countries/$countryId': typeof AppAdminReferenceCountriesCountryIdIndexRoute
-  '/projects/$projectId/people/$personId': typeof AppProjectsProjectIdPeoplePersonIdIndexRoute
-  '/admin/reference/countries/$countryId/states/$stateId': typeof AppAdminReferenceCountriesCountryIdStatesStateIdRoute
+  "/": typeof AppIndexRoute;
+  "/profile": typeof AppProfileRoute;
+  "/login": typeof AuthLoginRoute;
+  "/register": typeof AuthRegisterRoute;
+  "/admin/audit-logs": typeof AppAdminAuditLogsRoute;
+  "/projects/$projectId": typeof AppProjectsProjectIdRouteWithChildren;
+  "/admin": typeof AppAdminIndexRoute;
+  "/admin/reference/categories": typeof AppAdminReferenceCategoriesRoute;
+  "/admin/reference/offices": typeof AppAdminReferenceOfficesRoute;
+  "/admin/users/$userId": typeof AppAdminUsersUserIdRoute;
+  "/projects/$projectId/audit-logs": typeof AppProjectsProjectIdAuditLogsRoute;
+  "/admin/projects": typeof AppAdminProjectsIndexRoute;
+  "/admin/reference": typeof AppAdminReferenceIndexRoute;
+  "/admin/users": typeof AppAdminUsersIndexRoute;
+  "/admin/projects/$projectId/permissions": typeof AppAdminProjectsProjectIdPermissionsRoute;
+  "/projects/$projectId/pets/$status": typeof AppProjectsProjectIdPetsStatusRoute;
+  "/projects/$projectId/reports/custom": typeof AppProjectsProjectIdReportsCustomRoute;
+  "/projects/$projectId/reports/people": typeof AppProjectsProjectIdReportsPeopleRoute;
+  "/projects/$projectId/reports/pets": typeof AppProjectsProjectIdReportsPetsRoute;
+  "/projects/$projectId/support-records/$type": typeof AppProjectsProjectIdSupportRecordsTypeRoute;
+  "/admin/projects/$projectId": typeof AppAdminProjectsProjectIdIndexRoute;
+  "/admin/reference/countries": typeof AppAdminReferenceCountriesIndexRoute;
+  "/projects/$projectId/households": typeof AppProjectsProjectIdHouseholdsIndexRoute;
+  "/projects/$projectId/my-stats": typeof AppProjectsProjectIdMyStatsIndexRoute;
+  "/projects/$projectId/people": typeof AppProjectsProjectIdPeopleIndexRoute;
+  "/projects/$projectId/pets": typeof AppProjectsProjectIdPetsIndexRoute;
+  "/projects/$projectId/reports": typeof AppProjectsProjectIdReportsIndexRoute;
+  "/projects/$projectId/support-records": typeof AppProjectsProjectIdSupportRecordsIndexRoute;
+  "/projects/$projectId/tags": typeof AppProjectsProjectIdTagsIndexRoute;
+  "/projects/$projectId/people/$personId/documents": typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute;
+  "/projects/$projectId/people/$personId/migration-records": typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute;
+  "/projects/$projectId/people/$personId/notes": typeof AppProjectsProjectIdPeoplePersonIdNotesRoute;
+  "/projects/$projectId/people/$personId/stats": typeof AppProjectsProjectIdPeoplePersonIdStatsRoute;
+  "/projects/$projectId/people/$personId/support-records": typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute;
+  "/admin/reference/countries/$countryId": typeof AppAdminReferenceCountriesCountryIdIndexRoute;
+  "/projects/$projectId/people/$personId": typeof AppProjectsProjectIdPeoplePersonIdIndexRoute;
+  "/admin/reference/countries/$countryId/states/$stateId": typeof AppAdminReferenceCountriesCountryIdStatesStateIdRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/_app': typeof AppRouteWithChildren
-  '/_auth': typeof AuthRouteWithChildren
-  '/_app/admin': typeof AppAdminRouteWithChildren
-  '/_app/profile': typeof AppProfileRoute
-  '/_auth/login': typeof AuthLoginRoute
-  '/_auth/register': typeof AuthRegisterRoute
-  '/_app/': typeof AppIndexRoute
-  '/_app/admin/audit-logs': typeof AppAdminAuditLogsRoute
-  '/_app/projects/$projectId': typeof AppProjectsProjectIdRouteWithChildren
-  '/_app/admin/': typeof AppAdminIndexRoute
-  '/_app/admin/projects/$projectId': typeof AppAdminProjectsProjectIdRouteWithChildren
-  '/_app/admin/reference/categories': typeof AppAdminReferenceCategoriesRoute
-  '/_app/admin/reference/countries': typeof AppAdminReferenceCountriesRouteWithChildren
-  '/_app/admin/reference/offices': typeof AppAdminReferenceOfficesRoute
-  '/_app/admin/users/$userId': typeof AppAdminUsersUserIdRoute
-  '/_app/projects/$projectId/audit-logs': typeof AppProjectsProjectIdAuditLogsRoute
-  '/_app/admin/projects/': typeof AppAdminProjectsIndexRoute
-  '/_app/admin/reference/': typeof AppAdminReferenceIndexRoute
-  '/_app/admin/users/': typeof AppAdminUsersIndexRoute
-  '/_app/admin/projects/$projectId/permissions': typeof AppAdminProjectsProjectIdPermissionsRoute
-  '/_app/admin/reference/countries/$countryId': typeof AppAdminReferenceCountriesCountryIdRouteWithChildren
-  '/_app/projects/$projectId/people/$personId': typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
-  '/_app/projects/$projectId/pets/$status': typeof AppProjectsProjectIdPetsStatusRoute
-  '/_app/projects/$projectId/reports/custom': typeof AppProjectsProjectIdReportsCustomRoute
-  '/_app/projects/$projectId/reports/people': typeof AppProjectsProjectIdReportsPeopleRoute
-  '/_app/projects/$projectId/reports/pets': typeof AppProjectsProjectIdReportsPetsRoute
-  '/_app/projects/$projectId/support-records/$type': typeof AppProjectsProjectIdSupportRecordsTypeRoute
-  '/_app/admin/projects/$projectId/': typeof AppAdminProjectsProjectIdIndexRoute
-  '/_app/admin/reference/countries/': typeof AppAdminReferenceCountriesIndexRoute
-  '/_app/projects/$projectId/households/': typeof AppProjectsProjectIdHouseholdsIndexRoute
-  '/_app/projects/$projectId/my-stats/': typeof AppProjectsProjectIdMyStatsIndexRoute
-  '/_app/projects/$projectId/people/': typeof AppProjectsProjectIdPeopleIndexRoute
-  '/_app/projects/$projectId/pets/': typeof AppProjectsProjectIdPetsIndexRoute
-  '/_app/projects/$projectId/reports/': typeof AppProjectsProjectIdReportsIndexRoute
-  '/_app/projects/$projectId/support-records/': typeof AppProjectsProjectIdSupportRecordsIndexRoute
-  '/_app/projects/$projectId/tags/': typeof AppProjectsProjectIdTagsIndexRoute
-  '/_app/projects/$projectId/people/$personId/documents': typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute
-  '/_app/projects/$projectId/people/$personId/migration-records': typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute
-  '/_app/projects/$projectId/people/$personId/notes': typeof AppProjectsProjectIdPeoplePersonIdNotesRoute
-  '/_app/projects/$projectId/people/$personId/stats': typeof AppProjectsProjectIdPeoplePersonIdStatsRoute
-  '/_app/projects/$projectId/people/$personId/support-records': typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute
-  '/_app/admin/reference/countries/$countryId/': typeof AppAdminReferenceCountriesCountryIdIndexRoute
-  '/_app/projects/$projectId/people/$personId/': typeof AppProjectsProjectIdPeoplePersonIdIndexRoute
-  '/_app/admin/reference/countries/$countryId/states/$stateId': typeof AppAdminReferenceCountriesCountryIdStatesStateIdRoute
+  __root__: typeof rootRouteImport;
+  "/_app": typeof AppRouteWithChildren;
+  "/_auth": typeof AuthRouteWithChildren;
+  "/_app/admin": typeof AppAdminRouteWithChildren;
+  "/_app/profile": typeof AppProfileRoute;
+  "/_auth/login": typeof AuthLoginRoute;
+  "/_auth/register": typeof AuthRegisterRoute;
+  "/_app/": typeof AppIndexRoute;
+  "/_app/admin/audit-logs": typeof AppAdminAuditLogsRoute;
+  "/_app/projects/$projectId": typeof AppProjectsProjectIdRouteWithChildren;
+  "/_app/admin/": typeof AppAdminIndexRoute;
+  "/_app/admin/projects/$projectId": typeof AppAdminProjectsProjectIdRouteWithChildren;
+  "/_app/admin/reference/categories": typeof AppAdminReferenceCategoriesRoute;
+  "/_app/admin/reference/countries": typeof AppAdminReferenceCountriesRouteWithChildren;
+  "/_app/admin/reference/offices": typeof AppAdminReferenceOfficesRoute;
+  "/_app/admin/users/$userId": typeof AppAdminUsersUserIdRoute;
+  "/_app/projects/$projectId/audit-logs": typeof AppProjectsProjectIdAuditLogsRoute;
+  "/_app/admin/projects/": typeof AppAdminProjectsIndexRoute;
+  "/_app/admin/reference/": typeof AppAdminReferenceIndexRoute;
+  "/_app/admin/users/": typeof AppAdminUsersIndexRoute;
+  "/_app/admin/projects/$projectId/permissions": typeof AppAdminProjectsProjectIdPermissionsRoute;
+  "/_app/admin/reference/countries/$countryId": typeof AppAdminReferenceCountriesCountryIdRouteWithChildren;
+  "/_app/projects/$projectId/people/$personId": typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren;
+  "/_app/projects/$projectId/pets/$status": typeof AppProjectsProjectIdPetsStatusRoute;
+  "/_app/projects/$projectId/reports/custom": typeof AppProjectsProjectIdReportsCustomRoute;
+  "/_app/projects/$projectId/reports/people": typeof AppProjectsProjectIdReportsPeopleRoute;
+  "/_app/projects/$projectId/reports/pets": typeof AppProjectsProjectIdReportsPetsRoute;
+  "/_app/projects/$projectId/support-records/$type": typeof AppProjectsProjectIdSupportRecordsTypeRoute;
+  "/_app/admin/projects/$projectId/": typeof AppAdminProjectsProjectIdIndexRoute;
+  "/_app/admin/reference/countries/": typeof AppAdminReferenceCountriesIndexRoute;
+  "/_app/projects/$projectId/households/": typeof AppProjectsProjectIdHouseholdsIndexRoute;
+  "/_app/projects/$projectId/my-stats/": typeof AppProjectsProjectIdMyStatsIndexRoute;
+  "/_app/projects/$projectId/people/": typeof AppProjectsProjectIdPeopleIndexRoute;
+  "/_app/projects/$projectId/pets/": typeof AppProjectsProjectIdPetsIndexRoute;
+  "/_app/projects/$projectId/reports/": typeof AppProjectsProjectIdReportsIndexRoute;
+  "/_app/projects/$projectId/support-records/": typeof AppProjectsProjectIdSupportRecordsIndexRoute;
+  "/_app/projects/$projectId/tags/": typeof AppProjectsProjectIdTagsIndexRoute;
+  "/_app/projects/$projectId/people/$personId/documents": typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute;
+  "/_app/projects/$projectId/people/$personId/migration-records": typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute;
+  "/_app/projects/$projectId/people/$personId/notes": typeof AppProjectsProjectIdPeoplePersonIdNotesRoute;
+  "/_app/projects/$projectId/people/$personId/stats": typeof AppProjectsProjectIdPeoplePersonIdStatsRoute;
+  "/_app/projects/$projectId/people/$personId/support-records": typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute;
+  "/_app/admin/reference/countries/$countryId/": typeof AppAdminReferenceCountriesCountryIdIndexRoute;
+  "/_app/projects/$projectId/people/$personId/": typeof AppProjectsProjectIdPeoplePersonIdIndexRoute;
+  "/_app/admin/reference/countries/$countryId/states/$stateId": typeof AppAdminReferenceCountriesCountryIdStatesStateIdRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/admin'
-    | '/profile'
-    | '/login'
-    | '/register'
-    | '/admin/audit-logs'
-    | '/projects/$projectId'
-    | '/admin/'
-    | '/admin/projects/$projectId'
-    | '/admin/reference/categories'
-    | '/admin/reference/countries'
-    | '/admin/reference/offices'
-    | '/admin/users/$userId'
-    | '/projects/$projectId/audit-logs'
-    | '/admin/projects/'
-    | '/admin/reference/'
-    | '/admin/users/'
-    | '/admin/projects/$projectId/permissions'
-    | '/admin/reference/countries/$countryId'
-    | '/projects/$projectId/people/$personId'
-    | '/projects/$projectId/pets/$status'
-    | '/projects/$projectId/reports/custom'
-    | '/projects/$projectId/reports/people'
-    | '/projects/$projectId/reports/pets'
-    | '/projects/$projectId/support-records/$type'
-    | '/admin/projects/$projectId/'
-    | '/admin/reference/countries/'
-    | '/projects/$projectId/households/'
-    | '/projects/$projectId/my-stats/'
-    | '/projects/$projectId/people/'
-    | '/projects/$projectId/pets/'
-    | '/projects/$projectId/reports/'
-    | '/projects/$projectId/support-records/'
-    | '/projects/$projectId/tags/'
-    | '/projects/$projectId/people/$personId/documents'
-    | '/projects/$projectId/people/$personId/migration-records'
-    | '/projects/$projectId/people/$personId/notes'
-    | '/projects/$projectId/people/$personId/stats'
-    | '/projects/$projectId/people/$personId/support-records'
-    | '/admin/reference/countries/$countryId/'
-    | '/projects/$projectId/people/$personId/'
-    | '/admin/reference/countries/$countryId/states/$stateId'
-  fileRoutesByTo: FileRoutesByTo
+    | "/"
+    | "/admin"
+    | "/profile"
+    | "/login"
+    | "/register"
+    | "/admin/audit-logs"
+    | "/projects/$projectId"
+    | "/admin/"
+    | "/admin/projects/$projectId"
+    | "/admin/reference/categories"
+    | "/admin/reference/countries"
+    | "/admin/reference/offices"
+    | "/admin/users/$userId"
+    | "/projects/$projectId/audit-logs"
+    | "/admin/projects/"
+    | "/admin/reference/"
+    | "/admin/users/"
+    | "/admin/projects/$projectId/permissions"
+    | "/admin/reference/countries/$countryId"
+    | "/projects/$projectId/people/$personId"
+    | "/projects/$projectId/pets/$status"
+    | "/projects/$projectId/reports/custom"
+    | "/projects/$projectId/reports/people"
+    | "/projects/$projectId/reports/pets"
+    | "/projects/$projectId/support-records/$type"
+    | "/admin/projects/$projectId/"
+    | "/admin/reference/countries/"
+    | "/projects/$projectId/households/"
+    | "/projects/$projectId/my-stats/"
+    | "/projects/$projectId/people/"
+    | "/projects/$projectId/pets/"
+    | "/projects/$projectId/reports/"
+    | "/projects/$projectId/support-records/"
+    | "/projects/$projectId/tags/"
+    | "/projects/$projectId/people/$personId/documents"
+    | "/projects/$projectId/people/$personId/migration-records"
+    | "/projects/$projectId/people/$personId/notes"
+    | "/projects/$projectId/people/$personId/stats"
+    | "/projects/$projectId/people/$personId/support-records"
+    | "/admin/reference/countries/$countryId/"
+    | "/projects/$projectId/people/$personId/"
+    | "/admin/reference/countries/$countryId/states/$stateId";
+  fileRoutesByTo: FileRoutesByTo;
   to:
-    | '/'
-    | '/profile'
-    | '/login'
-    | '/register'
-    | '/admin/audit-logs'
-    | '/projects/$projectId'
-    | '/admin'
-    | '/admin/reference/categories'
-    | '/admin/reference/offices'
-    | '/admin/users/$userId'
-    | '/projects/$projectId/audit-logs'
-    | '/admin/projects'
-    | '/admin/reference'
-    | '/admin/users'
-    | '/admin/projects/$projectId/permissions'
-    | '/projects/$projectId/pets/$status'
-    | '/projects/$projectId/reports/custom'
-    | '/projects/$projectId/reports/people'
-    | '/projects/$projectId/reports/pets'
-    | '/projects/$projectId/support-records/$type'
-    | '/admin/projects/$projectId'
-    | '/admin/reference/countries'
-    | '/projects/$projectId/households'
-    | '/projects/$projectId/my-stats'
-    | '/projects/$projectId/people'
-    | '/projects/$projectId/pets'
-    | '/projects/$projectId/reports'
-    | '/projects/$projectId/support-records'
-    | '/projects/$projectId/tags'
-    | '/projects/$projectId/people/$personId/documents'
-    | '/projects/$projectId/people/$personId/migration-records'
-    | '/projects/$projectId/people/$personId/notes'
-    | '/projects/$projectId/people/$personId/stats'
-    | '/projects/$projectId/people/$personId/support-records'
-    | '/admin/reference/countries/$countryId'
-    | '/projects/$projectId/people/$personId'
-    | '/admin/reference/countries/$countryId/states/$stateId'
+    | "/"
+    | "/profile"
+    | "/login"
+    | "/register"
+    | "/admin/audit-logs"
+    | "/projects/$projectId"
+    | "/admin"
+    | "/admin/reference/categories"
+    | "/admin/reference/offices"
+    | "/admin/users/$userId"
+    | "/projects/$projectId/audit-logs"
+    | "/admin/projects"
+    | "/admin/reference"
+    | "/admin/users"
+    | "/admin/projects/$projectId/permissions"
+    | "/projects/$projectId/pets/$status"
+    | "/projects/$projectId/reports/custom"
+    | "/projects/$projectId/reports/people"
+    | "/projects/$projectId/reports/pets"
+    | "/projects/$projectId/support-records/$type"
+    | "/admin/projects/$projectId"
+    | "/admin/reference/countries"
+    | "/projects/$projectId/households"
+    | "/projects/$projectId/my-stats"
+    | "/projects/$projectId/people"
+    | "/projects/$projectId/pets"
+    | "/projects/$projectId/reports"
+    | "/projects/$projectId/support-records"
+    | "/projects/$projectId/tags"
+    | "/projects/$projectId/people/$personId/documents"
+    | "/projects/$projectId/people/$personId/migration-records"
+    | "/projects/$projectId/people/$personId/notes"
+    | "/projects/$projectId/people/$personId/stats"
+    | "/projects/$projectId/people/$personId/support-records"
+    | "/admin/reference/countries/$countryId"
+    | "/projects/$projectId/people/$personId"
+    | "/admin/reference/countries/$countryId/states/$stateId";
   id:
-    | '__root__'
-    | '/_app'
-    | '/_auth'
-    | '/_app/admin'
-    | '/_app/profile'
-    | '/_auth/login'
-    | '/_auth/register'
-    | '/_app/'
-    | '/_app/admin/audit-logs'
-    | '/_app/projects/$projectId'
-    | '/_app/admin/'
-    | '/_app/admin/projects/$projectId'
-    | '/_app/admin/reference/categories'
-    | '/_app/admin/reference/countries'
-    | '/_app/admin/reference/offices'
-    | '/_app/admin/users/$userId'
-    | '/_app/projects/$projectId/audit-logs'
-    | '/_app/admin/projects/'
-    | '/_app/admin/reference/'
-    | '/_app/admin/users/'
-    | '/_app/admin/projects/$projectId/permissions'
-    | '/_app/admin/reference/countries/$countryId'
-    | '/_app/projects/$projectId/people/$personId'
-    | '/_app/projects/$projectId/pets/$status'
-    | '/_app/projects/$projectId/reports/custom'
-    | '/_app/projects/$projectId/reports/people'
-    | '/_app/projects/$projectId/reports/pets'
-    | '/_app/projects/$projectId/support-records/$type'
-    | '/_app/admin/projects/$projectId/'
-    | '/_app/admin/reference/countries/'
-    | '/_app/projects/$projectId/households/'
-    | '/_app/projects/$projectId/my-stats/'
-    | '/_app/projects/$projectId/people/'
-    | '/_app/projects/$projectId/pets/'
-    | '/_app/projects/$projectId/reports/'
-    | '/_app/projects/$projectId/support-records/'
-    | '/_app/projects/$projectId/tags/'
-    | '/_app/projects/$projectId/people/$personId/documents'
-    | '/_app/projects/$projectId/people/$personId/migration-records'
-    | '/_app/projects/$projectId/people/$personId/notes'
-    | '/_app/projects/$projectId/people/$personId/stats'
-    | '/_app/projects/$projectId/people/$personId/support-records'
-    | '/_app/admin/reference/countries/$countryId/'
-    | '/_app/projects/$projectId/people/$personId/'
-    | '/_app/admin/reference/countries/$countryId/states/$stateId'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/_app"
+    | "/_auth"
+    | "/_app/admin"
+    | "/_app/profile"
+    | "/_auth/login"
+    | "/_auth/register"
+    | "/_app/"
+    | "/_app/admin/audit-logs"
+    | "/_app/projects/$projectId"
+    | "/_app/admin/"
+    | "/_app/admin/projects/$projectId"
+    | "/_app/admin/reference/categories"
+    | "/_app/admin/reference/countries"
+    | "/_app/admin/reference/offices"
+    | "/_app/admin/users/$userId"
+    | "/_app/projects/$projectId/audit-logs"
+    | "/_app/admin/projects/"
+    | "/_app/admin/reference/"
+    | "/_app/admin/users/"
+    | "/_app/admin/projects/$projectId/permissions"
+    | "/_app/admin/reference/countries/$countryId"
+    | "/_app/projects/$projectId/people/$personId"
+    | "/_app/projects/$projectId/pets/$status"
+    | "/_app/projects/$projectId/reports/custom"
+    | "/_app/projects/$projectId/reports/people"
+    | "/_app/projects/$projectId/reports/pets"
+    | "/_app/projects/$projectId/support-records/$type"
+    | "/_app/admin/projects/$projectId/"
+    | "/_app/admin/reference/countries/"
+    | "/_app/projects/$projectId/households/"
+    | "/_app/projects/$projectId/my-stats/"
+    | "/_app/projects/$projectId/people/"
+    | "/_app/projects/$projectId/pets/"
+    | "/_app/projects/$projectId/reports/"
+    | "/_app/projects/$projectId/support-records/"
+    | "/_app/projects/$projectId/tags/"
+    | "/_app/projects/$projectId/people/$personId/documents"
+    | "/_app/projects/$projectId/people/$personId/migration-records"
+    | "/_app/projects/$projectId/people/$personId/notes"
+    | "/_app/projects/$projectId/people/$personId/stats"
+    | "/_app/projects/$projectId/people/$personId/support-records"
+    | "/_app/admin/reference/countries/$countryId/"
+    | "/_app/projects/$projectId/people/$personId/"
+    | "/_app/admin/reference/countries/$countryId/states/$stateId";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  AppRoute: typeof AppRouteWithChildren
-  AuthRoute: typeof AuthRouteWithChildren
+  AppRoute: typeof AppRouteWithChildren;
+  AuthRoute: typeof AuthRouteWithChildren;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/_auth': {
-      id: '/_auth'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_app': {
-      id: '/_app'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_app/': {
-      id: '/_app/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_auth/register': {
-      id: '/_auth/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/_auth/login': {
-      id: '/_auth/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof AuthRoute
-    }
-    '/_app/profile': {
-      id: '/_app/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AppProfileRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/admin': {
-      id: '/_app/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AppAdminRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/admin/': {
-      id: '/_app/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AppAdminIndexRouteImport
-      parentRoute: typeof AppAdminRoute
-    }
-    '/_app/projects/$projectId': {
-      id: '/_app/projects/$projectId'
-      path: '/projects/$projectId'
-      fullPath: '/projects/$projectId'
-      preLoaderRoute: typeof AppProjectsProjectIdRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/admin/audit-logs': {
-      id: '/_app/admin/audit-logs'
-      path: '/audit-logs'
-      fullPath: '/admin/audit-logs'
-      preLoaderRoute: typeof AppAdminAuditLogsRouteImport
-      parentRoute: typeof AppAdminRoute
-    }
-    '/_app/admin/users/': {
-      id: '/_app/admin/users/'
-      path: '/users'
-      fullPath: '/admin/users/'
-      preLoaderRoute: typeof AppAdminUsersIndexRouteImport
-      parentRoute: typeof AppAdminRoute
-    }
-    '/_app/admin/reference/': {
-      id: '/_app/admin/reference/'
-      path: '/reference'
-      fullPath: '/admin/reference/'
-      preLoaderRoute: typeof AppAdminReferenceIndexRouteImport
-      parentRoute: typeof AppAdminRoute
-    }
-    '/_app/admin/projects/': {
-      id: '/_app/admin/projects/'
-      path: '/projects'
-      fullPath: '/admin/projects/'
-      preLoaderRoute: typeof AppAdminProjectsIndexRouteImport
-      parentRoute: typeof AppAdminRoute
-    }
-    '/_app/projects/$projectId/audit-logs': {
-      id: '/_app/projects/$projectId/audit-logs'
-      path: '/audit-logs'
-      fullPath: '/projects/$projectId/audit-logs'
-      preLoaderRoute: typeof AppProjectsProjectIdAuditLogsRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/admin/users/$userId': {
-      id: '/_app/admin/users/$userId'
-      path: '/users/$userId'
-      fullPath: '/admin/users/$userId'
-      preLoaderRoute: typeof AppAdminUsersUserIdRouteImport
-      parentRoute: typeof AppAdminRoute
-    }
-    '/_app/admin/reference/offices': {
-      id: '/_app/admin/reference/offices'
-      path: '/reference/offices'
-      fullPath: '/admin/reference/offices'
-      preLoaderRoute: typeof AppAdminReferenceOfficesRouteImport
-      parentRoute: typeof AppAdminRoute
-    }
-    '/_app/admin/reference/countries': {
-      id: '/_app/admin/reference/countries'
-      path: '/reference/countries'
-      fullPath: '/admin/reference/countries'
-      preLoaderRoute: typeof AppAdminReferenceCountriesRouteImport
-      parentRoute: typeof AppAdminRoute
-    }
-    '/_app/admin/reference/categories': {
-      id: '/_app/admin/reference/categories'
-      path: '/reference/categories'
-      fullPath: '/admin/reference/categories'
-      preLoaderRoute: typeof AppAdminReferenceCategoriesRouteImport
-      parentRoute: typeof AppAdminRoute
-    }
-    '/_app/admin/projects/$projectId': {
-      id: '/_app/admin/projects/$projectId'
-      path: '/projects/$projectId'
-      fullPath: '/admin/projects/$projectId'
-      preLoaderRoute: typeof AppAdminProjectsProjectIdRouteImport
-      parentRoute: typeof AppAdminRoute
-    }
-    '/_app/projects/$projectId/tags/': {
-      id: '/_app/projects/$projectId/tags/'
-      path: '/tags'
-      fullPath: '/projects/$projectId/tags/'
-      preLoaderRoute: typeof AppProjectsProjectIdTagsIndexRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/support-records/': {
-      id: '/_app/projects/$projectId/support-records/'
-      path: '/support-records'
-      fullPath: '/projects/$projectId/support-records/'
-      preLoaderRoute: typeof AppProjectsProjectIdSupportRecordsIndexRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/reports/': {
-      id: '/_app/projects/$projectId/reports/'
-      path: '/reports'
-      fullPath: '/projects/$projectId/reports/'
-      preLoaderRoute: typeof AppProjectsProjectIdReportsIndexRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/pets/': {
-      id: '/_app/projects/$projectId/pets/'
-      path: '/pets'
-      fullPath: '/projects/$projectId/pets/'
-      preLoaderRoute: typeof AppProjectsProjectIdPetsIndexRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/people/': {
-      id: '/_app/projects/$projectId/people/'
-      path: '/people'
-      fullPath: '/projects/$projectId/people/'
-      preLoaderRoute: typeof AppProjectsProjectIdPeopleIndexRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/my-stats/': {
-      id: '/_app/projects/$projectId/my-stats/'
-      path: '/my-stats'
-      fullPath: '/projects/$projectId/my-stats/'
-      preLoaderRoute: typeof AppProjectsProjectIdMyStatsIndexRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/households/': {
-      id: '/_app/projects/$projectId/households/'
-      path: '/households'
-      fullPath: '/projects/$projectId/households/'
-      preLoaderRoute: typeof AppProjectsProjectIdHouseholdsIndexRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/admin/reference/countries/': {
-      id: '/_app/admin/reference/countries/'
-      path: '/'
-      fullPath: '/admin/reference/countries/'
-      preLoaderRoute: typeof AppAdminReferenceCountriesIndexRouteImport
-      parentRoute: typeof AppAdminReferenceCountriesRoute
-    }
-    '/_app/admin/projects/$projectId/': {
-      id: '/_app/admin/projects/$projectId/'
-      path: '/'
-      fullPath: '/admin/projects/$projectId/'
-      preLoaderRoute: typeof AppAdminProjectsProjectIdIndexRouteImport
-      parentRoute: typeof AppAdminProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/support-records/$type': {
-      id: '/_app/projects/$projectId/support-records/$type'
-      path: '/support-records/$type'
-      fullPath: '/projects/$projectId/support-records/$type'
-      preLoaderRoute: typeof AppProjectsProjectIdSupportRecordsTypeRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/reports/pets': {
-      id: '/_app/projects/$projectId/reports/pets'
-      path: '/reports/pets'
-      fullPath: '/projects/$projectId/reports/pets'
-      preLoaderRoute: typeof AppProjectsProjectIdReportsPetsRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/reports/people': {
-      id: '/_app/projects/$projectId/reports/people'
-      path: '/reports/people'
-      fullPath: '/projects/$projectId/reports/people'
-      preLoaderRoute: typeof AppProjectsProjectIdReportsPeopleRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/reports/custom': {
-      id: '/_app/projects/$projectId/reports/custom'
-      path: '/reports/custom'
-      fullPath: '/projects/$projectId/reports/custom'
-      preLoaderRoute: typeof AppProjectsProjectIdReportsCustomRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/pets/$status': {
-      id: '/_app/projects/$projectId/pets/$status'
-      path: '/pets/$status'
-      fullPath: '/projects/$projectId/pets/$status'
-      preLoaderRoute: typeof AppProjectsProjectIdPetsStatusRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/people/$personId': {
-      id: '/_app/projects/$projectId/people/$personId'
-      path: '/people/$personId'
-      fullPath: '/projects/$projectId/people/$personId'
-      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdRouteImport
-      parentRoute: typeof AppProjectsProjectIdRoute
-    }
-    '/_app/admin/reference/countries/$countryId': {
-      id: '/_app/admin/reference/countries/$countryId'
-      path: '/$countryId'
-      fullPath: '/admin/reference/countries/$countryId'
-      preLoaderRoute: typeof AppAdminReferenceCountriesCountryIdRouteImport
-      parentRoute: typeof AppAdminReferenceCountriesRoute
-    }
-    '/_app/admin/projects/$projectId/permissions': {
-      id: '/_app/admin/projects/$projectId/permissions'
-      path: '/permissions'
-      fullPath: '/admin/projects/$projectId/permissions'
-      preLoaderRoute: typeof AppAdminProjectsProjectIdPermissionsRouteImport
-      parentRoute: typeof AppAdminProjectsProjectIdRoute
-    }
-    '/_app/projects/$projectId/people/$personId/': {
-      id: '/_app/projects/$projectId/people/$personId/'
-      path: '/'
-      fullPath: '/projects/$projectId/people/$personId/'
-      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdIndexRouteImport
-      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute
-    }
-    '/_app/admin/reference/countries/$countryId/': {
-      id: '/_app/admin/reference/countries/$countryId/'
-      path: '/'
-      fullPath: '/admin/reference/countries/$countryId/'
-      preLoaderRoute: typeof AppAdminReferenceCountriesCountryIdIndexRouteImport
-      parentRoute: typeof AppAdminReferenceCountriesCountryIdRoute
-    }
-    '/_app/projects/$projectId/people/$personId/support-records': {
-      id: '/_app/projects/$projectId/people/$personId/support-records'
-      path: '/support-records'
-      fullPath: '/projects/$projectId/people/$personId/support-records'
-      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRouteImport
-      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute
-    }
-    '/_app/projects/$projectId/people/$personId/stats': {
-      id: '/_app/projects/$projectId/people/$personId/stats'
-      path: '/stats'
-      fullPath: '/projects/$projectId/people/$personId/stats'
-      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdStatsRouteImport
-      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute
-    }
-    '/_app/projects/$projectId/people/$personId/notes': {
-      id: '/_app/projects/$projectId/people/$personId/notes'
-      path: '/notes'
-      fullPath: '/projects/$projectId/people/$personId/notes'
-      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdNotesRouteImport
-      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute
-    }
-    '/_app/projects/$projectId/people/$personId/migration-records': {
-      id: '/_app/projects/$projectId/people/$personId/migration-records'
-      path: '/migration-records'
-      fullPath: '/projects/$projectId/people/$personId/migration-records'
-      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRouteImport
-      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute
-    }
-    '/_app/projects/$projectId/people/$personId/documents': {
-      id: '/_app/projects/$projectId/people/$personId/documents'
-      path: '/documents'
-      fullPath: '/projects/$projectId/people/$personId/documents'
-      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdDocumentsRouteImport
-      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute
-    }
-    '/_app/admin/reference/countries/$countryId/states/$stateId': {
-      id: '/_app/admin/reference/countries/$countryId/states/$stateId'
-      path: '/states/$stateId'
-      fullPath: '/admin/reference/countries/$countryId/states/$stateId'
-      preLoaderRoute: typeof AppAdminReferenceCountriesCountryIdStatesStateIdRouteImport
-      parentRoute: typeof AppAdminReferenceCountriesCountryIdRoute
-    }
+    "/_auth": {
+      id: "/_auth";
+      path: "";
+      fullPath: "/";
+      preLoaderRoute: typeof AuthRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_app": {
+      id: "/_app";
+      path: "";
+      fullPath: "/";
+      preLoaderRoute: typeof AppRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_app/": {
+      id: "/_app/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof AppIndexRouteImport;
+      parentRoute: typeof AppRoute;
+    };
+    "/_auth/register": {
+      id: "/_auth/register";
+      path: "/register";
+      fullPath: "/register";
+      preLoaderRoute: typeof AuthRegisterRouteImport;
+      parentRoute: typeof AuthRoute;
+    };
+    "/_auth/login": {
+      id: "/_auth/login";
+      path: "/login";
+      fullPath: "/login";
+      preLoaderRoute: typeof AuthLoginRouteImport;
+      parentRoute: typeof AuthRoute;
+    };
+    "/_app/profile": {
+      id: "/_app/profile";
+      path: "/profile";
+      fullPath: "/profile";
+      preLoaderRoute: typeof AppProfileRouteImport;
+      parentRoute: typeof AppRoute;
+    };
+    "/_app/admin": {
+      id: "/_app/admin";
+      path: "/admin";
+      fullPath: "/admin";
+      preLoaderRoute: typeof AppAdminRouteImport;
+      parentRoute: typeof AppRoute;
+    };
+    "/_app/admin/": {
+      id: "/_app/admin/";
+      path: "/";
+      fullPath: "/admin/";
+      preLoaderRoute: typeof AppAdminIndexRouteImport;
+      parentRoute: typeof AppAdminRoute;
+    };
+    "/_app/projects/$projectId": {
+      id: "/_app/projects/$projectId";
+      path: "/projects/$projectId";
+      fullPath: "/projects/$projectId";
+      preLoaderRoute: typeof AppProjectsProjectIdRouteImport;
+      parentRoute: typeof AppRoute;
+    };
+    "/_app/admin/audit-logs": {
+      id: "/_app/admin/audit-logs";
+      path: "/audit-logs";
+      fullPath: "/admin/audit-logs";
+      preLoaderRoute: typeof AppAdminAuditLogsRouteImport;
+      parentRoute: typeof AppAdminRoute;
+    };
+    "/_app/admin/users/": {
+      id: "/_app/admin/users/";
+      path: "/users";
+      fullPath: "/admin/users/";
+      preLoaderRoute: typeof AppAdminUsersIndexRouteImport;
+      parentRoute: typeof AppAdminRoute;
+    };
+    "/_app/admin/reference/": {
+      id: "/_app/admin/reference/";
+      path: "/reference";
+      fullPath: "/admin/reference/";
+      preLoaderRoute: typeof AppAdminReferenceIndexRouteImport;
+      parentRoute: typeof AppAdminRoute;
+    };
+    "/_app/admin/projects/": {
+      id: "/_app/admin/projects/";
+      path: "/projects";
+      fullPath: "/admin/projects/";
+      preLoaderRoute: typeof AppAdminProjectsIndexRouteImport;
+      parentRoute: typeof AppAdminRoute;
+    };
+    "/_app/projects/$projectId/audit-logs": {
+      id: "/_app/projects/$projectId/audit-logs";
+      path: "/audit-logs";
+      fullPath: "/projects/$projectId/audit-logs";
+      preLoaderRoute: typeof AppProjectsProjectIdAuditLogsRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/admin/users/$userId": {
+      id: "/_app/admin/users/$userId";
+      path: "/users/$userId";
+      fullPath: "/admin/users/$userId";
+      preLoaderRoute: typeof AppAdminUsersUserIdRouteImport;
+      parentRoute: typeof AppAdminRoute;
+    };
+    "/_app/admin/reference/offices": {
+      id: "/_app/admin/reference/offices";
+      path: "/reference/offices";
+      fullPath: "/admin/reference/offices";
+      preLoaderRoute: typeof AppAdminReferenceOfficesRouteImport;
+      parentRoute: typeof AppAdminRoute;
+    };
+    "/_app/admin/reference/countries": {
+      id: "/_app/admin/reference/countries";
+      path: "/reference/countries";
+      fullPath: "/admin/reference/countries";
+      preLoaderRoute: typeof AppAdminReferenceCountriesRouteImport;
+      parentRoute: typeof AppAdminRoute;
+    };
+    "/_app/admin/reference/categories": {
+      id: "/_app/admin/reference/categories";
+      path: "/reference/categories";
+      fullPath: "/admin/reference/categories";
+      preLoaderRoute: typeof AppAdminReferenceCategoriesRouteImport;
+      parentRoute: typeof AppAdminRoute;
+    };
+    "/_app/admin/projects/$projectId": {
+      id: "/_app/admin/projects/$projectId";
+      path: "/projects/$projectId";
+      fullPath: "/admin/projects/$projectId";
+      preLoaderRoute: typeof AppAdminProjectsProjectIdRouteImport;
+      parentRoute: typeof AppAdminRoute;
+    };
+    "/_app/projects/$projectId/tags/": {
+      id: "/_app/projects/$projectId/tags/";
+      path: "/tags";
+      fullPath: "/projects/$projectId/tags/";
+      preLoaderRoute: typeof AppProjectsProjectIdTagsIndexRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/support-records/": {
+      id: "/_app/projects/$projectId/support-records/";
+      path: "/support-records";
+      fullPath: "/projects/$projectId/support-records/";
+      preLoaderRoute: typeof AppProjectsProjectIdSupportRecordsIndexRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/reports/": {
+      id: "/_app/projects/$projectId/reports/";
+      path: "/reports";
+      fullPath: "/projects/$projectId/reports/";
+      preLoaderRoute: typeof AppProjectsProjectIdReportsIndexRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/pets/": {
+      id: "/_app/projects/$projectId/pets/";
+      path: "/pets";
+      fullPath: "/projects/$projectId/pets/";
+      preLoaderRoute: typeof AppProjectsProjectIdPetsIndexRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/people/": {
+      id: "/_app/projects/$projectId/people/";
+      path: "/people";
+      fullPath: "/projects/$projectId/people/";
+      preLoaderRoute: typeof AppProjectsProjectIdPeopleIndexRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/my-stats/": {
+      id: "/_app/projects/$projectId/my-stats/";
+      path: "/my-stats";
+      fullPath: "/projects/$projectId/my-stats/";
+      preLoaderRoute: typeof AppProjectsProjectIdMyStatsIndexRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/households/": {
+      id: "/_app/projects/$projectId/households/";
+      path: "/households";
+      fullPath: "/projects/$projectId/households/";
+      preLoaderRoute: typeof AppProjectsProjectIdHouseholdsIndexRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/admin/reference/countries/": {
+      id: "/_app/admin/reference/countries/";
+      path: "/";
+      fullPath: "/admin/reference/countries/";
+      preLoaderRoute: typeof AppAdminReferenceCountriesIndexRouteImport;
+      parentRoute: typeof AppAdminReferenceCountriesRoute;
+    };
+    "/_app/admin/projects/$projectId/": {
+      id: "/_app/admin/projects/$projectId/";
+      path: "/";
+      fullPath: "/admin/projects/$projectId/";
+      preLoaderRoute: typeof AppAdminProjectsProjectIdIndexRouteImport;
+      parentRoute: typeof AppAdminProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/support-records/$type": {
+      id: "/_app/projects/$projectId/support-records/$type";
+      path: "/support-records/$type";
+      fullPath: "/projects/$projectId/support-records/$type";
+      preLoaderRoute: typeof AppProjectsProjectIdSupportRecordsTypeRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/reports/pets": {
+      id: "/_app/projects/$projectId/reports/pets";
+      path: "/reports/pets";
+      fullPath: "/projects/$projectId/reports/pets";
+      preLoaderRoute: typeof AppProjectsProjectIdReportsPetsRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/reports/people": {
+      id: "/_app/projects/$projectId/reports/people";
+      path: "/reports/people";
+      fullPath: "/projects/$projectId/reports/people";
+      preLoaderRoute: typeof AppProjectsProjectIdReportsPeopleRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/reports/custom": {
+      id: "/_app/projects/$projectId/reports/custom";
+      path: "/reports/custom";
+      fullPath: "/projects/$projectId/reports/custom";
+      preLoaderRoute: typeof AppProjectsProjectIdReportsCustomRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/pets/$status": {
+      id: "/_app/projects/$projectId/pets/$status";
+      path: "/pets/$status";
+      fullPath: "/projects/$projectId/pets/$status";
+      preLoaderRoute: typeof AppProjectsProjectIdPetsStatusRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/people/$personId": {
+      id: "/_app/projects/$projectId/people/$personId";
+      path: "/people/$personId";
+      fullPath: "/projects/$projectId/people/$personId";
+      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdRouteImport;
+      parentRoute: typeof AppProjectsProjectIdRoute;
+    };
+    "/_app/admin/reference/countries/$countryId": {
+      id: "/_app/admin/reference/countries/$countryId";
+      path: "/$countryId";
+      fullPath: "/admin/reference/countries/$countryId";
+      preLoaderRoute: typeof AppAdminReferenceCountriesCountryIdRouteImport;
+      parentRoute: typeof AppAdminReferenceCountriesRoute;
+    };
+    "/_app/admin/projects/$projectId/permissions": {
+      id: "/_app/admin/projects/$projectId/permissions";
+      path: "/permissions";
+      fullPath: "/admin/projects/$projectId/permissions";
+      preLoaderRoute: typeof AppAdminProjectsProjectIdPermissionsRouteImport;
+      parentRoute: typeof AppAdminProjectsProjectIdRoute;
+    };
+    "/_app/projects/$projectId/people/$personId/": {
+      id: "/_app/projects/$projectId/people/$personId/";
+      path: "/";
+      fullPath: "/projects/$projectId/people/$personId/";
+      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdIndexRouteImport;
+      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute;
+    };
+    "/_app/admin/reference/countries/$countryId/": {
+      id: "/_app/admin/reference/countries/$countryId/";
+      path: "/";
+      fullPath: "/admin/reference/countries/$countryId/";
+      preLoaderRoute: typeof AppAdminReferenceCountriesCountryIdIndexRouteImport;
+      parentRoute: typeof AppAdminReferenceCountriesCountryIdRoute;
+    };
+    "/_app/projects/$projectId/people/$personId/support-records": {
+      id: "/_app/projects/$projectId/people/$personId/support-records";
+      path: "/support-records";
+      fullPath: "/projects/$projectId/people/$personId/support-records";
+      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRouteImport;
+      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute;
+    };
+    "/_app/projects/$projectId/people/$personId/stats": {
+      id: "/_app/projects/$projectId/people/$personId/stats";
+      path: "/stats";
+      fullPath: "/projects/$projectId/people/$personId/stats";
+      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdStatsRouteImport;
+      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute;
+    };
+    "/_app/projects/$projectId/people/$personId/notes": {
+      id: "/_app/projects/$projectId/people/$personId/notes";
+      path: "/notes";
+      fullPath: "/projects/$projectId/people/$personId/notes";
+      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdNotesRouteImport;
+      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute;
+    };
+    "/_app/projects/$projectId/people/$personId/migration-records": {
+      id: "/_app/projects/$projectId/people/$personId/migration-records";
+      path: "/migration-records";
+      fullPath: "/projects/$projectId/people/$personId/migration-records";
+      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRouteImport;
+      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute;
+    };
+    "/_app/projects/$projectId/people/$personId/documents": {
+      id: "/_app/projects/$projectId/people/$personId/documents";
+      path: "/documents";
+      fullPath: "/projects/$projectId/people/$personId/documents";
+      preLoaderRoute: typeof AppProjectsProjectIdPeoplePersonIdDocumentsRouteImport;
+      parentRoute: typeof AppProjectsProjectIdPeoplePersonIdRoute;
+    };
+    "/_app/admin/reference/countries/$countryId/states/$stateId": {
+      id: "/_app/admin/reference/countries/$countryId/states/$stateId";
+      path: "/states/$stateId";
+      fullPath: "/admin/reference/countries/$countryId/states/$stateId";
+      preLoaderRoute: typeof AppAdminReferenceCountriesCountryIdStatesStateIdRouteImport;
+      parentRoute: typeof AppAdminReferenceCountriesCountryIdRoute;
+    };
   }
 }
 
 interface AppAdminProjectsProjectIdRouteChildren {
-  AppAdminProjectsProjectIdPermissionsRoute: typeof AppAdminProjectsProjectIdPermissionsRoute
-  AppAdminProjectsProjectIdIndexRoute: typeof AppAdminProjectsProjectIdIndexRoute
+  AppAdminProjectsProjectIdPermissionsRoute: typeof AppAdminProjectsProjectIdPermissionsRoute;
+  AppAdminProjectsProjectIdIndexRoute: typeof AppAdminProjectsProjectIdIndexRoute;
 }
 
-const AppAdminProjectsProjectIdRouteChildren: AppAdminProjectsProjectIdRouteChildren =
-  {
-    AppAdminProjectsProjectIdPermissionsRoute:
-      AppAdminProjectsProjectIdPermissionsRoute,
-    AppAdminProjectsProjectIdIndexRoute: AppAdminProjectsProjectIdIndexRoute,
-  }
+const AppAdminProjectsProjectIdRouteChildren: AppAdminProjectsProjectIdRouteChildren = {
+  AppAdminProjectsProjectIdPermissionsRoute: AppAdminProjectsProjectIdPermissionsRoute,
+  AppAdminProjectsProjectIdIndexRoute: AppAdminProjectsProjectIdIndexRoute,
+};
 
-const AppAdminProjectsProjectIdRouteWithChildren =
-  AppAdminProjectsProjectIdRoute._addFileChildren(
-    AppAdminProjectsProjectIdRouteChildren,
-  )
+const AppAdminProjectsProjectIdRouteWithChildren = AppAdminProjectsProjectIdRoute._addFileChildren(
+  AppAdminProjectsProjectIdRouteChildren,
+);
 
 interface AppAdminReferenceCountriesCountryIdRouteChildren {
-  AppAdminReferenceCountriesCountryIdIndexRoute: typeof AppAdminReferenceCountriesCountryIdIndexRoute
-  AppAdminReferenceCountriesCountryIdStatesStateIdRoute: typeof AppAdminReferenceCountriesCountryIdStatesStateIdRoute
+  AppAdminReferenceCountriesCountryIdIndexRoute: typeof AppAdminReferenceCountriesCountryIdIndexRoute;
+  AppAdminReferenceCountriesCountryIdStatesStateIdRoute: typeof AppAdminReferenceCountriesCountryIdStatesStateIdRoute;
 }
 
 const AppAdminReferenceCountriesCountryIdRouteChildren: AppAdminReferenceCountriesCountryIdRouteChildren =
   {
-    AppAdminReferenceCountriesCountryIdIndexRoute:
-      AppAdminReferenceCountriesCountryIdIndexRoute,
+    AppAdminReferenceCountriesCountryIdIndexRoute: AppAdminReferenceCountriesCountryIdIndexRoute,
     AppAdminReferenceCountriesCountryIdStatesStateIdRoute:
       AppAdminReferenceCountriesCountryIdStatesStateIdRoute,
-  }
+  };
 
 const AppAdminReferenceCountriesCountryIdRouteWithChildren =
   AppAdminReferenceCountriesCountryIdRoute._addFileChildren(
     AppAdminReferenceCountriesCountryIdRouteChildren,
-  )
+  );
 
 interface AppAdminReferenceCountriesRouteChildren {
-  AppAdminReferenceCountriesCountryIdRoute: typeof AppAdminReferenceCountriesCountryIdRouteWithChildren
-  AppAdminReferenceCountriesIndexRoute: typeof AppAdminReferenceCountriesIndexRoute
+  AppAdminReferenceCountriesCountryIdRoute: typeof AppAdminReferenceCountriesCountryIdRouteWithChildren;
+  AppAdminReferenceCountriesIndexRoute: typeof AppAdminReferenceCountriesIndexRoute;
 }
 
-const AppAdminReferenceCountriesRouteChildren: AppAdminReferenceCountriesRouteChildren =
-  {
-    AppAdminReferenceCountriesCountryIdRoute:
-      AppAdminReferenceCountriesCountryIdRouteWithChildren,
-    AppAdminReferenceCountriesIndexRoute: AppAdminReferenceCountriesIndexRoute,
-  }
+const AppAdminReferenceCountriesRouteChildren: AppAdminReferenceCountriesRouteChildren = {
+  AppAdminReferenceCountriesCountryIdRoute: AppAdminReferenceCountriesCountryIdRouteWithChildren,
+  AppAdminReferenceCountriesIndexRoute: AppAdminReferenceCountriesIndexRoute,
+};
 
 const AppAdminReferenceCountriesRouteWithChildren =
-  AppAdminReferenceCountriesRoute._addFileChildren(
-    AppAdminReferenceCountriesRouteChildren,
-  )
+  AppAdminReferenceCountriesRoute._addFileChildren(AppAdminReferenceCountriesRouteChildren);
 
 interface AppAdminRouteChildren {
-  AppAdminAuditLogsRoute: typeof AppAdminAuditLogsRoute
-  AppAdminIndexRoute: typeof AppAdminIndexRoute
-  AppAdminProjectsProjectIdRoute: typeof AppAdminProjectsProjectIdRouteWithChildren
-  AppAdminReferenceCategoriesRoute: typeof AppAdminReferenceCategoriesRoute
-  AppAdminReferenceCountriesRoute: typeof AppAdminReferenceCountriesRouteWithChildren
-  AppAdminReferenceOfficesRoute: typeof AppAdminReferenceOfficesRoute
-  AppAdminUsersUserIdRoute: typeof AppAdminUsersUserIdRoute
-  AppAdminProjectsIndexRoute: typeof AppAdminProjectsIndexRoute
-  AppAdminReferenceIndexRoute: typeof AppAdminReferenceIndexRoute
-  AppAdminUsersIndexRoute: typeof AppAdminUsersIndexRoute
+  AppAdminAuditLogsRoute: typeof AppAdminAuditLogsRoute;
+  AppAdminIndexRoute: typeof AppAdminIndexRoute;
+  AppAdminProjectsProjectIdRoute: typeof AppAdminProjectsProjectIdRouteWithChildren;
+  AppAdminReferenceCategoriesRoute: typeof AppAdminReferenceCategoriesRoute;
+  AppAdminReferenceCountriesRoute: typeof AppAdminReferenceCountriesRouteWithChildren;
+  AppAdminReferenceOfficesRoute: typeof AppAdminReferenceOfficesRoute;
+  AppAdminUsersUserIdRoute: typeof AppAdminUsersUserIdRoute;
+  AppAdminProjectsIndexRoute: typeof AppAdminProjectsIndexRoute;
+  AppAdminReferenceIndexRoute: typeof AppAdminReferenceIndexRoute;
+  AppAdminUsersIndexRoute: typeof AppAdminUsersIndexRoute;
 }
 
 const AppAdminRouteChildren: AppAdminRouteChildren = {
@@ -959,19 +935,17 @@ const AppAdminRouteChildren: AppAdminRouteChildren = {
   AppAdminProjectsIndexRoute: AppAdminProjectsIndexRoute,
   AppAdminReferenceIndexRoute: AppAdminReferenceIndexRoute,
   AppAdminUsersIndexRoute: AppAdminUsersIndexRoute,
-}
+};
 
-const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(
-  AppAdminRouteChildren,
-)
+const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(AppAdminRouteChildren);
 
 interface AppProjectsProjectIdPeoplePersonIdRouteChildren {
-  AppProjectsProjectIdPeoplePersonIdDocumentsRoute: typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute
-  AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute: typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute
-  AppProjectsProjectIdPeoplePersonIdNotesRoute: typeof AppProjectsProjectIdPeoplePersonIdNotesRoute
-  AppProjectsProjectIdPeoplePersonIdStatsRoute: typeof AppProjectsProjectIdPeoplePersonIdStatsRoute
-  AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute: typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute
-  AppProjectsProjectIdPeoplePersonIdIndexRoute: typeof AppProjectsProjectIdPeoplePersonIdIndexRoute
+  AppProjectsProjectIdPeoplePersonIdDocumentsRoute: typeof AppProjectsProjectIdPeoplePersonIdDocumentsRoute;
+  AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute: typeof AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute;
+  AppProjectsProjectIdPeoplePersonIdNotesRoute: typeof AppProjectsProjectIdPeoplePersonIdNotesRoute;
+  AppProjectsProjectIdPeoplePersonIdStatsRoute: typeof AppProjectsProjectIdPeoplePersonIdStatsRoute;
+  AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute: typeof AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute;
+  AppProjectsProjectIdPeoplePersonIdIndexRoute: typeof AppProjectsProjectIdPeoplePersonIdIndexRoute;
 }
 
 const AppProjectsProjectIdPeoplePersonIdRouteChildren: AppProjectsProjectIdPeoplePersonIdRouteChildren =
@@ -980,69 +954,61 @@ const AppProjectsProjectIdPeoplePersonIdRouteChildren: AppProjectsProjectIdPeopl
       AppProjectsProjectIdPeoplePersonIdDocumentsRoute,
     AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute:
       AppProjectsProjectIdPeoplePersonIdMigrationRecordsRoute,
-    AppProjectsProjectIdPeoplePersonIdNotesRoute:
-      AppProjectsProjectIdPeoplePersonIdNotesRoute,
-    AppProjectsProjectIdPeoplePersonIdStatsRoute:
-      AppProjectsProjectIdPeoplePersonIdStatsRoute,
+    AppProjectsProjectIdPeoplePersonIdNotesRoute: AppProjectsProjectIdPeoplePersonIdNotesRoute,
+    AppProjectsProjectIdPeoplePersonIdStatsRoute: AppProjectsProjectIdPeoplePersonIdStatsRoute,
     AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute:
       AppProjectsProjectIdPeoplePersonIdSupportRecordsRoute,
-    AppProjectsProjectIdPeoplePersonIdIndexRoute:
-      AppProjectsProjectIdPeoplePersonIdIndexRoute,
-  }
+    AppProjectsProjectIdPeoplePersonIdIndexRoute: AppProjectsProjectIdPeoplePersonIdIndexRoute,
+  };
 
 const AppProjectsProjectIdPeoplePersonIdRouteWithChildren =
   AppProjectsProjectIdPeoplePersonIdRoute._addFileChildren(
     AppProjectsProjectIdPeoplePersonIdRouteChildren,
-  )
+  );
 
 interface AppProjectsProjectIdRouteChildren {
-  AppProjectsProjectIdAuditLogsRoute: typeof AppProjectsProjectIdAuditLogsRoute
-  AppProjectsProjectIdPeoplePersonIdRoute: typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren
-  AppProjectsProjectIdPetsStatusRoute: typeof AppProjectsProjectIdPetsStatusRoute
-  AppProjectsProjectIdReportsCustomRoute: typeof AppProjectsProjectIdReportsCustomRoute
-  AppProjectsProjectIdReportsPeopleRoute: typeof AppProjectsProjectIdReportsPeopleRoute
-  AppProjectsProjectIdReportsPetsRoute: typeof AppProjectsProjectIdReportsPetsRoute
-  AppProjectsProjectIdSupportRecordsTypeRoute: typeof AppProjectsProjectIdSupportRecordsTypeRoute
-  AppProjectsProjectIdHouseholdsIndexRoute: typeof AppProjectsProjectIdHouseholdsIndexRoute
-  AppProjectsProjectIdMyStatsIndexRoute: typeof AppProjectsProjectIdMyStatsIndexRoute
-  AppProjectsProjectIdPeopleIndexRoute: typeof AppProjectsProjectIdPeopleIndexRoute
-  AppProjectsProjectIdPetsIndexRoute: typeof AppProjectsProjectIdPetsIndexRoute
-  AppProjectsProjectIdReportsIndexRoute: typeof AppProjectsProjectIdReportsIndexRoute
-  AppProjectsProjectIdSupportRecordsIndexRoute: typeof AppProjectsProjectIdSupportRecordsIndexRoute
-  AppProjectsProjectIdTagsIndexRoute: typeof AppProjectsProjectIdTagsIndexRoute
+  AppProjectsProjectIdAuditLogsRoute: typeof AppProjectsProjectIdAuditLogsRoute;
+  AppProjectsProjectIdPeoplePersonIdRoute: typeof AppProjectsProjectIdPeoplePersonIdRouteWithChildren;
+  AppProjectsProjectIdPetsStatusRoute: typeof AppProjectsProjectIdPetsStatusRoute;
+  AppProjectsProjectIdReportsCustomRoute: typeof AppProjectsProjectIdReportsCustomRoute;
+  AppProjectsProjectIdReportsPeopleRoute: typeof AppProjectsProjectIdReportsPeopleRoute;
+  AppProjectsProjectIdReportsPetsRoute: typeof AppProjectsProjectIdReportsPetsRoute;
+  AppProjectsProjectIdSupportRecordsTypeRoute: typeof AppProjectsProjectIdSupportRecordsTypeRoute;
+  AppProjectsProjectIdHouseholdsIndexRoute: typeof AppProjectsProjectIdHouseholdsIndexRoute;
+  AppProjectsProjectIdMyStatsIndexRoute: typeof AppProjectsProjectIdMyStatsIndexRoute;
+  AppProjectsProjectIdPeopleIndexRoute: typeof AppProjectsProjectIdPeopleIndexRoute;
+  AppProjectsProjectIdPetsIndexRoute: typeof AppProjectsProjectIdPetsIndexRoute;
+  AppProjectsProjectIdReportsIndexRoute: typeof AppProjectsProjectIdReportsIndexRoute;
+  AppProjectsProjectIdSupportRecordsIndexRoute: typeof AppProjectsProjectIdSupportRecordsIndexRoute;
+  AppProjectsProjectIdTagsIndexRoute: typeof AppProjectsProjectIdTagsIndexRoute;
 }
 
 const AppProjectsProjectIdRouteChildren: AppProjectsProjectIdRouteChildren = {
   AppProjectsProjectIdAuditLogsRoute: AppProjectsProjectIdAuditLogsRoute,
-  AppProjectsProjectIdPeoplePersonIdRoute:
-    AppProjectsProjectIdPeoplePersonIdRouteWithChildren,
+  AppProjectsProjectIdPeoplePersonIdRoute: AppProjectsProjectIdPeoplePersonIdRouteWithChildren,
   AppProjectsProjectIdPetsStatusRoute: AppProjectsProjectIdPetsStatusRoute,
-  AppProjectsProjectIdReportsCustomRoute:
-    AppProjectsProjectIdReportsCustomRoute,
-  AppProjectsProjectIdReportsPeopleRoute:
-    AppProjectsProjectIdReportsPeopleRoute,
+  AppProjectsProjectIdReportsCustomRoute: AppProjectsProjectIdReportsCustomRoute,
+  AppProjectsProjectIdReportsPeopleRoute: AppProjectsProjectIdReportsPeopleRoute,
   AppProjectsProjectIdReportsPetsRoute: AppProjectsProjectIdReportsPetsRoute,
-  AppProjectsProjectIdSupportRecordsTypeRoute:
-    AppProjectsProjectIdSupportRecordsTypeRoute,
-  AppProjectsProjectIdHouseholdsIndexRoute:
-    AppProjectsProjectIdHouseholdsIndexRoute,
+  AppProjectsProjectIdSupportRecordsTypeRoute: AppProjectsProjectIdSupportRecordsTypeRoute,
+  AppProjectsProjectIdHouseholdsIndexRoute: AppProjectsProjectIdHouseholdsIndexRoute,
   AppProjectsProjectIdMyStatsIndexRoute: AppProjectsProjectIdMyStatsIndexRoute,
   AppProjectsProjectIdPeopleIndexRoute: AppProjectsProjectIdPeopleIndexRoute,
   AppProjectsProjectIdPetsIndexRoute: AppProjectsProjectIdPetsIndexRoute,
   AppProjectsProjectIdReportsIndexRoute: AppProjectsProjectIdReportsIndexRoute,
-  AppProjectsProjectIdSupportRecordsIndexRoute:
-    AppProjectsProjectIdSupportRecordsIndexRoute,
+  AppProjectsProjectIdSupportRecordsIndexRoute: AppProjectsProjectIdSupportRecordsIndexRoute,
   AppProjectsProjectIdTagsIndexRoute: AppProjectsProjectIdTagsIndexRoute,
-}
+};
 
-const AppProjectsProjectIdRouteWithChildren =
-  AppProjectsProjectIdRoute._addFileChildren(AppProjectsProjectIdRouteChildren)
+const AppProjectsProjectIdRouteWithChildren = AppProjectsProjectIdRoute._addFileChildren(
+  AppProjectsProjectIdRouteChildren,
+);
 
 interface AppRouteChildren {
-  AppAdminRoute: typeof AppAdminRouteWithChildren
-  AppProfileRoute: typeof AppProfileRoute
-  AppIndexRoute: typeof AppIndexRoute
-  AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRouteWithChildren
+  AppAdminRoute: typeof AppAdminRouteWithChildren;
+  AppProfileRoute: typeof AppProfileRoute;
+  AppIndexRoute: typeof AppIndexRoute;
+  AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRouteWithChildren;
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -1050,26 +1016,26 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRoute,
   AppIndexRoute: AppIndexRoute,
   AppProjectsProjectIdRoute: AppProjectsProjectIdRouteWithChildren,
-}
+};
 
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren);
 
 interface AuthRouteChildren {
-  AuthLoginRoute: typeof AuthLoginRoute
-  AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthLoginRoute: typeof AuthLoginRoute;
+  AuthRegisterRoute: typeof AuthRegisterRoute;
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
-}
+};
 
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

@@ -55,7 +55,9 @@ export function DataTablePage<T>({
     <div>
       <PageHeader title={title} action={createAction} />
 
-      {filters && filters.length > 0 && <FilterBar filters={filters} trailing={filterTrailing} onSearch={onSearch} />}
+      {filters && filters.length > 0 && (
+        <FilterBar filters={filters} trailing={filterTrailing} onSearch={onSearch} />
+      )}
 
       <DataTable
         columns={columns}

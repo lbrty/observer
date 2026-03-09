@@ -68,7 +68,10 @@ function DashboardPage() {
 
   const { data: projectsData } = useProjects({ per_page: 1 }, { enabled: isAdminOrStaff });
   const { data: usersData } = useUsers({ per_page: 1 }, { enabled: isAdminOrStaff });
-  const { data: activeUsersData } = useUsers({ per_page: 1, is_active: true }, { enabled: isAdminOrStaff });
+  const { data: activeUsersData } = useUsers(
+    { per_page: 1, is_active: true },
+    { enabled: isAdminOrStaff },
+  );
   const { data: countriesData } = useCountries();
   const { data: myProjectsData } = useMyProjects();
 

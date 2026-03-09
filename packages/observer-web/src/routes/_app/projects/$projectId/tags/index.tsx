@@ -188,7 +188,7 @@ function TagsPage() {
         </span>
       ),
     },
-    ...((canWrite || canDelete)
+    ...(canWrite || canDelete
       ? [
           {
             key: "actions",

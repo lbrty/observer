@@ -113,7 +113,9 @@ export function PetsContent({
       if (dateFrom) searchParams.created_from = dateFrom;
       if (dateTo) searchParams.created_to = dateTo;
 
-      const serverBlob = await api.get(`projects/${projectId}/export/pets`, { searchParams }).blob();
+      const serverBlob = await api
+        .get(`projects/${projectId}/export/pets`, { searchParams })
+        .blob();
       const text = await serverBlob.text();
       const blob = new Blob(["\uFEFF" + text], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
