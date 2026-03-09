@@ -16,7 +16,7 @@ import { PersonDrawer } from "@/components/person-drawer";
 import { StatusBadge } from "@/components/status-badge";
 import { TagChips } from "@/components/tag-chips";
 import { SelectedTagChips, TagFilter } from "@/components/tag-filter";
-import { useMyProjects } from "@/hooks/use-my-projects";
+import { useProjectRole } from "@/hooks/use-project-role";
 import { usePeople } from "@/hooks/use-people";
 import { api } from "@/lib/api";
 import type { Person } from "@/types/person";
@@ -47,9 +47,7 @@ function PeopleListPage() {
   const [editPersonId, setEditPersonId] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
 
-  const { data: projectsData } = useMyProjects();
-  const project = projectsData?.projects.find((p) => p.id === projectId);
-  const canExport = project?.role === "owner" || project?.role === "manager";
+  const { canWrite, canExport } = useProjectRole(projectId);
 
   function setStatus(value: string) {
     navigate({ from: Route.fullPath, search: { status: value || undefined }, replace: true });
@@ -227,22 +225,26 @@ function PeopleListPage() {
         </span>
       ),
     },
-    {
-      key: "actions",
-      header: "",
-      render: (p) => (
-        <Button
-          variant="ghost"
-          className="p-1.5"
-          onClick={(e) => {
-            e.stopPropagation();
-            openEdit(p.id);
-          }}
-        >
-          <PencilSimpleIcon size={16} />
-        </Button>
-      ),
-    },
+    ...(canWrite
+      ? [
+          {
+            key: "actions",
+            header: "",
+            render: (p: Person) => (
+              <Button
+                variant="ghost"
+                className="p-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openEdit(p.id);
+                }}
+              >
+                <PencilSimpleIcon size={16} />
+              </Button>
+            ),
+          } satisfies Column<Person>,
+        ]
+      : []),
   ];
 
   return (
@@ -250,9 +252,11 @@ function PeopleListPage() {
       <PageHeader
         title={t("project.people.title")}
         action={
-          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
-            {t("project.people.register")}
-          </Button>
+          canWrite ? (
+            <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+              {t("project.people.register")}
+            </Button>
+          ) : undefined
         }
       />
 
@@ -314,9 +318,11 @@ function PeopleListPage() {
             title={t("project.people.emptyTitle")}
             description={t("project.people.emptyDescription")}
             action={
-              <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
-                {t("project.people.register")}
-              </Button>
+              canWrite ? (
+                <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
+                  {t("project.people.register")}
+                </Button>
+              ) : undefined
             }
           />
         }

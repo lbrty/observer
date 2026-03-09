@@ -7,6 +7,7 @@ import { Button } from "@/components/button";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { PencilSimpleIcon, TrashIcon, XIcon } from "@/components/icons";
 import { useCreateNote, useDeleteNote, useNotes, useUpdateNote } from "@/hooks/use-notes";
+import { useProjectRole } from "@/hooks/use-project-role";
 
 export const Route = createFileRoute("/_app/projects/$projectId/people/$personId/notes")({
   component: PersonNotes,
@@ -16,6 +17,7 @@ function PersonNotes() {
   const { t } = useTranslation();
   const { projectId, personId } = Route.useParams();
 
+  const { canWrite, canDelete } = useProjectRole(projectId);
   const { data, isLoading } = useNotes(projectId, personId);
   const createNote = useCreateNote(projectId, personId);
   const updateNote = useUpdateNote(projectId, personId);
@@ -60,20 +62,22 @@ function PersonNotes() {
     <div>
       <h2 className="mb-4 font-serif text-lg font-semibold text-fg">{t("project.notes.title")}</h2>
 
-      <form onSubmit={handleSubmit} className="mb-6">
-        <textarea
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder={t("project.notes.body")}
-          rows={3}
-          className="w-full rounded-xl border border-border-secondary bg-bg-secondary px-4 py-3 text-sm text-fg outline-none transition-colors focus:border-accent"
-        />
-        <div className="mt-2 flex justify-end">
-          <Button type="submit" disabled={!body.trim() || createNote.isPending}>
-            {t("project.notes.add")}
-          </Button>
-        </div>
-      </form>
+      {canWrite && (
+        <form onSubmit={handleSubmit} className="mb-6">
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder={t("project.notes.body")}
+            rows={3}
+            className="w-full rounded-xl border border-border-secondary bg-bg-secondary px-4 py-3 text-sm text-fg outline-none transition-colors focus:border-accent"
+          />
+          <div className="mt-2 flex justify-end">
+            <Button type="submit" disabled={!body.trim() || createNote.isPending}>
+              {t("project.notes.add")}
+            </Button>
+          </div>
+        </form>
+      )}
 
       {isLoading ? (
         <div className="space-y-3">
@@ -124,20 +128,24 @@ function PersonNotes() {
                       )}
                     </span>
                     <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        className="p-1.5"
-                        onClick={() => startEdit(note.id, note.body)}
-                      >
-                        <PencilSimpleIcon size={14} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="p-1.5 hover:text-rose"
-                        onClick={() => setDeleteId(note.id)}
-                      >
-                        <TrashIcon size={14} />
-                      </Button>
+                      {canWrite && (
+                        <Button
+                          variant="ghost"
+                          className="p-1.5"
+                          onClick={() => startEdit(note.id, note.body)}
+                        >
+                          <PencilSimpleIcon size={14} />
+                        </Button>
+                      )}
+                      {canDelete && (
+                        <Button
+                          variant="ghost"
+                          className="p-1.5 hover:text-rose"
+                          onClick={() => setDeleteId(note.id)}
+                        >
+                          <TrashIcon size={14} />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </>

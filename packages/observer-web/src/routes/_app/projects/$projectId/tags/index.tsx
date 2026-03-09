@@ -17,6 +17,7 @@ import {
   TrashIcon,
 } from "@/components/icons";
 import { useCreateTag, useDeleteTag, useUpdateTag, useTags } from "@/hooks/use-tags";
+import { useProjectRole } from "@/hooks/use-project-role";
 import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";
 import type { Tag } from "@/types/tag";
@@ -71,6 +72,7 @@ function TagsPage() {
   const { projectId } = Route.useParams();
   const toast = useToast();
 
+  const { canWrite, canDelete } = useProjectRole(projectId);
   const { data, isLoading } = useTags(projectId);
   const createTag = useCreateTag(projectId);
   const updateTag = useUpdateTag(projectId);
@@ -186,34 +188,42 @@ function TagsPage() {
         </span>
       ),
     },
-    {
-      key: "actions",
-      header: "",
-      render: (tag) => (
-        <div className="flex gap-1">
-          <Button
-            variant="ghost"
-            className="p-1.5"
-            onClick={(e) => {
-              e.stopPropagation();
-              openEdit(tag);
-            }}
-          >
-            <PencilSimpleIcon size={16} />
-          </Button>
-          <Button
-            variant="ghost"
-            className="p-1.5 hover:text-rose"
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeleteTarget(tag);
-            }}
-          >
-            <TrashIcon size={16} />
-          </Button>
-        </div>
-      ),
-    },
+    ...((canWrite || canDelete)
+      ? [
+          {
+            key: "actions",
+            header: "",
+            render: (tag: Tag) => (
+              <div className="flex gap-1">
+                {canWrite && (
+                  <Button
+                    variant="ghost"
+                    className="p-1.5"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openEdit(tag);
+                    }}
+                  >
+                    <PencilSimpleIcon size={16} />
+                  </Button>
+                )}
+                {canDelete && (
+                  <Button
+                    variant="ghost"
+                    className="p-1.5 hover:text-rose"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeleteTarget(tag);
+                    }}
+                  >
+                    <TrashIcon size={16} />
+                  </Button>
+                )}
+              </div>
+            ),
+          } satisfies Column<Tag>,
+        ]
+      : []),
   ];
 
   return (
@@ -227,14 +237,18 @@ function TagsPage() {
       emptyTitle={t("project.tags.emptyTitle")}
       emptyDescription={t("project.tags.emptyDescription")}
       emptyAction={
-        <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
-          {t("project.tags.add")}
-        </Button>
+        canWrite ? (
+          <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
+            {t("project.tags.add")}
+          </Button>
+        ) : undefined
       }
       createAction={
-        <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
-          {t("project.tags.add")}
-        </Button>
+        canWrite ? (
+          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+            {t("project.tags.add")}
+          </Button>
+        ) : undefined
       }
     >
       <FormDialog

@@ -24,6 +24,8 @@ export type ReferralStatus = "pending" | "accepted" | "completed" | "declined" |
 export interface SupportRecord {
   id: string;
   person_id: string;
+  person_first_name?: string;
+  person_last_name?: string;
   project_id: string;
   consultant_id?: string;
   recorded_by?: string;

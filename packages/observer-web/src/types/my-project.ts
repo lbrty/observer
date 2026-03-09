@@ -9,6 +9,7 @@ export interface MyProject {
   can_view_contact: boolean;
   can_view_personal: boolean;
   can_view_documents: boolean;
+  can_export: boolean;
   created_at: string;
   updated_at: string;
 }

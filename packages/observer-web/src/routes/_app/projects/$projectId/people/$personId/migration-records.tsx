@@ -11,6 +11,7 @@ import { JourneyTimeline } from "@/components/journey-timeline";
 import { MigrationRecordDrawer } from "@/components/migration-record-drawer";
 import { useMigrationRecords } from "@/hooks/use-migration-records";
 import { usePlaces } from "@/hooks/use-places";
+import { useProjectRole } from "@/hooks/use-project-role";
 import type { MigrationRecord } from "@/types/migration-record";
 
 export const Route = createFileRoute(
@@ -29,6 +30,7 @@ function PersonMigrationRecords() {
   const { view: viewParam } = Route.useSearch();
   const view = viewParam === "table" ? "table" : "timeline";
 
+  const { canWrite } = useProjectRole(projectId);
   const { data, isLoading } = useMigrationRecords(projectId, personId);
   const { data: placesData } = usePlaces();
 
@@ -94,22 +96,26 @@ function PersonMigrationRecords() {
       header: t("project.migrationRecords.housing"),
       render: (r) => <span className="text-fg-secondary">{r.housing_at_destination ?? "—"}</span>,
     },
-    {
-      key: "actions",
-      header: "",
-      render: (r) => (
-        <Button
-          variant="ghost"
-          className="p-1.5"
-          onClick={(e) => {
-            e.stopPropagation();
-            openEdit(r.id);
-          }}
-        >
-          <PencilSimpleIcon size={14} />
-        </Button>
-      ),
-    },
+    ...(canWrite
+      ? [
+          {
+            key: "actions",
+            header: "",
+            render: (r: MigrationRecord) => (
+              <Button
+                variant="ghost"
+                className="p-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openEdit(r.id);
+                }}
+              >
+                <PencilSimpleIcon size={14} />
+              </Button>
+            ),
+          } satisfies Column<MigrationRecord>,
+        ]
+      : []),
   ];
 
   return (
@@ -141,9 +147,11 @@ function PersonMigrationRecords() {
               </button>
             </div>
           )}
-          <Button size="sm" icon={<PlusIcon size={14} weight="bold" />} onClick={openCreate}>
-            {t("admin.common.add")}
-          </Button>
+          {canWrite && (
+            <Button size="sm" icon={<PlusIcon size={14} weight="bold" />} onClick={openCreate}>
+              {t("admin.common.add")}
+            </Button>
+          )}
         </div>
       </div>
 

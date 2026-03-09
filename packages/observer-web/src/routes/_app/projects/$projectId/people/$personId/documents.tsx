@@ -42,6 +42,7 @@ import {
   useUpdateDocument,
   useUploadDocument,
 } from "@/hooks/use-documents";
+import { useProjectRole } from "@/hooks/use-project-role";
 import { handleApiError } from "@/lib/form-error";
 import type { Document } from "@/types/document";
 
@@ -96,6 +97,7 @@ function PersonDocuments() {
   const { t } = useTranslation();
   const { projectId, personId } = Route.useParams();
 
+  const { canWrite, canDelete } = useProjectRole(projectId);
   const { data, isLoading } = useDocuments(projectId, personId);
   const updateDocument = useUpdateDocument(projectId);
   const deleteDocument = useDeleteDocument(projectId);
@@ -258,26 +260,30 @@ function PersonDocuments() {
           >
             <DownloadSimpleIcon size={16} />
           </a>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              startEdit(doc);
-            }}
-            className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg"
-          >
-            <PencilSimpleIcon size={16} />
-          </button>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setDeleteId(doc.id);
-            }}
-            className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
-          >
-            <TrashIcon size={16} />
-          </button>
+          {canWrite && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                startEdit(doc);
+              }}
+              className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-fg"
+            >
+              <PencilSimpleIcon size={16} />
+            </button>
+          )}
+          {canDelete && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setDeleteId(doc.id);
+              }}
+              className="cursor-pointer rounded-lg p-1.5 text-fg-tertiary hover:bg-bg-tertiary hover:text-rose"
+            >
+              <TrashIcon size={16} />
+            </button>
+          )}
         </div>
       ),
     },
@@ -288,25 +294,29 @@ function PersonDocuments() {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-serif text-lg font-semibold text-fg">{t("project.documents.title")}</h2>
         <div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept=".pdf,image/*,video/*,audio/*,text/*,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.gz"
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploadDocument.isPending}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border-secondary bg-bg-secondary px-3 py-1.5 text-sm font-medium text-fg hover:bg-bg-tertiary disabled:opacity-50"
-          >
-            <UploadSimpleIcon size={16} />
-            {uploadDocument.isPending
-              ? t("project.documents.uploading")
-              : t("project.documents.upload")}
-          </button>
+          {canWrite && (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".pdf,image/*,video/*,audio/*,text/*,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.gz"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadDocument.isPending}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border-secondary bg-bg-secondary px-3 py-1.5 text-sm font-medium text-fg hover:bg-bg-tertiary disabled:opacity-50"
+              >
+                <UploadSimpleIcon size={16} />
+                {uploadDocument.isPending
+                  ? t("project.documents.uploading")
+                  : t("project.documents.upload")}
+              </button>
+            </>
+          )}
         </div>
       </div>
 

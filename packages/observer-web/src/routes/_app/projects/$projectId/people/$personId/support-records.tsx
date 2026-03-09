@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { SupportRecordDrawer } from "@/components/support-record-drawer";
 import { referralKeys, sphereKeys, typeKeys } from "@/constants/support";
 import { useSupportRecords } from "@/hooks/use-support-records";
+import { useProjectRole } from "@/hooks/use-project-role";
 import type { SupportRecord } from "@/types/support-record";
 
 export const Route = createFileRoute("/_app/projects/$projectId/people/$personId/support-records")({
@@ -21,6 +22,7 @@ function PersonSupportRecords() {
   const { t } = useTranslation();
   const { projectId, personId } = Route.useParams();
 
+  const { canWrite } = useProjectRole(projectId);
   const [page, setPage] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editRecordId, setEditRecordId] = useState<string | null>(null);
@@ -88,22 +90,26 @@ function PersonSupportRecords() {
           <span className="text-fg-tertiary">{"\u2014"}</span>
         ),
     },
-    {
-      key: "actions",
-      header: "",
-      render: (r) => (
-        <Button
-          variant="ghost"
-          className="p-1.5"
-          onClick={(e) => {
-            e.stopPropagation();
-            openEdit(r.id);
-          }}
-        >
-          <PencilSimpleIcon size={16} />
-        </Button>
-      ),
-    },
+    ...(canWrite
+      ? [
+          {
+            key: "actions",
+            header: "",
+            render: (r: SupportRecord) => (
+              <Button
+                variant="ghost"
+                className="p-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openEdit(r.id);
+                }}
+              >
+                <PencilSimpleIcon size={16} />
+              </Button>
+            ),
+          } satisfies Column<SupportRecord>,
+        ]
+      : []),
   ];
 
   return (
@@ -112,9 +118,11 @@ function PersonSupportRecords() {
         <h2 className="text-sm font-semibold text-fg-secondary">
           {t("project.supportRecords.title")}
         </h2>
-        <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
-          {t("project.supportRecords.create")}
-        </Button>
+        {canWrite && (
+          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+            {t("project.supportRecords.create")}
+          </Button>
+        )}
       </div>
 
       <DataTable

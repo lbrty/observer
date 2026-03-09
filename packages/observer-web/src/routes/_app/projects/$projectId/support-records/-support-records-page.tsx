@@ -12,11 +12,10 @@ import { FilterBar } from "@/components/filter-bar";
 import { DownloadSimpleIcon, HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
-import { PersonName } from "@/components/person-name";
 import { StatusBadge } from "@/components/status-badge";
 import { SupportRecordDrawer } from "@/components/support-record-drawer";
 import { referralKeys, sphereKeys, typeKeys } from "@/constants/support";
-import { useMyProjects } from "@/hooks/use-my-projects";
+import { useProjectRole } from "@/hooks/use-project-role";
 import { useSupportRecords } from "@/hooks/use-support-records";
 import { api } from "@/lib/api";
 import type { SupportRecord } from "@/types/support-record";
@@ -69,9 +68,7 @@ export function SupportRecordsContent({
   const [dateTo, setDateTo] = useState("");
   const [exporting, setExporting] = useState(false);
 
-  const { data: projectsData } = useMyProjects();
-  const project = projectsData?.projects.find((p) => p.id === projectId);
-  const canExport = project?.role === "owner" || project?.role === "manager";
+  const { canWrite, canExport } = useProjectRole(projectId);
 
   const params = {
     page,
@@ -165,7 +162,7 @@ export function SupportRecordsContent({
             <HandHeartIcon size={16} />
           </span>
           <span className="truncate text-sm text-fg">
-            <PersonName projectId={projectId} personId={r.person_id} />
+            {[r.person_first_name, r.person_last_name].filter(Boolean).join(" ") || r.person_id}
           </span>
         </div>
       ),
@@ -209,22 +206,26 @@ export function SupportRecordsContent({
           <span className="text-fg-tertiary">{"\u2014"}</span>
         ),
     },
-    {
-      key: "actions",
-      header: "",
-      render: (r) => (
-        <Button
-          variant="ghost"
-          className="p-1.5"
-          onClick={(e) => {
-            e.stopPropagation();
-            openEdit(r.id);
-          }}
-        >
-          <PencilSimpleIcon size={16} />
-        </Button>
-      ),
-    },
+    ...(canWrite
+      ? [
+          {
+            key: "actions",
+            header: "",
+            render: (r: SupportRecord) => (
+              <Button
+                variant="ghost"
+                className="p-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openEdit(r.id);
+                }}
+              >
+                <PencilSimpleIcon size={16} />
+              </Button>
+            ),
+          } satisfies Column<SupportRecord>,
+        ]
+      : []),
   ];
 
   return (
@@ -232,9 +233,11 @@ export function SupportRecordsContent({
       <PageHeader
         title={t("project.supportRecords.title")}
         action={
-          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
-            {t("project.supportRecords.create")}
-          </Button>
+          canWrite ? (
+            <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+              {t("project.supportRecords.create")}
+            </Button>
+          ) : undefined
         }
       />
 
@@ -291,9 +294,11 @@ export function SupportRecordsContent({
             title={t("project.supportRecords.emptyTitle")}
             description={t("project.supportRecords.emptyDescription")}
             action={
-              <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
-                {t("project.supportRecords.create")}
-              </Button>
+              canWrite ? (
+                <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
+                  {t("project.supportRecords.create")}
+                </Button>
+              ) : undefined
             }
           />
         }

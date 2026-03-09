@@ -18,7 +18,7 @@ import {
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
 import { useHouseholds } from "@/hooks/use-households";
-import { useMyProjects } from "@/hooks/use-my-projects";
+import { useProjectRole } from "@/hooks/use-project-role";
 import { api } from "@/lib/api";
 import type { Household } from "@/types/household";
 
@@ -38,9 +38,7 @@ function HouseholdsListPage() {
   const [editHouseholdId, setEditHouseholdId] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
 
-  const { data: projectsData } = useMyProjects();
-  const project = projectsData?.projects.find((p) => p.id === projectId);
-  const canExport = project?.role === "owner" || project?.role === "manager";
+  const { canWrite, canExport } = useProjectRole(projectId);
 
   const params = {
     page,
@@ -149,22 +147,26 @@ function HouseholdsListPage() {
         </span>
       ),
     },
-    {
-      key: "actions",
-      header: "",
-      render: (h) => (
-        <Button
-          variant="ghost"
-          className="p-1.5"
-          onClick={(e) => {
-            e.stopPropagation();
-            openEdit(h.id);
-          }}
-        >
-          <PencilSimpleIcon size={16} />
-        </Button>
-      ),
-    },
+    ...(canWrite
+      ? [
+          {
+            key: "actions",
+            header: "",
+            render: (h: Household) => (
+              <Button
+                variant="ghost"
+                className="p-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openEdit(h.id);
+                }}
+              >
+                <PencilSimpleIcon size={16} />
+              </Button>
+            ),
+          } satisfies Column<Household>,
+        ]
+      : []),
   ];
 
   return (
@@ -172,9 +174,11 @@ function HouseholdsListPage() {
       <PageHeader
         title={t("project.households.title")}
         action={
-          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
-            {t("project.households.create")}
-          </Button>
+          canWrite ? (
+            <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+              {t("project.households.create")}
+            </Button>
+          ) : undefined
         }
       />
 
@@ -206,9 +210,11 @@ function HouseholdsListPage() {
             title={t("project.households.emptyTitle")}
             description={t("project.households.emptyDescription")}
             action={
-              <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
-                {t("project.households.create")}
-              </Button>
+              canWrite ? (
+                <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
+                  {t("project.households.create")}
+                </Button>
+              ) : undefined
             }
           />
         }

@@ -10,6 +10,8 @@ import (
 type SupportRecordDTO struct {
 	ID               string    `json:"id"`
 	PersonID         string    `json:"person_id"`
+	PersonFirstName  *string   `json:"person_first_name,omitempty"`
+	PersonLastName   *string   `json:"person_last_name,omitempty"`
 	ProjectID        string    `json:"project_id"`
 	ConsultantID     *string   `json:"consultant_id,omitempty"`
 	RecordedBy       *string   `json:"recorded_by,omitempty"`
@@ -75,6 +77,8 @@ func supportRecordToDTO(r *support.Record) SupportRecordDTO {
 	dto := SupportRecordDTO{
 		ID:               r.ID,
 		PersonID:         r.PersonID,
+		PersonFirstName:  r.PersonFirstName,
+		PersonLastName:   r.PersonLastName,
 		ProjectID:        r.ProjectID,
 		ConsultantID:     r.ConsultantID,
 		RecordedBy:       r.RecordedBy,

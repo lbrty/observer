@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "@/components/button";
 import { XIcon } from "@/components/icons";
 import { Tooltip } from "@/components/tooltip";
+import { useAuth } from "@/stores/auth";
 
 interface DrawerShellProps {
   open: boolean;
@@ -37,6 +38,8 @@ export function DrawerShell({
   size = "lg",
 }: DrawerShellProps) {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const isGuest = user?.role === "guest";
   const saveText = submitLabel ?? t("admin.common.save");
   const savingText = savingLabel ?? t("admin.common.saving");
 
@@ -67,9 +70,11 @@ export function DrawerShell({
                   <Button variant="secondary" asChild>
                     <Drawer.Close>{t("admin.common.cancel")}</Drawer.Close>
                   </Button>
-                  <Button type="submit" disabled={isPending}>
-                    {isPending ? savingText : saveText}
-                  </Button>
+                  {!isGuest && (
+                    <Button type="submit" disabled={isPending}>
+                      {isPending ? savingText : saveText}
+                    </Button>
+                  )}
                 </div>
               )}
             </form>

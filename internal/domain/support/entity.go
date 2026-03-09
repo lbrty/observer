@@ -60,6 +60,9 @@ type Record struct {
 	Notes            *string
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
+	// Enriched by list queries via JOIN with people.
+	PersonFirstName *string
+	PersonLastName  *string
 }
 
 // RecordListFilter holds optional filters for listing support records.

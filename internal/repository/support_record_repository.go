@@ -26,12 +26,30 @@ func NewSupportRecordRepository(db *sqlx.DB) SupportRecordRepository {
 const supportCols = `id, person_id, project_id, consultant_id, recorded_by, office_id,
 	referred_to_office, type, sphere, referral_status, provided_at, notes, created_at, updated_at`
 
+const supportListCols = `sr.id, sr.person_id, sr.project_id, sr.consultant_id, sr.recorded_by, sr.office_id,
+	sr.referred_to_office, sr.type, sr.sphere, sr.referral_status, sr.provided_at, sr.notes,
+	sr.created_at, sr.updated_at, p.first_name, p.last_name`
+
 func scanSupport(row interface{ Scan(dest ...any) error }) (*support.Record, error) {
 	var r support.Record
 	err := row.Scan(
 		&r.ID, &r.PersonID, &r.ProjectID, &r.ConsultantID, &r.RecordedBy, &r.OfficeID,
 		&r.ReferredToOffice, &r.Type, &r.Sphere, &r.ReferralStatus, &r.ProvidedAt, &r.Notes,
 		&r.CreatedAt, &r.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	TimesToUTC(&r.CreatedAt, &r.UpdatedAt)
+	return &r, nil
+}
+
+func scanSupportWithPerson(row interface{ Scan(dest ...any) error }) (*support.Record, error) {
+	var r support.Record
+	err := row.Scan(
+		&r.ID, &r.PersonID, &r.ProjectID, &r.ConsultantID, &r.RecordedBy, &r.OfficeID,
+		&r.ReferredToOffice, &r.Type, &r.Sphere, &r.ReferralStatus, &r.ProvidedAt, &r.Notes,
+		&r.CreatedAt, &r.UpdatedAt, &r.PersonFirstName, &r.PersonLastName,
 	)
 	if err != nil {
 		return nil, err
@@ -92,10 +110,16 @@ func (r *supportRecordRepo) List(ctx context.Context, filter support.RecordListF
 		args = append(args, *filter.DateTo)
 	}
 
+	// Prefix all filter columns with table alias for the JOIN query.
+	for i, w := range where {
+		where[i] = "sr." + w
+	}
 	whereClause := "WHERE " + strings.Join(where, " AND ")
 
+	const joinClause = "FROM support_records sr LEFT JOIN people p ON p.id = sr.person_id "
+
 	var total int
-	if err := r.db.QueryRowContext(ctx, "SELECT COUNT(*) FROM support_records "+whereClause, args...).Scan(&total); err != nil {
+	if err := r.db.QueryRowContext(ctx, "SELECT COUNT(*) "+joinClause+whereClause, args...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count support records: %w", err)
 	}
 
@@ -116,8 +140,8 @@ func (r *supportRecordRepo) List(ctx context.Context, filter support.RecordListF
 	args = append(args, offset)
 	offsetP := "$" + strconv.Itoa(ix)
 
-	q := "SELECT " + supportCols + " FROM support_records " +
-		whereClause + " ORDER BY created_at DESC LIMIT " + limitP + " OFFSET " + offsetP
+	q := "SELECT " + supportListCols + " " + joinClause +
+		whereClause + " ORDER BY sr.created_at DESC LIMIT " + limitP + " OFFSET " + offsetP
 
 	rows, err := r.db.QueryContext(ctx, q, args...)
 	if err != nil {
@@ -127,7 +151,7 @@ func (r *supportRecordRepo) List(ctx context.Context, filter support.RecordListF
 
 	var out []*support.Record
 	for rows.Next() {
-		rec, err := scanSupport(rows)
+		rec, err := scanSupportWithPerson(rows)
 		if err != nil {
 			return nil, 0, fmt.Errorf("scan support record: %w", err)
 		}

@@ -17,7 +17,7 @@ import { PetDrawer } from "@/components/pet-drawer";
 import { StatusBadge } from "@/components/status-badge";
 import { TagChips } from "@/components/tag-chips";
 import { SelectedTagChips, TagFilter } from "@/components/tag-filter";
-import { useMyProjects } from "@/hooks/use-my-projects";
+import { useProjectRole } from "@/hooks/use-project-role";
 import { usePets } from "@/hooks/use-pets";
 import { api } from "@/lib/api";
 import type { Pet } from "@/types/pet";
@@ -62,9 +62,7 @@ export function PetsContent({
   const [dateTo, setDateTo] = useState("");
   const [exporting, setExporting] = useState(false);
 
-  const { data: projectsData } = useMyProjects();
-  const project = projectsData?.projects.find((p) => p.id === projectId);
-  const canExport = project?.role === "owner" || project?.role === "manager";
+  const { canWrite, canExport } = useProjectRole(projectId);
 
   const params = {
     page,
@@ -181,22 +179,26 @@ export function PetsContent({
         </span>
       ),
     },
-    {
-      key: "actions",
-      header: "",
-      render: (p) => (
-        <Button
-          variant="ghost"
-          className="p-1.5"
-          onClick={(e) => {
-            e.stopPropagation();
-            openEdit(p.id);
-          }}
-        >
-          <PencilSimpleIcon size={16} />
-        </Button>
-      ),
-    },
+    ...(canWrite
+      ? [
+          {
+            key: "actions",
+            header: "",
+            render: (p: Pet) => (
+              <Button
+                variant="ghost"
+                className="p-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openEdit(p.id);
+                }}
+              >
+                <PencilSimpleIcon size={16} />
+              </Button>
+            ),
+          } satisfies Column<Pet>,
+        ]
+      : []),
   ];
 
   return (
@@ -204,9 +206,11 @@ export function PetsContent({
       <PageHeader
         title={t("project.pets.title")}
         action={
-          <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
-            {t("project.pets.register")}
-          </Button>
+          canWrite ? (
+            <Button icon={<PlusIcon size={16} />} onClick={openCreate}>
+              {t("project.pets.register")}
+            </Button>
+          ) : undefined
         }
       />
 
@@ -268,9 +272,11 @@ export function PetsContent({
             title={t("project.pets.emptyTitle")}
             description={t("project.pets.emptyDescription")}
             action={
-              <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
-                {t("project.pets.register")}
-              </Button>
+              canWrite ? (
+                <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
+                  {t("project.pets.register")}
+                </Button>
+              ) : undefined
             }
           />
         }
