@@ -190,4 +190,3 @@ func (h *HouseholdHandler) RemoveMember(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "member removed"})
 }
-

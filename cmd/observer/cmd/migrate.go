@@ -60,11 +60,11 @@ migration file, or can be specified explicitly with --seq.`,
 }
 
 var migrateVersionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Show current migration version",
-	Long:  `Display the current migration version and dirty state from the database.`,
+	Use:     "version",
+	Short:   "Show current migration version",
+	Long:    `Display the current migration version and dirty state from the database.`,
 	Example: `  observer migrate version`,
-	RunE: runMigrateVersion,
+	RunE:    runMigrateVersion,
 }
 
 func init() {

@@ -16,8 +16,8 @@ type MonthlyStatusCountDTO struct {
 
 // PetReportOutput returns all pet report groups at once.
 type PetReportOutput struct {
-	ByStatus        ReportOutput             `json:"by_status"`
-	ByOwnership     ReportOutput             `json:"by_ownership"`
-	ByMonth         ReportOutput             `json:"by_month"`
-	ByStatusByMonth []MonthlyStatusCountDTO  `json:"by_status_by_month"`
+	ByStatus        ReportOutput            `json:"by_status"`
+	ByOwnership     ReportOutput            `json:"by_ownership"`
+	ByMonth         ReportOutput            `json:"by_month"`
+	ByStatusByMonth []MonthlyStatusCountDTO `json:"by_status_by_month"`
 }

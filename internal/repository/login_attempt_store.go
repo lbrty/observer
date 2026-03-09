@@ -32,8 +32,8 @@ func NewLoginAttemptStore(client *redis.Client, userRepo UserRepository) LoginAt
 }
 
 const (
-	lockoutPrefix  = "login_lockout:"
-	attemptPrefix  = "login_attempts:"
+	lockoutPrefix   = "login_lockout:"
+	attemptPrefix   = "login_attempts:"
 	maxFreeAttempts = 5
 )
 
@@ -98,7 +98,7 @@ func (s *redisLoginAttemptStore) IsLocked(ctx context.Context, email string) (ti
 		return 0, fmt.Errorf("check lockout ttl: %w", err)
 	}
 
-	switch  ttl{
+	switch ttl {
 	case -2:
 		// Key doesn't exist — not locked.
 		return 0, nil

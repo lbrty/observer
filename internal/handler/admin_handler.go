@@ -217,4 +217,3 @@ func (h *AdminHandler) ReactivateUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, out)
 }
-

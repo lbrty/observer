@@ -18,13 +18,13 @@ const (
 
 // User is the core user domain entity.
 type User struct {
-	ID            ulid.ULID
-	FirstName     string
-	LastName      string
-	Email         string
-	Phone         string
-	OfficeID      *string
-	Role          Role
+	ID                  ulid.ULID
+	FirstName           string
+	LastName            string
+	Email               string
+	Phone               string
+	OfficeID            *string
+	Role                Role
 	IsVerified          bool
 	IsActive            bool
 	DeactivatedAt       *time.Time

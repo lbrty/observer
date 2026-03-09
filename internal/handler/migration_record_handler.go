@@ -103,4 +103,3 @@ func (h *MigrationRecordHandler) Update(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, out)
 }
-

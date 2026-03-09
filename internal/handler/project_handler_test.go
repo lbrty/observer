@@ -112,10 +112,10 @@ func TestProjectHandler_Get_Success(t *testing.T) {
 	projectID := testID().String()
 	ownerID := testID().String()
 	d.projectRepo.EXPECT().GetByID(gomock.Any(), projectID).Return(&project.Project{
-		ID:      projectID,
-		Name:    "Test Project",
-		OwnerID: ownerID,
-		Status:  project.ProjectStatusActive,
+		ID:        projectID,
+		Name:      "Test Project",
+		OwnerID:   ownerID,
+		Status:    project.ProjectStatusActive,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}, nil)

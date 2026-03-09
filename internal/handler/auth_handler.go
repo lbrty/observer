@@ -456,4 +456,3 @@ func (h *AuthHandler) ChangePassword(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "password changed successfully"})
 }
-

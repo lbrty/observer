@@ -62,9 +62,9 @@ func TestMyProjectsUseCase_Execute_Staff(t *testing.T) {
 		},
 	}
 	activeProject := &project.Project{
-		ID:     "p1",
-		Name:   "Alpha",
-		Status: project.ProjectStatusActive,
+		ID:        "p1",
+		Name:      "Alpha",
+		Status:    project.ProjectStatusActive,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}

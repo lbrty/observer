@@ -140,4 +140,3 @@ func (h *PlaceHandler) Delete(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "place deleted"})
 }
-

@@ -11,10 +11,10 @@ import (
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/storage"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
+	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 	ucmy "github.com/lbrty/observer/internal/usecase/my"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
-	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 	ucreport "github.com/lbrty/observer/internal/usecase/report"
 )
 

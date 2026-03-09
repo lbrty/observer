@@ -63,18 +63,18 @@ type CustomRow struct {
 
 // FullReportOutput returns all report groups at once.
 type FullReportOutput struct {
-	Consultations ReportOutput    `json:"consultations"`
-	BySex         ReportOutput    `json:"by_sex"`
-	ByIDPStatus   ReportOutput    `json:"by_idp_status"`
-	ByCategory    ReportOutput    `json:"by_category"`
-	ByRegion      ReportOutput    `json:"by_region"`
-	BySphere               ReportOutput `json:"by_sphere"`
-	PeopleBySphere         ReportOutput `json:"people_by_sphere"`
-	ByOffice               ReportOutput `json:"by_office"`
-	ByAgeGroup             ReportOutput `json:"by_age_group"`
-	ConsultationsByAgeGroup ReportOutput `json:"consultations_by_age_group"`
-	ByTag         ReportOutput    `json:"by_tag"`
-	FamilyUnits   ReportOutput    `json:"family_units"`
-	ByCaseStatus  ReportOutput    `json:"by_case_status"`
-	StatusFlow    []StatusFlowDTO `json:"status_flow"`
+	Consultations           ReportOutput    `json:"consultations"`
+	BySex                   ReportOutput    `json:"by_sex"`
+	ByIDPStatus             ReportOutput    `json:"by_idp_status"`
+	ByCategory              ReportOutput    `json:"by_category"`
+	ByRegion                ReportOutput    `json:"by_region"`
+	BySphere                ReportOutput    `json:"by_sphere"`
+	PeopleBySphere          ReportOutput    `json:"people_by_sphere"`
+	ByOffice                ReportOutput    `json:"by_office"`
+	ByAgeGroup              ReportOutput    `json:"by_age_group"`
+	ConsultationsByAgeGroup ReportOutput    `json:"consultations_by_age_group"`
+	ByTag                   ReportOutput    `json:"by_tag"`
+	FamilyUnits             ReportOutput    `json:"family_units"`
+	ByCaseStatus            ReportOutput    `json:"by_case_status"`
+	StatusFlow              []StatusFlowDTO `json:"status_flow"`
 }

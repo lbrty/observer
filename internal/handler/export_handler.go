@@ -15,11 +15,11 @@ import (
 
 // ExportHandler streams filtered data as CSV downloads.
 type ExportHandler struct {
-	personUC  *ucproject.PersonUseCase
-	supportUC *ucproject.SupportRecordUseCase
-	petUC     *ucproject.PetUseCase
+	personUC    *ucproject.PersonUseCase
+	supportUC   *ucproject.SupportRecordUseCase
+	petUC       *ucproject.PetUseCase
 	householdUC *ucproject.HouseholdUseCase
-	auditUC   *ucaudit.AuditUseCase
+	auditUC     *ucaudit.AuditUseCase
 }
 
 // NewExportHandler creates an ExportHandler.

@@ -21,10 +21,10 @@ import (
 )
 
 type personTestDeps struct {
-	personRepo      *repomock.MockPersonRepository
-	personTagRepo   *repomock.MockPersonTagRepository
-	personCatRepo   *repomock.MockPersonCategoryRepository
-	handler         *handler.PersonHandler
+	personRepo    *repomock.MockPersonRepository
+	personTagRepo *repomock.MockPersonTagRepository
+	personCatRepo *repomock.MockPersonCategoryRepository
+	handler       *handler.PersonHandler
 }
 
 func newPersonTestDeps(ctrl *gomock.Controller) *personTestDeps {

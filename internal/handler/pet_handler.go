@@ -164,4 +164,3 @@ func (h *PetHandler) ReplaceTags(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"tag_ids": input.IDs})
 }
-

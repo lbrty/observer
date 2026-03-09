@@ -103,4 +103,3 @@ func (h *NoteHandler) Delete(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "note deleted"})
 }
-

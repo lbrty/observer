@@ -10,9 +10,9 @@ import (
 	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/repository"
+	iulid "github.com/lbrty/observer/internal/ulid"
 	"github.com/lbrty/observer/internal/usecase"
 	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
-	iulid "github.com/lbrty/observer/internal/ulid"
 )
 
 // ResetPasswordInput holds the new password for an admin reset.
