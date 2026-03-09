@@ -127,15 +127,11 @@ func (uc *PersonUseCase) Create(ctx context.Context, projectID string, input Cre
 		ag := person.AgeGroup(*input.AgeGroup)
 		p.AgeGroup = &ag
 	}
-	if input.PrimaryPhone != nil {
-		p.PrimaryPhone = input.PrimaryPhone
-	}
+	setPtr(&p.PrimaryPhone, input.PrimaryPhone)
+	applyOpt(&p.ConsentGiven, input.ConsentGiven)
 	if input.PhoneNumbers != nil {
 		b, _ := json.Marshal(input.PhoneNumbers)
 		p.PhoneNumbers = b
-	}
-	if input.ConsentGiven != nil {
-		p.ConsentGiven = *input.ConsentGiven
 	}
 
 	if err := parseDateField(input.BirthDate, &p.BirthDate); err != nil {
@@ -169,52 +165,30 @@ func (uc *PersonUseCase) Update(ctx context.Context, id string, input UpdatePers
 		return nil, fmt.Errorf("get person for update: %w", err)
 	}
 
-	if input.ConsultantID != nil {
-		p.ConsultantID = input.ConsultantID
-	}
-	if input.OfficeID != nil {
-		p.OfficeID = input.OfficeID
-	}
-	if input.CurrentPlaceID != nil {
-		p.CurrentPlaceID = input.CurrentPlaceID
-	}
-	if input.OriginPlaceID != nil {
-		p.OriginPlaceID = input.OriginPlaceID
-	}
-	if input.ExternalID != nil {
-		p.ExternalID = input.ExternalID
-	}
-	if input.FirstName != nil {
-		p.FirstName = *input.FirstName
-	}
-	if input.LastName != nil {
-		p.LastName = input.LastName
-	}
-	if input.Patronymic != nil {
-		p.Patronymic = input.Patronymic
-	}
-	if input.Email != nil {
-		p.Email = input.Email
-	}
+	setPtr(&p.ConsultantID, input.ConsultantID)
+	setPtr(&p.OfficeID, input.OfficeID)
+	setPtr(&p.CurrentPlaceID, input.CurrentPlaceID)
+	setPtr(&p.OriginPlaceID, input.OriginPlaceID)
+	setPtr(&p.ExternalID, input.ExternalID)
+	setPtr(&p.LastName, input.LastName)
+	setPtr(&p.Patronymic, input.Patronymic)
+	setPtr(&p.Email, input.Email)
+	setPtr(&p.PrimaryPhone, input.PrimaryPhone)
+	applyOpt(&p.FirstName, input.FirstName)
+	applyOpt(&p.ConsentGiven, input.ConsentGiven)
 	if input.Sex != nil {
 		p.Sex = person.Sex(*input.Sex)
+	}
+	if input.CaseStatus != nil {
+		p.CaseStatus = person.CaseStatus(*input.CaseStatus)
 	}
 	if input.AgeGroup != nil {
 		ag := person.AgeGroup(*input.AgeGroup)
 		p.AgeGroup = &ag
 	}
-	if input.PrimaryPhone != nil {
-		p.PrimaryPhone = input.PrimaryPhone
-	}
 	if input.PhoneNumbers != nil {
 		b, _ := json.Marshal(input.PhoneNumbers)
 		p.PhoneNumbers = b
-	}
-	if input.CaseStatus != nil {
-		p.CaseStatus = person.CaseStatus(*input.CaseStatus)
-	}
-	if input.ConsentGiven != nil {
-		p.ConsentGiven = *input.ConsentGiven
 	}
 
 	if err := parseDateField(input.BirthDate, &p.BirthDate); err != nil {
