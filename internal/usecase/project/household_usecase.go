@@ -67,10 +67,13 @@ func (uc *HouseholdUseCase) List(ctx context.Context, projectID string, input Li
 }
 
 // Get returns a household by ID with its members.
-func (uc *HouseholdUseCase) Get(ctx context.Context, id string) (*HouseholdDTO, error) {
+func (uc *HouseholdUseCase) Get(ctx context.Context, projectID, id string) (*HouseholdDTO, error) {
 	h, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get household: %w", err)
+	}
+	if h.ProjectID != projectID {
+		return nil, household.ErrHouseholdNotFound
 	}
 	dto := householdToDTO(h)
 
@@ -104,10 +107,13 @@ func (uc *HouseholdUseCase) Create(ctx context.Context, projectID string, input 
 }
 
 // Update applies a partial update to a household.
-func (uc *HouseholdUseCase) Update(ctx context.Context, id string, input UpdateHouseholdInput) (*HouseholdDTO, error) {
+func (uc *HouseholdUseCase) Update(ctx context.Context, projectID, id string, input UpdateHouseholdInput) (*HouseholdDTO, error) {
 	h, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get household for update: %w", err)
+	}
+	if h.ProjectID != projectID {
+		return nil, household.ErrHouseholdNotFound
 	}
 	if input.ReferenceNumber != nil {
 		h.ReferenceNumber = input.ReferenceNumber
@@ -124,6 +130,13 @@ func (uc *HouseholdUseCase) Update(ctx context.Context, id string, input UpdateH
 
 // Delete removes a household.
 func (uc *HouseholdUseCase) Delete(ctx context.Context, projectID, id string) error {
+	h, err := uc.repo.GetByID(ctx, id)
+	if err != nil {
+		return fmt.Errorf("get household for delete: %w", err)
+	}
+	if h.ProjectID != projectID {
+		return household.ErrHouseholdNotFound
+	}
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete household: %w", err)
 	}

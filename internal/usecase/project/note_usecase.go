@@ -51,10 +51,13 @@ func (uc *NoteUseCase) Create(ctx context.Context, projectID, personID, authorID
 }
 
 // Update updates a note body.
-func (uc *NoteUseCase) Update(ctx context.Context, id string, input UpdateNoteInput) (*NoteDTO, error) {
+func (uc *NoteUseCase) Update(ctx context.Context, personID, id string, input UpdateNoteInput) (*NoteDTO, error) {
 	n, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get note for update: %w", err)
+	}
+	if n.PersonID != personID {
+		return nil, note.ErrNoteNotFound
 	}
 	n.Body = input.Body
 	if err := uc.repo.Update(ctx, n); err != nil {
@@ -65,7 +68,14 @@ func (uc *NoteUseCase) Update(ctx context.Context, id string, input UpdateNoteIn
 }
 
 // Delete removes a note.
-func (uc *NoteUseCase) Delete(ctx context.Context, projectID, id string) error {
+func (uc *NoteUseCase) Delete(ctx context.Context, projectID, personID, id string) error {
+	n, err := uc.repo.GetByID(ctx, id)
+	if err != nil {
+		return fmt.Errorf("get note for delete: %w", err)
+	}
+	if n.PersonID != personID {
+		return note.ErrNoteNotFound
+	}
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete note: %w", err)
 	}

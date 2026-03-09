@@ -76,7 +76,7 @@ func (h *NoteHandler) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
-	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
+	out, err := h.uc.Update(c.Request.Context(), c.Param("person_id"), c.Param("id"), input)
 	if err != nil {
 		HandleError(c, err)
 		return
@@ -97,7 +97,7 @@ func (h *NoteHandler) Update(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/people/{person_id}/notes/{id} [delete]
 func (h *NoteHandler) Delete(c *gin.Context) {
-	if err := h.uc.Delete(c.Request.Context(), c.Param("project_id"), c.Param("id")); err != nil {
+	if err := h.uc.Delete(c.Request.Context(), c.Param("project_id"), c.Param("person_id"), c.Param("id")); err != nil {
 		HandleError(c, err)
 		return
 	}

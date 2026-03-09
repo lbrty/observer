@@ -47,10 +47,13 @@ func (uc *DocumentUseCase) List(ctx context.Context, personID string) ([]Documen
 }
 
 // Get returns a document by ID.
-func (uc *DocumentUseCase) Get(ctx context.Context, id string) (*DocumentDTO, error) {
+func (uc *DocumentUseCase) Get(ctx context.Context, projectID, id string) (*DocumentDTO, error) {
 	d, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get document: %w", err)
+	}
+	if d.ProjectID != projectID {
+		return nil, document.ErrDocumentNotFound
 	}
 	dto := documentToDTO(d)
 	return &dto, nil
@@ -106,10 +109,13 @@ func (uc *DocumentUseCase) generateThumbnail(ctx context.Context, originalPath, 
 }
 
 // Thumbnail returns a reader for the document's thumbnail image.
-func (uc *DocumentUseCase) Thumbnail(ctx context.Context, id string) (*DocumentDTO, io.ReadCloser, error) {
+func (uc *DocumentUseCase) Thumbnail(ctx context.Context, projectID, id string) (*DocumentDTO, io.ReadCloser, error) {
 	d, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, nil, fmt.Errorf("get document: %w", err)
+	}
+	if d.ProjectID != projectID {
+		return nil, nil, document.ErrDocumentNotFound
 	}
 	if !isImage(d.MimeType) {
 		return nil, nil, document.ErrNotImage
@@ -163,10 +169,13 @@ func (uc *DocumentUseCase) Upload(ctx context.Context, projectID, personID, uplo
 }
 
 // Download opens the file for a given document.
-func (uc *DocumentUseCase) Download(ctx context.Context, id string) (*DocumentDTO, io.ReadCloser, error) {
+func (uc *DocumentUseCase) Download(ctx context.Context, projectID, id string) (*DocumentDTO, io.ReadCloser, error) {
 	d, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, nil, fmt.Errorf("get document: %w", err)
+	}
+	if d.ProjectID != projectID {
+		return nil, nil, document.ErrDocumentNotFound
 	}
 	rc, err := uc.fs.Open(ctx, d.Path)
 	if err != nil {
@@ -178,10 +187,13 @@ func (uc *DocumentUseCase) Download(ctx context.Context, id string) (*DocumentDT
 }
 
 // Update updates document metadata.
-func (uc *DocumentUseCase) Update(ctx context.Context, id string, input UpdateDocumentInput) (*DocumentDTO, error) {
+func (uc *DocumentUseCase) Update(ctx context.Context, projectID, id string, input UpdateDocumentInput) (*DocumentDTO, error) {
 	d, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get document for update: %w", err)
+	}
+	if d.ProjectID != projectID {
+		return nil, document.ErrDocumentNotFound
 	}
 	if input.Name != nil {
 		d.Name = *input.Name
@@ -194,10 +206,13 @@ func (uc *DocumentUseCase) Update(ctx context.Context, id string, input UpdateDo
 }
 
 // Delete removes document metadata and the stored file.
-func (uc *DocumentUseCase) Delete(ctx context.Context, id string) error {
+func (uc *DocumentUseCase) Delete(ctx context.Context, projectID, id string) error {
 	d, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return fmt.Errorf("get document for delete: %w", err)
+	}
+	if d.ProjectID != projectID {
+		return document.ErrDocumentNotFound
 	}
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete document: %w", err)

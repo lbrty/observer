@@ -60,10 +60,13 @@ func (uc *PetUseCase) List(ctx context.Context, projectID string, input ListPets
 }
 
 // Get returns a pet by ID.
-func (uc *PetUseCase) Get(ctx context.Context, id string) (*PetDTO, error) {
+func (uc *PetUseCase) Get(ctx context.Context, projectID, id string) (*PetDTO, error) {
 	p, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get pet: %w", err)
+	}
+	if p.ProjectID != projectID {
+		return nil, pet.ErrPetNotFound
 	}
 	dto := petToDTO(p)
 	return &dto, nil
@@ -92,10 +95,13 @@ func (uc *PetUseCase) Create(ctx context.Context, projectID string, input Create
 }
 
 // Update applies a partial update to a pet.
-func (uc *PetUseCase) Update(ctx context.Context, id string, input UpdatePetInput) (*PetDTO, error) {
+func (uc *PetUseCase) Update(ctx context.Context, projectID, id string, input UpdatePetInput) (*PetDTO, error) {
 	p, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get pet for update: %w", err)
+	}
+	if p.ProjectID != projectID {
+		return nil, pet.ErrPetNotFound
 	}
 	if input.OwnerID != nil {
 		p.OwnerID = input.OwnerID
@@ -121,6 +127,13 @@ func (uc *PetUseCase) Update(ctx context.Context, id string, input UpdatePetInpu
 
 // Delete removes a pet.
 func (uc *PetUseCase) Delete(ctx context.Context, projectID, id string) error {
+	p, err := uc.repo.GetByID(ctx, id)
+	if err != nil {
+		return fmt.Errorf("get pet for delete: %w", err)
+	}
+	if p.ProjectID != projectID {
+		return pet.ErrPetNotFound
+	}
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete pet: %w", err)
 	}

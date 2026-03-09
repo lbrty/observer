@@ -100,7 +100,7 @@ func (h *PermissionHandler) UpdatePermission(c *gin.Context) {
 		return
 	}
 
-	out, err := h.permUC.Update(c.Request.Context(), id, input)
+	out, err := h.permUC.Update(c.Request.Context(), c.Param("project_id"), id, input)
 	if err != nil {
 		HandleError(c, err)
 		return

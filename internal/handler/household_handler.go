@@ -57,7 +57,7 @@ func (h *HouseholdHandler) List(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/households/{id} [get]
 func (h *HouseholdHandler) Get(c *gin.Context) {
-	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
+	out, err := h.uc.Get(c.Request.Context(), c.Param("project_id"), c.Param("id"))
 	if err != nil {
 		HandleError(c, err)
 		return
@@ -112,7 +112,7 @@ func (h *HouseholdHandler) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
-	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
+	out, err := h.uc.Update(c.Request.Context(), c.Param("project_id"), c.Param("id"), input)
 	if err != nil {
 		HandleError(c, err)
 		return

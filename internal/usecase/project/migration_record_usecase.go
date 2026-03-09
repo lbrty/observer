@@ -35,10 +35,13 @@ func (uc *MigrationRecordUseCase) ListByPerson(ctx context.Context, personID str
 }
 
 // Get returns a migration record by ID.
-func (uc *MigrationRecordUseCase) Get(ctx context.Context, id string) (*MigrationRecordDTO, error) {
+func (uc *MigrationRecordUseCase) Get(ctx context.Context, personID, id string) (*MigrationRecordDTO, error) {
 	r, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get migration record: %w", err)
+	}
+	if r.PersonID != personID {
+		return nil, migration.ErrRecordNotFound
 	}
 	dto := migrationRecordToDTO(r)
 	return &dto, nil
@@ -75,10 +78,13 @@ func (uc *MigrationRecordUseCase) Create(ctx context.Context, projectID, personI
 }
 
 // Update updates a migration record.
-func (uc *MigrationRecordUseCase) Update(ctx context.Context, id string, input UpdateMigrationRecordInput) (*MigrationRecordDTO, error) {
+func (uc *MigrationRecordUseCase) Update(ctx context.Context, personID, id string, input UpdateMigrationRecordInput) (*MigrationRecordDTO, error) {
 	r, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get migration record for update: %w", err)
+	}
+	if r.PersonID != personID {
+		return nil, migration.ErrRecordNotFound
 	}
 
 	if input.FromPlaceID != nil {
