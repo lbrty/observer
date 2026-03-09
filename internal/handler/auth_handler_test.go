@@ -61,8 +61,7 @@ func TestAuthHandler_Register_Success(t *testing.T) {
 
 	d.userRepo.EXPECT().GetByEmail(gomock.Any(), "new@test.com").Return(nil, user.ErrUserNotFound)
 	d.hasher.EXPECT().Hash("P@ssword123!").Return("hashed", "salt", nil)
-	d.userRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
-	d.credRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
+	d.userRepo.EXPECT().CreateWithCredentials(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 
 	c, w := newTestContext(http.MethodPost, "/auth/register", map[string]string{
 		"email":    "new@test.com",

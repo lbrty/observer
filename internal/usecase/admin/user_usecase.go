@@ -124,10 +124,6 @@ func (uc *UserUseCase) Create(ctx context.Context, input CreateUserInput) (*User
 		UpdatedAt:  now,
 	}
 
-	if err := uc.userRepo.Create(ctx, newUser); err != nil {
-		return nil, fmt.Errorf("create user: %w", err)
-	}
-
 	cred := &user.Credentials{
 		UserID:       userID,
 		PasswordHash: hash,
@@ -135,8 +131,8 @@ func (uc *UserUseCase) Create(ctx context.Context, input CreateUserInput) (*User
 		UpdatedAt:    now,
 	}
 
-	if err := uc.credRepo.Create(ctx, cred); err != nil {
-		return nil, fmt.Errorf("create credentials: %w", err)
+	if err := uc.userRepo.CreateWithCredentials(ctx, newUser, cred); err != nil {
+		return nil, fmt.Errorf("create user: %w", err)
 	}
 
 	uid := userID.String()

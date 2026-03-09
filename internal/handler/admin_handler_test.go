@@ -149,8 +149,7 @@ func TestAdminHandler_CreateUser_Success(t *testing.T) {
 
 	d.userRepo.EXPECT().GetByEmail(gomock.Any(), "new@test.com").Return(nil, user.ErrUserNotFound)
 	d.hasher.EXPECT().Hash("password123").Return("hash", "salt", nil)
-	d.userRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
-	d.credRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
+	d.userRepo.EXPECT().CreateWithCredentials(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 
 	c, w := newTestContext(http.MethodPost, "/admin/users", map[string]any{
 		"first_name": "Alice",

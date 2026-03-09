@@ -105,9 +105,9 @@ func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) (
 	}
 	if filter.HasPets != nil {
 		if *filter.HasPets {
-			where = append(where, "id IN (SELECT DISTINCT owner_id FROM pets WHERE owner_id IS NOT NULL)")
+			where = append(where, "EXISTS (SELECT 1 FROM pets WHERE pets.owner_id = people.id)")
 		} else {
-			where = append(where, "id NOT IN (SELECT DISTINCT owner_id FROM pets WHERE owner_id IS NOT NULL)")
+			where = append(where, "NOT EXISTS (SELECT 1 FROM pets WHERE pets.owner_id = people.id)")
 		}
 	}
 	if filter.Search != nil && *filter.Search != "" {

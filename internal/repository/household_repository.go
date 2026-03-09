@@ -102,11 +102,12 @@ func (r *householdRepo) List(ctx context.Context, filter household.HouseholdList
 
 	q := `SELECT h.id, h.project_id, h.reference_number, h.head_person_id,
 			NULLIF(TRIM(COALESCE(p.first_name, '') || ' ' || COALESCE(p.last_name, '')), '') AS head_person_name,
-			COALESCE((SELECT COUNT(*) FROM household_members hm WHERE hm.household_id = h.id), 0) AS member_count,
+			COUNT(hm.person_id) AS member_count,
 			h.created_at, h.updated_at
 		FROM households h
 		LEFT JOIN people p ON p.id = h.head_person_id
-		` + whereClause + ` ORDER BY h.created_at DESC LIMIT ` + limitParam + ` OFFSET ` + offsetParam
+		LEFT JOIN household_members hm ON hm.household_id = h.id
+		` + whereClause + ` GROUP BY h.id, p.first_name, p.last_name ORDER BY h.created_at DESC LIMIT ` + limitParam + ` OFFSET ` + offsetParam
 	rows, err := r.db.QueryContext(ctx, q, args...)
 	if err != nil {
 		return nil, 0, fmt.Errorf("list households: %w", err)

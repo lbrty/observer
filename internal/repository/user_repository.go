@@ -27,6 +27,37 @@ func NewUserRepository(db *sqlx.DB) UserRepository {
 
 const userColumns = `id, first_name, last_name, email, phone, office_id, role, is_verified, is_active, deactivated_at, created_at, updated_at`
 
+func (r *userRepo) CreateWithCredentials(ctx context.Context, u *user.User, cred *user.Credentials) error {
+	tx, err := r.db.BeginTxx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("begin transaction: %w", err)
+	}
+	defer tx.Rollback() //nolint:errcheck
+
+	const userQ = `
+		INSERT INTO users (id, first_name, last_name, email, phone, office_id, role, is_verified, is_active, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+	`
+	if _, err = tx.ExecContext(ctx, userQ,
+		u.ID.String(), u.FirstName, u.LastName, u.Email, u.Phone, u.OfficeID,
+		string(u.Role), u.IsVerified, u.IsActive, u.CreatedAt.UTC(), u.UpdatedAt.UTC(),
+	); err != nil {
+		return fmt.Errorf("create user: %w", err)
+	}
+
+	const credQ = `
+		INSERT INTO credentials (user_id, password_hash, salt, updated_at)
+		VALUES ($1, $2, $3, $4)
+	`
+	if _, err = tx.ExecContext(ctx, credQ,
+		cred.UserID.String(), cred.PasswordHash, cred.Salt, cred.UpdatedAt.UTC(),
+	); err != nil {
+		return fmt.Errorf("create credentials: %w", err)
+	}
+
+	return tx.Commit()
+}
+
 func (r *userRepo) Create(ctx context.Context, u *user.User) error {
 	const q = `
 		INSERT INTO users (id, first_name, last_name, email, phone, office_id, role, is_verified, is_active, created_at, updated_at)

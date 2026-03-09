@@ -25,6 +25,8 @@ import (
 
 // UserRepository defines persistence operations for users.
 type UserRepository interface {
+	// CreateWithCredentials inserts a user and its credentials atomically.
+	CreateWithCredentials(ctx context.Context, u *user.User, cred *user.Credentials) error
 	Create(ctx context.Context, u *user.User) error
 	GetByID(ctx context.Context, id ulid.ULID) (*user.User, error)
 	GetByIDs(ctx context.Context, ids []ulid.ULID) ([]*user.User, error)

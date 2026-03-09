@@ -1,6 +1,6 @@
 import ky, { HTTPError } from "ky";
 
-export const apiBase = import.meta.env.VITE_API_URL ?? "http://localhost:9000";
+export const apiBase = import.meta.env.VITE_API_URL ?? "";
 
 const BASE_URL = apiBase;
 

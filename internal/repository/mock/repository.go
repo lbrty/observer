@@ -69,6 +69,20 @@ func (mr *MockUserRepositoryMockRecorder) Create(ctx, u any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockUserRepository)(nil).Create), ctx, u)
 }
 
+// CreateWithCredentials mocks base method.
+func (m *MockUserRepository) CreateWithCredentials(ctx context.Context, u *user.User, cred *user.Credentials) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateWithCredentials", ctx, u, cred)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateWithCredentials indicates an expected call of CreateWithCredentials.
+func (mr *MockUserRepositoryMockRecorder) CreateWithCredentials(ctx, u, cred any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateWithCredentials", reflect.TypeOf((*MockUserRepository)(nil).CreateWithCredentials), ctx, u, cred)
+}
+
 // Deactivate mocks base method.
 func (m *MockUserRepository) Deactivate(ctx context.Context, id ulid.ULID) error {
 	m.ctrl.T.Helper()

@@ -39,11 +39,7 @@ func TestRegister_Success(t *testing.T) {
 		Return(nil, user.ErrUserNotFound)
 
 	mockUserRepo.EXPECT().
-		Create(ctx, gomock.Any()).
-		Return(nil)
-
-	mockCredRepo.EXPECT().
-		Create(ctx, gomock.Any()).
+		CreateWithCredentials(ctx, gomock.Any(), gomock.Any()).
 		Return(nil)
 
 	out, err := uc.Register(ctx, input)
@@ -73,15 +69,11 @@ func TestRegister_AlwaysCreatesGuestRole(t *testing.T) {
 		Return(nil, user.ErrUserNotFound)
 
 	mockUserRepo.EXPECT().
-		Create(ctx, gomock.AssignableToTypeOf(&user.User{})).
-		DoAndReturn(func(_ context.Context, u *user.User) error {
+		CreateWithCredentials(ctx, gomock.AssignableToTypeOf(&user.User{}), gomock.Any()).
+		DoAndReturn(func(_ context.Context, u *user.User, _ *user.Credentials) error {
 			assert.Equal(t, user.RoleGuest, u.Role, "new users must always be created with RoleGuest")
 			return nil
 		})
-
-	mockCredRepo.EXPECT().
-		Create(ctx, gomock.Any()).
-		Return(nil)
 
 	out, err := uc.Register(ctx, ucauth.RegisterInput{
 		Email:    "attacker@example.com",

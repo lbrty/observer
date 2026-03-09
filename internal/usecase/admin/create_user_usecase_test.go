@@ -30,8 +30,7 @@ func TestUserUseCase_Create_Success(t *testing.T) {
 	mockUserRepo.EXPECT().GetByEmail(ctx, "alice@example.com").Return(nil, user.ErrUserNotFound)
 	// No phone to check
 	mockHasher.EXPECT().Hash("securepass").Return("hashed", "salt", nil)
-	mockUserRepo.EXPECT().Create(ctx, gomock.Any()).Return(nil)
-	mockCredRepo.EXPECT().Create(ctx, gomock.Any()).Return(nil)
+	mockUserRepo.EXPECT().CreateWithCredentials(ctx, gomock.Any(), gomock.Any()).Return(nil)
 
 	out, err := uc.Create(ctx, ucadmin.CreateUserInput{
 		FirstName: "Alice",
