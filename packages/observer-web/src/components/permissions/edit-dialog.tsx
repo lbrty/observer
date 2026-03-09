@@ -25,6 +25,7 @@ export function EditDialog({
     can_view_contact?: boolean;
     can_view_personal?: boolean;
     can_view_documents?: boolean;
+    can_export?: boolean;
   }) => Promise<void>;
   loading: boolean;
 }) {
@@ -34,6 +35,7 @@ export function EditDialog({
   const [contact, setContact] = useState(permission.can_view_contact);
   const [personal, setPersonal] = useState(permission.can_view_personal);
   const [documents, setDocuments] = useState(permission.can_view_documents);
+  const [canExport, setCanExport] = useState(permission.can_export);
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
@@ -42,6 +44,7 @@ export function EditDialog({
       can_view_contact: contact,
       can_view_personal: personal,
       can_view_documents: documents,
+      can_export: canExport,
     });
   }
 
@@ -113,6 +116,16 @@ export function EditDialog({
                 />
                 <p className="ml-11.5 text-xs text-fg-tertiary">
                   {t("admin.permissions.documentAccessDesc")}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <UISwitch
+                  checked={canExport}
+                  onCheckedChange={setCanExport}
+                  label={t("admin.permissions.exportAccess")}
+                />
+                <p className="ml-11.5 text-xs text-fg-tertiary">
+                  {t("admin.permissions.exportAccessDesc")}
                 </p>
               </div>
             </div>

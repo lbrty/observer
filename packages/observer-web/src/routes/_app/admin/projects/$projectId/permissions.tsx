@@ -79,7 +79,10 @@ function PermissionsPage() {
           {p.can_view_documents && (
             <StatusBadge label={t("admin.permissions.documents")} variant="foam" />
           )}
-          {!p.can_view_contact && !p.can_view_personal && !p.can_view_documents && (
+          {p.can_export && (
+            <StatusBadge label={t("admin.permissions.export")} variant="foam" />
+          )}
+          {!p.can_view_contact && !p.can_view_personal && !p.can_view_documents && !p.can_export && (
             <span className="text-xs text-fg-tertiary">-</span>
           )}
         </div>
