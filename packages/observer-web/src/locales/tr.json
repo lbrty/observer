@@ -744,5 +744,14 @@
     "reactivate": "Hesabı yeniden etkinleştir",
     "deactivateWarning": "Bu hesabı devre dışı bırakmak erişimi hemen iptal eder. Mevcut veriler ve denetim izi korunur.",
     "deactivatedSince": "Bu hesap {{date}} tarihinde devre dışı bırakıldı."
+  },
+  "search": {
+    "placeholder": "Ara...",
+    "noResults": "Sonuç bulunamadı.",
+    "people": "Kişiler",
+    "pets": "Evcil Hayvanlar",
+    "projects": "Projeler",
+    "viewAll": "Tüm sonuçları göster",
+    "title": "Arama sonuçları"
   }
 }

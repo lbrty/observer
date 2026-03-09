@@ -744,5 +744,14 @@
     "reactivate": "Reactivate account",
     "deactivateWarning": "Deactivating this account will immediately revoke access. Existing data and audit trail are preserved.",
     "deactivatedSince": "This account was deactivated on {{date}}."
+  },
+  "search": {
+    "placeholder": "Search...",
+    "noResults": "No results found.",
+    "people": "People",
+    "pets": "Pets",
+    "projects": "Projects",
+    "viewAll": "View all results for",
+    "title": "Search results"
   }
 }

@@ -744,5 +744,14 @@
     "reactivate": "Aqqaunttu qayta işke qoşuu",
     "deactivateWarning": "Aqqaunttu öçürsöñüz, kirüü daroo çektelet. Baardyq maalymat jana audittik izder saqtalat.",
     "deactivatedSince": "Bul aqqaunt {{date}} künü öçürüldü."
+  },
+  "search": {
+    "placeholder": "Izdöö...",
+    "noResults": "Natyjalar tabylğan coq.",
+    "people": "Adamdar",
+    "pets": "Canybarlar",
+    "projects": "Dolboorlor",
+    "viewAll": "Bardyq natyjalardy körüü",
+    "title": "Izdöö natyjalary"
   }
 }

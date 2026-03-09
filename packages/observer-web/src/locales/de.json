@@ -744,5 +744,14 @@
     "reactivate": "Konto reaktivieren",
     "deactivateWarning": "Durch die Deaktivierung wird der Zugriff sofort entzogen. Bestehende Daten und das Prüfprotokoll bleiben erhalten.",
     "deactivatedSince": "Dieses Konto wurde am {{date}} deaktiviert."
+  },
+  "search": {
+    "placeholder": "Suchen...",
+    "noResults": "Keine Ergebnisse gefunden.",
+    "people": "Personen",
+    "pets": "Tiere",
+    "projects": "Projekte",
+    "viewAll": "Alle Ergebnisse anzeigen für",
+    "title": "Suchergebnisse"
   }
 }

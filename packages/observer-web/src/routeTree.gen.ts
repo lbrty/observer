@@ -15,6 +15,7 @@ import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AppProfileRouteImport } from './routes/_app/profile'
+import { Route as AppSearchRouteImport } from './routes/_app/search'
 import { Route as AppAdminRouteImport } from './routes/_app/admin'
 import { Route as AppAdminIndexRouteImport } from './routes/_app/admin/index'
 import { Route as AppProjectsProjectIdRouteImport } from './routes/_app/projects/$projectId'
@@ -80,6 +81,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 const AppProfileRoute = AppProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSearchRoute = AppSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminRoute = AppAdminRouteImport.update({
@@ -307,6 +313,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/admin': typeof AppAdminRouteWithChildren
   '/profile': typeof AppProfileRoute
+  '/search': typeof AppSearchRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/admin/audit-logs': typeof AppAdminAuditLogsRoute
@@ -350,6 +357,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/profile': typeof AppProfileRoute
+  '/search': typeof AppSearchRoute
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/admin/audit-logs': typeof AppAdminAuditLogsRoute
@@ -392,6 +400,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/_app/admin': typeof AppAdminRouteWithChildren
   '/_app/profile': typeof AppProfileRoute
+  '/_app/search': typeof AppSearchRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/_app/': typeof AppIndexRoute
@@ -439,6 +448,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/profile'
+    | '/search'
     | '/login'
     | '/register'
     | '/admin/audit-logs'
@@ -482,6 +492,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/profile'
+    | '/search'
     | '/login'
     | '/register'
     | '/admin/audit-logs'
@@ -523,6 +534,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/_app/admin'
     | '/_app/profile'
+    | '/_app/search'
     | '/_auth/login'
     | '/_auth/register'
     | '/_app/'
@@ -612,6 +624,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof AppProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/search': {
+      id: '/_app/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof AppSearchRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/admin': {
@@ -1041,6 +1060,7 @@ const AppProjectsProjectIdRouteWithChildren =
 interface AppRouteChildren {
   AppAdminRoute: typeof AppAdminRouteWithChildren
   AppProfileRoute: typeof AppProfileRoute
+  AppSearchRoute: typeof AppSearchRoute
   AppIndexRoute: typeof AppIndexRoute
   AppProjectsProjectIdRoute: typeof AppProjectsProjectIdRouteWithChildren
 }
@@ -1048,6 +1068,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAdminRoute: AppAdminRouteWithChildren,
   AppProfileRoute: AppProfileRoute,
+  AppSearchRoute: AppSearchRoute,
   AppIndexRoute: AppIndexRoute,
   AppProjectsProjectIdRoute: AppProjectsProjectIdRouteWithChildren,
 }

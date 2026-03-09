@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Menu } from "@base-ui/react/menu";
 import { createFileRoute, Link, Navigate, Outlet } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { SignOutIcon, UserCircleIcon, WarningIcon, XIcon } from "@/components/icons";
+import { MagnifyingGlassIcon, SignOutIcon, UserCircleIcon, WarningIcon, XIcon } from "@/components/icons";
+import { SearchPalette } from "@/components/search-palette";
 import { useSchemaStatus } from "@/hooks/use-schema-status";
 import { useAuth } from "@/stores/auth";
 
@@ -17,6 +18,18 @@ function AppLayout() {
   const { isAuthenticated, isLoading, user, logout } = useAuth();
   const { data: schemaStatus } = useSchemaStatus();
   const [driftDismissed, setDriftDismissed] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen((v) => !v);
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   if (isLoading) return null;
 
@@ -29,7 +42,7 @@ function AppLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-bg">
       <header className="glass sticky top-0 z-50 border-b border-border-secondary">
-        <div className="flex h-13 items-center justify-between px-5">
+        <div className="grid h-13 grid-cols-3 items-center px-5">
           <Link
             to="/"
             className="flex items-center gap-2.5 text-sm font-semibold text-fg hover:text-fg"
@@ -39,9 +52,27 @@ function AppLayout() {
             </span>
             {t("common.appName")}
           </Link>
-          <AvatarMenu email={user?.email ?? ""} onLogout={logout} />
+
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              className="flex h-8 w-full max-w-[400px] cursor-pointer items-center gap-2.5 rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg-tertiary transition-colors hover:border-border hover:bg-bg-tertiary"
+            >
+              <MagnifyingGlassIcon size={14} className="shrink-0" />
+              <span className="flex-1 text-left">{t("search.placeholder")}</span>
+              <kbd className="hidden shrink-0 rounded border border-border-secondary px-1 font-mono text-[10px] sm:block">
+                ⌘K
+              </kbd>
+            </button>
+          </div>
+
+          <div className="flex justify-end">
+            <AvatarMenu email={user?.email ?? ""} onLogout={logout} />
+          </div>
         </div>
       </header>
+
       {showDriftBanner && (
         <div className="flex items-center gap-3 border-b border-gold/30 bg-gold/10 px-5 py-2.5 text-sm text-gold">
           <WarningIcon size={16} className="shrink-0" />
@@ -57,9 +88,12 @@ function AppLayout() {
           </button>
         </div>
       )}
+
       <div className="flex flex-1">
         <Outlet />
       </div>
+
+      <SearchPalette open={searchOpen} onOpenChange={setSearchOpen} />
     </div>
   );
 }
