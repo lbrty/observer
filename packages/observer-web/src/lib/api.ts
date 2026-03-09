@@ -13,9 +13,11 @@ export function setOnUnauthorized(fn: () => void) {
 }
 
 async function refreshTokens(): Promise<void> {
+  const csrf = document.cookie.match(/csrf_token=([^;]+)/)?.[1];
   const res = await fetch(`${BASE_URL}/auth/refresh`, {
     method: "POST",
     credentials: "include",
+    headers: csrf ? { "X-CSRF-Token": csrf } : undefined,
   });
 
   if (!res.ok) {
