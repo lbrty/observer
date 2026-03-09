@@ -21,7 +21,7 @@
     "enabled": "Iştetilgen",
     "disabled": "Öçürülgön",
     "search": "Izdöö",
-    "schemaDrift": "Маалымат базасынын схемасы {{pending}} миграция(лар) артта. Колдонуу үчүн `observer migrate up` иштетиңиз."
+    "schemaDrift": "Maalymat bazasynyñ sxemasy {{pending}} migratsija(lar) artta. Qoldonuu üçün `observer migrate up` iştetiñiz."
   },
   "auth": {
     "loginTitle": "Kirüü",
