@@ -25,11 +25,12 @@ type User struct {
 	Phone         string
 	OfficeID      *string
 	Role          Role
-	IsVerified    bool
-	IsActive      bool
-	DeactivatedAt *time.Time
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	IsVerified          bool
+	IsActive            bool
+	DeactivatedAt       *time.Time
+	LockedPermanentlyAt *time.Time
+	CreatedAt           time.Time
+	UpdatedAt           time.Time
 }
 
 // UserListFilter controls pagination and filtering for user listing.
@@ -77,6 +78,15 @@ type VerificationToken struct {
 	Token     string
 	Type      string
 	ExpiresAt time.Time
+	UsedAt    *time.Time
+	CreatedAt time.Time
+}
+
+// MFARecoveryCode is a single-use backup code stored hashed.
+type MFARecoveryCode struct {
+	ID        string
+	UserID    ulid.ULID
+	CodeHash  string
 	UsedAt    *time.Time
 	CreatedAt time.Time
 }

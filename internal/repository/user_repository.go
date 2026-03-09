@@ -182,6 +182,14 @@ func (r *userRepo) Reactivate(ctx context.Context, id ulid.ULID) error {
 	return CheckRowsAffected(res, user.ErrUserNotFound)
 }
 
+func (r *userRepo) LockPermanently(ctx context.Context, email string) error {
+	_, err := r.db.ExecContext(ctx,
+		`UPDATE users SET locked_permanently_at = NOW() WHERE email = $1`,
+		email,
+	)
+	return err
+}
+
 func (r *userRepo) scanUser(row *sql.Row) (*user.User, error) {
 	var u user.User
 	var idStr string

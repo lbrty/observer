@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -21,12 +22,13 @@ type LoginAttemptStore interface {
 }
 
 type redisLoginAttemptStore struct {
-	client *redis.Client
+	client   *redis.Client
+	userRepo UserRepository
 }
 
 // NewLoginAttemptStore creates a Redis-backed LoginAttemptStore.
-func NewLoginAttemptStore(client *redis.Client) LoginAttemptStore {
-	return &redisLoginAttemptStore{client: client}
+func NewLoginAttemptStore(client *redis.Client, userRepo UserRepository) LoginAttemptStore {
+	return &redisLoginAttemptStore{client: client, userRepo: userRepo}
 }
 
 const (
@@ -73,6 +75,10 @@ func (s *redisLoginAttemptStore) RecordFailure(ctx context.Context, email string
 		// Permanent lock — no expiry.
 		if err := s.client.Set(ctx, lockKey, "permanent", 0).Err(); err != nil {
 			return 0, fmt.Errorf("set permanent lock: %w", err)
+		}
+		// Also persist to PostgreSQL so lockout survives Redis restarts.
+		if err := s.userRepo.LockPermanently(ctx, email); err != nil {
+			slog.Error("persist permanent lock to db", slog.Any("err", err))
 		}
 		return -1, nil // -1 signals permanent
 	}

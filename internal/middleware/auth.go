@@ -61,10 +61,10 @@ func (m *AuthMiddleware) Authenticate() gin.HandlerFunc {
 			return
 		}
 
-		// Reject deactivated users.
+		// Reject deactivated or permanently locked users.
 		u, err := m.userRepo.GetByID(c.Request.Context(), userID)
-		if err != nil || u.DeactivatedAt != nil {
-			c.JSON(http.StatusForbidden, gin.H{"error": "account deactivated", "code": "errors.auth.accountDeactivated"})
+		if err != nil || u.DeactivatedAt != nil || u.LockedPermanentlyAt != nil {
+			c.JSON(http.StatusForbidden, gin.H{"error": "account locked or deactivated", "code": "errors.auth.accountLocked"})
 			c.Abort()
 			return
 		}

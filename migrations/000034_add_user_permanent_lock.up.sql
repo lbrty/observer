@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN IF NOT EXISTS locked_permanently_at TIMESTAMPTZ;
