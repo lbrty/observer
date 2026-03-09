@@ -262,6 +262,17 @@ type PetReportRepository interface {
 	CountByStatusByMonth(ctx context.Context, f report.PetReportFilter) ([]report.MonthlyStatusCount, error)
 }
 
+// SearchRepository runs cross-entity search queries within authorized projects.
+type SearchRepository interface {
+	Search(ctx context.Context, projectIDs []string, query string, limit int) (*SearchHits, error)
+	// ListAllProjectIDs returns all project IDs (used for admin/staff who see all projects).
+	ListAllProjectIDs(ctx context.Context) ([]string, error)
+	// ListProjectIDsByUser returns project IDs the user has any role in.
+	ListProjectIDsByUser(ctx context.Context, userID string) ([]string, error)
+	// ListProjectsByIDs fetches project id→name pairs for the given IDs.
+	ListProjectsByIDs(ctx context.Context, ids []string) (map[string]string, error)
+}
+
 // AuditLogRepository defines persistence operations for audit logs.
 type AuditLogRepository interface {
 	Log(ctx context.Context, entry audit.Entry) error

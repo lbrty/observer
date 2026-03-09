@@ -57,6 +57,10 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		my.GET("/projects", myHandler.Projects)
 	}
 
+	// Global search — any authenticated user, scoped to their authorised projects
+	searchHandler := handler.NewSearchHandler(container.SearchUC)
+	api.GET("/search", authMW.Authenticate(), searchHandler.Search)
+
 	// Admin endpoints — requires authentication + admin role
 	adminHandler := handler.NewAdminHandler(container.UserUC, container.LoginAttemptStore)
 	permHandler := handler.NewPermissionHandler(container.PermUC)

@@ -16,6 +16,7 @@ import (
 	ucmy "github.com/lbrty/observer/internal/usecase/my"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 	ucreport "github.com/lbrty/observer/internal/usecase/report"
+	ucsearch "github.com/lbrty/observer/internal/usecase/search"
 )
 
 // Container holds all application dependencies.
@@ -78,6 +79,9 @@ type Container struct {
 	// Storage
 	FileStorage storage.FileStorage
 
+	// Search
+	SearchUC *ucsearch.SearchUseCase
+
 	// Login attempt tracking
 	LoginAttemptStore repository.LoginAttemptStore
 }
@@ -116,6 +120,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	documentRepo := repository.NewDocumentRepository(sqlxDB)
 	petRepo := repository.NewPetRepository(sqlxDB)
 	petTagRepo := repository.NewPetTagRepository(sqlxDB)
+	searchRepo := repository.NewSearchRepository(sqlxDB)
 	auditRepo := repository.NewAuditLogRepository(sqlxDB)
 	reportRepo := repository.NewReportRepository(sqlxDB)
 	petReportRepo := repository.NewPetReportRepository(sqlxDB)
@@ -162,6 +167,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	petTagUC := ucproject.NewPetTagUseCase(petTagRepo)
 	reportUC := ucreport.NewReportUseCase(reportRepo)
 	petReportUC := ucreport.NewPetReportUseCase(petReportRepo)
+	searchUC := ucsearch.NewSearchUseCase(searchRepo)
 	loginAttemptStore := repository.NewLoginAttemptStore(redisClient, userRepo)
 
 	return &Container{
@@ -203,6 +209,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 		ReportUC:          reportUC,
 		PetReportUC:       petReportUC,
 		ReportRepo:        reportRepo,
+		SearchUC:          searchUC,
 		LoginAttemptStore: loginAttemptStore,
 	}, nil
 }
