@@ -252,6 +252,10 @@ func (uc *AuthUseCase) ChangePassword(ctx context.Context, userID ulid.ULID, inp
 		return fmt.Errorf("update credentials: %w", err)
 	}
 
+	if err := uc.sessionRepo.DeleteByUserID(ctx, userID); err != nil {
+		return fmt.Errorf("invalidate sessions: %w", err)
+	}
+
 	return nil
 }
 

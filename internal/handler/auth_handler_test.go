@@ -456,6 +456,7 @@ func TestAuthHandler_ChangePassword_Success(t *testing.T) {
 	d.hasher.EXPECT().Verify("oldpassword", "hash", "salt").Return(nil)
 	d.hasher.EXPECT().Hash("newpassword123").Return("newhash", "newsalt", nil)
 	d.credRepo.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
+	d.sessionRepo.EXPECT().DeleteByUserID(gomock.Any(), uid).Return(nil)
 
 	c, w := newTestContext(http.MethodPost, "/auth/change-password", map[string]string{
 		"current_password": "oldpassword",

@@ -136,7 +136,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
 
 	authUC := ucauth.NewAuthUseCase(userRepo, credRepo, sessionRepo, mfaRepo, hasher, tokenGen)
-	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher, auditUC)
+	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher, sessionRepo, auditUC)
 	permUC := ucadmin.NewPermissionUseCase(permCRUDRepo, userRepo, auditUC)
 
 	countryUC := ucadmin.NewCountryUseCase(countryRepo)

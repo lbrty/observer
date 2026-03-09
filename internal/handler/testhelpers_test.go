@@ -109,6 +109,7 @@ type adminTestDeps struct {
 	ctrl          *gomock.Controller
 	userRepo      *repomock.MockUserRepository
 	credRepo      *repomock.MockCredentialsRepository
+	sessionRepo   *repomock.MockSessionRepository
 	hasher        *cryptomock.MockPasswordHasher
 	loginAttempts *repomock.MockLoginAttemptStore
 }
@@ -118,11 +119,12 @@ func newAdminTestDeps(ctrl *gomock.Controller) *adminTestDeps {
 		ctrl:          ctrl,
 		userRepo:      repomock.NewMockUserRepository(ctrl),
 		credRepo:      repomock.NewMockCredentialsRepository(ctrl),
+		sessionRepo:   repomock.NewMockSessionRepository(ctrl),
 		hasher:        cryptomock.NewMockPasswordHasher(ctrl),
 		loginAttempts: repomock.NewMockLoginAttemptStore(ctrl),
 	}
 }
 
 func (d *adminTestDeps) userUseCase() *ucadmin.UserUseCase {
-	return ucadmin.NewUserUseCase(d.userRepo, d.credRepo, d.hasher, nil)
+	return ucadmin.NewUserUseCase(d.userRepo, d.credRepo, d.hasher, d.sessionRepo, nil)
 }

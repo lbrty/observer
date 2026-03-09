@@ -271,6 +271,7 @@ func TestAdminHandler_ResetPassword_Success(t *testing.T) {
 	d.credRepo.EXPECT().GetByUserID(gomock.Any(), uid).Return(cred, nil)
 	d.hasher.EXPECT().Hash("newpassword123").Return("newhash", "newsalt", nil)
 	d.credRepo.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
+	d.sessionRepo.EXPECT().DeleteByUserID(gomock.Any(), uid).Return(nil)
 
 	c, w := newTestContextWithParams(http.MethodPost, "/admin/users/"+uid.String()+"/reset-password",
 		map[string]any{"new_password": "newpassword123"}, gin.Params{{Key: "id", Value: uid.String()}})

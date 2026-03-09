@@ -22,10 +22,11 @@ type ResetPasswordInput struct {
 
 // UserUseCase handles admin user management operations.
 type UserUseCase struct {
-	userRepo repository.UserRepository
-	credRepo repository.CredentialsRepository
-	hasher   crypto.PasswordHasher
-	auditUC  *ucaudit.AuditUseCase
+	userRepo    repository.UserRepository
+	credRepo    repository.CredentialsRepository
+	hasher      crypto.PasswordHasher
+	sessionRepo repository.SessionRepository
+	auditUC     *ucaudit.AuditUseCase
 }
 
 // NewUserUseCase creates a UserUseCase.
@@ -33,13 +34,15 @@ func NewUserUseCase(
 	userRepo repository.UserRepository,
 	credRepo repository.CredentialsRepository,
 	hasher crypto.PasswordHasher,
+	sessionRepo repository.SessionRepository,
 	auditUC *ucaudit.AuditUseCase,
 ) *UserUseCase {
 	return &UserUseCase{
-		userRepo: userRepo,
-		credRepo: credRepo,
-		hasher:   hasher,
-		auditUC:  auditUC,
+		userRepo:    userRepo,
+		credRepo:    credRepo,
+		hasher:      hasher,
+		sessionRepo: sessionRepo,
+		auditUC:     auditUC,
 	}
 }
 
@@ -207,6 +210,10 @@ func (uc *UserUseCase) ResetPassword(ctx context.Context, userID ulid.ULID, inpu
 	cred.Salt = salt
 	if err := uc.credRepo.Update(ctx, cred); err != nil {
 		return fmt.Errorf("update credentials: %w", err)
+	}
+
+	if err := uc.sessionRepo.DeleteByUserID(ctx, userID); err != nil {
+		return fmt.Errorf("invalidate sessions: %w", err)
 	}
 
 	return nil
