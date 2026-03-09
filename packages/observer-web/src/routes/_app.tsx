@@ -107,7 +107,7 @@ function AvatarMenu({ email, onLogout }: { email: string; onLogout: () => void }
         {email.charAt(0).toUpperCase()}
       </Menu.Trigger>
       <Menu.Portal>
-        <Menu.Positioner sideOffset={6} align="end" className="z-[100]">
+        <Menu.Positioner sideOffset={6} align="end" className="z-100">
           <Menu.Popup className="w-44 origin-(--transform-origin) rounded-xl border border-border-secondary bg-bg-secondary py-1 shadow-elevated transition-[transform,scale,opacity] data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0">
             <Menu.Item
               render={<Link to="/profile" />}
