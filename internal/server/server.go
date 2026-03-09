@@ -88,7 +88,7 @@ func (s *Server) setupMiddleware(cfg *config.Config, log *slog.Logger) {
 	s.router.Use(cors.New(cors.Config{
 		AllowOrigins:     cfg.CORS.Origins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-CSRF-Token"},
 		ExposeHeaders:    []string{"X-Request-ID"},
 		AllowCredentials: true,
 	}))
