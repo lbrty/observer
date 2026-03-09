@@ -1,7 +1,12 @@
 package handler
 
 import (
+	"bytes"
+	"io"
+	"mime"
 	"net/http"
+	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -42,7 +47,7 @@ func (h *DocumentHandler) Get(c *gin.Context) {
 		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
 		return
 	}
-	out, err := h.uc.Get(c.Request.Context(), c.Param("id"))
+	out, err := h.uc.Get(c.Request.Context(), c.Param("project_id"), c.Param("id"))
 	if err != nil {
 		HandleError(c, err)
 		return
@@ -61,24 +66,37 @@ func (h *DocumentHandler) Upload(c *gin.Context) {
 	}
 	defer file.Close()
 
+	filename := filepath.Base(header.Filename)
+	if filename == "." || filename == "" {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "invalid filename"))
+		return
+	}
+
+	buf := make([]byte, 512)
+	n, _ := file.Read(buf)
+	detectedMIME := http.DetectContentType(buf[:n])
+
+	switch detectedMIME {
+	case "text/html; charset=utf-8", "application/xhtml+xml":
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "file type not permitted"))
+		return
+	}
+
+	body := io.MultiReader(bytes.NewReader(buf[:n]), file)
+
 	projectID := c.Param("project_id")
 	personID := c.Param("person_id")
 	userID, _ := middleware.UserIDFrom(c)
-
-	mimeType := header.Header.Get("Content-Type")
-	if mimeType == "" {
-		mimeType = "application/octet-stream"
-	}
 
 	out, err := h.uc.Upload(
 		c.Request.Context(),
 		projectID,
 		personID,
 		userID.String(),
-		header.Filename,
-		mimeType,
+		filename,
+		detectedMIME,
 		header.Size,
-		file,
+		body,
 	)
 	if err != nil {
 		HandleError(c, err)
@@ -94,14 +112,14 @@ func (h *DocumentHandler) Download(c *gin.Context) {
 		return
 	}
 
-	doc, rc, err := h.uc.Download(c.Request.Context(), c.Param("id"))
+	doc, rc, err := h.uc.Download(c.Request.Context(), c.Param("project_id"), c.Param("id"))
 	if err != nil {
 		HandleError(c, err)
 		return
 	}
 	defer rc.Close()
 
-	c.Header("Content-Disposition", "attachment; filename=\""+doc.Name+"\"")
+	c.Header("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": doc.Name}))
 	c.DataFromReader(http.StatusOK, doc.Size, doc.MimeType, rc, nil)
 }
 
@@ -112,16 +130,27 @@ func (h *DocumentHandler) Stream(c *gin.Context) {
 		return
 	}
 
-	doc, rc, err := h.uc.Download(c.Request.Context(), c.Param("id"))
+	doc, rc, err := h.uc.Download(c.Request.Context(), c.Param("project_id"), c.Param("id"))
 	if err != nil {
 		HandleError(c, err)
 		return
 	}
 	defer rc.Close()
 
-	c.Header("Content-Disposition", "inline; filename=\""+doc.Name+"\"")
-	c.Writer.Header().Del("X-Frame-Options")
-	c.DataFromReader(http.StatusOK, doc.Size, doc.MimeType, rc, nil)
+	c.Header("Content-Disposition", mime.FormatMediaType("inline", map[string]string{"filename": doc.Name}))
+	c.Header("Content-Security-Policy", "frame-ancestors 'self'")
+	c.Header("X-Frame-Options", "SAMEORIGIN")
+
+	safeMIME := doc.MimeType
+	switch {
+	case strings.HasPrefix(safeMIME, "image/"),
+		strings.HasPrefix(safeMIME, "video/"),
+		safeMIME == "application/pdf":
+		// keep as-is
+	default:
+		safeMIME = "application/octet-stream"
+	}
+	c.DataFromReader(http.StatusOK, doc.Size, safeMIME, rc, nil)
 }
 
 // Thumbnail handles GET /projects/:project_id/documents/:id/thumbnail.
@@ -131,7 +160,7 @@ func (h *DocumentHandler) Thumbnail(c *gin.Context) {
 		return
 	}
 
-	_, rc, err := h.uc.Thumbnail(c.Request.Context(), c.Param("id"))
+	_, rc, err := h.uc.Thumbnail(c.Request.Context(), c.Param("project_id"), c.Param("id"))
 	if err != nil {
 		HandleError(c, err)
 		return
@@ -149,7 +178,7 @@ func (h *DocumentHandler) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
-	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
+	out, err := h.uc.Update(c.Request.Context(), c.Param("project_id"), c.Param("id"), input)
 	if err != nil {
 		HandleError(c, err)
 		return
@@ -159,7 +188,7 @@ func (h *DocumentHandler) Update(c *gin.Context) {
 
 // Delete handles DELETE /projects/:project_id/documents/:id.
 func (h *DocumentHandler) Delete(c *gin.Context) {
-	if err := h.uc.Delete(c.Request.Context(), c.Param("id")); err != nil {
+	if err := h.uc.Delete(c.Request.Context(), c.Param("project_id"), c.Param("id")); err != nil {
 		HandleError(c, err)
 		return
 	}
