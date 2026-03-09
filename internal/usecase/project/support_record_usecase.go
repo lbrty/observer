@@ -72,10 +72,13 @@ func (uc *SupportRecordUseCase) List(ctx context.Context, projectID string, inpu
 }
 
 // Get returns a support record by ID.
-func (uc *SupportRecordUseCase) Get(ctx context.Context, id string) (*SupportRecordDTO, error) {
+func (uc *SupportRecordUseCase) Get(ctx context.Context, projectID, id string) (*SupportRecordDTO, error) {
 	r, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get support record: %w", err)
+	}
+	if r.ProjectID != projectID {
+		return nil, support.ErrRecordNotFound
 	}
 	dto := supportRecordToDTO(r)
 	return &dto, nil
@@ -116,10 +119,13 @@ func (uc *SupportRecordUseCase) Create(ctx context.Context, projectID string, re
 }
 
 // Update applies a partial update to a support record.
-func (uc *SupportRecordUseCase) Update(ctx context.Context, id string, input UpdateSupportRecordInput) (*SupportRecordDTO, error) {
+func (uc *SupportRecordUseCase) Update(ctx context.Context, projectID, id string, input UpdateSupportRecordInput) (*SupportRecordDTO, error) {
 	r, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get support record for update: %w", err)
+	}
+	if r.ProjectID != projectID {
+		return nil, support.ErrRecordNotFound
 	}
 
 	if input.ConsultantID != nil {
@@ -158,6 +164,13 @@ func (uc *SupportRecordUseCase) Update(ctx context.Context, id string, input Upd
 
 // Delete removes a support record.
 func (uc *SupportRecordUseCase) Delete(ctx context.Context, projectID, id string) error {
+	r, err := uc.repo.GetByID(ctx, id)
+	if err != nil {
+		return fmt.Errorf("get support record for delete: %w", err)
+	}
+	if r.ProjectID != projectID {
+		return support.ErrRecordNotFound
+	}
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete support record: %w", err)
 	}
