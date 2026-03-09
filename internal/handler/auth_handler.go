@@ -1,11 +1,11 @@
 package handler
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
-	"fmt"
 	"log/slog"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -100,11 +100,9 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 	if remaining != 0 {
-		msg := "account temporarily locked"
-		if remaining == -1 {
-			msg = "account locked, contact administrator"
-		} else {
-			msg = fmt.Sprintf("account locked for %s", remaining.Truncate(time.Second))
+		msg := "account locked, contact administrator"
+		if remaining > 0 {
+			msg = "account temporarily locked, please try again later"
 		}
 		c.JSON(http.StatusTooManyRequests, errJSON("errors.auth.accountLocked", msg))
 		return
@@ -117,11 +115,9 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			if lockDur, recErr := h.loginAttempts.RecordFailure(c.Request.Context(), input.Email); recErr != nil {
 				slog.Error("record login failure", slog.Any("err", recErr))
 			} else if lockDur != 0 {
-				msg := "account temporarily locked"
-				if lockDur == -1 {
-					msg = "account locked, contact administrator"
-				} else {
-					msg = fmt.Sprintf("account locked for %s", lockDur.Truncate(time.Second))
+				msg := "account locked, contact administrator"
+				if lockDur > 0 {
+					msg = "account temporarily locked, please try again later"
 				}
 				c.JSON(http.StatusTooManyRequests, errJSON("errors.auth.accountLocked", msg))
 				return
@@ -204,6 +200,8 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 
 	tokens, err := h.authUC.RefreshToken(c.Request.Context(), ucauth.RefreshTokenInput{
 		RefreshToken: refreshToken,
+		UserAgent:    c.GetHeader("User-Agent"),
+		IP:           c.ClientIP(),
 	})
 	if err != nil {
 		HandleError(c, err)
@@ -282,6 +280,27 @@ func (h *AuthHandler) setTokenCookies(c *gin.Context, accessToken, refreshToken 
 		Secure:   h.cookie.Secure,
 		SameSite: sameSite,
 	})
+
+	// CSRF double-submit cookie — HttpOnly: false so JS can read and echo it.
+	csrfToken := generateCSRFToken()
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     middleware.CSRFTokenCookie,
+		Value:    csrfToken,
+		Path:     "/",
+		Domain:   h.cookie.Domain,
+		MaxAge:   int(h.cookie.MaxAge.Seconds()),
+		HttpOnly: false,
+		Secure:   h.cookie.Secure,
+		SameSite: sameSite,
+	})
+}
+
+func generateCSRFToken() string {
+	b := make([]byte, 16)
+	if _, err := rand.Read(b); err != nil {
+		return "fallback-csrf"
+	}
+	return hex.EncodeToString(b)
 }
 
 func (h *AuthHandler) clearTokenCookies(c *gin.Context) {
@@ -305,6 +324,17 @@ func (h *AuthHandler) clearTokenCookies(c *gin.Context) {
 		Domain:   h.cookie.Domain,
 		MaxAge:   -1,
 		HttpOnly: true,
+		Secure:   h.cookie.Secure,
+		SameSite: sameSite,
+	})
+
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     middleware.CSRFTokenCookie,
+		Value:    "",
+		Path:     "/",
+		Domain:   h.cookie.Domain,
+		MaxAge:   -1,
+		HttpOnly: false,
 		Secure:   h.cookie.Secure,
 		SameSite: sameSite,
 	})
@@ -355,11 +385,12 @@ func (h *AuthHandler) EnableMFA(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.auth.invalidRequest", err.Error()))
 		return
 	}
-	if err := h.authUC.EnableMFA(c.Request.Context(), userID, input); err != nil {
+	out, err := h.authUC.EnableMFA(c.Request.Context(), userID, input)
+	if err != nil {
 		HandleError(c, err)
 		return
 	}
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusOK, out)
 }
 
 // DisableMFA handles POST /auth/mfa/disable — verifies TOTP code and disables MFA.

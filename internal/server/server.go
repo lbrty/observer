@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/getsentry/sentry-go/gin"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	validator "github.com/go-playground/validator/v10"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
@@ -36,6 +39,7 @@ type Server struct {
 // New creates and configures a new Server.
 func New(cfg *config.Config, db database.DB, log *slog.Logger, container *app.Container) *Server {
 	gin.SetMode(gin.ReleaseMode)
+	registerCustomValidators()
 	router := gin.New()
 
 	s := &Server{router: router, cfg: &cfg.Server}
@@ -72,6 +76,14 @@ func (s *Server) Shutdown(ctx context.Context) error {
 }
 
 func (s *Server) setupMiddleware(cfg *config.Config, log *slog.Logger) {
+	// Limit non-multipart request bodies to 1 MB to prevent memory exhaustion.
+	// Multipart (file uploads) are excluded — document_handler enforces 50 MB itself.
+	s.router.Use(func(c *gin.Context) {
+		if !strings.HasPrefix(c.GetHeader("Content-Type"), "multipart/form-data") {
+			c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 1<<20)
+		}
+		c.Next()
+	})
 	s.router.Use(requestIDMiddleware())
 	s.router.Use(logger.GinMiddleware(log))
 	if cfg.Sentry.Enabled() {
@@ -86,6 +98,7 @@ func (s *Server) setupMiddleware(cfg *config.Config, log *slog.Logger) {
 		AllowCredentials: true,
 	}))
 	s.router.Use(middleware.SecurityHeaders())
+	s.router.Use(middleware.CSRFProtection())
 }
 
 func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.Container) {
@@ -287,7 +300,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 		}
 
 		// Export-level access (consultant+)
-		export := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionExport))
+		export := proj.Group("", projectAuthMW.RequireProjectRole(project.ActionExport), projectAuthMW.RequireExport())
 		{
 			export.GET("/export/people", exportHandler.ExportPeople)
 			export.GET("/export/support-records", exportHandler.ExportSupportRecords)
@@ -319,6 +332,17 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			slog.Info("serving embedded SPA")
 			s.router.NoRoute(spa.Handler(spaFS))
 		}
+	}
+}
+
+func registerCustomValidators() {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("strongpassword", func(fl validator.FieldLevel) bool { //nolint:errcheck
+			p := fl.Field().String()
+			hasDigit := strings.ContainsAny(p, "0123456789")
+			hasSpecial := strings.ContainsAny(p, "!@#$%^&*()-_=+[]{}|;:',.<>?/`~")
+			return hasDigit && hasSpecial
+		})
 	}
 }
 
