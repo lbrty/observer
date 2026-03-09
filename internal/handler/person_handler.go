@@ -72,7 +72,7 @@ func (h *PersonHandler) List(c *gin.Context) {
 func (h *PersonHandler) Get(c *gin.Context) {
 	canContact := middleware.CanViewContactFrom(c)
 	canPersonal := middleware.CanViewPersonalFrom(c)
-	out, err := h.personUC.Get(c.Request.Context(), c.Param("person_id"), canContact, canPersonal)
+	out, err := h.personUC.Get(c.Request.Context(), c.Param("project_id"), c.Param("person_id"), canContact, canPersonal)
 	if err != nil {
 		HandleError(c, err)
 		return
@@ -128,7 +128,7 @@ func (h *PersonHandler) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
-	out, err := h.personUC.Update(c.Request.Context(), c.Param("person_id"), input)
+	out, err := h.personUC.Update(c.Request.Context(), c.Param("project_id"), c.Param("person_id"), input)
 	if err != nil {
 		HandleError(c, err)
 		return

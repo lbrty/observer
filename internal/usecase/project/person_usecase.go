@@ -89,10 +89,13 @@ func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListP
 }
 
 // Get returns a person by ID with sensitivity-aware redaction.
-func (uc *PersonUseCase) Get(ctx context.Context, id string, canViewContact, canViewPersonal bool) (*PersonDTO, error) {
+func (uc *PersonUseCase) Get(ctx context.Context, projectID, id string, canViewContact, canViewPersonal bool) (*PersonDTO, error) {
 	p, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get person: %w", err)
+	}
+	if p.ProjectID != projectID {
+		return nil, person.ErrPersonNotFound
 	}
 	dto := personToDTO(p, canViewContact, canViewPersonal)
 	return &dto, nil
@@ -159,10 +162,13 @@ func (uc *PersonUseCase) Create(ctx context.Context, projectID string, input Cre
 }
 
 // Update applies a partial update to a person.
-func (uc *PersonUseCase) Update(ctx context.Context, id string, input UpdatePersonInput) (*PersonDTO, error) {
+func (uc *PersonUseCase) Update(ctx context.Context, projectID, id string, input UpdatePersonInput) (*PersonDTO, error) {
 	p, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get person for update: %w", err)
+	}
+	if p.ProjectID != projectID {
+		return nil, person.ErrPersonNotFound
 	}
 
 	setPtr(&p.ConsultantID, input.ConsultantID)
@@ -214,6 +220,13 @@ func (uc *PersonUseCase) Update(ctx context.Context, id string, input UpdatePers
 
 // Delete removes a person.
 func (uc *PersonUseCase) Delete(ctx context.Context, projectID, id string) error {
+	p, err := uc.repo.GetByID(ctx, id)
+	if err != nil {
+		return fmt.Errorf("get person for delete: %w", err)
+	}
+	if p.ProjectID != projectID {
+		return person.ErrPersonNotFound
+	}
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete person: %w", err)
 	}

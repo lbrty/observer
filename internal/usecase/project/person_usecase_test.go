@@ -86,7 +86,7 @@ func TestPersonUseCase_Get_WithRedaction(t *testing.T) {
 	}, nil)
 
 	// Without contact or personal visibility
-	out, err := uc.Get(context.Background(), "p1", false, false)
+	out, err := uc.Get(context.Background(), "proj1", "p1", false, false)
 	require.NoError(t, err)
 	assert.Equal(t, "Aida", out.FirstName)
 	assert.Nil(t, out.Email, "email should be redacted")
@@ -122,7 +122,7 @@ func TestPersonUseCase_Get_FullVisibility(t *testing.T) {
 		PhoneNumbers: json.RawMessage(`["+996555333444"]`),
 	}, nil)
 
-	out, err := uc.Get(context.Background(), "p1", true, true)
+	out, err := uc.Get(context.Background(), "proj1", "p1", true, true)
 	require.NoError(t, err)
 	assert.Equal(t, &email, out.Email)
 	assert.Equal(t, &phone, out.PrimaryPhone)
@@ -218,6 +218,63 @@ func TestPersonUseCase_Create_ExternalIDConflict(t *testing.T) {
 	assert.ErrorIs(t, err, person.ErrExternalIDExists)
 }
 
+func TestPersonUseCase_Get_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewPersonUseCase(nil, mockRepo, nil, auditUC)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&person.Person{
+		ID:        "p1",
+		ProjectID: "other-project",
+	}, nil)
+
+	_, err := uc.Get(context.Background(), "proj1", "p1", true, true)
+	assert.ErrorIs(t, err, person.ErrPersonNotFound)
+}
+
+func TestPersonUseCase_Update_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewPersonUseCase(nil, mockRepo, nil, auditUC)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&person.Person{
+		ID:        "p1",
+		ProjectID: "other-project",
+	}, nil)
+
+	_, err := uc.Update(context.Background(), "proj1", "p1", ucproject.UpdatePersonInput{})
+	assert.ErrorIs(t, err, person.ErrPersonNotFound)
+}
+
+func TestPersonUseCase_Delete_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockPersonRepository(ctrl)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewPersonUseCase(nil, mockRepo, nil, auditUC)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&person.Person{
+		ID:        "p1",
+		ProjectID: "other-project",
+	}, nil)
+
+	err := uc.Delete(context.Background(), "proj1", "p1")
+	assert.ErrorIs(t, err, person.ErrPersonNotFound)
+}
+
 func TestPersonUseCase_Delete(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -228,6 +285,9 @@ func TestPersonUseCase_Delete(t *testing.T) {
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
 	uc := ucproject.NewPersonUseCase(nil, mockRepo, nil, auditUC)
 
+	mockRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&person.Person{
+		ID: "p1", ProjectID: "proj1",
+	}, nil)
 	mockRepo.EXPECT().Delete(gomock.Any(), "p1").Return(nil)
 
 	err := uc.Delete(context.Background(), "proj1", "p1")
@@ -244,7 +304,7 @@ func TestPersonUseCase_Delete_NotFound(t *testing.T) {
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
 	uc := ucproject.NewPersonUseCase(nil, mockRepo, nil, auditUC)
 
-	mockRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(person.ErrPersonNotFound)
+	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, person.ErrPersonNotFound)
 
 	err := uc.Delete(context.Background(), "proj1", "nonexistent")
 	assert.ErrorIs(t, err, person.ErrPersonNotFound)
