@@ -87,6 +87,7 @@ func (s *Server) setupMiddleware(cfg *config.Config, log *slog.Logger) {
 	}
 	s.router.Use(gin.Recovery())
 	if cfg.DevMode {
+		slog.Warn("DEV_MODE is enabled — CORS, CSRF, and security headers are disabled; never run this in production")
 		s.router.Use(cors.New(cors.Config{
 			AllowOriginFunc:  func(_ string) bool { return true },
 			AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},

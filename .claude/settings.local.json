@@ -53,7 +53,8 @@
       "Skill(code-review:code-review)",
       "Bash(sed:*)",
       "Skill(differential-review:differential-review)",
-      "Bash(go doc:*)"
+      "Bash(go doc:*)",
+      "WebFetch(domain:cmdk.paco.me)"
     ]
   }
 }
