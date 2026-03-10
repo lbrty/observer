@@ -175,7 +175,7 @@ func TestDocumentUseCase_Thumbnail_CacheHit(t *testing.T) {
 	}, nil)
 
 	thumbReader := io.NopCloser(strings.NewReader("thumb-data"))
-	mockFS.EXPECT().Open(gomock.Any(), "proj1/p1/d1_photo.jpg_thumb.jpg").Return(thumbReader, nil)
+	mockFS.EXPECT().Open(gomock.Any(), "proj1/p1/d1_photo_thumb.jpg").Return(thumbReader, nil)
 
 	dto, rc, err := uc.Thumbnail(context.Background(), "proj1", "d1")
 	require.NoError(t, err)

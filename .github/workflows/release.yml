@@ -26,7 +26,6 @@ jobs:
         run: |
           bun install
           cd packages/observer-web && bun run build
-          cp -r dist ../../internal/spa/dist
 
       - uses: goreleaser/goreleaser-action@v6
         with:
