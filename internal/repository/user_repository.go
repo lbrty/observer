@@ -281,4 +281,3 @@ func (r *userRepo) scanUsers(rows *sql.Rows) ([]*user.User, error) {
 	}
 	return users, nil
 }
-

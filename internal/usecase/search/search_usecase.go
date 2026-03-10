@@ -3,10 +3,13 @@ package search
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/repository"
 )
+
+const searchTimeout = 30 * time.Second
 
 // SearchUseCase executes global cross-project search.
 type SearchUseCase struct {
@@ -20,6 +23,9 @@ func NewSearchUseCase(repo repository.SearchRepository) *SearchUseCase {
 
 // Execute runs a global search scoped to the projects the user is authorised to see.
 func (uc *SearchUseCase) Execute(ctx context.Context, userID string, role user.Role, query string, limit int) (*SearchOutput, error) {
+	ctx, cancel := context.WithTimeout(ctx, searchTimeout)
+	defer cancel()
+
 	var (
 		projectIDs []string
 		err        error
