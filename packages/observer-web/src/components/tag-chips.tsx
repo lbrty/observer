@@ -19,7 +19,7 @@ export function TagChips({ projectId, tagIds }: { projectId: string; tagIds: str
       {tags.map((tag) => (
         <span
           key={tag.id}
-          className="inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium text-white"
+          className="inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium text-white dark:brightness-75"
           style={{ backgroundColor: resolveTagColor(tag.color, tag.name) }}
         >
           {tag.name}

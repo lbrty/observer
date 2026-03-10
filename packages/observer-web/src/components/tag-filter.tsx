@@ -85,7 +85,7 @@ export function TagFilter({ projectId, selectedIds, onChange }: TagFilterProps) 
                   className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-left hover:bg-bg-tertiary"
                 >
                   <span
-                    className="inline-flex size-4 shrink-0 items-center justify-center rounded"
+                    className="inline-flex size-4 shrink-0 items-center justify-center rounded dark:brightness-75"
                     style={{ backgroundColor: resolveTagColor(tag.color, tag.name) }}
                   >
                     <TagIcon size={10} className="text-white" />
@@ -113,7 +113,7 @@ export function SelectedTagChips({ projectId, selectedIds, onChange }: TagFilter
       {selectedTags.map((tag) => (
         <span
           key={tag.id}
-          className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium text-white"
+          className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium text-white dark:brightness-75"
           style={{ backgroundColor: resolveTagColor(tag.color, tag.name) }}
         >
           {tag.name}
