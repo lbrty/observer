@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { TagIcon, XIcon } from "@/components/icons";
 import { useTags } from "@/hooks/use-tags";
+import { resolveTagColor } from "@/lib/tag-color";
 
 import type { Tag } from "@/types/tag";
 
@@ -44,7 +45,7 @@ export function TagPicker({ projectId, selectedIds, onChange }: TagPickerProps) 
             <span
               key={tag.id}
               className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium text-white"
-              style={{ backgroundColor: tag.color || "#888" }}
+              style={{ backgroundColor: resolveTagColor(tag.color, tag.name) }}
             >
               <TagIcon size={12} />
               {tag.name}
@@ -70,7 +71,7 @@ export function TagPicker({ projectId, selectedIds, onChange }: TagPickerProps) 
         />
 
         {search.length > 0 && filtered.length > 0 && (
-          <div className="absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded-lg border border-border-secondary bg-bg-secondary shadow-elevated">
+          <div className="absolute bottom-full z-10 mb-1 max-h-40 w-full overflow-auto rounded-lg border border-border-secondary bg-bg-secondary shadow-elevated">
             {filtered.map((tag) => (
               <button
                 key={tag.id}
@@ -80,7 +81,7 @@ export function TagPicker({ projectId, selectedIds, onChange }: TagPickerProps) 
               >
                 <span
                   className="inline-flex size-5 shrink-0 items-center justify-center rounded"
-                  style={{ backgroundColor: tag.color || "#888" }}
+                  style={{ backgroundColor: resolveTagColor(tag.color, tag.name) }}
                 >
                   <TagIcon size={10} className="text-white" />
                 </span>
@@ -91,7 +92,7 @@ export function TagPicker({ projectId, selectedIds, onChange }: TagPickerProps) 
         )}
 
         {search.length > 0 && filtered.length === 0 && (
-          <div className="absolute z-10 mt-1 w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 shadow-elevated">
+          <div className="absolute bottom-full z-10 mb-1 w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 py-2 shadow-elevated">
             <p className="text-sm text-fg-tertiary">{t("admin.common.noData")}</p>
           </div>
         )}

@@ -21,10 +21,10 @@ var csrfSafeMethods = map[string]bool{
 // csrfExemptPaths are auth bootstrap endpoints that run before a CSRF cookie exists.
 // They are protected by credentials and rate limiting instead.
 var csrfExemptPaths = map[string]bool{
-	"/auth/login":    true,
-	"/auth/register": true,
-	"/auth/refresh":  true,
-	"/auth/mfa":      true,
+	"/api/auth/login":    true,
+	"/api/auth/register": true,
+	"/api/auth/refresh":  true,
+	"/api/auth/mfa":      true,
 }
 
 // CSRFProtection validates state-changing requests carry an X-CSRF-Token header

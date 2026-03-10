@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { FunnelIcon, TagIcon, XIcon } from "@/components/icons";
 import { useTags } from "@/hooks/use-tags";
+import { resolveTagColor } from "@/lib/tag-color";
 
 import type { Tag } from "@/types/tag";
 
@@ -85,7 +86,7 @@ export function TagFilter({ projectId, selectedIds, onChange }: TagFilterProps) 
                 >
                   <span
                     className="inline-flex size-4 shrink-0 items-center justify-center rounded"
-                    style={{ backgroundColor: tag.color || "#888" }}
+                    style={{ backgroundColor: resolveTagColor(tag.color, tag.name) }}
                   >
                     <TagIcon size={10} className="text-white" />
                   </span>
@@ -113,7 +114,7 @@ export function SelectedTagChips({ projectId, selectedIds, onChange }: TagFilter
         <span
           key={tag.id}
           className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium text-white"
-          style={{ backgroundColor: tag.color || "#888" }}
+          style={{ backgroundColor: resolveTagColor(tag.color, tag.name) }}
         >
           {tag.name}
           <button

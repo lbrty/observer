@@ -752,6 +752,7 @@
     "pets": "Evcil Hayvanlar",
     "projects": "Projeler",
     "viewAll": "Tüm sonuçları göster",
-    "title": "Arama sonuçları"
+    "title": "Arama sonuçları",
+    "hint": "Aramak için en az 2 karakter girin"
   }
 }

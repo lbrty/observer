@@ -752,6 +752,7 @@
     "pets": "Tiere",
     "projects": "Projekte",
     "viewAll": "Alle Ergebnisse anzeigen für",
-    "title": "Suchergebnisse"
+    "title": "Suchergebnisse",
+    "hint": "Mindestens 2 Zeichen eingeben, um zu suchen"
   }
 }

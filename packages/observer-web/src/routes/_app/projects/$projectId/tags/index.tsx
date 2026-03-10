@@ -19,6 +19,7 @@ import {
 import { useCreateTag, useDeleteTag, useUpdateTag, useTags } from "@/hooks/use-tags";
 import { useProjectRole } from "@/hooks/use-project-role";
 import { handleApiError } from "@/lib/form-error";
+import { resolveTagColor } from "@/lib/tag-color";
 import { useToast } from "@/stores/toast";
 import type { Tag } from "@/types/tag";
 
@@ -26,45 +27,11 @@ export const Route = createFileRoute("/_app/projects/$projectId/tags/")({
   component: TagsPage,
 });
 
-function colorFromName(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const h = ((hash % 360) + 360) % 360;
-  return `hsl(${h}, 55%, 55%)`;
-}
-
 function randomHex(): string {
   const hex = Math.floor(Math.random() * 0xffffff)
     .toString(16)
     .padStart(6, "0");
   return `#${hex}`;
-}
-
-function hslToHex(hsl: string): string {
-  const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-  if (!match) return "#888888";
-  const h = Number(match[1]) / 360;
-  const s = Number(match[2]) / 100;
-  const l = Number(match[3]) / 100;
-
-  const hue2rgb = (p: number, q: number, t: number) => {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-    if (t < 1 / 2) return q;
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-    return p;
-  };
-
-  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-  const p = 2 * l - q;
-  const r = Math.round(hue2rgb(p, q, h + 1 / 3) * 255);
-  const g = Math.round(hue2rgb(p, q, h) * 255);
-  const b = Math.round(hue2rgb(p, q, h - 1 / 3) * 255);
-
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
 
 function TagsPage() {
@@ -96,7 +63,7 @@ function TagsPage() {
   function openEdit(tag: Tag) {
     setEditTag(tag);
     setName(tag.name);
-    setColor(tag.color || hslToHex(colorFromName(tag.name)));
+    setColor(resolveTagColor(tag.color, tag.name));
     setError("");
     setFormOpen(true);
   }
@@ -112,7 +79,7 @@ function TagsPage() {
         });
         toast.success(t("project.tags.saved"));
       } else {
-        const tagColor = color || hslToHex(colorFromName(name.trim()));
+        const tagColor = resolveTagColor(color, name.trim());
         await createTag.mutateAsync({ name: name.trim(), color: tagColor });
         toast.success(t("project.tags.saved"));
       }
@@ -141,7 +108,7 @@ function TagsPage() {
         <div className="flex items-center gap-2.5">
           <span
             className="inline-flex size-7 shrink-0 items-center justify-center rounded-md"
-            style={{ backgroundColor: tag.color || hslToHex(colorFromName(tag.name)) }}
+            style={{ backgroundColor: resolveTagColor(tag.color, tag.name) }}
           >
             <TagIcon size={14} className="text-white" />
           </span>
@@ -153,7 +120,7 @@ function TagsPage() {
       key: "color",
       header: t("project.tags.color"),
       render: (tag) => {
-        const hex = tag.color || hslToHex(colorFromName(tag.name));
+        const hex = resolveTagColor(tag.color, tag.name);
         return (
           <div className="flex items-center gap-2">
             <span
@@ -284,7 +251,7 @@ function TagsPage() {
           <div className="flex items-center gap-3">
             <input
               type="color"
-              value={color || hslToHex(colorFromName(name || "tag"))}
+              value={resolveTagColor(color, name || "tag")}
               onChange={(e) => setColor(e.target.value)}
               className="size-9 cursor-pointer rounded-lg border border-border-secondary bg-bg-secondary p-0.5"
             />
@@ -296,7 +263,7 @@ function TagsPage() {
               <ArrowsClockwiseIcon size={16} />
             </button>
             <span className="font-mono text-sm text-fg-tertiary">
-              {color || hslToHex(colorFromName(name || "tag"))}
+              {resolveTagColor(color, name || "tag")}
             </span>
           </div>
         </Field.Root>

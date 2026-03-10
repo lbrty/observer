@@ -94,34 +94,40 @@ export function SearchPalette({ open, onOpenChange }: SearchPaletteProps) {
           </kbd>
         </div>
 
-        <Command.List className="max-h-[60vh] overflow-y-auto p-2">
-          {debouncedQuery.length >= 2 && !hasResults && (
-            <Command.Empty className="py-8 text-center text-sm text-fg-tertiary">
-              {t("search.noResults")}
-            </Command.Empty>
-          )}
+        {debouncedQuery.length >= 2 ? (
+          <Command.List className="max-h-[60vh] overflow-y-auto p-2">
+            {!hasResults && (
+              <Command.Empty className="py-8 text-center text-sm text-fg-tertiary">
+                {t("search.noResults")}
+              </Command.Empty>
+            )}
 
-          {results.map((group) => (
-            <ProjectGroupSection
-              key={group.project_id}
-              group={group}
-              onPerson={goToPerson}
-              onPet={goToPet}
-              onProject={goToProject}
-              t={t}
-            />
-          ))}
+            {results.map((group) => (
+              <ProjectGroupSection
+                key={group.project_id}
+                group={group}
+                onPerson={goToPerson}
+                onPet={goToPet}
+                onProject={goToProject}
+                t={t}
+              />
+            ))}
 
-          {showViewAll && (
-            <Command.Item
-              onSelect={goToViewAll}
-              className="mt-1 flex cursor-pointer items-center gap-2 rounded-lg border border-border-secondary px-3 py-2 text-sm text-accent outline-none aria-selected:bg-bg-tertiary"
-            >
-              <MagnifyingGlassIcon size={14} />
-              {t("search.viewAll")} &ldquo;{debouncedQuery}&rdquo;
-            </Command.Item>
-          )}
-        </Command.List>
+            {showViewAll && (
+              <Command.Item
+                onSelect={goToViewAll}
+                className="mt-1 flex cursor-pointer items-center gap-2 rounded-lg border border-border-secondary px-3 py-2 text-sm text-accent outline-none aria-selected:bg-bg-tertiary"
+              >
+                <MagnifyingGlassIcon size={14} />
+                {t("search.viewAll")} &ldquo;{debouncedQuery}&rdquo;
+              </Command.Item>
+            )}
+          </Command.List>
+        ) : (
+          <div className="px-4 py-8 text-center text-sm text-fg-tertiary">
+            {t("search.hint")}
+          </div>
+        )}
       </div>
     </Command.Dialog>
   );

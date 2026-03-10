@@ -752,6 +752,7 @@
     "pets": "Pets",
     "projects": "Projects",
     "viewAll": "View all results for",
-    "title": "Search results"
+    "title": "Search results",
+    "hint": "Type at least 2 characters to search"
   }
 }
