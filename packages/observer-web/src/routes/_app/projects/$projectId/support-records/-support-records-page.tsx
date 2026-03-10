@@ -170,7 +170,7 @@ export function SupportRecordsContent({
     {
       key: "type",
       header: t("project.supportRecords.type"),
-      render: (r) => <StatusBadge label={typeKeys[r.type] ? t(typeKeys[r.type]) : r.type} />,
+      render: (r) => <StatusBadge label={typeKeys[r.type] ? t(typeKeys[r.type]) : r.type} statusKey={r.type} />,
     },
     {
       key: "sphere",
@@ -201,6 +201,7 @@ export function SupportRecordsContent({
                 ? t(referralKeys[r.referral_status])
                 : r.referral_status
             }
+            statusKey={r.referral_status}
           />
         ) : (
           <span className="text-fg-tertiary">{"\u2014"}</span>

@@ -38,6 +38,19 @@ const statusVariants: Record<string, Variant> = {
   closed: "rose",
   true: "foam",
   false: "neutral",
+  // support types
+  humanitarian: "foam",
+  legal: "gold",
+  social: "gold",
+  psychological: "rose",
+  medical: "foam",
+  general: "neutral",
+  // referral statuses
+  pending: "gold",
+  accepted: "foam",
+  completed: "foam",
+  declined: "rose",
+  no_response: "neutral",
 };
 
 export function StatusBadge({ label, statusKey, variant, dot }: StatusBadgeProps) {
