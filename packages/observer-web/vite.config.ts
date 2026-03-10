@@ -10,6 +10,7 @@ export default defineConfig(() => {
     build: {
       outDir: "../../internal/spa/dist",
       emptyOutDir: true,
+      chunkSizeWarningLimit: 800,
       rollupOptions: {
         output: {
           manualChunks(id) {
