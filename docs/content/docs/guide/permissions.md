@@ -9,12 +9,12 @@ Observer uses a two-level permission model. Every user has a **platform role** t
 
 Platform roles are set when a user account is created and can only be changed by an admin.
 
-| Role         | What they can do                                                        |
-| ------------ | ----------------------------------------------------------------------- |
-| `admin`      | Full access to everything — users, projects, reference data, all cases  |
-| `staff`      | Manage reference data and projects; cannot manage other users           |
-| `consultant` | Work within projects they are assigned to; no admin panel access        |
-| `guest`      | Read-only access to projects they are assigned to                       |
+| Role         | What they can do                                                       |
+| ------------ | ---------------------------------------------------------------------- |
+| `admin`      | Full access to everything — users, projects, reference data, all cases |
+| `staff`      | Manage reference data and projects; cannot manage other users          |
+| `consultant` | Work within projects they are assigned to; no admin panel access       |
+| `guest`      | Read-only access to projects they are assigned to                      |
 
 Platform admins automatically act as **project owner** on all projects — they bypass project-level permission checks entirely.
 
@@ -22,34 +22,34 @@ Platform admins automatically act as **project owner** on all projects — they 
 
 Project roles apply within a specific project. A user must be explicitly assigned to a project to access it.
 
-| Role         | Rank | Can do                                          |
-| ------------ | ---- | ----------------------------------------------- |
-| `owner`      | 4    | Everything, including deleting the project      |
-| `manager`    | 3    | All case data operations + manage team members  |
-| `consultant` | 2    | Create, read, update cases and export data      |
-| `viewer`     | 1    | Read-only access to case data                   |
+| Role         | Rank | Can do                                         |
+| ------------ | ---- | ---------------------------------------------- |
+| `owner`      | 4    | Everything, including deleting the project     |
+| `manager`    | 3    | All case data operations + manage team members |
+| `consultant` | 2    | Create, read, update cases and export data     |
+| `viewer`     | 1    | Read-only access to case data                  |
 
 ### Action Requirements
 
-| Action          | Minimum project role |
-| --------------- | -------------------- |
-| Read data       | `viewer`             |
-| Create records  | `consultant`         |
-| Update records  | `consultant`         |
-| Delete records  | `manager`            |
-| Manage members  | `manager`            |
-| Export data     | `consultant`         |
+| Action         | Minimum project role |
+| -------------- | -------------------- |
+| Read data      | `viewer`             |
+| Create records | `consultant`         |
+| Update records | `consultant`         |
+| Delete records | `manager`            |
+| Manage members | `manager`            |
+| Export data    | `consultant`         |
 
 ## Sensitivity Flags
 
 Each project permission has three independent boolean flags. These are set per-user, per-project by a manager or owner.
 
-| Flag                  | Controls                                                         |
-| --------------------- | ---------------------------------------------------------------- |
-| `can_view_contact`    | Phone numbers and email addresses in person records              |
-| `can_view_personal`   | Full name, birth date, national ID (`external_id`), consent info |
-| `can_view_documents`  | Document file access and document metadata                       |
-| `can_export`          | Access to all CSV export endpoints for this project              |
+| Flag                 | Controls                                                         |
+| -------------------- | ---------------------------------------------------------------- |
+| `can_view_contact`   | Phone numbers and email addresses in person records              |
+| `can_view_personal`  | Full name, birth date, national ID (`external_id`), consent info |
+| `can_view_documents` | Document file access and document metadata                       |
+| `can_export`         | Access to all CSV export endpoints for this project              |
 
 When a flag is off, the corresponding fields are omitted from API responses and CSV exports — the data stays in the database but is not sent to that user. A consultant with `can_view_personal: false` cannot recover national IDs or birth dates through an export even though they can create records.
 

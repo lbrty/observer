@@ -15,12 +15,12 @@ GET /projects/:project_id/export/people?format=csv
 
 Optionale Abfrageparameter:
 
-| Parameter     | Beschreibung                                     |
-| ------------- | ------------------------------------------------ |
-| `start`       | Nach Registrierungsdatum filtern (JJJJ-MM-TT)   |
-| `end`         | Nach Registrierungsdatum filtern (JJJJ-MM-TT)   |
-| `category_id` | Nach Schwachstellenkategorie filtern             |
-| `tag_id`      | Nach Tag filtern                                 |
+| Parameter     | Beschreibung                                  |
+| ------------- | --------------------------------------------- |
+| `start`       | Nach Registrierungsdatum filtern (JJJJ-MM-TT) |
+| `end`         | Nach Registrierungsdatum filtern (JJJJ-MM-TT) |
+| `category_id` | Nach Schwachstellenkategorie filtern          |
+| `tag_id`      | Nach Tag filtern                              |
 
 Die Antwort wird gestreamt — große Datensätze werden schrittweise gesendet, damit die Verbindung nicht abbricht.
 
@@ -32,12 +32,12 @@ Beratungsdatensätze für ein Projekt exportieren:
 GET /projects/:project_id/export/support-records?format=csv&start=2024-01-01&end=2024-12-31
 ```
 
-| Parameter | Beschreibung                                       |
-| --------- | -------------------------------------------------- |
+| Parameter | Beschreibung                                      |
+| --------- | ------------------------------------------------- |
 | `start`   | Nach `provided_at`-Datum filtern (JJJJ-MM-TT)     |
 | `end`     | Nach `provided_at`-Datum filtern (JJJJ-MM-TT)     |
-| `type`    | `legal` oder `social`                              |
-| `sphere`  | Unterstützungsbereich (z.B. `housing_assistance`)  |
+| `type`    | `legal` oder `social`                             |
+| `sphere`  | Unterstützungsbereich (z.B. `housing_assistance`) |
 
 ## Migrationsdatensätze exportieren
 

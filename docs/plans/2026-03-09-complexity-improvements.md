@@ -13,6 +13,7 @@
 ### Task 1: Generic SQL Filter Helper — `appendIf`
 
 **Files:**
+
 - Modify: `internal/repository/helpers.go`
 - Modify: `internal/repository/report_repository.go`
 
@@ -123,6 +124,7 @@ git commit -m "Add generic appendIf helper, reduce filter builder branches"
 ### Task 2: Pointer-Copy Helper — `setPtr` and `applyOpt`
 
 **Files:**
+
 - Create: `internal/usecase/project/patch.go`
 - Modify: `internal/usecase/project/person_usecase.go`
 
@@ -213,6 +215,7 @@ git commit -m "Extract setPtr/applyOpt helpers, reduce person update nil-check b
 ### Task 3: URL Search Params for Report Filter State
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/projects/$projectId/reports/people.tsx`
 - Modify: `packages/observer-web/src/routes/_app/projects/$projectId/reports/pets.tsx`
 
@@ -240,11 +243,13 @@ export const Route = createFileRoute("/_app/projects/$projectId/reports/people")
 **Step 2: Replace local filter state with URL search in `ReportsPage`**
 
 Remove:
+
 ```ts
 const [params, setParams] = useState<ReportParams>({});
 ```
 
 Add:
+
 ```ts
 const params = Route.useSearch();
 const navigate = Route.useNavigate();

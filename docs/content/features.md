@@ -110,9 +110,13 @@ The same page looks different depending on your role. Platform roles (admin, sta
   </div>
 </div>
 
+## Global Search
+
+Search across all projects at once with `⌘K` / `Ctrl+K`. Results are grouped by project and entity type — people, pets, and projects. A full results page at `/search` is available for deeper exploration. Minimum two characters required to search.
+
 ## Two-Factor Authentication
 
-Each user can enable TOTP-based two-factor authentication on their account. Once enabled, login requires a 6-digit code from any authenticator app in addition to the email and password. 2FA can be managed from the user's profile page.
+Each user can enable TOTP-based two-factor authentication on their account. Once enabled, login requires a 6-digit code from any authenticator app in addition to the email and password. Recovery codes are generated at setup and can be used to regain access if the authenticator device is lost. 2FA can be managed from the user's profile page.
 
 ## Supported Languages
 

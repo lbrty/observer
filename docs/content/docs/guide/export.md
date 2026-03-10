@@ -3,7 +3,7 @@ title: Export
 weight: 8
 ---
 
-Observer can export case data and reports as CSV files. Export requires at minimum the `consultant` project role.
+Observer can export case data and reports as CSV files. Export requires the `consultant` project role **and** the `can_export` permission flag set on your project membership. Platform admins, staff, and project owners always have export access. See [Permissions](/docs/guide/permissions/) for details.
 
 ## Export Case Data
 
@@ -15,12 +15,12 @@ GET /projects/:project_id/export/people?format=csv
 
 Optional query parameters:
 
-| Parameter     | Description                                      |
-| ------------- | ------------------------------------------------ |
-| `start`       | Filter by registration date (YYYY-MM-DD)         |
-| `end`         | Filter by registration date (YYYY-MM-DD)         |
-| `category_id` | Filter by vulnerability category                 |
-| `tag_id`      | Filter by tag                                    |
+| Parameter     | Description                              |
+| ------------- | ---------------------------------------- |
+| `start`       | Filter by registration date (YYYY-MM-DD) |
+| `end`         | Filter by registration date (YYYY-MM-DD) |
+| `category_id` | Filter by vulnerability category         |
+| `tag_id`      | Filter by tag                            |
 
 The response is streamed — large datasets are sent progressively so the connection does not time out.
 
@@ -32,11 +32,11 @@ Export consultation records for a project:
 GET /projects/:project_id/export/support-records?format=csv&start=2024-01-01&end=2024-12-31
 ```
 
-| Parameter | Description                               |
-| --------- | ----------------------------------------- |
-| `start`   | Filter by `provided_at` date (YYYY-MM-DD) |
-| `end`     | Filter by `provided_at` date (YYYY-MM-DD) |
-| `type`    | `legal` or `social`                       |
+| Parameter | Description                                |
+| --------- | ------------------------------------------ |
+| `start`   | Filter by `provided_at` date (YYYY-MM-DD)  |
+| `end`     | Filter by `provided_at` date (YYYY-MM-DD)  |
+| `type`    | `legal` or `social`                        |
 | `sphere`  | Support sphere (e.g. `housing_assistance`) |
 
 ## Export Migration Records

@@ -15,12 +15,12 @@ GET /projects/:project_id/export/people?format=csv
 
 Qoşumça suroo parametrleri:
 
-| Parametr      | Süröttömö                                        |
-| ------------- | ------------------------------------------------ |
-| `start`       | Qattalğan kün bojunça çypqaloo (CCCC-AA-KK)      |
-| `end`         | Qattalğan kün bojunça çypqaloo (CCCC-AA-KK)      |
-| `category_id` | Ajaluuluq kategorijasy bojunça çypqaloo             |
-| `tag_id`      | Teg bojunça çypqaloo                              |
+| Parametr      | Süröttömö                                   |
+| ------------- | ------------------------------------------- |
+| `start`       | Qattalğan kün bojunça çypqaloo (CCCC-AA-KK) |
+| `end`         | Qattalğan kün bojunça çypqaloo (CCCC-AA-KK) |
+| `category_id` | Ajaluuluq kategorijasy bojunça çypqaloo     |
+| `tag_id`      | Teg bojunça çypqaloo                        |
 
 Coop ağym qatary cönötülöt — çoñ maalymat toptomdoru progressivdüü cönötülöt, oşonduktan bajlanyş üzülböjt.
 
@@ -32,12 +32,12 @@ Dolboor bojunça konsultasija cazuularyn eksporttoo:
 GET /projects/:project_id/export/support-records?format=csv&start=2024-01-01&end=2024-12-31
 ```
 
-| Parametr  | Süröttömö                                         |
-| --------- | ------------------------------------------------- |
-| `start`   | `provided_at` künü bojunça çypqaloo (CCCC-AA-KK)  |
-| `end`     | `provided_at` künü bojunça çypqaloo (CCCC-AA-KK)  |
-| `type`    | `legal` ce `social`                               |
-| `sphere`  | Qoldoo çöjrösü (mis. `housing_assistance`)        |
+| Parametr | Süröttömö                                        |
+| -------- | ------------------------------------------------ |
+| `start`  | `provided_at` künü bojunça çypqaloo (CCCC-AA-KK) |
+| `end`    | `provided_at` künü bojunça çypqaloo (CCCC-AA-KK) |
+| `type`   | `legal` ce `social`                              |
+| `sphere` | Qoldoo çöjrösü (mis. `housing_assistance`)       |
 
 ## Migratsija cazuularyn eksporttoo
 

@@ -25,10 +25,10 @@ The hasher is Argon2id with `time=2, memory=64MB, threads=4`. Parameters are in 
 
 Failed logins are tracked per email in Redis (`internal/repository/login_attempt_store.go`).
 
-| Threshold | Effect |
-|-----------|--------|
-| 5 failures in 15 min | Temporary lock (15 min) |
-| 10 failures total | Permanent lock — requires admin unlock |
+| Threshold            | Effect                                 |
+| -------------------- | -------------------------------------- |
+| 5 failures in 15 min | Temporary lock (15 min)                |
+| 10 failures total    | Permanent lock — requires admin unlock |
 
 Permanent locks are **also written to `users.locked_permanently_at`** (migration `000034`) so they survive Redis restarts. The `Authenticate()` middleware checks this column on every request.
 
@@ -102,11 +102,11 @@ Observer uses the **double-submit cookie** pattern (`internal/middleware/csrf.go
 
 At login/refresh/MFA-verify, three cookies are set:
 
-| Cookie | HttpOnly | Purpose |
-|--------|----------|---------|
-| `access_token` | true | Bearer credential |
-| `refresh_token` | true | Rotation credential (path: `/auth`) |
-| `csrf_token` | **false** | Readable by JS |
+| Cookie          | HttpOnly  | Purpose                             |
+| --------------- | --------- | ----------------------------------- |
+| `access_token`  | true      | Bearer credential                   |
+| `refresh_token` | true      | Rotation credential (path: `/auth`) |
+| `csrf_token`    | **false** | Readable by JS                      |
 
 For state-mutating requests (POST/PUT/PATCH/DELETE), the middleware requires:
 
@@ -133,12 +133,12 @@ Origins are configured via `CORS_ORIGINS` (comma-separated). At startup, the ser
 
 ### Platform roles
 
-| Role | Description |
-|------|-------------|
-| `admin` | Full access to all endpoints and projects |
-| `staff` | Read/write for users and reference data; project access controlled by permissions |
-| `consultant` | Project access controlled by permissions |
-| `guest` | Project access controlled by permissions (default for new registrations) |
+| Role         | Description                                                                       |
+| ------------ | --------------------------------------------------------------------------------- |
+| `admin`      | Full access to all endpoints and projects                                         |
+| `staff`      | Read/write for users and reference data; project access controlled by permissions |
+| `consultant` | Project access controlled by permissions                                          |
+| `guest`      | Project access controlled by permissions (default for new registrations)          |
 
 Role is verified on every request by `Authenticate()` → JWT claim.
 
@@ -153,12 +153,12 @@ Project-scoped access is controlled by the `permissions` table. The `RequireProj
 
 Permission flags are stored in context:
 
-| Context key | Source |
-|-------------|--------|
-| `can_view_contact` | `permissions.can_view_contact` |
-| `can_view_personal` | `permissions.can_view_personal` |
+| Context key          | Source                           |
+| -------------------- | -------------------------------- |
+| `can_view_contact`   | `permissions.can_view_contact`   |
+| `can_view_personal`  | `permissions.can_view_personal`  |
 | `can_view_documents` | `permissions.can_view_documents` |
-| `can_export` | `permissions.can_export` |
+| `can_export`         | `permissions.can_export`         |
 
 **Export access** is enforced at the route level by `RequireExport()` middleware on the `/export/*` route group. Do not add manual `CanExportFrom(c)` checks in handlers — use the middleware.
 
@@ -228,11 +228,11 @@ Everything else is served as attachment. CSP is set to `frame-ancestors 'self'` 
 
 The `SecurityHeaders()` middleware (`internal/middleware/security_headers.go`) sets:
 
-| Header | Value |
-|--------|-------|
-| `X-Content-Type-Options` | `nosniff` |
-| `X-Frame-Options` | `DENY` |
-| `Referrer-Policy` | `strict-origin-when-cross-origin` |
+| Header                    | Value                                                                |
+| ------------------------- | -------------------------------------------------------------------- |
+| `X-Content-Type-Options`  | `nosniff`                                                            |
+| `X-Frame-Options`         | `DENY`                                                               |
+| `Referrer-Policy`         | `strict-origin-when-cross-origin`                                    |
 | `Content-Security-Policy` | `default-src 'self'; object-src 'none'; frame-ancestors 'none'; ...` |
 
 **CSP note:** `style-src 'self' 'unsafe-inline'` is present to support Tailwind utility classes injected at runtime. If you add a strict CSP in future, use nonces.

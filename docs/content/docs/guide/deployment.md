@@ -105,3 +105,7 @@ If you use Nginx or another proxy, make sure to set:
 
 - `COOKIE_SECURE=true` in your environment
 - `CORS_ORIGINS` to your actual domain (e.g. `https://observer.yourorg.org`)
+
+## DEV_MODE
+
+`DEV_MODE=true` disables CORS enforcement, CSRF protection, and security headers. It exists only for local development and is set automatically by `just dev`. **Never set this in a production environment** — it removes all request origin and cross-site protections.

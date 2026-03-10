@@ -7,16 +7,18 @@ Observer records an audit log entry for every create, update, and delete operati
 
 ## What Gets Logged
 
-| Category          | Operations logged                                   |
-| ----------------- | --------------------------------------------------- |
-| People            | Create, update, delete person records               |
-| Support records   | Create, update, delete consultations                |
-| Migration records | Create, update, delete movement records             |
-| Households        | Create, update, delete household and member records |
-| Notes             | Create, update, delete case notes                   |
-| Documents         | Upload, update metadata, delete documents           |
-| Pets              | Create, update, delete pet records                  |
-| Permissions       | Assign, update, revoke project permissions          |
+| Category            | Operations logged                                   |
+| ------------------- | --------------------------------------------------- |
+| People              | Create, update, delete person records               |
+| Support records     | Create, update, delete consultations                |
+| Migration records   | Create, update, delete movement records             |
+| Households          | Create, update, delete household and member records |
+| Notes               | Create, update, delete case notes                   |
+| Documents           | Upload, update metadata, delete documents           |
+| Pets                | Create, update, delete pet records                  |
+| Permissions         | Assign, update, revoke project permissions          |
+| Admin — Users       | Create user, reset password                         |
+| Admin — Permissions | Update project permission                           |
 
 Authentication events (login, logout, token refresh) are not in the project audit log — they appear in server logs.
 

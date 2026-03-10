@@ -13,6 +13,7 @@
 ### Task 1: Add `common.search` i18n key to all locales
 
 **Files:**
+
 - Modify: `packages/observer-web/src/locales/en.json`
 - Modify: `packages/observer-web/src/locales/ru.json`
 - Modify: `packages/observer-web/src/locales/uk.json`
@@ -52,6 +53,7 @@ git commit -m "Add common.search i18n key to all locales"
 ### Task 2: Add `onSearch` prop to `FilterBar`
 
 **Files:**
+
 - Modify: `packages/observer-web/src/components/filter-bar.tsx`
 
 **Step 1: Update `FilterBarProps` and add the button**
@@ -108,6 +110,7 @@ git commit -m "Add onSearch button to FilterBar"
 ### Task 3: Thread `onSearch` through `DataTablePage`
 
 **Files:**
+
 - Modify: `packages/observer-web/src/components/data-table-page.tsx`
 
 **Step 1: Add prop and pass it to `FilterBar`**
@@ -156,16 +159,19 @@ git commit -m "Thread onSearch through DataTablePage to FilterBar"
 ### Task 4: Wire `onSearch` in people table page
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/projects/$projectId/people/index.tsx`
 
 **Step 1: Destructure `refetch` from `usePeople`**
 
 Find (line ~78):
+
 ```tsx
 const { data, isLoading } = usePeople(projectId, params);
 ```
 
 Replace with:
+
 ```tsx
 const { data, isLoading, refetch } = usePeople(projectId, params);
 ```
@@ -173,8 +179,9 @@ const { data, isLoading, refetch } = usePeople(projectId, params);
 **Step 2: Pass `refetch` as `onSearch` to `DataTablePage`**
 
 Find the `<DataTablePage` JSX and add:
+
 ```tsx
-onSearch={refetch}
+onSearch = { refetch };
 ```
 
 **Step 3: Verify TypeScript compiles**
@@ -195,16 +202,19 @@ git commit -m "Add search button to people table"
 ### Task 5: Wire `onSearch` in pets table page
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/projects/$projectId/pets/-pets-page.tsx`
 
 **Step 1: Destructure `refetch` from `usePets`**
 
 Find (line ~78):
+
 ```tsx
 const { data, isLoading } = usePets(projectId, params);
 ```
 
 Replace with:
+
 ```tsx
 const { data, isLoading, refetch } = usePets(projectId, params);
 ```
@@ -212,7 +222,7 @@ const { data, isLoading, refetch } = usePets(projectId, params);
 **Step 2: Pass to `DataTablePage`**
 
 ```tsx
-onSearch={refetch}
+onSearch = { refetch };
 ```
 
 **Step 3: Compile check + commit**
@@ -228,16 +238,19 @@ git commit -m "Add search button to pets table"
 ### Task 6: Wire `onSearch` in households table page
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/projects/$projectId/households/index.tsx`
 
 **Step 1: Destructure `refetch` from `useHouseholds`**
 
 Find (line ~53):
+
 ```tsx
 const { data, isLoading } = useHouseholds(projectId, params);
 ```
 
 Replace with:
+
 ```tsx
 const { data, isLoading, refetch } = useHouseholds(projectId, params);
 ```
@@ -245,7 +258,7 @@ const { data, isLoading, refetch } = useHouseholds(projectId, params);
 **Step 2: Pass to `DataTablePage`**
 
 ```tsx
-onSearch={refetch}
+onSearch = { refetch };
 ```
 
 **Step 3: Compile check + commit**
@@ -261,16 +274,19 @@ git commit -m "Add search button to households table"
 ### Task 7: Wire `onSearch` in audit logs page
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/projects/$projectId/audit-logs.tsx`
 
 **Step 1: Destructure `refetch` from `useProjectAuditLogs`**
 
 Find (line ~49):
+
 ```tsx
 const { data, isLoading } = useProjectAuditLogs(projectId, params);
 ```
 
 Replace with:
+
 ```tsx
 const { data, isLoading, refetch } = useProjectAuditLogs(projectId, params);
 ```
@@ -278,7 +294,7 @@ const { data, isLoading, refetch } = useProjectAuditLogs(projectId, params);
 **Step 2: Pass to `DataTablePage`**
 
 ```tsx
-onSearch={refetch}
+onSearch = { refetch };
 ```
 
 **Step 3: Compile check + commit**
@@ -294,16 +310,19 @@ git commit -m "Add search button to audit logs table"
 ### Task 8: Add search button inline to people report page
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/projects/$projectId/reports/people.tsx`
 
 **Step 1: Destructure `refetch` from `useReport`**
 
 Find (line ~69):
+
 ```tsx
 const { data, isLoading } = useReport(projectId, params);
 ```
 
 Replace with:
+
 ```tsx
 const { data, isLoading, refetch } = useReport(projectId, params);
 ```
@@ -317,17 +336,19 @@ import { Button } from "@/components/button";
 **Step 3: Add button at end of filter row**
 
 The filter row div ends at line ~263:
+
 ```tsx
             </div>  {/* closes flex flex-wrap items-start gap-4 */}
 ```
 
 Before that closing `</div>`, add:
+
 ```tsx
-              <div className="self-end">
-                <Button variant="secondary" onClick={() => refetch()}>
-                  {t("common.search")}
-                </Button>
-              </div>
+<div className="self-end">
+  <Button variant="secondary" onClick={() => refetch()}>
+    {t("common.search")}
+  </Button>
+</div>
 ```
 
 **Step 4: Compile check + commit**
@@ -343,16 +364,19 @@ git commit -m "Add search button to people report"
 ### Task 9: Add search button inline to pets report page
 
 **Files:**
+
 - Modify: `packages/observer-web/src/routes/_app/projects/$projectId/reports/pets.tsx`
 
 **Step 1: Destructure `refetch` from `usePetReport`**
 
 Find (line ~221):
+
 ```tsx
 const { data, isLoading } = usePetReport(projectId, params);
 ```
 
 Replace with:
+
 ```tsx
 const { data, isLoading, refetch } = usePetReport(projectId, params);
 ```
@@ -366,12 +390,13 @@ import { Button } from "@/components/button";
 **Step 3: Add button at end of filter row (line ~317)**
 
 Before the closing `</div>` of `flex flex-wrap items-start gap-4`:
+
 ```tsx
-              <div className="self-end">
-                <Button variant="secondary" onClick={() => refetch()}>
-                  {t("common.search")}
-                </Button>
-              </div>
+<div className="self-end">
+  <Button variant="secondary" onClick={() => refetch()}>
+    {t("common.search")}
+  </Button>
+</div>
 ```
 
 **Step 4: Compile check + commit**

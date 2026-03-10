@@ -11,22 +11,26 @@ Add an optional `onSearch` prop to `FilterBar`. When provided, a "Search" button
 ## Component Changes
 
 ### `FilterBar` (`filter-bar.tsx`)
+
 - Add `onSearch?: () => void` to `FilterBarProps`
 - When present, render a button after `{trailing}` at the end of the flex row
 
 ### `DataTablePage` (`data-table-page.tsx`)
+
 - Add `onSearch?: () => void` to `DataTablePageProps`
 - Pass it to `FilterBar`
 
 ## Pages to Update
 
 All pages that use `DataTablePage` with filters:
+
 - `people/index.tsx` — pass `refetch` from `usePeople`
 - `pets/-pets-page.tsx` — pass `refetch` from query
 - `households/index.tsx` — pass `refetch` from query
 - `audit-logs.tsx` — pass `refetch` from query
 
 Report pages with custom filter layouts:
+
 - `reports/people.tsx` — add button inline in filter section
 - `reports/pets.tsx` — add button inline in filter section
 

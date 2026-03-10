@@ -7,16 +7,16 @@ Observer iş maalymatdaryndağy ar bir tüzüü, cañyrtuu cana coq qyluu operat
 
 ## Emne cazylat
 
-| Kategorija         | Cazylğan operatsijalar                              |
-| ------------------ | --------------------------------------------------- |
-| Adamdar            | Adam cazuularyn tüzüü, cañyrtuu, coq qyluu         |
-| Qoldoo cazuulary   | Konsultatsijalardy tüzüü, cañyrtuu, coq qyluu      |
-| Migratsija cazuulary | Qyjmyl cazuularyn tüzüü, cañyrtuu, coq qyluu     |
-| Üj-bülölör         | Üj-bülö cana müçö cazularyn tüzüü, cañyrtuu, coq qyluu |
-| Eskertmeler        | Iş eskertmelerini tüzüü, cañyrtuu, coq qyluu       |
-| Dokumentter        | Cüktöö, metadatalardy cañyrtuu, dokumentterdi coq qyluu |
-| Üj canybarları     | Üj canybarlarynyn cazularyn tüzüü, cañyrtuu, coq qyluu |
-| Uruqsattar         | Dolboor uruqsattaryn berüü, cañyrtuu, qajtaryp aluu |
+| Kategorija           | Cazylğan operatsijalar                                  |
+| -------------------- | ------------------------------------------------------- |
+| Adamdar              | Adam cazuularyn tüzüü, cañyrtuu, coq qyluu              |
+| Qoldoo cazuulary     | Konsultatsijalardy tüzüü, cañyrtuu, coq qyluu           |
+| Migratsija cazuulary | Qyjmyl cazuularyn tüzüü, cañyrtuu, coq qyluu            |
+| Üj-bülölör           | Üj-bülö cana müçö cazularyn tüzüü, cañyrtuu, coq qyluu  |
+| Eskertmeler          | Iş eskertmelerini tüzüü, cañyrtuu, coq qyluu            |
+| Dokumentter          | Cüktöö, metadatalardy cañyrtuu, dokumentterdi coq qyluu |
+| Üj canybarları       | Üj canybarlarynyn cazularyn tüzüü, cañyrtuu, coq qyluu  |
+| Uruqsattar           | Dolboor uruqsattaryn berüü, cañyrtuu, qajtaryp aluu     |
 
 Autentifikasija okujalary (kirüü, çyğuu, tokendi cañyrtuu) dolboordun audit curnalynda coq — alar server curnaldarynda pajda bolot.
 
@@ -28,13 +28,13 @@ Audit curnalyna calgyz dolboor menecerleri cana eeleri kire alat.
 GET /projects/:project_id/audit?page=1&per_page=50
 ```
 
-| Parametr   | Süröttömö                              |
-| ---------- | -------------------------------------- |
-| `page`     | Baraqça nomeri (demejki 1)             |
-| `per_page` | Baraqçadağy natyjcalar (demejki 50)    |
+| Parametr   | Süröttömö                                    |
+| ---------- | -------------------------------------------- |
+| `page`     | Baraqça nomeri (demejki 1)                   |
+| `per_page` | Baraqçadağy natyjcalar (demejki 50)          |
 | `actor_id` | Özgörtüü casağan qoldonuuçu bojunça çypqaloo |
-| `start`    | Kün bojunça çypqaloo (CCCC-AA-KK)      |
-| `end`      | Kün bojunça çypqaloo (CCCC-AA-KK)      |
+| `start`    | Kün bojunça çypqaloo (CCCC-AA-KK)            |
+| `end`      | Kün bojunça çypqaloo (CCCC-AA-KK)            |
 
 ### Coop formaty
 
@@ -53,13 +53,13 @@ Ar bir audit cazuusu tömönkülördü qamtyjt:
 }
 ```
 
-| Tala          | Süröttömö                                                |
-| ------------- | -------------------------------------------------------- |
-| `actor_id`    | Araketti casağan qoldonuuçu                              |
-| `actor_ip`    | Suroo-talaptyn IP daregi                                 |
-| `action`      | `create`, `update` ce `delete`                           |
-| `entity_type` | Cazuu türü (`person`, `support_record`, `note`, c.b.)   |
-| `entity_id`   | Taasir etken cazuunun ULID'i                             |
+| Tala          | Süröttömö                                             |
+| ------------- | ----------------------------------------------------- |
+| `actor_id`    | Araketti casağan qoldonuuçu                           |
+| `actor_ip`    | Suroo-talaptyn IP daregi                              |
+| `action`      | `create`, `update` ce `delete`                        |
+| `entity_type` | Cazuu türü (`person`, `support_record`, `note`, c.b.) |
+| `entity_id`   | Taasir etken cazuunun ULID'i                          |
 
 ## Web-interfejste audit
 

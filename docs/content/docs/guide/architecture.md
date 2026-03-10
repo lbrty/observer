@@ -15,8 +15,8 @@ graph TD
     SERVER --> MW[Middleware<br>internal/middleware]
     MW --> HANDLER[Handlers<br>internal/handler]
     HANDLER --> USECASE[Use Cases<br>internal/usecase]
-    USECASE --> IFACE[Repository Interfaces<br>internal/domain/*/repository.go]
-    IFACE -.implements.-> IMPL[Repository Implementations<br>internal/postgres]
+    USECASE --> IFACE[Repository Interfaces<br>internal/repository/interfaces.go]
+    IFACE -.implements.-> IMPL[Repository Implementations<br>internal/repository]
     IMPL --> DB[(PostgreSQL)]
     USECASE --> CRYPTO[Crypto<br>internal/crypto]
     MW --> CRYPTO
@@ -34,7 +34,7 @@ The codebase is organized in layers. Inner layers define the rules, outer layers
 ```mermaid
 graph LR
     subgraph Outer["Outer Layer (Infrastructure)"]
-        PG[internal/postgres]
+        PG[internal/repository]
         SRV[internal/server]
         CFG[internal/config]
     end

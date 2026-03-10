@@ -9,12 +9,12 @@ Observer iki seviyeli bir izin modeli kullanır. Her kullanıcının yönetici i
 
 Platform rolleri kullanıcı hesabı oluşturulduğunda ayarlanır ve yalnızca bir yönetici tarafından değiştirilebilir.
 
-| Rol          | Ne yapabilirler                                                           |
-| ------------ | ------------------------------------------------------------------------- |
+| Rol          | Ne yapabilirler                                                              |
+| ------------ | ---------------------------------------------------------------------------- |
 | `admin`      | Her şeye tam erişim — kullanıcılar, projeler, referans verileri, tüm davalar |
-| `staff`      | Referans verileri ve projeleri yönetme; diğer kullanıcıları yönetemez    |
-| `consultant` | Atandıkları projelerde çalışma; yönetici paneline erişim yok             |
-| `guest`      | Atandıkları projelerde salt okunur erişim                                |
+| `staff`      | Referans verileri ve projeleri yönetme; diğer kullanıcıları yönetemez        |
+| `consultant` | Atandıkları projelerde çalışma; yönetici paneline erişim yok                 |
+| `guest`      | Atandıkları projelerde salt okunur erişim                                    |
 
 Platform yöneticileri tüm projelerde otomatik olarak **proje sahibi** olarak hareket eder — proje düzeyindeki izin kontrollerini tamamen atlarlar.
 
@@ -31,24 +31,24 @@ Proje rolleri belirli bir proje içinde geçerlidir. Bir kullanıcının projeye
 
 ### Eylem Gereksinimleri
 
-| Eylem              | Minimum proje rolü |
-| ------------------ | ------------------ |
-| Veri okuma         | `viewer`           |
-| Kayıt oluşturma    | `consultant`       |
-| Kayıt güncelleme   | `consultant`       |
-| Kayıt silme        | `manager`          |
-| Üye yönetimi       | `manager`          |
-| Veri dışa aktarma  | `consultant`       |
+| Eylem             | Minimum proje rolü |
+| ----------------- | ------------------ |
+| Veri okuma        | `viewer`           |
+| Kayıt oluşturma   | `consultant`       |
+| Kayıt güncelleme  | `consultant`       |
+| Kayıt silme       | `manager`          |
+| Üye yönetimi      | `manager`          |
+| Veri dışa aktarma | `consultant`       |
 
 ## Hassasiyet Bayrakları
 
 Her proje izninin bir yönetici veya sahip tarafından kullanıcı başına, proje başına ayarlanan üç bağımsız boolean bayrağı vardır.
 
-| Bayrak                | Neyi kontrol eder                                                           |
-| --------------------- | --------------------------------------------------------------------------- |
-| `can_view_contact`    | Kişi kayıtlarındaki telefon numaraları ve e-posta adresleri                 |
-| `can_view_personal`   | Tam ad, doğum tarihi, ulusal kimlik (`external_id`), onay bilgisi           |
-| `can_view_documents`  | Belge dosyası erişimi ve belge meta verileri                                |
+| Bayrak               | Neyi kontrol eder                                                 |
+| -------------------- | ----------------------------------------------------------------- |
+| `can_view_contact`   | Kişi kayıtlarındaki telefon numaraları ve e-posta adresleri       |
+| `can_view_personal`  | Tam ad, doğum tarihi, ulusal kimlik (`external_id`), onay bilgisi |
+| `can_view_documents` | Belge dosyası erişimi ve belge meta verileri                      |
 
 Bir bayrak kapalı olduğunda, ilgili alanlar API yanıtlarından ve CSV dışa aktarmalarından çıkarılır — veriler veritabanında kalır ancak o kullanıcıya gönderilmez. `can_view_personal: false` olan bir danışman kayıt oluşturabilse de dışa aktarma yoluyla ulusal kimliklere veya doğum tarihlerine erişemez.
 

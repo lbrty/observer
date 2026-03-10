@@ -15,12 +15,12 @@ GET /projects/:project_id/export/people?format=csv
 
 İsteğe bağlı sorgu parametreleri:
 
-| Parametre     | Açıklama                                         |
-| ------------- | ------------------------------------------------ |
-| `start`       | Kayıt tarihine göre filtrele (YYYY-AA-GG)        |
-| `end`         | Kayıt tarihine göre filtrele (YYYY-AA-GG)        |
-| `category_id` | Kırılganlık kategorisine göre filtrele           |
-| `tag_id`      | Etikete göre filtrele                            |
+| Parametre     | Açıklama                                  |
+| ------------- | ----------------------------------------- |
+| `start`       | Kayıt tarihine göre filtrele (YYYY-AA-GG) |
+| `end`         | Kayıt tarihine göre filtrele (YYYY-AA-GG) |
+| `category_id` | Kırılganlık kategorisine göre filtrele    |
+| `tag_id`      | Etikete göre filtrele                     |
 
 Yanıt akış olarak iletilir — büyük veri kümeleri bağlantının zaman aşımına uğramaması için aşamalı olarak gönderilir.
 
