@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { PieChart } from "@/components/charts/pie-chart";
@@ -14,7 +14,7 @@ import { useSupportRecords } from "@/hooks/use-support-records";
 
 import type { CountResult } from "@/types/report";
 
-export const Route = createFileRoute("/_app/projects/$projectId/people/$personId/stats")({
+export const Route = createLazyFileRoute("/_app/projects/$projectId/people/$personId/stats")({
   component: PersonStats,
 });
 

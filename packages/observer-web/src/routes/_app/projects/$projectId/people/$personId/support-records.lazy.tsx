@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -14,7 +14,7 @@ import { useSupportRecords } from "@/hooks/use-support-records";
 import { useProjectRole } from "@/hooks/use-project-role";
 import type { SupportRecord } from "@/types/support-record";
 
-export const Route = createFileRoute("/_app/projects/$projectId/people/$personId/support-records")({
+export const Route = createLazyFileRoute("/_app/projects/$projectId/people/$personId/support-records")({
   component: PersonSupportRecords,
 });
 

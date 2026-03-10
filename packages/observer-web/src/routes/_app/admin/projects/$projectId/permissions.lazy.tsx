@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -20,7 +20,7 @@ import {
 import { useAuth } from "@/stores/auth";
 import type { ProjectPermissionMember } from "@/types/permission";
 
-export const Route = createFileRoute("/_app/admin/projects/$projectId/permissions")({
+export const Route = createLazyFileRoute("/_app/admin/projects/$projectId/permissions")({
   component: PermissionsPage,
 });
 

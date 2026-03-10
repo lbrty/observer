@@ -2,7 +2,7 @@ import { type SyntheticEvent, useState } from "react";
 
 import { ArrowLeftIcon, GlobeIcon } from "@/components/icons";
 import { Field } from "@base-ui/react/field";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -16,7 +16,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { useCreateState, useDeleteState, useStates, useUpdateState } from "@/hooks/use-states";
 import type { State } from "@/types/reference";
 
-export const Route = createFileRoute("/_app/admin/reference/countries/$countryId/")({
+export const Route = createLazyFileRoute("/_app/admin/reference/countries/$countryId/")({
   component: StatesPage,
 });
 

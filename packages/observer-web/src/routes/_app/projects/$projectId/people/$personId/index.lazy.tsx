@@ -1,6 +1,6 @@
 import { type SyntheticEvent, useState } from "react";
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -18,7 +18,7 @@ import { useToast } from "@/stores/toast";
 
 import type { SupportSphere, SupportType } from "@/types/support-record";
 
-export const Route = createFileRoute("/_app/projects/$projectId/people/$personId/")({
+export const Route = createLazyFileRoute("/_app/projects/$projectId/people/$personId/")({
   component: PersonOverview,
 });
 

@@ -1,7 +1,7 @@
 import { type SyntheticEvent, useState } from "react";
 
 import { Field } from "@base-ui/react/field";
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -23,7 +23,7 @@ import { resolveTagColor } from "@/lib/tag-color";
 import { useToast } from "@/stores/toast";
 import type { Tag } from "@/types/tag";
 
-export const Route = createFileRoute("/_app/projects/$projectId/tags/")({
+export const Route = createLazyFileRoute("/_app/projects/$projectId/tags/")({
   component: TagsPage,
 });
 

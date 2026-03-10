@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { DateRangePicker } from "@/components/date-picker";
@@ -11,7 +11,7 @@ import { typeKeys } from "@/constants/support";
 import { useCustomReport } from "@/hooks/use-reports";
 import type { CustomReportParams } from "@/types/report";
 
-export const Route = createFileRoute("/_app/projects/$projectId/reports/custom")({
+export const Route = createLazyFileRoute("/_app/projects/$projectId/reports/custom")({
   component: CustomReportPage,
 });
 

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -9,7 +9,7 @@ import type { FilterDef } from "@/components/filter-bar";
 import { useProjectAuditLogs } from "@/hooks/use-audit-logs";
 import type { AuditEntry } from "@/types/audit";
 
-export const Route = createFileRoute("/_app/projects/$projectId/audit-logs")({
+export const Route = createLazyFileRoute("/_app/projects/$projectId/audit-logs")({
   component: ProjectAuditLogsPage,
 });
 

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Dialog } from "@base-ui/react/dialog";
@@ -46,7 +46,7 @@ import { useProjectRole } from "@/hooks/use-project-role";
 import { handleApiError } from "@/lib/form-error";
 import type { Document } from "@/types/document";
 
-export const Route = createFileRoute("/_app/projects/$projectId/people/$personId/documents")({
+export const Route = createLazyFileRoute("/_app/projects/$projectId/people/$personId/documents")({
   component: PersonDocuments,
 });
 

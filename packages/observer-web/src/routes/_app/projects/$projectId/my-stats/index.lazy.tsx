@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { type BarLegendItem } from "@/components/charts/bar-chart";
@@ -30,7 +30,7 @@ import { exportReportCSV } from "@/lib/export-csv";
 import { useAuth } from "@/stores/auth";
 import type { ReportParams } from "@/types/report";
 
-export const Route = createFileRoute("/_app/projects/$projectId/my-stats/")({
+export const Route = createLazyFileRoute("/_app/projects/$projectId/my-stats/")({
   component: MyStatsPage,
 });
 

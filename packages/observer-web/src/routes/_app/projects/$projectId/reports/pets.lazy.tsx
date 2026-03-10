@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { DateRangePicker } from "@/components/date-picker";
@@ -20,7 +20,7 @@ import { usePetReport } from "@/hooks/use-pet-reports";
 import { exportGroupCSV } from "@/lib/export-csv";
 import type { CountResult, MonthlyStatusCount, PetReportParams, ReportGroup } from "@/types/report";
 
-export const Route = createFileRoute("/_app/projects/$projectId/reports/pets")({
+export const Route = createLazyFileRoute("/_app/projects/$projectId/reports/pets")({
   component: PetReportsPage,
 });
 

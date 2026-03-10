@@ -1,5 +1,5 @@
 import { Field } from "@base-ui/react/field";
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { type SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -15,7 +15,7 @@ import { useDeactivateUser, useReactivateUser, useUpdateUser, useUser } from "@/
 import { api } from "@/lib/api";
 import { handleApiError } from "@/lib/form-error";
 
-export const Route = createFileRoute("/_app/admin/users/$userId")({
+export const Route = createLazyFileRoute("/_app/admin/users/$userId")({
   component: UserDetailPage,
 });
 

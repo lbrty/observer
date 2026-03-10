@@ -1,5 +1,5 @@
 import { Field } from "@base-ui/react/field";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { type SyntheticEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -18,7 +18,7 @@ import { useOffices } from "@/hooks/use-offices";
 import { useCreateUser, useUsers } from "@/hooks/use-users";
 import type { AdminUser } from "@/types/admin";
 
-export const Route = createFileRoute("/_app/admin/users/")({
+export const Route = createLazyFileRoute("/_app/admin/users/")({
   component: UsersPage,
 });
 

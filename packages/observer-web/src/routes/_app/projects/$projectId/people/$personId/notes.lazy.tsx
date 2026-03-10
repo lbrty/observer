@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -9,7 +9,7 @@ import { PencilSimpleIcon, TrashIcon, XIcon } from "@/components/icons";
 import { useCreateNote, useDeleteNote, useNotes, useUpdateNote } from "@/hooks/use-notes";
 import { useProjectRole } from "@/hooks/use-project-role";
 
-export const Route = createFileRoute("/_app/projects/$projectId/people/$personId/notes")({
+export const Route = createLazyFileRoute("/_app/projects/$projectId/people/$personId/notes")({
   component: PersonNotes,
 });
 

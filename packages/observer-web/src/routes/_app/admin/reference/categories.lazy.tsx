@@ -1,7 +1,7 @@
 import { type SyntheticEvent, useState } from "react";
 
 import { Field } from "@base-ui/react/field";
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -19,7 +19,7 @@ import {
 } from "@/hooks/use-categories";
 import type { Category } from "@/types/reference";
 
-export const Route = createFileRoute("/_app/admin/reference/categories")({
+export const Route = createLazyFileRoute("/_app/admin/reference/categories")({
   component: CategoriesPage,
 });
 

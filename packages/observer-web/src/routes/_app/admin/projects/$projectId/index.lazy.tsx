@@ -1,5 +1,5 @@
 import { Field } from "@base-ui/react/field";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { type SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/page-header";
 import { UISelect } from "@/components/ui-select";
 import { useProject, useUpdateProject } from "@/hooks/use-projects";
 
-export const Route = createFileRoute("/_app/admin/projects/$projectId/")({
+export const Route = createLazyFileRoute("/_app/admin/projects/$projectId/")({
   component: ProjectDetailPage,
 });
 

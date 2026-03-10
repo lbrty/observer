@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -22,7 +22,7 @@ import { useProjectRole } from "@/hooks/use-project-role";
 import { api } from "@/lib/api";
 import type { Household } from "@/types/household";
 
-export const Route = createFileRoute("/_app/projects/$projectId/households/")({
+export const Route = createLazyFileRoute("/_app/projects/$projectId/households/")({
   component: HouseholdsListPage,
 });
 
