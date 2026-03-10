@@ -64,7 +64,8 @@ func storagePath(projectID, personID, docID, name string) string {
 }
 
 func thumbnailPath(originalPath string) string {
-	return originalPath + "_thumb.jpg"
+	ext := path.Ext(originalPath)
+	return strings.TrimSuffix(originalPath, ext) + "_thumb.jpg"
 }
 
 func isImage(mimeType string) bool {
