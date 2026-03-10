@@ -10,6 +10,18 @@ export default defineConfig(() => {
     build: {
       outDir: "../../internal/spa/dist",
       emptyOutDir: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            "vendor-react":   ["react", "react-dom"],
+            "vendor-router":  ["@tanstack/react-router", "@tanstack/react-query", "@tanstack/react-table"],
+            "vendor-d3":      ["d3", "d3-sankey"],
+            "vendor-ui":      ["@base-ui/react", "cmdk", "react-day-picker"],
+            "vendor-i18n":    ["i18next", "react-i18next"],
+            "vendor-icons":   ["@phosphor-icons/react"],
+          },
+        },
+      },
     },
     plugins: [
       react({
