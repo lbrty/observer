@@ -155,7 +155,7 @@ function CustomReportPage() {
                       selected
                         ? "bg-accent text-accent-fg"
                         : disabled
-                          ? "cursor-not-allowed bg-bg-tertiary text-fg-quaternary"
+                          ? "cursor-not-allowed bg-bg-tertiary text-fg-tertiary/50"
                           : "bg-bg-tertiary text-fg-secondary hover:text-fg"
                     }`}
                   >
