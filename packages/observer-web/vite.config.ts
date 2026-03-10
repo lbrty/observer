@@ -12,13 +12,15 @@ export default defineConfig(() => {
       emptyOutDir: true,
       rollupOptions: {
         output: {
-          manualChunks: {
-            "vendor-react":   ["react", "react-dom"],
-            "vendor-router":  ["@tanstack/react-router", "@tanstack/react-query", "@tanstack/react-table"],
-            "vendor-d3":      ["d3", "d3-sankey"],
-            "vendor-ui":      ["@base-ui/react", "cmdk", "react-day-picker"],
-            "vendor-i18n":    ["i18next", "react-i18next"],
-            "vendor-icons":   ["@phosphor-icons/react"],
+          manualChunks(id) {
+            if (id.includes("node_modules")) {
+              if (id.includes("react-dom") || id.includes("/react/")) return "vendor-react";
+              if (id.includes("@tanstack/react-router") || id.includes("@tanstack/react-query") || id.includes("@tanstack/react-table")) return "vendor-router";
+              if (id.includes("/d3") || id.includes("d3-sankey")) return "vendor-d3";
+              if (id.includes("@base-ui") || id.includes("cmdk") || id.includes("react-day-picker")) return "vendor-ui";
+              if (id.includes("i18next")) return "vendor-i18n";
+              if (id.includes("@phosphor-icons")) return "vendor-icons";
+            }
           },
         },
       },
