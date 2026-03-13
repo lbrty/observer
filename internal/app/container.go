@@ -125,7 +125,13 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	reportRepo := repository.NewReportRepository(sqlxDB)
 	petReportRepo := repository.NewPetReportRepository(sqlxDB)
 
-	fileStorage, err := storage.NewLocalStorage(cfg.Storage.Path)
+	var fileStorage storage.FileStorage
+	switch cfg.Storage.Backend {
+	case "s3":
+		fileStorage, err = storage.NewS3Storage(cfg.Storage)
+	default:
+		fileStorage, err = storage.NewLocalStorage(cfg.Storage.Path)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("init file storage: %w", err)
 	}

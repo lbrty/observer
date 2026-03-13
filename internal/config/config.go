@@ -42,7 +42,13 @@ func (c SentryConfig) Enabled() bool {
 }
 
 type StorageConfig struct {
-	Path string
+	Path        string // STORAGE_PATH,    default "data/uploads"
+	Backend     string // STORAGE_BACKEND, default "local"
+	S3Endpoint  string // S3_ENDPOINT,     default "" (uses AWS default resolver)
+	S3Bucket    string // S3_BUCKET
+	S3Region    string // S3_REGION,       default "us-east-1"
+	S3AccessKey string // S3_ACCESS_KEY    (optional — falls back to SDK credential chain)
+	S3SecretKey string // S3_SECRET_KEY    (optional — falls back to SDK credential chain)
 }
 
 type RedisConfig struct {
@@ -148,7 +154,13 @@ func Load() (*Config, error) {
 			RegisterRate: getEnvInt("RATE_LIMIT_REGISTER", 5),
 		},
 		Storage: StorageConfig{
-			Path: getEnv("STORAGE_PATH", "data/uploads"),
+			Path:        getEnv("STORAGE_PATH", "data/uploads"),
+			Backend:     getEnv("STORAGE_BACKEND", "local"),
+			S3Endpoint:  getEnv("S3_ENDPOINT", ""),
+			S3Bucket:    getEnv("S3_BUCKET", ""),
+			S3Region:    getEnv("S3_REGION", "us-east-1"),
+			S3AccessKey: getEnv("S3_ACCESS_KEY", ""),
+			S3SecretKey: getEnv("S3_SECRET_KEY", ""),
 		},
 		Sentry: SentryConfig{
 			DSN:              getEnv("SENTRY_DSN", ""),
