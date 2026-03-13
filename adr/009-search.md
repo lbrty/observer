@@ -153,8 +153,7 @@ endpoint but with a higher server-side limit (configurable, default 50 per type)
 
 ### Debounce
 
-Queries are debounced **300 ms** after the last keystroke. Requests with fewer than
-2 characters are not sent.
+Queries are debounced **300 ms** after the last keystroke.
 
 ### Hook
 

@@ -38,6 +38,3 @@ just migrate-up   # applies all pending .up.sql files
 
 The `migrate` CLI subcommand embedded in the observer binary also applies pending migrations on startup when invoked directly.
 
-## Alternatives Rejected
-
-**Bidirectional migrations** (`.up.sql` + `.down.sql`): creates maintenance overhead with low practical benefit. Down files are almost always untested, often wrong, and the rollback path destroys data. Observer treats database state as precious and explicitly rejects the rollback model.

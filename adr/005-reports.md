@@ -176,7 +176,7 @@ When `birth_date` is set and `age_group` is NULL, the application layer computes
 | 38  | People and their family members who received **social** consultations | People + Units |
 | 39  | People and their family members registered in a given period          | People + Units |
 
-**Schema:** `households` + `household_members`. A family unit is one `households` row; members are all rows in `household_members` with that `household_id`. Use `household_members.relationship = 'head'` to identify the nominated head. The `people.parent_id` self-reference has been replaced by this model (see ADR-003 migration 000023).
+**Schema:** `households` + `household_members`. A family unit is one `households` row; members are all rows in `household_members` with that `household_id`. Use `household_members.relationship = 'head'` to identify the nominated head. The `people.parent_id` self-reference has been replaced by this model (see ADR-003 migration 000022).
 
 ## Reference Query Patterns
 
@@ -192,12 +192,17 @@ GROUP  BY type;
 
 ### Pattern B — People count by IDP status and registration window
 
+`idp_status` is not a stored column — it is derived via `origin_place_id → places.state_id → states.conflict_zone`. Rows where `conflict_zone IS NULL` are non-IDPs.
+
 ```sql
-SELECT idp_status, COUNT(*) AS total
-FROM   people
-WHERE  project_id    = :project_id
-  AND  registered_at BETWEEN :start AND :end
-GROUP  BY idp_status;
+SELECT COALESCE(st.conflict_zone, 'non-idp') AS idp_status,
+       COUNT(*)                               AS total
+FROM   people p
+LEFT   JOIN places pl ON pl.id = p.origin_place_id
+LEFT   JOIN states st ON st.id = pl.state_id
+WHERE  p.project_id    = :project_id
+  AND  p.registered_at BETWEEN :start AND :end
+GROUP  BY st.conflict_zone;
 ```
 
 ### Pattern C — Distinct people by sex who received a consultation type

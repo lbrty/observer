@@ -65,16 +65,6 @@ Tokens are defined as CSS custom properties in `packages/observer-web/src/main.c
 --shadow-card, --shadow-elevated, --shadow-overlay
 ```
 
-### Accent scale shifting
-
-Accent values shift across themes to preserve visual weight:
-
-| Token      | Light     | Dark      | Light HC  | Dark HC   |
-| ---------- | --------- | --------- | --------- | --------- |
-| `--accent` | `#b07825` | `#c9953a` | `#885010` | `#e0a840` |
-
-One stop lighter on Dark, two stops lighter on Dark HC, one stop darker on Light HC.
-
 ### Current CSS snapshot
 
 Source: `packages/observer-web/src/main.css`
@@ -171,7 +161,7 @@ Source: `packages/observer-web/src/main.css`
 | `--shadow-elevated`  | `rgba(26, 25, 22, 0.3)`   |
 | `--shadow-overlay`   | `rgba(26, 25, 22, 0.08)`  |
 
-### Backend representation
+### Frontend persistence
 
 Theme preference is stored in the browser via `localStorage` under the key `observer-theme`. The frontend reads this value on load and sets `data-theme` on the root `<html>` element. Valid values: `"dark"`, `"light"`, `"dark-hc"`, `"light-hc"`, `"system"`. `"system"` defers to `prefers-color-scheme`.
 
