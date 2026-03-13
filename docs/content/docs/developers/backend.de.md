@@ -34,9 +34,8 @@ Handler sind schlank. Sie binden, rufen auf, antworten — nichts weiter.
 
 ```go
 func (h *PersonHandler) Create(c *gin.Context) {
-    var req CreatePersonRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+    req, ok := bindJSON[CreatePersonRequest](c)
+    if !ok {
         return
     }
 
@@ -49,13 +48,15 @@ func (h *PersonHandler) Create(c *gin.Context) {
         // ... Felder aus req
     })
     if err != nil {
-        handleError(c, err)
+        HandleError(c, err)
         return
     }
 
     c.JSON(http.StatusCreated, out)
 }
 ```
+
+`bindJSON[T]` ist in `internal/handler/errors.go` definiert. Sie dekodiert den Request-Body und schreibt bei Fehler eine `400`-Antwort; sie gibt `false` zurück, damit der Handler sofort beenden kann.
 
 ## Use-Case-Muster
 

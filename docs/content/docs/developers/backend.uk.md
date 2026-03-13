@@ -34,9 +34,8 @@ weight: 3
 
 ```go
 func (h *PersonHandler) Create(c *gin.Context) {
-    var req CreatePersonRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+    req, ok := bindJSON[CreatePersonRequest](c)
+    if !ok {
         return
     }
 
@@ -49,13 +48,15 @@ func (h *PersonHandler) Create(c *gin.Context) {
         // ... поля з req
     })
     if err != nil {
-        handleError(c, err)
+        HandleError(c, err)
         return
     }
 
     c.JSON(http.StatusCreated, out)
 }
 ```
+
+`bindJSON[T]` визначена в `internal/handler/errors.go`. Вона декодує тіло запиту та записує відповідь `400` при помилці, повертаючи `false`, щоб обробник міг одразу завершитися.
 
 ## Шаблон варіанту використання
 

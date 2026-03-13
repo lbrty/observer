@@ -34,9 +34,8 @@ Iştetkiçter cuqa. Alar bajloo, çaqyruu, coop berüü ğana — başqa eç ner
 
 ```go
 func (h *PersonHandler) Create(c *gin.Context) {
-    var req CreatePersonRequest
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+    req, ok := bindJSON[CreatePersonRequest](c)
+    if !ok {
         return
     }
 
@@ -49,13 +48,15 @@ func (h *PersonHandler) Create(c *gin.Context) {
         // ... req dan talalar
     })
     if err != nil {
-        handleError(c, err)
+        HandleError(c, err)
         return
     }
 
     c.JSON(http.StatusCreated, out)
 }
 ```
+
+`bindJSON[T]` funksiasy `internal/handler/errors.go` fajlynda anyqtalat. Ol suranym denesini dekodolojt cana qatalyq bolğondo `400` cawapty jazat, iştetkiç dароо qajtara aluu üçün `false` qajtarat.
 
 ## Qoldonuu uçuru ülgüsü
 

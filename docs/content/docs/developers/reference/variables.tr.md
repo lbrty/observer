@@ -53,13 +53,30 @@ weight: 1
 | -------------- | ----------------------- | ---------------------------------- |
 | `CORS_ORIGINS` | `http://localhost:5173` | Virgülle ayrılmış izinli kaynaklar |
 
+### Depolama
+
+| Değişken          | Varsayılan     | Açıklama                                                              |
+| ----------------- | -------------- | --------------------------------------------------------------------- |
+| `STORAGE_PATH`    | `data/uploads` | Yerel dosya sistemi kökü (`STORAGE_BACKEND=local` olduğunda kullanılır) |
+| `STORAGE_BACKEND` | `local`        | Depolama arka ucu: `local` veya `s3`                                  |
+| `S3_ENDPOINT`     | `""`           | S3 endpoint URL'i (boş = AWS varsayılanı)                             |
+| `S3_BUCKET`       | `""`           | S3 bucket adı (backend `s3` olduğunda zorunlu)                        |
+| `S3_REGION`       | `us-east-1`    | S3 bölgesi                                                            |
+| `S3_ACCESS_KEY`   | `""`           | AWS access key (isteğe bağlı — SDK zincirine geri döner)              |
+| `S3_SECRET_KEY`   | `""`           | AWS secret key (isteğe bağlı — SDK zincirine geri döner)              |
+
 ### Diğer
 
-| Değişken          | Varsayılan       | Açıklama                                     |
-| ----------------- | ---------------- | -------------------------------------------- |
-| `LOG_LEVEL`       | `info`           | Log seviyesi                                 |
-| `REDIS_URI`       | `localhost:6379` | Redis bağlantı URI'si                        |
-| `SWAGGER_ENABLED` | `false`          | `/swagger/` adresinde Swagger UI etkinleştir |
+| Değişken                    | Varsayılan                 | Açıklama                                              |
+| --------------------------- | -------------------------- | ----------------------------------------------------- |
+| `DEV_MODE`                  | `false`                    | Geliştirme modunu etkinleştir                         |
+| `LOG_LEVEL`                 | `info`                     | Log seviyesi                                          |
+| `REDIS_URL`                 | `redis://localhost:6379/0` | Redis bağlantı URL'i                                  |
+| `SWAGGER_ENABLED`           | `false`                    | `/swagger/` adresinde Swagger UI etkinleştir          |
+| `RATE_LIMIT_LOGIN`          | `10`                       | Dakika başına maksimum giriş denemesi                 |
+| `RATE_LIMIT_REGISTER`       | `5`                        | Dakika başına maksimum kayıt denemesi                 |
+| `SENTRY_DSN`                | `""`                       | Sentry DSN (boş — Sentry devre dışı)                  |
+| `SENTRY_TRACES_SAMPLE_RATE` | `0.1`                      | Sentry performans izleme örnekleme oranı              |
 
 ## Ön yüz ortam değişkenleri
 

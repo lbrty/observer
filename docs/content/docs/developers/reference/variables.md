@@ -53,13 +53,30 @@ weight: 1
 | -------------- | ----------------------- | ------------------------------- |
 | `CORS_ORIGINS` | `http://localhost:5173` | Comma-separated allowed origins |
 
+### Storage
+
+| Variable          | Default        | Description                                         |
+| ----------------- | -------------- | --------------------------------------------------- |
+| `STORAGE_PATH`    | `data/uploads` | Local filesystem root (used when `STORAGE_BACKEND=local`) |
+| `STORAGE_BACKEND` | `local`        | Storage backend: `local` or `s3`                    |
+| `S3_ENDPOINT`     | `""`           | S3 endpoint URL (empty = AWS default)               |
+| `S3_BUCKET`       | `""`           | S3 bucket name (required when backend is `s3`)      |
+| `S3_REGION`       | `us-east-1`    | S3 region                                           |
+| `S3_ACCESS_KEY`   | `""`           | AWS access key (optional — falls back to SDK chain) |
+| `S3_SECRET_KEY`   | `""`           | AWS secret key (optional — falls back to SDK chain) |
+
 ### Other
 
-| Variable          | Default          | Description                      |
-| ----------------- | ---------------- | -------------------------------- |
-| `LOG_LEVEL`       | `info`           | Log level                        |
-| `REDIS_URI`       | `localhost:6379` | Redis connection URI             |
-| `SWAGGER_ENABLED` | `false`          | Enable Swagger UI at `/swagger/` |
+| Variable                    | Default          | Description                              |
+| --------------------------- | ---------------- | ---------------------------------------- |
+| `DEV_MODE`                  | `false`          | Enable development mode                  |
+| `LOG_LEVEL`                 | `info`           | Log level                                |
+| `REDIS_URL`                 | `redis://localhost:6379/0` | Redis connection URL          |
+| `SWAGGER_ENABLED`           | `false`          | Enable Swagger UI at `/swagger/`         |
+| `RATE_LIMIT_LOGIN`          | `10`             | Max login attempts per minute            |
+| `RATE_LIMIT_REGISTER`       | `5`              | Max registration attempts per minute     |
+| `SENTRY_DSN`                | `""`             | Sentry DSN (empty disables Sentry)       |
+| `SENTRY_TRACES_SAMPLE_RATE` | `0.1`            | Sentry performance traces sample rate    |
 
 ## Frontend environment variables
 

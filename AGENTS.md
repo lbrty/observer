@@ -18,7 +18,7 @@ internal/
   middleware/     # HTTP middleware (auth, RBAC)
   postgres/       # repository implementations
   crypto/         # RSA keys, Argon hasher, token generator
-  storage/        # file storage interface + local filesystem impl
+  storage/        # file storage interface + local filesystem + S3 impl (ADR-010)
   config/         # reads env vars with defaults
   server/         # HTTP server setup
   app/            # DI container (manual wiring)

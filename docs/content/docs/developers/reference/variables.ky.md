@@ -53,13 +53,30 @@ weight: 1
 | -------------- | ----------------------- | ---------------------------------------------- |
 | `CORS_ORIGINS` | `http://localhost:5173` | Ütür menen bölünğön uruqsat berilgen originter |
 
+### Saqtoo
+
+| Özgörmö           | Default        | Taanyştyruu                                                     |
+| ----------------- | -------------- | --------------------------------------------------------------- |
+| `STORAGE_PATH`    | `data/uploads` | Lokal fajl sistemesinin tübü (`STORAGE_BACKEND=local` bolğondo) |
+| `STORAGE_BACKEND` | `local`        | Saqtoo backend: `local` ce `s3`                                 |
+| `S3_ENDPOINT`     | `""`           | S3 endpoint URL (boş = AWS defolt)                              |
+| `S3_BUCKET`       | `""`           | S3 bucket aty (backend `s3` bolğondo mildet)                    |
+| `S3_REGION`       | `us-east-1`    | S3 region                                                       |
+| `S3_ACCESS_KEY`   | `""`           | AWS access key (mildet emes — SDK chain qoldoloт)               |
+| `S3_SECRET_KEY`   | `""`           | AWS secret key (mildet emes — SDK chain qoldoloт)               |
+
 ### Başqalar
 
-| Özgörmö           | Default          | Taanyştyruu                    |
-| ----------------- | ---------------- | ------------------------------ |
-| `LOG_LEVEL`       | `info`           | Log deñgeeli                   |
-| `REDIS_URI`       | `localhost:6379` | Redis bajlanyş URI             |
-| `SWAGGER_ENABLED` | `false`          | `/swagger/` da Swagger UI açuu |
+| Özgörmö                     | Default                    | Taanyştyruu                              |
+| --------------------------- | -------------------------- | ---------------------------------------- |
+| `DEV_MODE`                  | `false`                    | Öndürüştü rejimdi qoşuu                  |
+| `LOG_LEVEL`                 | `info`                     | Log deñgeeli                             |
+| `REDIS_URL`                 | `redis://localhost:6379/0` | Redis bajlanyş URL                       |
+| `SWAGGER_ENABLED`           | `false`                    | `/swagger/` da Swagger UI açuu           |
+| `RATE_LIMIT_LOGIN`          | `10`                       | Minutasyna iriştüünün maks sanasy        |
+| `RATE_LIMIT_REGISTER`       | `5`                        | Minutasyna kattaluunun maks sanasy       |
+| `SENTRY_DSN`                | `""`                       | Sentry DSN (boş bolso Sentry öçürülğön)  |
+| `SENTRY_TRACES_SAMPLE_RATE` | `0.1`                      | Sentry ishlöö körünüştörünün ülgü dereji |
 
 ## Frontend çöjrö özgörmölörü
 
