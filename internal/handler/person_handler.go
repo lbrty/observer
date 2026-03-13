@@ -95,9 +95,8 @@ func (h *PersonHandler) Get(c *gin.Context) {
 // @Router /projects/{project_id}/people [post]
 func (h *PersonHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
-	var input ucproject.CreatePersonInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.CreatePersonInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.personUC.Create(c.Request.Context(), projectID, input)
@@ -123,9 +122,8 @@ func (h *PersonHandler) Create(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/people/{person_id} [patch]
 func (h *PersonHandler) Update(c *gin.Context) {
-	var input ucproject.UpdatePersonInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.UpdatePersonInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.personUC.Update(c.Request.Context(), c.Param("project_id"), c.Param("person_id"), input)
@@ -188,9 +186,8 @@ func (h *PersonHandler) ListCategories(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/people/{person_id}/categories [put]
 func (h *PersonHandler) ReplaceCategories(c *gin.Context) {
-	var input ucproject.ReplaceIDsInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.ReplaceIDsInput](c)
+	if !ok {
 		return
 	}
 	if err := h.categoryUC.Replace(c.Request.Context(), c.Param("person_id"), input.IDs); err != nil {
@@ -233,9 +230,8 @@ func (h *PersonHandler) ListTags(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/people/{person_id}/tags [put]
 func (h *PersonHandler) ReplaceTags(c *gin.Context) {
-	var input ucproject.ReplaceIDsInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.ReplaceIDsInput](c)
+	if !ok {
 		return
 	}
 	if err := h.tagUC.Replace(c.Request.Context(), c.Param("person_id"), input.IDs); err != nil {

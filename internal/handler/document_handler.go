@@ -16,6 +16,15 @@ import (
 
 const maxUploadSize = 50 << 20 // 50 MB
 
+// requireDocPerm writes a 403 and returns false when the request lacks document view permission.
+func requireDocPerm(c *gin.Context) bool {
+	if !middleware.CanViewDocumentsFrom(c) {
+		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
+		return false
+	}
+	return true
+}
+
 // DocumentHandler exposes document HTTP endpoints.
 type DocumentHandler struct {
 	uc *ucproject.DocumentUseCase
@@ -28,8 +37,7 @@ func NewDocumentHandler(uc *ucproject.DocumentUseCase) *DocumentHandler {
 
 // List handles GET /projects/:project_id/people/:person_id/documents.
 func (h *DocumentHandler) List(c *gin.Context) {
-	if !middleware.CanViewDocumentsFrom(c) {
-		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
+	if !requireDocPerm(c) {
 		return
 	}
 	personID := c.Param("person_id")
@@ -43,8 +51,7 @@ func (h *DocumentHandler) List(c *gin.Context) {
 
 // Get handles GET /projects/:project_id/documents/:id.
 func (h *DocumentHandler) Get(c *gin.Context) {
-	if !middleware.CanViewDocumentsFrom(c) {
-		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
+	if !requireDocPerm(c) {
 		return
 	}
 	out, err := h.uc.Get(c.Request.Context(), c.Param("project_id"), c.Param("id"))
@@ -107,8 +114,7 @@ func (h *DocumentHandler) Upload(c *gin.Context) {
 
 // Download handles GET /projects/:project_id/documents/:id/download.
 func (h *DocumentHandler) Download(c *gin.Context) {
-	if !middleware.CanViewDocumentsFrom(c) {
-		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
+	if !requireDocPerm(c) {
 		return
 	}
 
@@ -125,8 +131,7 @@ func (h *DocumentHandler) Download(c *gin.Context) {
 
 // Stream handles GET /projects/:project_id/documents/:id/stream.
 func (h *DocumentHandler) Stream(c *gin.Context) {
-	if !middleware.CanViewDocumentsFrom(c) {
-		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
+	if !requireDocPerm(c) {
 		return
 	}
 
@@ -155,8 +160,7 @@ func (h *DocumentHandler) Stream(c *gin.Context) {
 
 // Thumbnail handles GET /projects/:project_id/documents/:id/thumbnail.
 func (h *DocumentHandler) Thumbnail(c *gin.Context) {
-	if !middleware.CanViewDocumentsFrom(c) {
-		c.JSON(http.StatusForbidden, errJSON("errors.document.insufficientPermissions", "insufficient permissions to view documents"))
+	if !requireDocPerm(c) {
 		return
 	}
 
@@ -173,9 +177,8 @@ func (h *DocumentHandler) Thumbnail(c *gin.Context) {
 
 // Update handles PATCH /projects/:project_id/documents/:id.
 func (h *DocumentHandler) Update(c *gin.Context) {
-	var input ucproject.UpdateDocumentInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.UpdateDocumentInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("project_id"), c.Param("id"), input)

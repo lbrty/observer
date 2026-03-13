@@ -89,9 +89,8 @@ func (h *ProjectHandler) Get(c *gin.Context) {
 // @Security BearerAuth
 // @Router /admin/projects [post]
 func (h *ProjectHandler) Create(c *gin.Context) {
-	var input ucadmin.CreateProjectInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.CreateProjectInput](c)
+	if !ok {
 		return
 	}
 	userID, _ := middleware.UserIDFrom(c)
@@ -118,9 +117,8 @@ func (h *ProjectHandler) Create(c *gin.Context) {
 // @Security BearerAuth
 // @Router /admin/projects/{project_id} [patch]
 func (h *ProjectHandler) Update(c *gin.Context) {
-	var input ucadmin.UpdateProjectInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.UpdateProjectInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("project_id"), input)

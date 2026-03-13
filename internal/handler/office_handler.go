@@ -66,9 +66,8 @@ func (h *OfficeHandler) Get(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /admin/offices [post]
 func (h *OfficeHandler) Create(c *gin.Context) {
-	var input ucadmin.CreateOfficeInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.CreateOfficeInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), input)
@@ -93,9 +92,8 @@ func (h *OfficeHandler) Create(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /admin/offices/{id} [patch]
 func (h *OfficeHandler) Update(c *gin.Context) {
-	var input ucadmin.UpdateOfficeInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.UpdateOfficeInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)

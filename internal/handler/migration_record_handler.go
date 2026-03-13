@@ -76,9 +76,8 @@ func (h *MigrationRecordHandler) Get(c *gin.Context) {
 func (h *MigrationRecordHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	personID := c.Param("person_id")
-	var input ucproject.CreateMigrationRecordInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.CreateMigrationRecordInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), projectID, personID, input)
@@ -91,9 +90,8 @@ func (h *MigrationRecordHandler) Create(c *gin.Context) {
 
 // Update handles PATCH /projects/:project_id/people/:person_id/migration-records/:id.
 func (h *MigrationRecordHandler) Update(c *gin.Context) {
-	var input ucproject.UpdateMigrationRecordInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.UpdateMigrationRecordInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("person_id"), c.Param("id"), input)

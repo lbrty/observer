@@ -67,9 +67,8 @@ func (h *CountryHandler) Get(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /admin/countries [post]
 func (h *CountryHandler) Create(c *gin.Context) {
-	var input ucadmin.CreateCountryInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.CreateCountryInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), input)
@@ -94,9 +93,8 @@ func (h *CountryHandler) Create(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /admin/countries/{id} [patch]
 func (h *CountryHandler) Update(c *gin.Context) {
-	var input ucadmin.UpdateCountryInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.UpdateCountryInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)

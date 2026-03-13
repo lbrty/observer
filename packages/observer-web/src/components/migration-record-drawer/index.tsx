@@ -17,6 +17,7 @@ import {
 import { usePlaces } from "@/hooks/use-places";
 import { useStates } from "@/hooks/use-states";
 import { handleApiError } from "@/lib/form-error";
+import { toSelectOptions } from "@/lib/options";
 import { useToast } from "@/stores/toast";
 
 import type { HousingAtDestination, MovementReason } from "@/types/migration-record";
@@ -167,26 +168,11 @@ export function MigrationRecordDrawer({
     }
   }
 
-  const countryOptions = (countries ?? []).map((c) => ({
-    label: c.name,
-    value: c.id,
-  }));
-  const fromStateOptions = (fromStates?.states ?? []).map((s) => ({
-    label: s.name,
-    value: s.id,
-  }));
-  const fromPlaceOptions = (fromPlaces?.places ?? []).map((p) => ({
-    label: p.name,
-    value: p.id,
-  }));
-  const destStateOptions = (destStates?.states ?? []).map((s) => ({
-    label: s.name,
-    value: s.id,
-  }));
-  const destPlaceOptions = (destPlaces?.places ?? []).map((p) => ({
-    label: p.name,
-    value: p.id,
-  }));
+  const countryOptions = toSelectOptions(countries);
+  const fromStateOptions = toSelectOptions(fromStates?.states);
+  const fromPlaceOptions = toSelectOptions(fromPlaces?.places);
+  const destStateOptions = toSelectOptions(destStates?.states);
+  const destPlaceOptions = toSelectOptions(destPlaces?.places);
 
   return (
     <DrawerShell

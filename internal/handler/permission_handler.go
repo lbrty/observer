@@ -61,9 +61,8 @@ func (h *PermissionHandler) ListPermissions(c *gin.Context) {
 func (h *PermissionHandler) AssignPermission(c *gin.Context) {
 	projectID := c.Param("project_id")
 
-	var input ucadmin.AssignPermissionInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.AssignPermissionInput](c)
+	if !ok {
 		return
 	}
 
@@ -94,9 +93,8 @@ func (h *PermissionHandler) AssignPermission(c *gin.Context) {
 func (h *PermissionHandler) UpdatePermission(c *gin.Context) {
 	id := c.Param("id")
 
-	var input ucadmin.UpdatePermissionInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.UpdatePermissionInput](c)
+	if !ok {
 		return
 	}
 

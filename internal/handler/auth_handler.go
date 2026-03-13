@@ -59,9 +59,8 @@ func NewAuthHandler(
 // @Failure 500 {object} ErrorResponse
 // @Router /auth/register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
-	var input ucauth.RegisterInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucauth.RegisterInput](c)
+	if !ok {
 		return
 	}
 
@@ -86,9 +85,8 @@ func (h *AuthHandler) Register(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
-	var input ucauth.LoginInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucauth.LoginInput](c)
+	if !ok {
 		return
 	}
 
@@ -348,9 +346,8 @@ func (h *AuthHandler) UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	var input ucauth.UpdateProfileInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucauth.UpdateProfileInput](c)
+	if !ok {
 		return
 	}
 
@@ -371,9 +368,8 @@ func (h *AuthHandler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	var input ucauth.ChangePasswordInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucauth.ChangePasswordInput](c)
+	if !ok {
 		return
 	}
 

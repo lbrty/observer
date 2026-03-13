@@ -81,9 +81,8 @@ func (h *PetHandler) Get(c *gin.Context) {
 // @Router /projects/{project_id}/pets [post]
 func (h *PetHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
-	var input ucproject.CreatePetInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.CreatePetInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), projectID, input)
@@ -109,9 +108,8 @@ func (h *PetHandler) Create(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/pets/{id} [patch]
 func (h *PetHandler) Update(c *gin.Context) {
-	var input ucproject.UpdatePetInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.UpdatePetInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("project_id"), c.Param("id"), input)
@@ -153,9 +151,8 @@ func (h *PetHandler) ListTags(c *gin.Context) {
 
 // ReplaceTags handles PUT /projects/:project_id/pets/:id/tags.
 func (h *PetHandler) ReplaceTags(c *gin.Context) {
-	var input ucproject.ReplaceIDsInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.ReplaceIDsInput](c)
+	if !ok {
 		return
 	}
 	if err := h.tagUC.Replace(c.Request.Context(), c.Param("id"), input.IDs); err != nil {

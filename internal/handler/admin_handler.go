@@ -101,9 +101,8 @@ func (h *AdminHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	var input ucadmin.UpdateUserInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.UpdateUserInput](c)
+	if !ok {
 		return
 	}
 
@@ -129,9 +128,8 @@ func (h *AdminHandler) UpdateUser(c *gin.Context) {
 // @Security BearerAuth
 // @Router /admin/users [post]
 func (h *AdminHandler) CreateUser(c *gin.Context) {
-	var input ucadmin.CreateUserInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.CreateUserInput](c)
+	if !ok {
 		return
 	}
 
@@ -152,9 +150,8 @@ func (h *AdminHandler) ResetPassword(c *gin.Context) {
 		return
 	}
 
-	var input ucadmin.ResetPasswordInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.ResetPasswordInput](c)
+	if !ok {
 		return
 	}
 

@@ -83,9 +83,8 @@ func (h *StateHandler) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "country_id is required"))
 		return
 	}
-	var input ucadmin.CreateStateInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.CreateStateInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), countryID, input)
@@ -110,9 +109,8 @@ func (h *StateHandler) Create(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /admin/states/{id} [patch]
 func (h *StateHandler) Update(c *gin.Context) {
-	var input ucadmin.UpdateStateInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.UpdateStateInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)

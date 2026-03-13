@@ -79,9 +79,8 @@ func (h *HouseholdHandler) Get(c *gin.Context) {
 // @Router /projects/{project_id}/households [post]
 func (h *HouseholdHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
-	var input ucproject.CreateHouseholdInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.CreateHouseholdInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), projectID, input)
@@ -107,9 +106,8 @@ func (h *HouseholdHandler) Create(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/households/{id} [patch]
 func (h *HouseholdHandler) Update(c *gin.Context) {
-	var input ucproject.UpdateHouseholdInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.UpdateHouseholdInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("project_id"), c.Param("id"), input)
@@ -156,9 +154,8 @@ func (h *HouseholdHandler) Delete(c *gin.Context) {
 // @Router /projects/{project_id}/households/{id}/members [post]
 func (h *HouseholdHandler) AddMember(c *gin.Context) {
 	householdID := c.Param("id")
-	var input ucproject.AddMemberInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.AddMemberInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.AddMember(c.Request.Context(), householdID, input)

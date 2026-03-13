@@ -85,9 +85,8 @@ func (h *SupportRecordHandler) Get(c *gin.Context) {
 // @Router /projects/{project_id}/support-records [post]
 func (h *SupportRecordHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
-	var input ucproject.CreateSupportRecordInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.CreateSupportRecordInput](c)
+	if !ok {
 		return
 	}
 	userID, _ := middleware.UserIDFrom(c)
@@ -114,9 +113,8 @@ func (h *SupportRecordHandler) Create(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/support-records/{id} [patch]
 func (h *SupportRecordHandler) Update(c *gin.Context) {
-	var input ucproject.UpdateSupportRecordInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.UpdateSupportRecordInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("project_id"), c.Param("id"), input)

@@ -83,9 +83,8 @@ func (h *PlaceHandler) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "state_id is required"))
 		return
 	}
-	var input ucadmin.CreatePlaceInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.CreatePlaceInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), stateID, input)
@@ -110,9 +109,8 @@ func (h *PlaceHandler) Create(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /admin/places/{id} [patch]
 func (h *PlaceHandler) Update(c *gin.Context) {
-	var input ucadmin.UpdatePlaceInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.UpdatePlaceInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)

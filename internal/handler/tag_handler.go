@@ -53,9 +53,8 @@ func (h *TagHandler) List(c *gin.Context) {
 // @Router /projects/{project_id}/tags [post]
 func (h *TagHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
-	var input ucproject.CreateTagInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.CreateTagInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), projectID, input)
@@ -82,9 +81,8 @@ func (h *TagHandler) Create(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/tags/{id} [put]
 func (h *TagHandler) Update(c *gin.Context) {
-	var input ucproject.UpdateTagInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.UpdateTagInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)

@@ -55,9 +55,8 @@ func (h *NoteHandler) List(c *gin.Context) {
 func (h *NoteHandler) Create(c *gin.Context) {
 	projectID := c.Param("project_id")
 	personID := c.Param("person_id")
-	var input ucproject.CreateNoteInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.CreateNoteInput](c)
+	if !ok {
 		return
 	}
 	userID, _ := middleware.UserIDFrom(c)
@@ -71,9 +70,8 @@ func (h *NoteHandler) Create(c *gin.Context) {
 
 // Update handles PATCH /projects/:project_id/people/:person_id/notes/:id.
 func (h *NoteHandler) Update(c *gin.Context) {
-	var input ucproject.UpdateNoteInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucproject.UpdateNoteInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("person_id"), c.Param("id"), input)

@@ -67,9 +67,8 @@ func (h *CategoryHandler) Get(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /admin/categories [post]
 func (h *CategoryHandler) Create(c *gin.Context) {
-	var input ucadmin.CreateCategoryInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.CreateCategoryInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Create(c.Request.Context(), input)
@@ -94,9 +93,8 @@ func (h *CategoryHandler) Create(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /admin/categories/{id} [patch]
 func (h *CategoryHandler) Update(c *gin.Context) {
-	var input ucadmin.UpdateCategoryInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+	input, ok := bindJSON[ucadmin.UpdateCategoryInput](c)
+	if !ok {
 		return
 	}
 	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)

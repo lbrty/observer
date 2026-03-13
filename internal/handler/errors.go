@@ -137,6 +137,17 @@ func MapDomainError(err error) (int, string) {
 	}
 }
 
+// bindJSON decodes JSON from the request body into a value of type T.
+// On failure it writes a 400 response and returns false.
+func bindJSON[T any](c *gin.Context) (T, bool) {
+	var v T
+	if err := c.ShouldBindJSON(&v); err != nil {
+		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		return v, false
+	}
+	return v, true
+}
+
 // HandleError writes a JSON error response for a domain error.
 func HandleError(c *gin.Context, err error) {
 	status, code := MapDomainError(err)
