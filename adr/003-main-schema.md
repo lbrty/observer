@@ -1,13 +1,11 @@
 # ADR-003: Main Schema
 
-
 | Field      | Value                      |
 | ---------- | -------------------------- |
 | Status     | Accepted                   |
 | Date       | 2026-02-21                 |
 | Supersedes | —                          |
 | Components | observer, database, schema |
-
 
 ## Domain Overview
 
@@ -23,13 +21,11 @@ Support:    support_records (referral_status, referred_to_office)
 Animals:    pets
 ```
 
-
 ## Migration Files
 
-### Updated: 000002 — Users (role fix + profile columns)
+### 000007 — Users
 
-The ADR-002 users migration is updated in-place to use the correct role enum and add profile fields.
-`office_id` is added separately in migration 000021 (after `offices` is created in 000010).
+`office_id` is included in the initial create (references `offices`, created in 000006).
 
 ```sql
 CREATE TABLE users (
@@ -38,6 +34,7 @@ CREATE TABLE users (
     last_name   TEXT,
     email       VARCHAR(255) NOT NULL,
     phone       VARCHAR(20)  NOT NULL,
+    office_id   TEXT         REFERENCES offices (id) ON DELETE SET NULL,
     role        VARCHAR(50)  NOT NULL CHECK (role IN ('admin', 'staff', 'consultant', 'guest')),
     is_verified BOOLEAN      NOT NULL DEFAULT FALSE,
     is_active   BOOLEAN      NOT NULL DEFAULT TRUE,
@@ -57,8 +54,7 @@ CREATE TABLE users (
 | `consultant` | Assigned to projects, works with people records |
 | `guest`      | Read-only on explicitly assigned projects       |
 
-
-### 000008 — States
+### 000004 — States
 
 `conflict_zone` tags an oblast/state with its conflict zone designation. IDP classification is derived at query time via `origin_place_id → places.state_id → states.conflict_zone` rather than being hardcoded on the person record. This is a free-text field — no enum constraint — so new zones can be added by seeding the states table without a schema migration.
 
@@ -78,8 +74,7 @@ CREATE INDEX        ix_states_name         ON states (name);
 CREATE UNIQUE INDEX uq_states_country_code ON states (country_id, code) WHERE code IS NOT NULL;
 ```
 
-
-### 000010 — Offices
+### 000006 — Offices
 
 `state_id` dropped — derivable via `place_id → places.state_id`. No global name uniqueness — different cities legitimately share office names (e.g. "Main Office" in Kyiv and Kherson).
 
@@ -95,8 +90,7 @@ CREATE TABLE offices (
 CREATE INDEX ix_offices_place_id ON offices (place_id);
 ```
 
-
-### 000012 — Tags
+### 000013 — Tags
 
 Project-scoped free-form labels. Tags are unique per project, not globally — each project maintains its own tag vocabulary independently.
 
@@ -111,7 +105,6 @@ CREATE TABLE tags (
 CREATE UNIQUE INDEX uq_tags_project_name ON tags (project_id, name);
 CREATE INDEX        ix_tags_project_id   ON tags (project_id);
 ```
-
 
 ### 000014 — Project Permissions
 
@@ -148,7 +141,6 @@ CREATE INDEX        ix_project_permissions_user_id      ON project_permissions (
 
 `projects.owner_id` implicitly grants owner-level role — no `project_permissions` row required for the project owner.
 
-
 ### 000016 — Person Tags
 
 Junction table replacing the legacy `TEXT[]` tags column on `people`.
@@ -162,7 +154,6 @@ CREATE TABLE person_tags (
 
 CREATE INDEX ix_person_tags_tag_id ON person_tags (tag_id);
 ```
-
 
 ### 000018 — Support Records
 
@@ -215,7 +206,6 @@ CREATE INDEX ix_support_records_provided_at   ON support_records (provided_at);
 CREATE INDEX ix_support_records_sphere        ON support_records (sphere) WHERE sphere IS NOT NULL;
 ```
 
-
 ### 000020 — Documents
 
 Documents attached to a person record, scoped to a project.
@@ -241,8 +231,7 @@ CREATE INDEX ix_documents_person_id  ON documents (person_id);
 CREATE INDEX ix_documents_project_id ON documents (project_id);
 ```
 
-
-### 000022 — Person Notes
+### 000021 — Person Notes
 
 Informal case-worker notes on a person record. Distinct from `support_records` (formal, quantified service events) — notes are internal observations and reminders.
 
@@ -259,8 +248,7 @@ CREATE INDEX ix_person_notes_person_id ON person_notes (person_id);
 CREATE INDEX ix_person_notes_author_id ON person_notes (author_id);
 ```
 
-
-### 000024 — Person Categories
+### 000023 — Person Categories
 
 Replaces the single `people.category_id` FK with a many-to-many junction, mirroring UNHCR's PSN multi-code model. A person may hold multiple concurrent vulnerability classifications (e.g. single parent + mobility impairment).
 
@@ -274,27 +262,42 @@ CREATE TABLE person_categories (
 CREATE INDEX ix_person_categories_category_id ON person_categories (category_id);
 ```
 
-
 ## Summary of Migration Numbers
 
 | Number | Table / Change                                                                                                |
 | ------ | ------------------------------------------------------------------------------------------------------------- |
-| 000002 | users (role fix, profile columns)                                                                             |
-| 000007 | countries                                                                                                     |
-| 000008 | states (+ conflict_zone)                                                                                      |
-| 000009 | places                                                                                                        |
-| 000010 | offices (no state_id, no global name unique)                                                                  |
-| 000011 | categories                                                                                                    |
-| 000012 | tags (project-scoped)                                                                                         |
-| 000013 | projects (+ status)                                                                                           |
+| 000001 | extensions (citext, pg_trgm, unaccent, pgcrypto)                                                              |
+| 000002 | countries                                                                                                     |
+| 000003 | categories (vulnerability taxonomy)                                                                           |
+| 000004 | states (+ conflict_zone free-text)                                                                            |
+| 000005 | places                                                                                                        |
+| 000006 | offices (no state_id, no global name uniqueness)                                                              |
+| 000007 | users (role, profile columns, office_id FK)                                                                   |
+| 000008 | credentials (password hash + salt)                                                                            |
+| 000009 | mfa_configs                                                                                                   |
+| 000010 | sessions                                                                                                      |
+| 000011 | verification_tokens                                                                                           |
+| 000012 | projects (+ status)                                                                                           |
+| 000013 | tags (project-scoped, unique per project)                                                                     |
 | 000014 | project_permissions (project_role enum + sensitivity flags)                                                   |
 | 000015 | people (split name, primary_phone, consent, age XOR, external_id unique, no idp_status/parent_id/category_id) |
-| 000016 | person_tags                                                                                                   |
+| 000016 | person_tags (junction replaces TEXT[] array)                                                                  |
 | 000017 | migration_records (movement_reason, housing_at_destination, immutable)                                        |
 | 000018 | support_records (recorded_by, provided_at, sphere, referral_status, referred_to_office)                       |
-| 000019 | pets (owner → people)                                                                                         |
-| 000020 | documents (renamed from person_documents)                                                                     |
-| 000021 | users office_id (alter)                                                                                       |
-| 000022 | person_notes                                                                                                  |
-| 000023 | households + household_members (replaces people.parent_id)                                                    |
-| 000024 | person_categories junction (replaces people.category_id)                                                      |
+| 000019 | pets                                                                                                          |
+| 000020 | documents                                                                                                     |
+| 000021 | person_notes                                                                                                  |
+| 000022 | households + household_members (replaces people.parent_id)                                                    |
+| 000023 | person_categories junction (replaces people.category_id)                                                      |
+| 000024 | person_status_history (trigger-driven case_status audit trail)                                                |
+| 000025 | add updated_at to migration_records, person_notes, documents                                                  |
+| 000026 | add color column to tags                                                                                      |
+| 000027 | pet_tags (junction)                                                                                           |
+| 000028 | audit_logs (initial)                                                                                          |
+| 000029 | fix audit_logs (user_id nullable for GDPR compliance)                                                         |
+| 000030 | users soft delete (deactivated_at column + partial index)                                                     |
+| 000031 | reporting indexes (composite indexes for ADR-005 report query patterns)                                       |
+| 000032 | list indexes (join indexes for support_records ↔ people)                                                      |
+| 000033 | add can_export to project_permissions                                                                         |
+| 000034 | add locked_permanently_at to users                                                                            |
+| 000035 | mfa_recovery_codes (single-use TOTP backup codes)                                                             |

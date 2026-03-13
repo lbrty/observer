@@ -9,7 +9,7 @@
 
 ## Decision
 
-Implement global search using a single `GET /search?q=<query>` endpoint backed by a
+Implement global search using a single `GET /api/search?q=<query>` endpoint backed by a
 two-stage authorization filter, returning grouped results (people, pets) per project.
 The frontend uses [cmdk](https://cmdk.paco.me/) triggered by `⌘K` / `Ctrl+K`.
 
@@ -97,18 +97,22 @@ Results with no matching entities for a project are omitted from the array.
 ### Endpoint
 
 ```
-GET /search?q=<query>
+GET /api/search?q=<query>
 Authorization: Bearer <token>   (authenticated users only)
 ```
 
 Minimum query length: 2 characters — returns `400` otherwise.
 No project scoping parameter — authorization determines the scope.
 
+### Query timeout
+
+The use case applies a 30-second context deadline to the entire search operation (both the project-ID resolution query and the concurrent entity searches). If the deadline is exceeded, the handler returns `504`.
+
 ### Architecture placement
 
-- Repository method: `SearchRepository.Search(ctx, projectIDs []ulid.ULID, query string) (*SearchResults, error)`
-- Use case: `internal/usecase/search/search_usecase.go` — resolves project IDs, fans out queries, merges results
-- Handler: `internal/handler/search_handler.go` — thin adapter, validates `q` param
+- Repository method: `SearchRepository.Search(ctx, projectIDs []string, query string, limit int) (*SearchHits, error)`
+- Use case: `internal/usecase/search/search_usecase.go` — resolves project IDs, applies 30s timeout, fans out queries, merges results
+- Handler: `internal/handler/search_handler.go` — thin adapter, validates `q` param length
 
 ## Frontend Design
 

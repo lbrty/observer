@@ -1,12 +1,10 @@
 # ADR-008: Tygo Type Generation
 
-
 | Field      | Value                                          |
 | ---------- | ---------------------------------------------- |
-| Status     | Proposed                                       |
+| Status     | Accepted                                       |
 | Date       | 2026-02-24                                     |
 | Components | observer (backend DTOs), observer-web (types/) |
-
 
 ## Decision
 
@@ -125,7 +123,6 @@ This keeps generated files untouched while allowing frontend-specific types alon
 - Query parameter types (`ListUsersParams`) — Go uses `form:` tags, not `json:`, and tygo only reads `json:` tags.
 - Wrapper response types that the frontend destructures differently.
 - React-specific types (form state, component props).
-
 
 ## Alternatives Considered
 

@@ -1,12 +1,10 @@
 # ADR-007: Color Themes
 
-
 | Field      | Value                   |
 | ---------- | ----------------------- |
 | Status     | Accepted                |
 | Date       | 2026-02-23              |
 | Components | observer-web (main.css) |
-
 
 ## Decision
 
@@ -178,7 +176,6 @@ Source: `packages/observer-web/src/main.css`
 Theme preference is stored in the browser via `localStorage` under the key `observer-theme`. The frontend reads this value on load and sets `data-theme` on the root `<html>` element. Valid values: `"dark"`, `"light"`, `"dark-hc"`, `"light-hc"`, `"system"`. `"system"` defers to `prefers-color-scheme`.
 
 No backend persistence is needed — theme is a per-device preference, not a per-account setting.
-
 
 ## Alternatives Considered
 
