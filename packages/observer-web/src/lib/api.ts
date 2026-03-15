@@ -40,16 +40,19 @@ export const api = ky.create({
         if (response.status !== 401) return response;
         if (request.url.includes("/auth/login")) return response;
 
+        const isInitiator = !refreshPromise;
         try {
-          if (!refreshPromise) {
+          if (isInitiator) {
             refreshPromise = refreshTokens();
           }
           await refreshPromise;
           refreshPromise = null;
           return ky(request, { credentials: "include" });
         } catch {
-          refreshPromise = null;
-          onUnauthorized?.();
+          if (isInitiator) {
+            refreshPromise = null;
+            onUnauthorized?.();
+          }
           return response;
         }
       },

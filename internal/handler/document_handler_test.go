@@ -266,6 +266,22 @@ func TestDocumentHandler_Upload_RejectsForbiddenMIME(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 }
 
+func TestDocumentHandler_Upload_RejectsXMLSVG(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	h, _, _ := newDocumentHandler(ctrl)
+
+	projectID := testID().String()
+	personID := testID().String()
+
+	// SVG content is detected as text/xml; charset=utf-8 — must be rejected.
+	svgContent := []byte(`<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>`)
+	c, w := newMultipartUploadContext("evil.svg", svgContent, projectID, personID)
+	setAuthContext(c, testID())
+	h.Upload(c)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
 func TestDocumentHandler_Upload_SanitizesFilename(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	h, docRepo, fs := newDocumentHandler(ctrl)

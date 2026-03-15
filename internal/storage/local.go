@@ -36,9 +36,9 @@ func (s *LocalStorage) Save(_ context.Context, path string, r io.Reader) error {
 	if err != nil {
 		return fmt.Errorf("create file: %w", err)
 	}
-	defer f.Close()
 
 	if _, err := io.Copy(f, r); err != nil {
+		f.Close()
 		os.Remove(full)
 		return fmt.Errorf("write file: %w", err)
 	}

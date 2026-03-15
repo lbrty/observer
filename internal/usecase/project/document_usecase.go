@@ -89,6 +89,9 @@ func (uc *DocumentUseCase) generateThumbnail(ctx context.Context, originalPath, 
 	bounds := src.Bounds()
 	origW := bounds.Dx()
 	origH := bounds.Dy()
+	if origW == 0 || origH == 0 {
+		return fmt.Errorf("image has zero dimension")
+	}
 	newW := thumbnailWidth
 	newH := origH * newW / origW
 	if newH < 1 {
@@ -219,6 +222,9 @@ func (uc *DocumentUseCase) Delete(ctx context.Context, projectID, id string) err
 		return fmt.Errorf("delete document: %w", err)
 	}
 	_ = uc.fs.Delete(ctx, d.Path)
+	if isImage(d.MimeType) {
+		_ = uc.fs.Delete(ctx, thumbnailPath(d.Path))
+	}
 	uc.auditUC.Record(ctx, &d.ProjectID, "document.delete", "document", &d.ID, fmt.Sprintf("Deleted document %s", d.Name))
 	return nil
 }

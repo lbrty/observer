@@ -201,6 +201,56 @@ func TestDocumentUseCase_Thumbnail_NotFound(t *testing.T) {
 	assert.Contains(t, err.Error(), "get document")
 }
 
+func TestDocumentUseCase_Delete_ImageAlsoDeletesThumbnail(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
+	mockFS := mock_storage.NewMockFileStorage(ctrl)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, auditUC)
+
+	existing := &document.Document{
+		ID:        "d1",
+		ProjectID: "proj1",
+		Path:      "proj1/p1/d1_photo.jpg",
+		MimeType:  "image/jpeg",
+	}
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(existing, nil)
+	mockRepo.EXPECT().Delete(gomock.Any(), "d1").Return(nil)
+	mockFS.EXPECT().Delete(gomock.Any(), "proj1/p1/d1_photo.jpg").Return(nil)
+	// Thumbnail must also be deleted for image documents.
+	mockFS.EXPECT().Delete(gomock.Any(), "proj1/p1/d1_photo_thumb.jpg").Return(nil)
+
+	err := uc.Delete(context.Background(), "proj1", "d1")
+	require.NoError(t, err)
+}
+
+func TestDocumentUseCase_Thumbnail_CorruptImageReturnsError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockDocumentRepository(ctrl)
+	mockFS := mock_storage.NewMockFileStorage(ctrl)
+	uc := ucproject.NewDocumentUseCase(mockRepo, mockFS, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "d1").Return(&document.Document{
+		ID:        "d1",
+		ProjectID: "proj1",
+		Path:      "proj1/p1/d1_photo.jpg",
+		MimeType:  "image/jpeg",
+	}, nil)
+	mockFS.EXPECT().Open(gomock.Any(), "proj1/p1/d1_photo_thumb.jpg").Return(nil, errors.New("not found"))
+	mockFS.EXPECT().Open(gomock.Any(), "proj1/p1/d1_photo.jpg").Return(io.NopCloser(strings.NewReader("not-an-image")), nil)
+
+	_, _, err := uc.Thumbnail(context.Background(), "proj1", "d1")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "generate thumbnail")
+}
+
 func TestDocumentUseCase_Get_CrossProjectIDOR(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

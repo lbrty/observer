@@ -1,7 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
+import { useAuth } from "@/stores/auth";
 import type { MFASetupData } from "@/types/auth";
+import type { User } from "@/types/auth";
 
 export function useMFASetup(enabled: boolean) {
   return useQuery({
@@ -14,19 +16,25 @@ export function useMFASetup(enabled: boolean) {
 }
 
 export function useEnableMFA() {
-  const qc = useQueryClient();
+  const { setUser } = useAuth();
   return useMutation({
     mutationFn: ({ secret, totpCode }: { secret: string; totpCode: string }) =>
       api.post("auth/mfa/enable", { json: { secret, totp_code: totpCode } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["me"] }),
+    onSuccess: async () => {
+      const user = await api.get("auth/me").json<User>();
+      setUser(user);
+    },
   });
 }
 
 export function useDisableMFA() {
-  const qc = useQueryClient();
+  const { setUser } = useAuth();
   return useMutation({
     mutationFn: (totpCode: string) =>
       api.post("auth/mfa/disable", { json: { totp_code: totpCode } }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["me"] }),
+    onSuccess: async () => {
+      const user = await api.get("auth/me").json<User>();
+      setUser(user);
+    },
   });
 }

@@ -84,7 +84,7 @@ func (h *DocumentHandler) Upload(c *gin.Context) {
 	detectedMIME := http.DetectContentType(buf[:n])
 
 	switch detectedMIME {
-	case "text/html; charset=utf-8", "application/xhtml+xml":
+	case "text/html; charset=utf-8", "application/xhtml+xml", "text/xml; charset=utf-8":
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "file type not permitted"))
 		return
 	}

@@ -33,12 +33,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
     api
-      .get("auth/me")
+      .get("auth/me", { signal: controller.signal })
       .json<User>()
       .then(setUser)
       .catch(() => {})
       .finally(() => setIsLoading(false));
+    return () => controller.abort();
   }, []);
 
   async function login(input: LoginInput): Promise<LoginOutput> {
