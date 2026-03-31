@@ -30,6 +30,7 @@ just dev
 The backend exposes Swagger at `http://localhost:9000/swagger/index.html` in dev mode.
 
 To create the first admin account:
+
 ```sh
 just create-admin admin@example.com yourpassword
 ```
@@ -38,20 +39,20 @@ just create-admin admin@example.com yourpassword
 
 All config is read from environment variables with sensible defaults. Key ones:
 
-| Variable | Default | Description |
-|---|---|---|
-| `DATABASE_DSN` | — | Postgres connection string |
-| `REDIS_URL` | `redis://localhost:6379/0` | Redis URL |
-| `JWT_PRIVATE_KEY_PATH` | `keys/jwt_rsa` | RSA private key |
-| `JWT_PUBLIC_KEY_PATH` | `keys/jwt_rsa.pub` | RSA public key |
-| `STORAGE_BACKEND` | `local` | `local` or `s3` |
-| `STORAGE_PATH` | `data/uploads` | Local upload directory |
-| `S3_BUCKET` | — | S3 bucket (when backend=s3) |
-| `S3_REGION` | `us-east-1` | S3 region |
-| `CORS_ORIGINS` | `http://localhost:5173` | Comma-separated allowed origins |
-| `COOKIE_SECURE` | `true` | Set `false` for local HTTP dev |
-| `SWAGGER_ENABLED` | `false` | Enable Swagger UI |
-| `SENTRY_DSN` | — | Sentry error tracking |
+| Variable               | Default                    | Description                     |
+| ---------------------- | -------------------------- | ------------------------------- |
+| `DATABASE_DSN`         | —                          | Postgres connection string      |
+| `REDIS_URL`            | `redis://localhost:6379/0` | Redis URL                       |
+| `JWT_PRIVATE_KEY_PATH` | `keys/jwt_rsa`             | RSA private key                 |
+| `JWT_PUBLIC_KEY_PATH`  | `keys/jwt_rsa.pub`         | RSA public key                  |
+| `STORAGE_BACKEND`      | `local`                    | `local` or `s3`                 |
+| `STORAGE_PATH`         | `data/uploads`             | Local upload directory          |
+| `S3_BUCKET`            | —                          | S3 bucket (when backend=s3)     |
+| `S3_REGION`            | `us-east-1`                | S3 region                       |
+| `CORS_ORIGINS`         | `http://localhost:5173`    | Comma-separated allowed origins |
+| `COOKIE_SECURE`        | `true`                     | Set `false` for local HTTP dev  |
+| `SWAGGER_ENABLED`      | `false`                    | Enable Swagger UI               |
+| `SENTRY_DSN`           | —                          | Sentry error tracking           |
 
 ---
 
