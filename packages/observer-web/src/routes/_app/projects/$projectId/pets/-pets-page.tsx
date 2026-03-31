@@ -17,9 +17,9 @@ import { PetDrawer } from "@/components/pet-drawer";
 import { StatusBadge } from "@/components/status-badge";
 import { TagChips } from "@/components/tag-chips";
 import { SelectedTagChips, TagFilter } from "@/components/tag-filter";
+import { useExportCSV } from "@/hooks/use-export-csv";
 import { useProjectRole } from "@/hooks/use-project-role";
 import { usePets } from "@/hooks/use-pets";
-import { api } from "@/lib/api";
 import type { Pet } from "@/types/pet";
 
 export type PetStatus = "" | "registered" | "adopted" | "owner_found" | "needs_shelter" | "unknown";
@@ -60,9 +60,8 @@ export function PetsContent({
   const [tagIds, setTagIds] = useState<string[]>([]);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [exporting, setExporting] = useState(false);
-
   const { canWrite, canExport } = useProjectRole(projectId);
+  const { exporting, exportCSV } = useExportCSV();
 
   const params = {
     page,
@@ -105,29 +104,12 @@ export function PetsContent({
     setDrawerOpen(true);
   }
 
-  async function handleExport() {
-    setExporting(true);
-    try {
-      const searchParams: Record<string, string> = {};
-      if (statusFilter) searchParams.status = statusFilter;
-      if (dateFrom) searchParams.created_from = dateFrom;
-      if (dateTo) searchParams.created_to = dateTo;
-
-      const serverBlob = await api
-        .get(`projects/${projectId}/export/pets`, { searchParams })
-        .blob();
-      const text = await serverBlob.text();
-      const blob = new Blob(["\uFEFF" + text], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      const date = new Date().toISOString().slice(0, 10);
-      a.download = `pets-${date}.csv`;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 100);
-    } finally {
-      setExporting(false);
-    }
+  function handleExport() {
+    const searchParams: Record<string, string> = {};
+    if (statusFilter) searchParams.status = statusFilter;
+    if (dateFrom) searchParams.created_from = dateFrom;
+    if (dateTo) searchParams.created_to = dateTo;
+    return exportCSV(`projects/${projectId}/export/pets`, "pets", searchParams);
   }
 
   const columns: Column<Pet>[] = [

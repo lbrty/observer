@@ -16,9 +16,9 @@ import { PersonDrawer } from "@/components/person-drawer";
 import { StatusBadge } from "@/components/status-badge";
 import { TagChips } from "@/components/tag-chips";
 import { SelectedTagChips, TagFilter } from "@/components/tag-filter";
+import { useExportCSV } from "@/hooks/use-export-csv";
 import { useProjectRole } from "@/hooks/use-project-role";
 import { usePeople } from "@/hooks/use-people";
-import { api } from "@/lib/api";
 import type { Person } from "@/types/person";
 
 export const Route = createFileRoute("/_app/projects/$projectId/people/")({
@@ -45,9 +45,8 @@ function PeopleListPage() {
   const [tagIds, setTagIds] = useState<string[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editPersonId, setEditPersonId] = useState<string | null>(null);
-  const [exporting, setExporting] = useState(false);
-
   const { canWrite, canExport } = useProjectRole(projectId);
+  const { exporting, exportCSV } = useExportCSV();
 
   function setStatus(value: string) {
     navigate({ from: Route.fullPath, search: { status: value || undefined }, replace: true });
@@ -146,28 +145,15 @@ function PeopleListPage() {
     setDrawerOpen(true);
   }
 
-  async function handleExport() {
-    setExporting(true);
-    try {
-      const searchParams: Record<string, string> = {};
-      if (status) searchParams.case_status = status;
-      if (search) searchParams.search = search;
-      if (sex) searchParams.sex = sex;
-      if (ageGroup) searchParams.age_group = ageGroup;
-      if (dateFrom) searchParams.registered_from = dateFrom;
-      if (dateTo) searchParams.registered_to = dateTo;
-
-      const blob = await api.get(`projects/${projectId}/export/people`, { searchParams }).blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      const date = new Date().toISOString().slice(0, 10);
-      a.download = `people-${date}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } finally {
-      setExporting(false);
-    }
+  function handleExport() {
+    const searchParams: Record<string, string> = {};
+    if (status) searchParams.case_status = status;
+    if (search) searchParams.search = search;
+    if (sex) searchParams.sex = sex;
+    if (ageGroup) searchParams.age_group = ageGroup;
+    if (dateFrom) searchParams.registered_from = dateFrom;
+    if (dateTo) searchParams.registered_to = dateTo;
+    return exportCSV(`projects/${projectId}/export/people`, "people", searchParams);
   }
 
   const columns: Column<Person>[] = [

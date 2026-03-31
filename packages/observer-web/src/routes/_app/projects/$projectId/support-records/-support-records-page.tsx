@@ -15,9 +15,9 @@ import { Pagination } from "@/components/pagination";
 import { StatusBadge } from "@/components/status-badge";
 import { SupportRecordDrawer } from "@/components/support-record-drawer";
 import { referralKeys, sphereKeys, typeKeys } from "@/constants/support";
+import { useExportCSV } from "@/hooks/use-export-csv";
 import { useProjectRole } from "@/hooks/use-project-role";
 import { useSupportRecords } from "@/hooks/use-support-records";
-import { api } from "@/lib/api";
 import type { SupportRecord } from "@/types/support-record";
 
 const supportTypes = [
@@ -66,9 +66,8 @@ export function SupportRecordsContent({
   const [sphere, setSphere] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [exporting, setExporting] = useState(false);
-
   const { canWrite, canExport } = useProjectRole(projectId);
+  const { exporting, exportCSV } = useExportCSV();
 
   const params = {
     page,
@@ -128,28 +127,13 @@ export function SupportRecordsContent({
     setDrawerOpen(true);
   }
 
-  async function handleExport() {
-    setExporting(true);
-    try {
-      const searchParams: Record<string, string> = {};
-      if (typeFilter) searchParams.type = typeFilter;
-      if (sphere) searchParams.sphere = sphere;
-      if (dateFrom) searchParams.provided_from = dateFrom;
-      if (dateTo) searchParams.provided_to = dateTo;
-
-      const blob = await api
-        .get(`projects/${projectId}/export/support-records`, { searchParams })
-        .blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      const date = new Date().toISOString().slice(0, 10);
-      a.download = `support-records-${date}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } finally {
-      setExporting(false);
-    }
+  function handleExport() {
+    const searchParams: Record<string, string> = {};
+    if (typeFilter) searchParams.type = typeFilter;
+    if (sphere) searchParams.sphere = sphere;
+    if (dateFrom) searchParams.provided_from = dateFrom;
+    if (dateTo) searchParams.provided_to = dateTo;
+    return exportCSV(`projects/${projectId}/export/support-records`, "support-records", searchParams);
   }
 
   const columns: Column<SupportRecord>[] = [

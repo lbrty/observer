@@ -7,7 +7,7 @@ function escapeCSV(value: string): string {
   return value;
 }
 
-function download(content: string, filename: string) {
+export function downloadCSV(content: string, filename: string) {
   const blob = new Blob(["\uFEFF" + content], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -24,7 +24,7 @@ export function exportGroupCSV(title: string, rows: CountResult[]) {
   }
   const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   const date = new Date().toISOString().slice(0, 10);
-  download(lines.join("\n"), `${slug}-${date}.csv`);
+  downloadCSV(lines.join("\n"), `${slug}-${date}.csv`);
 }
 
 export function exportReportCSV(data: FullReport, projectId: string) {
@@ -51,5 +51,5 @@ export function exportReportCSV(data: FullReport, projectId: string) {
   }
 
   const date = new Date().toISOString().slice(0, 10);
-  download(rows.join("\n"), `report-${projectId}-${date}.csv`);
+  downloadCSV(rows.join("\n"), `report-${projectId}-${date}.csv`);
 }

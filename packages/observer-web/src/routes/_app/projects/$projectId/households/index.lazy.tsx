@@ -17,9 +17,9 @@ import {
 } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
+import { useExportCSV } from "@/hooks/use-export-csv";
 import { useHouseholds } from "@/hooks/use-households";
 import { useProjectRole } from "@/hooks/use-project-role";
-import { api } from "@/lib/api";
 import type { Household } from "@/types/household";
 
 export const Route = createLazyFileRoute("/_app/projects/$projectId/households/")({
@@ -36,9 +36,8 @@ function HouseholdsListPage() {
   const [dateTo, setDateTo] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editHouseholdId, setEditHouseholdId] = useState<string | null>(null);
-  const [exporting, setExporting] = useState(false);
-
   const { canWrite, canExport } = useProjectRole(projectId);
+  const { exporting, exportCSV } = useExportCSV();
 
   const params = {
     page,
@@ -87,27 +86,12 @@ function HouseholdsListPage() {
     setDrawerOpen(true);
   }
 
-  async function handleExport() {
-    setExporting(true);
-    try {
-      const searchParams: Record<string, string> = {};
-      if (search) searchParams.search = search;
-      if (dateFrom) searchParams.created_from = dateFrom;
-      if (dateTo) searchParams.created_to = dateTo;
-
-      const blob = await api
-        .get(`projects/${projectId}/export/households`, { searchParams })
-        .blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      const date = new Date().toISOString().slice(0, 10);
-      a.download = `households-${date}.csv`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } finally {
-      setExporting(false);
-    }
+  function handleExport() {
+    const searchParams: Record<string, string> = {};
+    if (search) searchParams.search = search;
+    if (dateFrom) searchParams.created_from = dateFrom;
+    if (dateTo) searchParams.created_to = dateTo;
+    return exportCSV(`projects/${projectId}/export/households`, "households", searchParams);
   }
 
   const columns: Column<Household>[] = [
