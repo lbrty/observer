@@ -4,8 +4,6 @@ Case management platform for NGOs working with forcibly displaced people and ani
 
 **Stack:** Go 1.25 · PostgreSQL · Redis · React 19 · TanStack Router · Tailwind
 
----
-
 ## Development setup
 
 **Prerequisites:** Go 1.25+, PostgreSQL, Redis, [Bun](https://bun.sh), [Just](https://just.systems)
@@ -54,8 +52,6 @@ All config is read from environment variables with sensible defaults. Key ones:
 | `SWAGGER_ENABLED`      | `false`                    | Enable Swagger UI               |
 | `SENTRY_DSN`           | —                          | Sentry error tracking           |
 
----
-
 ## Project structure
 
 ```
@@ -96,8 +92,6 @@ adr/                   Architecture decision records
 - **Forward-only migrations** — no rollbacks; schema only moves forward
 - **Dual-level RBAC** — platform role (`admin/staff/consultant/guest`) × project role × 3 sensitivity flags
 
----
-
 ## Common tasks
 
 ```sh
@@ -108,8 +102,6 @@ just migrate-create name=add_foo  # New migration
 just seed              # Seed demo data
 just build-prod        # Build frontend + Go binary with embedded SPA
 ```
-
----
 
 ## Supporting the project
 
