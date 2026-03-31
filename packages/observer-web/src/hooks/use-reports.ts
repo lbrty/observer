@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
+import { filterParams } from "@/lib/params";
 import type {
   CustomReportOutput,
   CustomReportParams,
@@ -14,9 +15,7 @@ export function useReport(projectId: string, params: ReportParams = {}) {
     queryFn: () =>
       api
         .get(`projects/${projectId}/reports`, {
-          searchParams: Object.fromEntries(
-            Object.entries(params).filter(([, v]) => v != null && v !== ""),
-          ) as Record<string, string>,
+          searchParams: filterParams(params as Record<string, unknown>),
         })
         .json<FullReport>(),
     enabled: !!projectId,

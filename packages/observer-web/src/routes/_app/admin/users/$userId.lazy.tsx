@@ -1,6 +1,7 @@
+import { type SyntheticEvent, useEffect, useState } from "react";
+
 import { Field } from "@base-ui/react/field";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { type SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ErrorBanner } from "@/components/alert-banner";
@@ -14,6 +15,7 @@ import { useOffices } from "@/hooks/use-offices";
 import { useDeactivateUser, useReactivateUser, useUpdateUser, useUser } from "@/hooks/use-users";
 import { api } from "@/lib/api";
 import { handleApiError } from "@/lib/form-error";
+import { toSelectOptions } from "@/lib/options";
 
 export const Route = createLazyFileRoute("/_app/admin/users/$userId")({
   component: UserDetailPage,
@@ -81,10 +83,7 @@ function UserDetailPage() {
     { label: t("admin.users.roleGuest"), value: "guest" },
   ];
 
-  const officeOptions = [
-    { label: "—", value: "" },
-    ...offices.map((o) => ({ label: o.name, value: o.id })),
-  ];
+  const officeOptions = [{ label: "—", value: "" }, ...toSelectOptions(offices)];
 
   return (
     <div>

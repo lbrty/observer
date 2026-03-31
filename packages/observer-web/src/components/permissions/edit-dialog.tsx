@@ -1,5 +1,6 @@
-import { Dialog } from "@base-ui/react/dialog";
 import { type SyntheticEvent, useState } from "react";
+
+import { Dialog } from "@base-ui/react/dialog";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";

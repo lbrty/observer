@@ -1,5 +1,6 @@
-import { Popover } from "@base-ui/react/popover";
 import { useRef, useState } from "react";
+
+import { Popover } from "@base-ui/react/popover";
 import { DayPicker, type DateRange } from "react-day-picker";
 
 import { CalendarBlankIcon, CaretLeftIcon, CaretRightIcon, XIcon } from "@/components/icons";

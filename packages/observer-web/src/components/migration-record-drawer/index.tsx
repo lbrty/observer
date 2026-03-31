@@ -133,9 +133,11 @@ export function MigrationRecordDrawer({
             ...(form.from_place_id && { from_place_id: form.from_place_id }),
             ...(form.destination_place_id && { destination_place_id: form.destination_place_id }),
             ...(form.migration_date && { migration_date: form.migration_date }),
-            ...(form.movement_reason && { movement_reason: form.movement_reason }),
+            ...(form.movement_reason && {
+              movement_reason: form.movement_reason as MovementReason,
+            }),
             ...(form.housing_at_destination && {
-              housing_at_destination: form.housing_at_destination,
+              housing_at_destination: form.housing_at_destination as HousingAtDestination,
             }),
             ...(form.notes && { notes: form.notes }),
           },

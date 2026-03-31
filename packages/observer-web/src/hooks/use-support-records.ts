@@ -1,6 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
+import { filterParams } from "@/lib/params";
 import type {
   CreateSupportRecordInput,
   ListSupportRecordsOutput,
@@ -15,9 +16,7 @@ export function useSupportRecords(projectId: string, params: ListSupportRecordsP
     queryFn: () =>
       api
         .get(`projects/${projectId}/support-records`, {
-          searchParams: Object.fromEntries(
-            Object.entries(params).filter(([, v]) => v != null),
-          ) as Record<string, string>,
+          searchParams: filterParams(params as Record<string, unknown>),
         })
         .json<ListSupportRecordsOutput>(),
     enabled: !!projectId,

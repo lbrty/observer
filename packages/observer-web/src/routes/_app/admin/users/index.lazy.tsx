@@ -1,6 +1,7 @@
+import { type SyntheticEvent, useState } from "react";
+
 import { Field } from "@base-ui/react/field";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
-import { type SyntheticEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
@@ -16,6 +17,7 @@ import { UISwitch } from "@/components/ui-switch";
 import { UserInitials } from "@/components/user-initials";
 import { useOffices } from "@/hooks/use-offices";
 import { useCreateUser, useUsers } from "@/hooks/use-users";
+import { toSelectOptions } from "@/lib/options";
 import type { AdminUser } from "@/types/admin";
 
 export const Route = createLazyFileRoute("/_app/admin/users/")({
@@ -193,10 +195,7 @@ function CreateUserDialog({
     { label: t("admin.users.roleGuest"), value: "guest" },
   ];
 
-  const officeOptions = [
-    { label: "—", value: "" },
-    ...(officesData ?? []).map((o) => ({ label: o.name, value: o.id })),
-  ];
+  const officeOptions = [{ label: "—", value: "" }, ...toSelectOptions(officesData)];
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();

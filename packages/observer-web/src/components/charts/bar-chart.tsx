@@ -1,5 +1,6 @@
-import * as d3 from "d3";
 import { useEffect, useId, useRef, useState } from "react";
+
+import * as d3 from "d3";
 
 import type { CountResult } from "@/types/report";
 

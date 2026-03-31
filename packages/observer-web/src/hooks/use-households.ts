@@ -1,6 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
+import { filterParams } from "@/lib/params";
 import type {
   AddMemberInput,
   CreateHouseholdInput,
@@ -16,9 +17,7 @@ export function useHouseholds(projectId: string, params: ListHouseholdsParams = 
     queryFn: () =>
       api
         .get(`projects/${projectId}/households`, {
-          searchParams: Object.fromEntries(
-            Object.entries(params).filter(([, v]) => v != null),
-          ) as Record<string, string>,
+          searchParams: filterParams(params as Record<string, unknown>),
         })
         .json<ListHouseholdsOutput>(),
     enabled: !!projectId,

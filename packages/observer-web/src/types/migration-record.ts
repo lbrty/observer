@@ -42,8 +42,8 @@ export interface UpdateMigrationRecordInput {
   from_place_id?: string;
   destination_place_id?: string;
   migration_date?: string;
-  movement_reason?: string;
-  housing_at_destination?: string;
+  movement_reason?: MovementReason;
+  housing_at_destination?: HousingAtDestination;
   notes?: string;
 }
 

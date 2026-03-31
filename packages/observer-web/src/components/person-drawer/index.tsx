@@ -15,6 +15,7 @@ import { usePlaces } from "@/hooks/use-places";
 import { useStates } from "@/hooks/use-states";
 import { usePersonTags, useReplacePersonTags } from "@/hooks/use-tags";
 import { handleApiError } from "@/lib/form-error";
+import { toSelectOptions } from "@/lib/options";
 import { useToast } from "@/stores/toast";
 
 import type { CreatePersonInput, UpdatePersonInput } from "@/types/person";
@@ -185,7 +186,7 @@ export function PersonDrawer({ open, onOpenChange, projectId, personId }: Person
     }
   }
 
-  const officeOptions = (offices ?? []).map((o) => ({ label: o.name, value: o.id }));
+  const officeOptions = toSelectOptions(offices);
 
   return (
     <DrawerShell

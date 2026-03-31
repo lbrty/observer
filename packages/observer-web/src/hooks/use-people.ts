@@ -1,6 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
+import { filterParams } from "@/lib/params";
 import type {
   CreatePersonInput,
   ListPeopleOutput,
@@ -15,9 +16,7 @@ export function usePeople(projectId: string, params: ListPeopleParams = {}) {
     queryFn: () =>
       api
         .get(`projects/${projectId}/people`, {
-          searchParams: Object.fromEntries(
-            Object.entries(params).filter(([, v]) => v != null),
-          ) as Record<string, string>,
+          searchParams: filterParams(params as Record<string, unknown>),
         })
         .json<ListPeopleOutput>(),
     enabled: !!projectId,

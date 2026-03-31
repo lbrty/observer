@@ -37,6 +37,7 @@ import { useCategories } from "@/hooks/use-categories";
 import { useOffices } from "@/hooks/use-offices";
 import { useReport } from "@/hooks/use-reports";
 import { exportReportCSV } from "@/lib/export-csv";
+import { toSelectOptions } from "@/lib/options";
 import type { ReportParams } from "@/types/report";
 
 export const Route = createLazyFileRoute("/_app/projects/$projectId/reports/people")({
@@ -70,8 +71,8 @@ function ReportsPage() {
   const { data: offices } = useOffices();
   const { data: categories } = useCategories();
 
-  const officeOptions = (offices ?? []).map((o) => ({ label: o.name, value: o.id }));
-  const categoryOptions = (categories ?? []).map((c) => ({ label: c.name, value: c.id }));
+  const officeOptions = toSelectOptions(offices);
+  const categoryOptions = toSelectOptions(categories);
   const supportTypeOptions = SUPPORT_TYPE_OPTIONS.map((s) => ({
     label: t(labelKeyMap[s] ?? s),
     value: s,

@@ -1,5 +1,6 @@
+import type { ReactNode, SyntheticEvent } from "react";
+
 import { DrawerPreview as Drawer } from "@base-ui/react/drawer";
-import type { SyntheticEvent, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";

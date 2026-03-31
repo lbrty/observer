@@ -1,6 +1,7 @@
+import { type SyntheticEvent, useEffect, useState } from "react";
+
 import { Field } from "@base-ui/react/field";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
-import { type SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "@/lib/api";
+import { filterParams } from "@/lib/params";
 import type { PetReport, PetReportParams } from "@/types/report";
 
 export function usePetReport(projectId: string, params: PetReportParams = {}) {
@@ -9,9 +10,7 @@ export function usePetReport(projectId: string, params: PetReportParams = {}) {
     queryFn: () =>
       api
         .get(`projects/${projectId}/reports/pets`, {
-          searchParams: Object.fromEntries(
-            Object.entries(params).filter(([, v]) => v != null && v !== ""),
-          ) as Record<string, string>,
+          searchParams: filterParams(params as Record<string, unknown>),
         })
         .json<PetReport>(),
     enabled: !!projectId,
