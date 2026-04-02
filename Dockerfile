@@ -18,7 +18,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-COPY --from=frontend /app/packages/observer-web/dist internal/spa/dist
+COPY --from=frontend /app/internal/spa/dist internal/spa/dist
 RUN CGO_ENABLED=0 GOOS=linux go build -tags production -ldflags="-s -w" -o /observer ./cmd/observer
 
 # Stage 3: final image
