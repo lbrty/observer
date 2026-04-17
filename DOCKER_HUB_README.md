@@ -12,7 +12,7 @@ Case management platform for NGOs working with forcibly displaced people and ani
 
 ```sh
 mkdir keys
-docker run --rm -v "$PWD/keys:/keys" ghcr.io/lbrty/observer keygen \
+docker run --rm -v "$PWD/keys:/keys" sultaniman/observer keygen \
   --private-key /keys/jwt_rsa \
   --public-key  /keys/jwt_rsa.pub
 ```
@@ -46,7 +46,7 @@ services:
       retries: 5
 
   observer:
-    image: ghcr.io/lbrty/observer:latest
+    image: sultaniman/observer:latest
     ports:
       - "9000:9000"
     environment:
