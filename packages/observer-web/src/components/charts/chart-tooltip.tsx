@@ -1,9 +1,11 @@
 // packages/observer-web/src/components/charts/chart-tooltip.tsx
+import type { ReactNode } from "react";
+
 interface ChartTooltipProps {
   visible: boolean;
   x: number;
   y: number;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function ChartTooltip({ visible, x, y, children }: ChartTooltipProps) {
