@@ -240,7 +240,7 @@ type DocumentRepository interface {
 
 // PetRepository defines persistence operations for pets.
 type PetRepository interface {
-	List(ctx context.Context, projectID string, status string, tagIDs []string, page, perPage int) ([]*pet.Pet, int, error)
+	List(ctx context.Context, filter pet.PetListFilter) ([]*pet.Pet, int, error)
 	GetByID(ctx context.Context, id string) (*pet.Pet, error)
 	Create(ctx context.Context, p *pet.Pet) error
 	Update(ctx context.Context, p *pet.Pet) error

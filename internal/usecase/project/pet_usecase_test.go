@@ -25,7 +25,11 @@ func TestPetUseCase_List_Success(t *testing.T) {
 
 	now := time.Now().UTC()
 	ownerID := "p1"
-	mockRepo.EXPECT().List(gomock.Any(), "proj1", "", []string(nil), gomock.Any(), gomock.Any()).Return([]*pet.Pet{
+	mockRepo.EXPECT().List(gomock.Any(), pet.PetListFilter{
+		ProjectID: "proj1",
+		Page:      1,
+		PerPage:   20,
+	}).Return([]*pet.Pet{
 		{ID: "pet1", ProjectID: "proj1", OwnerID: &ownerID, Name: "Buddy", Status: pet.PetStatusRegistered, CreatedAt: now, UpdatedAt: now},
 		{ID: "pet2", ProjectID: "proj1", Name: "Max", Status: pet.PetStatusUnknown, CreatedAt: now, UpdatedAt: now},
 	}, 2, nil)
@@ -51,7 +55,7 @@ func TestPetUseCase_List_RepoError(t *testing.T) {
 	uc := ucproject.NewPetUseCase(mockRepo, mockTagRepo, nil)
 
 	repoErr := errors.New("db error")
-	mockRepo.EXPECT().List(gomock.Any(), "proj1", gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, 0, repoErr)
+	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, repoErr)
 
 	_, err := uc.List(context.Background(), "proj1", ucproject.ListPetsInput{})
 	assert.ErrorIs(t, err, repoErr)
@@ -66,7 +70,7 @@ func TestPetUseCase_List_TagRepoError(t *testing.T) {
 	uc := ucproject.NewPetUseCase(mockRepo, mockTagRepo, nil)
 
 	now := time.Now().UTC()
-	mockRepo.EXPECT().List(gomock.Any(), "proj1", gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return([]*pet.Pet{
+	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*pet.Pet{
 		{ID: "pet1", ProjectID: "proj1", Name: "Buddy", Status: pet.PetStatusRegistered, CreatedAt: now, UpdatedAt: now},
 	}, 1, nil)
 

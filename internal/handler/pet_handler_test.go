@@ -33,7 +33,11 @@ func TestPetHandler_List_Success(t *testing.T) {
 	id1 := testID().String()
 	id2 := testID().String()
 
-	petRepo.EXPECT().List(gomock.Any(), projectID, "", []string(nil), 1, 20).Return([]*pet.Pet{
+	petRepo.EXPECT().List(gomock.Any(), pet.PetListFilter{
+		ProjectID: projectID,
+		Page:      1,
+		PerPage:   20,
+	}).Return([]*pet.Pet{
 		{ID: id1, ProjectID: projectID, Name: "Rex", Status: pet.PetStatusRegistered, CreatedAt: now, UpdatedAt: now},
 		{ID: id2, ProjectID: projectID, Name: "Luna", Status: pet.PetStatusAdopted, CreatedAt: now, UpdatedAt: now},
 	}, 2, nil)
@@ -58,7 +62,11 @@ func TestPetHandler_List_InternalError(t *testing.T) {
 	h, petRepo, _ := newPetHandler(ctrl)
 
 	projectID := testID().String()
-	petRepo.EXPECT().List(gomock.Any(), projectID, "", []string(nil), 1, 20).Return(nil, 0, fmt.Errorf("db error"))
+	petRepo.EXPECT().List(gomock.Any(), pet.PetListFilter{
+		ProjectID: projectID,
+		Page:      1,
+		PerPage:   20,
+	}).Return(nil, 0, fmt.Errorf("db error"))
 
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/pets", nil, gin.Params{
 		{Key: "project_id", Value: projectID},

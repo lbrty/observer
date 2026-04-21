@@ -2296,9 +2296,9 @@ func (mr *MockPetRepositoryMockRecorder) GetByID(ctx, id any) *gomock.Call {
 }
 
 // List mocks base method.
-func (m *MockPetRepository) List(ctx context.Context, projectID, status string, tagIDs []string, page, perPage int) ([]*pet.Pet, int, error) {
+func (m *MockPetRepository) List(ctx context.Context, filter pet.PetListFilter) ([]*pet.Pet, int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "List", ctx, projectID, status, tagIDs, page, perPage)
+	ret := m.ctrl.Call(m, "List", ctx, filter)
 	ret0, _ := ret[0].([]*pet.Pet)
 	ret1, _ := ret[1].(int)
 	ret2, _ := ret[2].(error)
@@ -2306,9 +2306,9 @@ func (m *MockPetRepository) List(ctx context.Context, projectID, status string, 
 }
 
 // List indicates an expected call of List.
-func (mr *MockPetRepositoryMockRecorder) List(ctx, projectID, status, tagIDs, page, perPage any) *gomock.Call {
+func (mr *MockPetRepositoryMockRecorder) List(ctx, filter any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockPetRepository)(nil).List), ctx, projectID, status, tagIDs, page, perPage)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockPetRepository)(nil).List), ctx, filter)
 }
 
 // Update mocks base method.

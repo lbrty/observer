@@ -27,7 +27,18 @@ func NewPetUseCase(repo repository.PetRepository, tagRepo repository.PetTagRepos
 func (uc *PetUseCase) List(ctx context.Context, projectID string, input ListPetsInput) (*ListPetsOutput, error) {
 	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
-	pets, total, err := uc.repo.List(ctx, projectID, input.Status, input.TagIDs, page, perPage)
+	filter := pet.PetListFilter{
+		ProjectID: projectID,
+		TagIDs:    input.TagIDs,
+		Page:      page,
+		PerPage:   perPage,
+	}
+	if input.Status != "" {
+		s := pet.PetStatus(input.Status)
+		filter.Status = &s
+	}
+
+	pets, total, err := uc.repo.List(ctx, filter)
 	if err != nil {
 		return nil, fmt.Errorf("list pets: %w", err)
 	}

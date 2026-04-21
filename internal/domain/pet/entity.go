@@ -25,3 +25,12 @@ type Pet struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }
+
+// PetListFilter holds filter and pagination parameters for pet list queries.
+type PetListFilter struct {
+	ProjectID string
+	Status    *PetStatus
+	TagIDs    []string
+	Page      int
+	PerPage   int
+}

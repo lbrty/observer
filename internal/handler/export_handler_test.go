@@ -204,7 +204,7 @@ func TestExportHandler_ExportPets_Success(t *testing.T) {
 	projectID := testID().String()
 	now := time.Now().UTC()
 
-	deps.petRepo.EXPECT().List(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return([]*pet.Pet{
+	deps.petRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*pet.Pet{
 		{
 			ID:        "pet-1",
 			ProjectID: projectID,
@@ -239,7 +239,7 @@ func TestExportHandler_ExportPets_RepoError(t *testing.T) {
 
 	projectID := testID().String()
 
-	deps.petRepo.EXPECT().List(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
+	deps.petRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
 
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/pets", nil, gin.Params{
 		{Key: "project_id", Value: projectID},

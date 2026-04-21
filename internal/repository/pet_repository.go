@@ -32,34 +32,36 @@ func scanPet(row interface{ Scan(dest ...any) error }) (*pet.Pet, error) {
 	return &p, nil
 }
 
-func (r *petRepo) List(ctx context.Context, projectID string, status string, tagIDs []string, page, perPage int) ([]*pet.Pet, int, error) {
+func (r *petRepo) List(ctx context.Context, filter pet.PetListFilter) ([]*pet.Pet, int, error) {
+	page := filter.Page
 	if page < 1 {
 		page = 1
 	}
+	perPage := filter.PerPage
 	if perPage < 1 {
 		perPage = 20
 	}
 
 	where := []string{"project_id = $1"}
-	args := []any{projectID}
+	args := []any{filter.ProjectID}
 	ix := 1
 
-	if status != "" {
+	if filter.Status != nil {
 		ix++
 		where = append(where, "status = $"+strconv.Itoa(ix))
-		args = append(args, status)
+		args = append(args, *filter.Status)
 	}
 
 	var tagJoin string
-	if len(tagIDs) > 0 {
-		placeholders := make([]string, len(tagIDs))
-		for i, tagID := range tagIDs {
+	if len(filter.TagIDs) > 0 {
+		placeholders := make([]string, len(filter.TagIDs))
+		for i, tagID := range filter.TagIDs {
 			ix++
 			placeholders[i] = "$" + strconv.Itoa(ix)
 			args = append(args, tagID)
 		}
 		tagJoin = " JOIN pet_tags pt ON pt.pet_id = pets.id AND pt.tag_id IN (" + strings.Join(placeholders, ",") + ")"
-		where = append(where, "1=1 GROUP BY pets.id HAVING COUNT(DISTINCT pt.tag_id) = "+strconv.Itoa(len(tagIDs)))
+		where = append(where, "1=1 GROUP BY pets.id HAVING COUNT(DISTINCT pt.tag_id) = "+strconv.Itoa(len(filter.TagIDs)))
 	}
 
 	whereClause := "WHERE " + strings.Join(where, " AND ")
