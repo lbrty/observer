@@ -1,97 +1,37 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Dialog } from "@base-ui/react/dialog";
-
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { DataTable, type Column } from "@/components/data-table";
+import { formatBytes, mimeIcon } from "@/components/document-mime-icon";
+import { DocumentPreviewDialog } from "@/components/document-preview-dialog";
+import { DocumentUploadZone } from "@/components/document-upload-zone";
 import { EmptyState } from "@/components/empty-state";
 import {
   CheckIcon,
   DownloadSimpleIcon,
-  FileArchiveIcon,
-  FileAudioIcon,
-  FileCsvIcon,
-  FileDocIcon,
-  FileDashedIcon,
-  FileImageIcon,
-  FilePdfIcon,
-  FilePngIcon,
-  FilePptIcon,
-  FileSvgIcon,
-  FileTextIcon,
-  FileVideoIcon,
-  FileXlsIcon,
   FilesIcon,
   PencilSimpleIcon,
   TrashIcon,
-  UploadSimpleIcon,
   XIcon,
 } from "@/components/icons";
-import type { Icon } from "@/components/icons";
 import {
   documentDownloadUrl,
-  documentStreamUrl,
   documentThumbnailUrl,
   isImageMime,
   isPdfMime,
   useDeleteDocument,
   useDocuments,
   useUpdateDocument,
-  useUploadDocument,
 } from "@/hooks/use-documents";
 import { useProjectRole } from "@/hooks/use-project-role";
-import { handleApiError } from "@/lib/form-error";
 import type { Document } from "@/types/document";
 
 export const Route = createLazyFileRoute("/_app/projects/$projectId/people/$personId/documents")({
   component: PersonDocuments,
 });
-
-function formatBytes(bytes: number): string {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${(bytes / Math.pow(k, i)).toFixed(1)} ${sizes[i]}`;
-}
-
-function mimeIcon(mime: string): Icon {
-  if (mime === "application/pdf") return FilePdfIcon;
-  if (mime.startsWith("image/png")) return FilePngIcon;
-  if (mime.startsWith("image/svg")) return FileSvgIcon;
-  if (mime === "image/avif" || mime === "image/heif" || mime === "image/heic")
-    return FileDashedIcon;
-  if (mime.startsWith("image/")) return FileImageIcon;
-  if (mime.startsWith("video/")) return FileVideoIcon;
-  if (mime.startsWith("audio/")) return FileAudioIcon;
-  if (mime === "text/csv") return FileCsvIcon;
-  if (mime.startsWith("text/")) return FileTextIcon;
-  if (
-    mime === "application/msword" ||
-    mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  )
-    return FileDocIcon;
-  if (
-    mime === "application/vnd.ms-excel" ||
-    mime === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  )
-    return FileXlsIcon;
-  if (
-    mime === "application/vnd.ms-powerpoint" ||
-    mime === "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-  )
-    return FilePptIcon;
-  if (
-    mime === "application/zip" ||
-    mime === "application/x-rar-compressed" ||
-    mime === "application/gzip"
-  )
-    return FileArchiveIcon;
-  return FileDashedIcon;
-}
 
 function PersonDocuments() {
   const { t } = useTranslation();
@@ -101,9 +41,6 @@ function PersonDocuments() {
   const { data, isLoading } = useDocuments(projectId, personId);
   const updateDocument = useUpdateDocument(projectId);
   const deleteDocument = useDeleteDocument(projectId);
-  const uploadDocument = useUploadDocument(projectId, personId);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
@@ -132,26 +69,6 @@ function PersonDocuments() {
   function handleDelete() {
     if (!deleteId) return;
     deleteDocument.mutate(deleteId, { onSuccess: () => setDeleteId(null) });
-  }
-
-  async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = e.target.files;
-    if (!files?.length) return;
-
-    setUploadError("");
-
-    for (const file of Array.from(files)) {
-      try {
-        await uploadDocument.mutateAsync(file);
-      } catch (err) {
-        setUploadError(await handleApiError(err, t));
-        break;
-      }
-    }
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
   }
 
   const columns: Column<Document>[] = [
@@ -295,27 +212,11 @@ function PersonDocuments() {
         <h2 className="font-serif text-lg font-semibold text-fg">{t("project.documents.title")}</h2>
         <div>
           {canWrite && (
-            <>
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept=".pdf,image/*,video/*,audio/*,text/*,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.gz"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploadDocument.isPending}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border-secondary bg-bg-secondary px-3 py-1.5 text-sm font-medium text-fg hover:bg-bg-tertiary disabled:opacity-50"
-              >
-                <UploadSimpleIcon size={16} />
-                {uploadDocument.isPending
-                  ? t("project.documents.uploading")
-                  : t("project.documents.upload")}
-              </button>
-            </>
+            <DocumentUploadZone
+              projectId={projectId}
+              personId={personId}
+              onUploadError={setUploadError}
+            />
           )}
         </div>
       </div>
@@ -349,49 +250,11 @@ function PersonDocuments() {
         loading={deleteDocument.isPending}
       />
 
-      <Dialog.Root
-        open={!!previewDoc}
-        onOpenChange={(open) => {
-          if (!open) setPreviewDoc(null);
-        }}
-      >
-        <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" />
-          <Dialog.Popup
-            className="fixed inset-0 z-50 flex cursor-pointer items-center justify-center p-8"
-            onClick={() => setPreviewDoc(null)}
-          >
-            <div
-              className={`relative cursor-default ${
-                previewDoc && isPdfMime(previewDoc.mime_type)
-                  ? "flex h-[90vh] w-[60vw] flex-col"
-                  : "max-h-full max-w-full"
-              }`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Dialog.Close className="absolute -top-3 -right-3 z-10 cursor-pointer rounded-full bg-bg-secondary p-1.5 text-fg-secondary shadow-elevated hover:text-fg">
-                <XIcon size={18} />
-              </Dialog.Close>
-              {previewDoc && isPdfMime(previewDoc.mime_type) ? (
-                <iframe
-                  src={documentStreamUrl(projectId, previewDoc.id)}
-                  title={previewDoc.name}
-                  className="h-full w-full flex-1 rounded-lg shadow-elevated"
-                />
-              ) : previewDoc ? (
-                <img
-                  src={documentStreamUrl(projectId, previewDoc.id)}
-                  alt={previewDoc.name}
-                  className="max-h-[80vh] max-w-[80vw] rounded-lg object-contain shadow-elevated"
-                />
-              ) : null}
-              {previewDoc && (
-                <p className="mt-2 text-center text-sm text-white/70">{previewDoc.name}</p>
-              )}
-            </div>
-          </Dialog.Popup>
-        </Dialog.Portal>
-      </Dialog.Root>
+      <DocumentPreviewDialog
+        document={previewDoc}
+        projectId={projectId}
+        onClose={() => setPreviewDoc(null)}
+      />
     </div>
   );
 }
