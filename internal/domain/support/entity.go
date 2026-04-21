@@ -60,7 +60,8 @@ type Record struct {
 	Notes            *string
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
-	// Enriched by list queries via JOIN with people.
+
+	// Populated by repository reads via JOIN with people; zero-valued on Create/Update.
 	PersonFirstName *string
 	PersonLastName  *string
 }

@@ -23,10 +23,12 @@ type Household struct {
 	ProjectID       string
 	ReferenceNumber *string
 	HeadPersonID    *string
-	HeadPersonName  *string
-	MemberCount     int
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
+
+	// Populated by repository reads via JOIN; zero-valued on Create/Update.
+	HeadPersonName *string
+	MemberCount    int
 }
 
 // Member represents a person's membership in a household.

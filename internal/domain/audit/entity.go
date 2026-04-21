@@ -13,9 +13,11 @@ type Entry struct {
 	IP            *string   `db:"ip"`
 	UserAgent     *string   `db:"user_agent"`
 	CreatedAt     time.Time `db:"created_at"`
-	UserFirstName string    `db:"user_first_name"`
-	UserLastName  string    `db:"user_last_name"`
-	UserEmail     string    `db:"user_email"`
+
+	// Populated by repository reads via LEFT JOIN with users; zero-valued on Log.
+	UserFirstName string `db:"user_first_name"`
+	UserLastName  string `db:"user_last_name"`
+	UserEmail     string `db:"user_email"`
 }
 
 type Filter struct {
