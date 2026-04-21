@@ -22,8 +22,6 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 )
 
-//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/repository UserRepository,CredentialsRepository,MFARepository,MFARecoveryCodeRepository,VerificationTokenRepository,SessionRepository,PermissionLoader,PermissionRepository,ProjectRepository,CountryRepository,StateRepository,PlaceRepository,OfficeRepository,CategoryRepository,TagRepository,PersonRepository,PersonCategoryRepository,PersonTagRepository,SupportRecordRepository,MigrationRecordRepository,HouseholdRepository,HouseholdMemberRepository,PersonNoteRepository,DocumentRepository,PetRepository,PetTagRepository,PetReportRepository,ReportRepository,AuditLogRepository
-
 // UserRepository defines persistence operations for users.
 type UserRepository interface {
 	// CreateWithCredentials inserts a user and its credentials atomically.
