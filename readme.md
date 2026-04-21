@@ -2,11 +2,11 @@
 
 Case management platform for NGOs working with forcibly displaced people and animals. Replaces spreadsheets with a structured, auditable system for registering individuals, tracking support history, managing documents, and reporting.
 
-**Stack:** Go 1.25 · PostgreSQL · Redis · React 19 · TanStack Router · Tailwind
+**Stack:** Go 1.26 · PostgreSQL · Redis · React 19 · TanStack Router · Tailwind
 
 ## Development setup
 
-**Prerequisites:** Go 1.25+, PostgreSQL, Redis, [Bun](https://bun.sh), [Just](https://just.systems)
+**Prerequisites:** Go 1.26+, PostgreSQL, Redis, [Bun](https://bun.sh), [Just](https://just.systems)
 
 ```sh
 # 1. Start dependencies
@@ -19,7 +19,7 @@ just keygen
 just migrate-up
 
 # 4. Install frontend dependencies
-bun install
+cd packages/observer-web && bun install && cd ../..
 
 # 5. Run backend + frontend dev servers concurrently (port 9000 + Vite on 5173)
 just dev
@@ -75,8 +75,20 @@ migrations/            Forward-only .up.sql files
 packages/observer-web/ React SPA
   src/
     routes/            TanStack Router file-based routes
-    components/        Shared UI components
-    hooks/             React Query data hooks
+    components/        UI components grouped by domain
+      ui/              Atoms (button, badge, icons, toast…)
+      layout/          App shell (page-header, sidebar-link…)
+      forms/           Form primitives (form-field, filter-bar, comboboxes)
+      table/           Data table building blocks
+      dialogs/         Modal dialogs
+      drawer/          Drawer shell
+      people/ pets/ support/ households/ migration/
+      documents/ tags/ users/ permissions/ profile/
+      reports/ charts/ search-palette/ auth/ date-picker/
+    hooks/             React Query data hooks grouped by domain
+      reference/       Geography reference data (countries, states, places…)
+      people/ pets/ support/ households/ migration/
+      documents/ tags/ notes/ users/ projects/ reports/
     stores/            Zustand stores (auth, toast)
     types/             TypeScript types matching API responses
     lib/               Utilities (api client, export, params, i18n)
@@ -98,7 +110,7 @@ adr/                   Architecture decision records
 just test              # Unit tests (fast, no Docker)
 just test-all          # All tests including integration (requires Docker)
 just generate-mocks    # Regenerate gomock mocks
-just migrate-create name=add_foo  # New migration
+just migrate-create add_foo        # New migration
 just seed              # Seed demo data
 just build-prod        # Build frontend + Go binary with embedded SPA
 ```

@@ -22,41 +22,48 @@ weight: 3
 
 ```
 packages/observer-web/
-  index.html
-  vite.config.ts
-  tsconfig.json
-  vite-env.d.ts
   src/
-    main.tsx                  # app bootstrap (Router + Query + i18n)
-    main.css                  # Tailwind entry
-    lib/
-      api.ts                  # fetch wrapper (credentials: include, 401 auto-refresh)
-      i18n.ts                 # i18next setup
-    types/
-      auth.ts                 # auth DTOs matching backend
-    stores/
-      auth.tsx                # AuthProvider context + useAuth hook
-    locales/
-      ky.json                 # Kyrgyz Latin (default)
-      en.json                 # English
-    routes/
-      __root.tsx              # root layout (AuthProvider wraps Outlet)
-      _auth.tsx               # public layout — redirects to / if authenticated
-      _auth/
-        login.tsx             # /login
-        register.tsx          # /register
-      _app.tsx                # protected layout — redirects to /login if not
-      _app/
-        index.tsx             # / (dashboard stub)
+    main.tsx          # app bootstrap (Router + Query + i18n)
+    main.css          # Tailwind entry
+    routes/           # TanStack Router file-based routes (_app/, _auth/)
+    components/       # UI components, grouped by domain
+      ui/             # atoms: button, badge, icons, toast…
+      layout/         # app shell: page-header, sidebar-link…
+      forms/          # form-field, filter-bar, comboboxes
+      table/          # data-table, pagination, row-actions
+      dialogs/        # confirm-dialog, form-dialog
+      drawer/         # drawer-shell
+      people/ pets/ support/ households/ migration/
+      documents/ tags/ users/ permissions/ profile/
+      reports/ charts/ auth/ date-picker/ search-palette/
+    hooks/            # React Query hooks, grouped by domain
+      reference/      # countries, states, places, offices, categories
+      people/ pets/ support/ households/ migration/
+      documents/ tags/ notes/ users/ projects/ reports/
+    stores/           # Zustand: auth, toast
+    types/            # TypeScript types matching API responses
+    lib/              # api client, i18n, export, params helpers
+    constants/        # enum → i18n key maps
+    locales/          # ky.json (default), en.json, uk.json, ru.json…
 ```
 
 ## Çalıştırma
 
 ```bash
-just web-install    # bağımlılıkları yükle (bun)
-just web-dev        # geliştirme sunucusunu başlat (http://localhost:5173)
-just web-build      # üretim derlemesi
-just web-preview    # üretim derlemesini önizle
+# Install dependencies
+cd packages/observer-web && bun install
+
+# Backend + frontend dev servers concurrently
+just dev
+
+# Frontend only (http://localhost:5173)
+cd packages/observer-web && bun run dev
+
+# Production build (frontend + embedded Go binary)
+just build-prod
+
+# Format frontend code
+cd packages/observer-web && bun run fmt
 ```
 
 ## İçe aktarma kuralları

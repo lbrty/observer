@@ -76,6 +76,20 @@ Order (blank line between groups):
 5. Colocated (`./constants`, `./types`)
 6. Styles (`.module.css`) — always last
 
+### Component & Hook Structure
+
+Both `src/components/` and `src/hooks/` are organized by domain:
+
+- **`ui/`** — atoms: button, status-badge, icons, toast, tooltip, ui-select, ui-switch, alert-banner, empty-state
+- **`layout/`** — app shell: page-header, section-heading, sidebar-link, app-footer
+- **`table/`** — data table: data-table, data-table-page, pagination, row-actions
+- **`forms/`** — form primitives: form-field, form-section, filter-bar, base-combobox, place-combobox
+- **`dialogs/`** — modal dialogs: confirm-dialog, form-dialog
+- **`drawer/`** — drawer shell
+- Domain folders: `people/`, `pets/`, `support/`, `households/`, `migration/`, `documents/`, `tags/`, `users/`, `permissions/`, `profile/`, `reports/`, `charts/`, `auth/`, `date-picker/`, `search-palette/`, `my-stats/`
+
+Hooks mirror the same domain layout under `src/hooks/`: `reference/`, `people/`, `pets/`, `support/`, `households/`, `migration/`, `documents/`, `tags/`, `notes/`, `users/`, `projects/`, `reports/`. General-purpose hooks (`use-drawer-form`, `use-export-csv`, `use-search`, `use-audit-logs`, `use-schema-status`) stay at `src/hooks/`.
+
 ### Components & Tooling
 
 - Check `base-ui` and `@phosphor-icons/react` first for existing components/icons

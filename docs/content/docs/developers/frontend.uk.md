@@ -22,41 +22,48 @@ weight: 3
 
 ```
 packages/observer-web/
-  index.html
-  vite.config.ts
-  tsconfig.json
-  vite-env.d.ts
   src/
-    main.tsx                  # ініціалізація застосунку (Router + Query + i18n)
-    main.css                  # точка входу Tailwind
-    lib/
-      api.ts                  # обгортка fetch (credentials: include, 401 auto-refresh)
-      i18n.ts                 # налаштування i18next
-    types/
-      auth.ts                 # auth DTO, що відповідають бекенду
-    stores/
-      auth.tsx                # AuthProvider контекст + useAuth хук
-    locales/
-      ky.json                 # киргизька латиниця (за замовчуванням)
-      en.json                 # англійська
-    routes/
-      __root.tsx              # кореневий макет (AuthProvider обгортає Outlet)
-      _auth.tsx               # публічний макет — перенаправляє на / якщо автентифікований
-      _auth/
-        login.tsx             # /login
-        register.tsx          # /register
-      _app.tsx                # захищений макет — перенаправляє на /login якщо ні
-      _app/
-        index.tsx             # / (заглушка панелі керування)
+    main.tsx          # app bootstrap (Router + Query + i18n)
+    main.css          # Tailwind entry
+    routes/           # TanStack Router file-based routes (_app/, _auth/)
+    components/       # UI components, grouped by domain
+      ui/             # atoms: button, badge, icons, toast…
+      layout/         # app shell: page-header, sidebar-link…
+      forms/          # form-field, filter-bar, comboboxes
+      table/          # data-table, pagination, row-actions
+      dialogs/        # confirm-dialog, form-dialog
+      drawer/         # drawer-shell
+      people/ pets/ support/ households/ migration/
+      documents/ tags/ users/ permissions/ profile/
+      reports/ charts/ auth/ date-picker/ search-palette/
+    hooks/            # React Query hooks, grouped by domain
+      reference/      # countries, states, places, offices, categories
+      people/ pets/ support/ households/ migration/
+      documents/ tags/ notes/ users/ projects/ reports/
+    stores/           # Zustand: auth, toast
+    types/            # TypeScript types matching API responses
+    lib/              # api client, i18n, export, params helpers
+    constants/        # enum → i18n key maps
+    locales/          # ky.json (default), en.json, uk.json, ru.json…
 ```
 
 ## Запуск
 
 ```bash
-just web-install    # install dependencies (bun)
-just web-dev        # start dev server (http://localhost:5173)
-just web-build      # production build
-just web-preview    # preview production build
+# Install dependencies
+cd packages/observer-web && bun install
+
+# Backend + frontend dev servers concurrently
+just dev
+
+# Frontend only (http://localhost:5173)
+cd packages/observer-web && bun run dev
+
+# Production build (frontend + embedded Go binary)
+just build-prod
+
+# Format frontend code
+cd packages/observer-web && bun run fmt
 ```
 
 ## Конвенції імпортів

@@ -2,7 +2,19 @@
 default:
     @just --list
 
-# Build the application
+# ── Dev ──────────────────────────────────────────────────────────────────────
+
+# Run backend and frontend dev servers concurrently
+dev:
+    DEV_MODE=true SWAGGER_ENABLED=true COOKIE_SECURE=false go run ./cmd/observer serve & cd packages/observer-web && bun run dev
+
+# Run the server (backend only)
+run:
+    SWAGGER_ENABLED=true go run ./cmd/observer serve
+
+# ── Build ─────────────────────────────────────────────────────────────────────
+
+# Build the Go binary (dev)
 build:
     go build -o bin/observer ./cmd/observer
 
@@ -11,25 +23,38 @@ build-prod:
     cd packages/observer-web && bun run build
     go build -tags production -o bin/observer ./cmd/observer
 
-# Run the server
-run:
-    SWAGGER_ENABLED=true go run ./cmd/observer serve
+# Clean build artifacts
+clean:
+    rm -rf bin/
+    rm -f *.pem
 
-# Run backend and frontend dev servers concurrently
-dev:
-    DEV_MODE=true SWAGGER_ENABLED=true COOKIE_SECURE=false go run ./cmd/observer serve & just web-dev
-
-# Create new migration
-migrate-create name:
-    go run ./cmd/observer migrate create {{name}}
+# ── Database ──────────────────────────────────────────────────────────────────
 
 # Apply migrations (forward only)
 migrate-up:
     go run ./cmd/observer migrate up
 
-# Show migration version
+# Create a new migration file
+migrate-create name:
+    go run ./cmd/observer migrate create {{name}}
+
+# Show current migration version
 migrate-version:
     go run ./cmd/observer migrate version
+
+# Seed the database with realistic demo data
+seed *args='':
+    go run ./cmd/observer seed {{args}}
+
+# Start docker compose
+docker-up:
+    docker-compose up -d
+
+# Stop docker compose
+docker-down:
+    docker-compose down
+
+# ── Auth & Admin ──────────────────────────────────────────────────────────────
 
 # Generate RSA keys using the built-in keygen command
 keygen:
@@ -52,6 +77,8 @@ generate-keys:
 create-admin email password *args='':
     go run ./cmd/observer create-admin --email {{email}} --password {{password}} {{args}}
 
+# ── Test ──────────────────────────────────────────────────────────────────────
+
 # Run unit tests only (fast, no Docker)
 test:
     go test -v -short ./...
@@ -60,81 +87,25 @@ test:
 test-all:
     go test -v ./...
 
-# Run tests with coverage
-test-coverage:
-    go test -v -coverprofile=coverage.out ./...
-    go tool cover -html=coverage.out -o coverage.html
+# ── Code quality ──────────────────────────────────────────────────────────────
 
-# Generate OpenAPI spec from annotations
-openapi:
-    swag init -g cmd/observer/main.go -o api/swagger --parseDependency --parseInternal
+# Format code (Go + frontend)
+fmt:
+    go fmt ./...
+    cd packages/observer-web && bun run fmt
+
+# Lint Go code
+lint:
+    golangci-lint run
+
+# Tidy Go dependencies
+tidy:
+    go mod tidy
 
 # Generate mocks
 generate-mocks:
     go generate ./...
 
-# Run tests with race detector
-test-race:
-    go test -v -race ./...
-
-# Benchmark tests
-bench:
-    go test -bench=. -benchmem ./...
-
-# Start docker compose
-docker-up:
-    docker-compose up -d
-
-# Stop docker compose
-docker-down:
-    docker-compose down
-
-# Clean build artifacts
-clean:
-    rm -rf bin/
-    rm -f *.pem
-    rm -f coverage.out coverage.html
-
-# Seed the database with realistic demo data
-seed *args='':
-    go run ./cmd/observer seed {{args}}
-
-# Start frontend dev server
-web-dev:
-    cd packages/observer-web && bun run dev
-
-# Build frontend
-web-build:
-    cd packages/observer-web && bun run build
-
-# Preview frontend production build
-web-preview:
-    cd packages/observer-web && bun run preview
-
-# Install frontend dependencies
-web-install:
-    bun install
-
-# Start docs dev server (watch + live reload)
-docs-dev:
-    cd docs && hugo server -D -w
-
-# Build docs site
-docs-build:
-    cd docs && hugo --minify
-
-# Clean docs build
-docs-clean:
-    rm -rf docs/public/
-
-# Format code
-fmt:
-    go fmt ./...
-
-# Lint code
-lint:
-    golangci-lint run
-
-# Tidy dependencies
-tidy:
-    go mod tidy
+# Generate OpenAPI spec from annotations
+openapi:
+    swag init -g cmd/observer/main.go -o api/swagger --parseDependency --parseInternal
