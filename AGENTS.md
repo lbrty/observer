@@ -2,7 +2,7 @@
 
 ## Quick Ref
 
-- **Module**: `github.com/lbrty/observer` | **Go** 1.25.\* | **Port**: 9000
+- **Module**: `github.com/lbrty/observer` | **Go** 1.26.\* | **Port**: 9000
 - **Architecture**: DDD + Clean Architecture, manual DI (no frameworks)
 - **Build**: `Justfile` (not Makefile) | **Frontend pkg manager**: `bun` | **Always use `bun`/`bunx`** (never `npm`/`npx`/`node`)
 - **ADRs**: `adr/`

@@ -1,4 +1,5 @@
 # Component Extraction — Design Spec
+
 **Date:** 2026-04-20
 
 ## Goal
@@ -21,40 +22,40 @@ Extract reusable sub-components from all oversized frontend files so that no com
 
 Each file below is converted to a folder. The index re-exports so existing imports don't change.
 
-| Current file | New structure | Sub-components to extract |
-|---|---|---|
-| `components/search-palette.tsx` | `search-palette/index.tsx` | `result.tsx` — SearchResult, SearchResultGroup |
-| `components/charts/bar-chart.tsx` | `charts/bar-chart/index.tsx` | `axes.tsx`, `bars.tsx`, `tooltip.tsx` |
-| `components/charts/sankey-chart.tsx` | `charts/sankey-chart/index.tsx` | `nodes.tsx`, `links.tsx`, `labels.tsx` |
-| `components/date-picker.tsx` | `date-picker/index.tsx` | `trigger.tsx`, `nav.tsx` |
-| `components/profile/mfa-settings.tsx` | `profile/mfa-settings/index.tsx` | `setup.tsx`, `backup-codes.tsx`, `disable.tsx` |
-| `components/permissions/assign-dialog.tsx` | `permissions/assign-dialog/index.tsx` | `permission-row.tsx` |
+| Current file                               | New structure                         | Sub-components to extract                      |
+| ------------------------------------------ | ------------------------------------- | ---------------------------------------------- |
+| `components/search-palette.tsx`            | `search-palette/index.tsx`            | `result.tsx` — SearchResult, SearchResultGroup |
+| `components/charts/bar-chart.tsx`          | `charts/bar-chart/index.tsx`          | `axes.tsx`, `bars.tsx`, `tooltip.tsx`          |
+| `components/charts/sankey-chart.tsx`       | `charts/sankey-chart/index.tsx`       | `nodes.tsx`, `links.tsx`, `labels.tsx`         |
+| `components/date-picker.tsx`               | `date-picker/index.tsx`               | `trigger.tsx`, `nav.tsx`                       |
+| `components/profile/mfa-settings.tsx`      | `profile/mfa-settings/index.tsx`      | `setup.tsx`, `backup-codes.tsx`, `disable.tsx` |
+| `components/permissions/assign-dialog.tsx` | `permissions/assign-dialog/index.tsx` | `permission-row.tsx`                           |
 
 Drawer indexes that still exceed 150 lines after existing sub-sections get additional extraction:
 
-| File | Sub-components to extract |
-|---|---|
+| File                                      | Sub-components to extract                     |
+| ----------------------------------------- | --------------------------------------------- |
 | `migration-record-drawer/index.tsx` (252) | `movement-section.tsx`, `housing-section.tsx` |
-| `person-drawer/index.tsx` (238) | `identity-section.tsx`, `contact-section.tsx` |
-| `support-record-drawer/index.tsx` (211) | `referral-section.tsx` |
-| `household-drawer/index.tsx` (195) | `members-section.tsx` |
+| `person-drawer/index.tsx` (238)           | `identity-section.tsx`, `contact-section.tsx` |
+| `support-record-drawer/index.tsx` (211)   | `referral-section.tsx`                        |
+| `household-drawer/index.tsx` (195)        | `members-section.tsx`                         |
 
 ### B — Route files (extraction to `components/`)
 
 Sub-components are new files in `components/`. Route files shrink but are not split.
 
-| Route | Extracted to `components/` |
-|---|---|
-| `reports/people.lazy.tsx` (518) | `reports/people-kpi-cards.tsx`, `reports/people-chart-section.tsx`, `reports/report-filters.tsx` |
-| `reports/pets.lazy.tsx` (465) | `reports/pets-kpi-cards.tsx`, `reports/pets-chart-section.tsx` |
-| `documents.lazy.tsx` (397) | `document-row.tsx`, `upload-zone.tsx`, `document-preview.tsx` |
-| `people/index.tsx` (334) | `people-columns.tsx`, `people-filters.tsx` |
-| `admin/users/index.lazy.tsx` (312) | `user-row.tsx`, `role-select.tsx` |
-| `support-records/-page.tsx` (309) | `support-record-row.tsx`, `support-record-filters.tsx` |
-| `my-stats/index.lazy.tsx` (307) | `stat-card.tsx`, `activity-section.tsx` |
-| `people/$personId/index.lazy.tsx` (306) | `person-header.tsx`, `person-details.tsx` |
-| `reports/custom.lazy.tsx` (300) | `reports/custom-report-form.tsx`, `reports/report-result.tsx` |
-| `pets/-page.tsx` (286) | `pet-row.tsx`, `pet-filters.tsx` |
+| Route                                   | Extracted to `components/`                                                                       |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `reports/people.lazy.tsx` (518)         | `reports/people-kpi-cards.tsx`, `reports/people-chart-section.tsx`, `reports/report-filters.tsx` |
+| `reports/pets.lazy.tsx` (465)           | `reports/pets-kpi-cards.tsx`, `reports/pets-chart-section.tsx`                                   |
+| `documents.lazy.tsx` (397)              | `document-row.tsx`, `upload-zone.tsx`, `document-preview.tsx`                                    |
+| `people/index.tsx` (334)                | `people-columns.tsx`, `people-filters.tsx`                                                       |
+| `admin/users/index.lazy.tsx` (312)      | `user-row.tsx`, `role-select.tsx`                                                                |
+| `support-records/-page.tsx` (309)       | `support-record-row.tsx`, `support-record-filters.tsx`                                           |
+| `my-stats/index.lazy.tsx` (307)         | `stat-card.tsx`, `activity-section.tsx`                                                          |
+| `people/$personId/index.lazy.tsx` (306) | `person-header.tsx`, `person-details.tsx`                                                        |
+| `reports/custom.lazy.tsx` (300)         | `reports/custom-report-form.tsx`, `reports/report-result.tsx`                                    |
+| `pets/-page.tsx` (286)                  | `pet-row.tsx`, `pet-filters.tsx`                                                                 |
 
 ---
 
