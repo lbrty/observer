@@ -20,7 +20,7 @@ mock.module("@/lib/api", () => ({
 }));
 
 const { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } =
-  await import("@/hooks/use-categories");
+  await import("@/hooks/reference/use-categories");
 
 describe("useCategories", () => {
   it("fetches categories", async () => {

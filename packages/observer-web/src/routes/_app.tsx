@@ -4,7 +4,13 @@ import { Menu } from "@base-ui/react/menu";
 import { createFileRoute, Link, Navigate, Outlet } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { MagnifyingGlassIcon, SignOutIcon, UserCircleIcon, WarningIcon, XIcon } from "@/components/icons";
+import {
+  MagnifyingGlassIcon,
+  SignOutIcon,
+  UserCircleIcon,
+  WarningIcon,
+  XIcon,
+} from "@/components/ui/icons";
 import { SearchPalette } from "@/components/search-palette";
 import { useSchemaStatus } from "@/hooks/use-schema-status";
 import { useAuth } from "@/stores/auth";
@@ -34,7 +40,7 @@ function AppLayout() {
   if (isLoading) return null;
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace viewTransition={false} />;
   }
 
   const showDriftBanner = !driftDismissed && schemaStatus && schemaStatus.pending > 0;
@@ -108,7 +114,7 @@ function AvatarMenu({ email, onLogout }: { email: string; onLogout: () => void }
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Positioner sideOffset={6} align="end" className="z-100">
-          <Menu.Popup className="w-44 origin-(--transform-origin) rounded-xl border border-border-secondary bg-bg-secondary py-1 shadow-elevated transition-[transform,scale,opacity] data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0">
+          <Menu.Popup className="w-44 origin-(--transform-origin) overflow-hidden rounded-xl border border-border-secondary bg-bg-secondary py-1 shadow-elevated transition-[transform,scale,opacity] data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0">
             <Menu.Item
               render={<Link to="/profile" />}
               className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-sm text-fg outline-none select-none data-highlighted:bg-bg-tertiary"

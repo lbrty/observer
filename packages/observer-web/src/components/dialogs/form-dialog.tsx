@@ -3,8 +3,8 @@ import type { SyntheticEvent, ReactNode } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner } from "@/components/alert-banner";
-import { Button } from "@/components/button";
+import { ErrorBanner } from "@/components/ui/alert-banner";
+import { Button } from "@/components/ui/button";
 
 interface FormDialogProps {
   open: boolean;

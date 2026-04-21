@@ -1,8 +1,8 @@
 import { useDeferredValue, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { BaseCombobox } from "@/components/base-combobox";
-import { useSearchPeople } from "@/hooks/use-people";
+import { BaseCombobox } from "@/components/forms/base-combobox";
+import { useSearchPeople } from "@/hooks/people/use-people";
 import type { Person } from "@/types/person";
 
 interface PersonComboboxProps {

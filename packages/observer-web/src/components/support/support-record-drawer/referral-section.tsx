@@ -1,8 +1,8 @@
 import { Field } from "@base-ui/react/field";
 import { useTranslation } from "react-i18next";
 
-import { FormSection } from "@/components/form-section";
-import { UISelect } from "@/components/ui-select";
+import { FormSection } from "@/components/forms/form-section";
+import { UISelect } from "@/components/ui/ui-select";
 import { referralKeys } from "@/constants/support";
 
 interface ReferralSectionProps {

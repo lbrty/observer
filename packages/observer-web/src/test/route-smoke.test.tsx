@@ -102,16 +102,13 @@ describe("route imports", () => {
   });
 
   it("imports admin/reference/countries/$countryId/index", async () => {
-    const mod = await import(
-      "@/routes/_app/admin/reference/countries/$countryId/index.lazy"
-    );
+    const mod = await import("@/routes/_app/admin/reference/countries/$countryId/index.lazy");
     expect(mod).toBeDefined();
   });
 
   it("imports admin/reference/countries/$countryId/states/$stateId", async () => {
-    const mod = await import(
-      "@/routes/_app/admin/reference/countries/$countryId/states/$stateId.lazy"
-    );
+    const mod =
+      await import("@/routes/_app/admin/reference/countries/$countryId/states/$stateId.lazy");
     expect(mod).toBeDefined();
   });
 
@@ -141,44 +138,34 @@ describe("route imports", () => {
   });
 
   it("imports projects/$projectId/people/$personId/index", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/people/$personId/index.lazy"
-    );
+    const mod = await import("@/routes/_app/projects/$projectId/people/$personId/index.lazy");
     expect(mod).toBeDefined();
   });
 
   it("imports projects/$projectId/people/$personId/notes", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/people/$personId/notes.lazy"
-    );
+    const mod = await import("@/routes/_app/projects/$projectId/people/$personId/notes.lazy");
     expect(mod).toBeDefined();
   });
 
   it("imports projects/$projectId/people/$personId/documents", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/people/$personId/documents.lazy"
-    );
+    const mod = await import("@/routes/_app/projects/$projectId/people/$personId/documents.lazy");
     expect(mod).toBeDefined();
   });
 
   it("imports projects/$projectId/people/$personId/migration-records", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/people/$personId/migration-records"
-    );
+    const mod =
+      await import("@/routes/_app/projects/$projectId/people/$personId/migration-records");
     expect(mod).toBeDefined();
   });
 
   it("imports projects/$projectId/people/$personId/support-records", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/people/$personId/support-records.lazy"
-    );
+    const mod =
+      await import("@/routes/_app/projects/$projectId/people/$personId/support-records.lazy");
     expect(mod).toBeDefined();
   });
 
   it("imports projects/$projectId/people/$personId/stats", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/people/$personId/stats.lazy"
-    );
+    const mod = await import("@/routes/_app/projects/$projectId/people/$personId/stats.lazy");
     expect(mod).toBeDefined();
   });
 
@@ -218,9 +205,8 @@ describe("route imports", () => {
   });
 
   it("imports projects/$projectId/support-records/-support-records-page", async () => {
-    const mod = await import(
-      "@/routes/_app/projects/$projectId/support-records/-support-records-page"
-    );
+    const mod =
+      await import("@/routes/_app/projects/$projectId/support-records/-support-records-page");
     expect(mod).toBeDefined();
   });
 

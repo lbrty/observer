@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { PageHeader } from "@/components/page-header";
+import { PageHeader } from "@/components/layout/page-header";
 import { AppearanceSettings } from "@/components/profile/appearance-settings";
 import { ChangePasswordForm } from "@/components/profile/change-password-form";
 import { MFASettings } from "@/components/profile/mfa-settings";

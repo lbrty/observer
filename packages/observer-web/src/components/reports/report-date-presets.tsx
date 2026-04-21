@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
-import { getPresetDates, PRESET_KEYS } from "@/components/report";
-import type { DatePreset } from "@/components/report";
+import { getPresetDates, PRESET_KEYS } from "@/components/reports/shared";
+import type { DatePreset } from "@/components/reports/shared";
 
 interface ReportDatePresetsProps {
   activePreset: DatePreset | null;

@@ -30,7 +30,7 @@ mock.module("@/lib/api", () => ({
 }));
 
 const { useDocuments, useUploadDocument, useUpdateDocument, useDeleteDocument } =
-  await import("@/hooks/use-documents");
+  await import("@/hooks/documents/use-documents");
 
 describe("useDocuments", () => {
   it("fetches documents for a person", async () => {

@@ -2,9 +2,9 @@ import { type SyntheticEvent, useState } from "react";
 
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner } from "@/components/alert-banner";
-import { Button } from "@/components/button";
-import { FormField } from "@/components/form-field";
+import { ErrorBanner } from "@/components/ui/alert-banner";
+import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/forms/form-field";
 import { api } from "@/lib/api";
 import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";

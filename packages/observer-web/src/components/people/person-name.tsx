@@ -1,4 +1,4 @@
-import { usePerson } from "@/hooks/use-people";
+import { usePerson } from "@/hooks/people/use-people";
 
 interface PersonNameProps {
   projectId: string;

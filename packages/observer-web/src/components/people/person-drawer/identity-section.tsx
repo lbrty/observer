@@ -2,9 +2,9 @@ import { Field } from "@base-ui/react/field";
 import { useTranslation } from "react-i18next";
 
 import { DatePicker } from "@/components/date-picker";
-import { FormField } from "@/components/form-field";
-import { FormSection } from "@/components/form-section";
-import { UISelect } from "@/components/ui-select";
+import { FormField } from "@/components/forms/form-field";
+import { FormSection } from "@/components/forms/form-section";
+import { UISelect } from "@/components/ui/ui-select";
 import { ageGroupKeys, sexKeys } from "@/constants/person";
 
 interface IdentitySectionProps {

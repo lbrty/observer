@@ -1,4 +1,4 @@
-import { UISwitch } from "@/components/ui-switch";
+import { UISwitch } from "@/components/ui/ui-switch";
 
 interface PermissionToggleRowProps {
   label: string;
@@ -7,7 +7,12 @@ interface PermissionToggleRowProps {
   onCheckedChange: (v: boolean) => void;
 }
 
-export function PermissionToggleRow({ label, description, checked, onCheckedChange }: PermissionToggleRowProps) {
+export function PermissionToggleRow({
+  label,
+  description,
+  checked,
+  onCheckedChange,
+}: PermissionToggleRowProps) {
   return (
     <div className="space-y-2">
       <UISwitch checked={checked} onCheckedChange={onCheckedChange} label={label} />

@@ -1,13 +1,14 @@
-import { FolderSimpleIcon, GlobeIcon, TagIcon, UsersIcon } from "@/components/icons";
-import type { Icon } from "@/components/icons";
+import { BuildingsIcon, FolderSimpleIcon, GlobeIcon, UsersIcon } from "@/components/ui/icons";
+import type { Icon } from "@/components/ui/icons";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { StatusBadge } from "@/components/status-badge";
-import { useCountries } from "@/hooks/use-countries";
-import { useMyProjects } from "@/hooks/use-my-projects";
-import { useProjects } from "@/hooks/use-projects";
-import { useUsers } from "@/hooks/use-users";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { useCountries } from "@/hooks/reference/use-countries";
+import { useOffices } from "@/hooks/reference/use-offices";
+import { useMyProjects } from "@/hooks/projects/use-my-projects";
+import { useProjects } from "@/hooks/projects/use-projects";
+import { useUsers } from "@/hooks/users/use-users";
 import { useAuth } from "@/stores/auth";
 
 export const Route = createFileRoute("/_app/")({
@@ -21,44 +22,14 @@ const colorClasses = {
   rose: "bg-rose/10 text-rose",
 };
 
-interface QuickAction {
+interface StatAction {
+  key: string;
   to: string;
   icon: Icon;
   color: keyof typeof colorClasses;
-  titleKey: string;
-  descKey: string;
+  labelKey: string;
+  value: number | string | null;
 }
-
-const quickActions: QuickAction[] = [
-  {
-    to: "/admin/users",
-    icon: UsersIcon,
-    color: "accent",
-    titleKey: "dashboard.manageUsers",
-    descKey: "dashboard.manageUsersDesc",
-  },
-  {
-    to: "/admin/projects",
-    icon: FolderSimpleIcon,
-    color: "foam",
-    titleKey: "dashboard.projectsAction",
-    descKey: "dashboard.projectsActionDesc",
-  },
-  {
-    to: "/admin/reference/countries",
-    icon: GlobeIcon,
-    color: "gold",
-    titleKey: "dashboard.referenceData",
-    descKey: "dashboard.referenceDataDesc",
-  },
-  {
-    to: "/admin/reference/categories",
-    icon: TagIcon,
-    color: "rose",
-    titleKey: "dashboard.categories",
-    descKey: "dashboard.categoriesDesc",
-  },
-];
 
 function DashboardPage() {
   const { t } = useTranslation();
@@ -68,24 +39,46 @@ function DashboardPage() {
 
   const { data: projectsData } = useProjects({ per_page: 1 }, { enabled: isAdminOrStaff });
   const { data: usersData } = useUsers({ per_page: 1 }, { enabled: isAdminOrStaff });
-  const { data: activeUsersData } = useUsers(
-    { per_page: 1, is_active: true },
-    { enabled: isAdminOrStaff },
-  );
   const { data: countriesData } = useCountries();
+  const { data: officesData } = useOffices();
   const { data: myProjectsData } = useMyProjects();
 
-  const stats = [
-    { label: t("dashboard.projects"), value: projectsData?.total ?? "—" },
-    { label: t("dashboard.users"), value: usersData?.total ?? "—" },
-    { label: t("dashboard.active"), value: activeUsersData?.total ?? "—" },
+  const myProjects = myProjectsData?.projects ?? [];
+
+  const statActions: StatAction[] = [
     {
-      label: t("dashboard.countries"),
+      key: "projects",
+      to: "/admin/projects",
+      icon: FolderSimpleIcon,
+      color: "foam",
+      labelKey: "dashboard.projects",
+      value: projectsData?.total ?? "—",
+    },
+    {
+      key: "users",
+      to: "/admin/users",
+      icon: UsersIcon,
+      color: "accent",
+      labelKey: "dashboard.users",
+      value: usersData?.total ?? "—",
+    },
+    {
+      key: "countries",
+      to: "/admin/reference/countries",
+      icon: GlobeIcon,
+      color: "gold",
+      labelKey: "dashboard.countries",
       value: countriesData?.length ?? "—",
     },
+    {
+      key: "offices",
+      to: "/admin/reference/offices",
+      icon: BuildingsIcon,
+      color: "rose",
+      labelKey: "dashboard.offices",
+      value: officesData?.length ?? "—",
+    },
   ];
-
-  const myProjects = myProjectsData?.projects ?? [];
 
   return (
     <div className="mx-auto w-full max-w-270 px-10 py-8">
@@ -93,25 +86,33 @@ function DashboardPage() {
         <h1 className="font-serif text-3xl font-bold tracking-tight text-fg">
           {t("dashboard.greeting")}
         </h1>
-        <p className="mt-2 text-sm text-fg-secondary">
-          {t("dashboard.role")} <StatusBadge label={user?.role ?? ""} />
-        </p>
+        <div className="mt-2">
+          <StatusBadge label={user?.role ?? ""} />
+        </div>
       </div>
 
       {isAdminOrStaff && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="card-bg-topo rounded-xl border border-border-secondary bg-bg-secondary p-5"
+          {statActions.map(({ key, to, icon: ActionIcon, color, labelKey, value }) => (
+            <Link
+              key={key}
+              to={to}
+              className="card-bg-topo group rounded-xl border border-border-secondary bg-bg-secondary p-5 transition-shadow hover:shadow-elevated"
             >
+              <span
+                className={`relative mb-3 inline-flex size-9 items-center justify-center rounded-xl ${colorClasses[color]}`}
+              >
+                <ActionIcon size={18} weight="duotone" />
+              </span>
               <p className="relative text-[11px] font-semibold uppercase tracking-wide text-fg-tertiary">
-                {stat.label}
+                {t(labelKey)}
               </p>
-              <p className="relative mt-2 font-mono text-2xl font-bold tabular-nums text-fg">
-                {stat.value}
-              </p>
-            </div>
+              {value !== null && (
+                <p className="relative mt-1 font-mono text-2xl font-bold tabular-nums text-fg">
+                  {value}
+                </p>
+              )}
+            </Link>
           ))}
         </div>
       )}
@@ -146,32 +147,6 @@ function DashboardPage() {
             </Link>
           ))}
         </div>
-      )}
-
-      {isAdminOrStaff && (
-        <>
-          <h2 className="mt-8 mb-4 font-serif text-lg font-semibold text-fg">
-            {t("dashboard.quickActions")}
-          </h2>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {quickActions.map(({ to, icon: ActionIcon, color, titleKey, descKey }) => (
-              <Link
-                key={to}
-                to={to}
-                className="card-bg-dots group rounded-xl border border-border-secondary bg-bg-secondary p-5 transition-shadow hover:shadow-elevated"
-              >
-                <span
-                  className={`relative mb-4 inline-flex size-10 items-center justify-center rounded-xl ${colorClasses[color]}`}
-                >
-                  <ActionIcon size={20} weight="duotone" />
-                </span>
-                <p className="relative text-sm font-medium text-fg">{t(titleKey)}</p>
-                <p className="relative mt-0.5 text-xs text-fg-tertiary">{t(descKey)}</p>
-              </Link>
-            ))}
-          </div>
-        </>
       )}
     </div>
   );

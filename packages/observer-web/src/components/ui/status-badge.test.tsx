@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import { cleanup, render, screen } from "@testing-library/react";
 
-import { StatusBadge, StatusDot } from "@/components/status-badge";
+import { StatusBadge, StatusDot } from "@/components/ui/status-badge";
 
 afterEach(cleanup);
 

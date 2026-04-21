@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { SectionHeading } from "@/components/section-heading";
+import { SectionHeading } from "@/components/layout/section-heading";
 
 interface FormSectionProps {
   title: string;

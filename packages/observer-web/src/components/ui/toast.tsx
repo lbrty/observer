@@ -1,4 +1,4 @@
-import { CheckIcon, WarningIcon, XIcon } from "@/components/icons";
+import { CheckIcon, WarningIcon, XIcon } from "@/components/ui/icons";
 import { useToasts, useToast } from "@/stores/toast";
 
 const variantStyles = {

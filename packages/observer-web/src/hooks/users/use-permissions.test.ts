@@ -23,7 +23,7 @@ mock.module("@/lib/api", () => ({
 }));
 
 const { usePermissions, useAssignPermission, useUpdatePermission, useRevokePermission } =
-  await import("@/hooks/use-permissions");
+  await import("@/hooks/users/use-permissions");
 
 describe("usePermissions", () => {
   it("fetches permissions for a project", async () => {

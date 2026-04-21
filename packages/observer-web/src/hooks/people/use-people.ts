@@ -13,9 +13,10 @@ import type {
 export function usePeople(projectId: string, params: ListPeopleParams = {}) {
   return useQuery({
     queryKey: ["people", projectId, params],
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       api
         .get(`projects/${projectId}/people`, {
+          signal,
           searchParams: filterParams(params as Record<string, unknown>),
         })
         .json<ListPeopleOutput>(),
@@ -53,9 +54,10 @@ export function useUpdatePerson(projectId: string) {
 export function useSearchPeople(projectId: string, search: string) {
   return useQuery({
     queryKey: ["people", projectId, "search", search],
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       api
         .get(`projects/${projectId}/people`, {
+          signal,
           searchParams: { search, per_page: "10" },
         })
         .json<ListPeopleOutput>(),

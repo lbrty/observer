@@ -21,15 +21,15 @@ mock.module("@base-ui/react/drawer", () => {
   };
 });
 
-mock.module("@/components/button", () => ({
+mock.module("@/components/ui/button", () => ({
   Button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
 }));
 
-mock.module("@/components/icons", () => ({
+mock.module("@/components/ui/icons", () => ({
   XIcon: () => <span>X</span>,
 }));
 
-mock.module("@/components/tooltip", () => ({
+mock.module("@/components/ui/tooltip", () => ({
   Tooltip: ({ children }: any) => <>{children}</>,
 }));
 
@@ -37,7 +37,7 @@ mock.module("react-i18next", () => ({
   useTranslation: () => ({ t: (k: string) => k }),
 }));
 
-const { DrawerShell } = await import("@/components/drawer-shell");
+const { DrawerShell } = await import("@/components/drawer/drawer-shell");
 
 describe("DrawerShell", () => {
   const defaultProps = {

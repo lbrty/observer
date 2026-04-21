@@ -2,11 +2,11 @@ import { Field } from "@base-ui/react/field";
 import { useTranslation } from "react-i18next";
 
 import { DatePicker } from "@/components/date-picker";
-import { FormSection } from "@/components/form-section";
-import { CopySimpleIcon } from "@/components/icons";
-import { PersonCombobox } from "@/components/person-combobox";
-import { Tooltip } from "@/components/tooltip";
-import { UISelect } from "@/components/ui-select";
+import { FormSection } from "@/components/forms/form-section";
+import { CopySimpleIcon } from "@/components/ui/icons";
+import { PersonCombobox } from "@/components/people/person-combobox";
+import { Tooltip } from "@/components/ui/tooltip";
+import { UISelect } from "@/components/ui/ui-select";
 import { sphereKeys, typeKeys } from "@/constants/support";
 import { useToast } from "@/stores/toast";
 

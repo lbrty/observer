@@ -4,12 +4,12 @@ import { Link, Outlet } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { ArrowLeftIcon, PencilSimpleIcon } from "@/components/icons";
-import { PersonDrawer } from "@/components/person-drawer";
-import { StatusBadge } from "@/components/status-badge";
-import { useMyProjects } from "@/hooks/use-my-projects";
-import { usePerson } from "@/hooks/use-people";
-import { useProjectRole } from "@/hooks/use-project-role";
+import { ArrowLeftIcon, PencilSimpleIcon } from "@/components/ui/icons";
+import { PersonDrawer } from "@/components/people/person-drawer";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { useMyProjects } from "@/hooks/projects/use-my-projects";
+import { usePerson } from "@/hooks/people/use-people";
+import { useProjectRole } from "@/hooks/users/use-project-role";
 
 export const Route = createFileRoute("/_app/projects/$projectId/people/$personId")({
   component: PersonDetailLayout,
@@ -83,7 +83,10 @@ function PersonDetailLayout() {
 
       <div className="mb-6 flex items-center gap-3">
         <h1 className="font-serif text-xl font-bold tracking-tight text-fg">{fullName}</h1>
-        <StatusBadge label={t(`project.people.${person.case_status}`)} statusKey={person.case_status} />
+        <StatusBadge
+          label={t(`project.people.${person.case_status}`)}
+          statusKey={person.case_status}
+        />
         {canWrite && (
           <button
             type="button"

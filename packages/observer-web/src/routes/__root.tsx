@@ -1,7 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 
-import { ToastContainer } from "@/components/toast";
+import { ToastContainer } from "@/components/ui/toast";
 import { AuthProvider } from "@/stores/auth";
 import { ToastProvider } from "@/stores/toast";
 

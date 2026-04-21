@@ -31,7 +31,7 @@ const {
   useReplacePersonTags,
   usePetTags,
   useReplacePetTags,
-} = await import("@/hooks/use-tags");
+} = await import("@/hooks/tags/use-tags");
 
 describe("useTags", () => {
   it("fetches tags for a project", async () => {

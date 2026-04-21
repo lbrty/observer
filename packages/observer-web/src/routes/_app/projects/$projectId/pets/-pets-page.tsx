@@ -1,21 +1,20 @@
 import { useState } from "react";
 
-import { Tabs } from "@base-ui/react/tabs";
-import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { DataTable } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
-import { PawPrintIcon, PlusIcon } from "@/components/icons";
-import { PageHeader } from "@/components/page-header";
-import { Pagination } from "@/components/pagination";
-import { buildPetColumns } from "@/components/pet-columns";
-import { PetFilterBar } from "@/components/pet-filter-bar";
-import { PetDrawer } from "@/components/pet-drawer";
+import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/table/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PawPrintIcon, PlusIcon } from "@/components/ui/icons";
+import { PageHeader } from "@/components/layout/page-header";
+import { Pagination } from "@/components/table/pagination";
+import { buildPetColumns } from "@/components/pets/pet-columns";
+import { PetFilterBar } from "@/components/pets/pet-filter-bar";
+import { PetDrawer } from "@/components/pets/pet-drawer";
+import { PetStatusTabs } from "@/components/pets/pet-status-tabs";
 import { useExportCSV } from "@/hooks/use-export-csv";
-import { useProjectRole } from "@/hooks/use-project-role";
-import { usePets } from "@/hooks/use-pets";
+import { useProjectRole } from "@/hooks/users/use-project-role";
+import { usePets } from "@/hooks/pets/use-pets";
 import type { Pet } from "@/types/pet";
 
 export type PetStatus = "" | "registered" | "adopted" | "owner_found" | "needs_shelter" | "unknown";
@@ -27,15 +26,6 @@ const statusVariants: Record<string, "foam" | "gold" | "rose" | "neutral"> = {
   needs_shelter: "rose",
   unknown: "neutral",
 };
-
-const statusTabs: PetStatus[] = [
-  "",
-  "registered",
-  "adopted",
-  "owner_found",
-  "needs_shelter",
-  "unknown",
-];
 
 export function PetsContent({
   projectId,
@@ -49,7 +39,6 @@ export function PetsContent({
   onPageChange: (page: number) => void;
 }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editPetId, setEditPetId] = useState<string | null>(null);
@@ -118,31 +107,11 @@ export function PetsContent({
         }
       />
 
-      <Tabs.Root
-        defaultValue=""
-        value={statusFilter}
-        onValueChange={(value) => {
-          const s = value as PetStatus;
-          if (s) {
-            navigate({ to: "/projects/$projectId/pets/$status", params: { projectId, status: s } });
-          } else {
-            navigate({ to: "/projects/$projectId/pets", params: { projectId } });
-          }
-        }}
-        className="mb-4"
-      >
-        <Tabs.List className="flex gap-0 rounded-lg border border-border-secondary bg-bg-secondary p-0.5">
-          {statusTabs.map((tab) => (
-            <Tabs.Tab
-              key={tab}
-              value={tab}
-              className="cursor-pointer rounded-sm px-4 py-1.5 m-0.5 text-sm font-medium text-fg-tertiary transition-colors hover:text-fg data-active:bg-bg data-active:text-fg data-active:shadow-card"
-            >
-              {tab === "" ? t("project.pets.all") : statusLabels[tab]}
-            </Tabs.Tab>
-          ))}
-        </Tabs.List>
-      </Tabs.Root>
+      <PetStatusTabs
+        projectId={projectId}
+        statusFilter={statusFilter}
+        statusLabels={statusLabels}
+      />
 
       <PetFilterBar
         projectId={projectId}

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useTags } from "@/hooks/use-tags";
+import { useTags } from "@/hooks/tags/use-tags";
 import { resolveTagColor } from "@/lib/tag-color";
 
 export function TagChips({ projectId, tagIds }: { projectId: string; tagIds: string[] }) {

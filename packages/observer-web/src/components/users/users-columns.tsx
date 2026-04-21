@@ -1,6 +1,6 @@
-import type { Column } from "@/components/data-table";
-import { StatusBadge, StatusDot } from "@/components/status-badge";
-import { UserInitials } from "@/components/user-initials";
+import type { Column } from "@/components/table/data-table";
+import { StatusBadge, StatusDot } from "@/components/ui/status-badge";
+import { UserInitials } from "@/components/users/user-initials";
 import type { AdminUser } from "@/types/admin";
 
 interface UsersColumnsOptions {

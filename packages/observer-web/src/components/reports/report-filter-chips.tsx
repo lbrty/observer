@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { FilterChip } from "@/components/report";
+import { FilterChip } from "@/components/reports/shared";
 import type { ReportParams } from "@/types/report";
 
 interface ReportFilterChipsProps {
@@ -37,14 +37,20 @@ export function ReportFilterChips({
         <FilterChip
           label={t("project.reports.dateFrom")}
           value={params.date_from}
-          onRemove={() => { onParamsChange((p) => ({ ...p, date_from: undefined })); onClearDatePreset(); }}
+          onRemove={() => {
+            onParamsChange((p) => ({ ...p, date_from: undefined }));
+            onClearDatePreset();
+          }}
         />
       )}
       {params.date_to && (
         <FilterChip
           label={t("project.reports.dateTo")}
           value={params.date_to}
-          onRemove={() => { onParamsChange((p) => ({ ...p, date_to: undefined })); onClearDatePreset(); }}
+          onRemove={() => {
+            onParamsChange((p) => ({ ...p, date_to: undefined }));
+            onClearDatePreset();
+          }}
         />
       )}
       {params.office_id && (
@@ -91,7 +97,10 @@ export function ReportFilterChips({
       )}
       <button
         type="button"
-        onClick={() => { onParamsChange(() => ({})); onClearDatePreset(); }}
+        onClick={() => {
+          onParamsChange(() => ({}));
+          onClearDatePreset();
+        }}
         className="ml-1 text-xs font-medium text-fg-tertiary underline transition-colors hover:text-fg"
       >
         {t("project.reports.clearAll")}

@@ -15,7 +15,7 @@ mock.module("@/lib/api", () => ({
   HTTPError: class extends Error {},
 }));
 
-const { usePetReport } = await import("@/hooks/use-pet-reports");
+const { usePetReport } = await import("@/hooks/reports/use-pet-reports");
 
 describe("usePetReport", () => {
   it("fetches pet report for a project", async () => {

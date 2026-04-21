@@ -14,9 +14,10 @@ import type {
 export function useHouseholds(projectId: string, params: ListHouseholdsParams = {}) {
   return useQuery({
     queryKey: ["households", projectId, params],
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       api
         .get(`projects/${projectId}/households`, {
+          signal,
           searchParams: filterParams(params as Record<string, unknown>),
         })
         .json<ListHouseholdsOutput>(),

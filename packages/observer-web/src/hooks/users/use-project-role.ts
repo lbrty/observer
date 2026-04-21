@@ -1,6 +1,6 @@
 import { useAuth } from "@/stores/auth";
 
-import { useMyProjects } from "./use-my-projects";
+import { useMyProjects } from "@/hooks/projects/use-my-projects";
 
 export function useProjectRole(projectId: string) {
   const { user } = useAuth();

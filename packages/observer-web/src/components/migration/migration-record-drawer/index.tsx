@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner } from "@/components/alert-banner";
-import { DrawerShell } from "@/components/drawer-shell";
-import { FormTextarea } from "@/components/form-field";
-import { SectionHeading } from "@/components/section-heading";
+import { ErrorBanner } from "@/components/ui/alert-banner";
+import { DrawerShell } from "@/components/drawer/drawer-shell";
+import { FormTextarea } from "@/components/forms/form-field";
+import { SectionHeading } from "@/components/layout/section-heading";
 
 import { DetailsSection } from "./details-section";
 import { PlaceSection } from "./place-section";

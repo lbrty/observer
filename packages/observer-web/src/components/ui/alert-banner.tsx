@@ -1,4 +1,4 @@
-import { CheckIcon, WarningIcon } from "@/components/icons";
+import { CheckIcon, WarningIcon } from "@/components/ui/icons";
 
 interface AlertBannerProps {
   message: string;

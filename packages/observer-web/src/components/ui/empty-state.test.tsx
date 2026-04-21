@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import { cleanup, render, screen } from "@testing-library/react";
 
-import type { Icon } from "@/components/icons";
-import { EmptyState } from "@/components/empty-state";
+import type { Icon } from "@/components/ui/icons";
+import { EmptyState } from "@/components/ui/empty-state";
 
 function FakeIconFn({ size }: { size: number }) {
   return <svg data-testid="icon" data-size={size} />;

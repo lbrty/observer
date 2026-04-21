@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
-import { PathIcon } from "@/components/icons";
-import { StatusBadge } from "@/components/status-badge";
+import { PathIcon } from "@/components/ui/icons";
+import { StatusBadge } from "@/components/ui/status-badge";
 import type { MigrationRecord } from "@/types/migration-record";
 import type { Place } from "@/types/reference";
 

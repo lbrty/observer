@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
 import { DateRangePicker } from "@/components/date-picker";
-import { UISelect } from "@/components/ui-select";
+import { UISelect } from "@/components/ui/ui-select";
 import { typeKeys } from "@/constants/support";
 import type { CustomReportParams } from "@/types/report";
 

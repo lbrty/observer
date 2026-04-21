@@ -7,7 +7,7 @@ mock.module("react-i18next", () => ({
   useTranslation: () => ({ t: (k: string) => k }),
 }));
 
-const { Pagination } = await import("@/components/pagination");
+const { Pagination } = await import("@/components/table/pagination");
 
 afterEach(cleanup);
 

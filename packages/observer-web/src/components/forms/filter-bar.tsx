@@ -2,10 +2,10 @@ import type { ReactNode } from "react";
 
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 import { DateRangePicker } from "@/components/date-picker";
-import { MagnifyingGlassIcon } from "@/components/icons";
-import { UISelect } from "@/components/ui-select";
+import { MagnifyingGlassIcon } from "@/components/ui/icons";
+import { UISelect } from "@/components/ui/ui-select";
 
 export interface SearchFilter {
   type: "search";

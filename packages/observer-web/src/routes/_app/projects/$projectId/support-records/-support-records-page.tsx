@@ -1,34 +1,30 @@
 import { useState } from "react";
 
-import { Tabs } from "@base-ui/react/tabs";
-import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { DataTable } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
-import { DownloadSimpleIcon, HandHeartIcon, PlusIcon } from "@/components/icons";
-import { PageHeader } from "@/components/page-header";
-import { Pagination } from "@/components/pagination";
-import { buildSupportRecordColumns } from "@/components/support-record-columns";
-import { SupportRecordFilterBar } from "@/components/support-record-filter-bar";
-import { SupportRecordDrawer } from "@/components/support-record-drawer";
+import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/table/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { DownloadSimpleIcon, HandHeartIcon, PlusIcon } from "@/components/ui/icons";
+import { PageHeader } from "@/components/layout/page-header";
+import { Pagination } from "@/components/table/pagination";
+import { buildSupportRecordColumns } from "@/components/support/support-record-columns";
+import { SupportRecordDrawer } from "@/components/support/support-record-drawer";
+import { SupportRecordFilterBar } from "@/components/support/support-record-filter-bar";
+import { SupportRecordStatusTabs } from "@/components/support/support-record-status-tabs";
 import { useExportCSV } from "@/hooks/use-export-csv";
-import { useProjectRole } from "@/hooks/use-project-role";
-import { useSupportRecords } from "@/hooks/use-support-records";
+import { useProjectRole } from "@/hooks/users/use-project-role";
+import { useSupportRecords } from "@/hooks/support/use-support-records";
 import type { SupportRecord } from "@/types/support-record";
 
-const supportTypes = [
-  "",
-  "humanitarian",
-  "legal",
-  "social",
-  "psychological",
-  "medical",
-  "general",
-] as const;
-
-export type SupportType = (typeof supportTypes)[number];
+export type SupportType =
+  | ""
+  | "humanitarian"
+  | "legal"
+  | "social"
+  | "psychological"
+  | "medical"
+  | "general";
 
 interface SupportRecordsContentProps {
   projectId: string;
@@ -64,16 +60,6 @@ export function SupportRecordsContent({
 
   const { data, isLoading } = useSupportRecords(projectId, params);
 
-  const tabLabels: Record<string, string> = {
-    "": t("project.supportRecords.all"),
-    humanitarian: t("project.supportRecords.typeHumanitarian"),
-    legal: t("project.supportRecords.typeLegal"),
-    social: t("project.supportRecords.typeSocial"),
-    psychological: t("project.supportRecords.typePsychological"),
-    medical: t("project.supportRecords.typeMedical"),
-    general: t("project.supportRecords.typeGeneral"),
-  };
-
   function openCreate() {
     setEditRecordId(null);
     setDrawerOpen(true);
@@ -90,7 +76,11 @@ export function SupportRecordsContent({
     if (sphere) searchParams.sphere = sphere;
     if (dateFrom) searchParams.provided_from = dateFrom;
     if (dateTo) searchParams.provided_to = dateTo;
-    return exportCSV(`projects/${projectId}/export/support-records`, "support-records", searchParams);
+    return exportCSV(
+      `projects/${projectId}/export/support-records`,
+      "support-records",
+      searchParams,
+    );
   }
 
   const columns = buildSupportRecordColumns({ t, canWrite, onEdit: openEdit });
@@ -108,30 +98,7 @@ export function SupportRecordsContent({
         }
       />
 
-      <Tabs.Root value={typeFilter} className="mb-4">
-        <Tabs.List className="flex gap-0 rounded-lg border border-border-secondary bg-bg-secondary p-0.5">
-          {supportTypes.map((tab) => (
-            <Tabs.Tab
-              key={tab}
-              value={tab}
-              nativeButton={false}
-              render={
-                <Link
-                  to={
-                    tab
-                      ? "/projects/$projectId/support-records/$type"
-                      : "/projects/$projectId/support-records"
-                  }
-                  params={tab ? { projectId, type: tab } : { projectId }}
-                />
-              }
-              className="cursor-pointer rounded-sm px-4 py-1.5 m-0.5 text-sm font-medium text-fg-tertiary transition-colors hover:text-fg data-active:bg-bg data-active:text-fg data-active:shadow-card"
-            >
-              {tabLabels[tab]}
-            </Tabs.Tab>
-          ))}
-        </Tabs.List>
-      </Tabs.Root>
+      <SupportRecordStatusTabs projectId={projectId} typeFilter={typeFilter} />
 
       <SupportRecordFilterBar
         sphere={sphere}

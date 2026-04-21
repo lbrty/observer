@@ -1,7 +1,7 @@
 import { Dialog } from "@base-ui/react/dialog";
 
-import { XIcon } from "@/components/icons";
-import { documentStreamUrl, isPdfMime } from "@/hooks/use-documents";
+import { XIcon } from "@/components/ui/icons";
+import { documentStreamUrl, isPdfMime } from "@/hooks/documents/use-documents";
 import type { Document } from "@/types/document";
 
 interface DocumentPreviewDialogProps {
@@ -10,7 +10,11 @@ interface DocumentPreviewDialogProps {
   onClose: () => void;
 }
 
-export function DocumentPreviewDialog({ document, projectId, onClose }: DocumentPreviewDialogProps) {
+export function DocumentPreviewDialog({
+  document,
+  projectId,
+  onClose,
+}: DocumentPreviewDialogProps) {
   return (
     <Dialog.Root
       open={!!document}
@@ -48,9 +52,7 @@ export function DocumentPreviewDialog({ document, projectId, onClose }: Document
                 className="max-h-[80vh] max-w-[80vw] rounded-lg object-contain shadow-elevated"
               />
             ) : null}
-            {document && (
-              <p className="mt-2 text-center text-sm text-white/70">{document.name}</p>
-            )}
+            {document && <p className="mt-2 text-center text-sm text-white/70">{document.name}</p>}
           </div>
         </Dialog.Popup>
       </Dialog.Portal>

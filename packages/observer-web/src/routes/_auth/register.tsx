@@ -4,7 +4,7 @@ import { Field } from "@base-ui/react/field";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 import { handleApiError } from "@/lib/form-error";
 import { useAuth } from "@/stores/auth";
 

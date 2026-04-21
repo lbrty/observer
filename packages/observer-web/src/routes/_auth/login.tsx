@@ -1,10 +1,10 @@
 import { type SyntheticEvent, useState } from "react";
 
 import { Field } from "@base-ui/react/field";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
+import { Button } from "@/components/ui/button";
 import { handleApiError } from "@/lib/form-error";
 import { useAuth } from "@/stores/auth";
 
@@ -15,7 +15,6 @@ export const Route = createFileRoute("/_auth/login")({
 function LoginPage() {
   const { t } = useTranslation();
   const { login, verifyMFA } = useAuth();
-  const navigate = useNavigate();
 
   const [step, setStep] = useState<"credentials" | "mfa">("credentials");
   const [mfaToken, setMfaToken] = useState("");
@@ -35,8 +34,6 @@ function LoginPage() {
       if (result.requires_mfa && result.mfa_token) {
         setMfaToken(result.mfa_token);
         setStep("mfa");
-      } else {
-        navigate({ to: "/" });
       }
     } catch (err) {
       setError(
@@ -54,7 +51,6 @@ function LoginPage() {
     const form = new FormData(e.currentTarget);
     try {
       await verifyMFA(mfaToken, form.get("totp_code") as string);
-      navigate({ to: "/" });
     } catch (err) {
       setError(
         await handleApiError(err, t, { "errors.user.notActive": t("auth.pendingApproval") }),

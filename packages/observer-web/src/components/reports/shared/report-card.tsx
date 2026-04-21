@@ -2,9 +2,9 @@ import { useTranslation } from "react-i18next";
 
 import { BarChart, type BarLegendItem } from "@/components/charts/bar-chart";
 import { PieChart } from "@/components/charts/pie-chart";
-import { DownloadSimpleIcon } from "@/components/icons";
+import { DownloadSimpleIcon } from "@/components/ui/icons";
 import { exportGroupCSV } from "@/lib/export-csv";
-import { useTranslatedRows } from "@/components/report/label-maps";
+import { useTranslatedRows } from "@/components/reports/shared/label-maps";
 import type { ReportGroup } from "@/types/report";
 
 interface ReportCardProps {

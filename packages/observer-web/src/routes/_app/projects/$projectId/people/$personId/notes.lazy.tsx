@@ -3,11 +3,11 @@ import { useState } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { PencilSimpleIcon, TrashIcon, XIcon } from "@/components/icons";
-import { useCreateNote, useDeleteNote, useNotes, useUpdateNote } from "@/hooks/use-notes";
-import { useProjectRole } from "@/hooks/use-project-role";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/dialogs/confirm-dialog";
+import { PencilSimpleIcon, TrashIcon, XIcon } from "@/components/ui/icons";
+import { useCreateNote, useDeleteNote, useNotes, useUpdateNote } from "@/hooks/notes/use-notes";
+import { useProjectRole } from "@/hooks/users/use-project-role";
 
 export const Route = createLazyFileRoute("/_app/projects/$projectId/people/$personId/notes")({
   component: PersonNotes,

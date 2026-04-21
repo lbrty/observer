@@ -20,7 +20,7 @@ mock.module("@/lib/api", () => ({
 }));
 
 const { useStates, useCreateState, useUpdateState, useDeleteState } =
-  await import("@/hooks/use-states");
+  await import("@/hooks/reference/use-states");
 
 describe("useStates", () => {
   it("fetches states", async () => {

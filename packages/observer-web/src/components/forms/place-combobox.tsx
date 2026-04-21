@@ -1,10 +1,10 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { BaseCombobox } from "@/components/base-combobox";
-import { useCountries } from "@/hooks/use-countries";
-import { usePlaces } from "@/hooks/use-places";
-import { useStates } from "@/hooks/use-states";
+import { BaseCombobox } from "@/components/forms/base-combobox";
+import { useCountries } from "@/hooks/reference/use-countries";
+import { usePlaces } from "@/hooks/reference/use-places";
+import { useStates } from "@/hooks/reference/use-states";
 
 import type { Country, Place, State } from "@/types/reference";
 

@@ -5,7 +5,7 @@ mock.module("react-i18next", () => ({
   useTranslation: () => ({ t: (k: string) => k }),
 }));
 
-const { DataTable } = await import("@/components/data-table");
+const { DataTable } = await import("@/components/table/data-table");
 
 type Item = { id: string; name: string; email: string };
 

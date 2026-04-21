@@ -19,7 +19,7 @@ mock.module("@/lib/api", () => ({
 }));
 
 const { useUsers, useUser, useSearchUsers, useCreateUser, useUpdateUser } =
-  await import("@/hooks/use-users");
+  await import("@/hooks/users/use-users");
 
 describe("useUsers", () => {
   it("fetches users", async () => {

@@ -4,7 +4,7 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 
 import { CustomReportForm } from "@/components/reports/custom-report-form";
 import { ReportResultTable } from "@/components/reports/report-result-table";
-import { useCustomReport } from "@/hooks/use-reports";
+import { useCustomReport } from "@/hooks/reports/use-reports";
 import type { CustomReportParams } from "@/types/report";
 
 export const Route = createLazyFileRoute("/_app/projects/$projectId/reports/custom")({

@@ -3,15 +3,15 @@ import { type SyntheticEvent, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-import { useCountries } from "@/hooks/use-countries";
+import { useCountries } from "@/hooks/reference/use-countries";
 import { useDrawerForm } from "@/hooks/use-drawer-form";
 import {
   useCreateMigrationRecord,
   useMigrationRecord,
   useUpdateMigrationRecord,
-} from "@/hooks/use-migration-records";
-import { usePlaces } from "@/hooks/use-places";
-import { useStates } from "@/hooks/use-states";
+} from "@/hooks/migration/use-migration-records";
+import { usePlaces } from "@/hooks/reference/use-places";
+import { useStates } from "@/hooks/reference/use-states";
 import { handleApiError } from "@/lib/form-error";
 import { toSelectOptions } from "@/lib/options";
 import { useToast } from "@/stores/toast";

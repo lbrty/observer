@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 
 import { useTranslation } from "react-i18next";
 
-import type { FilterDef } from "@/components/filter-bar";
-import { FilterBar } from "@/components/filter-bar";
+import type { FilterDef } from "@/components/forms/filter-bar";
+import { FilterBar } from "@/components/forms/filter-bar";
 import { sphereKeys } from "@/constants/support";
 
 const sphereValues = [

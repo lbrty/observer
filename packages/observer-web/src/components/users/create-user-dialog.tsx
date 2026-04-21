@@ -3,12 +3,12 @@ import { type SyntheticEvent, useState } from "react";
 import { Field } from "@base-ui/react/field";
 import { useTranslation } from "react-i18next";
 
-import { FormDialog } from "@/components/form-dialog";
-import { FormField } from "@/components/form-field";
-import { UISelect } from "@/components/ui-select";
-import { UISwitch } from "@/components/ui-switch";
-import { useOffices } from "@/hooks/use-offices";
-import { useCreateUser } from "@/hooks/use-users";
+import { FormDialog } from "@/components/dialogs/form-dialog";
+import { FormField } from "@/components/forms/form-field";
+import { UISelect } from "@/components/ui/ui-select";
+import { UISwitch } from "@/components/ui/ui-switch";
+import { useOffices } from "@/hooks/reference/use-offices";
+import { useCreateUser } from "@/hooks/users/use-users";
 import { toSelectOptions } from "@/lib/options";
 
 interface CreateUserDialogProps {

@@ -16,9 +16,9 @@ export function useUsers(
 ) {
   return useQuery({
     queryKey: ["users", params],
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       api
-        .get("admin/users", { searchParams: params as Record<string, string> })
+        .get("admin/users", { signal, searchParams: params as Record<string, string> })
         .json<ListUsersOutput>(),
     placeholderData: keepPreviousData,
     ...options,
@@ -36,9 +36,10 @@ export function useUser(id: string) {
 export function useSearchUsers(search: string) {
   return useQuery({
     queryKey: ["users", "search", search],
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       api
         .get("admin/users", {
+          signal,
           searchParams: { search, per_page: "10" },
         })
         .json<ListUsersOutput>(),

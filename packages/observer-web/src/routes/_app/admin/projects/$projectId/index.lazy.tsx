@@ -4,10 +4,10 @@ import { Field } from "@base-ui/react/field";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { PageHeader } from "@/components/page-header";
-import { UISelect } from "@/components/ui-select";
-import { useProject, useUpdateProject } from "@/hooks/use-projects";
+import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout/page-header";
+import { UISelect } from "@/components/ui/ui-select";
+import { useProject, useUpdateProject } from "@/hooks/projects/use-projects";
 
 export const Route = createLazyFileRoute("/_app/admin/projects/$projectId/")({
   component: ProjectDetailPage,

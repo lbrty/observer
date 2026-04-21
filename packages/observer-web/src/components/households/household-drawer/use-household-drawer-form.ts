@@ -10,8 +10,8 @@ import {
   useHousehold,
   useRemoveHouseholdMember,
   useUpdateHousehold,
-} from "@/hooks/use-households";
-import { usePerson } from "@/hooks/use-people";
+} from "@/hooks/households/use-households";
+import { usePerson } from "@/hooks/people/use-people";
 import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";
 

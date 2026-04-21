@@ -1,4 +1,4 @@
-import type { Icon } from "@/components/icons";
+import type { Icon } from "@/components/ui/icons";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 
 interface SidebarLinkProps {

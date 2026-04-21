@@ -1,13 +1,13 @@
 import { useTranslation } from "react-i18next";
 
-import { ReportDatePresets } from "@/components/report-date-presets";
-import { FilterField, labelKeyMap } from "@/components/report";
-import type { DatePreset } from "@/components/report";
+import { ReportDatePresets } from "@/components/reports/report-date-presets";
+import { FilterField, labelKeyMap } from "@/components/reports/shared";
+import type { DatePreset } from "@/components/reports/shared";
 import { DateRangePicker } from "@/components/date-picker";
-import { UISelect } from "@/components/ui-select";
+import { UISelect } from "@/components/ui/ui-select";
 import { SEX_VALUES, AGE_GROUP_VALUES, CASE_STATUS_VALUES } from "@/constants/person";
-import { useCategories } from "@/hooks/use-categories";
-import { useOffices } from "@/hooks/use-offices";
+import { useCategories } from "@/hooks/reference/use-categories";
+import { useOffices } from "@/hooks/reference/use-offices";
 import { toSelectOptions } from "@/lib/options";
 import type { ReportParams } from "@/types/report";
 

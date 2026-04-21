@@ -2,8 +2,8 @@ import { useMemo, useRef, useState } from "react";
 
 import { useTranslation } from "react-i18next";
 
-import { FunnelIcon, TagIcon, XIcon } from "@/components/icons";
-import { useTags } from "@/hooks/use-tags";
+import { FunnelIcon, TagIcon, XIcon } from "@/components/ui/icons";
+import { useTags } from "@/hooks/tags/use-tags";
 import { resolveTagColor } from "@/lib/tag-color";
 
 import type { Tag } from "@/types/tag";

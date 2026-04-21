@@ -5,21 +5,21 @@ import { Tabs } from "@base-ui/react/tabs";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { DataTable, type Column } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
-import { FormDialog } from "@/components/form-dialog";
+import { Button } from "@/components/ui/button";
+import { DataTable, type Column } from "@/components/table/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { FormDialog } from "@/components/dialogs/form-dialog";
 import {
   ArrowSquareOutIcon,
   FolderSimpleIcon,
   PencilSimpleIcon,
   PlusIcon,
   UsersIcon,
-} from "@/components/icons";
-import { PageHeader } from "@/components/page-header";
-import { Pagination } from "@/components/pagination";
-import { StatusBadge } from "@/components/status-badge";
-import { useCreateProject, useProjects } from "@/hooks/use-projects";
+} from "@/components/ui/icons";
+import { PageHeader } from "@/components/layout/page-header";
+import { Pagination } from "@/components/table/pagination";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { useCreateProject, useProjects } from "@/hooks/projects/use-projects";
 import type { Project } from "@/types/project";
 
 export const Route = createFileRoute("/_app/admin/projects/")({

@@ -1,21 +1,23 @@
 import { type SyntheticEvent, useState } from "react";
 
-import { ArrowLeftIcon, GlobeIcon } from "@/components/icons";
+import { ArrowLeftIcon, GlobeIcon } from "@/components/ui/icons";
 import { Field } from "@base-ui/react/field";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { DataTable, type Column } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
-import { FormDialog } from "@/components/form-dialog";
-import { PageHeader } from "@/components/page-header";
-import { RowActions } from "@/components/row-actions";
-import { useCreatePlace, useDeletePlace, usePlaces, useUpdatePlace } from "@/hooks/use-places";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/dialogs/confirm-dialog";
+import { DataTable, type Column } from "@/components/table/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { FormDialog } from "@/components/dialogs/form-dialog";
+import { PageHeader } from "@/components/layout/page-header";
+import { RowActions } from "@/components/table/row-actions";
+import { useCreatePlace, useDeletePlace, usePlaces, useUpdatePlace } from "@/hooks/reference/use-places";
 import type { Place } from "@/types/reference";
 
-export const Route = createLazyFileRoute("/_app/admin/reference/countries/$countryId/states/$stateId")({
+export const Route = createLazyFileRoute(
+  "/_app/admin/reference/countries/$countryId/states/$stateId",
+)({
   component: PlacesPage,
 });
 

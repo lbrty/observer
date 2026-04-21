@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
-import { FormSection } from "@/components/form-section";
-import { PlaceCombobox } from "@/components/place-combobox";
+import { FormSection } from "@/components/forms/form-section";
+import { PlaceCombobox } from "@/components/forms/place-combobox";
 
 import type { Country, Place, State } from "@/types/reference";
 

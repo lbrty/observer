@@ -26,7 +26,7 @@ const {
   useUpdateHousehold,
   useAddHouseholdMember,
   useRemoveHouseholdMember,
-} = await import("@/hooks/use-households");
+} = await import("@/hooks/households/use-households");
 
 describe("useHouseholds", () => {
   it("fetches households for a project", async () => {

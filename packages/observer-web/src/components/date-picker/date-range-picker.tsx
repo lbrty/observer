@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { Popover } from "@base-ui/react/popover";
 import { DayPicker, type DateRange } from "react-day-picker";
 
-import { CalendarBlankIcon, CaretLeftIcon, CaretRightIcon } from "@/components/icons";
+import { CalendarBlankIcon, CaretLeftIcon, CaretRightIcon } from "@/components/ui/icons";
 
 import { formatDisplay, toISO, parseISO, triggerClass } from "./utils";
 import "./date-picker.css";

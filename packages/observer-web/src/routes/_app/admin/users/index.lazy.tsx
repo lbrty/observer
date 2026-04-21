@@ -3,13 +3,13 @@ import { useState } from "react";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { CreateUserDialog } from "@/components/create-user-dialog";
-import { DataTablePage } from "@/components/data-table-page";
-import type { FilterDef } from "@/components/filter-bar";
-import { UsersIcon } from "@/components/icons";
-import { buildUsersColumns } from "@/components/users-columns";
-import { useUsers } from "@/hooks/use-users";
+import { Button } from "@/components/ui/button";
+import { CreateUserDialog } from "@/components/users/create-user-dialog";
+import { DataTablePage } from "@/components/table/data-table-page";
+import type { FilterDef } from "@/components/forms/filter-bar";
+import { UsersIcon } from "@/components/ui/icons";
+import { buildUsersColumns } from "@/components/users/users-columns";
+import { useUsers } from "@/hooks/users/use-users";
 
 export const Route = createLazyFileRoute("/_app/admin/users/")({
   component: UsersPage,

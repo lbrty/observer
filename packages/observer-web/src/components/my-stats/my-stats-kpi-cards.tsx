@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { KpiCard } from "@/components/report";
+import { KpiCard } from "@/components/reports/shared";
 
 interface MyStatsKpiCardsProps {
   totalPeople: number;

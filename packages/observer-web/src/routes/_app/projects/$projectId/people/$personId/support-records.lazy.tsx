@@ -3,19 +3,21 @@ import { useState } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { DataTable, type Column } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
-import { HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
-import { Pagination } from "@/components/pagination";
-import { StatusBadge } from "@/components/status-badge";
-import { SupportRecordDrawer } from "@/components/support-record-drawer";
+import { Button } from "@/components/ui/button";
+import { DataTable, type Column } from "@/components/table/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/ui/icons";
+import { Pagination } from "@/components/table/pagination";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { SupportRecordDrawer } from "@/components/support/support-record-drawer";
 import { referralKeys, sphereKeys, typeKeys } from "@/constants/support";
-import { useSupportRecords } from "@/hooks/use-support-records";
-import { useProjectRole } from "@/hooks/use-project-role";
+import { useSupportRecords } from "@/hooks/support/use-support-records";
+import { useProjectRole } from "@/hooks/users/use-project-role";
 import type { SupportRecord } from "@/types/support-record";
 
-export const Route = createLazyFileRoute("/_app/projects/$projectId/people/$personId/support-records")({
+export const Route = createLazyFileRoute(
+  "/_app/projects/$projectId/people/$personId/support-records",
+)({
   component: PersonSupportRecords,
 });
 

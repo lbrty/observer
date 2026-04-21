@@ -1,8 +1,8 @@
-import { Button } from "@/components/button";
-import { type Column } from "@/components/data-table";
-import { PencilSimpleIcon, UserCircleIcon } from "@/components/icons";
-import { StatusBadge } from "@/components/status-badge";
-import { TagChips } from "@/components/tag-chips";
+import { Button } from "@/components/ui/button";
+import { type Column } from "@/components/table/data-table";
+import { PencilSimpleIcon, UserCircleIcon } from "@/components/ui/icons";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { TagChips } from "@/components/tags/tag-chips";
 import type { Person } from "@/types/person";
 
 interface PeopleColumnsOptions {

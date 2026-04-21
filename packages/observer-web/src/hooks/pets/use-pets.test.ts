@@ -20,7 +20,7 @@ mock.module("@/lib/api", () => ({
 }));
 
 const { usePets, usePet, useCreatePet, useUpdatePet, useDeletePet } =
-  await import("@/hooks/use-pets");
+  await import("@/hooks/pets/use-pets");
 
 describe("usePets", () => {
   it("fetches pets for a project", async () => {

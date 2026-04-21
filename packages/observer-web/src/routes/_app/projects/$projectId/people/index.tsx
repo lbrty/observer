@@ -1,21 +1,19 @@
 import { useState } from "react";
 
-import { Tabs } from "@base-ui/react/tabs";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { DataTable } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
-import { UserCircleIcon, PlusIcon } from "@/components/icons";
-import { PageHeader } from "@/components/page-header";
-import { Pagination } from "@/components/pagination";
-import { buildPeopleColumns } from "@/components/people-columns";
-import { PeopleFilterBar } from "@/components/people-filter-bar";
-import { PersonDrawer } from "@/components/person-drawer";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "@/components/ui/icons";
+import { PageHeader } from "@/components/layout/page-header";
+import { buildPeopleColumns } from "@/components/people/people-columns";
+import { PeopleFilterBar } from "@/components/people/people-filter-bar";
+import { PeopleStatusTabs } from "@/components/people/people-status-tabs";
+import { PeopleTable } from "@/components/people/people-table";
+import { PersonDrawer } from "@/components/people/person-drawer";
 import { useExportCSV } from "@/hooks/use-export-csv";
-import { useProjectRole } from "@/hooks/use-project-role";
-import { usePeople } from "@/hooks/use-people";
+import { useProjectRole } from "@/hooks/users/use-project-role";
+import { usePeople } from "@/hooks/people/use-people";
 
 export const Route = createFileRoute("/_app/projects/$projectId/people/")({
   component: PeopleListPage,
@@ -24,8 +22,6 @@ export const Route = createFileRoute("/_app/projects/$projectId/people/")({
     page: Number(search.page) || undefined,
   }),
 });
-
-const statusTabs = ["", "new", "active", "closed", "archived"] as const;
 
 function PeopleListPage() {
   const { t } = useTranslation();
@@ -138,62 +134,32 @@ function PeopleListPage() {
         onExport={handleExport}
       />
 
-      <Tabs.Root
-        defaultValue=""
+      <PeopleStatusTabs
+        tabs={["", "new", "active", "closed", "archived"]}
         value={status}
-        onValueChange={(value) => {
-          setStatus(value as string);
-        }}
-        className="mb-4"
-      >
-        <Tabs.List className="flex gap-0 rounded-lg border border-border-secondary bg-bg-secondary p-0.5">
-          {statusTabs.map((tab) => (
-            <Tabs.Tab
-              key={tab}
-              value={tab}
-              className="cursor-pointer rounded-sm px-4 py-1.5 m-0.5 text-sm font-medium text-fg-tertiary transition-colors hover:text-fg data-active:bg-bg data-active:text-fg data-active:shadow-card"
-            >
-              {tab === "" ? t("project.people.all") : statusLabels[tab]}
-            </Tabs.Tab>
-          ))}
-        </Tabs.List>
-      </Tabs.Root>
+        onValueChange={(v) => setStatus(v as string)}
+        getLabel={(tab) => (tab === "" ? t("project.people.all") : statusLabels[tab])}
+      />
 
-      <DataTable
+      <PeopleTable
         columns={columns}
         data={data?.people ?? []}
-        keyExtractor={(p) => p.id}
+        isLoading={isLoading}
         onRowClick={(p) =>
           navigate({
             to: "/projects/$projectId/people/$personId",
             params: { projectId, personId: p.id },
           })
         }
-        isLoading={isLoading}
-        emptyState={
-          <EmptyState
-            icon={UserCircleIcon}
-            title={t("project.people.emptyTitle")}
-            description={t("project.people.emptyDescription")}
-            action={
-              canWrite ? (
-                <Button onClick={openCreate} icon={<PlusIcon size={16} />}>
-                  {t("project.people.register")}
-                </Button>
-              ) : undefined
-            }
-          />
+        canWrite={canWrite}
+        onCreateClick={openCreate}
+        t={t}
+        pagination={
+          data
+            ? { page: data.page, perPage: data.per_page, total: data.total, onChange: setPage }
+            : undefined
         }
       />
-
-      {data && (
-        <Pagination
-          page={data.page}
-          perPage={data.per_page}
-          total={data.total}
-          onChange={setPage}
-        />
-      )}
 
       <PersonDrawer
         open={drawerOpen}

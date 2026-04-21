@@ -13,9 +13,10 @@ import type {
 export function useSupportRecords(projectId: string, params: ListSupportRecordsParams = {}) {
   return useQuery({
     queryKey: ["support-records", projectId, params],
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       api
         .get(`projects/${projectId}/support-records`, {
+          signal,
           searchParams: filterParams(params as Record<string, unknown>),
         })
         .json<ListSupportRecordsOutput>(),

@@ -1,6 +1,6 @@
 import { Command } from "cmdk";
 
-import { PawPrintIcon, UserFocusIcon, FolderSimpleIcon } from "@/components/icons";
+import { PawPrintIcon, UserFocusIcon, FolderSimpleIcon } from "@/components/ui/icons";
 import type { ProjectGroup } from "@/types/search";
 
 export interface ProjectGroupSectionProps {
@@ -11,7 +11,13 @@ export interface ProjectGroupSectionProps {
   t: (key: string) => string;
 }
 
-export function ProjectGroupSection({ group, onPerson, onPet, onProject, t }: ProjectGroupSectionProps) {
+export function ProjectGroupSection({
+  group,
+  onPerson,
+  onPet,
+  onProject,
+  t,
+}: ProjectGroupSectionProps) {
   return (
     <Command.Group
       heading={group.project_name}

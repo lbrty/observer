@@ -20,7 +20,7 @@ mock.module("@/lib/api", () => ({
 }));
 
 const { useCountries, useCreateCountry, useUpdateCountry, useDeleteCountry } =
-  await import("@/hooks/use-countries");
+  await import("@/hooks/reference/use-countries");
 
 describe("useCountries", () => {
   it("fetches countries", async () => {

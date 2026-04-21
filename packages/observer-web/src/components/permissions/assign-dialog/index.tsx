@@ -3,9 +3,9 @@ import { type SyntheticEvent, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { UISelect } from "@/components/ui-select";
-import { UserCombobox } from "@/components/user-combobox";
+import { Button } from "@/components/ui/button";
+import { UISelect } from "@/components/ui/ui-select";
+import { UserCombobox } from "@/components/users/user-combobox";
 import type { AdminUser } from "@/types/admin";
 import type { ProjectRole } from "@/types/permission";
 

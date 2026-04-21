@@ -1,4 +1,4 @@
-import { CaretUpDownIcon, CheckIcon, XIcon } from "@/components/icons";
+import { CaretUpDownIcon, CheckIcon, XIcon } from "@/components/ui/icons";
 import { Select } from "@base-ui/react/select";
 
 interface SelectOption {

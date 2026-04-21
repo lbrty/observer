@@ -39,7 +39,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .json<User>()
       .then(setUser)
       .catch(() => {})
-      .finally(() => setIsLoading(false));
+      .finally(() => {
+        if (!controller.signal.aborted) setIsLoading(false);
+      });
     return () => controller.abort();
   }, []);
 

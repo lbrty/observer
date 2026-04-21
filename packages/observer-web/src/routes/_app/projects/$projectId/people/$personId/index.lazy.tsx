@@ -3,14 +3,14 @@ import { useState } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { PlusIcon } from "@/components/icons";
-import { PersonDetail } from "@/components/person-detail";
-import { QuickSupportForm } from "@/components/quick-support-form";
-import { StatusBadge } from "@/components/status-badge";
-import { useOffices } from "@/hooks/use-offices";
-import { usePerson } from "@/hooks/use-people";
-import { useProjectRole } from "@/hooks/use-project-role";
+import { Button } from "@/components/ui/button";
+import { PlusIcon } from "@/components/ui/icons";
+import { PersonDetail } from "@/components/people/person-detail";
+import { QuickSupportForm } from "@/components/support/quick-support-form";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { useOffices } from "@/hooks/reference/use-offices";
+import { usePerson } from "@/hooks/people/use-people";
+import { useProjectRole } from "@/hooks/users/use-project-role";
 
 export const Route = createLazyFileRoute("/_app/projects/$projectId/people/$personId/")({
   component: PersonOverview,
@@ -92,7 +92,10 @@ function PersonOverview() {
               {t("project.people.caseStatusLabel")}
             </dt>
             <dd className="mt-1">
-              <StatusBadge label={t(`project.people.${person.case_status}`)} statusKey={person.case_status} />
+              <StatusBadge
+                label={t(`project.people.${person.case_status}`)}
+                statusKey={person.case_status}
+              />
             </dd>
           </div>
           <PersonDetail label={t("project.people.externalId")} value={person.external_id} />

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Icon } from "@/components/icons";
+import type { Icon } from "@/components/ui/icons";
 
 interface EmptyStateProps {
   icon: Icon;

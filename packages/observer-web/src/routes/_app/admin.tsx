@@ -5,11 +5,11 @@ import {
   GlobeIcon,
   TagIcon,
   UsersIcon,
-} from "@/components/icons";
+} from "@/components/ui/icons";
 import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { SidebarLink } from "@/components/sidebar-link";
+import { SidebarLink } from "@/components/layout/sidebar-link";
 import { useAuth } from "@/stores/auth";
 
 export const Route = createFileRoute("/_app/admin")({

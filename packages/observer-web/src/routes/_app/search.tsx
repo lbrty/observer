@@ -3,7 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { FolderSimpleIcon, MagnifyingGlassIcon, PawPrintIcon, UserFocusIcon } from "@/components/icons";
+import {
+  FolderSimpleIcon,
+  MagnifyingGlassIcon,
+  PawPrintIcon,
+  UserFocusIcon,
+} from "@/components/ui/icons";
 import { useSearch } from "@/hooks/use-search";
 
 export const Route = createFileRoute("/_app/search")({

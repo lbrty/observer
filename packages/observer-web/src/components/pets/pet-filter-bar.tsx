@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { FilterBar } from "@/components/filter-bar";
-import { DownloadSimpleIcon } from "@/components/icons";
-import { SelectedTagChips, TagFilter } from "@/components/tag-filter";
+import { Button } from "@/components/ui/button";
+import { FilterBar } from "@/components/forms/filter-bar";
+import { DownloadSimpleIcon } from "@/components/ui/icons";
+import { SelectedTagChips, TagFilter } from "@/components/tags/tag-filter";
 
 interface PetFilterBarProps {
   projectId: string;

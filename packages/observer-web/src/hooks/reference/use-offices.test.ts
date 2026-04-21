@@ -20,7 +20,7 @@ mock.module("@/lib/api", () => ({
 }));
 
 const { useOffices, useCreateOffice, useUpdateOffice, useDeleteOffice } =
-  await import("@/hooks/use-offices");
+  await import("@/hooks/reference/use-offices");
 
 describe("useOffices", () => {
   it("fetches offices", async () => {

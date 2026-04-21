@@ -7,9 +7,12 @@ import type { AuditListOutput, AuditListParams } from "@/types/audit";
 export function useAuditLogs(params: AuditListParams) {
   return useQuery({
     queryKey: ["audit-logs", params],
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       api
-        .get("admin/audit-logs", { searchParams: filterParams(params as Record<string, unknown>) })
+        .get("admin/audit-logs", {
+          signal,
+          searchParams: filterParams(params as Record<string, unknown>),
+        })
         .json<AuditListOutput>(),
     placeholderData: keepPreviousData,
   });
@@ -18,9 +21,10 @@ export function useAuditLogs(params: AuditListParams) {
 export function useProjectAuditLogs(projectId: string, params: AuditListParams) {
   return useQuery({
     queryKey: ["project-audit-logs", projectId, params],
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       api
         .get(`projects/${projectId}/audit-logs`, {
+          signal,
           searchParams: filterParams(params as Record<string, unknown>),
         })
         .json<AuditListOutput>(),

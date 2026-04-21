@@ -1,11 +1,11 @@
 import type { ReactNode, SyntheticEvent } from "react";
 
-import { DrawerPreview as Drawer } from "@base-ui/react/drawer";
+import { Drawer } from "@base-ui/react/drawer";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { XIcon } from "@/components/icons";
-import { Tooltip } from "@/components/tooltip";
+import { Button } from "@/components/ui/button";
+import { XIcon } from "@/components/ui/icons";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useAuth } from "@/stores/auth";
 
 interface DrawerShellProps {
@@ -63,7 +63,10 @@ export function DrawerShell({
               </Tooltip>
             </div>
 
-            <form onSubmit={isGuest ? (e) => e.preventDefault() : onSubmit} className="flex min-h-0 flex-1 flex-col">
+            <form
+              onSubmit={isGuest ? (e) => e.preventDefault() : onSubmit}
+              className="flex min-h-0 flex-1 flex-col"
+            >
               <div
                 inert={isGuest || undefined}
                 className="flex-1 space-y-5 overflow-y-auto px-6 py-5"

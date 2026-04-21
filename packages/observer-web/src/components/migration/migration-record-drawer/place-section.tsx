@@ -1,5 +1,5 @@
-import { SectionHeading } from "@/components/section-heading";
-import { UISelect } from "@/components/ui-select";
+import { SectionHeading } from "@/components/layout/section-heading";
+import { UISelect } from "@/components/ui/ui-select";
 
 interface SelectOption {
   label: string;

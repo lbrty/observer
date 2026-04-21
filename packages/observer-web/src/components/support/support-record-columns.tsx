@@ -1,7 +1,7 @@
-import type { Column } from "@/components/data-table";
-import { Button } from "@/components/button";
-import { HandHeartIcon, PencilSimpleIcon } from "@/components/icons";
-import { StatusBadge } from "@/components/status-badge";
+import type { Column } from "@/components/table/data-table";
+import { Button } from "@/components/ui/button";
+import { HandHeartIcon, PencilSimpleIcon } from "@/components/ui/icons";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { referralKeys, sphereKeys, typeKeys } from "@/constants/support";
 import type { SupportRecord } from "@/types/support-record";
 
@@ -34,7 +34,9 @@ export function buildSupportRecordColumns({
     {
       key: "type",
       header: t("project.supportRecords.type"),
-      render: (r) => <StatusBadge label={typeKeys[r.type] ? t(typeKeys[r.type]) : r.type} statusKey={r.type} />,
+      render: (r) => (
+        <StatusBadge label={typeKeys[r.type] ? t(typeKeys[r.type]) : r.type} statusKey={r.type} />
+      ),
     },
     {
       key: "sphere",

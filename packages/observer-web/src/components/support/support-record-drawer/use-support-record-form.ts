@@ -4,13 +4,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import { useDrawerForm } from "@/hooks/use-drawer-form";
-import { useOffices } from "@/hooks/use-offices";
-import { usePerson } from "@/hooks/use-people";
+import { useOffices } from "@/hooks/reference/use-offices";
+import { usePerson } from "@/hooks/people/use-people";
 import {
   useCreateSupportRecord,
   useSupportRecord,
   useUpdateSupportRecord,
-} from "@/hooks/use-support-records";
+} from "@/hooks/support/use-support-records";
 import { handleApiError } from "@/lib/form-error";
 import { useAuth } from "@/stores/auth";
 import { useToast } from "@/stores/toast";

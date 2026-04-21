@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "@tanstack/react-router";
 
-import { Button } from "@/components/button";
-import { TrashIcon } from "@/components/icons";
-import { PersonCombobox } from "@/components/person-combobox";
-import { PersonName } from "@/components/person-name";
-import { SectionHeading } from "@/components/section-heading";
-import { UISelect } from "@/components/ui-select";
+import { Button } from "@/components/ui/button";
+import { TrashIcon } from "@/components/ui/icons";
+import { PersonCombobox } from "@/components/people/person-combobox";
+import { PersonName } from "@/components/people/person-name";
+import { SectionHeading } from "@/components/layout/section-heading";
+import { UISelect } from "@/components/ui/ui-select";
 import { relationshipKeys } from "@/constants/household";
 
 import type { Household, Relationship } from "@/types/household";

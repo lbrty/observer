@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
-import { MagnifyingGlassIcon } from "@/components/icons";
+import { MagnifyingGlassIcon } from "@/components/ui/icons";
 
 interface BaseComboboxProps<T> {
   items: T[];

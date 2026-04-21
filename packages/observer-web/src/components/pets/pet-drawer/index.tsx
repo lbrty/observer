@@ -3,13 +3,13 @@ import { type SyntheticEvent, useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner } from "@/components/alert-banner";
-import { DrawerShell } from "@/components/drawer-shell";
-import { SectionHeading } from "@/components/section-heading";
-import { TagPicker } from "@/components/tag-picker";
+import { ErrorBanner } from "@/components/ui/alert-banner";
+import { DrawerShell } from "@/components/drawer/drawer-shell";
+import { SectionHeading } from "@/components/layout/section-heading";
+import { TagPicker } from "@/components/tags/tag-picker";
 import { useDrawerForm } from "@/hooks/use-drawer-form";
-import { useCreatePet, usePet, useUpdatePet } from "@/hooks/use-pets";
-import { usePetTags, useReplacePetTags } from "@/hooks/use-tags";
+import { useCreatePet, usePet, useUpdatePet } from "@/hooks/pets/use-pets";
+import { usePetTags, useReplacePetTags } from "@/hooks/tags/use-tags";
 import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";
 

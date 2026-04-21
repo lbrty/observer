@@ -3,10 +3,10 @@ import { type SyntheticEvent, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { UISelect } from "@/components/ui-select";
-import { UISwitch } from "@/components/ui-switch";
-import { UserInitials } from "@/components/user-initials";
+import { Button } from "@/components/ui/button";
+import { UISelect } from "@/components/ui/ui-select";
+import { UISwitch } from "@/components/ui/ui-switch";
+import { UserInitials } from "@/components/users/user-initials";
 import type { ProjectPermissionMember, ProjectRole } from "@/types/permission";
 
 import { RoleDescription, useRoleOptions } from "./role-select";

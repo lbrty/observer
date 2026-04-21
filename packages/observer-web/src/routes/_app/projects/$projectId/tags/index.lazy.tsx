@@ -4,20 +4,20 @@ import { Field } from "@base-ui/react/field";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { type Column } from "@/components/data-table";
-import { DataTablePage } from "@/components/data-table-page";
-import { FormDialog } from "@/components/form-dialog";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/dialogs/confirm-dialog";
+import { type Column } from "@/components/table/data-table";
+import { DataTablePage } from "@/components/table/data-table-page";
+import { FormDialog } from "@/components/dialogs/form-dialog";
 import {
   ArrowsClockwiseIcon,
   PencilSimpleIcon,
   PlusIcon,
   TagIcon,
   TrashIcon,
-} from "@/components/icons";
-import { useCreateTag, useDeleteTag, useUpdateTag, useTags } from "@/hooks/use-tags";
-import { useProjectRole } from "@/hooks/use-project-role";
+} from "@/components/ui/icons";
+import { useCreateTag, useDeleteTag, useUpdateTag, useTags } from "@/hooks/tags/use-tags";
+import { useProjectRole } from "@/hooks/users/use-project-role";
 import { handleApiError } from "@/lib/form-error";
 import { resolveTagColor } from "@/lib/tag-color";
 import { useToast } from "@/stores/toast";

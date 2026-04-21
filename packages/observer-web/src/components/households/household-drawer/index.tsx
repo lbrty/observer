@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner } from "@/components/alert-banner";
-import { DrawerShell } from "@/components/drawer-shell";
+import { ErrorBanner } from "@/components/ui/alert-banner";
+import { DrawerShell } from "@/components/drawer/drawer-shell";
 
 import { HeadSection } from "./head-section";
 import { MembersSection } from "./members-section";

@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner } from "@/components/alert-banner";
-import { DrawerShell } from "@/components/drawer-shell";
-import { FormTextarea } from "@/components/form-field";
-import { SectionHeading } from "@/components/section-heading";
+import { ErrorBanner } from "@/components/ui/alert-banner";
+import { DrawerShell } from "@/components/drawer/drawer-shell";
+import { FormTextarea } from "@/components/forms/form-field";
+import { SectionHeading } from "@/components/layout/section-heading";
 
 import { InfoSection } from "./info-section";
 import { ReferralSection } from "./referral-section";
@@ -25,8 +25,17 @@ export function SupportRecordDrawer({
   personId,
 }: SupportRecordDrawerProps) {
   const { t } = useTranslation();
-  const { isEdit, form, set, error, isPending, handleSubmit, personName, setPersonName, officeOptions } =
-    useSupportRecordForm({ open, projectId, recordId, personId });
+  const {
+    isEdit,
+    form,
+    set,
+    error,
+    isPending,
+    handleSubmit,
+    personName,
+    setPersonName,
+    officeOptions,
+  } = useSupportRecordForm({ open, projectId, recordId, personId });
 
   return (
     <DrawerShell

@@ -6,8 +6,10 @@ import type { SearchOutput } from "@/types/search";
 export function useSearch(query: string, limit = 5) {
   return useQuery({
     queryKey: ["search", query, limit],
-    queryFn: () =>
-      api.get(`search?q=${encodeURIComponent(query)}&limit=${limit}`).json<SearchOutput>(),
+    queryFn: ({ signal }) =>
+      api
+        .get(`search?q=${encodeURIComponent(query)}&limit=${limit}`, { signal })
+        .json<SearchOutput>(),
     enabled: query.length >= 2,
     staleTime: 30_000,
   });

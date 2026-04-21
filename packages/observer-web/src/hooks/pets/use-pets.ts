@@ -13,9 +13,10 @@ import type {
 export function usePets(projectId: string, params: ListPetsParams = {}) {
   return useQuery({
     queryKey: ["pets", projectId, params],
-    queryFn: () =>
+    queryFn: ({ signal }) =>
       api
         .get(`projects/${projectId}/pets`, {
+          signal,
           searchParams: filterParams(params as Record<string, unknown>),
         })
         .json<ListPetsOutput>(),

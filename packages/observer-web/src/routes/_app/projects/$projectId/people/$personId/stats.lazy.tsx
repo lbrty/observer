@@ -4,13 +4,13 @@ import { useTranslation } from "react-i18next";
 import { PieChart } from "@/components/charts/pie-chart";
 import { sphereKeys } from "@/constants/support";
 import { SUPPORT_TYPE_COLORS } from "@/components/charts/colors";
-import { useDocuments } from "@/hooks/use-documents";
-import { useMigrationRecords } from "@/hooks/use-migration-records";
-import { useMyProjects } from "@/hooks/use-my-projects";
-import { useNotes } from "@/hooks/use-notes";
-import { useOffices } from "@/hooks/use-offices";
-import { usePermissions } from "@/hooks/use-permissions";
-import { useSupportRecords } from "@/hooks/use-support-records";
+import { useDocuments } from "@/hooks/documents/use-documents";
+import { useMigrationRecords } from "@/hooks/migration/use-migration-records";
+import { useMyProjects } from "@/hooks/projects/use-my-projects";
+import { useNotes } from "@/hooks/notes/use-notes";
+import { useOffices } from "@/hooks/reference/use-offices";
+import { usePermissions } from "@/hooks/users/use-permissions";
+import { useSupportRecords } from "@/hooks/support/use-support-records";
 
 import type { CountResult } from "@/types/report";
 

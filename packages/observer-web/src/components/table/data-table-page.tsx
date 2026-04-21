@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 
-import { DataTable, type Column } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
-import { type FilterDef, FilterBar } from "@/components/filter-bar";
-import type { Icon } from "@/components/icons";
-import { PageHeader } from "@/components/page-header";
-import { Pagination } from "@/components/pagination";
+import { DataTable, type Column } from "@/components/table/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { type FilterDef, FilterBar } from "@/components/forms/filter-bar";
+import type { Icon } from "@/components/ui/icons";
+import { PageHeader } from "@/components/layout/page-header";
+import { Pagination } from "@/components/table/pagination";
 
 interface PaginationConfig {
   page: number;

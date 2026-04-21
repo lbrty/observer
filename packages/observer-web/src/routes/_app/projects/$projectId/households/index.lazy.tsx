@@ -3,23 +3,23 @@ import { useState } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { DataTable, type Column } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
-import type { FilterDef } from "@/components/filter-bar";
-import { FilterBar } from "@/components/filter-bar";
-import { HouseholdDrawer } from "@/components/household-drawer";
+import { Button } from "@/components/ui/button";
+import { DataTable, type Column } from "@/components/table/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import type { FilterDef } from "@/components/forms/filter-bar";
+import { FilterBar } from "@/components/forms/filter-bar";
+import { HouseholdDrawer } from "@/components/households/household-drawer";
 import {
   DownloadSimpleIcon,
   HouseSimpleIcon,
   PencilSimpleIcon,
   PlusIcon,
-} from "@/components/icons";
-import { PageHeader } from "@/components/page-header";
-import { Pagination } from "@/components/pagination";
+} from "@/components/ui/icons";
+import { PageHeader } from "@/components/layout/page-header";
+import { Pagination } from "@/components/table/pagination";
 import { useExportCSV } from "@/hooks/use-export-csv";
-import { useHouseholds } from "@/hooks/use-households";
-import { useProjectRole } from "@/hooks/use-project-role";
+import { useHouseholds } from "@/hooks/households/use-households";
+import { useProjectRole } from "@/hooks/users/use-project-role";
 import type { Household } from "@/types/household";
 
 export const Route = createLazyFileRoute("/_app/projects/$projectId/households/")({

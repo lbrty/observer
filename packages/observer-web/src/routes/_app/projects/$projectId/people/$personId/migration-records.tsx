@@ -3,15 +3,15 @@ import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { DataTable, type Column } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
-import { PathIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
-import { JourneyTimeline } from "@/components/journey-timeline";
-import { MigrationRecordDrawer } from "@/components/migration-record-drawer";
-import { useMigrationRecords } from "@/hooks/use-migration-records";
-import { usePlaces } from "@/hooks/use-places";
-import { useProjectRole } from "@/hooks/use-project-role";
+import { Button } from "@/components/ui/button";
+import { DataTable, type Column } from "@/components/table/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PathIcon, PencilSimpleIcon, PlusIcon } from "@/components/ui/icons";
+import { JourneyTimeline } from "@/components/people/journey-timeline";
+import { MigrationRecordDrawer } from "@/components/migration/migration-record-drawer";
+import { useMigrationRecords } from "@/hooks/migration/use-migration-records";
+import { usePlaces } from "@/hooks/reference/use-places";
+import { useProjectRole } from "@/hooks/users/use-project-role";
 import type { MigrationRecord } from "@/types/migration-record";
 
 export const Route = createFileRoute(

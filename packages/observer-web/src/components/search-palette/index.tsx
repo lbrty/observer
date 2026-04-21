@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
+import * as RadixDialog from "@radix-ui/react-dialog";
 import { Command } from "cmdk";
 import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { MagnifyingGlassIcon } from "@/components/icons";
+import { MagnifyingGlassIcon } from "@/components/ui/icons";
 import { useSearch } from "@/hooks/use-search";
 
 import { ProjectGroupSection } from "./project-group-section";
@@ -41,34 +42,39 @@ export function SearchPalette({ open, onOpenChange }: SearchPaletteProps) {
   const { data } = useSearch(debouncedQuery, PALETTE_LIMIT);
   const results = debouncedQuery.length >= 2 ? (data?.results ?? []) : [];
   const hasResults = results.length > 0;
-  const showViewAll = data && (
-    results.some(g => g.people.length >= PALETTE_LIMIT || g.pets.length >= PALETTE_LIMIT || g.projects.length >= PALETTE_LIMIT)
-  );
+  const showViewAll =
+    data &&
+    results.some(
+      (g) =>
+        g.people.length >= PALETTE_LIMIT ||
+        g.pets.length >= PALETTE_LIMIT ||
+        g.projects.length >= PALETTE_LIMIT,
+    );
 
   function close() {
     onOpenChange(false);
   }
 
   function goToViewAll() {
+    close();
     if (debouncedQuery.length >= 2) {
       navigate({ to: "/search", search: { q: debouncedQuery } });
     }
-    close();
   }
 
   function goToPerson(projectId: string, personId: string) {
-    navigate({ to: "/projects/$projectId/people/$personId", params: { projectId, personId } });
     close();
+    navigate({ to: "/projects/$projectId/people/$personId", params: { projectId, personId } });
   }
 
   function goToPet(projectId: string, _petId: string) {
-    navigate({ to: "/projects/$projectId/pets/$status", params: { projectId, status: "all" } });
     close();
+    navigate({ to: "/projects/$projectId/pets/$status", params: { projectId, status: "all" } });
   }
 
   function goToProject(projectId: string) {
-    navigate({ to: "/projects/$projectId/people", params: { projectId } });
     close();
+    navigate({ to: "/projects/$projectId/people", params: { projectId } });
   }
 
   return (
@@ -81,6 +87,9 @@ export function SearchPalette({ open, onOpenChange }: SearchPaletteProps) {
       overlayClassName="fixed inset-0 z-[199] bg-black/10"
       contentClassName="fixed left-1/2 top-[15vh] -translate-x-1/2 z-[200] w-[calc(100%-2rem)] max-w-lg outline-none"
     >
+      {/* Visually hidden title/description to satisfy Radix Dialog a11y checks */}
+      <RadixDialog.Title className="sr-only">{t("search.title")}</RadixDialog.Title>
+      <RadixDialog.Description className="sr-only">{t("search.hint")}</RadixDialog.Description>
       <div className="overflow-hidden rounded-xl border border-border-secondary bg-bg shadow-elevated">
         <div className="flex items-center gap-3 border-b border-border-secondary px-4 py-3">
           <MagnifyingGlassIcon size={16} className="shrink-0 text-fg-tertiary" />
@@ -125,9 +134,7 @@ export function SearchPalette({ open, onOpenChange }: SearchPaletteProps) {
             )}
           </Command.List>
         ) : (
-          <div className="px-4 py-8 text-center text-sm text-fg-tertiary">
-            {t("search.hint")}
-          </div>
+          <div className="px-4 py-8 text-center text-sm text-fg-tertiary">{t("search.hint")}</div>
         )}
       </div>
     </Command.Dialog>

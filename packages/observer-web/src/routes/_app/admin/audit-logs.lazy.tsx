@@ -3,10 +3,10 @@ import { useState } from "react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { ClockCounterClockwiseIcon } from "@/components/icons";
-import type { Column } from "@/components/data-table";
-import { DataTablePage } from "@/components/data-table-page";
-import type { FilterDef } from "@/components/filter-bar";
+import { ClockCounterClockwiseIcon } from "@/components/ui/icons";
+import type { Column } from "@/components/table/data-table";
+import { DataTablePage } from "@/components/table/data-table-page";
+import type { FilterDef } from "@/components/forms/filter-bar";
 import { useAuditLogs } from "@/hooks/use-audit-logs";
 import type { AuditEntry } from "@/types/audit";
 

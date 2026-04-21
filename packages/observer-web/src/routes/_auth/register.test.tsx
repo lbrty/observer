@@ -36,7 +36,7 @@ mock.module("@base-ui/react/field", () => {
   return { Field: { Root, Label, Control } };
 });
 
-mock.module("@/components/button", () => ({
+mock.module("@/components/ui/button", () => ({
   Button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
 }));
 

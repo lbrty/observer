@@ -3,8 +3,8 @@ import { type SyntheticEvent, useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner } from "@/components/alert-banner";
-import { useDisableMFA, useEnableMFA, useMFASetup } from "@/hooks/use-mfa";
+import { ErrorBanner } from "@/components/ui/alert-banner";
+import { useDisableMFA, useEnableMFA, useMFASetup } from "@/hooks/users/use-mfa";
 import { handleApiError } from "@/lib/form-error";
 import { useAuth } from "@/stores/auth";
 import { useToast } from "@/stores/toast";

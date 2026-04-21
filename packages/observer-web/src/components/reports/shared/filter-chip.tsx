@@ -1,4 +1,4 @@
-import { XIcon } from "@/components/icons";
+import { XIcon } from "@/components/ui/icons";
 
 export function FilterChip({
   label,

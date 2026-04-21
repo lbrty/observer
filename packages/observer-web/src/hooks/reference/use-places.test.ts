@@ -20,7 +20,7 @@ mock.module("@/lib/api", () => ({
 }));
 
 const { usePlaces, useCreatePlace, useUpdatePlace, useDeletePlace } =
-  await import("@/hooks/use-places");
+  await import("@/hooks/reference/use-places");
 
 describe("usePlaces", () => {
   it("fetches places", async () => {

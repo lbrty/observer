@@ -2,21 +2,21 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { DataTable, type Column } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
-import { PencilSimpleIcon, TrashIcon, UsersIcon } from "@/components/icons";
-import { PageHeader } from "@/components/page-header";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/dialogs/confirm-dialog";
+import { DataTable, type Column } from "@/components/table/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PencilSimpleIcon, TrashIcon, UsersIcon } from "@/components/ui/icons";
+import { PageHeader } from "@/components/layout/page-header";
 import { AssignDialog, EditDialog } from "@/components/permissions";
-import { StatusBadge } from "@/components/status-badge";
-import { UserInitials } from "@/components/user-initials";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { UserInitials } from "@/components/users/user-initials";
 import {
   useAssignPermission,
   usePermissions,
   useRevokePermission,
   useUpdatePermission,
-} from "@/hooks/use-permissions";
+} from "@/hooks/users/use-permissions";
 import { useAuth } from "@/stores/auth";
 import type { ProjectPermissionMember } from "@/types/permission";
 

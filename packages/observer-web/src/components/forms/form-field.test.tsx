@@ -17,7 +17,7 @@ mock.module("@base-ui/react/field", () => ({
 
 afterEach(cleanup);
 
-const { FormField, FormTextarea } = await import("@/components/form-field");
+const { FormField, FormTextarea } = await import("@/components/forms/form-field");
 
 describe("FormField", () => {
   it("renders label and input", () => {

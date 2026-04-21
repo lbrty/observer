@@ -19,7 +19,7 @@ mock.module("@/lib/api", () => ({
 }));
 
 const { useProjects, useProject, useCreateProject, useUpdateProject } =
-  await import("@/hooks/use-projects");
+  await import("@/hooks/projects/use-projects");
 
 describe("useProjects", () => {
   it("fetches projects", async () => {

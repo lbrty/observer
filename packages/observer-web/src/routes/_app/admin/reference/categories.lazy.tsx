@@ -4,19 +4,19 @@ import { Field } from "@base-ui/react/field";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { ConfirmDialog } from "@/components/confirm-dialog";
-import { type Column } from "@/components/data-table";
-import { DataTablePage } from "@/components/data-table-page";
-import { FormDialog } from "@/components/form-dialog";
-import { TagIcon } from "@/components/icons";
-import { RowActions } from "@/components/row-actions";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/dialogs/confirm-dialog";
+import { type Column } from "@/components/table/data-table";
+import { DataTablePage } from "@/components/table/data-table-page";
+import { FormDialog } from "@/components/dialogs/form-dialog";
+import { TagIcon } from "@/components/ui/icons";
+import { RowActions } from "@/components/table/row-actions";
 import {
   useCategories,
   useCreateCategory,
   useDeleteCategory,
   useUpdateCategory,
-} from "@/hooks/use-categories";
+} from "@/hooks/reference/use-categories";
 import type { Category } from "@/types/reference";
 
 export const Route = createLazyFileRoute("/_app/admin/reference/categories")({

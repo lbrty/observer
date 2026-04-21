@@ -19,7 +19,7 @@ mock.module("@/lib/api", () => ({
 }));
 
 const { useSupportRecords, useSupportRecord, useCreateSupportRecord, useUpdateSupportRecord } =
-  await import("@/hooks/use-support-records");
+  await import("@/hooks/support/use-support-records");
 
 describe("useSupportRecords", () => {
   it("fetches support records for a project", async () => {

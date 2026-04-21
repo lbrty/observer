@@ -19,7 +19,7 @@ mock.module("@/lib/api", () => ({
   HTTPError: class extends Error {},
 }));
 
-const { useNotes, useCreateNote, useUpdateNote, useDeleteNote } = await import("@/hooks/use-notes");
+const { useNotes, useCreateNote, useUpdateNote, useDeleteNote } = await import("@/hooks/notes/use-notes");
 
 describe("useNotes", () => {
   it("fetches notes for a person", async () => {

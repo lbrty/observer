@@ -1,6 +1,6 @@
-import { Button } from "@/components/button";
-import { PencilSimpleIcon, TrashIcon } from "@/components/icons";
-import { Tooltip } from "@/components/tooltip";
+import { Button } from "@/components/ui/button";
+import { PencilSimpleIcon, TrashIcon } from "@/components/ui/icons";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useTranslation } from "react-i18next";
 
 interface RowActionsProps {

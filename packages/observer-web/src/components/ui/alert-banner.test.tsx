@@ -3,7 +3,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 
 import "@/test/mock-icons";
 
-const { SuccessBanner, ErrorBanner } = await import("@/components/alert-banner");
+const { SuccessBanner, ErrorBanner } = await import("@/components/ui/alert-banner");
 
 afterEach(cleanup);
 

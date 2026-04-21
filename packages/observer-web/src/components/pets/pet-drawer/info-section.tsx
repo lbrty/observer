@@ -1,11 +1,11 @@
 import { Field } from "@base-ui/react/field";
 import { useTranslation } from "react-i18next";
 
-import { FormField, FormTextarea } from "@/components/form-field";
-import { FormSection } from "@/components/form-section";
-import { PersonCombobox } from "@/components/person-combobox";
-import { PersonName } from "@/components/person-name";
-import { UISelect } from "@/components/ui-select";
+import { FormField, FormTextarea } from "@/components/forms/form-field";
+import { FormSection } from "@/components/forms/form-section";
+import { PersonCombobox } from "@/components/people/person-combobox";
+import { PersonName } from "@/components/people/person-name";
+import { UISelect } from "@/components/ui/ui-select";
 import { petStatusKeys } from "@/constants/pet";
 
 interface InfoSectionProps {
@@ -48,23 +48,13 @@ export function InfoSection({
 
   return (
     <FormSection title={t("project.pets.title")}>
-      <FormField
-        label={t("project.pets.name")}
-        value={name}
-        onChange={onNameChange}
-        required
-      />
+      <FormField label={t("project.pets.name")} value={name} onChange={onNameChange} required />
 
       <Field.Root>
         <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
           {t("project.pets.status")}
         </Field.Label>
-        <UISelect
-          value={status}
-          onValueChange={onStatusChange}
-          options={statusOptions}
-          fullWidth
-        />
+        <UISelect value={status} onValueChange={onStatusChange} options={statusOptions} fullWidth />
       </Field.Root>
 
       <div>
@@ -87,9 +77,7 @@ export function InfoSection({
         ) : (
           <PersonCombobox
             projectId={projectId}
-            onSelect={(p) =>
-              onOwnerSelect(p.id, `${p.first_name} ${p.last_name ?? ""}`.trim())
-            }
+            onSelect={(p) => onOwnerSelect(p.id, `${p.first_name} ${p.last_name ?? ""}`.trim())}
           />
         )}
       </div>

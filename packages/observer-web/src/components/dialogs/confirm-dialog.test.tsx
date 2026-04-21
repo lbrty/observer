@@ -25,7 +25,7 @@ mock.module("@base-ui/react/dialog", () => ({
   },
 }));
 
-mock.module("@/components/button", () => ({
+mock.module("@/components/ui/button", () => ({
   Button: ({
     children,
     onClick,
@@ -49,7 +49,7 @@ mock.module("@/components/button", () => ({
 
 afterEach(cleanup);
 
-const { ConfirmDialog } = await import("@/components/confirm-dialog");
+const { ConfirmDialog } = await import("@/components/dialogs/confirm-dialog");
 
 describe("ConfirmDialog", () => {
   it("renders title and description when open", () => {

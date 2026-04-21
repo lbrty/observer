@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner } from "@/components/alert-banner";
-import { DrawerShell } from "@/components/drawer-shell";
-import { SectionHeading } from "@/components/section-heading";
-import { TagPicker } from "@/components/tag-picker";
+import { ErrorBanner } from "@/components/ui/alert-banner";
+import { DrawerShell } from "@/components/drawer/drawer-shell";
+import { SectionHeading } from "@/components/layout/section-heading";
+import { TagPicker } from "@/components/tags/tag-picker";
 
 import { CaseSection } from "./case-section";
 import { IdentitySection } from "./identity-section";

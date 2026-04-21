@@ -1,4 +1,4 @@
-import { CaretLeftIcon, CaretRightIcon } from "@/components/icons";
+import { CaretLeftIcon, CaretRightIcon } from "@/components/ui/icons";
 import { useTranslation } from "react-i18next";
 
 interface PaginationProps {

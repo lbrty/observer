@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
 
-import { FormField } from "@/components/form-field";
-import { FormSection } from "@/components/form-section";
-import { PersonCombobox } from "@/components/person-combobox";
+import { FormField } from "@/components/forms/form-field";
+import { FormSection } from "@/components/forms/form-section";
+import { PersonCombobox } from "@/components/people/person-combobox";
 
 interface HeadSectionProps {
   referenceNumber: string;

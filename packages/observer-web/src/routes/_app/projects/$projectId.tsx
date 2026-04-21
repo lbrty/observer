@@ -8,9 +8,9 @@ import {
   TagIcon,
   UserCircleIcon,
   UserFocusIcon,
-} from "@/components/icons";
-import { SidebarLink } from "@/components/sidebar-link";
-import { useMyProjects } from "@/hooks/use-my-projects";
+} from "@/components/ui/icons";
+import { SidebarLink } from "@/components/layout/sidebar-link";
+import { useMyProjects } from "@/hooks/projects/use-my-projects";
 import { useAuth } from "@/stores/auth";
 import { createFileRoute, Navigate, Outlet, useLocation } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";

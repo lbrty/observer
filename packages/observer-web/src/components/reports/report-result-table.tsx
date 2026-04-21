@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
-import { DownloadSimpleIcon } from "@/components/icons";
-import { labelKeyMap } from "@/components/report";
+import { DownloadSimpleIcon } from "@/components/ui/icons";
+import { labelKeyMap } from "@/components/reports/shared";
 import type { CustomReportOutput } from "@/types/report";
 
 import { DIMENSION_LABEL_KEYS } from "./custom-report-form";
@@ -44,9 +44,7 @@ export function ReportResultTable({ data }: ReportResultTableProps) {
       {/* Total + export */}
       <div className="flex items-center justify-between px-5 py-4">
         <div>
-          <p className="text-3xl font-bold tabular-nums text-fg">
-            {data.total.toLocaleString()}
-          </p>
+          <p className="text-3xl font-bold tabular-nums text-fg">{data.total.toLocaleString()}</p>
           <p className="mt-0.5 text-xs font-medium text-fg-tertiary">
             {t("project.customReport.total")}
           </p>

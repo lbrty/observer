@@ -2,8 +2,8 @@ import { useRef } from "react";
 
 import { useTranslation } from "react-i18next";
 
-import { UploadSimpleIcon } from "@/components/icons";
-import { useUploadDocument } from "@/hooks/use-documents";
+import { UploadSimpleIcon } from "@/components/ui/icons";
+import { useUploadDocument } from "@/hooks/documents/use-documents";
 import { handleApiError } from "@/lib/form-error";
 
 interface DocumentUploadZoneProps {
@@ -12,7 +12,11 @@ interface DocumentUploadZoneProps {
   onUploadError: (msg: string) => void;
 }
 
-export function DocumentUploadZone({ projectId, personId, onUploadError }: DocumentUploadZoneProps) {
+export function DocumentUploadZone({
+  projectId,
+  personId,
+  onUploadError,
+}: DocumentUploadZoneProps) {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadDocument = useUploadDocument(projectId, personId);

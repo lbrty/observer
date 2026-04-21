@@ -1,9 +1,9 @@
-import { Button } from "@/components/button";
-import { DataTable, type Column } from "@/components/data-table";
-import { PawPrintIcon, PencilSimpleIcon } from "@/components/icons";
-import { PersonName } from "@/components/person-name";
-import { StatusBadge } from "@/components/status-badge";
-import { TagChips } from "@/components/tag-chips";
+import { Button } from "@/components/ui/button";
+import { DataTable, type Column } from "@/components/table/data-table";
+import { PawPrintIcon, PencilSimpleIcon } from "@/components/ui/icons";
+import { PersonName } from "@/components/people/person-name";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { TagChips } from "@/components/tags/tag-chips";
 import type { Pet } from "@/types/pet";
 
 // Re-export Column so callers don't need to import data-table separately.

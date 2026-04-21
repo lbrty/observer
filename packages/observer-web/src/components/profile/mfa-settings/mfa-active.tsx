@@ -2,8 +2,8 @@ import { type SyntheticEvent } from "react";
 
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/button";
-import { FormField } from "@/components/form-field";
+import { Button } from "@/components/ui/button";
+import { FormField } from "@/components/forms/form-field";
 
 interface MFAActiveProps {
   showDisable: boolean;
