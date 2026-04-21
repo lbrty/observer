@@ -52,9 +52,7 @@ for (const file of locales) {
   const localeKeys = new Set(Object.keys(locale));
 
   const missing = [...refKeys].filter((k) => !localeKeys.has(k));
-  const orphaned = showOrphans
-    ? [...localeKeys].filter((k) => !refKeys.has(k))
-    : [];
+  const orphaned = showOrphans ? [...localeKeys].filter((k) => !refKeys.has(k)) : [];
 
   if (missing.length === 0 && orphaned.length === 0) {
     console.log(`✓  ${basename(file).padEnd(10)}  ${localeKeys.size} keys — complete`);
