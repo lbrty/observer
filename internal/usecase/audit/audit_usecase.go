@@ -12,6 +12,13 @@ import (
 	"github.com/lbrty/observer/internal/usecase"
 )
 
+func strPtrOrNil(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
+}
+
 type AuditUseCase struct {
 	repo repository.AuditLogRepository
 }
@@ -29,8 +36,8 @@ func (uc *AuditUseCase) Log(ctx context.Context, input LogInput) error {
 		EntityType: input.EntityType,
 		EntityID:   input.EntityID,
 		Summary:    input.Summary,
-		IP:         input.IP,
-		UserAgent:  input.UserAgent,
+		IP:         strPtrOrNil(input.IP),
+		UserAgent:  strPtrOrNil(input.UserAgent),
 	}
 	if err := uc.repo.Log(ctx, entry); err != nil {
 		return fmt.Errorf("audit log: %w", err)
@@ -107,8 +114,8 @@ func (uc *AuditUseCase) Record(ctx context.Context, projectID *string, action, e
 		EntityType: entityType,
 		EntityID:   entityID,
 		Summary:    summary,
-		IP:         middleware.AuditIP(ctx),
-		UserAgent:  middleware.AuditUserAgent(ctx),
+		IP:         strPtrOrNil(middleware.AuditIP(ctx)),
+		UserAgent:  strPtrOrNil(middleware.AuditUserAgent(ctx)),
 	}
 	if err := uc.repo.Log(ctx, entry); err != nil {
 		slog.Error("audit log failed", slog.String("action", action), slog.Any("err", err))

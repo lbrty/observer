@@ -30,8 +30,8 @@ type EntryDTO struct {
 	EntityType    string  `json:"entity_type"`
 	EntityID      *string `json:"entity_id"`
 	Summary       string  `json:"summary"`
-	IP            string  `json:"ip"`
-	UserAgent     string  `json:"user_agent"`
+	IP            *string `json:"ip,omitempty"`
+	UserAgent     *string `json:"user_agent,omitempty"`
 	CreatedAt     string  `json:"created_at"`
 	UserFirstName string  `json:"user_first_name"`
 	UserLastName  string  `json:"user_last_name"`

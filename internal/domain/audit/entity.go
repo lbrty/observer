@@ -10,8 +10,8 @@ type Entry struct {
 	EntityType    string    `db:"entity_type"`
 	EntityID      *string   `db:"entity_id"`
 	Summary       string    `db:"summary"`
-	IP            string    `db:"ip"`
-	UserAgent     string    `db:"user_agent"`
+	IP            *string   `db:"ip"`
+	UserAgent     *string   `db:"user_agent"`
 	CreatedAt     time.Time `db:"created_at"`
 	UserFirstName string    `db:"user_first_name"`
 	UserLastName  string    `db:"user_last_name"`
