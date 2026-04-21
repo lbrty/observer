@@ -84,7 +84,7 @@ type VerificationToken struct {
 
 // MFARecoveryCode is a single-use backup code stored hashed.
 type MFARecoveryCode struct {
-	ID        string
+	ID        ulid.ULID
 	UserID    ulid.ULID
 	CodeHash  string
 	UsedAt    *time.Time

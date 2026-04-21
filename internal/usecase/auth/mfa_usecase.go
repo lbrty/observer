@@ -166,7 +166,7 @@ func generateRecoveryCodes(n int, userID ulid.ULID, hasher crypto.PasswordHasher
 		}
 		plainCodes[i] = plain
 		records[i] = &user.MFARecoveryCode{
-			ID:        iulid.NewString(),
+			ID:        iulid.New(),
 			UserID:    userID,
 			CodeHash:  hash,
 			CreatedAt: now,

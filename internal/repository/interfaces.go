@@ -62,7 +62,7 @@ type MFARecoveryCodeRepository interface {
 	// FindUnused returns the first unused code matching the given hash.
 	FindUnused(ctx context.Context, userID ulid.ULID, codeHash string) (*user.MFARecoveryCode, error)
 	// MarkUsed marks a code as used (sets used_at = now).
-	MarkUsed(ctx context.Context, id string) error
+	MarkUsed(ctx context.Context, id ulid.ULID) error
 	// DeleteByUserID removes all recovery codes for a user (called on MFA disable).
 	DeleteByUserID(ctx context.Context, userID ulid.ULID) error
 }

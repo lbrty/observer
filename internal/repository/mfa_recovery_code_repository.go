@@ -27,7 +27,7 @@ func (r *mfaRecoveryCodeRepo) CreateBatch(ctx context.Context, codes []*domainus
 		VALUES ($1, $2, $3, $4)
 	`
 	for _, c := range codes {
-		if _, err := r.db.ExecContext(ctx, q, c.ID, c.UserID.String(), c.CodeHash, c.CreatedAt); err != nil {
+		if _, err := r.db.ExecContext(ctx, q, c.ID.String(), c.UserID.String(), c.CodeHash, c.CreatedAt); err != nil {
 			return err
 		}
 	}
@@ -58,8 +58,12 @@ func (r *mfaRecoveryCodeRepo) FindUnused(ctx context.Context, userID ulid.ULID, 
 	if err != nil {
 		return nil, err
 	}
+	parsedID, err := ulid.Parse(row.ID)
+	if err != nil {
+		return nil, err
+	}
 	return &domainuser.MFARecoveryCode{
-		ID:        row.ID,
+		ID:        parsedID,
 		UserID:    uid,
 		CodeHash:  row.CodeHash,
 		UsedAt:    row.UsedAt,
@@ -67,9 +71,9 @@ func (r *mfaRecoveryCodeRepo) FindUnused(ctx context.Context, userID ulid.ULID, 
 	}, nil
 }
 
-func (r *mfaRecoveryCodeRepo) MarkUsed(ctx context.Context, id string) error {
+func (r *mfaRecoveryCodeRepo) MarkUsed(ctx context.Context, id ulid.ULID) error {
 	const q = `UPDATE mfa_recovery_codes SET used_at = NOW() WHERE id = $1`
-	_, err := r.db.ExecContext(ctx, q, id)
+	_, err := r.db.ExecContext(ctx, q, id.String())
 	return err
 }
 

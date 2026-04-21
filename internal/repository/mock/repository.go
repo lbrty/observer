@@ -431,7 +431,7 @@ func (mr *MockMFARecoveryCodeRepositoryMockRecorder) FindUnused(ctx, userID, cod
 }
 
 // MarkUsed mocks base method.
-func (m *MockMFARecoveryCodeRepository) MarkUsed(ctx context.Context, id string) error {
+func (m *MockMFARecoveryCodeRepository) MarkUsed(ctx context.Context, id ulid.ULID) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MarkUsed", ctx, id)
 	ret0, _ := ret[0].(error)
