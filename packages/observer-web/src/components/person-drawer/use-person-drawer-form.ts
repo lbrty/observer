@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type SyntheticEvent, useEffect, useState } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -52,6 +52,8 @@ export function usePersonDrawerForm({ open, projectId, personId }: UsePersonDraw
   const replacePersonTags = useReplacePersonTags(projectId);
 
   const [tagIds, setTagIds] = useState<string[]>([]);
+  const [originPlaceLabel, setOriginPlaceLabel] = useState("");
+  const [currentPlaceLabel, setCurrentPlaceLabel] = useState("");
 
   const toast = useToast();
   const { form, set, error, setError, editingId, setEditingId } = useDrawerForm({
@@ -86,9 +88,6 @@ export function usePersonDrawerForm({ open, projectId, personId }: UsePersonDraw
     if (!open) setTagIds([]);
   }, [open]);
 
-  const [originPlaceLabel, setOriginPlaceLabel] = useState("");
-  const [currentPlaceLabel, setCurrentPlaceLabel] = useState("");
-
   const { data: countries } = useCountries();
   const { data: statesData } = useStates();
   const { data: placesData } = usePlaces();
@@ -111,7 +110,7 @@ export function usePersonDrawerForm({ open, projectId, personId }: UsePersonDraw
   const resolvedOriginLabel = originPlaceLabel || resolvePlaceLabel(form.origin_place_id);
   const resolvedCurrentLabel = currentPlaceLabel || resolvePlaceLabel(form.current_place_id);
 
-  async function handleSubmit(e: React.SyntheticEvent) {
+  async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
     setError("");
 

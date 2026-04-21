@@ -1,4 +1,4 @@
-import { type SyntheticEvent, useEffect } from "react";
+import { type SyntheticEvent, useEffect, useRef } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -79,14 +79,20 @@ export function useMigrationRecordForm({
   const { data: destStates } = useStates(form.dest_country || undefined);
   const { data: destPlaces } = usePlaces(form.dest_state || undefined);
 
-  // resolve place -> state -> country when record loads
+  // Track current form values via ref to avoid stale closure in the effect below
+  const formRef = useRef(form);
+  formRef.current = form;
+
+  // Resolve place -> state -> country when record loads (runs once per data change,
+  // reads form via ref to avoid adding form to deps and causing a cycle)
   useEffect(() => {
     if (!isEdit || !record || !allStates?.states || !allPlaces?.places) return;
 
     const states = allStates.states;
     const places = allPlaces.places;
+    const currentForm = formRef.current;
 
-    if (record.from_place_id && !form.from_country) {
+    if (record.from_place_id && !currentForm.from_country) {
       const place = places.find((p) => p.id === record.from_place_id);
       if (place) {
         const state = states.find((s) => s.id === place.state_id);
@@ -97,7 +103,7 @@ export function useMigrationRecordForm({
       }
     }
 
-    if (record.destination_place_id && !form.dest_country) {
+    if (record.destination_place_id && !currentForm.dest_country) {
       const place = places.find((p) => p.id === record.destination_place_id);
       if (place) {
         const state = states.find((s) => s.id === place.state_id);
