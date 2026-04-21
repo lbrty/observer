@@ -5,16 +5,14 @@ import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
-import { DataTable, type Column } from "@/components/data-table";
+import { DataTable } from "@/components/data-table";
 import { EmptyState } from "@/components/empty-state";
-import type { FilterDef } from "@/components/filter-bar";
-import { FilterBar } from "@/components/filter-bar";
-import { DownloadSimpleIcon, HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
+import { DownloadSimpleIcon, HandHeartIcon, PlusIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
-import { StatusBadge } from "@/components/status-badge";
+import { buildSupportRecordColumns } from "@/components/support-record-columns";
+import { SupportRecordFilterBar } from "@/components/support-record-filter-bar";
 import { SupportRecordDrawer } from "@/components/support-record-drawer";
-import { referralKeys, sphereKeys, typeKeys } from "@/constants/support";
 import { useExportCSV } from "@/hooks/use-export-csv";
 import { useProjectRole } from "@/hooks/use-project-role";
 import { useSupportRecords } from "@/hooks/use-support-records";
@@ -31,20 +29,6 @@ const supportTypes = [
 ] as const;
 
 export type SupportType = (typeof supportTypes)[number];
-
-const sphereValues = [
-  "housing_assistance",
-  "document_recovery",
-  "social_benefits",
-  "property_rights",
-  "employment_rights",
-  "family_law",
-  "healthcare_access",
-  "education_access",
-  "financial_aid",
-  "psychological_support",
-  "other",
-] as const;
 
 interface SupportRecordsContentProps {
   projectId: string;
@@ -90,33 +74,6 @@ export function SupportRecordsContent({
     general: t("project.supportRecords.typeGeneral"),
   };
 
-  const sphereOptions = [
-    { label: t("project.supportRecords.allSpheres"), value: "" },
-    ...sphereValues.map((s) => ({
-      label: sphereKeys[s] ? t(sphereKeys[s]) : s,
-      value: s,
-    })),
-  ];
-
-  const filters: FilterDef[] = [
-    {
-      type: "select",
-      value: sphere,
-      onValueChange: setSphere,
-      options: sphereOptions,
-      placeholder: t("project.supportRecords.allSpheres"),
-    },
-    {
-      type: "date-range",
-      fromValue: dateFrom,
-      toValue: dateTo,
-      onFromChange: setDateFrom,
-      onToChange: setDateTo,
-      fromPlaceholder: t("common.dateFrom"),
-      toPlaceholder: t("common.dateTo"),
-    },
-  ];
-
   function openCreate() {
     setEditRecordId(null);
     setDrawerOpen(true);
@@ -136,82 +93,7 @@ export function SupportRecordsContent({
     return exportCSV(`projects/${projectId}/export/support-records`, "support-records", searchParams);
   }
 
-  const columns: Column<SupportRecord>[] = [
-    {
-      key: "person_id",
-      header: t("project.supportRecords.person"),
-      render: (r) => (
-        <div className="flex items-center gap-3">
-          <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-bg-tertiary text-fg-tertiary">
-            <HandHeartIcon size={16} />
-          </span>
-          <span className="truncate text-sm text-fg">
-            {[r.person_first_name, r.person_last_name].filter(Boolean).join(" ") || r.person_id}
-          </span>
-        </div>
-      ),
-    },
-    {
-      key: "type",
-      header: t("project.supportRecords.type"),
-      render: (r) => <StatusBadge label={typeKeys[r.type] ? t(typeKeys[r.type]) : r.type} statusKey={r.type} />,
-    },
-    {
-      key: "sphere",
-      header: t("project.supportRecords.sphere"),
-      render: (r) => (
-        <span className="text-fg-secondary">
-          {r.sphere ? t(sphereKeys[r.sphere] ?? r.sphere) : "\u2014"}
-        </span>
-      ),
-    },
-    {
-      key: "provided_at",
-      header: t("project.supportRecords.providedAt"),
-      render: (r) => (
-        <span className="font-mono text-xs tabular-nums text-fg-tertiary">
-          {r.provided_at ? new Date(r.provided_at).toLocaleDateString("en-CA") : "\u2014"}
-        </span>
-      ),
-    },
-    {
-      key: "referral_status",
-      header: t("project.supportRecords.referralStatus"),
-      render: (r) =>
-        r.referral_status ? (
-          <StatusBadge
-            label={
-              referralKeys[r.referral_status]
-                ? t(referralKeys[r.referral_status])
-                : r.referral_status
-            }
-            statusKey={r.referral_status}
-          />
-        ) : (
-          <span className="text-fg-tertiary">{"\u2014"}</span>
-        ),
-    },
-    ...(canWrite
-      ? [
-          {
-            key: "actions",
-            header: "",
-            render: (r: SupportRecord) => (
-              <Button
-                variant="ghost"
-                className="p-1.5"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openEdit(r.id);
-                }}
-              >
-                <PencilSimpleIcon size={16} />
-              </Button>
-            ),
-          } satisfies Column<SupportRecord>,
-        ]
-      : []),
-  ];
+  const columns = buildSupportRecordColumns({ t, canWrite, onEdit: openEdit });
 
   return (
     <div>
@@ -251,8 +133,13 @@ export function SupportRecordsContent({
         </Tabs.List>
       </Tabs.Root>
 
-      <FilterBar
-        filters={filters}
+      <SupportRecordFilterBar
+        sphere={sphere}
+        onSphereChange={setSphere}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        onDateFromChange={setDateFrom}
+        onDateToChange={setDateTo}
         trailing={
           canExport ? (
             <Button
