@@ -1,24 +1,15 @@
-import { type SyntheticEvent, useState } from "react";
+import { useState } from "react";
 
-import { Field } from "@base-ui/react/field";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
-import type { Column } from "@/components/data-table";
+import { CreateUserDialog } from "@/components/create-user-dialog";
 import { DataTablePage } from "@/components/data-table-page";
 import type { FilterDef } from "@/components/filter-bar";
-import { FormDialog } from "@/components/form-dialog";
-import { FormField } from "@/components/form-field";
 import { UsersIcon } from "@/components/icons";
-import { StatusBadge, StatusDot } from "@/components/status-badge";
-import { UISelect } from "@/components/ui-select";
-import { UISwitch } from "@/components/ui-switch";
-import { UserInitials } from "@/components/user-initials";
-import { useOffices } from "@/hooks/use-offices";
-import { useCreateUser, useUsers } from "@/hooks/use-users";
-import { toSelectOptions } from "@/lib/options";
-import type { AdminUser } from "@/types/admin";
+import { buildUsersColumns } from "@/components/users-columns";
+import { useUsers } from "@/hooks/use-users";
 
 export const Route = createLazyFileRoute("/_app/admin/users/")({
   component: UsersPage,
@@ -58,57 +49,7 @@ function UsersPage() {
     { label: t("admin.users.inactive"), value: "false" },
   ];
 
-  const columns: Column<AdminUser>[] = [
-    {
-      key: "name",
-      header: t("admin.users.name"),
-      render: (u) => (
-        <div className="flex items-center gap-3">
-          <UserInitials firstName={u.first_name} lastName={u.last_name} />
-          <span className="font-medium text-fg">
-            {u.first_name} {u.last_name}
-          </span>
-        </div>
-      ),
-    },
-    {
-      key: "email",
-      header: t("admin.users.email"),
-      render: (u) => <span className="text-fg-secondary">{u.email}</span>,
-    },
-    {
-      key: "role",
-      header: t("admin.users.role"),
-      render: (u) => <StatusBadge label={u.role} />,
-    },
-    {
-      key: "active",
-      header: t("admin.users.active"),
-      render: (u) =>
-        u.deactivated_at ? (
-          <span className="inline-flex items-center gap-1 text-xs text-amber-600">
-            <span className="size-1.5 rounded-full bg-amber-500" />
-            {t("users.deactivated")}
-          </span>
-        ) : (
-          <StatusDot active={u.is_active} />
-        ),
-    },
-    {
-      key: "verified",
-      header: t("admin.users.verified"),
-      render: (u) => <StatusDot active={u.is_verified} />,
-    },
-    {
-      key: "created",
-      header: t("admin.users.created"),
-      render: (u) => (
-        <span className="font-mono text-xs tabular-nums text-fg-tertiary">
-          {new Date(u.created_at).toLocaleDateString("en-CA")}
-        </span>
-      ),
-    },
-  ];
+  const columns = buildUsersColumns({ t });
 
   const filters: FilterDef[] = [
     {
@@ -162,151 +103,5 @@ function UsersPage() {
     >
       <CreateUserDialog open={createOpen} onOpenChange={setCreateOpen} />
     </DataTablePage>
-  );
-}
-
-function CreateUserDialog({
-  open,
-  onOpenChange,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
-  const { t } = useTranslation();
-  const createUser = useCreateUser();
-  const { data: officesData } = useOffices();
-
-  const [form, setForm] = useState({
-    first_name: "",
-    last_name: "",
-    email: "",
-    phone: "",
-    password: "",
-    role: "consultant",
-    office_id: "",
-    is_active: true,
-    is_verified: true,
-  });
-
-  const roleOptions = [
-    { label: t("admin.users.roleAdmin"), value: "admin" },
-    { label: t("admin.users.roleStaff"), value: "staff" },
-    { label: t("admin.users.roleConsultant"), value: "consultant" },
-    { label: t("admin.users.roleGuest"), value: "guest" },
-  ];
-
-  const officeOptions = [{ label: "—", value: "" }, ...toSelectOptions(officesData)];
-
-  async function handleSubmit(e: SyntheticEvent) {
-    e.preventDefault();
-    await createUser.mutateAsync({
-      first_name: form.first_name,
-      last_name: form.last_name || undefined,
-      email: form.email,
-      phone: form.phone || undefined,
-      password: form.password,
-      role: form.role,
-      office_id: form.office_id || null,
-      is_active: form.is_active,
-      is_verified: form.is_verified,
-    });
-    onOpenChange(false);
-    setForm({
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      password: "",
-      role: "consultant",
-      office_id: "",
-      is_active: true,
-      is_verified: true,
-    });
-  }
-
-  return (
-    <FormDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      title={t("admin.users.addTitle")}
-      loading={createUser.isPending}
-      onSubmit={handleSubmit}
-      maxWidth="md"
-    >
-      <div className="grid grid-cols-2 gap-3">
-        <FormField
-          label={t("admin.users.firstName")}
-          required
-          value={form.first_name}
-          onChange={(v) => setForm((f) => ({ ...f, first_name: v }))}
-        />
-        <FormField
-          label={t("admin.users.lastName")}
-          value={form.last_name}
-          onChange={(v) => setForm((f) => ({ ...f, last_name: v }))}
-        />
-      </div>
-
-      <FormField
-        label={t("admin.users.email")}
-        type="email"
-        required
-        value={form.email}
-        onChange={(v) => setForm((f) => ({ ...f, email: v }))}
-      />
-
-      <FormField
-        label={t("admin.users.phone")}
-        type="tel"
-        value={form.phone}
-        onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
-      />
-
-      <FormField
-        label={t("admin.users.password")}
-        type="password"
-        required
-        value={form.password}
-        onChange={(v) => setForm((f) => ({ ...f, password: v }))}
-      />
-
-      <Field.Root>
-        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-          {t("admin.users.role")}
-        </Field.Label>
-        <UISelect
-          value={form.role}
-          onValueChange={(v) => setForm((f) => ({ ...f, role: v }))}
-          options={roleOptions}
-          fullWidth
-        />
-      </Field.Root>
-
-      <Field.Root>
-        <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
-          {t("admin.users.office")}
-        </Field.Label>
-        <UISelect
-          value={form.office_id}
-          onValueChange={(v) => setForm((f) => ({ ...f, office_id: v }))}
-          options={officeOptions}
-          placeholder="—"
-          fullWidth
-        />
-      </Field.Root>
-
-      <div className="flex gap-6">
-        <UISwitch
-          checked={form.is_active}
-          onCheckedChange={(v) => setForm((f) => ({ ...f, is_active: v }))}
-          label={t("admin.users.active")}
-        />
-        <UISwitch
-          checked={form.is_verified}
-          onCheckedChange={(v) => setForm((f) => ({ ...f, is_verified: v }))}
-          label={t("admin.users.verified")}
-        />
-      </div>
-    </FormDialog>
   );
 }
