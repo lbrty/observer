@@ -5,21 +5,17 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
-import { DataTable, type Column } from "@/components/data-table";
+import { DataTable } from "@/components/data-table";
 import { EmptyState } from "@/components/empty-state";
-import type { FilterDef } from "@/components/filter-bar";
-import { FilterBar } from "@/components/filter-bar";
-import { DownloadSimpleIcon, PencilSimpleIcon, PlusIcon, UserCircleIcon } from "@/components/icons";
+import { UserCircleIcon, PlusIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
+import { buildPeopleColumns } from "@/components/people-columns";
+import { PeopleFilterBar } from "@/components/people-filter-bar";
 import { PersonDrawer } from "@/components/person-drawer";
-import { StatusBadge } from "@/components/status-badge";
-import { TagChips } from "@/components/tag-chips";
-import { SelectedTagChips, TagFilter } from "@/components/tag-filter";
 import { useExportCSV } from "@/hooks/use-export-csv";
 import { useProjectRole } from "@/hooks/use-project-role";
 import { usePeople } from "@/hooks/use-people";
-import type { Person } from "@/types/person";
 
 export const Route = createFileRoute("/_app/projects/$projectId/people/")({
   component: PeopleListPage,
@@ -81,60 +77,6 @@ function PeopleListPage() {
     archived: t("project.people.archived"),
   };
 
-  const sexOptions = [
-    { label: t("project.people.allSex"), value: "" },
-    { label: t("project.people.sexMale"), value: "male" },
-    { label: t("project.people.sexFemale"), value: "female" },
-    { label: t("project.people.sexOther"), value: "other" },
-    { label: t("project.people.sexUnknown"), value: "unknown" },
-  ];
-
-  const ageGroupOptions = [
-    { label: t("project.people.allAgeGroups"), value: "" },
-    { label: t("project.people.ageInfant"), value: "infant" },
-    { label: t("project.people.ageToddler"), value: "toddler" },
-    { label: t("project.people.agePreSchool"), value: "pre_school" },
-    { label: t("project.people.ageMiddleChildhood"), value: "middle_childhood" },
-    { label: t("project.people.ageYoungTeen"), value: "young_teen" },
-    { label: t("project.people.ageTeenager"), value: "teenager" },
-    { label: t("project.people.ageYoungAdult"), value: "young_adult" },
-    { label: t("project.people.ageEarlyAdult"), value: "early_adult" },
-    { label: t("project.people.ageMiddleAgedAdult"), value: "middle_aged_adult" },
-    { label: t("project.people.ageOldAdult"), value: "old_adult" },
-  ];
-
-  const filters: FilterDef[] = [
-    {
-      type: "search",
-      placeholder: t("project.people.search"),
-      value: search,
-      onChange: setSearch,
-    },
-    {
-      type: "select",
-      value: sex,
-      onValueChange: setSex,
-      options: sexOptions,
-      placeholder: t("project.people.allSex"),
-    },
-    {
-      type: "select",
-      value: ageGroup,
-      onValueChange: setAgeGroup,
-      options: ageGroupOptions,
-      placeholder: t("project.people.allAgeGroups"),
-    },
-    {
-      type: "date-range",
-      fromValue: dateFrom,
-      toValue: dateTo,
-      onFromChange: setDateFrom,
-      onToChange: setDateTo,
-      fromPlaceholder: t("common.dateFrom"),
-      toPlaceholder: t("common.dateTo"),
-    },
-  ];
-
   function openCreate() {
     setEditPersonId(null);
     setDrawerOpen(true);
@@ -156,82 +98,13 @@ function PeopleListPage() {
     return exportCSV(`projects/${projectId}/export/people`, "people", searchParams);
   }
 
-  const columns: Column<Person>[] = [
-    {
-      key: "name",
-      header: t("project.people.name"),
-      render: (p) => (
-        <div className="flex items-center gap-3">
-          <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-bg-tertiary text-fg-tertiary">
-            <UserCircleIcon size={16} />
-          </span>
-          <div className="min-w-0">
-            <p className="truncate font-medium text-fg">
-              {p.first_name}
-              {p.last_name ? ` ${p.last_name}` : ""}
-            </p>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "sex",
-      header: t("project.people.sex"),
-      render: (p) => <span className="text-fg-secondary">{p.sex}</span>,
-    },
-    {
-      key: "case_status",
-      header: t("project.people.caseStatus"),
-      render: (p) => {
-        const caseVariants: Record<string, "foam" | "gold" | "rose" | "neutral"> = {
-          new: "gold",
-          active: "foam",
-          closed: "rose",
-          archived: "neutral",
-        };
-        return (
-          <StatusBadge
-            label={statusLabels[p.case_status] ?? p.case_status}
-            variant={caseVariants[p.case_status]}
-          />
-        );
-      },
-    },
-    {
-      key: "tags",
-      header: t("project.tags.title"),
-      render: (p) => <TagChips projectId={projectId} tagIds={p.tag_ids} />,
-    },
-    {
-      key: "registered",
-      header: t("project.people.registered"),
-      render: (p) => (
-        <span className="font-mono text-xs tabular-nums text-fg-tertiary">
-          {new Date(p.registered_at ?? p.created_at).toLocaleDateString("en-CA")}
-        </span>
-      ),
-    },
-    ...(canWrite
-      ? [
-          {
-            key: "actions",
-            header: "",
-            render: (p: Person) => (
-              <Button
-                variant="ghost"
-                className="p-1.5"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openEdit(p.id);
-                }}
-              >
-                <PencilSimpleIcon size={16} />
-              </Button>
-            ),
-          } satisfies Column<Person>,
-        ]
-      : []),
-  ];
+  const columns = buildPeopleColumns({
+    projectId,
+    t,
+    onEdit: openEdit,
+    canWrite,
+    statusLabels,
+  });
 
   return (
     <div>
@@ -246,25 +119,24 @@ function PeopleListPage() {
         }
       />
 
-      <FilterBar
-        filters={filters}
-        trailing={
-          <div className="flex items-center gap-2">
-            <TagFilter projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
-            {canExport && (
-              <Button
-                variant="secondary"
-                icon={<DownloadSimpleIcon size={16} />}
-                onClick={handleExport}
-                disabled={exporting}
-              >
-                {t("common.export")}
-              </Button>
-            )}
-          </div>
-        }
+      <PeopleFilterBar
+        projectId={projectId}
+        search={search}
+        onSearchChange={setSearch}
+        sex={sex}
+        onSexChange={setSex}
+        ageGroup={ageGroup}
+        onAgeGroupChange={setAgeGroup}
+        dateFrom={dateFrom}
+        onDateFromChange={setDateFrom}
+        dateTo={dateTo}
+        onDateToChange={setDateTo}
+        tagIds={tagIds}
+        onTagIdsChange={setTagIds}
+        canExport={canExport}
+        exporting={exporting}
+        onExport={handleExport}
       />
-      <SelectedTagChips projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
 
       <Tabs.Root
         defaultValue=""
