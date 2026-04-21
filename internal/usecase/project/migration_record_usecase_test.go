@@ -163,3 +163,18 @@ func TestMigrationRecordUseCase_Delete_NotFound(t *testing.T) {
 	err := uc.Delete(context.Background(), "proj1", "p1", "mr99")
 	assert.ErrorIs(t, err, migration.ErrRecordNotFound)
 }
+
+func TestMigrationRecordUseCase_Delete_CrossPersonIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockMigrationRecordRepository(ctrl)
+	uc := ucproject.NewMigrationRecordUseCase(mockRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "mr1").Return(&migration.Record{
+		ID: "mr1", PersonID: "other-person",
+	}, nil)
+
+	err := uc.Delete(context.Background(), "proj1", "p1", "mr1")
+	assert.ErrorIs(t, err, migration.ErrRecordNotFound)
+}
