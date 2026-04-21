@@ -1,86 +1,86 @@
 export const SEX_COLORS: Record<string, string> = {
   female: "#e05a8a",
-  male: "#5a8ae0",
+  male: "#5b8af8",
   other: "#8b5cf6",
-  unknown: "#94a3b8",
+  unknown: "#8b909e",
 };
 
 export const SUPPORT_TYPE_COLORS: Record<string, string> = {
-  humanitarian: "#d97706",
-  legal: "#3b82f6",
-  social: "#10b981",
+  humanitarian: "#e08c1a",
+  legal: "#5b8af8",
+  social: "#30a46c",
   psychological: "#8b5cf6",
-  medical: "#ef4444",
-  general: "#64748b",
+  medical: "#e5534b",
+  general: "#60636c",
 };
 
 export const SPHERE_COLORS: Record<string, string> = {
-  housing_assistance: "#0ea5e9",
-  document_recovery: "#6366f1",
-  social_benefits: "#10b981",
+  housing_assistance: "#38bdf8",
+  document_recovery: "#5b8af8",
+  social_benefits: "#30a46c",
   property_rights: "#f59e0b",
   employment_rights: "#ec4899",
   family_law: "#8b5cf6",
-  healthcare_access: "#ef4444",
+  healthcare_access: "#e5534b",
   education_access: "#14b8a6",
-  financial_aid: "#d97706",
+  financial_aid: "#e08c1a",
   psychological_support: "#a78bfa",
-  other: "#94a3b8",
-  unspecified: "#94a3b8",
+  other: "#8b909e",
+  unspecified: "#8b909e",
 };
 
 export const CASE_STATUS_COLORS: Record<string, string> = {
-  new: "#6366f1",
-  active: "#10b981",
-  closed: "#94a3b8",
-  archived: "#64748b",
+  new: "#5b8af8",
+  active: "#30a46c",
+  closed: "#8b909e",
+  archived: "#60636c",
 };
 
 export const IDP_STATUS_COLORS: Record<string, string> = {
-  idp: "#ef4444",
-  non_idp: "#10b981",
-  unknown: "#94a3b8",
+  idp: "#e5534b",
+  non_idp: "#30a46c",
+  unknown: "#8b909e",
 };
 
 export const AGE_GROUP_COLORS: Record<string, string> = {
-  infant: "#fef3c7",
-  toddler: "#fde68a",
-  pre_school: "#fcd34d",
-  middle_childhood: "#fbbf24",
-  young_teen: "#f59e0b",
-  teenager: "#d97706",
-  young_adult: "#b45309",
-  early_adult: "#92400e",
-  middle_aged_adult: "#78350f",
-  old_adult: "#451a03",
+  infant: "#e0f2fe",
+  toddler: "#bae6fd",
+  pre_school: "#7dd3fc",
+  middle_childhood: "#38bdf8",
+  young_teen: "#0ea5e9",
+  teenager: "#0284c7",
+  young_adult: "#0369a1",
+  early_adult: "#075985",
+  middle_aged_adult: "#0c4a6e",
+  old_adult: "#082f49",
 };
 
 export const PET_STATUS_COLORS: Record<string, string> = {
-  registered: "#6366f1",
-  adopted: "#10b981",
-  owner_found: "#3b82f6",
-  needs_shelter: "#ef4444",
-  unknown: "#94a3b8",
+  registered: "#5b8af8",
+  adopted: "#30a46c",
+  owner_found: "#38bdf8",
+  needs_shelter: "#e5534b",
+  unknown: "#8b909e",
 };
 
 export const PET_OWNERSHIP_COLORS: Record<string, string> = {
-  with_owner: "#10b981",
+  with_owner: "#30a46c",
   without_owner: "#f59e0b",
 };
 
 export const FALLBACK_PALETTE = [
-  "#6366f1",
-  "#f59e0b",
-  "#10b981",
-  "#ef4444",
+  "#5b8af8",
+  "#30a46c",
+  "#e08c1a",
+  "#e5534b",
   "#8b5cf6",
   "#ec4899",
   "#14b8a6",
   "#f97316",
-  "#3b82f6",
+  "#38bdf8",
   "#84cc16",
   "#e879f9",
-  "#06b6d4",
+  "#a78bfa",
 ];
 
 export function getColor(label: string, colorMap?: Record<string, string>, index?: number): string {

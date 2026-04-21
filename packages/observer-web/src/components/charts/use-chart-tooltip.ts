@@ -19,7 +19,12 @@ export function useChartTooltip(containerRef: RefObject<HTMLDivElement | null>) 
   function show(event: MouseEvent, text: string) {
     const bounds = containerRef.current?.getBoundingClientRect();
     if (!bounds) return;
-    setTooltip({ visible: true, x: event.clientX - bounds.left + 12, y: event.clientY - bounds.top - 10, text });
+    setTooltip({
+      visible: true,
+      x: event.clientX - bounds.left + 12,
+      y: event.clientY - bounds.top - 10,
+      text,
+    });
   }
 
   function hide() {

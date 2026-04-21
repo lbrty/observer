@@ -9,10 +9,10 @@ import { ChartTooltip } from "../chart-tooltip";
 import { useChartTooltip } from "../use-chart-tooltip";
 
 const NODE_COLORS: Record<string, string> = {
-  new: "#6366f1",
-  active: "#10b981",
+  new: "#5b8af8",
+  active: "#30a46c",
   closed: "#f59e0b",
-  archived: "#94a3b8",
+  archived: "#8b909e",
 };
 
 function nodeColor(name: string): string {
@@ -162,7 +162,9 @@ export function SankeyChart({ data, width = 500, height = 260, translateLabel }:
   return (
     <div ref={containerRef} className="relative w-full">
       <svg ref={svgRef} className="w-full" />
-      <ChartTooltip visible={tooltip.visible} x={tooltip.x} y={tooltip.y}>{tooltip.text}</ChartTooltip>
+      <ChartTooltip visible={tooltip.visible} x={tooltip.x} y={tooltip.y}>
+        {tooltip.text}
+      </ChartTooltip>
     </div>
   );
 }

@@ -10,7 +10,17 @@ export function renderVerticalBars(
   data: CountResult[],
   opts: RenderOptions,
 ) {
-  const { width, height, yAxisLabel, selectedLabel, colorMap, clipId, onMouseOver, onMouseOut, onClick } = opts;
+  const {
+    width,
+    height,
+    yAxisLabel,
+    selectedLabel,
+    colorMap,
+    clipId,
+    onMouseOver,
+    onMouseOut,
+    onClick,
+  } = opts;
 
   const axisColor = "var(--fg-tertiary, #6b7280)";
   const margin = { top: 20, right: 20, bottom: 60, left: 50 };

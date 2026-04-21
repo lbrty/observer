@@ -22,7 +22,16 @@ export function renderHorizontalBars(
   data: CountResult[],
   opts: RenderOptions,
 ) {
-  const { width, resolvedHeight, selectedLabel, colorMap, clipId, onMouseOver, onMouseOut, onClick } = opts;
+  const {
+    width,
+    resolvedHeight,
+    selectedLabel,
+    colorMap,
+    clipId,
+    onMouseOver,
+    onMouseOut,
+    onClick,
+  } = opts;
 
   const axisColor = "var(--fg-tertiary, #6b7280)";
   const margin = { top: 10, right: 40, bottom: 20, left: 120 };
