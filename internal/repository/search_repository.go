@@ -7,6 +7,8 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
+
+	domainsearch "github.com/lbrty/observer/internal/domain/search"
 )
 
 type searchRepo struct {
@@ -79,15 +81,15 @@ func (r *searchRepo) ListProjectsByIDs(ctx context.Context, ids []string) (map[s
 	return out, rows.Err()
 }
 
-func (r *searchRepo) Search(ctx context.Context, projectIDs []string, query string, limit int) (*SearchHits, error) {
+func (r *searchRepo) Search(ctx context.Context, projectIDs []string, query string, limit int) (*domainsearch.SearchHits, error) {
 	if len(projectIDs) == 0 {
-		return &SearchHits{}, nil
+		return &domainsearch.SearchHits{}, nil
 	}
 
 	like := "%" + query + "%"
 	var (
 		mu   sync.Mutex
-		hits SearchHits
+		hits domainsearch.SearchHits
 		errs []error
 		wg   sync.WaitGroup
 	)
@@ -138,7 +140,7 @@ func (r *searchRepo) Search(ctx context.Context, projectIDs []string, query stri
 	return &hits, nil
 }
 
-func (r *searchRepo) searchPeople(ctx context.Context, projectIDs []string, like string, limit int) ([]PersonHit, error) {
+func (r *searchRepo) searchPeople(ctx context.Context, projectIDs []string, like string, limit int) ([]domainsearch.PersonHit, error) {
 	const q = `
 		SELECT id, first_name, last_name, project_id
 		FROM people
@@ -151,9 +153,9 @@ func (r *searchRepo) searchPeople(ctx context.Context, projectIDs []string, like
 	}
 	defer rows.Close()
 
-	var results []PersonHit
+	var results []domainsearch.PersonHit
 	for rows.Next() {
-		var h PersonHit
+		var h domainsearch.PersonHit
 		if err := rows.Scan(&h.ID, &h.FirstName, &h.LastName, &h.ProjectID); err != nil {
 			return nil, err
 		}
@@ -162,7 +164,7 @@ func (r *searchRepo) searchPeople(ctx context.Context, projectIDs []string, like
 	return results, rows.Err()
 }
 
-func (r *searchRepo) searchPets(ctx context.Context, projectIDs []string, like string, limit int) ([]PetHit, error) {
+func (r *searchRepo) searchPets(ctx context.Context, projectIDs []string, like string, limit int) ([]domainsearch.PetHit, error) {
 	const q = `
 		SELECT id, name, project_id
 		FROM pets
@@ -175,9 +177,9 @@ func (r *searchRepo) searchPets(ctx context.Context, projectIDs []string, like s
 	}
 	defer rows.Close()
 
-	var results []PetHit
+	var results []domainsearch.PetHit
 	for rows.Next() {
-		var h PetHit
+		var h domainsearch.PetHit
 		if err := rows.Scan(&h.ID, &h.Name, &h.ProjectID); err != nil {
 			return nil, err
 		}
@@ -186,7 +188,7 @@ func (r *searchRepo) searchPets(ctx context.Context, projectIDs []string, like s
 	return results, rows.Err()
 }
 
-func (r *searchRepo) searchProjects(ctx context.Context, projectIDs []string, like string, limit int) ([]ProjectHit, error) {
+func (r *searchRepo) searchProjects(ctx context.Context, projectIDs []string, like string, limit int) ([]domainsearch.ProjectHit, error) {
 	const q = `
 		SELECT id, name
 		FROM projects
@@ -199,9 +201,9 @@ func (r *searchRepo) searchProjects(ctx context.Context, projectIDs []string, li
 	}
 	defer rows.Close()
 
-	var results []ProjectHit
+	var results []domainsearch.ProjectHit
 	for rows.Next() {
-		var h ProjectHit
+		var h domainsearch.ProjectHit
 		if err := rows.Scan(&h.ID, &h.Name); err != nil {
 			return nil, err
 		}

@@ -16,6 +16,7 @@ import (
 	"github.com/lbrty/observer/internal/domain/project"
 	"github.com/lbrty/observer/internal/domain/reference"
 	"github.com/lbrty/observer/internal/domain/report"
+	domainsearch "github.com/lbrty/observer/internal/domain/search"
 	"github.com/lbrty/observer/internal/domain/support"
 	"github.com/lbrty/observer/internal/domain/tag"
 	"github.com/lbrty/observer/internal/domain/user"
@@ -264,7 +265,7 @@ type PetReportRepository interface {
 
 // SearchRepository runs cross-entity search queries within authorized projects.
 type SearchRepository interface {
-	Search(ctx context.Context, projectIDs []string, query string, limit int) (*SearchHits, error)
+	Search(ctx context.Context, projectIDs []string, query string, limit int) (*domainsearch.SearchHits, error)
 	// ListAllProjectIDs returns all project IDs (used for admin/staff who see all projects).
 	ListAllProjectIDs(ctx context.Context) ([]string, error)
 	// ListProjectIDsByUser returns project IDs the user has any role in.

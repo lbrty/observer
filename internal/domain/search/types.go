@@ -1,4 +1,4 @@
-package repository
+package search
 
 // PersonHit is a search result for a person entity.
 type PersonHit struct {
@@ -21,7 +21,7 @@ type ProjectHit struct {
 	Name string
 }
 
-// SearchHits holds raw search results across all entity types.
+// SearchHits holds search results across all entity types.
 type SearchHits struct {
 	People   []PersonHit
 	Pets     []PetHit
