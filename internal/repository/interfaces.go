@@ -178,6 +178,9 @@ type PersonRepository interface {
 // PersonCategoryRepository manages person-category associations.
 type PersonCategoryRepository interface {
 	List(ctx context.Context, personID string) ([]string, error)
+	// ListBulk fetches category IDs for multiple people in one query.
+	// Returns a map of person ID → []category ID.
+	ListBulk(ctx context.Context, personIDs []string) (map[string][]string, error)
 	ReplaceAll(ctx context.Context, personID string, categoryIDs []string) error
 }
 

@@ -1611,6 +1611,21 @@ func (mr *MockPersonCategoryRepositoryMockRecorder) List(ctx, personID any) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockPersonCategoryRepository)(nil).List), ctx, personID)
 }
 
+// ListBulk mocks base method.
+func (m *MockPersonCategoryRepository) ListBulk(ctx context.Context, personIDs []string) (map[string][]string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListBulk", ctx, personIDs)
+	ret0, _ := ret[0].(map[string][]string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListBulk indicates an expected call of ListBulk.
+func (mr *MockPersonCategoryRepositoryMockRecorder) ListBulk(ctx, personIDs any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListBulk", reflect.TypeOf((*MockPersonCategoryRepository)(nil).ListBulk), ctx, personIDs)
+}
+
 // ReplaceAll mocks base method.
 func (m *MockPersonCategoryRepository) ReplaceAll(ctx context.Context, personID string, categoryIDs []string) error {
 	m.ctrl.T.Helper()

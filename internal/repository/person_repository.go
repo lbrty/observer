@@ -283,6 +283,23 @@ func (r *personCategoryRepo) List(ctx context.Context, personID string) ([]strin
 	return ids, rows.Err()
 }
 
+func (r *personCategoryRepo) ListBulk(ctx context.Context, personIDs []string) (map[string][]string, error) {
+	if len(personIDs) == 0 {
+		return map[string][]string{}, nil
+	}
+	params := make([]string, len(personIDs))
+	args := make([]any, len(personIDs))
+	for i, id := range personIDs {
+		args[i] = id
+		params[i] = fmt.Sprintf("$%d", i+1)
+	}
+	q := fmt.Sprintf(
+		"SELECT person_id, category_id FROM person_categories WHERE person_id IN (%s) ORDER BY person_id, category_id",
+		joinStrings(params, ", "),
+	)
+	return queryBulkTags(ctx, r.db, q, args)
+}
+
 func (r *personCategoryRepo) ReplaceAll(ctx context.Context, personID string, categoryIDs []string) error {
 	tx, err := r.db.BeginTxx(ctx, nil)
 	if err != nil {
