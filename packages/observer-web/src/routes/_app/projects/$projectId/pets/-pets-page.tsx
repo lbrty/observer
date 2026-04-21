@@ -5,18 +5,14 @@ import { useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/button";
-import { DataTable, type Column } from "@/components/data-table";
+import { DataTable } from "@/components/data-table";
 import { EmptyState } from "@/components/empty-state";
-import type { FilterDef } from "@/components/filter-bar";
-import { FilterBar } from "@/components/filter-bar";
-import { DownloadSimpleIcon, PawPrintIcon, PencilSimpleIcon, PlusIcon } from "@/components/icons";
+import { PawPrintIcon, PlusIcon } from "@/components/icons";
 import { PageHeader } from "@/components/page-header";
 import { Pagination } from "@/components/pagination";
-import { PersonName } from "@/components/person-name";
+import { buildPetColumns } from "@/components/pet-columns";
+import { PetFilterBar } from "@/components/pet-filter-bar";
 import { PetDrawer } from "@/components/pet-drawer";
-import { StatusBadge } from "@/components/status-badge";
-import { TagChips } from "@/components/tag-chips";
-import { SelectedTagChips, TagFilter } from "@/components/tag-filter";
 import { useExportCSV } from "@/hooks/use-export-csv";
 import { useProjectRole } from "@/hooks/use-project-role";
 import { usePets } from "@/hooks/use-pets";
@@ -82,18 +78,6 @@ export function PetsContent({
     unknown: t("project.pets.statusUnknown"),
   };
 
-  const filters: FilterDef[] = [
-    {
-      type: "date-range",
-      fromValue: dateFrom,
-      toValue: dateTo,
-      onFromChange: setDateFrom,
-      onToChange: setDateTo,
-      fromPlaceholder: t("common.dateFrom"),
-      toPlaceholder: t("common.dateTo"),
-    },
-  ];
-
   function openCreate() {
     setEditPetId(null);
     setDrawerOpen(true);
@@ -112,78 +96,14 @@ export function PetsContent({
     return exportCSV(`projects/${projectId}/export/pets`, "pets", searchParams);
   }
 
-  const columns: Column<Pet>[] = [
-    {
-      key: "name",
-      header: t("project.pets.name"),
-      render: (p) => (
-        <div className="flex items-center gap-3">
-          <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-bg-tertiary text-fg-tertiary">
-            <PawPrintIcon size={16} />
-          </span>
-          <div className="min-w-0">
-            <p className="truncate font-medium text-fg">{p.name}</p>
-          </div>
-        </div>
-      ),
-    },
-    {
-      key: "status",
-      header: t("project.pets.status"),
-      render: (p) => (
-        <StatusBadge
-          label={statusLabels[p.status] ?? p.status}
-          variant={statusVariants[p.status]}
-        />
-      ),
-    },
-    {
-      key: "owner_id",
-      header: t("project.pets.ownerId"),
-      render: (p) =>
-        p.owner_id ? (
-          <span className="text-sm text-fg-secondary">
-            <PersonName projectId={projectId} personId={p.owner_id} />
-          </span>
-        ) : (
-          <span className="text-fg-tertiary">—</span>
-        ),
-    },
-    {
-      key: "tags",
-      header: t("project.tags.title"),
-      render: (p) => <TagChips projectId={projectId} tagIds={p.tag_ids} />,
-    },
-    {
-      key: "registration_id",
-      header: t("project.pets.registrationId"),
-      render: (p) => (
-        <span className="font-mono text-xs tabular-nums text-fg-tertiary">
-          {p.registration_id ?? ""}
-        </span>
-      ),
-    },
-    ...(canWrite
-      ? [
-          {
-            key: "actions",
-            header: "",
-            render: (p: Pet) => (
-              <Button
-                variant="ghost"
-                className="p-1.5"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openEdit(p.id);
-                }}
-              >
-                <PencilSimpleIcon size={16} />
-              </Button>
-            ),
-          } satisfies Column<Pet>,
-        ]
-      : []),
-  ];
+  const columns = buildPetColumns({
+    t,
+    projectId,
+    statusLabels,
+    statusVariants,
+    canWrite,
+    onEdit: openEdit,
+  });
 
   return (
     <div>
@@ -224,25 +144,18 @@ export function PetsContent({
         </Tabs.List>
       </Tabs.Root>
 
-      <FilterBar
-        filters={filters}
-        trailing={
-          <div className="flex items-center gap-2">
-            <TagFilter projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
-            {canExport && (
-              <Button
-                variant="secondary"
-                icon={<DownloadSimpleIcon size={16} />}
-                onClick={handleExport}
-                disabled={exporting}
-              >
-                {t("common.export")}
-              </Button>
-            )}
-          </div>
-        }
+      <PetFilterBar
+        projectId={projectId}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
+        tagIds={tagIds}
+        canExport={canExport}
+        exporting={exporting}
+        onDateFromChange={setDateFrom}
+        onDateToChange={setDateTo}
+        onTagsChange={setTagIds}
+        onExport={handleExport}
       />
-      <SelectedTagChips projectId={projectId} selectedIds={tagIds} onChange={setTagIds} />
 
       <DataTable
         columns={columns}
