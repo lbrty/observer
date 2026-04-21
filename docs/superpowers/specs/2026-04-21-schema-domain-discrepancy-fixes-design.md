@@ -123,6 +123,27 @@ forcing N+1 queries on any list view that shows categories per person.
 
 ---
 
+### 8. `//go:generate` — replace giant reflect-mode list with source mode
+
+**Problem:** Line 24 of `internal/repository/interfaces.go` is a 280-character `//go:generate`
+directive listing 29 comma-separated interface names in reflect mode. It is hard to read,
+hard to diff, and requires manual maintenance every time an interface is added.
+A bonus bug: `SearchRepository` is defined in `interfaces.go` but absent from the list,
+meaning it has never been mocked.
+
+**Fix:**
+- Create `internal/repository/generate.go`:
+  ```go
+  package repository
+
+  //go:generate mockgen -source=interfaces.go -destination=mock/repository.go -package=mock
+  ```
+- Remove the `//go:generate` line from `interfaces.go`.
+- Source mode auto-discovers all interfaces in the file, including `SearchRepository`.
+- Run `just generate-mocks` to verify the mock regenerates correctly and includes `SearchRepository`.
+
+---
+
 ## Execution order
 
 Dependencies run top to bottom; items with no dependencies on each other can be done
@@ -135,6 +156,7 @@ in any order within the same pass.
 5. `MFARecoveryCode.ID` → `ulid.ULID` (type change — propagate through callers)
 6. `audit.Entry` IP/UserAgent → `*string` (type change — propagate through callers)
 7. Enrichment field comments (doc-only, no logic)
+8. `generate.go` + source mode (do last, after all interface changes are in place — one `just generate-mocks` regenerates everything)
 
 ## Out of scope
 
