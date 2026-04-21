@@ -130,3 +130,36 @@ func TestMigrationRecordUseCase_Update_CrossPersonIDOR(t *testing.T) {
 	_, err := uc.Update(context.Background(), "p1", "mr1", ucproject.UpdateMigrationRecordInput{})
 	assert.ErrorIs(t, err, migration.ErrRecordNotFound)
 }
+
+func TestMigrationRecordUseCase_Delete_Success(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockMigrationRecordRepository(ctrl)
+	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
+	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
+	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	uc := ucproject.NewMigrationRecordUseCase(mockRepo, auditUC)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "mr1").Return(&migration.Record{
+		ID:       "mr1",
+		PersonID: "p1",
+	}, nil)
+	mockRepo.EXPECT().Delete(gomock.Any(), "mr1").Return(nil)
+
+	err := uc.Delete(context.Background(), "proj1", "p1", "mr1")
+	require.NoError(t, err)
+}
+
+func TestMigrationRecordUseCase_Delete_NotFound(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockMigrationRecordRepository(ctrl)
+	uc := ucproject.NewMigrationRecordUseCase(mockRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "mr99").Return(nil, migration.ErrRecordNotFound)
+
+	err := uc.Delete(context.Background(), "proj1", "p1", "mr99")
+	assert.ErrorIs(t, err, migration.ErrRecordNotFound)
+}

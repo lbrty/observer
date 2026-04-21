@@ -101,3 +101,13 @@ func (h *MigrationRecordHandler) Update(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, out)
 }
+
+// Delete handles DELETE /projects/:project_id/people/:person_id/migration-records/:id.
+func (h *MigrationRecordHandler) Delete(c *gin.Context) {
+	err := h.uc.Delete(c.Request.Context(), c.Param("project_id"), c.Param("person_id"), c.Param("id"))
+	if err != nil {
+		HandleError(c, err)
+		return
+	}
+	c.Status(http.StatusNoContent)
+}

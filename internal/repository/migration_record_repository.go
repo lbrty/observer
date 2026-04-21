@@ -104,3 +104,11 @@ func (r *migrationRecordRepo) Update(ctx context.Context, rec *migration.Record)
 	}
 	return CheckRowsAffected(res, migration.ErrRecordNotFound)
 }
+
+func (r *migrationRecordRepo) Delete(ctx context.Context, id string) error {
+	res, err := r.db.ExecContext(ctx, `DELETE FROM migration_records WHERE id = $1`, id)
+	if err != nil {
+		return fmt.Errorf("delete migration record: %w", err)
+	}
+	return CheckRowsAffected(res, migration.ErrRecordNotFound)
+}

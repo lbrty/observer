@@ -77,6 +77,23 @@ func (uc *MigrationRecordUseCase) Create(ctx context.Context, projectID, personI
 	return &dto, nil
 }
 
+// Delete removes a migration record after verifying it belongs to the given person.
+func (uc *MigrationRecordUseCase) Delete(ctx context.Context, projectID, personID, id string) error {
+	rec, err := uc.repo.GetByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	if rec.PersonID != personID {
+		return migration.ErrRecordNotFound
+	}
+	if err := uc.repo.Delete(ctx, id); err != nil {
+		return err
+	}
+	uc.auditUC.Record(ctx, &projectID, "migration_record.delete", "migration_record", &id,
+		fmt.Sprintf("Deleted migration record %s", id))
+	return nil
+}
+
 // Update updates a migration record.
 func (uc *MigrationRecordUseCase) Update(ctx context.Context, personID, id string, input UpdateMigrationRecordInput) (*MigrationRecordDTO, error) {
 	r, err := uc.repo.GetByID(ctx, id)

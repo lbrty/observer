@@ -206,6 +206,7 @@ type MigrationRecordRepository interface {
 	GetByID(ctx context.Context, id string) (*migration.Record, error)
 	Create(ctx context.Context, r *migration.Record) error
 	Update(ctx context.Context, r *migration.Record) error
+	Delete(ctx context.Context, id string) error
 }
 
 // HouseholdRepository defines persistence operations for households.

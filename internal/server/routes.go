@@ -242,6 +242,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 			del.DELETE("/households/:id/members/:person_id", householdHandler.RemoveMember)
 			del.DELETE("/documents/:id", documentHandler.Delete)
 			del.DELETE("/pets/:id", petHandler.Delete)
+			del.DELETE("/people/:person_id/migration-records/:id", migrationHandler.Delete)
 		}
 	}
 
