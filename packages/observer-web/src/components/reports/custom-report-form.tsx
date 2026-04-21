@@ -73,7 +73,6 @@ export function CustomReportForm({
       </div>
 
       <div className="border-t border-border-secondary px-5 pb-5 pt-4 space-y-5">
-        {/* Metric */}
         <div>
           <span className="mb-2 block text-xs font-medium text-fg-secondary">
             {t("project.customReport.metric")}
@@ -96,7 +95,6 @@ export function CustomReportForm({
           </div>
         </div>
 
-        {/* Dimensions */}
         <div>
           <span className="mb-2 block text-xs font-medium text-fg-secondary">
             {t("project.customReport.dimensions")}
@@ -127,7 +125,6 @@ export function CustomReportForm({
           </div>
         </div>
 
-        {/* Date range + support type */}
         <div className="flex flex-wrap items-end gap-4">
           <DateRangePicker
             from={dateFrom}
@@ -156,7 +153,6 @@ export function CustomReportForm({
           </div>
         </div>
 
-        {/* Generate button */}
         <button
           type="button"
           disabled={groupBy.length === 0 || isFetching}

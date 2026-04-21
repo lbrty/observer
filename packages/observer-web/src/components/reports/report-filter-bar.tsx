@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
 import { ReportDatePresets } from "@/components/report-date-presets";
-import { FilterChip, FilterField, labelKeyMap } from "@/components/report";
+import { FilterField, labelKeyMap } from "@/components/report";
 import type { DatePreset } from "@/components/report";
 import { DateRangePicker } from "@/components/date-picker";
 import { UISelect } from "@/components/ui-select";
@@ -10,6 +10,8 @@ import { useCategories } from "@/hooks/use-categories";
 import { useOffices } from "@/hooks/use-offices";
 import { toSelectOptions } from "@/lib/options";
 import type { ReportParams } from "@/types/report";
+
+import { ReportFilterChips } from "./report-filter-chips";
 
 interface ReportFilterBarProps {
   params: ReportParams;
@@ -56,12 +58,10 @@ export function ReportFilterBar({
     value: g,
   }));
 
-  const hasFilters = Object.values(params).some((v) => v != null && v !== "");
   const clearDatePreset = () => onPresetChange(null);
 
   return (
     <>
-      {/* Date presets */}
       <ReportDatePresets
         activePreset={activePreset}
         onSelect={(preset, dates) => {
@@ -70,7 +70,6 @@ export function ReportFilterBar({
         }}
       />
 
-      {/* Filter row */}
       <div className="flex flex-wrap items-start gap-4">
         <FilterField label={t("project.reports.dateRange")}>
           <DateRangePicker
@@ -142,96 +141,17 @@ export function ReportFilterBar({
         </FilterField>
       </div>
 
-      {/* Active filter chips */}
-      {hasFilters && (
-        <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-border-secondary pt-2.5">
-          {params.date_from && (
-            <FilterChip
-              label={t("project.reports.dateFrom")}
-              value={params.date_from}
-              onRemove={() => {
-                onParamsChange((p) => ({ ...p, date_from: undefined }));
-                clearDatePreset();
-              }}
-            />
-          )}
-          {params.date_to && (
-            <FilterChip
-              label={t("project.reports.dateTo")}
-              value={params.date_to}
-              onRemove={() => {
-                onParamsChange((p) => ({ ...p, date_to: undefined }));
-                clearDatePreset();
-              }}
-            />
-          )}
-          {params.office_id && (
-            <FilterChip
-              label={t("project.reports.filterOffice")}
-              value={
-                officeOptions.find((o) => o.value === params.office_id)?.label ?? params.office_id
-              }
-              onRemove={() => onParamsChange((p) => ({ ...p, office_id: undefined }))}
-            />
-          )}
-          {params.category_id && (
-            <FilterChip
-              label={t("project.reports.filterCategory")}
-              value={
-                categoryOptions.find((c) => c.value === params.category_id)?.label ??
-                params.category_id
-              }
-              onRemove={() => onParamsChange((p) => ({ ...p, category_id: undefined }))}
-            />
-          )}
-          {params.case_status && (
-            <FilterChip
-              label={t("project.reports.filterCaseStatus")}
-              value={
-                caseStatusOptions.find((s) => s.value === params.case_status)?.label ??
-                params.case_status
-              }
-              onRemove={() => onParamsChange((p) => ({ ...p, case_status: undefined }))}
-            />
-          )}
-          {params.sex && (
-            <FilterChip
-              label={t("project.reports.filterSex")}
-              value={sexOptions.find((s) => s.value === params.sex)?.label ?? params.sex}
-              onRemove={() => onParamsChange((p) => ({ ...p, sex: undefined }))}
-            />
-          )}
-          {params.age_group && (
-            <FilterChip
-              label={t("project.reports.filterAgeGroup")}
-              value={
-                ageGroupOptions.find((g) => g.value === params.age_group)?.label ?? params.age_group
-              }
-              onRemove={() => onParamsChange((p) => ({ ...p, age_group: undefined }))}
-            />
-          )}
-          {params.support_type && (
-            <FilterChip
-              label={t("project.reports.filterSupportType")}
-              value={
-                supportTypeOptions.find((s) => s.value === params.support_type)?.label ??
-                params.support_type
-              }
-              onRemove={() => onParamsChange((p) => ({ ...p, support_type: undefined }))}
-            />
-          )}
-          <button
-            type="button"
-            onClick={() => {
-              onParamsChange(() => ({}));
-              clearDatePreset();
-            }}
-            className="ml-1 text-xs font-medium text-fg-tertiary underline transition-colors hover:text-fg"
-          >
-            {t("project.reports.clearAll")}
-          </button>
-        </div>
-      )}
+      <ReportFilterChips
+        params={params}
+        officeLabel={officeOptions.find((o) => o.value === params.office_id)?.label}
+        categoryLabel={categoryOptions.find((c) => c.value === params.category_id)?.label}
+        caseStatusLabel={caseStatusOptions.find((s) => s.value === params.case_status)?.label}
+        sexLabel={sexOptions.find((s) => s.value === params.sex)?.label}
+        ageGroupLabel={ageGroupOptions.find((g) => g.value === params.age_group)?.label}
+        supportTypeLabel={supportTypeOptions.find((s) => s.value === params.support_type)?.label}
+        onParamsChange={onParamsChange}
+        onClearDatePreset={clearDatePreset}
+      />
     </>
   );
 }

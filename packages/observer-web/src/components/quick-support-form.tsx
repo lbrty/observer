@@ -6,7 +6,7 @@ import { Button } from "@/components/button";
 import { DatePicker } from "@/components/date-picker";
 import { WarningIcon } from "@/components/icons";
 import { UISelect } from "@/components/ui-select";
-import { sphereKeys, typeKeys } from "@/constants/support";
+import { sphereKeys, typeKeys, SUPPORT_TYPE_VALUES, SUPPORT_SPHERE_VALUES } from "@/constants/support";
 import { useCreateSupportRecord } from "@/hooks/use-support-records";
 import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";
@@ -22,29 +22,6 @@ interface QuickSupportFormProps {
 
 const inputClass =
   "block h-9 w-full rounded-lg border border-border-secondary bg-bg-secondary px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg";
-
-const typeOptions: SupportType[] = [
-  "humanitarian",
-  "legal",
-  "social",
-  "psychological",
-  "medical",
-  "general",
-];
-
-const sphereOptions: SupportSphere[] = [
-  "housing_assistance",
-  "document_recovery",
-  "social_benefits",
-  "property_rights",
-  "employment_rights",
-  "family_law",
-  "healthcare_access",
-  "education_access",
-  "financial_aid",
-  "psychological_support",
-  "other",
-];
 
 const typeKeyMap = typeKeys as Record<SupportType, string>;
 const sphereKeyMap = sphereKeys as Record<SupportSphere, string>;
@@ -119,7 +96,7 @@ export function QuickSupportForm({ projectId, personId, onSaved, onCancel }: Qui
             <UISelect
               value={type}
               onValueChange={(v) => setType(v as SupportType)}
-              options={typeOptions.map((v) => ({
+              options={SUPPORT_TYPE_VALUES.map((v) => ({
                 value: v,
                 label: t(typeKeyMap[v]),
               }))}
@@ -133,7 +110,7 @@ export function QuickSupportForm({ projectId, personId, onSaved, onCancel }: Qui
             <UISelect
               value={sphere}
               onValueChange={setSphere}
-              options={sphereOptions.map((v) => ({
+              options={SUPPORT_SPHERE_VALUES.map((v) => ({
                 value: v,
                 label: t(sphereKeyMap[v]),
               }))}
