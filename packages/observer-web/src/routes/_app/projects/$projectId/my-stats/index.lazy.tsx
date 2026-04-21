@@ -12,18 +12,18 @@ import {
 } from "@/components/charts/colors";
 import { DatePicker } from "@/components/date-picker";
 import { CaretDownIcon, CaretUpIcon, DownloadSimpleIcon, FunnelIcon } from "@/components/icons";
+import { MyStatsKpiCards } from "@/components/my-stats-kpi-cards";
 import {
   ReportCard,
-  KpiCard,
   FilterChip,
   FilterField,
   ReportSkeleton,
   labelKeyMap,
   AGE_RANGE_MAP,
   getPresetDates,
-  PRESET_KEYS,
 } from "@/components/report";
 import type { DatePreset } from "@/components/report";
+import { ReportDatePresets } from "@/components/report-date-presets";
 import { UISelect } from "@/components/ui-select";
 import { useReport } from "@/hooks/use-reports";
 import { exportReportCSV } from "@/lib/export-csv";
@@ -101,26 +101,14 @@ function MyStatsPage() {
 
         {filtersOpen && (
           <div className="border-t border-border-secondary px-5 pb-4 pt-3">
-            <div className="mb-3 flex flex-wrap gap-1.5">
-              {PRESET_KEYS.map(({ key, i18n }) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => {
-                    const dates = getPresetDates(key);
-                    setParams((p) => ({ ...p, ...dates }));
-                    setActivePreset(key);
-                  }}
-                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                    activePreset === key
-                      ? "bg-accent text-accent-fg"
-                      : "bg-bg-tertiary text-fg-secondary hover:text-fg"
-                  }`}
-                >
-                  {t(i18n)}
-                </button>
-              ))}
-            </div>
+            <ReportDatePresets
+              activePreset={activePreset}
+              onSelect={(key) => {
+                const dates = getPresetDates(key);
+                setParams((p) => ({ ...p, ...dates }));
+                setActivePreset(key);
+              }}
+            />
 
             <div className="grid grid-cols-3 gap-x-4 gap-y-3">
               <FilterField label={t("project.reports.dateFrom")}>
@@ -208,18 +196,12 @@ function MyStatsPage() {
       {data && (
         <div className="grid gap-6 lg:grid-cols-2">
           {/* KPI overview */}
-          <div className="col-span-full grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <KpiCard label={t("project.myStats.kpiPeople")} value={data.by_sex.total} />
-            <KpiCard
-              label={t("project.myStats.kpiConsultations")}
-              value={data.consultations.total}
-            />
-            <KpiCard
-              label={t("project.myStats.kpiActiveCases")}
-              value={data.by_case_status?.rows.find((r) => r.label === "active")?.count ?? 0}
-            />
-            <KpiCard label={t("project.myStats.kpiHouseholds")} value={data.family_units.total} />
-          </div>
+          <MyStatsKpiCards
+            totalPeople={data.by_sex.total}
+            totalConsultations={data.consultations.total}
+            totalActiveCases={data.by_case_status?.rows.find((r) => r.label === "active")?.count ?? 0}
+            totalHouseholds={data.family_units.total}
+          />
 
           {/* Consultations */}
           <div className="col-span-full">
