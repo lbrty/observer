@@ -20,7 +20,6 @@ import {
   ReportSkeleton,
   labelKeyMap,
   AGE_RANGE_MAP,
-  getPresetDates,
 } from "@/components/report";
 import type { DatePreset } from "@/components/report";
 import { ReportDatePresets } from "@/components/report-date-presets";
@@ -103,8 +102,7 @@ function MyStatsPage() {
           <div className="border-t border-border-secondary px-5 pb-4 pt-3">
             <ReportDatePresets
               activePreset={activePreset}
-              onSelect={(key) => {
-                const dates = getPresetDates(key);
+              onSelect={(key, dates) => {
                 setParams((p) => ({ ...p, ...dates }));
                 setActivePreset(key);
               }}

@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next";
 
-import { PRESET_KEYS } from "@/components/report";
+import { getPresetDates, PRESET_KEYS } from "@/components/report";
 import type { DatePreset } from "@/components/report";
 
 interface ReportDatePresetsProps {
   activePreset: DatePreset | null;
-  onSelect: (preset: DatePreset) => void;
+  onSelect: (preset: DatePreset, dates: { date_from?: string; date_to?: string }) => void;
 }
 
 export function ReportDatePresets({ activePreset, onSelect }: ReportDatePresetsProps) {
@@ -17,7 +17,7 @@ export function ReportDatePresets({ activePreset, onSelect }: ReportDatePresetsP
         <button
           key={key}
           type="button"
-          onClick={() => onSelect(key)}
+          onClick={() => onSelect(key, getPresetDates(key))}
           className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
             activePreset === key
               ? "bg-accent text-accent-fg"

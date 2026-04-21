@@ -11,7 +11,16 @@ import {
   IDP_STATUS_COLORS,
   AGE_GROUP_COLORS,
 } from "@/components/charts/colors";
-import { DateRangePicker } from "@/components/date-picker";
+import {
+  ReportCard,
+  ReportSkeleton,
+  labelKeyMap,
+  AGE_RANGE_MAP,
+} from "@/components/report";
+import type { DatePreset } from "@/components/report";
+import { ReportFilterBar } from "@/components/reports/report-filter-bar";
+import { PeopleKpiCards } from "@/components/reports/people-kpi-cards";
+import { PeopleChartSection } from "@/components/reports/people-chart-section";
 import {
   CaretDownIcon,
   CaretUpIcon,
@@ -19,39 +28,13 @@ import {
   FunnelIcon,
   PrinterIcon,
 } from "@/components/icons";
-import {
-  ReportCard,
-  KpiCard,
-  FilterChip,
-  FilterField,
-  ReportSkeleton,
-  labelKeyMap,
-  AGE_RANGE_MAP,
-  getPresetDates,
-  PRESET_KEYS,
-} from "@/components/report";
-import type { DatePreset } from "@/components/report";
-import { UISelect } from "@/components/ui-select";
-import { SEX_VALUES, AGE_GROUP_VALUES, CASE_STATUS_VALUES } from "@/constants/person";
-import { useCategories } from "@/hooks/use-categories";
-import { useOffices } from "@/hooks/use-offices";
 import { useReport } from "@/hooks/use-reports";
 import { exportReportCSV } from "@/lib/export-csv";
-import { toSelectOptions } from "@/lib/options";
 import type { ReportParams } from "@/types/report";
 
 export const Route = createLazyFileRoute("/_app/projects/$projectId/reports/people")({
   component: ReportsPage,
 });
-
-const SUPPORT_TYPE_OPTIONS = [
-  "humanitarian",
-  "legal",
-  "social",
-  "psychological",
-  "medical",
-  "general",
-] as const;
 
 function SectionHeader({ title }: { title: string }) {
   return (
@@ -68,36 +51,13 @@ function ReportsPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [activePreset, setActivePreset] = useState<DatePreset | null>(null);
   const { data, isLoading } = useReport(projectId, params);
-  const { data: offices } = useOffices();
-  const { data: categories } = useCategories();
-
-  const officeOptions = toSelectOptions(offices);
-  const categoryOptions = toSelectOptions(categories);
-  const supportTypeOptions = SUPPORT_TYPE_OPTIONS.map((s) => ({
-    label: t(labelKeyMap[s] ?? s),
-    value: s,
-  }));
-  const caseStatusOptions = CASE_STATUS_VALUES.map((s) => ({
-    label: t(`project.people.${s}`),
-    value: s,
-  }));
-  const sexOptions = SEX_VALUES.map((s) => ({
-    label: t(`project.people.sex${s[0].toUpperCase()}${s.slice(1)}`),
-    value: s,
-  }));
-  const ageGroupOptions = AGE_GROUP_VALUES.map((g) => ({
-    label: t(labelKeyMap[g] ?? g),
-    value: g,
-  }));
 
   const ageGroupLegend: BarLegendItem[] = Object.entries(AGE_RANGE_MAP).map(([key, range]) => ({
     short: range,
     full: t(labelKeyMap[key] ?? key),
   }));
 
-  const hasFilters = Object.values(params).some((v) => v != null && v !== "");
   const axisLabel = t("project.reports.axisCount");
-  const clearDatePreset = () => setActivePreset(null);
 
   return (
     <div>
@@ -157,203 +117,12 @@ function ReportsPage() {
         {/* Collapsible filter panel */}
         {filtersOpen && (
           <div className="border-t border-border-secondary px-5 pb-4 pt-3">
-            {/* Date presets */}
-            <div className="mb-3 flex flex-wrap gap-1.5">
-              {PRESET_KEYS.map(({ key, i18n }) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => {
-                    const dates = getPresetDates(key);
-                    setParams((p) => ({ ...p, ...dates }));
-                    setActivePreset(key);
-                  }}
-                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                    activePreset === key
-                      ? "bg-accent text-accent-fg"
-                      : "bg-bg-tertiary text-fg-secondary hover:text-fg"
-                  }`}
-                >
-                  {t(i18n)}
-                </button>
-              ))}
-            </div>
-
-            {/* Filter row */}
-            <div className="flex flex-wrap items-start gap-4">
-              <FilterField label={t("project.reports.dateRange")}>
-                <DateRangePicker
-                  from={params.date_from ?? ""}
-                  to={params.date_to ?? ""}
-                  onChange={(range) => {
-                    setParams((p) => ({
-                      ...p,
-                      date_from: range.from || undefined,
-                      date_to: range.to || undefined,
-                    }));
-                    clearDatePreset();
-                  }}
-                />
-              </FilterField>
-              <FilterField label={t("project.reports.filterOffice")}>
-                <UISelect
-                  fullWidth
-                  value={params.office_id ?? ""}
-                  onValueChange={(v) => setParams((p) => ({ ...p, office_id: v || undefined }))}
-                  options={[{ label: t("project.reports.allValues"), value: "" }, ...officeOptions]}
-                  placeholder={t("project.reports.allValues")}
-                />
-              </FilterField>
-              <FilterField label={t("project.reports.filterCategory")}>
-                <UISelect
-                  fullWidth
-                  value={params.category_id ?? ""}
-                  onValueChange={(v) => setParams((p) => ({ ...p, category_id: v || undefined }))}
-                  options={[
-                    { label: t("project.reports.allValues"), value: "" },
-                    ...categoryOptions,
-                  ]}
-                  placeholder={t("project.reports.allValues")}
-                />
-              </FilterField>
-              <FilterField label={t("project.reports.filterCaseStatus")}>
-                <UISelect
-                  fullWidth
-                  value={params.case_status ?? ""}
-                  onValueChange={(v) => setParams((p) => ({ ...p, case_status: v || undefined }))}
-                  options={[
-                    { label: t("project.reports.allValues"), value: "" },
-                    ...caseStatusOptions,
-                  ]}
-                  placeholder={t("project.reports.allValues")}
-                />
-              </FilterField>
-              <FilterField label={t("project.reports.filterSex")}>
-                <UISelect
-                  fullWidth
-                  value={params.sex ?? ""}
-                  onValueChange={(v) => setParams((p) => ({ ...p, sex: v || undefined }))}
-                  options={[{ label: t("project.reports.allValues"), value: "" }, ...sexOptions]}
-                  placeholder={t("project.reports.allValues")}
-                />
-              </FilterField>
-              <FilterField label={t("project.reports.filterAgeGroup")}>
-                <UISelect
-                  fullWidth
-                  value={params.age_group ?? ""}
-                  onValueChange={(v) => setParams((p) => ({ ...p, age_group: v || undefined }))}
-                  options={[
-                    { label: t("project.reports.allValues"), value: "" },
-                    ...ageGroupOptions,
-                  ]}
-                  placeholder={t("project.reports.allValues")}
-                />
-              </FilterField>
-              <FilterField label={t("project.reports.filterSupportType")}>
-                <UISelect
-                  fullWidth
-                  value={params.support_type ?? ""}
-                  onValueChange={(v) => setParams((p) => ({ ...p, support_type: v || undefined }))}
-                  options={[
-                    { label: t("project.reports.allValues"), value: "" },
-                    ...supportTypeOptions,
-                  ]}
-                  placeholder={t("project.reports.allValues")}
-                />
-              </FilterField>
-            </div>
-          </div>
-        )}
-
-        {/* Active filter chips (always visible) */}
-        {hasFilters && (
-          <div className="flex flex-wrap items-center gap-1.5 border-t border-border-secondary px-5 py-2.5">
-            {params.date_from && (
-              <FilterChip
-                label={t("project.reports.dateFrom")}
-                value={params.date_from}
-                onRemove={() => {
-                  setParams((p) => ({ ...p, date_from: undefined }));
-                  clearDatePreset();
-                }}
-              />
-            )}
-            {params.date_to && (
-              <FilterChip
-                label={t("project.reports.dateTo")}
-                value={params.date_to}
-                onRemove={() => {
-                  setParams((p) => ({ ...p, date_to: undefined }));
-                  clearDatePreset();
-                }}
-              />
-            )}
-            {params.office_id && (
-              <FilterChip
-                label={t("project.reports.filterOffice")}
-                value={
-                  officeOptions.find((o) => o.value === params.office_id)?.label ?? params.office_id
-                }
-                onRemove={() => setParams((p) => ({ ...p, office_id: undefined }))}
-              />
-            )}
-            {params.category_id && (
-              <FilterChip
-                label={t("project.reports.filterCategory")}
-                value={
-                  categoryOptions.find((c) => c.value === params.category_id)?.label ??
-                  params.category_id
-                }
-                onRemove={() => setParams((p) => ({ ...p, category_id: undefined }))}
-              />
-            )}
-            {params.case_status && (
-              <FilterChip
-                label={t("project.reports.filterCaseStatus")}
-                value={
-                  caseStatusOptions.find((s) => s.value === params.case_status)?.label ??
-                  params.case_status
-                }
-                onRemove={() => setParams((p) => ({ ...p, case_status: undefined }))}
-              />
-            )}
-            {params.sex && (
-              <FilterChip
-                label={t("project.reports.filterSex")}
-                value={sexOptions.find((s) => s.value === params.sex)?.label ?? params.sex}
-                onRemove={() => setParams((p) => ({ ...p, sex: undefined }))}
-              />
-            )}
-            {params.age_group && (
-              <FilterChip
-                label={t("project.reports.filterAgeGroup")}
-                value={
-                  ageGroupOptions.find((g) => g.value === params.age_group)?.label ??
-                  params.age_group
-                }
-                onRemove={() => setParams((p) => ({ ...p, age_group: undefined }))}
-              />
-            )}
-            {params.support_type && (
-              <FilterChip
-                label={t("project.reports.filterSupportType")}
-                value={
-                  supportTypeOptions.find((s) => s.value === params.support_type)?.label ??
-                  params.support_type
-                }
-                onRemove={() => setParams((p) => ({ ...p, support_type: undefined }))}
-              />
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                setParams({});
-                clearDatePreset();
-              }}
-              className="ml-1 text-xs font-medium text-fg-tertiary underline transition-colors hover:text-fg"
-            >
-              {t("project.reports.clearAll")}
-            </button>
+            <ReportFilterBar
+              params={params}
+              activePreset={activePreset}
+              onParamsChange={setParams}
+              onPresetChange={setActivePreset}
+            />
           </div>
         )}
       </div>
@@ -366,34 +135,20 @@ function ReportsPage() {
         <div className="report-grid grid gap-6 lg:grid-cols-2">
           {/* Overview: KPI cards + Sankey side by side */}
           <div className="col-span-full grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* KPI cards — 3x2 grid on the left */}
-            <div className="grid grid-cols-3 gap-3">
-              <KpiCard label={t("project.reports.kpiPeople")} value={data.by_sex.total} />
-              <KpiCard
-                label={t("project.reports.kpiConsultations")}
-                value={data.consultations.total}
-              />
-              <KpiCard
-                label={t("project.reports.kpiActiveCases")}
-                value={data.by_case_status?.rows.find((r) => r.label === "active")?.count ?? 0}
-              />
-              <KpiCard
-                label={t("project.reports.kpiIdp")}
-                value={
-                  data.by_idp_status.rows.find((r) => r.label === "idp")?.count ??
-                  data.by_idp_status.total
-                }
-              />
-              <KpiCard label={t("project.reports.kpiHouseholds")} value={data.family_units.total} />
-              <KpiCard label={t("project.reports.kpiOffices")} value={data.by_office.rows.length} />
-            </div>
+            <PeopleKpiCards
+              totalPeople={data.by_sex.total}
+              totalConsultations={data.consultations.total}
+              activeCases={data.by_case_status?.rows.find((r) => r.label === "active")?.count ?? 0}
+              idpCount={
+                data.by_idp_status.rows.find((r) => r.label === "idp")?.count ??
+                data.by_idp_status.total
+              }
+              households={data.family_units.total}
+              offices={data.by_office.rows.length}
+            />
 
-            {/* Sankey on the right */}
             {data.status_flow && data.status_flow.length > 0 && (
-              <div className="rounded-xl border border-border-secondary bg-bg-secondary p-5">
-                <h3 className="mb-3 text-sm font-semibold text-fg">
-                  {t("project.reports.statusFlow")}
-                </h3>
+              <PeopleChartSection title={t("project.reports.statusFlow")}>
                 <SankeyChart
                   data={data.status_flow}
                   translateLabel={(l) => {
@@ -401,7 +156,7 @@ function ReportsPage() {
                     return key ? t(key) : t(`project.people.${l}`, l);
                   }}
                 />
-              </div>
+              </PeopleChartSection>
             )}
           </div>
 
