@@ -5,3 +5,8 @@ export const petStatusKeys: Record<string, string> = {
   needs_shelter: "project.pets.statusNeedsShelter",
   unknown: "project.pets.statusUnknown",
 };
+
+export const petOwnershipKeys: Record<string, string> = {
+  with_owner: "project.petReports.withOwner",
+  without_owner: "project.petReports.withoutOwner",
+};
