@@ -10,7 +10,11 @@ import { DocumentPreviewDialog } from "@/components/documents/document-preview-d
 import { DocumentUploadZone } from "@/components/documents/document-upload-zone";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FilesIcon } from "@/components/ui/icons";
-import { useDeleteDocument, useDocuments, useUpdateDocument } from "@/hooks/documents/use-documents";
+import {
+  useDeleteDocument,
+  useDocuments,
+  useUpdateDocument,
+} from "@/hooks/documents/use-documents";
 import { useProjectRole } from "@/hooks/users/use-project-role";
 import type { Document } from "@/types/document";
 

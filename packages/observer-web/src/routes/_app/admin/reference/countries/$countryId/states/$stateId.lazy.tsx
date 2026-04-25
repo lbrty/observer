@@ -12,7 +12,12 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { FormDialog } from "@/components/dialogs/form-dialog";
 import { PageHeader } from "@/components/layout/page-header";
 import { RowActions } from "@/components/table/row-actions";
-import { useCreatePlace, useDeletePlace, usePlaces, useUpdatePlace } from "@/hooks/reference/use-places";
+import {
+  useCreatePlace,
+  useDeletePlace,
+  usePlaces,
+  useUpdatePlace,
+} from "@/hooks/reference/use-places";
 import type { Place } from "@/types/reference";
 
 export const Route = createLazyFileRoute(

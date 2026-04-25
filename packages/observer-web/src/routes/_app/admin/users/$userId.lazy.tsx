@@ -12,7 +12,12 @@ import { PageHeader } from "@/components/layout/page-header";
 import { UISelect } from "@/components/ui/ui-select";
 import { UISwitch } from "@/components/ui/ui-switch";
 import { useOffices } from "@/hooks/reference/use-offices";
-import { useDeactivateUser, useReactivateUser, useUpdateUser, useUser } from "@/hooks/users/use-users";
+import {
+  useDeactivateUser,
+  useReactivateUser,
+  useUpdateUser,
+  useUser,
+} from "@/hooks/users/use-users";
 import { api } from "@/lib/api";
 import { handleApiError } from "@/lib/form-error";
 import { toSelectOptions } from "@/lib/options";

@@ -11,7 +11,12 @@ import { DataTablePage } from "@/components/table/data-table-page";
 import { FormDialog } from "@/components/dialogs/form-dialog";
 import { BuildingsIcon } from "@/components/ui/icons";
 import { RowActions } from "@/components/table/row-actions";
-import { useCreateOffice, useDeleteOffice, useOffices, useUpdateOffice } from "@/hooks/reference/use-offices";
+import {
+  useCreateOffice,
+  useDeleteOffice,
+  useOffices,
+  useUpdateOffice,
+} from "@/hooks/reference/use-offices";
 import { usePlaces } from "@/hooks/reference/use-places";
 import type { Office } from "@/types/reference";
 
