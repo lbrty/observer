@@ -10,40 +10,21 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
-	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
-	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
-	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
-func newUserUC(t *testing.T) (*ucadmin.UserUseCase, *mock_repo.MockUserRepository) {
-	t.Helper()
-	ctrl := gomock.NewController(t)
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	hasher := crypto.NewArgonHasher()
-	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
-	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
-	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
-	return uc, mockUserRepo
-}
-
 func TestUserUseCase_List_Success(t *testing.T) {
-	uc, mockRepo := newUserUC(t)
+	uc, d := newUserUCDeps(t)
 
 	ctx := context.Background()
 	now := time.Now().UTC()
-
 	users := []*user.User{
 		{ID: ulid.MustNew(ulid.Now(), nil), FirstName: "Alice", LastName: "A", Email: "a@test.com", Phone: "+1", Role: user.RoleAdmin, IsActive: true, CreatedAt: now, UpdatedAt: now},
 		{ID: ulid.MustNew(ulid.Now(), nil), FirstName: "Bob", LastName: "B", Email: "b@test.com", Phone: "+2", Role: user.RoleStaff, IsActive: true, CreatedAt: now, UpdatedAt: now},
 	}
 
-	mockRepo.EXPECT().
-		List(ctx, user.UserListFilter{Page: 1, PerPage: 10}).
-		Return(users, 2, nil)
+	d.userRepo.EXPECT().List(ctx, user.UserListFilter{Page: 1, PerPage: 10}).Return(users, 2, nil)
 
 	out, err := uc.List(ctx, ucadmin.ListUsersInput{Page: 1, PerPage: 10})
 	require.NoError(t, err)
@@ -55,11 +36,9 @@ func TestUserUseCase_List_Success(t *testing.T) {
 }
 
 func TestUserUseCase_List_DefaultPagination(t *testing.T) {
-	uc, mockRepo := newUserUC(t)
+	uc, d := newUserUCDeps(t)
 
-	mockRepo.EXPECT().
-		List(gomock.Any(), user.UserListFilter{Page: 1, PerPage: 20}).
-		Return(nil, 0, nil)
+	d.userRepo.EXPECT().List(gomock.Any(), user.UserListFilter{Page: 1, PerPage: 20}).Return(nil, 0, nil)
 
 	out, err := uc.List(context.Background(), ucadmin.ListUsersInput{})
 	require.NoError(t, err)
@@ -68,11 +47,9 @@ func TestUserUseCase_List_DefaultPagination(t *testing.T) {
 }
 
 func TestUserUseCase_List_ClampPerPage(t *testing.T) {
-	uc, mockRepo := newUserUC(t)
+	uc, d := newUserUCDeps(t)
 
-	mockRepo.EXPECT().
-		List(gomock.Any(), user.UserListFilter{Page: 1, PerPage: 100}).
-		Return(nil, 0, nil)
+	d.userRepo.EXPECT().List(gomock.Any(), user.UserListFilter{Page: 1, PerPage: 100}).Return(nil, 0, nil)
 
 	out, err := uc.List(context.Background(), ucadmin.ListUsersInput{Page: 1, PerPage: 500})
 	require.NoError(t, err)
@@ -80,18 +57,16 @@ func TestUserUseCase_List_ClampPerPage(t *testing.T) {
 }
 
 func TestUserUseCase_List_WithFilters(t *testing.T) {
-	uc, mockRepo := newUserUC(t)
+	uc, d := newUserUCDeps(t)
 
 	active := true
-	mockRepo.EXPECT().
-		List(gomock.Any(), user.UserListFilter{
-			Page:     1,
-			PerPage:  20,
-			Search:   "alice",
-			Role:     "admin",
-			IsActive: &active,
-		}).
-		Return(nil, 0, nil)
+	d.userRepo.EXPECT().List(gomock.Any(), user.UserListFilter{
+		Page:     1,
+		PerPage:  20,
+		Search:   "alice",
+		Role:     "admin",
+		IsActive: &active,
+	}).Return(nil, 0, nil)
 
 	_, err := uc.List(context.Background(), ucadmin.ListUsersInput{
 		Search:   "alice",

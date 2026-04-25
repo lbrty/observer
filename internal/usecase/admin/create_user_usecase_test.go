@@ -9,28 +9,17 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
-	cryptomock "github.com/lbrty/observer/internal/crypto/mock"
 	"github.com/lbrty/observer/internal/domain/user"
-	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
 
 func TestUserUseCase_Create_Success(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil, nil)
-
+	uc, d := newUserUCDeps(t)
 	ctx := context.Background()
 
-	// Email not taken
-	mockUserRepo.EXPECT().GetByEmail(ctx, "alice@example.com").Return(nil, user.ErrUserNotFound)
-	// No phone to check
-	mockHasher.EXPECT().Hash("securepass").Return("hashed", "salt", nil)
-	mockUserRepo.EXPECT().CreateWithCredentials(ctx, gomock.Any(), gomock.Any()).Return(nil)
+	d.userRepo.EXPECT().GetByEmail(ctx, "alice@example.com").Return(nil, user.ErrUserNotFound)
+	d.hasher.EXPECT().Hash("securepass").Return("hashed", "salt", nil)
+	d.userRepo.EXPECT().CreateWithCredentials(ctx, gomock.Any(), gomock.Any()).Return(nil)
 
 	out, err := uc.Create(ctx, ucadmin.CreateUserInput{
 		FirstName: "Alice",
@@ -50,13 +39,7 @@ func TestUserUseCase_Create_Success(t *testing.T) {
 }
 
 func TestUserUseCase_Create_InvalidRole(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil, nil)
+	uc, _ := newUserUCDeps(t)
 
 	_, err := uc.Create(context.Background(), ucadmin.CreateUserInput{
 		FirstName: "Bob",
@@ -68,18 +51,10 @@ func TestUserUseCase_Create_InvalidRole(t *testing.T) {
 }
 
 func TestUserUseCase_Create_DuplicateEmail(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil, nil)
-
+	uc, d := newUserUCDeps(t)
 	ctx := context.Background()
 
-	// Email already taken (GetByEmail returns a user, no error)
-	mockUserRepo.EXPECT().GetByEmail(ctx, "alice@example.com").Return(&user.User{
+	d.userRepo.EXPECT().GetByEmail(ctx, "alice@example.com").Return(&user.User{
 		ID: ulid.Make(), Email: "alice@example.com",
 	}, nil)
 
@@ -93,20 +68,11 @@ func TestUserUseCase_Create_DuplicateEmail(t *testing.T) {
 }
 
 func TestUserUseCase_Create_DuplicatePhone(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil, nil)
-
+	uc, d := newUserUCDeps(t)
 	ctx := context.Background()
 
-	// Email not taken
-	mockUserRepo.EXPECT().GetByEmail(ctx, "bob@example.com").Return(nil, user.ErrUserNotFound)
-	// Phone already taken
-	mockUserRepo.EXPECT().GetByPhone(ctx, "+380991234567").Return(&user.User{
+	d.userRepo.EXPECT().GetByEmail(ctx, "bob@example.com").Return(nil, user.ErrUserNotFound)
+	d.userRepo.EXPECT().GetByPhone(ctx, "+380991234567").Return(&user.User{
 		ID: ulid.Make(), Phone: "+380991234567",
 	}, nil)
 
@@ -121,53 +87,34 @@ func TestUserUseCase_Create_DuplicatePhone(t *testing.T) {
 }
 
 func TestUserUseCase_ResetPassword_Success(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
-	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, mockSessionRepo, nil, nil)
-
+	uc, d := newUserUCDeps(t)
 	ctx := context.Background()
 	userID := ulid.Make()
 
-	mockCredRepo.EXPECT().GetByUserID(ctx, userID).Return(&user.Credentials{
+	d.credRepo.EXPECT().GetByUserID(ctx, userID).Return(&user.Credentials{
 		UserID:       userID,
 		PasswordHash: "oldhash",
 		Salt:         "oldsalt",
 	}, nil)
-	mockHasher.EXPECT().Hash("newpassword123").Return("newhash", "newsalt", nil)
-	mockCredRepo.EXPECT().Update(ctx, gomock.Any()).DoAndReturn(func(_ context.Context, c *user.Credentials) error {
+	d.hasher.EXPECT().Hash("newpassword123").Return("newhash", "newsalt", nil)
+	d.credRepo.EXPECT().Update(ctx, gomock.Any()).DoAndReturn(func(_ context.Context, c *user.Credentials) error {
 		assert.Equal(t, "newhash", c.PasswordHash)
 		assert.Equal(t, "newsalt", c.Salt)
 		return nil
 	})
-	mockSessionRepo.EXPECT().DeleteByUserID(ctx, userID).Return(nil)
+	d.sessionRepo.EXPECT().DeleteByUserID(ctx, userID).Return(nil)
 
-	err := uc.ResetPassword(ctx, userID, ucadmin.ResetPasswordInput{
-		NewPassword: "newpassword123",
-	})
+	err := uc.ResetPassword(ctx, userID, ucadmin.ResetPasswordInput{NewPassword: "newpassword123"})
 	require.NoError(t, err)
 }
 
 func TestUserUseCase_ResetPassword_CredNotFound(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil, nil)
-
+	uc, d := newUserUCDeps(t)
 	ctx := context.Background()
 	userID := ulid.Make()
 
-	mockCredRepo.EXPECT().GetByUserID(ctx, userID).Return(nil, user.ErrUserNotFound)
+	d.credRepo.EXPECT().GetByUserID(ctx, userID).Return(nil, user.ErrUserNotFound)
 
-	err := uc.ResetPassword(ctx, userID, ucadmin.ResetPasswordInput{
-		NewPassword: "newpassword123",
-	})
+	err := uc.ResetPassword(ctx, userID, ucadmin.ResetPasswordInput{NewPassword: "newpassword123"})
 	assert.ErrorIs(t, err, user.ErrUserNotFound)
 }

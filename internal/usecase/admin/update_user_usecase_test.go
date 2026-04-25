@@ -10,27 +10,12 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
-	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
-	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
-	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 )
 
-func ptr[T any](v T) *T { return &v }
-
 func TestUserUseCase_Update_PartialUpdate(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	hasher := crypto.NewArgonHasher()
-	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
-	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
-	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
-
+	uc, d := newUserUCDeps(t)
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
 
@@ -47,36 +32,22 @@ func TestUserUseCase_Update_PartialUpdate(t *testing.T) {
 		UpdatedAt:  time.Now().UTC(),
 	}
 
-	mockUserRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
-	mockUserRepo.EXPECT().Update(ctx, gomock.Any()).DoAndReturn(func(_ context.Context, u *user.User) error {
+	d.userRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
+	d.userRepo.EXPECT().Update(ctx, gomock.Any()).DoAndReturn(func(_ context.Context, u *user.User) error {
 		assert.Equal(t, "Bob", u.FirstName)
 		assert.Equal(t, "Smith", u.LastName)          // unchanged
 		assert.Equal(t, "alice@example.com", u.Email) // unchanged
 		return nil
 	})
 
-	input := ucadmin.UpdateUserInput{
-		FirstName: ptr("Bob"),
-	}
-
-	out, err := uc.Update(ctx, uid, input)
+	out, err := uc.Update(ctx, uid, ucadmin.UpdateUserInput{FirstName: ptr("Bob")})
 	require.NoError(t, err)
 	assert.Equal(t, "Bob", out.FirstName)
 	assert.Equal(t, "Smith", out.LastName)
 }
 
 func TestUserUseCase_Update_RoleChange(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	hasher := crypto.NewArgonHasher()
-	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
-	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
-	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
-
+	uc, d := newUserUCDeps(t)
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
 
@@ -90,28 +61,16 @@ func TestUserUseCase_Update_RoleChange(t *testing.T) {
 		UpdatedAt: time.Now().UTC(),
 	}
 
-	mockUserRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
-	mockUserRepo.EXPECT().Update(ctx, gomock.Any()).Return(nil)
+	d.userRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
+	d.userRepo.EXPECT().Update(ctx, gomock.Any()).Return(nil)
 
-	out, err := uc.Update(ctx, uid, ucadmin.UpdateUserInput{
-		Role: ptr("admin"),
-	})
+	out, err := uc.Update(ctx, uid, ucadmin.UpdateUserInput{Role: ptr("admin")})
 	require.NoError(t, err)
 	assert.Equal(t, "admin", out.Role)
 }
 
 func TestUserUseCase_Update_InvalidRole(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	hasher := crypto.NewArgonHasher()
-	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
-	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
-	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
-
+	uc, d := newUserUCDeps(t)
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
 
@@ -125,47 +84,24 @@ func TestUserUseCase_Update_InvalidRole(t *testing.T) {
 		UpdatedAt: time.Now().UTC(),
 	}
 
-	mockUserRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
+	d.userRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
 
-	_, err := uc.Update(ctx, uid, ucadmin.UpdateUserInput{
-		Role: ptr("superadmin"),
-	})
+	_, err := uc.Update(ctx, uid, ucadmin.UpdateUserInput{Role: ptr("superadmin")})
 	assert.ErrorIs(t, err, user.ErrInvalidRole)
 }
 
 func TestUserUseCase_Update_NotFound(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	hasher := crypto.NewArgonHasher()
-	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
-	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
-	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
-
+	uc, d := newUserUCDeps(t)
 	uid := ulid.MustNew(ulid.Now(), nil)
-	mockUserRepo.EXPECT().GetByID(gomock.Any(), uid).Return(nil, user.ErrUserNotFound)
 
-	_, err := uc.Update(context.Background(), uid, ucadmin.UpdateUserInput{
-		FirstName: ptr("New"),
-	})
+	d.userRepo.EXPECT().GetByID(gomock.Any(), uid).Return(nil, user.ErrUserNotFound)
+
+	_, err := uc.Update(context.Background(), uid, ucadmin.UpdateUserInput{FirstName: ptr("New")})
 	assert.ErrorIs(t, err, user.ErrUserNotFound)
 }
 
 func TestUserUseCase_Update_Deactivate(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
-	hasher := crypto.NewArgonHasher()
-	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
-	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
-	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
-
+	uc, d := newUserUCDeps(t)
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
 
@@ -179,15 +115,13 @@ func TestUserUseCase_Update_Deactivate(t *testing.T) {
 		UpdatedAt: time.Now().UTC(),
 	}
 
-	mockUserRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
-	mockUserRepo.EXPECT().Update(ctx, gomock.Any()).DoAndReturn(func(_ context.Context, u *user.User) error {
+	d.userRepo.EXPECT().GetByID(ctx, uid).Return(existing, nil)
+	d.userRepo.EXPECT().Update(ctx, gomock.Any()).DoAndReturn(func(_ context.Context, u *user.User) error {
 		assert.False(t, u.IsActive)
 		return nil
 	})
 
-	out, err := uc.Update(ctx, uid, ucadmin.UpdateUserInput{
-		IsActive: ptr(false),
-	})
+	out, err := uc.Update(ctx, uid, ucadmin.UpdateUserInput{IsActive: ptr(false)})
 	require.NoError(t, err)
 	assert.False(t, out.IsActive)
 }
