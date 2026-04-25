@@ -24,6 +24,16 @@ internal/
   app/            # DI container (manual wiring)
 adr/              # architectural decision records
 migrations/       # forward-only SQL migrations
+
+packages/observer-web/src/
+  components/     # React components, organized by domain
+  hooks/          # React hooks, mirroring component domain layout
+  routes/         # TanStack Router file-based routes
+  stores/         # client state (Zustand)
+  constants/      # shared constants by domain (i18n.ts, person.ts, support.ts, …)
+  types/          # TypeScript types generated from Go (see ADR-008) + manual
+  lib/            # utilities (form-error, export-csv, tag-color, …)
+  locales/        # i18n JSON files (en, ky, ru, uk, de, tr)
 ```
 
 ## Code Conventions
@@ -37,7 +47,7 @@ migrations/       # forward-only SQL migrations
 
 - Simple docstrings only
 - No decorative separators (`//-----`, `//=====`, `/* ── ... ── */`), no ASCII art
-- Complex logic: mermaid diagrams + module README instead of lengthy text
+- Complex logic: mermaid diagrams + module README instead of lengthy inline comments
 
 ### Architecture Rules
 
@@ -94,7 +104,7 @@ Hooks mirror the same domain layout under `src/hooks/`: `reference/`, `people/`,
 
 - Check `base-ui` and `@phosphor-icons/react` first for existing components/icons
 - React compiler enabled — omit effect dependencies where possible
-- Extract shared constants to `constants.ts` (root-level if cross-module)
+- Constants live in `constants/<domain>.ts`; i18n key maps go in `constants/i18n.ts`
 
 ### Tailwind `@apply` Order
 
@@ -102,3 +112,60 @@ When >10 rules, separate `@apply` per group on its own line:
 
 positioning > layout > sizing > borders > background > padding/margin > text > transforms > rest
 
+## Do's and Don'ts
+
+### Do
+
+**Before implementing**
+
+- State assumptions explicitly. If uncertain, ask — don't guess silently.
+- If multiple interpretations exist, present them rather than picking one silently.
+- Share a brief plan and wait for confirmation. For small, well-scoped changes, stating the plan is enough.
+- Check `adr/` before exploring the codebase broadly.
+- Read the entire plan file before starting, when one exists.
+
+**While implementing**
+
+- Match existing style, even if you'd do it differently.
+- Keep new tests consistent with existing test design.
+- Remove imports, variables, and functions your changes leave unused.
+- Use `bun`/`bunx` for all frontend package management — never `npm`, `npx`, or `node`.
+- Use `@/` imports for all frontend modules except colocated siblings (`./`). Follow the import group order.
+- Check `base-ui` and `@phosphor-icons/react` before adding new components or icons.
+- Put business logic in `internal/usecase/` — never in handlers or SQL.
+- Keep handlers thin: bind request, call use case, return response.
+- Use `ulid.ULID` for entity IDs and `string` in DTOs via `.String()`.
+- Use `just` commands for building and testing, not `make`.
+
+**After implementing**
+
+- Run pre-commit hooks and fix any errors.
+- Update documentation when the components it describes change.
+
+### Don't
+
+**Scope**
+
+- Don't add features beyond what was asked.
+- Don't add abstractions for single-use code.
+- Don't add error handling for impossible scenarios.
+- Don't improve adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Don't remove pre-existing dead code — mention it instead.
+- Don't skip or work around failing tests — fix them before proceeding.
+
+**Git**
+
+- Don't commit unless explicitly asked or after manual review. Commit messages: lowercase, short.
+- Don't run `git add -A`. Stage files individually.
+
+**Code style**
+
+- Don't write decorative comments (`// ─────`, `// =====`) or ASCII art.
+- Don't ignore linting errors without a strong, stated reason.
+- Don't write lengthy inline comments for complex logic — use mermaid diagrams or a module README instead.
+
+**Files**
+
+- Don't edit `src/apiTypes.ts` manually.
+- Don't wire dependencies outside `internal/app/container.go`.
