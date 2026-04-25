@@ -59,6 +59,20 @@ type UserDTO struct {
 	CreatedAt  time.Time `json:"created_at"`
 }
 
+// MeDTO is the response for the current authenticated user, including runtime flags.
+type MeDTO struct {
+	ID         string    `json:"id"`
+	FirstName  string    `json:"first_name"`
+	LastName   string    `json:"last_name"`
+	Email      string    `json:"email"`
+	Phone      string    `json:"phone"`
+	Role       string    `json:"role"`
+	IsVerified bool      `json:"is_verified"`
+	MFAEnabled bool      `json:"mfa_enabled"`
+	OfficeID   *string   `json:"office_id,omitempty"`
+	CreatedAt  time.Time `json:"created_at"`
+}
+
 // UpdateProfileInput holds fields a user can update on their own profile.
 type UpdateProfileInput struct {
 	FirstName *string `json:"first_name"`

@@ -9,6 +9,26 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 )
 
+// Me returns the current user's profile with MFA status.
+func (uc *AuthUseCase) Me(ctx context.Context, userID ulid.ULID) (*MeDTO, error) {
+	u, err := uc.userRepo.GetByID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("get user: %w", err)
+	}
+	return &MeDTO{
+		ID:         u.ID.String(),
+		FirstName:  u.FirstName,
+		LastName:   u.LastName,
+		Email:      u.Email,
+		Phone:      u.Phone,
+		Role:       string(u.Role),
+		IsVerified: u.IsVerified,
+		MFAEnabled: uc.IsMFAEnabled(ctx, userID),
+		OfficeID:   u.OfficeID,
+		CreatedAt:  u.CreatedAt,
+	}, nil
+}
+
 // ChangePassword verifies the current password and replaces it with a new one.
 func (uc *AuthUseCase) ChangePassword(ctx context.Context, userID ulid.ULID, input ChangePasswordInput) error {
 	cred, err := uc.credRepo.GetByUserID(ctx, userID)

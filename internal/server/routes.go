@@ -26,7 +26,6 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 
 	authHandler := handler.NewAuthHandler(
 		container.AuthUC,
-		container.UserRepo,
 		container.LoginAttemptStore,
 		cfg.Cookie,
 		cfg.JWT,
@@ -62,7 +61,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	api.GET("/search", authMW.Authenticate(), searchHandler.Search)
 
 	// Admin endpoints — requires authentication + admin role
-	adminHandler := handler.NewAdminHandler(container.UserUC, container.LoginAttemptStore)
+	adminHandler := handler.NewAdminHandler(container.UserUC)
 	permHandler := handler.NewPermissionHandler(container.PermUC)
 	countryHandler := handler.NewCountryHandler(container.CountryUC)
 	stateHandler := handler.NewStateHandler(container.StateUC)

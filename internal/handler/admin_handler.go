@@ -6,19 +6,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/oklog/ulid/v2"
 
-	"github.com/lbrty/observer/internal/repository"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )
 
 // AdminHandler exposes admin user-management HTTP endpoints.
 type AdminHandler struct {
-	userUC        *ucadmin.UserUseCase
-	loginAttempts repository.LoginAttemptStore
+	userUC *ucadmin.UserUseCase
 }
 
 // NewAdminHandler creates an AdminHandler.
-func NewAdminHandler(userUC *ucadmin.UserUseCase, loginAttempts repository.LoginAttemptStore) *AdminHandler {
-	return &AdminHandler{userUC: userUC, loginAttempts: loginAttempts}
+func NewAdminHandler(userUC *ucadmin.UserUseCase) *AdminHandler {
+	return &AdminHandler{userUC: userUC}
 }
 
 // ListUsers handles GET /admin/users.
@@ -170,18 +168,10 @@ func (h *AdminHandler) UnlockAccount(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", "invalid user ID"))
 		return
 	}
-
-	u, err := h.userUC.Get(c.Request.Context(), id)
-	if err != nil {
+	if err := h.userUC.UnlockAccount(c.Request.Context(), id); err != nil {
 		HandleError(c, err)
 		return
 	}
-
-	if err := h.loginAttempts.ClearAttempts(c.Request.Context(), u.Email); err != nil {
-		internalError(c, "unlock account", err)
-		return
-	}
-
 	c.JSON(http.StatusOK, gin.H{"message": "account unlocked"})
 }
 

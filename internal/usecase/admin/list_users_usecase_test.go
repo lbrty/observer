@@ -26,7 +26,7 @@ func newUserUC(t *testing.T) (*ucadmin.UserUseCase, *mock_repo.MockUserRepositor
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, auditUC)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
 	return uc, mockUserRepo
 }
 

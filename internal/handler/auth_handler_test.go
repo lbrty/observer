@@ -16,7 +16,7 @@ import (
 )
 
 func newAuthHandler(d *authTestDeps) *handler.AuthHandler {
-	return handler.NewAuthHandler(d.authUseCase(), d.userRepo, d.loginAttempts, testCookieConfig(), testJWTConfig())
+	return handler.NewAuthHandler(d.authUseCase(), d.loginAttempts, testCookieConfig(), testJWTConfig())
 }
 
 // --- Register ---

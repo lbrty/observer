@@ -146,9 +146,10 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	)
 
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
+	loginAttemptStore := repository.NewLoginAttemptStore(redisClient, userRepo)
 
 	authUC := ucauth.NewAuthUseCase(userRepo, credRepo, sessionRepo, mfaRepo, mfaRecoveryRepo, hasher, tokenGen)
-	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher, sessionRepo, auditUC)
+	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher, sessionRepo, loginAttemptStore, auditUC)
 	permUC := ucadmin.NewPermissionUseCase(permCRUDRepo, userRepo, auditUC)
 
 	countryUC := ucadmin.NewCountryUseCase(countryRepo)
@@ -174,7 +175,6 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	reportUC := ucreport.NewReportUseCase(reportRepo)
 	petReportUC := ucreport.NewPetReportUseCase(petReportRepo)
 	searchUC := ucsearch.NewSearchUseCase(searchRepo)
-	loginAttemptStore := repository.NewLoginAttemptStore(redisClient, userRepo)
 
 	return &Container{
 		UserRepo:          userRepo,

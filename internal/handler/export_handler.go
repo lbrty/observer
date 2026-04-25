@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/csv"
 	"fmt"
+	"mime"
 	"net/http"
 	"strconv"
 
@@ -68,7 +69,7 @@ func (h *ExportHandler) ExportPeople(c *gin.Context) {
 
 	filename := fmt.Sprintf("people-%s.csv", projectID)
 	c.Header("Content-Type", "text/csv")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.Header("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": filename}))
 
 	w := csv.NewWriter(c.Writer)
 	_ = w.Write([]string{
@@ -116,7 +117,7 @@ func (h *ExportHandler) ExportSupportRecords(c *gin.Context) {
 
 	filename := fmt.Sprintf("support-records-%s.csv", projectID)
 	c.Header("Content-Type", "text/csv")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.Header("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": filename}))
 
 	w := csv.NewWriter(c.Writer)
 	_ = w.Write([]string{
@@ -160,7 +161,7 @@ func (h *ExportHandler) ExportPets(c *gin.Context) {
 
 	filename := fmt.Sprintf("pets-%s.csv", projectID)
 	c.Header("Content-Type", "text/csv")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.Header("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": filename}))
 
 	w := csv.NewWriter(c.Writer)
 	_ = w.Write([]string{
@@ -201,7 +202,7 @@ func (h *ExportHandler) ExportHouseholds(c *gin.Context) {
 
 	filename := fmt.Sprintf("households-%s.csv", projectID)
 	c.Header("Content-Type", "text/csv")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.Header("Content-Disposition", mime.FormatMediaType("attachment", map[string]string{"filename": filename}))
 
 	w := csv.NewWriter(c.Writer)
 	_ = w.Write([]string{

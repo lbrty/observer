@@ -29,7 +29,7 @@ func TestUserUseCase_Update_PartialUpdate(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, auditUC)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
@@ -75,7 +75,7 @@ func TestUserUseCase_Update_RoleChange(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, auditUC)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
@@ -110,7 +110,7 @@ func TestUserUseCase_Update_InvalidRole(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, auditUC)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)
@@ -143,7 +143,7 @@ func TestUserUseCase_Update_NotFound(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, auditUC)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
 
 	uid := ulid.MustNew(ulid.Now(), nil)
 	mockUserRepo.EXPECT().GetByID(gomock.Any(), uid).Return(nil, user.ErrUserNotFound)
@@ -164,7 +164,7 @@ func TestUserUseCase_Update_Deactivate(t *testing.T) {
 	auditRepo := mock_repo.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, auditUC)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, nil, nil, auditUC)
 
 	ctx := context.Background()
 	uid := ulid.MustNew(ulid.Now(), nil)

@@ -23,7 +23,7 @@ func TestResetPassword_InvalidatesSessions(t *testing.T) {
 	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
 	hasher := crypto.NewArgonHasher()
 
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, mockSessionRepo, nil)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, hasher, mockSessionRepo, nil, nil)
 
 	ctx := context.Background()
 	uid := iulid.New()

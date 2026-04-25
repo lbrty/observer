@@ -139,5 +139,5 @@ func newAdminTestDeps(ctrl *gomock.Controller) *adminTestDeps {
 }
 
 func (d *adminTestDeps) userUseCase() *ucadmin.UserUseCase {
-	return ucadmin.NewUserUseCase(d.userRepo, d.credRepo, d.hasher, d.sessionRepo, nil)
+	return ucadmin.NewUserUseCase(d.userRepo, d.credRepo, d.hasher, d.sessionRepo, d.loginAttempts, nil)
 }

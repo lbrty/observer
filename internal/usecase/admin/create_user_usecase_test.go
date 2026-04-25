@@ -22,7 +22,7 @@ func TestUserUseCase_Create_Success(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil, nil)
 
 	ctx := context.Background()
 
@@ -56,7 +56,7 @@ func TestUserUseCase_Create_InvalidRole(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil, nil)
 
 	_, err := uc.Create(context.Background(), ucadmin.CreateUserInput{
 		FirstName: "Bob",
@@ -74,7 +74,7 @@ func TestUserUseCase_Create_DuplicateEmail(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil, nil)
 
 	ctx := context.Background()
 
@@ -99,7 +99,7 @@ func TestUserUseCase_Create_DuplicatePhone(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil, nil)
 
 	ctx := context.Background()
 
@@ -128,7 +128,7 @@ func TestUserUseCase_ResetPassword_Success(t *testing.T) {
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
 	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, mockSessionRepo, nil)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, mockSessionRepo, nil, nil)
 
 	ctx := context.Background()
 	userID := ulid.Make()
@@ -159,7 +159,7 @@ func TestUserUseCase_ResetPassword_CredNotFound(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
 	mockHasher := cryptomock.NewMockPasswordHasher(ctrl)
-	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil)
+	uc := ucadmin.NewUserUseCase(mockUserRepo, mockCredRepo, mockHasher, nil, nil, nil)
 
 	ctx := context.Background()
 	userID := ulid.Make()

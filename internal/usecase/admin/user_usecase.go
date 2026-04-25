@@ -22,11 +22,12 @@ type ResetPasswordInput struct {
 
 // UserUseCase handles admin user management operations.
 type UserUseCase struct {
-	userRepo    repository.UserRepository
-	credRepo    repository.CredentialsRepository
-	hasher      crypto.PasswordHasher
-	sessionRepo repository.SessionRepository
-	auditUC     *ucaudit.AuditUseCase
+	userRepo      repository.UserRepository
+	credRepo      repository.CredentialsRepository
+	hasher        crypto.PasswordHasher
+	sessionRepo   repository.SessionRepository
+	loginAttempts repository.LoginAttemptStore
+	auditUC       *ucaudit.AuditUseCase
 }
 
 // NewUserUseCase creates a UserUseCase.
@@ -35,15 +36,29 @@ func NewUserUseCase(
 	credRepo repository.CredentialsRepository,
 	hasher crypto.PasswordHasher,
 	sessionRepo repository.SessionRepository,
+	loginAttempts repository.LoginAttemptStore,
 	auditUC *ucaudit.AuditUseCase,
 ) *UserUseCase {
 	return &UserUseCase{
-		userRepo:    userRepo,
-		credRepo:    credRepo,
-		hasher:      hasher,
-		sessionRepo: sessionRepo,
-		auditUC:     auditUC,
+		userRepo:      userRepo,
+		credRepo:      credRepo,
+		hasher:        hasher,
+		sessionRepo:   sessionRepo,
+		loginAttempts: loginAttempts,
+		auditUC:       auditUC,
 	}
+}
+
+// UnlockAccount clears the login-attempt lockout for a user.
+func (uc *UserUseCase) UnlockAccount(ctx context.Context, id ulid.ULID) error {
+	u, err := uc.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return fmt.Errorf("get user: %w", err)
+	}
+	if err := uc.loginAttempts.ClearAttempts(ctx, u.Email); err != nil {
+		return fmt.Errorf("clear login attempts: %w", err)
+	}
+	return nil
 }
 
 // List returns a paginated list of users.

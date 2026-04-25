@@ -24,7 +24,6 @@ const (
 // AuthHandler exposes auth HTTP endpoints.
 type AuthHandler struct {
 	authUC        *ucauth.AuthUseCase
-	userRepo      repository.UserRepository
 	loginAttempts repository.LoginAttemptStore
 	cookie        config.CookieConfig
 	jwt           config.JWTConfig
@@ -33,14 +32,12 @@ type AuthHandler struct {
 // NewAuthHandler creates an AuthHandler.
 func NewAuthHandler(
 	authUC *ucauth.AuthUseCase,
-	userRepo repository.UserRepository,
 	loginAttempts repository.LoginAttemptStore,
 	cookie config.CookieConfig,
 	jwt config.JWTConfig,
 ) *AuthHandler {
 	return &AuthHandler{
 		authUC:        authUC,
-		userRepo:      userRepo,
 		loginAttempts: loginAttempts,
 		cookie:        cookie,
 		jwt:           jwt,
@@ -152,30 +149,12 @@ func (h *AuthHandler) Me(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, errJSON("errors.auth.missingUser", "missing user identity"))
 		return
 	}
-
-	u, err := h.userRepo.GetByID(c.Request.Context(), userID)
+	dto, err := h.authUC.Me(c.Request.Context(), userID)
 	if err != nil {
 		HandleError(c, err)
 		return
 	}
-
-	mfaEnabled := h.authUC.IsMFAEnabled(c.Request.Context(), userID)
-
-	resp := gin.H{
-		"id":          u.ID.String(),
-		"first_name":  u.FirstName,
-		"last_name":   u.LastName,
-		"email":       u.Email,
-		"phone":       u.Phone,
-		"role":        string(u.Role),
-		"is_verified": u.IsVerified,
-		"mfa_enabled": mfaEnabled,
-		"created_at":  u.CreatedAt,
-	}
-	if u.OfficeID != nil {
-		resp["office_id"] = *u.OfficeID
-	}
-	c.JSON(http.StatusOK, resp)
+	c.JSON(http.StatusOK, dto)
 }
 
 // RefreshToken handles POST /auth/refresh.
@@ -295,9 +274,7 @@ func (h *AuthHandler) setTokenCookies(c *gin.Context, accessToken, refreshToken 
 
 func generateCSRFToken() string {
 	b := make([]byte, 16)
-	if _, err := rand.Read(b); err != nil {
-		return "fallback-csrf"
-	}
+	_, _ = rand.Read(b) // crypto/rand.Read never fails; panics internally on catastrophic entropy failure
 	return hex.EncodeToString(b)
 }
 

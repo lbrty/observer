@@ -15,7 +15,7 @@ import (
 )
 
 func newAdminHandler(d *adminTestDeps) *handler.AdminHandler {
-	return handler.NewAdminHandler(d.userUseCase(), d.loginAttempts)
+	return handler.NewAdminHandler(d.userUseCase())
 }
 
 // --- ListUsers ---
