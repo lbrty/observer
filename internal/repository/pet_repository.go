@@ -52,7 +52,7 @@ func (r *petRepo) List(ctx context.Context, filter pet.PetListFilter) ([]*pet.Pe
 		args = append(args, *filter.Status)
 	}
 
-	var tagJoin string
+	var tagJoin, groupBy string
 	if len(filter.TagIDs) > 0 {
 		placeholders := make([]string, len(filter.TagIDs))
 		for i, tagID := range filter.TagIDs {
@@ -61,14 +61,14 @@ func (r *petRepo) List(ctx context.Context, filter pet.PetListFilter) ([]*pet.Pe
 			args = append(args, tagID)
 		}
 		tagJoin = " JOIN pet_tags pt ON pt.pet_id = pets.id AND pt.tag_id IN (" + strings.Join(placeholders, ",") + ")"
-		where = append(where, "1=1 GROUP BY pets.id HAVING COUNT(DISTINCT pt.tag_id) = "+strconv.Itoa(len(filter.TagIDs)))
+		groupBy = " GROUP BY pets.id HAVING COUNT(DISTINCT pt.tag_id) = " + strconv.Itoa(len(filter.TagIDs))
 	}
 
 	whereClause := "WHERE " + strings.Join(where, " AND ")
 
 	var countQ string
 	if tagJoin != "" {
-		countQ = "SELECT COUNT(*) FROM (SELECT pets.id FROM pets" + tagJoin + " " + whereClause + ") sub"
+		countQ = "SELECT COUNT(*) FROM (SELECT pets.id FROM pets" + tagJoin + " " + whereClause + groupBy + ") sub"
 	} else {
 		countQ = "SELECT COUNT(*) FROM pets " + whereClause
 	}
@@ -87,7 +87,7 @@ func (r *petRepo) List(ctx context.Context, filter pet.PetListFilter) ([]*pet.Pe
 	var q string
 	if tagJoin != "" {
 		q = fmt.Sprintf(`SELECT pets.id, pets.project_id, pets.owner_id, pets.name, pets.status, pets.registration_id, pets.notes, pets.created_at, pets.updated_at
-			FROM pets%s %s ORDER BY pets.created_at DESC LIMIT %s OFFSET %s`, tagJoin, whereClause, limitParam, offsetParam)
+			FROM pets%s %s%s ORDER BY pets.created_at DESC LIMIT %s OFFSET %s`, tagJoin, whereClause, groupBy, limitParam, offsetParam)
 	} else {
 		q = fmt.Sprintf(`SELECT id, project_id, owner_id, name, status, registration_id, notes, created_at, updated_at
 			FROM pets %s ORDER BY created_at DESC LIMIT %s OFFSET %s`, whereClause, limitParam, offsetParam)

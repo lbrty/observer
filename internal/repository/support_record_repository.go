@@ -66,60 +66,56 @@ func (r *supportRecordRepo) List(ctx context.Context, filter support.RecordListF
 	)
 
 	ix++
-	where = append(where, "project_id = $"+strconv.Itoa(ix))
+	where = append(where, "sr.project_id = $"+strconv.Itoa(ix))
 	args = append(args, filter.ProjectID)
 
 	if filter.PersonID != nil {
 		ix++
-		where = append(where, "person_id = $"+strconv.Itoa(ix))
+		where = append(where, "sr.person_id = $"+strconv.Itoa(ix))
 		args = append(args, *filter.PersonID)
 	}
 	if filter.ConsultantID != nil {
 		ix++
-		where = append(where, "consultant_id = $"+strconv.Itoa(ix))
+		where = append(where, "sr.consultant_id = $"+strconv.Itoa(ix))
 		args = append(args, *filter.ConsultantID)
 	}
 	if filter.OfficeID != nil {
 		ix++
-		where = append(where, "office_id = $"+strconv.Itoa(ix))
+		where = append(where, "sr.office_id = $"+strconv.Itoa(ix))
 		args = append(args, *filter.OfficeID)
 	}
 	if filter.Type != nil {
 		ix++
-		where = append(where, "type = $"+strconv.Itoa(ix))
+		where = append(where, "sr.type = $"+strconv.Itoa(ix))
 		args = append(args, string(*filter.Type))
 	}
 	if filter.Sphere != nil {
 		ix++
-		where = append(where, "sphere = $"+strconv.Itoa(ix))
+		where = append(where, "sr.sphere = $"+strconv.Itoa(ix))
 		args = append(args, string(*filter.Sphere))
 	}
 	if filter.ReferralStatus != nil {
 		ix++
-		where = append(where, "referral_status = $"+strconv.Itoa(ix))
+		where = append(where, "sr.referral_status = $"+strconv.Itoa(ix))
 		args = append(args, string(*filter.ReferralStatus))
 	}
 	if filter.DateFrom != nil {
 		ix++
-		where = append(where, "provided_at >= $"+strconv.Itoa(ix))
+		where = append(where, "sr.provided_at >= $"+strconv.Itoa(ix))
 		args = append(args, *filter.DateFrom)
 	}
 	if filter.DateTo != nil {
 		ix++
-		where = append(where, "provided_at <= $"+strconv.Itoa(ix))
+		where = append(where, "sr.provided_at <= $"+strconv.Itoa(ix))
 		args = append(args, *filter.DateTo)
 	}
 
-	// Prefix all filter columns with table alias for the JOIN query.
-	for i, w := range where {
-		where[i] = "sr." + w
-	}
 	whereClause := "WHERE " + strings.Join(where, " AND ")
 
 	const joinClause = "FROM support_records sr LEFT JOIN people p ON p.id = sr.person_id "
 
 	var total int
-	if err := r.db.QueryRowContext(ctx, "SELECT COUNT(*) "+joinClause+whereClause, args...).Scan(&total); err != nil {
+	if err := r.db.QueryRowContext(ctx, "SELECT COUNT(*) FROM support_records sr "+whereClause, args...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count support records: %w", err)
 	}
 

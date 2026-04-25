@@ -78,19 +78,7 @@ func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) (
 	if filter.AgeGroup != nil {
 		ix++
 		where = append(where, "(age_group::text = $"+strconv.Itoa(ix)+
-			" OR (age_group IS NULL AND birth_date IS NOT NULL AND "+
-			"CASE "+
-			"WHEN EXTRACT(YEAR FROM age(birth_date)) < 1 THEN 'infant' "+
-			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 1 AND 2 THEN 'toddler' "+
-			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 3 AND 5 THEN 'pre_school' "+
-			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 6 AND 11 THEN 'middle_childhood' "+
-			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 12 AND 14 THEN 'young_teen' "+
-			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 15 AND 17 THEN 'teenager' "+
-			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 18 AND 24 THEN 'young_adult' "+
-			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 25 AND 39 THEN 'early_adult' "+
-			"WHEN EXTRACT(YEAR FROM age(birth_date)) BETWEEN 40 AND 59 THEN 'middle_aged_adult' "+
-			"WHEN EXTRACT(YEAR FROM age(birth_date)) >= 60 THEN 'old_adult' "+
-			"ELSE 'unknown' END = $"+strconv.Itoa(ix)+"))")
+			" OR (age_group IS NULL AND birth_date IS NOT NULL AND infer_age_group(birth_date) = $"+strconv.Itoa(ix)+"))")
 		args = append(args, string(*filter.AgeGroup))
 	}
 	if filter.CategoryID != nil {
@@ -116,7 +104,7 @@ func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) (
 		args = append(args, *filter.Search)
 	}
 
-	var tagJoin string
+	var tagJoin, groupBy string
 	if len(filter.TagIDs) > 0 {
 		placeholders := make([]string, len(filter.TagIDs))
 		for i, tagID := range filter.TagIDs {
@@ -125,14 +113,14 @@ func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) (
 			args = append(args, tagID)
 		}
 		tagJoin = " JOIN person_tags pt ON pt.person_id = people.id AND pt.tag_id IN (" + strings.Join(placeholders, ",") + ")"
-		where = append(where, "1=1 GROUP BY people.id HAVING COUNT(DISTINCT pt.tag_id) = "+strconv.Itoa(len(filter.TagIDs)))
+		groupBy = " GROUP BY people.id HAVING COUNT(DISTINCT pt.tag_id) = " + strconv.Itoa(len(filter.TagIDs))
 	}
 
 	whereClause := "WHERE " + strings.Join(where, " AND ")
 
 	var countQ string
 	if tagJoin != "" {
-		countQ = "SELECT COUNT(*) FROM (SELECT people.id FROM people" + tagJoin + " " + whereClause + ") sub"
+		countQ = "SELECT COUNT(*) FROM (SELECT people.id FROM people" + tagJoin + " " + whereClause + groupBy + ") sub"
 	} else {
 		countQ = "SELECT COUNT(*) FROM people " + whereClause
 	}
@@ -161,7 +149,7 @@ func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) (
 	var q string
 	if tagJoin != "" {
 		q = "SELECT " + personColumns + " FROM people" + tagJoin + " " +
-			whereClause + " ORDER BY people.created_at DESC LIMIT " + limitParam + " OFFSET " + offsetParam
+			whereClause + groupBy + " ORDER BY people.created_at DESC LIMIT " + limitParam + " OFFSET " + offsetParam
 	} else {
 		q = "SELECT " + personColumns + " FROM people " +
 			whereClause + " ORDER BY created_at DESC LIMIT " + limitParam + " OFFSET " + offsetParam

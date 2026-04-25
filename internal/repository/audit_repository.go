@@ -34,68 +34,31 @@ func (r *auditLogRepo) Log(ctx context.Context, entry audit.Entry) error {
 }
 
 func (r *auditLogRepo) List(ctx context.Context, filter audit.Filter) ([]audit.Entry, int, error) {
-	q := `SELECT a.id, a.project_id, a.user_id, a.action, a.entity_type, a.entity_id, a.summary, a.ip, a.user_agent, a.created_at,
-	             COALESCE(u.first_name, '') AS user_first_name, COALESCE(u.last_name, '') AS user_last_name, COALESCE(u.email, '') AS user_email
-	      FROM audit_logs a LEFT JOIN users u ON u.id = a.user_id WHERE 1=1`
-	countQ := `SELECT COUNT(*) FROM audit_logs a WHERE 1=1`
-	args := []any{}
-	ix := 1
+	var (
+		args    []any
+		filters string
+		ix      = 1
+	)
 
-	if filter.ProjectID != nil {
-		clause := fmt.Sprintf(" AND a.project_id = $%d", ix)
-		q += clause
-		countQ += clause
-		args = append(args, *filter.ProjectID)
-		ix++
-	}
-	if filter.UserID != nil {
-		clause := fmt.Sprintf(" AND a.user_id = $%d", ix)
-		q += clause
-		countQ += clause
-		args = append(args, *filter.UserID)
-		ix++
-	}
-	if filter.Action != nil {
-		clause := fmt.Sprintf(" AND a.action = $%d", ix)
-		q += clause
-		countQ += clause
-		args = append(args, *filter.Action)
-		ix++
-	}
-	if filter.EntityType != nil {
-		clause := fmt.Sprintf(" AND a.entity_type = $%d", ix)
-		q += clause
-		countQ += clause
-		args = append(args, *filter.EntityType)
-		ix++
-	}
-	if filter.DateFrom != nil {
-		clause := fmt.Sprintf(" AND a.created_at >= $%d", ix)
-		q += clause
-		countQ += clause
-		args = append(args, *filter.DateFrom)
-		ix++
-	}
-	if filter.DateTo != nil {
-		clause := fmt.Sprintf(" AND a.created_at <= $%d", ix)
-		q += clause
-		countQ += clause
-		args = append(args, *filter.DateTo)
-		ix++
-	}
+	filters, args, ix = appendIf(filters, args, ix, " AND a.project_id = $%d", filter.ProjectID)
+	filters, args, ix = appendIf(filters, args, ix, " AND a.user_id = $%d", filter.UserID)
+	filters, args, ix = appendIf(filters, args, ix, " AND a.action = $%d", filter.Action)
+	filters, args, ix = appendIf(filters, args, ix, " AND a.entity_type = $%d", filter.EntityType)
+	filters, args, ix = appendIf(filters, args, ix, " AND a.created_at >= $%d", filter.DateFrom)
+	filters, args, ix = appendIf(filters, args, ix, " AND a.created_at <= $%d", filter.DateTo)
 
 	var total int
-	if err := r.db.GetContext(ctx, &total, countQ, args...); err != nil {
+	if err := r.db.GetContext(ctx, &total, `SELECT COUNT(*) FROM audit_logs a WHERE 1=1`+filters, args...); err != nil {
 		return nil, 0, fmt.Errorf("count audit logs: %w", err)
 	}
 
-	q += " ORDER BY a.created_at DESC"
 	offset := (filter.Page - 1) * filter.PerPage
-	q += fmt.Sprintf(" LIMIT $%d", ix)
-	args = append(args, filter.PerPage)
-	ix++
-	q += fmt.Sprintf(" OFFSET $%d", ix)
-	args = append(args, offset)
+	args = append(args, filter.PerPage, offset)
+
+	q := `SELECT a.id, a.project_id, a.user_id, a.action, a.entity_type, a.entity_id, a.summary, a.ip, a.user_agent, a.created_at,
+	             COALESCE(u.first_name, '') AS user_first_name, COALESCE(u.last_name, '') AS user_last_name, COALESCE(u.email, '') AS user_email
+	      FROM audit_logs a LEFT JOIN users u ON u.id = a.user_id WHERE 1=1` +
+		filters + fmt.Sprintf(" ORDER BY a.created_at DESC LIMIT $%d OFFSET $%d", ix, ix+1)
 
 	var entries []audit.Entry
 	if err := r.db.SelectContext(ctx, &entries, q, args...); err != nil {
