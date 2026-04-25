@@ -22,7 +22,6 @@ export function MyStatsChartSection({ data, axisLabel, ageGroupLegend }: MyStats
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      {/* KPI overview */}
       <MyStatsKpiCards
         totalPeople={data.by_sex.total}
         totalConsultations={data.consultations.total}
@@ -30,7 +29,6 @@ export function MyStatsChartSection({ data, axisLabel, ageGroupLegend }: MyStats
         totalHouseholds={data.family_units.total}
       />
 
-      {/* Consultations */}
       <div className="col-span-full">
         <ReportCard
           group={data.consultations}
@@ -41,7 +39,6 @@ export function MyStatsChartSection({ data, axisLabel, ageGroupLegend }: MyStats
         />
       </div>
 
-      {/* Service breakdown */}
       <ReportCard
         group={data.by_sphere}
         title={t("project.reports.bySphere")}
@@ -65,7 +62,6 @@ export function MyStatsChartSection({ data, axisLabel, ageGroupLegend }: MyStats
         direction="auto"
       />
 
-      {/* Demographics */}
       <ReportCard
         group={data.by_sex}
         title={t("project.reports.bySex")}
@@ -80,7 +76,6 @@ export function MyStatsChartSection({ data, axisLabel, ageGroupLegend }: MyStats
         direction="auto"
       />
 
-      {/* Age distribution */}
       <div className="col-span-full">
         <ReportCard
           group={data.by_age_group}
@@ -94,7 +89,6 @@ export function MyStatsChartSection({ data, axisLabel, ageGroupLegend }: MyStats
         />
       </div>
 
-      {/* Categories & tags */}
       <ReportCard
         group={data.by_category}
         title={t("project.reports.byCategory")}

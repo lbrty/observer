@@ -92,6 +92,7 @@ export function renderHorizontalBars(
       const by = yBand(d.label) ?? 0;
       const bw = xLinear(d.count);
       const bh = yBand.bandwidth();
+      if (bw < rH * 2) return "";
       return `M${bx},${by} H${bx + bw - rH} a${rH},${rH} 0 0 1 ${rH},${rH} V${by + bh - rH} a${rH},${rH} 0 0 1 ${-rH},${rH} H${bx} Z`;
     })
     .attr("fill", (d, i) => getColor(d.label, colorMap, i))

@@ -1,4 +1,3 @@
-// packages/observer-web/src/components/charts/chart-tooltip.tsx
 import type { ReactNode } from "react";
 
 interface ChartTooltipProps {

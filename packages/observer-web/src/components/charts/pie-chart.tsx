@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 
 import type { CountResult } from "@/types/report";
 
-import { getColor } from "./colors";
+import { ChartTooltip } from "./chart-tooltip";
+import { getColor, getContrastColor } from "./colors";
 
 interface Tooltip {
   visible: boolean;
@@ -118,7 +119,7 @@ export function PieChart({ data, colorMap }: PieChartProps) {
       .attr("transform", (d) => `translate(${labelArc.centroid(d)})`)
       .attr("text-anchor", "middle")
       .style("font-size", "9px")
-      .style("fill", "#fff")
+      .style("fill", (d, i) => getContrastColor(getColor(d.data.label, colorMap, i)))
       .style("font-weight", "600")
       .attr("opacity", (d) => (selectedLabel === null || selectedLabel === d.data.label ? 1 : 0.3))
       .text((d) => (d.data.count > 0 ? d.data.count : ""));
@@ -129,25 +130,9 @@ export function PieChart({ data, colorMap }: PieChartProps) {
   return (
     <div ref={containerRef} className="relative flex items-center gap-6">
       <svg ref={svgRef} className="shrink-0" />
-      {tooltip.visible && (
-        <div
-          style={{
-            position: "absolute",
-            left: tooltip.x,
-            top: tooltip.y,
-            background: "var(--bg-secondary)",
-            border: "1px solid var(--border-secondary)",
-            borderRadius: 8,
-            padding: "6px 10px",
-            fontSize: 12,
-            color: "var(--fg)",
-            boxShadow: "var(--shadow-elevated)",
-            pointerEvents: "none",
-          }}
-        >
-          <strong>{tooltip.label}</strong>: {tooltip.count}
-        </div>
-      )}
+      <ChartTooltip visible={tooltip.visible} x={tooltip.x} y={tooltip.y}>
+        <strong>{tooltip.label}</strong>: {tooltip.count}
+      </ChartTooltip>
       <ul className="space-y-1.5 text-sm">
         {data.map((d, i) => (
           <li

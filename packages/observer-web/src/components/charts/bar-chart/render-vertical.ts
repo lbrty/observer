@@ -92,6 +92,7 @@ export function renderVerticalBars(
       const by = y(d.count);
       const bw = x.bandwidth();
       const bh = h - y(d.count);
+      if (bh < rV) return "";
       return `M${bx},${by + rV} a${rV},${rV} 0 0 1 ${rV},${-rV} H${bx + bw - rV} a${rV},${rV} 0 0 1 ${rV},${rV} V${by + bh} H${bx} Z`;
     })
     .attr("fill", (d, i) => getColor(d.label, colorMap, i))

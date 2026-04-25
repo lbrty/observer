@@ -5,18 +5,12 @@ import { sankey, sankeyLinkHorizontal } from "d3-sankey";
 
 import type { StatusFlow } from "@/types/report";
 
-import { ChartTooltip } from "../chart-tooltip";
-import { useChartTooltip } from "../use-chart-tooltip";
-
-const NODE_COLORS: Record<string, string> = {
-  new: "#5b8af8",
-  active: "#30a46c",
-  closed: "#f59e0b",
-  archived: "#8b909e",
-};
+import { ChartTooltip } from "./chart-tooltip";
+import { CASE_STATUS_COLORS } from "./colors";
+import { useChartTooltip } from "./use-chart-tooltip";
 
 function nodeColor(name: string): string {
-  return NODE_COLORS[name] ?? "#8b5cf6";
+  return CASE_STATUS_COLORS[name] ?? "#8b5cf6";
 }
 
 interface SankeyChartProps {
@@ -41,7 +35,6 @@ export function SankeyChart({ data, width = 500, height = 260, translateLabel }:
     const w = width - margin.left - margin.right;
     const h = height - margin.top - margin.bottom;
 
-    // Define forward order to prevent circular links
     const STATUS_ORDER: Record<string, number> = {
       new: 0,
       active: 1,
@@ -49,7 +42,6 @@ export function SankeyChart({ data, width = 500, height = 260, translateLabel }:
       archived: 3,
     };
 
-    // Only keep forward transitions (from lower to higher order)
     const forwardData = data.filter((d) => {
       const fromIdx = STATUS_ORDER[d.from_status] ?? -1;
       const toIdx = STATUS_ORDER[d.to_status] ?? -1;
@@ -87,6 +79,14 @@ export function SankeyChart({ data, width = 500, height = 260, translateLabel }:
       links: links.map((d) => ({ ...d })),
     });
 
+    const tl = translateLabel ?? ((l: string) => l);
+
+    type LinkDatum = { fromStatus: string; toStatus: string; value: number; avgDays: number };
+    function showLinkTooltip(event: MouseEvent, d: unknown) {
+      const { fromStatus, toStatus, value, avgDays } = d as LinkDatum;
+      show(event, `${tl(fromStatus)} → ${tl(toStatus)}: ${value} (~${avgDays}d)`);
+    }
+
     const g = svg
       .attr("viewBox", `0 0 ${width} ${height}`)
       .append("g")
@@ -107,20 +107,10 @@ export function SankeyChart({ data, width = 500, height = 260, translateLabel }:
       .style("cursor", "pointer")
       .on("mouseover", function (event: MouseEvent, d) {
         d3.select(this).attr("stroke-opacity", 0.6);
-        const tl = translateLabel ?? ((l: string) => l);
-        const fromStatus = (d as unknown as { fromStatus: string }).fromStatus;
-        const toStatus = (d as unknown as { toStatus: string }).toStatus;
-        const value = (d as unknown as { value: number }).value;
-        const avgDays = (d as unknown as { avgDays: number }).avgDays;
-        show(event, `${tl(fromStatus)} → ${tl(toStatus)}: ${value} (~${avgDays}d)`);
+        showLinkTooltip(event, d);
       })
       .on("mousemove", function (event: MouseEvent, d) {
-        const tl = translateLabel ?? ((l: string) => l);
-        const fromStatus = (d as unknown as { fromStatus: string }).fromStatus;
-        const toStatus = (d as unknown as { toStatus: string }).toStatus;
-        const value = (d as unknown as { value: number }).value;
-        const avgDays = (d as unknown as { avgDays: number }).avgDays;
-        show(event, `${tl(fromStatus)} → ${tl(toStatus)}: ${value} (~${avgDays}d)`);
+        showLinkTooltip(event, d);
       })
       .on("mouseout", function () {
         d3.select(this).attr("stroke-opacity", 0.3);
@@ -138,7 +128,6 @@ export function SankeyChart({ data, width = 500, height = 260, translateLabel }:
       .attr("rx", 2)
       .attr("fill", (d) => nodeColor(d.name));
 
-    const tl = translateLabel ?? ((l: string) => l);
     g.selectAll(".node-label")
       .data(sNodes)
       .join("text")

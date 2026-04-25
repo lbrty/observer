@@ -1,4 +1,3 @@
-// packages/observer-web/src/components/charts/use-chart-tooltip.ts
 import { type RefObject, useState } from "react";
 
 interface TooltipState {

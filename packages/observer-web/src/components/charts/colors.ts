@@ -43,16 +43,16 @@ export const IDP_STATUS_COLORS: Record<string, string> = {
 };
 
 export const AGE_GROUP_COLORS: Record<string, string> = {
-  infant: "#e0f2fe",
-  toddler: "#bae6fd",
-  pre_school: "#7dd3fc",
-  middle_childhood: "#38bdf8",
-  young_teen: "#0ea5e9",
-  teenager: "#0284c7",
-  young_adult: "#0369a1",
-  early_adult: "#075985",
-  middle_aged_adult: "#0c4a6e",
-  old_adult: "#082f49",
+  infant: "#38bdf8",
+  toddler: "#0ea5e9",
+  pre_school: "#0284c7",
+  middle_childhood: "#0369a1",
+  young_teen: "#3b82f6",
+  teenager: "#2563eb",
+  young_adult: "#1d4ed8",
+  early_adult: "#6366f1",
+  middle_aged_adult: "#4f46e5",
+  old_adult: "#4338ca",
 };
 
 export const PET_STATUS_COLORS: Record<string, string> = {
@@ -86,4 +86,13 @@ export const FALLBACK_PALETTE = [
 export function getColor(label: string, colorMap?: Record<string, string>, index?: number): string {
   if (colorMap?.[label]) return colorMap[label];
   return FALLBACK_PALETTE[(index ?? 0) % FALLBACK_PALETTE.length];
+}
+
+export function getContrastColor(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16) / 255;
+  const g = parseInt(hex.slice(3, 5), 16) / 255;
+  const b = parseInt(hex.slice(5, 7), 16) / 255;
+  const toLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  const L = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+  return L > 0.179 ? "#1c1d22" : "#ffffff";
 }

@@ -19,6 +19,7 @@ mock.module("d3", () => {
 
 mock.module("./colors", () => ({
   getColor: (_label: string, _map: unknown, i: number) => `#color${i}`,
+  getContrastColor: (_hex: string) => "#ffffff",
 }));
 
 globalThis.ResizeObserver = class {
