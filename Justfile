@@ -2,8 +2,6 @@
 default:
     @just --list
 
-# ── Dev ──────────────────────────────────────────────────────────────────────
-
 # Run backend and frontend dev servers concurrently
 dev:
     DEV_MODE=true SWAGGER_ENABLED=true COOKIE_SECURE=false go run ./cmd/observer serve & cd packages/observer-web && bun run dev
@@ -11,8 +9,6 @@ dev:
 # Run the server (backend only)
 run:
     SWAGGER_ENABLED=true go run ./cmd/observer serve
-
-# ── Build ─────────────────────────────────────────────────────────────────────
 
 # Build the Go binary (dev)
 build:
@@ -27,8 +23,6 @@ build-prod:
 clean:
     rm -rf bin/
     rm -f *.pem
-
-# ── Database ──────────────────────────────────────────────────────────────────
 
 # Apply migrations (forward only)
 migrate-up:
@@ -54,8 +48,6 @@ docker-up:
 docker-down:
     docker-compose down
 
-# ── Auth & Admin ──────────────────────────────────────────────────────────────
-
 # Generate RSA keys using the built-in keygen command
 keygen:
     go run ./cmd/observer keygen
@@ -77,8 +69,6 @@ generate-keys:
 create-admin email password *args='':
     go run ./cmd/observer create-admin --email {{email}} --password {{password}} {{args}}
 
-# ── Test ──────────────────────────────────────────────────────────────────────
-
 # Run unit tests only (fast, no Docker)
 test:
     go test -v -short ./...
@@ -86,8 +76,6 @@ test:
 # Run all tests including integration tests
 test-all:
     go test -v ./...
-
-# ── Code quality ──────────────────────────────────────────────────────────────
 
 # Format code (Go + frontend)
 fmt:
