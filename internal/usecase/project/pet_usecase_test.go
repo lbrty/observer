@@ -86,7 +86,8 @@ func TestPetUseCase_Get_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
+	mockTagRepo := mock_repo.NewMockPetTagRepository(ctrl)
+	uc := ucproject.NewPetUseCase(mockRepo, mockTagRepo, nil)
 
 	now := time.Now().UTC()
 	ownerID := "p1"
@@ -99,6 +100,9 @@ func TestPetUseCase_Get_Success(t *testing.T) {
 		CreatedAt: now,
 		UpdatedAt: now,
 	}, nil)
+	mockTagRepo.EXPECT().ListBulk(gomock.Any(), []string{"pet1"}).Return(map[string][]string{
+		"pet1": {"tag1"},
+	}, nil)
 
 	dto, err := uc.Get(context.Background(), "proj1", "pet1")
 	require.NoError(t, err)
@@ -107,6 +111,7 @@ func TestPetUseCase_Get_Success(t *testing.T) {
 	assert.Equal(t, "registered", dto.Status)
 	require.NotNil(t, dto.OwnerID)
 	assert.Equal(t, "p1", *dto.OwnerID)
+	assert.Equal(t, []string{"tag1"}, dto.TagIDs)
 }
 
 func TestPetUseCase_Get_NotFound(t *testing.T) {

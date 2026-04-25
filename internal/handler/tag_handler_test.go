@@ -146,6 +146,7 @@ func TestTagHandler_Update_Success(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodPut, "/projects/"+projectID+"/tags/"+id, map[string]any{
 		"name": "critical",
 	}, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Update(c)
@@ -161,9 +162,10 @@ func TestTagHandler_Delete_NotFound(t *testing.T) {
 	h, repo := newTagHandler(ctrl)
 
 	id := testID().String()
-	repo.EXPECT().Delete(gomock.Any(), id).Return(domaintag.ErrTagNotFound)
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(nil, domaintag.ErrTagNotFound)
 
 	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/tags/"+id, nil, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "id", Value: id},
 	})
 	h.Delete(c)
@@ -175,10 +177,13 @@ func TestTagHandler_Delete_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	h, repo := newTagHandler(ctrl)
 
+	projectID := "proj1"
 	id := testID().String()
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(&domaintag.Tag{ID: id, ProjectID: projectID}, nil)
 	repo.EXPECT().Delete(gomock.Any(), id).Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/tags/"+id, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/tags/"+id, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.Delete(c)

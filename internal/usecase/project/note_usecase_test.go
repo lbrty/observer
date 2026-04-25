@@ -41,7 +41,7 @@ func TestNoteUseCase_Update(t *testing.T) {
 		return nil
 	})
 
-	out, err := uc.Update(context.Background(), "p1", "n1", ucproject.UpdateNoteInput{Body: "updated body"})
+	out, err := uc.Update(context.Background(), "proj1", "p1", "n1", ucproject.UpdateNoteInput{Body: "updated body"})
 	require.NoError(t, err)
 	assert.Equal(t, "n1", out.ID)
 	assert.Equal(t, "updated body", out.Body)
@@ -60,7 +60,7 @@ func TestNoteUseCase_Update_NotFound(t *testing.T) {
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "n1").Return(nil, errors.New("not found"))
 
-	_, err := uc.Update(context.Background(), "p1", "n1", ucproject.UpdateNoteInput{Body: "new"})
+	_, err := uc.Update(context.Background(), "proj1", "p1", "n1", ucproject.UpdateNoteInput{Body: "new"})
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "get note for update")
 }
@@ -76,7 +76,7 @@ func TestNoteUseCase_Update_CrossPersonIDOR(t *testing.T) {
 		ID: "n1", PersonID: "other-person",
 	}, nil)
 
-	_, err := uc.Update(context.Background(), "p1", "n1", ucproject.UpdateNoteInput{Body: "x"})
+	_, err := uc.Update(context.Background(), "proj1", "p1", "n1", ucproject.UpdateNoteInput{Body: "x"})
 	assert.ErrorIs(t, err, note.ErrNoteNotFound)
 }
 

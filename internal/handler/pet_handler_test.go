@@ -93,7 +93,7 @@ func TestPetHandler_Get_NotFound(t *testing.T) {
 
 func TestPetHandler_Get_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, petRepo, _ := newPetHandler(ctrl)
+	h, petRepo, petTagRepo := newPetHandler(ctrl)
 
 	now := time.Now().UTC()
 	id := testID().String()
@@ -103,6 +103,7 @@ func TestPetHandler_Get_Success(t *testing.T) {
 		ID: id, ProjectID: projectID, Name: "Rex", Status: pet.PetStatusRegistered,
 		CreatedAt: now, UpdatedAt: now,
 	}, nil)
+	petTagRepo.EXPECT().ListBulk(gomock.Any(), []string{id}).Return(map[string][]string{}, nil)
 
 	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/pets/"+id, nil, gin.Params{
 		{Key: "project_id", Value: projectID},

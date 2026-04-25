@@ -158,6 +158,7 @@ func (uc *SupportRecordUseCase) Update(ctx context.Context, projectID, id string
 	if err := uc.repo.Update(ctx, r); err != nil {
 		return nil, fmt.Errorf("update support record: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "support_record.update", "support_record", &id, fmt.Sprintf("Updated support record %s", id))
 	dto := supportRecordToDTO(r)
 	return &dto, nil
 }

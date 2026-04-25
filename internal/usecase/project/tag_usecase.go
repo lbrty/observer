@@ -51,10 +51,13 @@ func (uc *TagUseCase) Create(ctx context.Context, projectID string, input Create
 }
 
 // Update applies a partial update to a tag.
-func (uc *TagUseCase) Update(ctx context.Context, id string, input UpdateTagInput) (*TagDTO, error) {
+func (uc *TagUseCase) Update(ctx context.Context, projectID, id string, input UpdateTagInput) (*TagDTO, error) {
 	t, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get tag for update: %w", err)
+	}
+	if t.ProjectID != projectID {
+		return nil, tag.ErrTagNotFound
 	}
 	if input.Name != nil {
 		t.Name = *input.Name
@@ -65,12 +68,20 @@ func (uc *TagUseCase) Update(ctx context.Context, id string, input UpdateTagInpu
 	if err := uc.repo.Update(ctx, t); err != nil {
 		return nil, fmt.Errorf("update tag: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "tag.update", "tag", &id, fmt.Sprintf("Updated tag %s", id))
 	dto := tagToDTO(t)
 	return &dto, nil
 }
 
 // Delete removes a tag.
 func (uc *TagUseCase) Delete(ctx context.Context, projectID, id string) error {
+	t, err := uc.repo.GetByID(ctx, id)
+	if err != nil {
+		return fmt.Errorf("get tag for delete: %w", err)
+	}
+	if t.ProjectID != projectID {
+		return tag.ErrTagNotFound
+	}
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete tag: %w", err)
 	}

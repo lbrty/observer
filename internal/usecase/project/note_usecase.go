@@ -51,7 +51,7 @@ func (uc *NoteUseCase) Create(ctx context.Context, projectID, personID, authorID
 }
 
 // Update updates a note body.
-func (uc *NoteUseCase) Update(ctx context.Context, personID, id string, input UpdateNoteInput) (*NoteDTO, error) {
+func (uc *NoteUseCase) Update(ctx context.Context, projectID, personID, id string, input UpdateNoteInput) (*NoteDTO, error) {
 	n, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get note for update: %w", err)
@@ -63,6 +63,7 @@ func (uc *NoteUseCase) Update(ctx context.Context, personID, id string, input Up
 	if err := uc.repo.Update(ctx, n); err != nil {
 		return nil, fmt.Errorf("update note: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "note.update", "note", &id, fmt.Sprintf("Updated note %s", id))
 	dto := noteToDTO(n)
 	return &dto, nil
 }

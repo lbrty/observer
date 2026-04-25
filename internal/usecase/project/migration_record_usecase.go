@@ -81,13 +81,13 @@ func (uc *MigrationRecordUseCase) Create(ctx context.Context, projectID, personI
 func (uc *MigrationRecordUseCase) Delete(ctx context.Context, projectID, personID, id string) error {
 	rec, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
-		return err
+		return fmt.Errorf("get migration record for delete: %w", err)
 	}
 	if rec.PersonID != personID {
 		return migration.ErrRecordNotFound
 	}
 	if err := uc.repo.Delete(ctx, id); err != nil {
-		return err
+		return fmt.Errorf("delete migration record: %w", err)
 	}
 	uc.auditUC.Record(ctx, &projectID, "migration_record.delete", "migration_record", &id,
 		fmt.Sprintf("Deleted migration record %s", id))
@@ -95,7 +95,7 @@ func (uc *MigrationRecordUseCase) Delete(ctx context.Context, projectID, personI
 }
 
 // Update updates a migration record.
-func (uc *MigrationRecordUseCase) Update(ctx context.Context, personID, id string, input UpdateMigrationRecordInput) (*MigrationRecordDTO, error) {
+func (uc *MigrationRecordUseCase) Update(ctx context.Context, projectID, personID, id string, input UpdateMigrationRecordInput) (*MigrationRecordDTO, error) {
 	r, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get migration record for update: %w", err)
@@ -128,6 +128,7 @@ func (uc *MigrationRecordUseCase) Update(ctx context.Context, personID, id strin
 	if err := uc.repo.Update(ctx, r); err != nil {
 		return nil, fmt.Errorf("update migration record: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "migration_record.update", "migration_record", &id, fmt.Sprintf("Updated migration record %s", id))
 	dto := migrationRecordToDTO(r)
 	return &dto, nil
 }

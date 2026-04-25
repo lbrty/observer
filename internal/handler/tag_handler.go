@@ -85,7 +85,7 @@ func (h *TagHandler) Update(c *gin.Context) {
 	if !ok {
 		return
 	}
-	out, err := h.uc.Update(c.Request.Context(), c.Param("id"), input)
+	out, err := h.uc.Update(c.Request.Context(), c.Param("project_id"), c.Param("id"), input)
 	if err != nil {
 		HandleError(c, err)
 		return

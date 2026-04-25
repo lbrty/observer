@@ -37,15 +37,17 @@ func (uc *HouseholdUseCase) List(ctx context.Context, projectID string, input Li
 		filter.Search = &input.Search
 	}
 	if input.CreatedFrom != "" {
-		if t, err := time.Parse("2006-01-02", input.CreatedFrom); err == nil {
-			filter.CreatedFrom = &t
+		if err := parseDateField(&input.CreatedFrom, &filter.CreatedFrom); err != nil {
+			return nil, fmt.Errorf("invalid created_from: %w", err)
 		}
 	}
 	if input.CreatedTo != "" {
-		if t, err := time.Parse("2006-01-02", input.CreatedTo); err == nil {
-			end := t.Add(24*time.Hour - time.Nanosecond)
-			filter.CreatedTo = &end
+		var t *time.Time
+		if err := parseDateField(&input.CreatedTo, &t); err != nil {
+			return nil, fmt.Errorf("invalid created_to: %w", err)
 		}
+		end := t.Add(24*time.Hour - time.Nanosecond)
+		filter.CreatedTo = &end
 	}
 
 	households, total, err := uc.repo.List(ctx, filter)
@@ -124,6 +126,7 @@ func (uc *HouseholdUseCase) Update(ctx context.Context, projectID, id string, in
 	if err := uc.repo.Update(ctx, h); err != nil {
 		return nil, fmt.Errorf("update household: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "household.update", "household", &id, fmt.Sprintf("Updated household %s", id))
 	dto := householdToDTO(h)
 	return &dto, nil
 }
@@ -145,7 +148,14 @@ func (uc *HouseholdUseCase) Delete(ctx context.Context, projectID, id string) er
 }
 
 // AddMember adds a member to a household.
-func (uc *HouseholdUseCase) AddMember(ctx context.Context, householdID string, input AddMemberInput) (*HouseholdMemberDTO, error) {
+func (uc *HouseholdUseCase) AddMember(ctx context.Context, projectID, householdID string, input AddMemberInput) (*HouseholdMemberDTO, error) {
+	h, err := uc.repo.GetByID(ctx, householdID)
+	if err != nil {
+		return nil, fmt.Errorf("get household for add member: %w", err)
+	}
+	if h.ProjectID != projectID {
+		return nil, household.ErrHouseholdNotFound
+	}
 	m := &household.Member{
 		HouseholdID:  householdID,
 		PersonID:     input.PersonID,
@@ -159,7 +169,14 @@ func (uc *HouseholdUseCase) AddMember(ctx context.Context, householdID string, i
 }
 
 // RemoveMember removes a member from a household.
-func (uc *HouseholdUseCase) RemoveMember(ctx context.Context, householdID, personID string) error {
+func (uc *HouseholdUseCase) RemoveMember(ctx context.Context, projectID, householdID, personID string) error {
+	h, err := uc.repo.GetByID(ctx, householdID)
+	if err != nil {
+		return fmt.Errorf("get household for remove member: %w", err)
+	}
+	if h.ProjectID != projectID {
+		return household.ErrHouseholdNotFound
+	}
 	if err := uc.memberRepo.Remove(ctx, householdID, personID); err != nil {
 		return fmt.Errorf("remove household member: %w", err)
 	}

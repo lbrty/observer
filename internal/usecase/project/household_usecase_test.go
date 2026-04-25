@@ -268,6 +268,7 @@ func TestHouseholdUseCase_AddMember_Success(t *testing.T) {
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
 	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "proj1"}, nil)
 	mockMemberRepo.EXPECT().Add(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, m *household.Member) error {
 		assert.Equal(t, "h1", m.HouseholdID)
 		assert.Equal(t, "p3", m.PersonID)
@@ -275,13 +276,27 @@ func TestHouseholdUseCase_AddMember_Success(t *testing.T) {
 		return nil
 	})
 
-	dto, err := uc.AddMember(context.Background(), "h1", ucproject.AddMemberInput{
+	dto, err := uc.AddMember(context.Background(), "proj1", "h1", ucproject.AddMemberInput{
 		PersonID:     "p3",
 		Relationship: "child",
 	})
 	require.NoError(t, err)
 	assert.Equal(t, "p3", dto.PersonID)
 	assert.Equal(t, "child", dto.Relationship)
+}
+
+func TestHouseholdUseCase_AddMember_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
+	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "other-project"}, nil)
+
+	_, err := uc.AddMember(context.Background(), "proj1", "h1", ucproject.AddMemberInput{PersonID: "p1", Relationship: "head"})
+	assert.ErrorIs(t, err, household.ErrHouseholdNotFound)
 }
 
 func TestHouseholdUseCase_AddMember_AlreadyExists(t *testing.T) {
@@ -292,9 +307,10 @@ func TestHouseholdUseCase_AddMember_AlreadyExists(t *testing.T) {
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
 	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "proj1"}, nil)
 	mockMemberRepo.EXPECT().Add(gomock.Any(), gomock.Any()).Return(household.ErrMemberExists)
 
-	_, err := uc.AddMember(context.Background(), "h1", ucproject.AddMemberInput{
+	_, err := uc.AddMember(context.Background(), "proj1", "h1", ucproject.AddMemberInput{
 		PersonID:     "p1",
 		Relationship: "head",
 	})
@@ -309,10 +325,25 @@ func TestHouseholdUseCase_RemoveMember_Success(t *testing.T) {
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
 	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "proj1"}, nil)
 	mockMemberRepo.EXPECT().Remove(gomock.Any(), "h1", "p3").Return(nil)
 
-	err := uc.RemoveMember(context.Background(), "h1", "p3")
+	err := uc.RemoveMember(context.Background(), "proj1", "h1", "p3")
 	require.NoError(t, err)
+}
+
+func TestHouseholdUseCase_RemoveMember_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
+	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "other-project"}, nil)
+
+	err := uc.RemoveMember(context.Background(), "proj1", "h1", "p3")
+	assert.ErrorIs(t, err, household.ErrHouseholdNotFound)
 }
 
 func TestHouseholdUseCase_RemoveMember_NotFound(t *testing.T) {
@@ -323,8 +354,9 @@ func TestHouseholdUseCase_RemoveMember_NotFound(t *testing.T) {
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
 	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
 
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "proj1"}, nil)
 	mockMemberRepo.EXPECT().Remove(gomock.Any(), "h1", "nonexistent").Return(household.ErrMemberNotFound)
 
-	err := uc.RemoveMember(context.Background(), "h1", "nonexistent")
+	err := uc.RemoveMember(context.Background(), "proj1", "h1", "nonexistent")
 	assert.ErrorIs(t, err, household.ErrMemberNotFound)
 }

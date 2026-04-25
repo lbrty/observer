@@ -227,17 +227,20 @@ func TestHouseholdHandler_AddMember_ValidationError(t *testing.T) {
 
 func TestHouseholdHandler_AddMember_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, _, memberRepo := newHouseholdHandler(ctrl)
+	h, repo, memberRepo := newHouseholdHandler(ctrl)
 
+	projectID := "proj1"
 	id := testID().String()
 	personID := testID().String()
 
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(&household.Household{ID: id, ProjectID: projectID}, nil)
 	memberRepo.EXPECT().Add(gomock.Any(), gomock.Any()).Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodPost, "/projects/x/households/"+id+"/members", map[string]any{
+	c, w := newTestContextWithParams(http.MethodPost, "/projects/"+projectID+"/households/"+id+"/members", map[string]any{
 		"person_id":    personID,
 		"relationship": "spouse",
 	}, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.AddMember(c)
@@ -250,13 +253,17 @@ func TestHouseholdHandler_AddMember_Success(t *testing.T) {
 
 func TestHouseholdHandler_RemoveMember_NotFound(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, _, memberRepo := newHouseholdHandler(ctrl)
+	h, repo, memberRepo := newHouseholdHandler(ctrl)
 
+	projectID := "proj1"
 	id := testID().String()
 	personID := testID().String()
+
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(&household.Household{ID: id, ProjectID: projectID}, nil)
 	memberRepo.EXPECT().Remove(gomock.Any(), id, personID).Return(household.ErrMemberNotFound)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/households/"+id+"/members/"+personID, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/households/"+id+"/members/"+personID, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 		{Key: "person_id", Value: personID},
 	})
@@ -267,13 +274,17 @@ func TestHouseholdHandler_RemoveMember_NotFound(t *testing.T) {
 
 func TestHouseholdHandler_RemoveMember_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, _, memberRepo := newHouseholdHandler(ctrl)
+	h, repo, memberRepo := newHouseholdHandler(ctrl)
 
+	projectID := "proj1"
 	id := testID().String()
 	personID := testID().String()
+
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(&household.Household{ID: id, ProjectID: projectID}, nil)
 	memberRepo.EXPECT().Remove(gomock.Any(), id, personID).Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/households/"+id+"/members/"+personID, nil, gin.Params{
+	c, w := newTestContextWithParams(http.MethodDelete, "/projects/"+projectID+"/households/"+id+"/members/"+personID, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 		{Key: "person_id", Value: personID},
 	})

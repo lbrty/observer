@@ -13,7 +13,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
-	mock_db "github.com/lbrty/observer/internal/database/mock"
 	"github.com/lbrty/observer/internal/domain/household"
 	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/domain/pet"
@@ -48,11 +47,8 @@ func newExportTestDeps(ctrl *gomock.Controller) *exportTestDeps {
 	auditRepo := repomock.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
-	db := mock_db.NewMockDB(ctrl)
-	db.EXPECT().WithTx(gomock.Any(), gomock.Any()).AnyTimes()
-
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	personUC := ucproject.NewPersonUseCase(db, personRepo, personTagRepo, auditUC)
+	personUC := ucproject.NewPersonUseCase(personRepo, personTagRepo, auditUC)
 	supportUC := ucproject.NewSupportRecordUseCase(supportRepo, auditUC)
 	petUC := ucproject.NewPetUseCase(petRepo, petTagRepo, auditUC)
 	householdUC := ucproject.NewHouseholdUseCase(householdRepo, memberRepo, auditUC)

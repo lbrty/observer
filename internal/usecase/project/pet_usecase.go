@@ -80,6 +80,15 @@ func (uc *PetUseCase) Get(ctx context.Context, projectID, id string) (*PetDTO, e
 		return nil, pet.ErrPetNotFound
 	}
 	dto := petToDTO(p)
+	tagMap, err := uc.tagRepo.ListBulk(ctx, []string{id})
+	if err != nil {
+		return nil, fmt.Errorf("list pet tags: %w", err)
+	}
+	if tags, ok := tagMap[id]; ok {
+		dto.TagIDs = tags
+	} else {
+		dto.TagIDs = []string{}
+	}
 	return &dto, nil
 }
 
@@ -132,6 +141,7 @@ func (uc *PetUseCase) Update(ctx context.Context, projectID, id string, input Up
 	if err := uc.repo.Update(ctx, p); err != nil {
 		return nil, fmt.Errorf("update pet: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "pet.update", "pet", &id, fmt.Sprintf("Updated pet %s", id))
 	dto := petToDTO(p)
 	return &dto, nil
 }

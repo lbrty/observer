@@ -104,7 +104,7 @@ func TestTagUseCase_Update_Success(t *testing.T) {
 		return nil
 	})
 
-	dto, err := uc.Update(context.Background(), "t1", ucproject.UpdateTagInput{
+	dto, err := uc.Update(context.Background(), "proj1", "t1", ucproject.UpdateTagInput{
 		Name:  ptr("critical"),
 		Color: ptr("#cc0000"),
 	})
@@ -122,7 +122,22 @@ func TestTagUseCase_Update_NotFound(t *testing.T) {
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, tag.ErrTagNotFound)
 
-	_, err := uc.Update(context.Background(), "nonexistent", ucproject.UpdateTagInput{Name: ptr("x")})
+	_, err := uc.Update(context.Background(), "proj1", "nonexistent", ucproject.UpdateTagInput{Name: ptr("x")})
+	assert.ErrorIs(t, err, tag.ErrTagNotFound)
+}
+
+func TestTagUseCase_Update_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockTagRepository(ctrl)
+	uc := ucproject.NewTagUseCase(mockRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "t1").Return(&tag.Tag{
+		ID: "t1", ProjectID: "other-project",
+	}, nil)
+
+	_, err := uc.Update(context.Background(), "proj1", "t1", ucproject.UpdateTagInput{Name: ptr("x")})
 	assert.ErrorIs(t, err, tag.ErrTagNotFound)
 }
 
@@ -133,6 +148,7 @@ func TestTagUseCase_Delete_Success(t *testing.T) {
 	mockRepo := mock_repo.NewMockTagRepository(ctrl)
 	uc := ucproject.NewTagUseCase(mockRepo, nil)
 
+	mockRepo.EXPECT().GetByID(gomock.Any(), "t1").Return(&tag.Tag{ID: "t1", ProjectID: "proj1"}, nil)
 	mockRepo.EXPECT().Delete(gomock.Any(), "t1").Return(nil)
 
 	err := uc.Delete(context.Background(), "proj1", "t1")
@@ -146,8 +162,23 @@ func TestTagUseCase_Delete_NotFound(t *testing.T) {
 	mockRepo := mock_repo.NewMockTagRepository(ctrl)
 	uc := ucproject.NewTagUseCase(mockRepo, nil)
 
-	mockRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(tag.ErrTagNotFound)
+	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, tag.ErrTagNotFound)
 
 	err := uc.Delete(context.Background(), "proj1", "nonexistent")
+	assert.ErrorIs(t, err, tag.ErrTagNotFound)
+}
+
+func TestTagUseCase_Delete_CrossProjectIDOR(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockTagRepository(ctrl)
+	uc := ucproject.NewTagUseCase(mockRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "t1").Return(&tag.Tag{
+		ID: "t1", ProjectID: "other-project",
+	}, nil)
+
+	err := uc.Delete(context.Background(), "proj1", "t1")
 	assert.ErrorIs(t, err, tag.ErrTagNotFound)
 }

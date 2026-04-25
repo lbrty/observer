@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lbrty/observer/internal/database"
 	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
@@ -16,15 +15,14 @@ import (
 
 // PersonUseCase handles person operations within a project.
 type PersonUseCase struct {
-	db      database.DB
 	repo    repository.PersonRepository
 	tagRepo repository.PersonTagRepository
 	auditUC *ucaudit.AuditUseCase
 }
 
 // NewPersonUseCase creates a PersonUseCase.
-func NewPersonUseCase(db database.DB, repo repository.PersonRepository, tagRepo repository.PersonTagRepository, auditUC *ucaudit.AuditUseCase) *PersonUseCase {
-	return &PersonUseCase{db: db, repo: repo, tagRepo: tagRepo, auditUC: auditUC}
+func NewPersonUseCase(repo repository.PersonRepository, tagRepo repository.PersonTagRepository, auditUC *ucaudit.AuditUseCase) *PersonUseCase {
+	return &PersonUseCase{repo: repo, tagRepo: tagRepo, auditUC: auditUC}
 }
 
 // List returns paginated people with sensitivity-aware redaction.
@@ -151,9 +149,7 @@ func (uc *PersonUseCase) Create(ctx context.Context, projectID string, input Cre
 		return nil, err
 	}
 
-	if err := uc.db.WithTx(ctx, func(ctx context.Context) error {
-		return uc.repo.Create(ctx, p)
-	}); err != nil {
+	if err := uc.repo.Create(ctx, p); err != nil {
 		return nil, fmt.Errorf("create person: %w", err)
 	}
 	uc.auditUC.Record(ctx, &projectID, "person.create", "person", &p.ID, fmt.Sprintf("Created person %s", p.ID))
@@ -214,6 +210,7 @@ func (uc *PersonUseCase) Update(ctx context.Context, projectID, id string, input
 	if err := uc.repo.Update(ctx, p); err != nil {
 		return nil, fmt.Errorf("update person: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "person.update", "person", &id, fmt.Sprintf("Updated person %s", id))
 	dto := personToDTO(p, true, true)
 	return &dto, nil
 }

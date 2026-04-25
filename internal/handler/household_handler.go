@@ -153,12 +153,11 @@ func (h *HouseholdHandler) Delete(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/households/{id}/members [post]
 func (h *HouseholdHandler) AddMember(c *gin.Context) {
-	householdID := c.Param("id")
 	input, ok := bindJSON[ucproject.AddMemberInput](c)
 	if !ok {
 		return
 	}
-	out, err := h.uc.AddMember(c.Request.Context(), householdID, input)
+	out, err := h.uc.AddMember(c.Request.Context(), c.Param("project_id"), c.Param("id"), input)
 	if err != nil {
 		HandleError(c, err)
 		return
@@ -179,9 +178,7 @@ func (h *HouseholdHandler) AddMember(c *gin.Context) {
 // @Failure 500 {object} ErrorResponse
 // @Router /projects/{project_id}/households/{id}/members/{person_id} [delete]
 func (h *HouseholdHandler) RemoveMember(c *gin.Context) {
-	householdID := c.Param("id")
-	personID := c.Param("person_id")
-	if err := h.uc.RemoveMember(c.Request.Context(), householdID, personID); err != nil {
+	if err := h.uc.RemoveMember(c.Request.Context(), c.Param("project_id"), c.Param("id"), c.Param("person_id")); err != nil {
 		HandleError(c, err)
 		return
 	}

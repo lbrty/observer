@@ -205,6 +205,7 @@ func (uc *DocumentUseCase) Update(ctx context.Context, projectID, id string, inp
 	if err := uc.repo.Update(ctx, d); err != nil {
 		return nil, fmt.Errorf("update document: %w", err)
 	}
+	uc.auditUC.Record(ctx, &projectID, "document.update", "document", &id, fmt.Sprintf("Updated document %s", id))
 	dto := documentToDTO(d)
 	return &dto, nil
 }
