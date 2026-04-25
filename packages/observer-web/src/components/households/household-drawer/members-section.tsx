@@ -7,7 +7,7 @@ import { PersonCombobox } from "@/components/people/person-combobox";
 import { PersonName } from "@/components/people/person-name";
 import { SectionHeading } from "@/components/layout/section-heading";
 import { UISelect } from "@/components/ui/ui-select";
-import { relationshipKeys } from "@/constants/household";
+import { relationshipKeys } from "@/constants/i18n";
 
 import type { Household, Relationship } from "@/types/household";
 

@@ -5,7 +5,7 @@ import { DatePicker } from "@/components/date-picker";
 import { FormField } from "@/components/forms/form-field";
 import { FormSection } from "@/components/forms/form-section";
 import { UISelect } from "@/components/ui/ui-select";
-import { ageGroupKeys, sexKeys } from "@/constants/person";
+import { ageGroupKeys, sexKeys } from "@/constants/i18n";
 
 interface IdentitySectionProps {
   form: {

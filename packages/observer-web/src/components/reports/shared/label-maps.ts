@@ -1,8 +1,15 @@
 import { useTranslation } from "react-i18next";
 
-import { petStatusKeys, petOwnershipKeys } from "@/constants/pet";
-import { sexKeys, ageGroupKeys, AGE_RANGE_MAP as AGE_RANGES } from "@/constants/person";
-import { typeKeys, sphereKeys, referralKeys } from "@/constants/support";
+import { AGE_RANGE_MAP as AGE_RANGES } from "@/constants/person";
+import {
+  petStatusKeys,
+  petOwnershipKeys,
+  sexKeys,
+  ageGroupKeys,
+  typeKeys,
+  sphereKeys,
+  referralKeys,
+} from "@/constants/i18n";
 import type { CountResult } from "@/types/report";
 
 export { AGE_RANGES as AGE_RANGE_MAP };

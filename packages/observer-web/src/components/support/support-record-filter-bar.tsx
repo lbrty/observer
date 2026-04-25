@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import type { FilterDef } from "@/components/forms/filter-bar";
 import { FilterBar } from "@/components/forms/filter-bar";
-import { sphereKeys } from "@/constants/support";
+import { sphereKeys } from "@/constants/i18n";
 
 const sphereValues = [
   "housing_assistance",

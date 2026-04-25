@@ -6,7 +6,7 @@ import { FormSection } from "@/components/forms/form-section";
 import { PersonCombobox } from "@/components/people/person-combobox";
 import { PersonName } from "@/components/people/person-name";
 import { UISelect } from "@/components/ui/ui-select";
-import { petStatusKeys } from "@/constants/pet";
+import { petStatusKeys } from "@/constants/i18n";
 
 interface InfoSectionProps {
   name: string;

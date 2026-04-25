@@ -6,7 +6,7 @@ import { FormField } from "@/components/forms/form-field";
 import { FormSection } from "@/components/forms/form-section";
 import { UISelect } from "@/components/ui/ui-select";
 import { UISwitch } from "@/components/ui/ui-switch";
-import { caseStatusKeys } from "@/constants/person";
+import { caseStatusKeys } from "@/constants/i18n";
 
 interface CaseSectionProps {
   form: {

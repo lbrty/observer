@@ -2,7 +2,7 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
 import { PieChart } from "@/components/charts/pie-chart";
-import { sphereKeys } from "@/constants/support";
+import { sphereKeys } from "@/constants/i18n";
 import { SUPPORT_TYPE_COLORS } from "@/components/charts/colors";
 import { useDocuments } from "@/hooks/documents/use-documents";
 import { useMigrationRecords } from "@/hooks/migration/use-migration-records";

@@ -10,7 +10,7 @@ import { HandHeartIcon, PencilSimpleIcon, PlusIcon } from "@/components/ui/icons
 import { Pagination } from "@/components/table/pagination";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { SupportRecordDrawer } from "@/components/support/support-record-drawer";
-import { referralKeys, sphereKeys, typeKeys } from "@/constants/support";
+import { referralKeys, sphereKeys, typeKeys } from "@/constants/i18n";
 import { useSupportRecords } from "@/hooks/support/use-support-records";
 import { useProjectRole } from "@/hooks/users/use-project-role";
 import type { SupportRecord } from "@/types/support-record";

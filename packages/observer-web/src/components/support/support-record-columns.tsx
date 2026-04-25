@@ -2,7 +2,7 @@ import type { Column } from "@/components/table/data-table";
 import { Button } from "@/components/ui/button";
 import { HandHeartIcon, PencilSimpleIcon } from "@/components/ui/icons";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { referralKeys, sphereKeys, typeKeys } from "@/constants/support";
+import { referralKeys, sphereKeys, typeKeys } from "@/constants/i18n";
 import type { SupportRecord } from "@/types/support-record";
 
 interface SupportRecordColumnsOptions {

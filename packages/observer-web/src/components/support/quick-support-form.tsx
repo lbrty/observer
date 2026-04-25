@@ -6,12 +6,8 @@ import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/date-picker";
 import { WarningIcon } from "@/components/ui/icons";
 import { UISelect } from "@/components/ui/ui-select";
-import {
-  sphereKeys,
-  typeKeys,
-  SUPPORT_TYPE_VALUES,
-  SUPPORT_SPHERE_VALUES,
-} from "@/constants/support";
+import { SUPPORT_TYPE_VALUES, SUPPORT_SPHERE_VALUES } from "@/constants/support";
+import { sphereKeys, typeKeys } from "@/constants/i18n";
 import { useCreateSupportRecord } from "@/hooks/support/use-support-records";
 import { handleApiError } from "@/lib/form-error";
 import { useToast } from "@/stores/toast";

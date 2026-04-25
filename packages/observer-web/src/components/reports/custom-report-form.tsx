@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 
 import { DateRangePicker } from "@/components/date-picker";
 import { UISelect } from "@/components/ui/ui-select";
-import { typeKeys } from "@/constants/support";
+import { typeKeys } from "@/constants/i18n";
 import type { CustomReportParams } from "@/types/report";
 
 const METRICS = ["events", "people", "units", "pets"] as const;

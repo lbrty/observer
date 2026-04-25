@@ -7,7 +7,7 @@ import { CopySimpleIcon } from "@/components/ui/icons";
 import { PersonCombobox } from "@/components/people/person-combobox";
 import { Tooltip } from "@/components/ui/tooltip";
 import { UISelect } from "@/components/ui/ui-select";
-import { sphereKeys, typeKeys } from "@/constants/support";
+import { sphereKeys, typeKeys } from "@/constants/i18n";
 import { useToast } from "@/stores/toast";
 
 interface InfoSectionProps {

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { projectRoleKeys } from "@/constants/user";
+import { projectRoleKeys } from "@/constants/i18n";
 
 export function useRoleOptions() {
   const { t } = useTranslation();

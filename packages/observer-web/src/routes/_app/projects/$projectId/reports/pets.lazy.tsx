@@ -10,7 +10,7 @@ import {
 } from "@/components/reports/pet-report-card";
 import { PetReportFilters } from "@/components/reports/pet-report-filters";
 import { PetsChartSection } from "@/components/reports/pets-chart-section";
-import { petStatusKeys } from "@/constants/pet";
+import { petStatusKeys } from "@/constants/i18n";
 import { usePetReport } from "@/hooks/reports/use-pet-reports";
 
 import type { PetReportParams } from "@/types/report";

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { FormSection } from "@/components/forms/form-section";
 import { UISelect } from "@/components/ui/ui-select";
-import { referralKeys } from "@/constants/support";
+import { referralKeys } from "@/constants/i18n";
 
 interface ReferralSectionProps {
   form: {
