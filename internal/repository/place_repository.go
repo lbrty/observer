@@ -34,7 +34,8 @@ func scanPlace(row interface{ Scan(dest ...any) error }) (*reference.Place, erro
 func (r *placeRepo) ListAll(ctx context.Context) ([]*reference.Place, error) {
 	const q = `
 		SELECT id, state_id, name, lat, lon, created_at, updated_at
-		FROM places ORDER BY name
+		FROM places
+		ORDER BY name
 	`
 	rows, err := r.db.QueryContext(ctx, q)
 	if err != nil {
@@ -56,7 +57,9 @@ func (r *placeRepo) ListAll(ctx context.Context) ([]*reference.Place, error) {
 func (r *placeRepo) List(ctx context.Context, stateID string) ([]*reference.Place, error) {
 	const q = `
 		SELECT id, state_id, name, lat, lon, created_at, updated_at
-		FROM places WHERE state_id = $1 ORDER BY name
+		FROM places
+		WHERE state_id = $1
+		ORDER BY name
 	`
 	rows, err := r.db.QueryContext(ctx, q, stateID)
 	if err != nil {
@@ -103,7 +106,11 @@ func (r *placeRepo) Create(ctx context.Context, p *reference.Place) error {
 }
 
 func (r *placeRepo) Update(ctx context.Context, p *reference.Place) error {
-	const q = `UPDATE places SET name=$2, lat=$3, lon=$4, updated_at=$5 WHERE id=$1`
+	const q = `
+		UPDATE places
+		SET name=$2, lat=$3, lon=$4, updated_at=$5
+		WHERE id=$1
+	`
 	p.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q, p.ID, p.Name, p.Lat, p.Lon, p.UpdatedAt)
 	if err != nil {

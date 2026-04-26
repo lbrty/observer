@@ -122,8 +122,11 @@ func (r *petRepo) GetByID(ctx context.Context, id string) (*pet.Pet, error) {
 }
 
 func (r *petRepo) Create(ctx context.Context, p *pet.Pet) error {
-	const q = `INSERT INTO pets (id, project_id, owner_id, name, status, registration_id, notes, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+	const q = `
+		INSERT INTO pets (id, project_id, owner_id, name, status, registration_id, notes, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+	`
+
 	now := time.Now().UTC()
 	p.CreatedAt = now
 	p.UpdatedAt = now

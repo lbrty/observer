@@ -41,7 +41,8 @@ func (r *sessionRepo) Create(ctx context.Context, s *auth.Session) error {
 func (r *sessionRepo) GetByRefreshToken(ctx context.Context, token string) (*auth.Session, error) {
 	const q = `
 		SELECT id, user_id, refresh_token, user_agent, ip, expires_at, created_at
-		FROM sessions WHERE refresh_token=$1
+		FROM sessions
+		WHERE refresh_token=$1
 	`
 	return r.scanSession(r.db.QueryRowContext(ctx, q, token))
 }

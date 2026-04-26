@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	domainreport "github.com/lbrty/observer/internal/domain/report"
 	"github.com/lbrty/observer/internal/domain/person"
+	domainreport "github.com/lbrty/observer/internal/domain/report"
 	"github.com/lbrty/observer/internal/domain/support"
 	"github.com/lbrty/observer/internal/repository"
 )

@@ -77,7 +77,8 @@ func (r *migrationRecordRepo) Create(ctx context.Context, rec *migration.Record)
 	const q = `INSERT INTO migration_records (
 		id, person_id, from_place_id, destination_place_id, migration_date,
 		movement_reason, housing_at_destination, notes, created_at
-	) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`
+	)
+	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`
 	rec.CreatedAt = time.Now().UTC()
 	_, err := r.db.ExecContext(ctx, q,
 		rec.ID, rec.PersonID, rec.FromPlaceID, rec.DestinationPlaceID, rec.MigrationDate,
@@ -90,10 +91,14 @@ func (r *migrationRecordRepo) Create(ctx context.Context, rec *migration.Record)
 }
 
 func (r *migrationRecordRepo) Update(ctx context.Context, rec *migration.Record) error {
-	const q = `UPDATE migration_records SET
-		from_place_id=$2, destination_place_id=$3, migration_date=$4,
-		movement_reason=$5, housing_at_destination=$6, notes=$7, updated_at=$8
-	WHERE id=$1`
+	const q = `
+		UPDATE migration_records
+		SET
+			from_place_id=$2, destination_place_id=$3, migration_date=$4,
+			movement_reason=$5, housing_at_destination=$6, notes=$7, updated_at=$8
+		WHERE id=$1
+	`
+
 	rec.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q,
 		rec.ID, rec.FromPlaceID, rec.DestinationPlaceID, rec.MigrationDate,

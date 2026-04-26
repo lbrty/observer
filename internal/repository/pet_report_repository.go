@@ -52,7 +52,9 @@ func (r *petReportRepo) CountByStatus(ctx context.Context, f report.PetReportFil
 
 func (r *petReportRepo) CountByOwnership(ctx context.Context, f report.PetReportFilter) ([]report.CountResult, error) {
 	q := `SELECT CASE WHEN owner_id IS NOT NULL THEN 'with_owner' ELSE 'without_owner' END AS label,
-		COUNT(*) AS count FROM pets WHERE project_id = $1`
+		COUNT(*) AS count
+		FROM pets
+		WHERE project_id = $1`
 	args := []any{f.ProjectID}
 	q, args, _ = applyPetFilters(q, f, args, 2)
 	q += ` GROUP BY label ORDER BY count DESC`
@@ -65,8 +67,12 @@ func (r *petReportRepo) CountByOwnership(ctx context.Context, f report.PetReport
 }
 
 func (r *petReportRepo) CountByMonth(ctx context.Context, f report.PetReportFilter) ([]report.CountResult, error) {
-	q := `SELECT to_char(created_at, 'YYYY-MM') AS label, COUNT(*) AS count
-		FROM pets WHERE project_id = $1`
+	q := `
+		SELECT TO_CHAR(created_at, 'YYYY-MM') AS label, COUNT(*) AS count
+		FROM pets
+		WHERE project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applyPetFilters(q, f, args, 2)
 	q += ` GROUP BY label ORDER BY label`
@@ -79,8 +85,12 @@ func (r *petReportRepo) CountByMonth(ctx context.Context, f report.PetReportFilt
 }
 
 func (r *petReportRepo) CountByStatusByMonth(ctx context.Context, f report.PetReportFilter) ([]report.MonthlyStatusCount, error) {
-	q := `SELECT to_char(created_at, 'YYYY-MM') AS month, status, COUNT(*) AS count
-		FROM pets WHERE project_id = $1`
+	q := `
+		SELECT TO_CHAR(created_at, 'YYYY-MM') AS month, status, COUNT(*) AS count
+		FROM pets
+		WHERE project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applyPetFilters(q, f, args, 2)
 	q += ` GROUP BY month, status ORDER BY month, status`

@@ -138,8 +138,10 @@ func (r *householdRepo) GetByID(ctx context.Context, id string) (*household.Hous
 }
 
 func (r *householdRepo) Create(ctx context.Context, h *household.Household) error {
-	const q = `INSERT INTO households (id, project_id, reference_number, head_person_id, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6)`
+	const q = `
+		INSERT INTO households (id, project_id, reference_number, head_person_id, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6)
+	`
 	now := time.Now().UTC()
 	h.CreatedAt = now
 	h.UpdatedAt = now

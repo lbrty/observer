@@ -185,12 +185,16 @@ func (r *personRepo) GetByID(ctx context.Context, id string) (*person.Person, er
 }
 
 func (r *personRepo) Create(ctx context.Context, p *person.Person) error {
-	const q = `INSERT INTO people (
-		id, project_id, consultant_id, office_id, current_place_id, origin_place_id,
-		external_id, first_name, last_name, patronymic, email, birth_date, sex, age_group,
-		primary_phone, phone_numbers, case_status, consent_given, consent_date, registered_at,
-		created_at, updated_at
-	) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)`
+	const q = `
+		INSERT INTO people (
+			id, project_id, consultant_id, office_id, current_place_id, origin_place_id,
+			external_id, first_name, last_name, patronymic, email, birth_date, sex, age_group,
+			primary_phone, phone_numbers, case_status, consent_given, consent_date, registered_at,
+			created_at, updated_at
+		)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)
+	`
+
 	now := time.Now().UTC()
 	p.CreatedAt = now
 	p.UpdatedAt = now
@@ -210,12 +214,15 @@ func (r *personRepo) Create(ctx context.Context, p *person.Person) error {
 }
 
 func (r *personRepo) Update(ctx context.Context, p *person.Person) error {
-	const q = `UPDATE people SET
-		consultant_id=$2, office_id=$3, current_place_id=$4, origin_place_id=$5,
-		external_id=$6, first_name=$7, last_name=$8, patronymic=$9, email=$10,
-		birth_date=$11, sex=$12, age_group=$13, primary_phone=$14, phone_numbers=$15,
-		case_status=$16, consent_given=$17, consent_date=$18, registered_at=$19, updated_at=$20
-	WHERE id=$1`
+	const q = `
+		UPDATE people
+		SET
+			consultant_id=$2, office_id=$3, current_place_id=$4, origin_place_id=$5,
+			external_id=$6, first_name=$7, last_name=$8, patronymic=$9, email=$10,
+			birth_date=$11, sex=$12, age_group=$13, primary_phone=$14, phone_numbers=$15,
+			case_status=$16, consent_given=$17, consent_date=$18, registered_at=$19, updated_at=$20
+		WHERE id=$1
+	`
 	p.UpdatedAt = time.Now().UTC()
 	res, err := database.ExecCtx(ctx, r.db).ExecContext(ctx, q,
 		p.ID, p.ConsultantID, p.OfficeID, p.CurrentPlaceID, p.OriginPlaceID,

@@ -63,7 +63,10 @@ func (r *countryRepo) GetByID(ctx context.Context, id string) (*reference.Countr
 }
 
 func (r *countryRepo) Create(ctx context.Context, c *reference.Country) error {
-	const q = `INSERT INTO countries (id, name, code, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)`
+	const q = `
+		INSERT INTO countries (id, name, code, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5)
+	`
 	now := time.Now().UTC()
 	c.CreatedAt = now
 	c.UpdatedAt = now
@@ -78,7 +81,11 @@ func (r *countryRepo) Create(ctx context.Context, c *reference.Country) error {
 }
 
 func (r *countryRepo) Update(ctx context.Context, c *reference.Country) error {
-	const q = `UPDATE countries SET name=$2, code=$3, updated_at=$4 WHERE id=$1`
+	const q = `
+		UPDATE countries
+		SET name=$2, code=$3, updated_at=$4
+		WHERE id=$1
+	`
 	c.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q, c.ID, c.Name, c.Code, c.UpdatedAt)
 	if err != nil {

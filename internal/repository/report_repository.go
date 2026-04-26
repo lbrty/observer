@@ -77,7 +77,10 @@ func applySupportFilters(q string, f report.ReportFilter, dateCol string, args [
 
 func (r *reportRepo) CountConsultations(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
 	q := `SELECT sr.type AS label, COUNT(*) AS count
-		FROM support_records sr WHERE sr.project_id = $1`
+		FROM support_records sr
+		WHERE sr.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applySupportFilters(q, f, "sr.provided_at", args, 2)
 	q += " GROUP BY sr.type ORDER BY count DESC"
@@ -91,7 +94,10 @@ func (r *reportRepo) CountConsultations(ctx context.Context, f report.ReportFilt
 
 func (r *reportRepo) CountBySex(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
 	q := `SELECT COALESCE(p.sex, 'unknown') AS label, COUNT(*) AS count
-		FROM people p WHERE p.project_id = $1`
+		FROM people p
+		WHERE p.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applyPeopleFilters(q, f, "p.registered_at", args, 2)
 	q += " GROUP BY label ORDER BY count DESC"
@@ -104,11 +110,14 @@ func (r *reportRepo) CountBySex(ctx context.Context, f report.ReportFilter) ([]r
 }
 
 func (r *reportRepo) CountByIDPStatus(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT COALESCE(s.conflict_zone, 'unknown') AS label, COUNT(DISTINCT p.id) AS count
+	q := `
+		SELECT COALESCE(s.conflict_zone, 'unknown') AS label, COUNT(DISTINCT p.id) AS count
 		FROM people p
 		LEFT JOIN places pl ON p.origin_place_id = pl.id
 		LEFT JOIN states s ON pl.state_id = s.id
-		WHERE p.project_id = $1`
+		WHERE p.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applyPeopleFilters(q, f, "p.registered_at", args, 2)
 	q += " GROUP BY label ORDER BY count DESC"
@@ -121,11 +130,14 @@ func (r *reportRepo) CountByIDPStatus(ctx context.Context, f report.ReportFilter
 }
 
 func (r *reportRepo) CountByCategory(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT c.name AS label, COUNT(DISTINCT pc.person_id) AS count
+	q := `
+		SELECT c.name AS label, COUNT(DISTINCT pc.person_id) AS count
 		FROM person_categories pc
 		JOIN categories c ON pc.category_id = c.id
 		JOIN people p ON pc.person_id = p.id
-		WHERE p.project_id = $1`
+		WHERE p.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applyPeopleFilters(q, f, "p.registered_at", args, 2)
 	q += " GROUP BY c.name ORDER BY count DESC"
@@ -138,11 +150,14 @@ func (r *reportRepo) CountByCategory(ctx context.Context, f report.ReportFilter)
 }
 
 func (r *reportRepo) CountByCurrentRegion(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT COALESCE(s.name, 'unknown') AS label, COUNT(DISTINCT p.id) AS count
+	q := `
+		SELECT COALESCE(s.name, 'unknown') AS label, COUNT(DISTINCT p.id) AS count
 		FROM people p
 		LEFT JOIN places pl ON p.current_place_id = pl.id
 		LEFT JOIN states s ON pl.state_id = s.id
-		WHERE p.project_id = $1`
+		WHERE p.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applyPeopleFilters(q, f, "p.registered_at", args, 2)
 	q += " GROUP BY label ORDER BY count DESC"
@@ -155,8 +170,12 @@ func (r *reportRepo) CountByCurrentRegion(ctx context.Context, f report.ReportFi
 }
 
 func (r *reportRepo) CountBySphere(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT COALESCE(sr.sphere::text, 'unspecified') AS label, COUNT(*) AS count
-		FROM support_records sr WHERE sr.project_id = $1`
+	q := `
+		SELECT COALESCE(sr.sphere::text, 'unspecified') AS label, COUNT(*) AS count
+		FROM support_records sr
+		WHERE sr.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applySupportFilters(q, f, "sr.provided_at", args, 2)
 	q += " GROUP BY sr.sphere ORDER BY count DESC"
@@ -169,8 +188,12 @@ func (r *reportRepo) CountBySphere(ctx context.Context, f report.ReportFilter) (
 }
 
 func (r *reportRepo) CountPeopleBySphere(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT COALESCE(sr.sphere::text, 'unspecified') AS label, COUNT(DISTINCT sr.person_id) AS count
-		FROM support_records sr WHERE sr.project_id = $1`
+	q := `
+		SELECT COALESCE(sr.sphere::text, 'unspecified') AS label, COUNT(DISTINCT sr.person_id) AS count
+		FROM support_records sr
+		WHERE sr.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applySupportFilters(q, f, "sr.provided_at", args, 2)
 	q += " GROUP BY sr.sphere ORDER BY count DESC"
@@ -183,10 +206,13 @@ func (r *reportRepo) CountPeopleBySphere(ctx context.Context, f report.ReportFil
 }
 
 func (r *reportRepo) CountByOffice(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT COALESCE(o.name, 'unassigned') AS label, COUNT(*) AS count
+	q := `
+		SELECT COALESCE(o.name, 'unassigned') AS label, COUNT(*) AS count
 		FROM support_records sr
 		LEFT JOIN offices o ON sr.office_id = o.id
-		WHERE sr.project_id = $1`
+		WHERE sr.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applySupportFilters(q, f, "sr.provided_at", args, 2)
 	q += " GROUP BY label ORDER BY count DESC"
@@ -199,25 +225,27 @@ func (r *reportRepo) CountByOffice(ctx context.Context, f report.ReportFilter) (
 }
 
 func (r *reportRepo) CountByAgeGroup(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT
-		COALESCE(p.age_group::text,
-			CASE
-				WHEN p.birth_date IS NULL THEN 'unknown'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 1  THEN 'infant'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 3  THEN 'toddler'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 6  THEN 'pre_school'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 12 THEN 'middle_childhood'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 14 THEN 'young_teen'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 18 THEN 'teenager'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 25 THEN 'young_adult'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 35 THEN 'early_adult'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 55 THEN 'middle_aged_adult'
-				ELSE 'old_adult'
-			END
-		) AS label,
-		COUNT(DISTINCT p.id) AS count
-	FROM people p
-	WHERE p.project_id = $1`
+	q := `
+		SELECT
+			COALESCE(p.age_group::text,
+				CASE
+					WHEN p.birth_date IS NULL THEN 'unknown'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 1  THEN 'infant'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 3  THEN 'toddler'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 6  THEN 'pre_school'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 12 THEN 'middle_childhood'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 14 THEN 'young_teen'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 18 THEN 'teenager'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 25 THEN 'young_adult'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 35 THEN 'early_adult'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 55 THEN 'middle_aged_adult'
+					ELSE 'old_adult'
+				END
+			) AS label,
+			COUNT(DISTINCT p.id) AS count
+		FROM people p
+		WHERE p.project_id = $1
+	`
 	args := []any{f.ProjectID}
 	q, args, _ = applyPeopleFilters(q, f, "p.registered_at", args, 2)
 	q += " GROUP BY label ORDER BY label"
@@ -230,26 +258,29 @@ func (r *reportRepo) CountByAgeGroup(ctx context.Context, f report.ReportFilter)
 }
 
 func (r *reportRepo) CountConsultationsByAgeGroup(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT
-		COALESCE(p.age_group::text,
-			CASE
-				WHEN p.birth_date IS NULL THEN 'unknown'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 1  THEN 'infant'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 3  THEN 'toddler'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 6  THEN 'pre_school'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 12 THEN 'middle_childhood'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 14 THEN 'young_teen'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 18 THEN 'teenager'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 25 THEN 'young_adult'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 35 THEN 'early_adult'
-				WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 55 THEN 'middle_aged_adult'
-				ELSE 'old_adult'
-			END
-		) AS label,
-		COUNT(*) AS count
-	FROM support_records sr
-	JOIN people p ON sr.person_id = p.id
-	WHERE sr.project_id = $1`
+	q := `
+		SELECT
+			COALESCE(p.age_group::text,
+				CASE
+					WHEN p.birth_date IS NULL THEN 'unknown'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 1  THEN 'infant'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 3  THEN 'toddler'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 6  THEN 'pre_school'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 12 THEN 'middle_childhood'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 14 THEN 'young_teen'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 18 THEN 'teenager'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 25 THEN 'young_adult'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 35 THEN 'early_adult'
+					WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, p.birth_date)) < 55 THEN 'middle_aged_adult'
+					ELSE 'old_adult'
+				END
+			) AS label,
+			COUNT(*) AS count
+		FROM support_records sr
+		JOIN people p ON sr.person_id = p.id
+		WHERE sr.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applySupportFilters(q, f, "sr.provided_at", args, 2)
 	q += " GROUP BY label ORDER BY label"
@@ -262,11 +293,14 @@ func (r *reportRepo) CountConsultationsByAgeGroup(ctx context.Context, f report.
 }
 
 func (r *reportRepo) CountByTag(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT t.name AS label, COUNT(DISTINCT pt.person_id) AS count
+	q := `
+		SELECT t.name AS label, COUNT(DISTINCT pt.person_id) AS count
 		FROM person_tags pt
 		JOIN tags t ON pt.tag_id = t.id
 		JOIN people p ON pt.person_id = p.id
-		WHERE p.project_id = $1`
+		WHERE p.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applyPeopleFilters(q, f, "p.registered_at", args, 2)
 	q += " GROUP BY t.name ORDER BY count DESC"
@@ -279,8 +313,12 @@ func (r *reportRepo) CountByTag(ctx context.Context, f report.ReportFilter) ([]r
 }
 
 func (r *reportRepo) CountFamilyUnits(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT 'households' AS label, COUNT(DISTINCT h.id) AS count
-		FROM households h WHERE h.project_id = $1`
+	q := `
+		SELECT 'households' AS label, COUNT(DISTINCT h.id) AS count
+		FROM households h
+		WHERE h.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	ix := 2
 
@@ -302,8 +340,12 @@ func (r *reportRepo) CountFamilyUnits(ctx context.Context, f report.ReportFilter
 }
 
 func (r *reportRepo) CountByCaseStatus(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error) {
-	q := `SELECT p.case_status AS label, COUNT(*) AS count
-		FROM people p WHERE p.project_id = $1`
+	q := `
+		SELECT p.case_status AS label, COUNT(*) AS count
+		FROM people p
+		WHERE p.project_id = $1
+	`
+
 	args := []any{f.ProjectID}
 	q, args, _ = applyPeopleFilters(q, f, "p.registered_at", args, 2)
 	q += " GROUP BY p.case_status ORDER BY count DESC"

@@ -63,7 +63,10 @@ func (r *officeRepo) GetByID(ctx context.Context, id string) (*reference.Office,
 }
 
 func (r *officeRepo) Create(ctx context.Context, o *reference.Office) error {
-	const q = `INSERT INTO offices (id, name, place_id, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)`
+	const q = `
+		INSERT INTO offices (id, name, place_id, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5)
+	`
 	now := time.Now().UTC()
 	o.CreatedAt = now
 	o.UpdatedAt = now
@@ -75,7 +78,12 @@ func (r *officeRepo) Create(ctx context.Context, o *reference.Office) error {
 }
 
 func (r *officeRepo) Update(ctx context.Context, o *reference.Office) error {
-	const q = `UPDATE offices SET name=$2, place_id=$3, updated_at=$4 WHERE id=$1`
+	const q = `
+		UPDATE offices
+		SET name=$2, place_id=$3, updated_at=$4
+		WHERE id=$1
+	`
+
 	o.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q, o.ID, o.Name, o.PlaceID, o.UpdatedAt)
 	if err != nil {

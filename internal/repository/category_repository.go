@@ -63,7 +63,10 @@ func (r *categoryRepo) GetByID(ctx context.Context, id string) (*reference.Categ
 }
 
 func (r *categoryRepo) Create(ctx context.Context, c *reference.Category) error {
-	const q = `INSERT INTO categories (id, name, description, created_at, updated_at) VALUES ($1, $2, $3, $4, $5)`
+	const q = `
+		INSERT INTO categories (id, name, description, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5)
+	`
 	now := time.Now().UTC()
 	c.CreatedAt = now
 	c.UpdatedAt = now
@@ -78,7 +81,11 @@ func (r *categoryRepo) Create(ctx context.Context, c *reference.Category) error 
 }
 
 func (r *categoryRepo) Update(ctx context.Context, c *reference.Category) error {
-	const q = `UPDATE categories SET name=$2, description=$3, updated_at=$4 WHERE id=$1`
+	const q = `
+		UPDATE categories
+		SET name=$2, description=$3, updated_at=$4
+		WHERE id=$1
+	`
 	c.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q, c.ID, c.Name, c.Description, c.UpdatedAt)
 	if err != nil {

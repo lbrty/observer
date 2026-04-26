@@ -173,7 +173,8 @@ func (r *supportRecordRepo) Create(ctx context.Context, rec *support.Record) err
 		id, person_id, project_id, consultant_id, recorded_by, office_id,
 		referred_to_office, type, sphere, referral_status, provided_at, notes,
 		created_at, updated_at
-	) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`
+	)
+	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`
 	now := time.Now().UTC()
 	rec.CreatedAt = now
 	rec.UpdatedAt = now
@@ -189,10 +190,14 @@ func (r *supportRecordRepo) Create(ctx context.Context, rec *support.Record) err
 }
 
 func (r *supportRecordRepo) Update(ctx context.Context, rec *support.Record) error {
-	const q = `UPDATE support_records SET
-		consultant_id=$2, office_id=$3, referred_to_office=$4, type=$5, sphere=$6,
-		referral_status=$7, provided_at=$8, notes=$9, updated_at=$10
-	WHERE id=$1`
+	const q = `
+		UPDATE support_records
+		SET
+			consultant_id=$2, office_id=$3, referred_to_office=$4, type=$5, sphere=$6,
+			referral_status=$7, provided_at=$8, notes=$9, updated_at=$10
+		WHERE id=$1
+	`
+
 	rec.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q,
 		rec.ID, rec.ConsultantID, rec.OfficeID, rec.ReferredToOffice, rec.Type, rec.Sphere,

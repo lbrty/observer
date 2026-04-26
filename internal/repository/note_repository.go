@@ -91,6 +91,7 @@ func (r *personNoteRepo) Update(ctx context.Context, n *note.Note) error {
 
 func (r *personNoteRepo) Delete(ctx context.Context, id string) error {
 	const q = `DELETE FROM person_notes WHERE id = $1`
+
 	res, err := r.db.ExecContext(ctx, q, id)
 	if err != nil {
 		return fmt.Errorf("delete note: %w", err)

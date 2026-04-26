@@ -34,7 +34,8 @@ func scanState(row interface{ Scan(dest ...any) error }) (*reference.State, erro
 func (r *stateRepo) ListAll(ctx context.Context) ([]*reference.State, error) {
 	const q = `
 		SELECT id, country_id, name, code, conflict_zone, created_at, updated_at
-		FROM states ORDER BY name
+		FROM states
+		ORDER BY name
 	`
 	rows, err := r.db.QueryContext(ctx, q)
 	if err != nil {
@@ -56,7 +57,9 @@ func (r *stateRepo) ListAll(ctx context.Context) ([]*reference.State, error) {
 func (r *stateRepo) List(ctx context.Context, countryID string) ([]*reference.State, error) {
 	const q = `
 		SELECT id, country_id, name, code, conflict_zone, created_at, updated_at
-		FROM states WHERE country_id = $1 ORDER BY name
+		FROM states
+		WHERE country_id = $1
+		ORDER BY name
 	`
 	rows, err := r.db.QueryContext(ctx, q, countryID)
 	if err != nil {
@@ -103,7 +106,11 @@ func (r *stateRepo) Create(ctx context.Context, s *reference.State) error {
 }
 
 func (r *stateRepo) Update(ctx context.Context, s *reference.State) error {
-	const q = `UPDATE states SET name=$2, code=$3, conflict_zone=$4, updated_at=$5 WHERE id=$1`
+	const q = `
+		UPDATE states
+		SET name=$2, code=$3, conflict_zone=$4, updated_at=$5
+		WHERE id=$1
+	`
 	s.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q, s.ID, s.Name, s.Code, s.ConflictZone, s.UpdatedAt)
 	if err != nil {
