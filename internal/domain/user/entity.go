@@ -42,6 +42,18 @@ type UserListFilter struct {
 	IsActive *bool
 }
 
+// Deactivate sets the user as inactive and records the timestamp.
+func (u *User) Deactivate(now time.Time) {
+	u.IsActive = false
+	u.DeactivatedAt = &now
+}
+
+// Activate clears the deactivation state.
+func (u *User) Activate() {
+	u.IsActive = true
+	u.DeactivatedAt = nil
+}
+
 // CanLogin returns an error if the user is not allowed to log in.
 func (u *User) CanLogin() error {
 	if !u.IsActive {

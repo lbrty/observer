@@ -189,7 +189,11 @@ func (uc *UserUseCase) Update(ctx context.Context, id ulid.ULID, input UpdateUse
 		u.Role = role
 	}
 	if input.IsActive != nil {
-		u.IsActive = *input.IsActive
+		if *input.IsActive {
+			u.Activate()
+		} else {
+			u.Deactivate(time.Now().UTC())
+		}
 	}
 	if input.IsVerified != nil {
 		u.IsVerified = *input.IsVerified
