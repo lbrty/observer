@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -28,7 +29,7 @@ func (r *mfaRecoveryCodeRepo) CreateBatch(ctx context.Context, codes []*domainus
 	`
 	for _, c := range codes {
 		if _, err := r.db.ExecContext(ctx, q, c.ID.String(), c.UserID.String(), c.CodeHash, c.CreatedAt); err != nil {
-			return err
+			return fmt.Errorf("create recovery code: %w", err)
 		}
 	}
 	return nil
@@ -50,17 +51,17 @@ func (r *mfaRecoveryCodeRepo) FindUnused(ctx context.Context, userID ulid.ULID, 
 	}
 	if err := r.db.GetContext(ctx, &row, q, userID.String(), codeHash); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, sql.ErrNoRows
+			return nil, domainuser.ErrMFARecoveryCodeNotFound
 		}
-		return nil, err
+		return nil, fmt.Errorf("find recovery code: %w", err)
 	}
 	uid, err := ulid.Parse(row.UserID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parse user id: %w", err)
 	}
 	parsedID, err := ulid.Parse(row.ID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parse code id: %w", err)
 	}
 	return &domainuser.MFARecoveryCode{
 		ID:        parsedID,
@@ -74,11 +75,17 @@ func (r *mfaRecoveryCodeRepo) FindUnused(ctx context.Context, userID ulid.ULID, 
 func (r *mfaRecoveryCodeRepo) MarkUsed(ctx context.Context, id ulid.ULID) error {
 	const q = `UPDATE mfa_recovery_codes SET used_at = NOW() WHERE id = $1`
 	_, err := r.db.ExecContext(ctx, q, id.String())
-	return err
+	if err != nil {
+		return fmt.Errorf("mark recovery code used: %w", err)
+	}
+	return nil
 }
 
 func (r *mfaRecoveryCodeRepo) DeleteByUserID(ctx context.Context, userID ulid.ULID) error {
 	const q = `DELETE FROM mfa_recovery_codes WHERE user_id = $1`
 	_, err := r.db.ExecContext(ctx, q, userID.String())
-	return err
+	if err != nil {
+		return fmt.Errorf("delete recovery codes: %w", err)
+	}
+	return nil
 }
