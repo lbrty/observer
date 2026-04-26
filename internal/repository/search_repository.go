@@ -32,7 +32,7 @@ func (r *searchRepo) ListAllProjectIDs(ctx context.Context) ([]string, error) {
 	for rows.Next() {
 		var id string
 		if err := rows.Scan(&id); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("scan project id: %w", err)
 		}
 		ids = append(ids, id)
 	}
@@ -51,7 +51,7 @@ func (r *searchRepo) ListProjectIDsByUser(ctx context.Context, userID string) ([
 	for rows.Next() {
 		var id string
 		if err := rows.Scan(&id); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("scan project id: %w", err)
 		}
 		ids = append(ids, id)
 	}
@@ -74,7 +74,7 @@ func (r *searchRepo) ListProjectsByIDs(ctx context.Context, ids []string) (map[s
 	for rows.Next() {
 		var id, name string
 		if err := rows.Scan(&id, &name); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("scan project: %w", err)
 		}
 		out[id] = name
 	}
@@ -157,7 +157,7 @@ func (r *searchRepo) searchPeople(ctx context.Context, projectIDs []string, like
 	for rows.Next() {
 		var h domainsearch.PersonHit
 		if err := rows.Scan(&h.ID, &h.FirstName, &h.LastName, &h.ProjectID); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("scan person hit: %w", err)
 		}
 		results = append(results, h)
 	}
@@ -181,7 +181,7 @@ func (r *searchRepo) searchPets(ctx context.Context, projectIDs []string, like s
 	for rows.Next() {
 		var h domainsearch.PetHit
 		if err := rows.Scan(&h.ID, &h.Name, &h.ProjectID); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("scan pet hit: %w", err)
 		}
 		results = append(results, h)
 	}
@@ -205,7 +205,7 @@ func (r *searchRepo) searchProjects(ctx context.Context, projectIDs []string, li
 	for rows.Next() {
 		var h domainsearch.ProjectHit
 		if err := rows.Scan(&h.ID, &h.Name); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("scan project hit: %w", err)
 		}
 		results = append(results, h)
 	}
