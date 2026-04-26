@@ -89,7 +89,6 @@ func (uc *HouseholdUseCase) Get(ctx context.Context, projectID, id string) (*Hou
 	}
 
 	dto := householdToDTO(h)
-
 	members, err := uc.memberRepo.List(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("list household members: %w", err)
@@ -104,7 +103,11 @@ func (uc *HouseholdUseCase) Get(ctx context.Context, projectID, id string) (*Hou
 }
 
 // Create creates a new household.
-func (uc *HouseholdUseCase) Create(ctx context.Context, projectID string, input CreateHouseholdInput) (*HouseholdDTO, error) {
+func (uc *HouseholdUseCase) Create(
+	ctx context.Context,
+	projectID string,
+	input CreateHouseholdInput,
+) (*HouseholdDTO, error) {
 	h := &household.Household{
 		ID:              ulid.NewString(),
 		ProjectID:       projectID,
@@ -131,7 +134,11 @@ func (uc *HouseholdUseCase) Create(ctx context.Context, projectID string, input 
 }
 
 // Update applies a partial update to a household.
-func (uc *HouseholdUseCase) Update(ctx context.Context, projectID, id string, input UpdateHouseholdInput) (*HouseholdDTO, error) {
+func (uc *HouseholdUseCase) Update(
+	ctx context.Context,
+	projectID, id string,
+	input UpdateHouseholdInput,
+) (*HouseholdDTO, error) {
 	h, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get household for update: %w", err)

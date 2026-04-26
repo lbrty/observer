@@ -202,7 +202,11 @@ var validDimensions = map[string]bool{
 }
 
 // GenerateCustom runs the custom report builder.
-func (uc *ReportUseCase) GenerateCustom(ctx context.Context, projectID string, input CustomReportInput) (*CustomReportOutput, error) {
+func (uc *ReportUseCase) GenerateCustom(
+	ctx context.Context,
+	projectID string,
+	input CustomReportInput,
+) (*CustomReportOutput, error) {
 	if len(input.GroupBy) == 0 {
 		return nil, fmt.Errorf("at least one dimension required in group_by")
 	}

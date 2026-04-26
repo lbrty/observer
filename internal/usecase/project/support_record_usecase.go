@@ -29,7 +29,11 @@ func NewSupportRecordUseCase(
 }
 
 // List returns paginated support records.
-func (uc *SupportRecordUseCase) List(ctx context.Context, projectID string, input ListSupportRecordsInput) (*ListSupportRecordsOutput, error) {
+func (uc *SupportRecordUseCase) List(
+	ctx context.Context,
+	projectID string,
+	input ListSupportRecordsInput,
+) (*ListSupportRecordsOutput, error) {
 	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
 	filter := support.RecordListFilter{
@@ -151,7 +155,11 @@ func (uc *SupportRecordUseCase) Create(ctx context.Context, projectID string, re
 }
 
 // Update applies a partial update to a support record.
-func (uc *SupportRecordUseCase) Update(ctx context.Context, projectID, id string, input UpdateSupportRecordInput) (*SupportRecordDTO, error) {
+func (uc *SupportRecordUseCase) Update(
+	ctx context.Context,
+	projectID, id string,
+	input UpdateSupportRecordInput,
+) (*SupportRecordDTO, error) {
 	r, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get support record for update: %w", err)
@@ -164,23 +172,29 @@ func (uc *SupportRecordUseCase) Update(ctx context.Context, projectID, id string
 	if input.ConsultantID != nil {
 		r.ConsultantID = input.ConsultantID
 	}
+
 	if input.OfficeID != nil {
 		r.OfficeID = input.OfficeID
 	}
+
 	if input.ReferredToOffice != nil {
 		r.ReferredToOffice = input.ReferredToOffice
 	}
+
 	if input.Type != nil {
 		r.Type = support.SupportType(*input.Type)
 	}
+
 	if input.Sphere != nil {
 		s := support.SupportSphere(*input.Sphere)
 		r.Sphere = &s
 	}
+
 	if input.ReferralStatus != nil {
 		s := support.ReferralStatus(*input.ReferralStatus)
 		r.ReferralStatus = &s
 	}
+
 	if input.Notes != nil {
 		r.Notes = input.Notes
 	}

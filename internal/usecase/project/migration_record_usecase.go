@@ -55,7 +55,11 @@ func (uc *MigrationRecordUseCase) Get(ctx context.Context, personID, id string) 
 }
 
 // Create creates a new migration record.
-func (uc *MigrationRecordUseCase) Create(ctx context.Context, projectID, personID string, input CreateMigrationRecordInput) (*MigrationRecordDTO, error) {
+func (uc *MigrationRecordUseCase) Create(
+	ctx context.Context,
+	projectID, personID string,
+	input CreateMigrationRecordInput,
+) (*MigrationRecordDTO, error) {
 	r := &migration.Record{
 		ID:                 ulid.NewString(),
 		PersonID:           personID,
@@ -136,17 +140,21 @@ func (uc *MigrationRecordUseCase) Update(ctx context.Context, projectID, personI
 	if input.FromPlaceID != nil {
 		r.FromPlaceID = input.FromPlaceID
 	}
+
 	if input.DestinationPlaceID != nil {
 		r.DestinationPlaceID = input.DestinationPlaceID
 	}
+
 	if input.MovementReason != nil {
 		mr := migration.MovementReason(*input.MovementReason)
 		r.MovementReason = &mr
 	}
+
 	if input.HousingAtDestination != nil {
 		h := migration.HousingAtDestination(*input.HousingAtDestination)
 		r.HousingAtDestination = &h
 	}
+
 	if input.Notes != nil {
 		r.Notes = input.Notes
 	}

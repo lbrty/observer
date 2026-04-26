@@ -148,15 +148,19 @@ func (uc *PetUseCase) Update(ctx context.Context, projectID, id string, input Up
 	if input.OwnerID != nil {
 		p.OwnerID = input.OwnerID
 	}
+
 	if input.Name != nil {
 		p.Name = *input.Name
 	}
+
 	if input.Status != nil {
 		p.Status = pet.PetStatus(*input.Status)
 	}
+
 	if input.RegistrationID != nil {
 		p.RegistrationID = input.RegistrationID
 	}
+
 	if input.Notes != nil {
 		p.Notes = input.Notes
 	}

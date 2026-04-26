@@ -79,6 +79,7 @@ func (uc *TagUseCase) Update(ctx context.Context, projectID, id string, input Up
 	if input.Name != nil {
 		t.Name = *input.Name
 	}
+
 	if input.Color != nil {
 		t.Color = *input.Color
 	}

@@ -30,7 +30,12 @@ func NewPersonUseCase(
 }
 
 // List returns paginated people with sensitivity-aware redaction.
-func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListPeopleInput, canViewContact, canViewPersonal bool) (*ListPeopleOutput, error) {
+func (uc *PersonUseCase) List(
+	ctx context.Context,
+	projectID string,
+	input ListPeopleInput,
+	canViewContact, canViewPersonal bool,
+) (*ListPeopleOutput, error) {
 	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
 	filter := person.PersonListFilter{
@@ -94,7 +99,11 @@ func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListP
 }
 
 // Get returns a person by ID with sensitivity-aware redaction.
-func (uc *PersonUseCase) Get(ctx context.Context, projectID, id string, canViewContact, canViewPersonal bool) (*PersonDTO, error) {
+func (uc *PersonUseCase) Get(
+	ctx context.Context,
+	projectID, id string,
+	canViewContact, canViewPersonal bool,
+) (*PersonDTO, error) {
 	p, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get person: %w", err)
@@ -182,7 +191,11 @@ func (uc *PersonUseCase) Create(ctx context.Context, projectID string, input Cre
 }
 
 // Update applies a partial update to a person.
-func (uc *PersonUseCase) Update(ctx context.Context, projectID, id string, input UpdatePersonInput) (*PersonDTO, error) {
+func (uc *PersonUseCase) Update(
+	ctx context.Context,
+	projectID, id string,
+	input UpdatePersonInput,
+) (*PersonDTO, error) {
 	p, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get person for update: %w", err)
@@ -286,9 +299,11 @@ func validatePersonConstraints(p *person.Person) error {
 	if p.BirthDate != nil && p.AgeGroup != nil {
 		return person.ErrAgeConstraint
 	}
+
 	if !p.ConsentGiven && p.ConsentDate != nil {
 		return person.ErrConsentConstraint
 	}
+
 	return nil
 }
 
@@ -296,10 +311,12 @@ func parseDateField(s *string, target **time.Time) error {
 	if s == nil {
 		return nil
 	}
+
 	t, err := time.Parse("2006-01-02", *s)
 	if err != nil {
 		return err
 	}
+
 	*target = &t
 	return nil
 }
@@ -308,9 +325,11 @@ func parsePhoneNumbers(raw json.RawMessage) []string {
 	if raw == nil {
 		return []string{}
 	}
+
 	var phones []string
 	if err := json.Unmarshal(raw, &phones); err != nil {
 		return []string{}
 	}
+
 	return phones
 }

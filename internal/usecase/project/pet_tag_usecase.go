@@ -25,6 +25,7 @@ func (uc *PetTagUseCase) List(ctx context.Context, petID string) ([]string, erro
 	if err != nil {
 		return nil, fmt.Errorf("list pet tags: %w", err)
 	}
+
 	return ids, nil
 }
 
@@ -34,9 +35,11 @@ func (uc *PetTagUseCase) Replace(ctx context.Context, projectID, petID string, t
 	if err != nil {
 		return fmt.Errorf("replace pet tags: %w", err)
 	}
+
 	if p.ProjectID != projectID {
 		return fmt.Errorf("replace pet tags: %w", pet.ErrPetNotFound)
 	}
+
 	if err := uc.repo.ReplaceAll(ctx, petID, tagIDs); err != nil {
 		return fmt.Errorf("replace pet tags: %w", err)
 	}

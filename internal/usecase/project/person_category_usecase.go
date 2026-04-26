@@ -15,7 +15,10 @@ type PersonCategoryUseCase struct {
 }
 
 // NewPersonCategoryUseCase creates a PersonCategoryUseCase.
-func NewPersonCategoryUseCase(repo repository.PersonCategoryRepository, personRepo repository.PersonRepository) *PersonCategoryUseCase {
+func NewPersonCategoryUseCase(
+	repo repository.PersonCategoryRepository,
+	personRepo repository.PersonRepository,
+) *PersonCategoryUseCase {
 	return &PersonCategoryUseCase{repo: repo, personRepo: personRepo}
 }
 
@@ -25,6 +28,7 @@ func (uc *PersonCategoryUseCase) List(ctx context.Context, personID string) ([]s
 	if err != nil {
 		return nil, fmt.Errorf("list person categories: %w", err)
 	}
+
 	return ids, nil
 }
 
@@ -34,11 +38,14 @@ func (uc *PersonCategoryUseCase) Replace(ctx context.Context, projectID, personI
 	if err != nil {
 		return fmt.Errorf("replace person categories: %w", err)
 	}
+
 	if p.ProjectID != projectID {
 		return fmt.Errorf("replace person categories: %w", person.ErrPersonNotFound)
 	}
+
 	if err := uc.repo.ReplaceAll(ctx, personID, categoryIDs); err != nil {
 		return fmt.Errorf("replace person categories: %w", err)
 	}
+
 	return nil
 }

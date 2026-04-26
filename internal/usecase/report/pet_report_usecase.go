@@ -20,7 +20,11 @@ func NewPetReportUseCase(repo repository.PetReportRepository) *PetReportUseCase 
 }
 
 // Generate runs all pet report queries and returns the combined result.
-func (uc *PetReportUseCase) Generate(ctx context.Context, projectID string, input PetReportInput) (*PetReportOutput, error) {
+func (uc *PetReportUseCase) Generate(
+	ctx context.Context,
+	projectID string,
+	input PetReportInput,
+) (*PetReportOutput, error) {
 	f := domainreport.PetReportFilter{ProjectID: projectID}
 
 	if input.DateFrom != "" {

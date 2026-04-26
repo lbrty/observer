@@ -25,6 +25,7 @@ func (uc *PersonTagUseCase) List(ctx context.Context, personID string) ([]string
 	if err != nil {
 		return nil, fmt.Errorf("list person tags: %w", err)
 	}
+
 	return ids, nil
 }
 
@@ -34,11 +35,14 @@ func (uc *PersonTagUseCase) Replace(ctx context.Context, projectID, personID str
 	if err != nil {
 		return fmt.Errorf("replace person tags: %w", err)
 	}
+
 	if p.ProjectID != projectID {
 		return fmt.Errorf("replace person tags: %w", person.ErrPersonNotFound)
 	}
+
 	if err := uc.repo.ReplaceAll(ctx, personID, tagIDs); err != nil {
 		return fmt.Errorf("replace person tags: %w", err)
 	}
+
 	return nil
 }
