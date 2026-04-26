@@ -97,3 +97,11 @@ generate-mocks:
 # Generate OpenAPI spec from annotations
 openapi:
     swag init -g cmd/observer/main.go -o api/swagger --parseDependency --parseInternal
+
+# Tag, build, push Docker image, and push git tags
+release version:
+    git tag v{{version}}
+    docker build . --tag sultaniman/observer:v{{version}}
+    docker tag sultaniman/observer:v{{version}} sultaniman/observer:latest
+    docker push sultaniman/observer:v{{version}} sultaniman/observer:latest
+    git push --tags
