@@ -24,7 +24,7 @@ func NewProjectAuthMiddleware(permLoader repository.PermissionLoader) *ProjectAu
 // RequireProjectRole returns middleware that checks the user holds a sufficient
 // project role for the given action. The route must contain :project_id.
 func (m *ProjectAuthMiddleware) RequireProjectRole(action project.Action) gin.HandlerFunc {
-	minRole, ok := project.MinRoleForAction[action]
+	minRole, ok := project.MinRoleFor(action)
 	if !ok {
 		panic("unknown project action: " + string(action))
 	}

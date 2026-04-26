@@ -38,14 +38,20 @@ const (
 	ActionExport        Action = "export"
 )
 
-// MinRoleForAction maps each action to its minimum required project role.
-var MinRoleForAction = map[Action]ProjectRole{
+var minRoleForAction = map[Action]ProjectRole{
 	ActionRead:          ProjectRoleViewer,
 	ActionCreate:        ProjectRoleConsultant,
 	ActionUpdate:        ProjectRoleConsultant,
 	ActionDelete:        ProjectRoleManager,
 	ActionManageMembers: ProjectRoleManager,
 	ActionExport:        ProjectRoleConsultant,
+}
+
+// MinRoleFor returns the minimum project role required for the given action.
+// The second return value is false if the action is not recognized.
+func MinRoleFor(a Action) (ProjectRole, bool) {
+	r, ok := minRoleForAction[a]
+	return r, ok
 }
 
 // Permission holds a user's project-level role and sensitivity flags.
