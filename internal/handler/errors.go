@@ -21,16 +21,16 @@ import (
 	"github.com/lbrty/observer/internal/domain/user"
 )
 
-// errJSON builds a JSON error response with both a human-readable message and
+// ErrJSON builds a JSON error response with both a human-readable message and
 // a machine-readable code that maps to a frontend i18n key.
-func errJSON(code, msg string) gin.H {
+func ErrJSON(code, msg string) gin.H {
 	return gin.H{"error": msg, "code": code}
 }
 
-// internalError logs the error with context and returns a 500 JSON response.
-func internalError(c *gin.Context, msg string, err error) {
+// InternalError logs the error with context and returns a 500 JSON response.
+func InternalError(c *gin.Context, msg string, err error) {
 	slog.Error(msg, slog.String("error", err.Error()), slog.String("path", c.Request.URL.Path), slog.String("method", c.Request.Method))
-	c.JSON(http.StatusInternalServerError, errJSON("errors.internal", "internal server error"))
+	c.JSON(http.StatusInternalServerError, ErrJSON("errors.internal", "internal server error"))
 }
 
 // MapDomainError maps a domain error to HTTP status and i18n code.
@@ -149,12 +149,12 @@ func MapDomainError(err error) (int, string) {
 	}
 }
 
-// bindJSON decodes JSON from the request body into a value of type T.
+// BindJSON decodes JSON from the request body into a value of type T.
 // On failure it writes a 400 response and returns false.
-func bindJSON[T any](c *gin.Context) (T, bool) {
+func BindJSON[T any](c *gin.Context) (T, bool) {
 	var v T
 	if err := c.ShouldBindJSON(&v); err != nil {
-		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
+		c.JSON(http.StatusBadRequest, ErrJSON("errors.validation", err.Error()))
 		return v, false
 	}
 	return v, true
@@ -168,8 +168,8 @@ func HandleError(c *gin.Context, err error) {
 			"error", err,
 			"path", c.Request.URL.Path,
 		)
-		c.JSON(status, errJSON(code, "internal server error"))
+		c.JSON(status, ErrJSON(code, "internal server error"))
 		return
 	}
-	c.JSON(status, errJSON(code, err.Error()))
+	c.JSON(status, ErrJSON(code, err.Error()))
 }

@@ -9,6 +9,13 @@ import (
 	"github.com/lbrty/observer/internal/domain/project"
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/handler"
+	adminhandler "github.com/lbrty/observer/internal/handler/admin"
+	authhandler "github.com/lbrty/observer/internal/handler/auth"
+	audithandler "github.com/lbrty/observer/internal/handler/audit"
+	myhandler "github.com/lbrty/observer/internal/handler/my"
+	projecthandler "github.com/lbrty/observer/internal/handler/project"
+	reporthandler "github.com/lbrty/observer/internal/handler/report"
+	searchhandler "github.com/lbrty/observer/internal/handler/search"
 	"github.com/lbrty/observer/internal/health"
 	"github.com/lbrty/observer/internal/middleware"
 	"github.com/lbrty/observer/internal/spa"
@@ -24,7 +31,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	authMW := middleware.NewAuthMiddleware(container.TokenGenerator, container.UserRepo)
 	projectAuthMW := middleware.NewProjectAuthMiddleware(container.PermissionRepo)
 
-	authHandler := handler.NewAuthHandler(
+	authHandler := authhandler.NewAuthHandler(
 		container.AuthUC,
 		cfg.Cookie,
 		cfg.JWT,
@@ -49,25 +56,25 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	}
 
 	// My endpoints — authenticated user's own data
-	myHandler := handler.NewMyHandler(container.MyProjectsUC)
+	myHandler := myhandler.NewMyHandler(container.MyProjectsUC)
 	my := api.Group("/my", authMW.Authenticate())
 	{
 		my.GET("/projects", myHandler.Projects)
 	}
 
 	// Global search — any authenticated user, scoped to their authorised projects
-	searchHandler := handler.NewSearchHandler(container.SearchUC)
+	searchHandler := searchhandler.NewSearchHandler(container.SearchUC)
 	api.GET("/search", authMW.Authenticate(), searchHandler.Search)
 
 	// Admin endpoints — requires authentication + admin role
-	adminHandler := handler.NewAdminHandler(container.UserUC)
-	permHandler := handler.NewPermissionHandler(container.PermUC)
-	countryHandler := handler.NewCountryHandler(container.CountryUC)
-	stateHandler := handler.NewStateHandler(container.StateUC)
-	placeHandler := handler.NewPlaceHandler(container.PlaceUC)
-	officeHandler := handler.NewOfficeHandler(container.OfficeUC)
-	categoryHandler := handler.NewCategoryHandler(container.CategoryUC)
-	projectHandler := handler.NewProjectHandler(container.ProjectUC)
+	adminHandler := adminhandler.NewAdminHandler(container.UserUC)
+	permHandler := adminhandler.NewPermissionHandler(container.PermUC)
+	countryHandler := adminhandler.NewCountryHandler(container.CountryUC)
+	stateHandler := adminhandler.NewStateHandler(container.StateUC)
+	placeHandler := adminhandler.NewPlaceHandler(container.PlaceUC)
+	officeHandler := adminhandler.NewOfficeHandler(container.OfficeUC)
+	categoryHandler := adminhandler.NewCategoryHandler(container.CategoryUC)
+	projectHandler := adminhandler.NewProjectHandler(container.ProjectUC)
 
 	// Admin endpoints readable by admin + staff + consultant
 	adminRead := api.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin, user.RoleStaff, user.RoleConsultant))
@@ -114,7 +121,7 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	}
 
 	// Admin-only endpoints
-	auditHandler := handler.NewAuditHandler(container.AuditUC)
+	auditHandler := audithandler.NewAuditHandler(container.AuditUC)
 	schemaHandler := handler.NewSchemaHandler(schemaStatus)
 	admin := api.Group("/admin", authMW.Authenticate(), authMW.RequireRole(user.RoleAdmin))
 	{
@@ -147,17 +154,17 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 	}
 
 	// Project-scoped endpoints — requires authentication + project role
-	tagHandler := handler.NewTagHandler(container.TagUC)
-	personHandler := handler.NewPersonHandler(container.PersonUC, container.PersonCategoryUC, container.PersonTagUC)
-	supportHandler := handler.NewSupportRecordHandler(container.SupportRecordUC)
-	migrationHandler := handler.NewMigrationRecordHandler(container.MigrationRecordUC)
-	householdHandler := handler.NewHouseholdHandler(container.HouseholdUC)
-	noteHandler := handler.NewNoteHandler(container.NoteUC)
-	documentHandler := handler.NewDocumentHandler(container.DocumentUC)
-	petHandler := handler.NewPetHandler(container.PetUC, container.PetTagUC)
-	reportHandler := handler.NewReportHandler(container.ReportUC)
-	petReportHandler := handler.NewPetReportHandler(container.PetReportUC)
-	exportHandler := handler.NewExportHandler(container.PersonUC, container.SupportRecordUC, container.PetUC, container.HouseholdUC, container.AuditUC)
+	tagHandler := projecthandler.NewTagHandler(container.TagUC)
+	personHandler := projecthandler.NewPersonHandler(container.PersonUC, container.PersonCategoryUC, container.PersonTagUC)
+	supportHandler := projecthandler.NewSupportRecordHandler(container.SupportRecordUC)
+	migrationHandler := projecthandler.NewMigrationRecordHandler(container.MigrationRecordUC)
+	householdHandler := projecthandler.NewHouseholdHandler(container.HouseholdUC)
+	noteHandler := projecthandler.NewNoteHandler(container.NoteUC)
+	documentHandler := projecthandler.NewDocumentHandler(container.DocumentUC)
+	petHandler := projecthandler.NewPetHandler(container.PetUC, container.PetTagUC)
+	reportHandler := reporthandler.NewReportHandler(container.ReportUC)
+	petReportHandler := reporthandler.NewPetReportHandler(container.PetReportUC)
+	exportHandler := reporthandler.NewExportHandler(container.PersonUC, container.SupportRecordUC, container.PetUC, container.HouseholdUC, container.AuditUC)
 
 	proj := api.Group("/projects/:project_id", authMW.Authenticate())
 	{

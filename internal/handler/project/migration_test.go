@@ -1,0 +1,156 @@
+package project_test
+
+import (
+	"net/http"
+	"testing"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
+
+	"github.com/lbrty/observer/internal/domain/migration"
+	"github.com/lbrty/observer/internal/handler/handlertest"
+	"github.com/lbrty/observer/internal/handler/project"
+	repomock "github.com/lbrty/observer/internal/repository/mock"
+	ucproject "github.com/lbrty/observer/internal/usecase/project"
+)
+
+func newMigrationRecordHandler(ctrl *gomock.Controller) (*project.MigrationRecordHandler, *repomock.MockMigrationRecordRepository) {
+	repo := repomock.NewMockMigrationRecordRepository(ctrl)
+	uc := ucproject.NewMigrationRecordUseCase(repo, nil)
+	return project.NewMigrationRecordHandler(uc), repo
+}
+
+func TestMigrationRecordHandler_List_Success(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	h, repo := newMigrationRecordHandler(ctrl)
+
+	personID := handlertest.TestID().String()
+	now := time.Now().UTC()
+	repo.EXPECT().ListByPerson(gomock.Any(), personID).Return([]*migration.Record{
+		{ID: handlertest.TestID().String(), PersonID: personID, CreatedAt: now},
+		{ID: handlertest.TestID().String(), PersonID: personID, CreatedAt: now},
+	}, nil)
+
+	c, w := handlertest.NewTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/migration-records", nil, gin.Params{
+		{Key: "person_id", Value: personID},
+	})
+	h.List(c)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	resp := handlertest.ParseResponse[map[string]any](w)
+	records := resp["records"].([]any)
+	assert.Len(t, records, 2)
+}
+
+func TestMigrationRecordHandler_Get_NotFound(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	h, repo := newMigrationRecordHandler(ctrl)
+
+	id := handlertest.TestID().String()
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(nil, migration.ErrRecordNotFound)
+
+	c, w := handlertest.NewTestContextWithParams(http.MethodGet, "/projects/x/people/y/migration-records/"+id, nil, gin.Params{
+		{Key: "id", Value: id},
+	})
+	h.Get(c)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
+}
+
+func TestMigrationRecordHandler_Get_Success(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	h, repo := newMigrationRecordHandler(ctrl)
+
+	now := time.Now().UTC()
+	id := handlertest.TestID().String()
+	personID := handlertest.TestID().String()
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(&migration.Record{
+		ID:        id,
+		PersonID:  personID,
+		CreatedAt: now,
+	}, nil)
+
+	c, w := handlertest.NewTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/migration-records/"+id, nil, gin.Params{
+		{Key: "person_id", Value: personID},
+		{Key: "id", Value: id},
+	})
+	h.Get(c)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	resp := handlertest.ParseResponse[map[string]any](w)
+	assert.Equal(t, id, resp["id"])
+	assert.Equal(t, personID, resp["person_id"])
+}
+
+func TestMigrationRecordHandler_Create_Success(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	h, repo := newMigrationRecordHandler(ctrl)
+
+	personID := handlertest.TestID().String()
+	reason := "conflict"
+
+	repo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
+
+	c, w := handlertest.NewTestContextWithParams(http.MethodPost, "/projects/x/people/"+personID+"/migration-records", map[string]any{
+		"movement_reason": reason,
+	}, gin.Params{
+		{Key: "person_id", Value: personID},
+	})
+	h.Create(c)
+
+	assert.Equal(t, http.StatusCreated, w.Code)
+	resp := handlertest.ParseResponse[map[string]any](w)
+	assert.NotEmpty(t, resp["id"])
+	assert.Equal(t, personID, resp["person_id"])
+	assert.Equal(t, reason, resp["movement_reason"])
+}
+
+func TestMigrationRecordHandler_Update_NotFound(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	h, repo := newMigrationRecordHandler(ctrl)
+
+	id := handlertest.TestID().String()
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(nil, migration.ErrRecordNotFound)
+
+	c, w := handlertest.NewTestContextWithParams(http.MethodPatch, "/projects/x/people/y/migration-records/"+id, map[string]any{
+		"notes": "updated",
+	}, gin.Params{
+		{Key: "id", Value: id},
+	})
+	h.Update(c)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
+}
+
+func TestMigrationRecordHandler_Update_Success(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	h, repo := newMigrationRecordHandler(ctrl)
+
+	now := time.Now().UTC()
+	id := handlertest.TestID().String()
+	personID := handlertest.TestID().String()
+	existing := &migration.Record{
+		ID:        id,
+		PersonID:  personID,
+		CreatedAt: now,
+	}
+
+	repo.EXPECT().GetByID(gomock.Any(), id).Return(existing, nil)
+	repo.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
+
+	notes := "updated notes"
+	c, w := handlertest.NewTestContextWithParams(http.MethodPatch, "/projects/x/people/"+personID+"/migration-records/"+id, map[string]any{
+		"notes": notes,
+	}, gin.Params{
+		{Key: "person_id", Value: personID},
+		{Key: "id", Value: id},
+	})
+	h.Update(c)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	resp := handlertest.ParseResponse[map[string]any](w)
+	assert.Equal(t, id, resp["id"])
+	assert.Equal(t, notes, resp["notes"])
+}

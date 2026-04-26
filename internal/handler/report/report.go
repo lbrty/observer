@@ -1,0 +1,58 @@
+package report
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/lbrty/observer/internal/handler"
+	ucreport "github.com/lbrty/observer/internal/usecase/report"
+)
+
+// ReportHandler exposes report HTTP endpoints.
+type ReportHandler struct {
+	uc *ucreport.ReportUseCase
+}
+
+// NewReportHandler creates a ReportHandler.
+func NewReportHandler(uc *ucreport.ReportUseCase) *ReportHandler {
+	return &ReportHandler{uc: uc}
+}
+
+// Generate handles GET /projects/:project_id/reports.
+func (h *ReportHandler) Generate(c *gin.Context) {
+	projectID := c.Param("project_id")
+
+	var input ucreport.ReportInput
+	if err := c.ShouldBindQuery(&input); err != nil {
+		c.JSON(http.StatusBadRequest, handler.ErrJSON("errors.validation", err.Error()))
+		return
+	}
+
+	out, err := h.uc.Generate(c.Request.Context(), projectID, input)
+	if err != nil {
+		handler.InternalError(c, "generate report", err)
+		return
+	}
+
+	c.JSON(http.StatusOK, out)
+}
+
+// GenerateCustom handles GET /projects/:project_id/reports/custom.
+func (h *ReportHandler) GenerateCustom(c *gin.Context) {
+	projectID := c.Param("project_id")
+
+	var input ucreport.CustomReportInput
+	if err := c.ShouldBindQuery(&input); err != nil {
+		c.JSON(http.StatusBadRequest, handler.ErrJSON("errors.validation", err.Error()))
+		return
+	}
+
+	out, err := h.uc.GenerateCustom(c.Request.Context(), projectID, input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, handler.ErrJSON("errors.validation", err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, out)
+}
