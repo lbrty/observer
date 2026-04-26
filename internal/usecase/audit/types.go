@@ -33,9 +33,9 @@ type EntryDTO struct {
 	IP            *string `json:"ip,omitempty"`
 	UserAgent     *string `json:"user_agent,omitempty"`
 	CreatedAt     string  `json:"created_at"`
-	UserFirstName string  `json:"user_first_name"`
-	UserLastName  string  `json:"user_last_name"`
-	UserEmail     string  `json:"user_email"`
+	UserFirstName *string `json:"user_first_name"`
+	UserLastName  *string `json:"user_last_name"`
+	UserEmail     *string `json:"user_email"`
 }
 
 type ListOutput struct {

@@ -22,9 +22,9 @@ type auditRow struct {
 	IP            *string   `db:"ip"`
 	UserAgent     *string   `db:"user_agent"`
 	CreatedAt     time.Time `db:"created_at"`
-	UserFirstName string    `db:"user_first_name"`
-	UserLastName  string    `db:"user_last_name"`
-	UserEmail     string    `db:"user_email"`
+	UserFirstName *string   `db:"user_first_name"`
+	UserLastName  *string   `db:"user_last_name"`
+	UserEmail     *string   `db:"user_email"`
 }
 
 func scanAuditRow(r auditRow) audit.Entry {
@@ -91,7 +91,7 @@ func (r *auditLogRepo) List(ctx context.Context, filter audit.Filter) ([]audit.E
 	args = append(args, filter.PerPage, offset)
 
 	q := `SELECT a.id, a.project_id, a.user_id, a.action, a.entity_type, a.entity_id, a.summary, a.ip, a.user_agent, a.created_at,
-	             COALESCE(u.first_name, '') AS user_first_name, COALESCE(u.last_name, '') AS user_last_name, COALESCE(u.email, '') AS user_email
+	             u.first_name AS user_first_name, u.last_name AS user_last_name, u.email AS user_email
 	      FROM audit_logs a LEFT JOIN users u ON u.id = a.user_id WHERE 1=1` +
 		filters + fmt.Sprintf(" ORDER BY a.created_at DESC LIMIT $%d OFFSET $%d", ix, ix+1)
 

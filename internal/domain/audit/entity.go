@@ -14,10 +14,10 @@ type Entry struct {
 	UserAgent  *string
 	CreatedAt  time.Time
 
-	// Populated by repository reads via LEFT JOIN with users; zero-valued on Log.
-	UserFirstName string
-	UserLastName  string
-	UserEmail     string
+	// Populated by repository reads via LEFT JOIN with users; nil when user has been deleted.
+	UserFirstName *string
+	UserLastName  *string
+	UserEmail     *string
 }
 
 type Filter struct {
