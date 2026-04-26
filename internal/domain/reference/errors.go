@@ -6,7 +6,8 @@ var (
 	ErrCountryNotFound   = errors.New("country not found")
 	ErrCountryCodeExists = errors.New("country code already exists")
 
-	ErrStateNotFound = errors.New("state not found")
+	ErrStateNotFound   = errors.New("state not found")
+	ErrStateCodeExists = errors.New("state code already exists in this country")
 
 	ErrPlaceNotFound = errors.New("place not found")
 

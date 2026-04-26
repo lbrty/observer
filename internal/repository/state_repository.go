@@ -100,6 +100,9 @@ func (r *stateRepo) Create(ctx context.Context, s *reference.State) error {
 	s.UpdatedAt = now
 	_, err := r.db.ExecContext(ctx, q, s.ID, s.CountryID, s.Name, s.Code, s.ConflictZone, s.CreatedAt, s.UpdatedAt)
 	if err != nil {
+		if IsUniqueViolation(err) {
+			return reference.ErrStateCodeExists
+		}
 		return fmt.Errorf("create state: %w", err)
 	}
 	return nil
@@ -114,6 +117,9 @@ func (r *stateRepo) Update(ctx context.Context, s *reference.State) error {
 	s.UpdatedAt = time.Now().UTC()
 	res, err := r.db.ExecContext(ctx, q, s.ID, s.Name, s.Code, s.ConflictZone, s.UpdatedAt)
 	if err != nil {
+		if IsUniqueViolation(err) {
+			return reference.ErrStateCodeExists
+		}
 		return fmt.Errorf("update state: %w", err)
 	}
 	return CheckRowsAffected(res, reference.ErrStateNotFound)
