@@ -9,5 +9,6 @@ var (
 	ErrInvalidCredentials        = errors.New("invalid credentials")
 	ErrUserNotActive             = errors.New("user account is not active")
 	ErrInvalidRole               = errors.New("invalid role")
+	ErrMFAConfigNotFound         = errors.New("MFA config not found")
 	ErrMFARecoveryCodeNotFound   = errors.New("MFA recovery code not found")
 )

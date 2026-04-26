@@ -49,7 +49,7 @@ func (r *mfaRepo) GetByUserID(ctx context.Context, userID ulid.ULID) (*user.MFAC
 	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, user.ErrUserNotFound
+			return nil, user.ErrMFAConfigNotFound
 		}
 		return nil, fmt.Errorf("get mfa config: %w", err)
 	}
