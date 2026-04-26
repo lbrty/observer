@@ -12,6 +12,7 @@ import (
 
 	"github.com/lbrty/observer/internal/domain/audit"
 	"github.com/lbrty/observer/internal/repository"
+	repoaudit "github.com/lbrty/observer/internal/repository/audit"
 	"github.com/lbrty/observer/internal/testutil"
 	"github.com/lbrty/observer/internal/ulid"
 )
@@ -64,7 +65,7 @@ func setupAuditTest(t *testing.T) auditTestFixture {
 
 	return auditTestFixture{
 		db:     db,
-		repo:   repository.NewAuditLogRepository(db),
+		repo:   repoaudit.New(db),
 		userID: userID,
 		cleanup: func() {
 			db.Close()

@@ -16,6 +16,9 @@ import (
 	"github.com/lbrty/observer/internal/domain/project"
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/repository"
+	repoperson "github.com/lbrty/observer/internal/repository/person"
+	repoproj "github.com/lbrty/observer/internal/repository/project"
+	repouser "github.com/lbrty/observer/internal/repository/user"
 	iulid "github.com/lbrty/observer/internal/ulid"
 )
 
@@ -62,9 +65,9 @@ func makePerson(projectID, firstName string) *person.Person {
 
 func TestPersonRepo_CRUD(t *testing.T) {
 	db := setupTestDB(t)
-	userRepo := repository.NewUserRepository(db)
-	projectRepo := repository.NewProjectRepository(db)
-	personRepo := repository.NewPersonRepository(db)
+	userRepo := repouser.New(db)
+	projectRepo := repoproj.New(db)
+	personRepo := repoperson.New(db)
 	ctx := context.Background()
 
 	_, proj := setupProjectWithOwner(t, userRepo, projectRepo)
@@ -99,9 +102,9 @@ func TestPersonRepo_CRUD(t *testing.T) {
 
 func TestPersonRepo_List_WithFilter(t *testing.T) {
 	db := setupTestDB(t)
-	userRepo := repository.NewUserRepository(db)
-	projectRepo := repository.NewProjectRepository(db)
-	personRepo := repository.NewPersonRepository(db)
+	userRepo := repouser.New(db)
+	projectRepo := repoproj.New(db)
+	personRepo := repoperson.New(db)
 	ctx := context.Background()
 
 	_, proj := setupProjectWithOwner(t, userRepo, projectRepo)

@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/lbrty/observer/internal/domain/user"
-	"github.com/lbrty/observer/internal/repository"
+	repouser "github.com/lbrty/observer/internal/repository/user"
 )
 
 func makeUser(email, phone string) *user.User {
@@ -33,7 +33,7 @@ func makeUser(email, phone string) *user.User {
 
 func TestUserRepo_CreateAndGetByID(t *testing.T) {
 	db := setupTestDB(t)
-	repo := repository.NewUserRepository(db)
+	repo := repouser.New(db)
 	ctx := context.Background()
 
 	u := makeUser("create-get@test.com", "+10000000001")
@@ -53,7 +53,7 @@ func TestUserRepo_CreateAndGetByID(t *testing.T) {
 
 func TestUserRepo_GetByEmail(t *testing.T) {
 	db := setupTestDB(t)
-	repo := repository.NewUserRepository(db)
+	repo := repouser.New(db)
 	ctx := context.Background()
 
 	u := makeUser("byemail@test.com", "+10000000002")
@@ -67,7 +67,7 @@ func TestUserRepo_GetByEmail(t *testing.T) {
 
 func TestUserRepo_GetByEmail_NotFound(t *testing.T) {
 	db := setupTestDB(t)
-	repo := repository.NewUserRepository(db)
+	repo := repouser.New(db)
 	ctx := context.Background()
 
 	_, err := repo.GetByEmail(ctx, "nonexistent@test.com")
@@ -76,7 +76,7 @@ func TestUserRepo_GetByEmail_NotFound(t *testing.T) {
 
 func TestUserRepo_DuplicateEmail(t *testing.T) {
 	db := setupTestDB(t)
-	repo := repository.NewUserRepository(db)
+	repo := repouser.New(db)
 	ctx := context.Background()
 
 	u1 := makeUser("dup@test.com", "+10000000003")
@@ -89,7 +89,7 @@ func TestUserRepo_DuplicateEmail(t *testing.T) {
 
 func TestUserRepo_Update(t *testing.T) {
 	db := setupTestDB(t)
-	repo := repository.NewUserRepository(db)
+	repo := repouser.New(db)
 	ctx := context.Background()
 
 	u := makeUser("update@test.com", "+10000000005")
@@ -109,7 +109,7 @@ func TestUserRepo_Update(t *testing.T) {
 
 func TestUserRepo_List(t *testing.T) {
 	db := setupTestDB(t)
-	repo := repository.NewUserRepository(db)
+	repo := repouser.New(db)
 	ctx := context.Background()
 
 	for i, email := range []string{"list1@test.com", "list2@test.com", "list3@test.com"} {

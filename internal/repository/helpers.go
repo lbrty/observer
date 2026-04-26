@@ -12,8 +12,8 @@ import (
 	"github.com/lib/pq"
 )
 
-// psql is a PostgreSQL squirrel builder (uses $N placeholders).
-var psql = sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+// PSQL is a PostgreSQL squirrel builder (uses $N placeholders).
+var PSQL = sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 
 // TimesToUTC converts one or more time pointers to UTC in-place.
 func TimesToUTC(times ...*time.Time) {
@@ -40,9 +40,9 @@ func IsUniqueViolation(err error) bool {
 	return errors.As(err, &pqErr) && pqErr.Code == "23505"
 }
 
-// buildBulkTagQuery builds a SELECT for fetching tag IDs for multiple entities.
-func buildBulkTagQuery(table, fkCol string, entityIDs []string) (string, []any, error) {
-	return psql.
+// BuildBulkTagQuery builds a SELECT for fetching tag IDs for multiple entities.
+func BuildBulkTagQuery(table, fkCol string, entityIDs []string) (string, []any, error) {
+	return PSQL.
 		Select(fkCol + ", tag_id").
 		From(table).
 		Where(sq.Eq{fkCol: entityIDs}).
@@ -50,9 +50,9 @@ func buildBulkTagQuery(table, fkCol string, entityIDs []string) (string, []any, 
 		ToSql()
 }
 
-// normalizePagination clamps page and perPage to sensible minimums (1 and 20 respectively)
+// NormalizePagination clamps page and perPage to sensible minimums (1 and 20 respectively)
 // and returns the normalized perPage and the SQL OFFSET for use in paginated queries.
-func normalizePagination(page, perPage int) (int, int) {
+func NormalizePagination(page, perPage int) (int, int) {
 	if page < 1 {
 		page = 1
 	}
@@ -62,11 +62,11 @@ func normalizePagination(page, perPage int) (int, int) {
 	return perPage, (page - 1) * perPage
 }
 
-// replaceAllJunction atomically replaces all rows for a parent entity in a junction table.
+// ReplaceAllJunction atomically replaces all rows for a parent entity in a junction table.
 // It deletes every existing row where parentCol = parentID, then bulk-inserts the new childIDs.
 // If childIDs is empty the delete still runs, leaving the parent with no associations.
 // The whole operation runs in a single transaction so no partial state is ever visible.
-func replaceAllJunction(ctx context.Context, db *sqlx.DB, table, parentCol, childCol, parentID string, childIDs []string) error {
+func ReplaceAllJunction(ctx context.Context, db *sqlx.DB, table, parentCol, childCol, parentID string, childIDs []string) error {
 	tx, err := db.BeginTxx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
@@ -78,7 +78,7 @@ func replaceAllJunction(ctx context.Context, db *sqlx.DB, table, parentCol, chil
 	}
 
 	if len(childIDs) > 0 {
-		iq := psql.Insert(table).Columns(parentCol, childCol)
+		iq := PSQL.Insert(table).Columns(parentCol, childCol)
 		for _, id := range childIDs {
 			iq = iq.Values(parentID, id)
 		}
@@ -94,8 +94,8 @@ func replaceAllJunction(ctx context.Context, db *sqlx.DB, table, parentCol, chil
 	return tx.Commit()
 }
 
-// queryBulkTags executes a bulk tag query and returns a map of entity ID → tag IDs.
-func queryBulkTags(ctx context.Context, db *sqlx.DB, q string, args []any) (map[string][]string, error) {
+// QueryBulkTags executes a bulk tag query and returns a map of entity ID → tag IDs.
+func QueryBulkTags(ctx context.Context, db *sqlx.DB, q string, args []any) (map[string][]string, error) {
 	rows, err := db.QueryContext(ctx, q, args...)
 	if err != nil {
 		return nil, fmt.Errorf("bulk tag query: %w", err)

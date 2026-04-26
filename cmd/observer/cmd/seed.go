@@ -23,7 +23,11 @@ import (
 	"github.com/lbrty/observer/internal/domain/support"
 	"github.com/lbrty/observer/internal/domain/tag"
 	"github.com/lbrty/observer/internal/domain/user"
-	"github.com/lbrty/observer/internal/repository"
+	repohousehold "github.com/lbrty/observer/internal/repository/household"
+	repoproj "github.com/lbrty/observer/internal/repository/project"
+	reporeference "github.com/lbrty/observer/internal/repository/reference"
+	repotag "github.com/lbrty/observer/internal/repository/tag"
+	repouser "github.com/lbrty/observer/internal/repository/user"
 	"github.com/lbrty/observer/internal/ulid"
 )
 
@@ -170,11 +174,11 @@ func now() time.Time { return time.Now().UTC() }
 
 // seedReferenceData creates countries, states, places, offices, and categories.
 func seedReferenceData(ctx context.Context, db *sqlx.DB) ([]*reference.Place, []*reference.Office, []*reference.Category) {
-	countryRepo := repository.NewCountryRepository(db)
-	stateRepo := repository.NewStateRepository(db)
-	placeRepo := repository.NewPlaceRepository(db)
-	officeRepo := repository.NewOfficeRepository(db)
-	catRepo := repository.NewCategoryRepository(db)
+	countryRepo := reporeference.NewCountry(db)
+	stateRepo := reporeference.NewState(db)
+	placeRepo := reporeference.NewPlace(db)
+	officeRepo := reporeference.NewOffice(db)
+	catRepo := reporeference.NewCategory(db)
 
 	type stateSpec struct {
 		name         string
@@ -272,8 +276,8 @@ func seedReferenceData(ctx context.Context, db *sqlx.DB) ([]*reference.Place, []
 }
 
 func seedUsers(ctx context.Context, db *sqlx.DB) []*user.User {
-	userRepo := repository.NewUserRepository(db)
-	credRepo := repository.NewCredentialsRepository(db)
+	userRepo := repouser.New(db)
+	credRepo := repouser.NewCredentials(db)
 	hasher := crypto.NewArgonHasher()
 
 	type spec struct {
@@ -326,7 +330,7 @@ func seedUsers(ctx context.Context, db *sqlx.DB) []*user.User {
 }
 
 func seedProject(ctx context.Context, db *sqlx.DB, faker *gofakeit.Faker, admin *user.User, ix int) *project.Project {
-	projRepo := repository.NewProjectRepository(db)
+	projRepo := repoproj.New(db)
 	n := now()
 	desc := fmt.Sprintf("Development project #%d for testing", ix+1)
 	p := &project.Project{
@@ -343,7 +347,7 @@ func seedProject(ctx context.Context, db *sqlx.DB, faker *gofakeit.Faker, admin 
 }
 
 func seedPermissions(ctx context.Context, db *sqlx.DB, projectID string, users []*user.User) {
-	permRepo := repository.NewProjectPermissionRepository(db)
+	permRepo := repoproj.NewCRUD(db)
 	n := now()
 
 	type permSpec struct {
@@ -377,7 +381,7 @@ func seedPermissions(ctx context.Context, db *sqlx.DB, projectID string, users [
 }
 
 func seedTags(ctx context.Context, db *sqlx.DB, faker *gofakeit.Faker, projectID string) []*tag.Tag {
-	tagRepo := repository.NewTagRepository(db)
+	tagRepo := repotag.New(db)
 	pool := []string{"urgent", "follow-up", "legal-aid", "housing", "medical", "employment", "education", "documentation", "family", "vulnerable"}
 	faker.ShuffleStrings(pool)
 
@@ -687,7 +691,7 @@ func genAndInsertPets(ctx context.Context, db *sqlx.DB, faker *gofakeit.Faker, p
 }
 
 func seedHouseholds(ctx context.Context, db *sqlx.DB, faker *gofakeit.Faker, projectID string, people []*person.Person) {
-	hhRepo := repository.NewHouseholdRepository(db)
+	hhRepo := repohousehold.New(db)
 	relationships := []household.Relationship{
 		household.RelationshipSpouse, household.RelationshipChild,
 		household.RelationshipParent, household.RelationshipSibling,

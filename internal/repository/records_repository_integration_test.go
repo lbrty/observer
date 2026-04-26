@@ -20,6 +20,12 @@ import (
 	"github.com/lbrty/observer/internal/domain/tag"
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/repository"
+	repohousehold "github.com/lbrty/observer/internal/repository/household"
+	repoperson "github.com/lbrty/observer/internal/repository/person"
+	repoproj "github.com/lbrty/observer/internal/repository/project"
+	reposupport "github.com/lbrty/observer/internal/repository/support"
+	repotag "github.com/lbrty/observer/internal/repository/tag"
+	repouser "github.com/lbrty/observer/internal/repository/user"
 	iulid "github.com/lbrty/observer/internal/ulid"
 )
 
@@ -29,8 +35,8 @@ func setupProjectEnv(t *testing.T, db *sqlx.DB) (repository.UserRepository, repo
 	ctx := context.Background()
 	now := time.Now().UTC()
 
-	userRepo := repository.NewUserRepository(db)
-	projectRepo := repository.NewProjectRepository(db)
+	userRepo := repouser.New(db)
+	projectRepo := repoproj.New(db)
 
 	owner := &user.User{
 		ID:         ulid.Make(),
@@ -60,7 +66,7 @@ func setupProjectEnv(t *testing.T, db *sqlx.DB) (repository.UserRepository, repo
 func TestTagRepo_CRUD(t *testing.T) {
 	db := setupTestDB(t)
 	_, _, _, proj := setupProjectEnv(t, db)
-	tagRepo := repository.NewTagRepository(db)
+	tagRepo := repotag.New(db)
 	ctx := context.Background()
 
 	tg := &tag.Tag{
@@ -103,7 +109,7 @@ func TestTagRepo_CRUD(t *testing.T) {
 func TestTagRepo_DuplicateName(t *testing.T) {
 	db := setupTestDB(t)
 	_, _, _, proj := setupProjectEnv(t, db)
-	tagRepo := repository.NewTagRepository(db)
+	tagRepo := repotag.New(db)
 	ctx := context.Background()
 
 	t1 := &tag.Tag{ID: iulid.NewString(), ProjectID: proj.ID, Name: "DupTag", Color: "#000"}
@@ -117,7 +123,7 @@ func TestTagRepo_DuplicateName(t *testing.T) {
 func TestHouseholdRepo_CRUD(t *testing.T) {
 	db := setupTestDB(t)
 	_, _, _, proj := setupProjectEnv(t, db)
-	hhRepo := repository.NewHouseholdRepository(db)
+	hhRepo := repohousehold.New(db)
 	ctx := context.Background()
 
 	hh := &household.Household{
@@ -149,8 +155,8 @@ func TestHouseholdRepo_CRUD(t *testing.T) {
 func TestSupportRecordRepo_CRUD(t *testing.T) {
 	db := setupTestDB(t)
 	_, _, _, proj := setupProjectEnv(t, db)
-	personRepo := repository.NewPersonRepository(db)
-	supportRepo := repository.NewSupportRecordRepository(db)
+	personRepo := repoperson.New(db)
+	supportRepo := reposupport.New(db)
 	ctx := context.Background()
 
 	p := &person.Person{

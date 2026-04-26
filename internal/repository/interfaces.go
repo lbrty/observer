@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/oklog/ulid/v2"
 
@@ -299,4 +300,16 @@ type ReportRepository interface {
 	CountByCaseStatus(ctx context.Context, f report.ReportFilter) ([]report.CountResult, error)
 	StatusFlowReport(ctx context.Context, f report.ReportFilter) ([]report.StatusFlow, error)
 	CustomQuery(ctx context.Context, projectID string, metric string, groupBy []string, filter report.ReportFilter) ([]report.CustomResult, int, error)
+}
+
+// LoginAttemptStore tracks failed login attempts and account lockouts.
+type LoginAttemptStore interface {
+	// RecordFailure increments the failure counter for the given email.
+	// Returns the remaining lockout duration (0 = not locked, -1 = permanent).
+	RecordFailure(ctx context.Context, email string) (time.Duration, error)
+	// IsLocked returns the remaining lockout duration for the given email.
+	// Returns 0 if not locked, -1 if permanently locked.
+	IsLocked(ctx context.Context, email string) (time.Duration, error)
+	// ClearAttempts resets all failure counters and lockout state for the email.
+	ClearAttempts(ctx context.Context, email string) error
 }

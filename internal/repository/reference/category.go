@@ -1,0 +1,108 @@
+package reference
+
+import (
+	"context"
+	"database/sql"
+	"errors"
+	"fmt"
+	"time"
+
+	"github.com/jmoiron/sqlx"
+
+	"github.com/lbrty/observer/internal/domain/reference"
+	"github.com/lbrty/observer/internal/repository"
+)
+
+// categoryRepo is a PostgreSQL-backed category repository.
+type categoryRepo struct {
+	db *sqlx.DB
+}
+
+// NewCategory creates a CategoryRepository.
+func NewCategory(db *sqlx.DB) repository.CategoryRepository {
+	return &categoryRepo{db: db}
+}
+
+func scanCategory(row interface{ Scan(dest ...any) error }) (*reference.Category, error) {
+	var c reference.Category
+	if err := row.Scan(&c.ID, &c.Name, &c.Description, &c.CreatedAt, &c.UpdatedAt); err != nil {
+		return nil, err
+	}
+	repository.TimesToUTC(&c.CreatedAt, &c.UpdatedAt)
+	return &c, nil
+}
+
+func (r *categoryRepo) List(ctx context.Context) ([]*reference.Category, error) {
+	const q = `SELECT id, name, description, created_at, updated_at FROM categories ORDER BY name`
+	rows, err := r.db.QueryContext(ctx, q)
+	if err != nil {
+		return nil, fmt.Errorf("list categories: %w", err)
+	}
+	defer rows.Close()
+
+	var out []*reference.Category
+	for rows.Next() {
+		c, err := scanCategory(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan category: %w", err)
+		}
+		out = append(out, c)
+	}
+	return out, rows.Err()
+}
+
+func (r *categoryRepo) GetByID(ctx context.Context, id string) (*reference.Category, error) {
+	const q = `SELECT id, name, description, created_at, updated_at FROM categories WHERE id = $1`
+	c, err := scanCategory(r.db.QueryRowContext(ctx, q, id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, reference.ErrCategoryNotFound
+		}
+		return nil, fmt.Errorf("get category: %w", err)
+	}
+	return c, nil
+}
+
+func (r *categoryRepo) Create(ctx context.Context, c *reference.Category) error {
+	const q = `
+		INSERT INTO categories (id, name, description, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5)
+	`
+	now := time.Now().UTC()
+	c.CreatedAt = now
+	c.UpdatedAt = now
+	_, err := r.db.ExecContext(ctx, q, c.ID, c.Name, c.Description, c.CreatedAt, c.UpdatedAt)
+	if err != nil {
+		if repository.IsUniqueViolation(err) {
+			return reference.ErrCategoryNameExists
+		}
+		return fmt.Errorf("create category: %w", err)
+	}
+	return nil
+}
+
+func (r *categoryRepo) Update(ctx context.Context, c *reference.Category) error {
+	const q = `
+		UPDATE categories
+		SET name=$2, description=$3, updated_at=$4
+		WHERE id=$1
+	`
+	c.UpdatedAt = time.Now().UTC()
+	res, err := r.db.ExecContext(ctx, q, c.ID, c.Name, c.Description, c.UpdatedAt)
+	if err != nil {
+		if repository.IsUniqueViolation(err) {
+			return reference.ErrCategoryNameExists
+		}
+		return fmt.Errorf("update category: %w", err)
+	}
+	return repository.CheckRowsAffected(res, reference.ErrCategoryNotFound)
+}
+
+func (r *categoryRepo) Delete(ctx context.Context, id string) error {
+	const q = `DELETE FROM categories WHERE id = $1`
+	res, err := r.db.ExecContext(ctx, q, id)
+	if err != nil {
+		return fmt.Errorf("delete category: %w", err)
+	}
+	return repository.CheckRowsAffected(res, reference.ErrCategoryNotFound)
+}

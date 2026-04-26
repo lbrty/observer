@@ -9,6 +9,19 @@ import (
 	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/database"
 	"github.com/lbrty/observer/internal/repository"
+	repoaudit "github.com/lbrty/observer/internal/repository/audit"
+	repoauth "github.com/lbrty/observer/internal/repository/auth"
+	repohousehold "github.com/lbrty/observer/internal/repository/household"
+	repomigration "github.com/lbrty/observer/internal/repository/migration"
+	repoperson "github.com/lbrty/observer/internal/repository/person"
+	repopet "github.com/lbrty/observer/internal/repository/pet"
+	repoproj "github.com/lbrty/observer/internal/repository/project"
+	reporeference "github.com/lbrty/observer/internal/repository/reference"
+	reporeport "github.com/lbrty/observer/internal/repository/report"
+	reposearch "github.com/lbrty/observer/internal/repository/search"
+	reposupport "github.com/lbrty/observer/internal/repository/support"
+	repotag "github.com/lbrty/observer/internal/repository/tag"
+	repouser "github.com/lbrty/observer/internal/repository/user"
 	"github.com/lbrty/observer/internal/storage"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
@@ -81,7 +94,6 @@ type Container struct {
 
 	// Search
 	SearchUC *ucsearch.SearchUseCase
-
 }
 
 // NewContainer wires all dependencies from config, database, and redis.
@@ -93,35 +105,35 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 
 	sqlxDB := db.GetDB()
 
-	userRepo := repository.NewUserRepository(sqlxDB)
-	credRepo := repository.NewCredentialsRepository(sqlxDB)
-	sessionRepo := repository.NewSessionRepository(sqlxDB)
-	mfaRepo := repository.NewMFARepository(sqlxDB)
-	mfaRecoveryRepo := repository.NewMFARecoveryCodeRepository(sqlxDB)
-	permRepo := repository.NewPermissionRepository(sqlxDB)
-	permCRUDRepo := repository.NewProjectPermissionRepository(sqlxDB)
-	countryRepo := repository.NewCountryRepository(sqlxDB)
-	stateRepo := repository.NewStateRepository(sqlxDB)
-	placeRepo := repository.NewPlaceRepository(sqlxDB)
-	officeRepo := repository.NewOfficeRepository(sqlxDB)
-	categoryRepo := repository.NewCategoryRepository(sqlxDB)
-	projectRepo := repository.NewProjectRepository(sqlxDB)
-	tagRepo := repository.NewTagRepository(sqlxDB)
-	personRepo := repository.NewPersonRepository(sqlxDB)
-	personCatRepo := repository.NewPersonCategoryRepository(sqlxDB)
-	personTagRepo := repository.NewPersonTagRepository(sqlxDB)
-	supportRepo := repository.NewSupportRecordRepository(sqlxDB)
-	migrationRepo := repository.NewMigrationRecordRepository(sqlxDB)
-	householdRepo := repository.NewHouseholdRepository(sqlxDB)
-	householdMemberRepo := repository.NewHouseholdMemberRepository(sqlxDB)
-	noteRepo := repository.NewPersonNoteRepository(sqlxDB)
-	documentRepo := repository.NewDocumentRepository(sqlxDB)
-	petRepo := repository.NewPetRepository(sqlxDB)
-	petTagRepo := repository.NewPetTagRepository(sqlxDB)
-	searchRepo := repository.NewSearchRepository(sqlxDB)
-	auditRepo := repository.NewAuditLogRepository(sqlxDB)
-	reportRepo := repository.NewReportRepository(sqlxDB)
-	petReportRepo := repository.NewPetReportRepository(sqlxDB)
+	userRepo := repouser.New(sqlxDB)
+	credRepo := repouser.NewCredentials(sqlxDB)
+	sessionRepo := repoauth.NewSession(sqlxDB)
+	mfaRepo := repouser.NewMFA(sqlxDB)
+	mfaRecoveryRepo := repouser.NewMFARecovery(sqlxDB)
+	permRepo := repoproj.NewLoader(sqlxDB)
+	permCRUDRepo := repoproj.NewCRUD(sqlxDB)
+	countryRepo := reporeference.NewCountry(sqlxDB)
+	stateRepo := reporeference.NewState(sqlxDB)
+	placeRepo := reporeference.NewPlace(sqlxDB)
+	officeRepo := reporeference.NewOffice(sqlxDB)
+	categoryRepo := reporeference.NewCategory(sqlxDB)
+	projectRepo := repoproj.New(sqlxDB)
+	tagRepo := repotag.New(sqlxDB)
+	personRepo := repoperson.New(sqlxDB)
+	personCatRepo := repoperson.NewCategory(sqlxDB)
+	personTagRepo := repoperson.NewTag(sqlxDB)
+	supportRepo := reposupport.New(sqlxDB)
+	migrationRepo := repomigration.New(sqlxDB)
+	householdRepo := repohousehold.New(sqlxDB)
+	householdMemberRepo := repohousehold.NewMember(sqlxDB)
+	noteRepo := repoperson.NewNote(sqlxDB)
+	documentRepo := repoperson.NewDocument(sqlxDB)
+	petRepo := repopet.New(sqlxDB)
+	petTagRepo := repopet.NewTag(sqlxDB)
+	searchRepo := reposearch.New(sqlxDB)
+	auditRepo := repoaudit.New(sqlxDB)
+	reportRepo := reporeport.New(sqlxDB)
+	petReportRepo := repopet.NewReport(sqlxDB)
 
 	var fileStorage storage.FileStorage
 	switch cfg.Storage.Backend {
@@ -144,7 +156,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	)
 
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
-	loginAttemptStore := repository.NewLoginAttemptStore(redisClient, userRepo)
+	loginAttemptStore := repoauth.NewLoginAttemptStore(redisClient, userRepo)
 
 	authUC := ucauth.NewAuthUseCase(userRepo, credRepo, sessionRepo, mfaRepo, mfaRecoveryRepo, hasher, tokenGen, loginAttemptStore)
 	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher, sessionRepo, loginAttemptStore, auditUC)

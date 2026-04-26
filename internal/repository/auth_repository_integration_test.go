@@ -13,13 +13,14 @@ import (
 
 	"github.com/lbrty/observer/internal/domain/auth"
 	"github.com/lbrty/observer/internal/domain/user"
-	"github.com/lbrty/observer/internal/repository"
+	repoauth "github.com/lbrty/observer/internal/repository/auth"
+	repouser "github.com/lbrty/observer/internal/repository/user"
 )
 
 func TestCredentialsRepo_CreateAndGet(t *testing.T) {
 	db := setupTestDB(t)
-	userRepo := repository.NewUserRepository(db)
-	credRepo := repository.NewCredentialsRepository(db)
+	userRepo := repouser.New(db)
+	credRepo := repouser.NewCredentials(db)
 	ctx := context.Background()
 
 	u := makeUser("cred-create@test.com", "+12000000001")
@@ -42,8 +43,8 @@ func TestCredentialsRepo_CreateAndGet(t *testing.T) {
 
 func TestCredentialsRepo_Update(t *testing.T) {
 	db := setupTestDB(t)
-	userRepo := repository.NewUserRepository(db)
-	credRepo := repository.NewCredentialsRepository(db)
+	userRepo := repouser.New(db)
+	credRepo := repouser.NewCredentials(db)
 	ctx := context.Background()
 
 	u := makeUser("cred-update@test.com", "+12000000002")
@@ -69,8 +70,8 @@ func TestCredentialsRepo_Update(t *testing.T) {
 
 func TestSessionRepo_CreateAndGet(t *testing.T) {
 	db := setupTestDB(t)
-	userRepo := repository.NewUserRepository(db)
-	sessionRepo := repository.NewSessionRepository(db)
+	userRepo := repouser.New(db)
+	sessionRepo := repoauth.NewSession(db)
 	ctx := context.Background()
 
 	u := makeUser("session-create@test.com", "+12000000003")
@@ -98,8 +99,8 @@ func TestSessionRepo_CreateAndGet(t *testing.T) {
 
 func TestSessionRepo_Delete(t *testing.T) {
 	db := setupTestDB(t)
-	userRepo := repository.NewUserRepository(db)
-	sessionRepo := repository.NewSessionRepository(db)
+	userRepo := repouser.New(db)
+	sessionRepo := repoauth.NewSession(db)
 	ctx := context.Background()
 
 	u := makeUser("session-delete@test.com", "+12000000004")

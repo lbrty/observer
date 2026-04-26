@@ -11,7 +11,7 @@ import (
 	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/database"
 	"github.com/lbrty/observer/internal/domain/user"
-	"github.com/lbrty/observer/internal/repository"
+	repouser "github.com/lbrty/observer/internal/repository/user"
 	"github.com/lbrty/observer/internal/ulid"
 )
 
@@ -71,8 +71,8 @@ func runCreateAdmin(cmd *cobra.Command, _ []string) error {
 	defer db.Close()
 
 	sqlxDB := db.GetDB()
-	userRepo := repository.NewUserRepository(sqlxDB)
-	credRepo := repository.NewCredentialsRepository(sqlxDB)
+	userRepo := repouser.New(sqlxDB)
+	credRepo := repouser.NewCredentials(sqlxDB)
 	hasher := crypto.NewArgonHasher()
 
 	ctx := context.Background()

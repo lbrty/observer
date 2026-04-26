@@ -14,6 +14,8 @@ import (
 	"github.com/lbrty/observer/internal/domain/project"
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/repository"
+	repoproj "github.com/lbrty/observer/internal/repository/project"
+	repouser "github.com/lbrty/observer/internal/repository/user"
 	iulid "github.com/lbrty/observer/internal/ulid"
 )
 
@@ -47,8 +49,8 @@ func createOwnerUser(t *testing.T, ctx context.Context, userRepo repository.User
 
 func TestProjectRepo_CRUD(t *testing.T) {
 	db := setupTestDB(t)
-	userRepo := repository.NewUserRepository(db)
-	projectRepo := repository.NewProjectRepository(db)
+	userRepo := repouser.New(db)
+	projectRepo := repoproj.New(db)
 	ctx := context.Background()
 
 	owner := createOwnerUser(t, ctx, userRepo)
@@ -81,8 +83,8 @@ func TestProjectRepo_CRUD(t *testing.T) {
 
 func TestProjectRepo_ListWithFilter(t *testing.T) {
 	db := setupTestDB(t)
-	userRepo := repository.NewUserRepository(db)
-	projectRepo := repository.NewProjectRepository(db)
+	userRepo := repouser.New(db)
+	projectRepo := repoproj.New(db)
 	ctx := context.Background()
 
 	owner := createOwnerUser(t, ctx, userRepo)
@@ -121,9 +123,9 @@ func TestProjectRepo_ListWithFilter(t *testing.T) {
 
 func TestPermissionRepo_CRUD(t *testing.T) {
 	db := setupTestDB(t)
-	userRepo := repository.NewUserRepository(db)
-	projectRepo := repository.NewProjectRepository(db)
-	permRepo := repository.NewProjectPermissionRepository(db)
+	userRepo := repouser.New(db)
+	projectRepo := repoproj.New(db)
+	permRepo := repoproj.NewCRUD(db)
 	ctx := context.Background()
 
 	owner := createOwnerUser(t, ctx, userRepo)

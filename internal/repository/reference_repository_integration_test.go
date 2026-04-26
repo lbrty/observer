@@ -10,13 +10,13 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/lbrty/observer/internal/domain/reference"
-	"github.com/lbrty/observer/internal/repository"
+	reporeference "github.com/lbrty/observer/internal/repository/reference"
 	iulid "github.com/lbrty/observer/internal/ulid"
 )
 
 func TestCountryRepo_CRUD(t *testing.T) {
 	db := setupTestDB(t)
-	repo := repository.NewCountryRepository(db)
+	repo := reporeference.NewCountry(db)
 	ctx := context.Background()
 
 	c := &reference.Country{
@@ -57,7 +57,7 @@ func TestCountryRepo_CRUD(t *testing.T) {
 
 func TestCountryRepo_DuplicateCode(t *testing.T) {
 	db := setupTestDB(t)
-	repo := repository.NewCountryRepository(db)
+	repo := reporeference.NewCountry(db)
 	ctx := context.Background()
 
 	c1 := &reference.Country{ID: iulid.NewString(), Name: "Country A", Code: "XX"}
@@ -70,8 +70,8 @@ func TestCountryRepo_DuplicateCode(t *testing.T) {
 
 func TestStateRepo_CRUD(t *testing.T) {
 	db := setupTestDB(t)
-	countryRepo := repository.NewCountryRepository(db)
-	stateRepo := repository.NewStateRepository(db)
+	countryRepo := reporeference.NewCountry(db)
+	stateRepo := reporeference.NewState(db)
 	ctx := context.Background()
 
 	country := &reference.Country{ID: iulid.NewString(), Name: "Ukraine", Code: "UA"}
@@ -117,9 +117,9 @@ func TestStateRepo_CRUD(t *testing.T) {
 
 func TestPlaceRepo_CRUD(t *testing.T) {
 	db := setupTestDB(t)
-	countryRepo := repository.NewCountryRepository(db)
-	stateRepo := repository.NewStateRepository(db)
-	placeRepo := repository.NewPlaceRepository(db)
+	countryRepo := reporeference.NewCountry(db)
+	stateRepo := reporeference.NewState(db)
+	placeRepo := reporeference.NewPlace(db)
 	ctx := context.Background()
 
 	country := &reference.Country{ID: iulid.NewString(), Name: "Ukraine", Code: "UA"}
@@ -169,7 +169,7 @@ func TestPlaceRepo_CRUD(t *testing.T) {
 
 func TestOfficeRepo_CRUD(t *testing.T) {
 	db := setupTestDB(t)
-	repo := repository.NewOfficeRepository(db)
+	repo := reporeference.NewOffice(db)
 	ctx := context.Background()
 
 	o := &reference.Office{
@@ -206,7 +206,7 @@ func TestOfficeRepo_CRUD(t *testing.T) {
 
 func TestCategoryRepo_CRUD(t *testing.T) {
 	db := setupTestDB(t)
-	repo := repository.NewCategoryRepository(db)
+	repo := reporeference.NewCategory(db)
 	ctx := context.Background()
 
 	desc := "Internally displaced persons"
@@ -246,7 +246,7 @@ func TestCategoryRepo_CRUD(t *testing.T) {
 
 func TestCategoryRepo_DuplicateName(t *testing.T) {
 	db := setupTestDB(t)
-	repo := repository.NewCategoryRepository(db)
+	repo := reporeference.NewCategory(db)
 	ctx := context.Background()
 
 	c1 := &reference.Category{ID: iulid.NewString(), Name: "Unique Name"}
