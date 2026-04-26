@@ -6,6 +6,8 @@ import (
 	"time"
 
 	domainreport "github.com/lbrty/observer/internal/domain/report"
+	"github.com/lbrty/observer/internal/domain/person"
+	"github.com/lbrty/observer/internal/domain/support"
 	"github.com/lbrty/observer/internal/repository"
 )
 
@@ -47,16 +49,20 @@ func (uc *ReportUseCase) Generate(ctx context.Context, projectID string, input R
 		f.ConsultantID = &input.ConsultantID
 	}
 	if input.CaseStatus != "" {
-		f.CaseStatus = &input.CaseStatus
+		cs := person.CaseStatus(input.CaseStatus)
+		f.CaseStatus = &cs
 	}
 	if input.Sex != "" {
-		f.Sex = &input.Sex
+		sx := person.Sex(input.Sex)
+		f.Sex = &sx
 	}
 	if input.AgeGroup != "" {
-		f.AgeGroup = &input.AgeGroup
+		ag := person.AgeGroup(input.AgeGroup)
+		f.AgeGroup = &ag
 	}
 	if input.SupportType != "" {
-		f.SupportType = &input.SupportType
+		st := support.SupportType(input.SupportType)
+		f.SupportType = &st
 	}
 
 	out := &FullReportOutput{}
@@ -202,7 +208,8 @@ func (uc *ReportUseCase) GenerateCustom(ctx context.Context, projectID string, i
 		f.DateTo = &t
 	}
 	if input.SupportType != "" {
-		f.SupportType = &input.SupportType
+		st := support.SupportType(input.SupportType)
+		f.SupportType = &st
 	}
 	if input.OfficeID != "" {
 		f.OfficeID = &input.OfficeID
@@ -211,10 +218,12 @@ func (uc *ReportUseCase) GenerateCustom(ctx context.Context, projectID string, i
 		f.CategoryID = &input.CategoryID
 	}
 	if input.CaseStatus != "" {
-		f.CaseStatus = &input.CaseStatus
+		cs := person.CaseStatus(input.CaseStatus)
+		f.CaseStatus = &cs
 	}
 	if input.Sex != "" {
-		f.Sex = &input.Sex
+		sx := person.Sex(input.Sex)
+		f.Sex = &sx
 	}
 
 	results, total, err := uc.repo.CustomQuery(ctx, projectID, input.Metric, input.GroupBy, f)

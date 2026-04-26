@@ -1,6 +1,11 @@
 package report
 
-import "time"
+import (
+	"time"
+
+	"github.com/lbrty/observer/internal/domain/person"
+	"github.com/lbrty/observer/internal/domain/support"
+)
 
 // ReportFilter contains common filter parameters for all reports.
 type ReportFilter struct {
@@ -10,10 +15,10 @@ type ReportFilter struct {
 	OfficeID     *string
 	CategoryID   *string
 	ConsultantID *string
-	CaseStatus   *string
-	Sex          *string
-	AgeGroup     *string
-	SupportType  *string
+	CaseStatus   *person.CaseStatus
+	Sex          *person.Sex
+	AgeGroup     *person.AgeGroup
+	SupportType  *support.SupportType
 }
 
 // CountResult represents a single count in a report breakdown.
