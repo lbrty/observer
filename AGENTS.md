@@ -13,14 +13,18 @@
 cmd/              # entrypoints
 internal/
   domain/         # entities + repository interfaces
-  usecase/        # business logic (use cases live here, NOT in handlers/DB)
-  handler/        # thin HTTP adapters — delegate to use cases
+  usecase/        # business logic — subdirs mirror domain groups (admin/, auth/, project/, …)
+  handler/        # thin HTTP adapters — subdirs mirror usecase groups (admin/, auth/, project/, …)
+    errors.go     # shared: HandleError, BindJSON, MapDomainError
+    handlertest/  # shared test helpers for handler subdirectory tests
+  repository/     # repository implementations — subdirs mirror domain groups (user/, project/, …)
+    interfaces.go # all repository interfaces
+    mock/         # gomock mocks
   middleware/     # HTTP middleware (auth, RBAC)
-  postgres/       # repository implementations
   crypto/         # RSA keys, Argon hasher, token generator
   storage/        # file storage interface + local filesystem + S3 impl (ADR-010)
-  config/         # reads env vars with defaults
-  server/         # HTTP server setup
+  config/         # reads env vars via github.com/sultaniman/env
+  server/         # HTTP server setup + route wiring
   app/            # DI container (manual wiring)
 adr/              # architectural decision records
 migrations/       # forward-only SQL migrations
@@ -54,7 +58,7 @@ packages/observer-web/src/
 - Business logic in `internal/usecase/`, never in handlers or SQL
 - Handlers are thin — bind request, call use case, return response
 - Manual DI wired in `internal/app/container.go`
-- Domain entities define repository interfaces; `internal/postgres/` implements them
+- Domain entities define repository interfaces; `internal/repository/<group>/` implements them
 - `ulid.ULID` for entity IDs, `string` in DTOs (via `.String()`)
 - Prefer well-maintained, widely-known libs (Gin, testify, gomock, testcontainers-go, sqlx)
 - Pragmatic MVP: core functionality first, defer advanced features (MEK/DEK, detailed audit logs) to Phase 2
