@@ -12,37 +12,38 @@
 
 ## File Map
 
-| File | Changes |
-|---|---|
-| `internal/domain/pet/entity.go` | Add `PetListFilter` struct |
-| `internal/domain/search/types.go` | **Create** — move `SearchHits`, `PersonHit`, `PetHit`, `ProjectHit` here |
-| `internal/repository/interfaces.go` | Update `PetRepository.List`, `SearchRepository.Search`, add `PersonCategoryRepository.ListBulk`, add `MigrationRecordRepository.Delete`, update `MFARecoveryCodeRepository.MarkUsed` |
-| `internal/repository/search_types.go` | **Delete** |
-| `internal/repository/pet_repository.go` | Update `petRepo.List` to accept `pet.PetListFilter` |
-| `internal/repository/person_repository.go` | Add `ListBulk` to `personCategoryRepo` |
-| `internal/repository/migration_record_repository.go` | Add `Delete` method |
-| `internal/repository/mfa_recovery_code_repository.go` | Update `FindUnused` scan, `MarkUsed` param, `CreateBatch` ID serialisation |
-| `internal/repository/audit_repository.go` | Update insert and scan for `*string` IP/UserAgent |
-| `internal/repository/search_repository.go` | Update to use `domainsearch.SearchHits` etc. |
-| `internal/repository/generate.go` | **Create** — single source-mode `//go:generate` |
-| `internal/repository/mock/repository.go` | Regenerated (do not edit manually) |
-| `internal/domain/user/entity.go` | Change `MFARecoveryCode.ID` to `ulid.ULID` |
-| `internal/domain/audit/entity.go` | Change `IP`, `UserAgent` to `*string`; annotate enrichment fields |
-| `internal/domain/household/entity.go` | Annotate enrichment fields |
-| `internal/domain/support/entity.go` | Annotate enrichment fields |
-| `internal/usecase/project/pet_usecase.go` | Build `pet.PetListFilter` before calling repo |
-| `internal/usecase/project/migration_record_usecase.go` | Add `Delete` method |
-| `internal/usecase/auth/mfa_usecase.go` | Update `generateRecoveryCodes` to use `ulid.New()` |
-| `internal/usecase/audit/audit_usecase.go` | Update `Record` and `Log` to pass `*string` IP/UserAgent |
-| `internal/usecase/audit/types.go` | Change `EntryDTO.IP` and `EntryDTO.UserAgent` to `*string` |
-| `internal/handler/migration_record_handler.go` | Add `Delete` handler method |
-| `internal/server/routes.go` | Register `DELETE /people/:person_id/migration-records/:id` |
+| File                                                   | Changes                                                                                                                                                                              |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `internal/domain/pet/entity.go`                        | Add `PetListFilter` struct                                                                                                                                                           |
+| `internal/domain/search/types.go`                      | **Create** — move `SearchHits`, `PersonHit`, `PetHit`, `ProjectHit` here                                                                                                             |
+| `internal/repository/interfaces.go`                    | Update `PetRepository.List`, `SearchRepository.Search`, add `PersonCategoryRepository.ListBulk`, add `MigrationRecordRepository.Delete`, update `MFARecoveryCodeRepository.MarkUsed` |
+| `internal/repository/search_types.go`                  | **Delete**                                                                                                                                                                           |
+| `internal/repository/pet_repository.go`                | Update `petRepo.List` to accept `pet.PetListFilter`                                                                                                                                  |
+| `internal/repository/person_repository.go`             | Add `ListBulk` to `personCategoryRepo`                                                                                                                                               |
+| `internal/repository/migration_record_repository.go`   | Add `Delete` method                                                                                                                                                                  |
+| `internal/repository/mfa_recovery_code_repository.go`  | Update `FindUnused` scan, `MarkUsed` param, `CreateBatch` ID serialisation                                                                                                           |
+| `internal/repository/audit_repository.go`              | Update insert and scan for `*string` IP/UserAgent                                                                                                                                    |
+| `internal/repository/search_repository.go`             | Update to use `domainsearch.SearchHits` etc.                                                                                                                                         |
+| `internal/repository/generate.go`                      | **Create** — single source-mode `//go:generate`                                                                                                                                      |
+| `internal/repository/mock/repository.go`               | Regenerated (do not edit manually)                                                                                                                                                   |
+| `internal/domain/user/entity.go`                       | Change `MFARecoveryCode.ID` to `ulid.ULID`                                                                                                                                           |
+| `internal/domain/audit/entity.go`                      | Change `IP`, `UserAgent` to `*string`; annotate enrichment fields                                                                                                                    |
+| `internal/domain/household/entity.go`                  | Annotate enrichment fields                                                                                                                                                           |
+| `internal/domain/support/entity.go`                    | Annotate enrichment fields                                                                                                                                                           |
+| `internal/usecase/project/pet_usecase.go`              | Build `pet.PetListFilter` before calling repo                                                                                                                                        |
+| `internal/usecase/project/migration_record_usecase.go` | Add `Delete` method                                                                                                                                                                  |
+| `internal/usecase/auth/mfa_usecase.go`                 | Update `generateRecoveryCodes` to use `ulid.New()`                                                                                                                                   |
+| `internal/usecase/audit/audit_usecase.go`              | Update `Record` and `Log` to pass `*string` IP/UserAgent                                                                                                                             |
+| `internal/usecase/audit/types.go`                      | Change `EntryDTO.IP` and `EntryDTO.UserAgent` to `*string`                                                                                                                           |
+| `internal/handler/migration_record_handler.go`         | Add `Delete` handler method                                                                                                                                                          |
+| `internal/server/routes.go`                            | Register `DELETE /people/:person_id/migration-records/:id`                                                                                                                           |
 
 ---
 
 ## Task 1: Add `PetListFilter` and update `PetRepository.List`
 
 **Files:**
+
 - Modify: `internal/domain/pet/entity.go`
 - Modify: `internal/repository/interfaces.go`
 - Modify: `internal/repository/pet_repository.go`
@@ -207,6 +208,7 @@ git commit -m "Introduce PetListFilter and update PetRepository.List"
 ## Task 2: Move `SearchHits` to the domain layer
 
 **Files:**
+
 - Create: `internal/domain/search/types.go`
 - Modify: `internal/repository/interfaces.go`
 - Modify: `internal/repository/search_repository.go`
@@ -271,6 +273,7 @@ domainsearch "github.com/lbrty/observer/internal/domain/search"
 ```
 
 Replace all unqualified type references:
+
 - `&SearchHits{}` → `&domainsearch.SearchHits{}`
 - `SearchHits` (as a variable type) → `domainsearch.SearchHits`
 - `PersonHit` → `domainsearch.PersonHit`
@@ -317,6 +320,7 @@ git commit -m "Move SearchHits to internal/domain/search"
 ## Task 3: Add `PersonCategoryRepository.ListBulk`
 
 **Files:**
+
 - Modify: `internal/repository/interfaces.go`
 - Modify: `internal/repository/person_repository.go`
 
@@ -411,6 +415,7 @@ git commit -m "Add PersonCategoryRepository.ListBulk"
 ## Task 4: Add `MigrationRecordRepository.Delete` with use case, handler, and route
 
 **Files:**
+
 - Modify: `internal/repository/interfaces.go`
 - Modify: `internal/repository/migration_record_repository.go`
 - Modify: `internal/usecase/project/migration_record_usecase.go`
@@ -574,6 +579,7 @@ git commit -m "Add Delete to MigrationRecordRepository, use case, handler, and r
 ## Task 5: Change `MFARecoveryCode.ID` from `string` to `ulid.ULID`
 
 **Files:**
+
 - Modify: `internal/domain/user/entity.go`
 - Modify: `internal/repository/interfaces.go`
 - Modify: `internal/repository/mfa_recovery_code_repository.go`
@@ -615,11 +621,13 @@ MarkUsed(ctx context.Context, id ulid.ULID) error
 In `internal/repository/mfa_recovery_code_repository.go`:
 
 a) In `CreateBatch`, change the insert to serialize `ID` to string:
+
 ```go
 if _, err := r.db.ExecContext(ctx, q, c.ID.String(), c.UserID.String(), c.CodeHash, c.CreatedAt); err != nil {
 ```
 
 b) In `FindUnused`, parse the scanned `ID` string into `ulid.ULID`:
+
 ```go
 parsedID, err := ulid.Parse(row.ID)
 if err != nil {
@@ -635,6 +643,7 @@ return &domainuser.MFARecoveryCode{
 ```
 
 c) In `MarkUsed`, change the parameter type and use `.String()` in the query:
+
 ```go
 func (r *mfaRecoveryCodeRepo) MarkUsed(ctx context.Context, id ulid.ULID) error {
 	const q = `UPDATE mfa_recovery_codes SET used_at = NOW() WHERE id = $1`
@@ -646,11 +655,13 @@ func (r *mfaRecoveryCodeRepo) MarkUsed(ctx context.Context, id ulid.ULID) error 
 - [ ] **Step 4: Update `generateRecoveryCodes` in the MFA use case**
 
 In `internal/usecase/auth/mfa_usecase.go`, `generateRecoveryCodes` currently sets:
+
 ```go
 ID: iulid.NewString(),
 ```
 
 Change to:
+
 ```go
 ID: iulid.New(),
 ```
@@ -689,6 +700,7 @@ git commit -m "Change MFARecoveryCode.ID to ulid.ULID"
 ## Task 6: Fix `audit.Entry` IP/UserAgent nullability
 
 **Files:**
+
 - Modify: `internal/domain/audit/entity.go`
 - Modify: `internal/repository/audit_repository.go`
 - Modify: `internal/usecase/audit/audit_usecase.go`
@@ -815,6 +827,7 @@ git commit -m "Fix audit.Entry IP and UserAgent to *string matching nullable DB 
 ## Task 7: Annotate enrichment fields as read-only projections
 
 **Files:**
+
 - Modify: `internal/domain/household/entity.go`
 - Modify: `internal/domain/support/entity.go`
 - Modify: `internal/domain/audit/entity.go`
@@ -882,6 +895,7 @@ git commit -m "Annotate enrichment fields as read-only projections on entity str
 ## Task 8: Replace giant `//go:generate` with source mode
 
 **Files:**
+
 - Create: `internal/repository/generate.go`
 - Modify: `internal/repository/interfaces.go`
 
@@ -906,9 +920,11 @@ just generate-mocks
 ```
 
 Expected: `internal/repository/mock/repository.go` regenerated. The file header now reads:
+
 ```
 // Source: interfaces.go
 ```
+
 and includes `MockSearchRepository` which was previously missing from the reflect-mode list.
 
 - [ ] **Step 4: Run full test suite**

@@ -110,12 +110,6 @@ Hooks mirror the same domain layout under `src/hooks/`: `reference/`, `people/`,
 - React compiler enabled — omit effect dependencies where possible
 - Constants live in `constants/<domain>.ts`; i18n key maps go in `constants/i18n.ts`
 
-### Tailwind `@apply` Order
-
-When >10 rules, separate `@apply` per group on its own line:
-
-positioning > layout > sizing > borders > background > padding/margin > text > transforms > rest
-
 ## Do's and Don'ts
 
 ### Do

@@ -20,6 +20,7 @@ agreed design for fixing all of them in a single sweep (Approach A).
 putting a domain result type below the domain boundary.
 
 **Fix:**
+
 - Create `internal/domain/search/types.go` with `SearchHits` and all nested types.
 - Update `internal/repository/interfaces.go` to import and reference `search.SearchHits`.
 - Update `internal/repository/search_repository.go` implementation to use the domain type.
@@ -34,6 +35,7 @@ putting a domain result type below the domain boundary.
 making it a breaking change to add any new filter field.
 
 **Fix:**
+
 - Add `PetListFilter` struct to `internal/domain/pet/entity.go`:
   ```go
   type PetListFilter struct {
@@ -56,6 +58,7 @@ a `Delete` method. Migration records are editable (`UpdatedAt` exists), so omiss
 is an oversight, not intentional immutability.
 
 **Fix:**
+
 - Add `Delete(ctx context.Context, id string) error` to `MigrationRecordRepository` interface.
 - Implement in postgres repository.
 - Regenerate mock.
@@ -69,6 +72,7 @@ is an oversight, not intentional immutability.
 use `ulid.ULID` for their IDs (`User.ID`, `Session.ID`, `VerificationToken.ID`).
 
 **Fix:**
+
 - Change `MFARecoveryCode.ID` from `string` to `ulid.ULID`.
 - Update `MFARecoveryCodeRepository.MarkUsed(ctx, id string)` to `MarkUsed(ctx, id ulid.ULID)`.
 - Update postgres implementation and mock.
@@ -83,6 +87,7 @@ the DB, but `audit.Entry.IP` and `audit.Entry.UserAgent` are non-nullable `strin
 A system-generated entry with no IP/user agent would scan incorrectly.
 
 **Fix:**
+
 - Change `Entry.IP` from `string` to `*string`.
 - Change `Entry.UserAgent` from `string` to `*string`.
 - Update audit log repository implementation (scan + insert).
@@ -97,11 +102,13 @@ A system-generated entry with no IP/user agent would scan incorrectly.
 Create/Update callers must know to leave them zero-valued, but nothing in the code signals this.
 
 Affected:
+
 - `household.Household`: `HeadPersonName *string`, `MemberCount int`
 - `support.Record`: `PersonFirstName *string`, `PersonLastName *string`
 - `audit.Entry`: `UserFirstName string`, `UserLastName string`, `UserEmail string`
 
 **Fix:**
+
 - Add a `// Populated by repository reads; zero-valued on writes.` comment block above
   each group of enrichment fields in the struct definition.
 - No logic changes required.
@@ -115,6 +122,7 @@ efficient list-view hydration. `PersonCategoryRepository` only has `List(personI
 forcing N+1 queries on any list view that shows categories per person.
 
 **Fix:**
+
 - Add `ListBulk(ctx context.Context, personIDs []string) (map[string][]string, error)` to
   `PersonCategoryRepository` interface.
 - Implement in postgres repository using `WHERE person_id = ANY($1)`.
@@ -132,12 +140,15 @@ A bonus bug: `SearchRepository` is defined in `interfaces.go` but absent from th
 meaning it has never been mocked.
 
 **Fix:**
+
 - Create `internal/repository/generate.go`:
+
   ```go
   package repository
 
   //go:generate mockgen -source=interfaces.go -destination=mock/repository.go -package=mock
   ```
+
 - Remove the `//go:generate` line from `interfaces.go`.
 - Source mode auto-discovers all interfaces in the file, including `SearchRepository`.
 - Run `just generate-mocks` to verify the mock regenerates correctly and includes `SearchRepository`.

@@ -55,28 +55,28 @@ weight: 1
 
 ### Speicher
 
-| Variable          | Standard       | Beschreibung                                                              |
-| ----------------- | -------------- | ------------------------------------------------------------------------- |
+| Variable          | Standard       | Beschreibung                                                                  |
+| ----------------- | -------------- | ----------------------------------------------------------------------------- |
 | `STORAGE_PATH`    | `data/uploads` | Lokales Dateisystem-Stammverzeichnis (verwendet wenn `STORAGE_BACKEND=local`) |
-| `STORAGE_BACKEND` | `local`        | Speicher-Backend: `local` oder `s3`                                       |
-| `S3_ENDPOINT`     | `""`           | S3-Endpunkt-URL (leer = AWS-Standard)                                     |
-| `S3_BUCKET`       | `""`           | S3-Bucket-Name (erforderlich wenn Backend `s3` ist)                       |
-| `S3_REGION`       | `us-east-1`    | S3-Region                                                                 |
-| `S3_ACCESS_KEY`   | `""`           | AWS-Access-Key (optional — fällt auf SDK-Chain zurück)                    |
-| `S3_SECRET_KEY`   | `""`           | AWS-Secret-Key (optional — fällt auf SDK-Chain zurück)                    |
+| `STORAGE_BACKEND` | `local`        | Speicher-Backend: `local` oder `s3`                                           |
+| `S3_ENDPOINT`     | `""`           | S3-Endpunkt-URL (leer = AWS-Standard)                                         |
+| `S3_BUCKET`       | `""`           | S3-Bucket-Name (erforderlich wenn Backend `s3` ist)                           |
+| `S3_REGION`       | `us-east-1`    | S3-Region                                                                     |
+| `S3_ACCESS_KEY`   | `""`           | AWS-Access-Key (optional — fällt auf SDK-Chain zurück)                        |
+| `S3_SECRET_KEY`   | `""`           | AWS-Secret-Key (optional — fällt auf SDK-Chain zurück)                        |
 
 ### Sonstiges
 
-| Variable                    | Standard                   | Beschreibung                                        |
-| --------------------------- | -------------------------- | --------------------------------------------------- |
-| `DEV_MODE`                  | `false`                    | Entwicklungsmodus aktivieren                        |
-| `LOG_LEVEL`                 | `info`                     | Log-Level                                           |
-| `REDIS_URL`                 | `redis://localhost:6379/0` | Redis-Verbindungs-URL                               |
-| `SWAGGER_ENABLED`           | `false`                    | Swagger UI unter `/swagger/` aktivieren             |
-| `RATE_LIMIT_LOGIN`          | `10`                       | Max. Anmeldeversuche pro Minute                     |
-| `RATE_LIMIT_REGISTER`       | `5`                        | Max. Registrierungsversuche pro Minute              |
-| `SENTRY_DSN`                | `""`                       | Sentry DSN (leer — Sentry deaktiviert)              |
-| `SENTRY_TRACES_SAMPLE_RATE` | `0.1`                      | Sentry-Performance-Traces-Stichprobenrate           |
+| Variable                    | Standard                   | Beschreibung                              |
+| --------------------------- | -------------------------- | ----------------------------------------- |
+| `DEV_MODE`                  | `false`                    | Entwicklungsmodus aktivieren              |
+| `LOG_LEVEL`                 | `info`                     | Log-Level                                 |
+| `REDIS_URL`                 | `redis://localhost:6379/0` | Redis-Verbindungs-URL                     |
+| `SWAGGER_ENABLED`           | `false`                    | Swagger UI unter `/swagger/` aktivieren   |
+| `RATE_LIMIT_LOGIN`          | `10`                       | Max. Anmeldeversuche pro Minute           |
+| `RATE_LIMIT_REGISTER`       | `5`                        | Max. Registrierungsversuche pro Minute    |
+| `SENTRY_DSN`                | `""`                       | Sentry DSN (leer — Sentry deaktiviert)    |
+| `SENTRY_TRACES_SAMPLE_RATE` | `0.1`                      | Sentry-Performance-Traces-Stichprobenrate |
 
 ## Frontend-Umgebungsvariablen
 
