@@ -49,6 +49,10 @@ func MapDomainError(err error) (int, string) {
 		return http.StatusNotFound, "errors.user.notFound"
 	case errors.Is(err, user.ErrInvalidRole):
 		return http.StatusBadRequest, "errors.user.invalidRole"
+	case errors.Is(err, user.ErrMFAConfigNotFound):
+		return http.StatusNotFound, "errors.user.mfaConfigNotFound"
+	case errors.Is(err, user.ErrMFARecoveryCodeNotFound):
+		return http.StatusNotFound, "errors.user.mfaRecoveryCodeNotFound"
 
 	// Auth/session errors
 	case errors.Is(err, domainauth.ErrSessionNotFound):
