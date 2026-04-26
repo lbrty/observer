@@ -22,6 +22,11 @@ func NewPetRepository(db *sqlx.DB) PetRepository {
 	return &petRepo{db: db}
 }
 
+const petColumns = `id, project_id, owner_id, name, status, registration_id, notes, created_at, updated_at`
+
+// petColumnsTagged is the same list with explicit "pets." qualifier for tag-filtered queries.
+const petColumnsTagged = `pets.id, pets.project_id, pets.owner_id, pets.name, pets.status, pets.registration_id, pets.notes, pets.created_at, pets.updated_at`
+
 func scanPet(row interface{ Scan(dest ...any) error }) (*pet.Pet, error) {
 	var p pet.Pet
 	if err := row.Scan(&p.ID, &p.ProjectID, &p.OwnerID, &p.Name, &p.Status, &p.RegistrationID, &p.Notes, &p.CreatedAt, &p.UpdatedAt); err != nil {
@@ -67,9 +72,6 @@ func (r *petRepo) List(ctx context.Context, filter pet.PetListFilter) ([]*pet.Pe
 	if err := r.db.QueryRowContext(ctx, countSQL, countArgs...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count pets: %w", err)
 	}
-
-	const petColumns = `id, project_id, owner_id, name, status, registration_id, notes, created_at, updated_at`
-	const petColumnsTagged = `pets.id, pets.project_id, pets.owner_id, pets.name, pets.status, pets.registration_id, pets.notes, pets.created_at, pets.updated_at`
 
 	var listSQL string
 	var listArgs []any
