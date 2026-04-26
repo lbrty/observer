@@ -64,6 +64,9 @@ func (h *DocumentHandler) Get(c *gin.Context) {
 
 // Upload handles POST /projects/:project_id/people/:person_id/documents (multipart).
 func (h *DocumentHandler) Upload(c *gin.Context) {
+	if !requireDocPerm(c) {
+		return
+	}
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxUploadSize)
 
 	file, header, err := c.Request.FormFile("file")
@@ -177,6 +180,9 @@ func (h *DocumentHandler) Thumbnail(c *gin.Context) {
 
 // Update handles PATCH /projects/:project_id/documents/:id.
 func (h *DocumentHandler) Update(c *gin.Context) {
+	if !requireDocPerm(c) {
+		return
+	}
 	input, ok := bindJSON[ucproject.UpdateDocumentInput](c)
 	if !ok {
 		return
@@ -191,6 +197,9 @@ func (h *DocumentHandler) Update(c *gin.Context) {
 
 // Delete handles DELETE /projects/:project_id/documents/:id.
 func (h *DocumentHandler) Delete(c *gin.Context) {
+	if !requireDocPerm(c) {
+		return
+	}
 	if err := h.uc.Delete(c.Request.Context(), c.Param("project_id"), c.Param("id")); err != nil {
 		HandleError(c, err)
 		return

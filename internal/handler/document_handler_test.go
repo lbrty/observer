@@ -174,6 +174,7 @@ func TestDocumentHandler_Update_NotFound(t *testing.T) {
 	}, gin.Params{
 		{Key: "id", Value: id},
 	})
+	setCanViewDocuments(c, true)
 	h.Update(c)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
@@ -200,6 +201,7 @@ func TestDocumentHandler_Update_Success(t *testing.T) {
 		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
+	setCanViewDocuments(c, true)
 	h.Update(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -218,6 +220,7 @@ func TestDocumentHandler_Delete_NotFound(t *testing.T) {
 	c, w := newTestContextWithParams(http.MethodDelete, "/projects/x/documents/"+id, nil, gin.Params{
 		{Key: "id", Value: id},
 	})
+	setCanViewDocuments(c, true)
 	h.Delete(c)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
@@ -243,6 +246,7 @@ func TestDocumentHandler_Delete_Success(t *testing.T) {
 		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
+	setCanViewDocuments(c, true)
 	h.Delete(c)
 
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -261,6 +265,7 @@ func TestDocumentHandler_Upload_RejectsForbiddenMIME(t *testing.T) {
 	htmlContent := []byte("<html><body><script>alert(1)</script></body></html>")
 	c, w := newMultipartUploadContext("evil.html", htmlContent, projectID, personID)
 	setAuthContext(c, testID())
+	setCanViewDocuments(c, true)
 	h.Upload(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -277,6 +282,7 @@ func TestDocumentHandler_Upload_RejectsXMLSVG(t *testing.T) {
 	svgContent := []byte(`<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>`)
 	c, w := newMultipartUploadContext("evil.svg", svgContent, projectID, personID)
 	setAuthContext(c, testID())
+	setCanViewDocuments(c, true)
 	h.Upload(c)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -296,6 +302,7 @@ func TestDocumentHandler_Upload_SanitizesFilename(t *testing.T) {
 	pngHeader := []byte("\x89PNG\r\n\x1a\n" + string(make([]byte, 504)))
 	c, w := newMultipartUploadContext("../../etc/passwd", pngHeader, projectID, personID)
 	setAuthContext(c, testID())
+	setCanViewDocuments(c, true)
 	h.Upload(c)
 
 	// Should succeed (not path traversal), uploading as "passwd"

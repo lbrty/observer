@@ -62,7 +62,7 @@ func (h *NoteHandler) Create(c *gin.Context) {
 	userID, _ := middleware.UserIDFrom(c)
 	out, err := h.uc.Create(c.Request.Context(), projectID, personID, userID.String(), input)
 	if err != nil {
-		internalError(c, "create note", err)
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusCreated, out)

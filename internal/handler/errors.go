@@ -77,6 +77,8 @@ func MapDomainError(err error) (int, string) {
 		return http.StatusConflict, "errors.reference.countryCodeExists"
 	case errors.Is(err, reference.ErrStateNotFound):
 		return http.StatusNotFound, "errors.reference.stateNotFound"
+	case errors.Is(err, reference.ErrStateCodeExists):
+		return http.StatusConflict, "errors.reference.stateCodeExists"
 	case errors.Is(err, reference.ErrPlaceNotFound):
 		return http.StatusNotFound, "errors.reference.placeNotFound"
 	case errors.Is(err, reference.ErrOfficeNotFound):
