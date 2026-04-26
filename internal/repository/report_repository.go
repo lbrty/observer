@@ -518,8 +518,8 @@ func (r *reportRepo) CustomQuery(ctx context.Context, projectID string, metric s
 	}
 
 	qb := psql.
-		Select(strings.Join(selectCols, ", ")+", "+countExpr+" AS count").
-		From(from+joins.String()).
+		Select(strings.Join(selectCols, ", ") + ", " + countExpr + " AS count").
+		From(from + joins.String()).
 		Where(sq.Eq{projectCol: projectID})
 
 	if filter.DateFrom != nil {
