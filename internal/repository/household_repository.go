@@ -50,15 +50,7 @@ func scanMember(row interface{ Scan(dest ...any) error }) (*household.Member, er
 }
 
 func (r *householdRepo) List(ctx context.Context, filter household.HouseholdListFilter) ([]*household.Household, int, error) {
-	page := filter.Page
-	if page < 1 {
-		page = 1
-	}
-
-	perPage := filter.PerPage
-	if perPage < 1 {
-		perPage = 20
-	}
+	perPage, off := normalizePagination(filter.Page, filter.PerPage)
 
 	cond := sq.And{sq.Eq{"h.project_id": filter.ProjectID}}
 	if filter.Search != nil && *filter.Search != "" {
@@ -83,7 +75,7 @@ func (r *householdRepo) List(ctx context.Context, filter household.HouseholdList
 		return nil, 0, fmt.Errorf("count households: %w", err)
 	}
 
-	offset := uint64((page - 1) * perPage)
+	offset := uint64(off)
 	listSQL, listArgs, err := psql.
 		Select(
 			"h.id", "h.project_id", "h.reference_number", "h.head_person_id",

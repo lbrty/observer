@@ -114,15 +114,7 @@ func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) (
 		return nil, 0, fmt.Errorf("count people: %w", err)
 	}
 
-	page := filter.Page
-	if page < 1 {
-		page = 1
-	}
-	perPage := filter.PerPage
-	if perPage < 1 {
-		perPage = 20
-	}
-	offset := (page - 1) * perPage
+	perPage, offset := normalizePagination(filter.Page, filter.PerPage)
 
 	var listSQL string
 	var listArgs []any
@@ -296,31 +288,7 @@ func (r *personCategoryRepo) ListBulk(ctx context.Context, personIDs []string) (
 }
 
 func (r *personCategoryRepo) ReplaceAll(ctx context.Context, personID string, categoryIDs []string) error {
-	tx, err := r.db.BeginTxx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("begin tx: %w", err)
-	}
-	defer tx.Rollback()
-
-	if _, err := tx.ExecContext(ctx, `DELETE FROM person_categories WHERE person_id = $1`, personID); err != nil {
-		return fmt.Errorf("delete person categories: %w", err)
-	}
-
-	if len(categoryIDs) > 0 {
-		iq := psql.Insert("person_categories").Columns("person_id", "category_id")
-		for _, catID := range categoryIDs {
-			iq = iq.Values(personID, catID)
-		}
-		sqlStr, args, err := iq.ToSql()
-		if err != nil {
-			return fmt.Errorf("build insert categories: %w", err)
-		}
-		if _, err := tx.ExecContext(ctx, sqlStr, args...); err != nil {
-			return fmt.Errorf("insert person categories: %w", err)
-		}
-	}
-
-	return tx.Commit()
+	return replaceAllJunction(ctx, r.db, "person_categories", "person_id", "category_id", personID, categoryIDs)
 }
 
 // PersonTag repository
@@ -367,29 +335,5 @@ func (r *personTagRepo) ListBulk(ctx context.Context, entityIDs []string) (map[s
 }
 
 func (r *personTagRepo) ReplaceAll(ctx context.Context, personID string, tagIDs []string) error {
-	tx, err := r.db.BeginTxx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("begin tx: %w", err)
-	}
-	defer tx.Rollback()
-
-	if _, err := tx.ExecContext(ctx, `DELETE FROM person_tags WHERE person_id = $1`, personID); err != nil {
-		return fmt.Errorf("delete person tags: %w", err)
-	}
-
-	if len(tagIDs) > 0 {
-		iq := psql.Insert("person_tags").Columns("person_id", "tag_id")
-		for _, tagID := range tagIDs {
-			iq = iq.Values(personID, tagID)
-		}
-		sqlStr, args, err := iq.ToSql()
-		if err != nil {
-			return fmt.Errorf("build insert tags: %w", err)
-		}
-		if _, err := tx.ExecContext(ctx, sqlStr, args...); err != nil {
-			return fmt.Errorf("insert person tags: %w", err)
-		}
-	}
-
-	return tx.Commit()
+	return replaceAllJunction(ctx, r.db, "person_tags", "person_id", "tag_id", personID, tagIDs)
 }

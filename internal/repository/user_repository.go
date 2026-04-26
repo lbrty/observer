@@ -168,18 +168,11 @@ func (r *userRepo) List(ctx context.Context, filter user.UserListFilter) ([]*use
 		return nil, 0, fmt.Errorf("count users: %w", err)
 	}
 
-	if filter.Page < 1 {
-		filter.Page = 1
-	}
-
-	if filter.PerPage < 1 {
-		filter.PerPage = 20
-	}
-	offset := (filter.Page - 1) * filter.PerPage
+	perPage, offset := normalizePagination(filter.Page, filter.PerPage)
 
 	listSQL, listArgs, err := psql.Select(userColumns).From("users").Where(cond).
 		OrderBy("created_at DESC").
-		Limit(uint64(filter.PerPage)).
+		Limit(uint64(perPage)).
 		Offset(uint64(offset)).
 		ToSql()
 

@@ -43,11 +43,55 @@ func IsUniqueViolation(err error) bool {
 // buildBulkTagQuery builds a SELECT for fetching tag IDs for multiple entities.
 func buildBulkTagQuery(table, fkCol string, entityIDs []string) (string, []any, error) {
 	return psql.
-		Select(fkCol+", tag_id").
+		Select(fkCol + ", tag_id").
 		From(table).
 		Where(sq.Eq{fkCol: entityIDs}).
-		OrderBy(fkCol+", tag_id").
+		OrderBy(fkCol + ", tag_id").
 		ToSql()
+}
+
+// normalizePagination clamps page and perPage to sensible minimums (1 and 20 respectively)
+// and returns the normalized perPage and the SQL OFFSET for use in paginated queries.
+func normalizePagination(page, perPage int) (int, int) {
+	if page < 1 {
+		page = 1
+	}
+	if perPage < 1 {
+		perPage = 20
+	}
+	return perPage, (page - 1) * perPage
+}
+
+// replaceAllJunction atomically replaces all rows for a parent entity in a junction table.
+// It deletes every existing row where parentCol = parentID, then bulk-inserts the new childIDs.
+// If childIDs is empty the delete still runs, leaving the parent with no associations.
+// The whole operation runs in a single transaction so no partial state is ever visible.
+func replaceAllJunction(ctx context.Context, db *sqlx.DB, table, parentCol, childCol, parentID string, childIDs []string) error {
+	tx, err := db.BeginTxx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("begin tx: %w", err)
+	}
+	defer tx.Rollback()
+
+	if _, err := tx.ExecContext(ctx, "DELETE FROM "+table+" WHERE "+parentCol+" = $1", parentID); err != nil {
+		return fmt.Errorf("delete %s: %w", table, err)
+	}
+
+	if len(childIDs) > 0 {
+		iq := psql.Insert(table).Columns(parentCol, childCol)
+		for _, id := range childIDs {
+			iq = iq.Values(parentID, id)
+		}
+		sqlStr, args, err := iq.ToSql()
+		if err != nil {
+			return fmt.Errorf("build insert %s: %w", table, err)
+		}
+		if _, err := tx.ExecContext(ctx, sqlStr, args...); err != nil {
+			return fmt.Errorf("insert %s: %w", table, err)
+		}
+	}
+
+	return tx.Commit()
 }
 
 // queryBulkTags executes a bulk tag query and returns a map of entity ID → tag IDs.
@@ -69,4 +113,3 @@ func queryBulkTags(ctx context.Context, db *sqlx.DB, q string, args []any) (map[
 
 	return result, rows.Err()
 }
-

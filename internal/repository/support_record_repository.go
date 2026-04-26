@@ -105,17 +105,8 @@ func (r *supportRecordRepo) List(ctx context.Context, filter support.RecordListF
 		return nil, 0, fmt.Errorf("count support records: %w", err)
 	}
 
-	page := filter.Page
-	if page < 1 {
-		page = 1
-	}
-
-	perPage := filter.PerPage
-	if perPage < 1 {
-		perPage = 20
-	}
-
-	offset := uint64((page - 1) * perPage)
+	perPage, off := normalizePagination(filter.Page, filter.PerPage)
+	offset := uint64(off)
 
 	listSQL, listArgs, err := psql.
 		Select(supportListCols).

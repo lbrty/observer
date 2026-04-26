@@ -32,14 +32,7 @@ func scanPet(row interface{ Scan(dest ...any) error }) (*pet.Pet, error) {
 }
 
 func (r *petRepo) List(ctx context.Context, filter pet.PetListFilter) ([]*pet.Pet, int, error) {
-	page := filter.Page
-	if page < 1 {
-		page = 1
-	}
-	perPage := filter.PerPage
-	if perPage < 1 {
-		perPage = 20
-	}
+	perPage, offset := normalizePagination(filter.Page, filter.PerPage)
 
 	cond := sq.And{sq.Eq{"project_id": filter.ProjectID}}
 
@@ -74,8 +67,6 @@ func (r *petRepo) List(ctx context.Context, filter pet.PetListFilter) ([]*pet.Pe
 	if err := r.db.QueryRowContext(ctx, countSQL, countArgs...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count pets: %w", err)
 	}
-
-	offset := (page - 1) * perPage
 
 	const petColumns = `id, project_id, owner_id, name, status, registration_id, notes, created_at, updated_at`
 	const petColumnsTagged = `pets.id, pets.project_id, pets.owner_id, pets.name, pets.status, pets.registration_id, pets.notes, pets.created_at, pets.updated_at`
@@ -219,29 +210,5 @@ func (r *petTagRepo) ListBulk(ctx context.Context, entityIDs []string) (map[stri
 }
 
 func (r *petTagRepo) ReplaceAll(ctx context.Context, petID string, tagIDs []string) error {
-	tx, err := r.db.BeginTxx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("begin tx: %w", err)
-	}
-	defer tx.Rollback()
-
-	if _, err := tx.ExecContext(ctx, `DELETE FROM pet_tags WHERE pet_id = $1`, petID); err != nil {
-		return fmt.Errorf("delete pet tags: %w", err)
-	}
-
-	if len(tagIDs) > 0 {
-		iq := psql.Insert("pet_tags").Columns("pet_id", "tag_id")
-		for _, tagID := range tagIDs {
-			iq = iq.Values(petID, tagID)
-		}
-		sqlStr, args, err := iq.ToSql()
-		if err != nil {
-			return fmt.Errorf("build insert tags: %w", err)
-		}
-		if _, err := tx.ExecContext(ctx, sqlStr, args...); err != nil {
-			return fmt.Errorf("insert pet tags: %w", err)
-		}
-	}
-
-	return tx.Commit()
+	return replaceAllJunction(ctx, r.db, "pet_tags", "pet_id", "tag_id", petID, tagIDs)
 }

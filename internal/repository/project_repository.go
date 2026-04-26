@@ -43,17 +43,7 @@ func (r *projectRepo) List(ctx context.Context, filter project.ProjectListFilter
 		return nil, 0, fmt.Errorf("count projects: %w", err)
 	}
 
-	page := filter.Page
-	if page < 1 {
-		page = 1
-	}
-
-	perPage := filter.PerPage
-	if perPage < 1 {
-		perPage = 20
-	}
-
-	offset := (page - 1) * perPage
+	perPage, offset := normalizePagination(filter.Page, filter.PerPage)
 
 	listSQL, listArgs, err := psql.Select("id, name, description, owner_id, status, created_at, updated_at").
 		From("projects").Where(cond).
