@@ -56,7 +56,9 @@ func (s *redisLoginAttemptStore) RecordFailure(ctx context.Context, email string
 
 	// Keep the attempt counter around for 24h so it resets naturally if no further failures.
 	if count == 1 {
-		s.client.Expire(ctx, attemptKey, 24*time.Hour)
+		if err := s.client.Expire(ctx, attemptKey, 24*time.Hour).Err(); err != nil {
+			slog.Warn("set attempt counter ttl", slog.Any("err", err))
+		}
 	}
 
 	if count < int64(maxFreeAttempts) {

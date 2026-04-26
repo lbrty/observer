@@ -77,7 +77,7 @@ func (r *sessionRepo) DeleteByUserID(ctx context.Context, userID ulid.ULID) erro
 func (r *sessionRepo) DeleteExpired(ctx context.Context) (int64, error) {
 	result, err := r.db.ExecContext(ctx, `DELETE FROM sessions WHERE expires_at < NOW()`)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("delete expired sessions: %w", err)
 	}
 	n, _ := result.RowsAffected()
 	return n, nil

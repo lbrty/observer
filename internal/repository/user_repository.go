@@ -230,13 +230,15 @@ func (r *userRepo) Reactivate(ctx context.Context, id ulid.ULID) error {
 }
 
 func (r *userRepo) LockPermanently(ctx context.Context, email string) error {
-	_, err := r.db.ExecContext(
+	res, err := r.db.ExecContext(
 		ctx,
 		`UPDATE users SET locked_permanently_at = NOW() WHERE email = $1`,
 		email,
 	)
-
-	return err
+	if err != nil {
+		return fmt.Errorf("lock user permanently: %w", err)
+	}
+	return CheckRowsAffected(res, user.ErrUserNotFound)
 }
 
 func (r *userRepo) scanUser(row *sql.Row) (*user.User, error) {
