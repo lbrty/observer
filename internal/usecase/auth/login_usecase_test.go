@@ -25,6 +25,7 @@ func setupAuthUseCase(t *testing.T) (
 	*mock_repo.MockCredentialsRepository,
 	*mock_repo.MockSessionRepository,
 	*mock_repo.MockMFARepository,
+	*mock_repo.MockLoginAttemptStore,
 	crypto.PasswordHasher,
 ) {
 	t.Helper()
@@ -35,13 +36,14 @@ func setupAuthUseCase(t *testing.T) (
 	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
 	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
 	mockRecoveryRepo := mock_repo.NewMockMFARecoveryCodeRepository(ctrl)
+	mockLoginAttempts := mock_repo.NewMockLoginAttemptStore(ctrl)
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
 	uc := ucauth.NewAuthUseCase(
-		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen,
+		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mockLoginAttempts,
 	)
-	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher
+	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockLoginAttempts, hasher
 }
 
 // setupAuthUseCaseWithTokenGen is like setupAuthUseCase but also returns the TokenGenerator
@@ -52,6 +54,7 @@ func setupAuthUseCaseWithTokenGen(t *testing.T) (
 	*mock_repo.MockCredentialsRepository,
 	*mock_repo.MockSessionRepository,
 	*mock_repo.MockMFARepository,
+	*mock_repo.MockLoginAttemptStore,
 	crypto.PasswordHasher,
 	crypto.TokenGenerator,
 ) {
@@ -63,13 +66,14 @@ func setupAuthUseCaseWithTokenGen(t *testing.T) (
 	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
 	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
 	mockRecoveryRepo := mock_repo.NewMockMFARecoveryCodeRepository(ctrl)
+	mockLoginAttempts := mock_repo.NewMockLoginAttemptStore(ctrl)
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
 	uc := ucauth.NewAuthUseCase(
-		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen,
+		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mockLoginAttempts,
 	)
-	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher, tokenGen
+	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockLoginAttempts, hasher, tokenGen
 }
 
 func newTestTokenGen(t *testing.T) crypto.TokenGenerator {
@@ -82,7 +86,7 @@ func newTestTokenGen(t *testing.T) crypto.TokenGenerator {
 }
 
 func TestLogin_Success(t *testing.T) {
-	uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, hasher := setupAuthUseCase(t)
+	uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockLoginAttempts, hasher := setupAuthUseCase(t)
 
 	ctx := context.Background()
 	password := "securepassword"
@@ -93,10 +97,12 @@ func TestLogin_Success(t *testing.T) {
 	u := &user.User{ID: uid, Email: "test@example.com", Role: user.RoleConsultant, IsActive: true}
 	cred := &user.Credentials{UserID: uid, PasswordHash: hash, Salt: salt}
 
+	mockLoginAttempts.EXPECT().IsLocked(ctx, u.Email).Return(time.Duration(0), nil)
 	mockUserRepo.EXPECT().GetByEmail(ctx, u.Email).Return(u, nil)
 	mockCredRepo.EXPECT().GetByUserID(ctx, uid).Return(cred, nil)
 	mockMFARepo.EXPECT().GetByUserID(ctx, uid).Return(nil, errors.New("not found"))
 	mockSessionRepo.EXPECT().Create(ctx, gomock.Any()).Return(nil)
+	mockLoginAttempts.EXPECT().ClearAttempts(ctx, u.Email).Return(nil)
 
 	out, err := uc.Login(ctx, ucauth.LoginInput{Email: u.Email, Password: password}, "agent", "1.2.3.4")
 	require.NoError(t, err)
@@ -107,11 +113,11 @@ func TestLogin_Success(t *testing.T) {
 }
 
 func TestLogin_InvalidCredentials(t *testing.T) {
-	uc, mockUserRepo, _, _, _, _ := setupAuthUseCase(t)
+	uc, mockUserRepo, _, _, _, mockLoginAttempts, _ := setupAuthUseCase(t)
 
-	mockUserRepo.EXPECT().
-		GetByEmail(gomock.Any(), "bad@example.com").
-		Return(nil, user.ErrUserNotFound)
+	mockLoginAttempts.EXPECT().IsLocked(gomock.Any(), "bad@example.com").Return(time.Duration(0), nil)
+	mockUserRepo.EXPECT().GetByEmail(gomock.Any(), "bad@example.com").Return(nil, user.ErrUserNotFound)
+	mockLoginAttempts.EXPECT().RecordFailure(gomock.Any(), "bad@example.com").Return(time.Duration(0), nil)
 
 	_, err := uc.Login(context.Background(), ucauth.LoginInput{
 		Email: "bad@example.com", Password: "pass",
@@ -120,11 +126,12 @@ func TestLogin_InvalidCredentials(t *testing.T) {
 }
 
 func TestLogin_InactiveUser(t *testing.T) {
-	uc, mockUserRepo, _, _, _, _ := setupAuthUseCase(t)
+	uc, mockUserRepo, _, _, _, mockLoginAttempts, _ := setupAuthUseCase(t)
 
 	uid := ulid.New()
 	u := &user.User{ID: uid, Email: "inactive@example.com", IsActive: false}
 
+	mockLoginAttempts.EXPECT().IsLocked(gomock.Any(), u.Email).Return(time.Duration(0), nil)
 	mockUserRepo.EXPECT().GetByEmail(gomock.Any(), u.Email).Return(u, nil)
 
 	_, err := uc.Login(context.Background(), ucauth.LoginInput{
@@ -134,7 +141,7 @@ func TestLogin_InactiveUser(t *testing.T) {
 }
 
 func TestVerifyMFA_BlocksDeactivatedUser(t *testing.T) {
-	uc, mockUserRepo, _, _, mockMFARepo, _, tokenGen := setupAuthUseCaseWithTokenGen(t)
+	uc, mockUserRepo, _, _, mockMFARepo, _, _, tokenGen := setupAuthUseCaseWithTokenGen(t)
 
 	ctx := context.Background()
 	uid := ulid.New()
@@ -168,7 +175,7 @@ func TestVerifyMFA_BlocksDeactivatedUser(t *testing.T) {
 }
 
 func TestRefreshToken_BlocksDeactivatedUser(t *testing.T) {
-	uc, mockUserRepo, _, mockSessionRepo, _, _ := setupAuthUseCase(t)
+	uc, mockUserRepo, _, mockSessionRepo, _, _, _ := setupAuthUseCase(t)
 
 	ctx := context.Background()
 	uid := ulid.New()

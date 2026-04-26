@@ -114,7 +114,7 @@ func newAuthTestDeps(ctrl *gomock.Controller) *authTestDeps {
 }
 
 func (d *authTestDeps) authUseCase() *ucauth.AuthUseCase {
-	return ucauth.NewAuthUseCase(d.userRepo, d.credRepo, d.sessionRepo, d.mfaRepo, d.recoveryRepo, d.hasher, d.tokenGen)
+	return ucauth.NewAuthUseCase(d.userRepo, d.credRepo, d.sessionRepo, d.mfaRepo, d.recoveryRepo, d.hasher, d.tokenGen, d.loginAttempts)
 }
 
 // adminTestDeps holds all mocks needed to construct an AdminHandler.

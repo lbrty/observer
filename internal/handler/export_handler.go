@@ -14,6 +14,9 @@ import (
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
 
+// maxExportRows is the maximum number of records returned per export request.
+const maxExportRows = 10000
+
 // ExportHandler streams filtered data as CSV downloads.
 type ExportHandler struct {
 	personUC    *ucproject.PersonUseCase
@@ -56,7 +59,7 @@ func (h *ExportHandler) ExportPeople(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
-	input.PerPage = 10000
+	input.PerPage = maxExportRows
 
 	canContact := middleware.CanViewContactFrom(c)
 	canPersonal := middleware.CanViewPersonalFrom(c)
@@ -107,7 +110,7 @@ func (h *ExportHandler) ExportSupportRecords(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
-	input.PerPage = 10000
+	input.PerPage = maxExportRows
 
 	out, err := h.supportUC.List(c.Request.Context(), projectID, input)
 	if err != nil {
@@ -151,7 +154,7 @@ func (h *ExportHandler) ExportPets(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
-	input.PerPage = 10000
+	input.PerPage = maxExportRows
 
 	out, err := h.petUC.List(c.Request.Context(), projectID, input)
 	if err != nil {
@@ -192,7 +195,7 @@ func (h *ExportHandler) ExportHouseholds(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errJSON("errors.validation", err.Error()))
 		return
 	}
-	input.PerPage = 10000
+	input.PerPage = maxExportRows
 
 	out, err := h.householdUC.List(c.Request.Context(), projectID, input)
 	if err != nil {

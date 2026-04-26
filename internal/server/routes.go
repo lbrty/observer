@@ -26,7 +26,6 @@ func (s *Server) setupRoutes(cfg *config.Config, db database.DB, container *app.
 
 	authHandler := handler.NewAuthHandler(
 		container.AuthUC,
-		container.LoginAttemptStore,
 		cfg.Cookie,
 		cfg.JWT,
 	)

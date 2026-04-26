@@ -3,16 +3,12 @@ package handler
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"errors"
-	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/lbrty/observer/internal/config"
-	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/middleware"
-	"github.com/lbrty/observer/internal/repository"
 	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 )
 
@@ -23,24 +19,21 @@ const (
 
 // AuthHandler exposes auth HTTP endpoints.
 type AuthHandler struct {
-	authUC        *ucauth.AuthUseCase
-	loginAttempts repository.LoginAttemptStore
-	cookie        config.CookieConfig
-	jwt           config.JWTConfig
+	authUC *ucauth.AuthUseCase
+	cookie config.CookieConfig
+	jwt    config.JWTConfig
 }
 
 // NewAuthHandler creates an AuthHandler.
 func NewAuthHandler(
 	authUC *ucauth.AuthUseCase,
-	loginAttempts repository.LoginAttemptStore,
 	cookie config.CookieConfig,
 	jwt config.JWTConfig,
 ) *AuthHandler {
 	return &AuthHandler{
-		authUC:        authUC,
-		loginAttempts: loginAttempts,
-		cookie:        cookie,
-		jwt:           jwt,
+		authUC: authUC,
+		cookie: cookie,
+		jwt:    jwt,
 	}
 }
 
@@ -87,44 +80,10 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	// Check if the account is locked out. Fail closed: if the store is unavailable, deny access.
-	remaining, err := h.loginAttempts.IsLocked(c.Request.Context(), input.Email)
-	if err != nil {
-		slog.Error("check login lockout", slog.Any("err", err))
-		c.JSON(http.StatusServiceUnavailable, errJSON("errors.auth.rateLimiterUnavailable", "rate limiter unavailable, try again later"))
-		return
-	}
-	if remaining != 0 {
-		msg := "account locked, contact administrator"
-		if remaining > 0 {
-			msg = "account temporarily locked, please try again later"
-		}
-		c.JSON(http.StatusTooManyRequests, errJSON("errors.auth.accountLocked", msg))
-		return
-	}
-
 	out, err := h.authUC.Login(c.Request.Context(), input, c.GetHeader("User-Agent"), c.ClientIP())
 	if err != nil {
-		// Record failure on invalid credentials.
-		if errors.Is(err, user.ErrInvalidCredentials) {
-			if lockDur, recErr := h.loginAttempts.RecordFailure(c.Request.Context(), input.Email); recErr != nil {
-				slog.Error("record login failure", slog.Any("err", recErr))
-			} else if lockDur != 0 {
-				msg := "account locked, contact administrator"
-				if lockDur > 0 {
-					msg = "account temporarily locked, please try again later"
-				}
-				c.JSON(http.StatusTooManyRequests, errJSON("errors.auth.accountLocked", msg))
-				return
-			}
-		}
 		HandleError(c, err)
 		return
-	}
-
-	// Successful login — clear any prior failure tracking.
-	if clearErr := h.loginAttempts.ClearAttempts(c.Request.Context(), input.Email); clearErr != nil {
-		slog.Error("clear login attempts", slog.Any("err", clearErr))
 	}
 
 	if !out.RequiresMFA && out.Tokens != nil {

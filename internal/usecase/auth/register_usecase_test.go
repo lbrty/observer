@@ -26,7 +26,7 @@ func TestRegister_Success(t *testing.T) {
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen)
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mock_repo.NewMockLoginAttemptStore(ctrl))
 
 	ctx := context.Background()
 	input := ucauth.RegisterInput{
@@ -60,7 +60,7 @@ func TestRegister_AlwaysCreatesGuestRole(t *testing.T) {
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen)
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mock_repo.NewMockLoginAttemptStore(ctrl))
 
 	ctx := context.Background()
 
@@ -95,7 +95,7 @@ func TestRegister_DuplicateEmailReturnsSuccess(t *testing.T) {
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen)
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mock_repo.NewMockLoginAttemptStore(ctrl))
 
 	// GetByEmail returns an existing user (no error) — simulates duplicate email.
 	mockUserRepo.EXPECT().

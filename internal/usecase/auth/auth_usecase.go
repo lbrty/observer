@@ -15,13 +15,14 @@ import (
 
 // AuthUseCase handles authentication, session management, and user profile operations.
 type AuthUseCase struct {
-	userRepo     repository.UserRepository
-	credRepo     repository.CredentialsRepository
-	sessionRepo  repository.SessionRepository
-	mfaRepo      repository.MFARepository
-	recoveryRepo repository.MFARecoveryCodeRepository
-	hasher       crypto.PasswordHasher
-	tokenGen     crypto.TokenGenerator
+	userRepo      repository.UserRepository
+	credRepo      repository.CredentialsRepository
+	sessionRepo   repository.SessionRepository
+	mfaRepo       repository.MFARepository
+	recoveryRepo  repository.MFARecoveryCodeRepository
+	hasher        crypto.PasswordHasher
+	tokenGen      crypto.TokenGenerator
+	loginAttempts repository.LoginAttemptStore
 }
 
 // NewAuthUseCase creates an AuthUseCase.
@@ -33,15 +34,17 @@ func NewAuthUseCase(
 	recoveryRepo repository.MFARecoveryCodeRepository,
 	hasher crypto.PasswordHasher,
 	tokenGen crypto.TokenGenerator,
+	loginAttempts repository.LoginAttemptStore,
 ) *AuthUseCase {
 	return &AuthUseCase{
-		userRepo:     userRepo,
-		credRepo:     credRepo,
-		sessionRepo:  sessionRepo,
-		mfaRepo:      mfaRepo,
-		recoveryRepo: recoveryRepo,
-		hasher:       hasher,
-		tokenGen:     tokenGen,
+		userRepo:      userRepo,
+		credRepo:      credRepo,
+		sessionRepo:   sessionRepo,
+		mfaRepo:       mfaRepo,
+		recoveryRepo:  recoveryRepo,
+		hasher:        hasher,
+		tokenGen:      tokenGen,
+		loginAttempts: loginAttempts,
 	}
 }
 
@@ -95,9 +98,24 @@ func (uc *AuthUseCase) Register(ctx context.Context, input RegisterInput) (*Regi
 //   - MFA enabled: issues a short-lived MFA token (no session yet) and sets RequiresMFA=true.
 //     The client must follow up with POST /auth/mfa { mfa_token, totp_code } to complete login.
 //   - MFA disabled: creates a full session and returns access + refresh tokens immediately.
+//
+// Lockout checks are enforced here: the call fails closed if the rate limiter store is unavailable.
 func (uc *AuthUseCase) Login(ctx context.Context, input LoginInput, userAgent, ip string) (*LoginOutput, error) {
+	remaining, err := uc.loginAttempts.IsLocked(ctx, input.Email)
+	if err != nil {
+		slog.ErrorContext(ctx, "check login lockout", slog.Any("err", err))
+		return nil, domainauth.ErrRateLimiterUnavailable
+	}
+	if remaining != 0 {
+		if remaining > 0 {
+			return nil, domainauth.ErrAccountTemporarilyLocked
+		}
+		return nil, domainauth.ErrAccountLocked
+	}
+
 	u, err := uc.userRepo.GetByEmail(ctx, input.Email)
 	if err != nil {
+		uc.recordFailure(ctx, input.Email)
 		return nil, user.ErrInvalidCredentials
 	}
 
@@ -107,11 +125,12 @@ func (uc *AuthUseCase) Login(ctx context.Context, input LoginInput, userAgent, i
 
 	cred, err := uc.credRepo.GetByUserID(ctx, u.ID)
 	if err != nil {
+		uc.recordFailure(ctx, input.Email)
 		return nil, user.ErrInvalidCredentials
 	}
 
 	if err := uc.hasher.Verify(input.Password, cred.PasswordHash, cred.Salt); err != nil {
-		return nil, user.ErrInvalidCredentials
+		return nil, uc.recordFailureOrLock(ctx, input.Email)
 	}
 
 	mfaCfg, err := uc.mfaRepo.GetByUserID(ctx, u.ID)
@@ -128,12 +147,41 @@ func (uc *AuthUseCase) Login(ctx context.Context, input LoginInput, userAgent, i
 		return nil, fmt.Errorf("create session: %w", err)
 	}
 
+	if clearErr := uc.loginAttempts.ClearAttempts(ctx, input.Email); clearErr != nil {
+		slog.ErrorContext(ctx, "clear login attempts", slog.Any("err", clearErr))
+	}
+
 	return &LoginOutput{
 		RequiresMFA: false,
 		Tokens:      tokens,
 		User:        toUserDTO(u),
 	}, nil
 }
+
+// recordFailure increments the failure counter; logs but does not propagate store errors.
+func (uc *AuthUseCase) recordFailure(ctx context.Context, email string) {
+	if _, err := uc.loginAttempts.RecordFailure(ctx, email); err != nil {
+		slog.ErrorContext(ctx, "record login failure", slog.Any("err", err))
+	}
+}
+
+// recordFailureOrLock increments the failure counter and returns a lockout error if the
+// threshold was just reached, or ErrInvalidCredentials otherwise.
+func (uc *AuthUseCase) recordFailureOrLock(ctx context.Context, email string) error {
+	lockDur, err := uc.loginAttempts.RecordFailure(ctx, email)
+	if err != nil {
+		slog.ErrorContext(ctx, "record login failure", slog.Any("err", err))
+		return user.ErrInvalidCredentials
+	}
+	if lockDur != 0 {
+		if lockDur > 0 {
+			return domainauth.ErrAccountTemporarilyLocked
+		}
+		return domainauth.ErrAccountLocked
+	}
+	return user.ErrInvalidCredentials
+}
+
 
 func (uc *AuthUseCase) createSession(ctx context.Context, u *user.User, userAgent, ip string) (*TokenPair, error) {
 	accessToken, expiresAt, err := uc.tokenGen.GenerateAccessToken(u.ID, string(u.Role))

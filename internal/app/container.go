@@ -82,8 +82,6 @@ type Container struct {
 	// Search
 	SearchUC *ucsearch.SearchUseCase
 
-	// Login attempt tracking
-	LoginAttemptStore repository.LoginAttemptStore
 }
 
 // NewContainer wires all dependencies from config, database, and redis.
@@ -148,7 +146,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
 	loginAttemptStore := repository.NewLoginAttemptStore(redisClient, userRepo)
 
-	authUC := ucauth.NewAuthUseCase(userRepo, credRepo, sessionRepo, mfaRepo, mfaRecoveryRepo, hasher, tokenGen)
+	authUC := ucauth.NewAuthUseCase(userRepo, credRepo, sessionRepo, mfaRepo, mfaRecoveryRepo, hasher, tokenGen, loginAttemptStore)
 	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher, sessionRepo, loginAttemptStore, auditUC)
 	permUC := ucadmin.NewPermissionUseCase(permCRUDRepo, userRepo, auditUC)
 
@@ -216,6 +214,5 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 		PetReportUC:       petReportUC,
 		ReportRepo:        reportRepo,
 		SearchUC:          searchUC,
-		LoginAttemptStore: loginAttemptStore,
 	}, nil
 }

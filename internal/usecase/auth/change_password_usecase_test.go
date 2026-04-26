@@ -13,7 +13,7 @@ import (
 )
 
 func TestChangePassword_InvalidatesSessions(t *testing.T) {
-	uc, _, mockCredRepo, mockSessionRepo, _, hasher := setupAuthUseCase(t)
+	uc, _, mockCredRepo, mockSessionRepo, _, _, hasher := setupAuthUseCase(t)
 
 	ctx := context.Background()
 	uid := iulid.New()

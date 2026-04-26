@@ -16,7 +16,7 @@ import (
 )
 
 func newAuthHandler(d *authTestDeps) *handler.AuthHandler {
-	return handler.NewAuthHandler(d.authUseCase(), d.loginAttempts, testCookieConfig(), testJWTConfig())
+	return handler.NewAuthHandler(d.authUseCase(), testCookieConfig(), testJWTConfig())
 }
 
 // --- Register ---
@@ -103,7 +103,7 @@ func TestAuthHandler_Login_AccountLocked(t *testing.T) {
 
 	assert.Equal(t, http.StatusTooManyRequests, w.Code)
 	resp := parseResponse[map[string]any](w)
-	assert.Equal(t, "errors.auth.accountLocked", resp["code"])
+	assert.Equal(t, "errors.auth.accountTemporarilyLocked", resp["code"])
 }
 
 func TestAuthHandler_Login_InvalidCredentials(t *testing.T) {

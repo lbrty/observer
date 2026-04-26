@@ -57,6 +57,12 @@ func MapDomainError(err error) (int, string) {
 		return http.StatusUnauthorized, "errors.auth.sessionExpired"
 	case errors.Is(err, domainauth.ErrInvalidMFACode):
 		return http.StatusUnauthorized, "errors.auth.invalidMFACode"
+	case errors.Is(err, domainauth.ErrAccountLocked):
+		return http.StatusTooManyRequests, "errors.auth.accountLocked"
+	case errors.Is(err, domainauth.ErrAccountTemporarilyLocked):
+		return http.StatusTooManyRequests, "errors.auth.accountTemporarilyLocked"
+	case errors.Is(err, domainauth.ErrRateLimiterUnavailable):
+		return http.StatusServiceUnavailable, "errors.auth.rateLimiterUnavailable"
 
 	// Project errors
 	case errors.Is(err, project.ErrProjectNotFound):
