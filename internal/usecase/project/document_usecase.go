@@ -30,7 +30,11 @@ type DocumentUseCase struct {
 }
 
 // NewDocumentUseCase creates a DocumentUseCase.
-func NewDocumentUseCase(repo repository.DocumentRepository, fs storage.FileStorage, auditUC *ucaudit.AuditUseCase) *DocumentUseCase {
+func NewDocumentUseCase(
+	repo repository.DocumentRepository,
+	fs storage.FileStorage,
+	auditUC *ucaudit.AuditUseCase,
+) *DocumentUseCase {
 	return &DocumentUseCase{repo: repo, fs: fs, auditUC: auditUC}
 }
 
@@ -40,10 +44,12 @@ func (uc *DocumentUseCase) List(ctx context.Context, personID string) ([]Documen
 	if err != nil {
 		return nil, fmt.Errorf("list documents: %w", err)
 	}
+
 	dtos := make([]DocumentDTO, len(docs))
 	for i, d := range docs {
 		dtos[i] = documentToDTO(d)
 	}
+
 	return dtos, nil
 }
 
@@ -53,9 +59,11 @@ func (uc *DocumentUseCase) Get(ctx context.Context, projectID, id string) (*Docu
 	if err != nil {
 		return nil, fmt.Errorf("get document: %w", err)
 	}
+
 	if d.ProjectID != projectID {
 		return nil, document.ErrDocumentNotFound
 	}
+
 	dto := documentToDTO(d)
 	return &dto, nil
 }
@@ -93,6 +101,7 @@ func (uc *DocumentUseCase) generateThumbnail(ctx context.Context, originalPath, 
 	if origW == 0 || origH == 0 {
 		return fmt.Errorf("image has zero dimension")
 	}
+
 	newW := thumbnailWidth
 	newH := origH * newW / origW
 	if newH < 1 {
@@ -110,6 +119,7 @@ func (uc *DocumentUseCase) generateThumbnail(ctx context.Context, originalPath, 
 	if err := uc.fs.Save(ctx, thumbPath, &buf, "image/jpeg"); err != nil {
 		return fmt.Errorf("save thumbnail: %w", err)
 	}
+
 	return nil
 }
 
@@ -119,9 +129,11 @@ func (uc *DocumentUseCase) Thumbnail(ctx context.Context, projectID, id string) 
 	if err != nil {
 		return nil, nil, fmt.Errorf("get document: %w", err)
 	}
+
 	if d.ProjectID != projectID {
 		return nil, nil, document.ErrDocumentNotFound
 	}
+
 	if !isImage(d.MimeType) {
 		return nil, nil, document.ErrNotImage
 	}
@@ -132,6 +144,7 @@ func (uc *DocumentUseCase) Thumbnail(ctx context.Context, projectID, id string) 
 		dto := documentToDTO(d)
 		return &dto, rc, nil
 	}
+
 	if !errors.Is(err, storage.ErrNotFound) {
 		return nil, nil, fmt.Errorf("open thumbnail: %w", err)
 	}
@@ -144,12 +157,17 @@ func (uc *DocumentUseCase) Thumbnail(ctx context.Context, projectID, id string) 
 	if err != nil {
 		return nil, nil, fmt.Errorf("open thumbnail: %w", err)
 	}
+
 	dto := documentToDTO(d)
 	return &dto, rc, nil
 }
 
 // Upload stores the file and creates document metadata.
-func (uc *DocumentUseCase) Upload(ctx context.Context, projectID, personID, uploadedBy, filename, mimeType string, size int64, body io.Reader) (*DocumentDTO, error) {
+func (uc *DocumentUseCase) Upload(
+	ctx context.Context,
+	projectID, personID, uploadedBy, filename, mimeType string,
+	size int64, body io.Reader,
+) (*DocumentDTO, error) {
 	docID := ulid.NewString()
 	fpath := storagePath(projectID, personID, docID, filename)
 
@@ -157,7 +175,7 @@ func (uc *DocumentUseCase) Upload(ctx context.Context, projectID, personID, uplo
 		return nil, fmt.Errorf("save file: %w", err)
 	}
 
-	d := &document.Document{
+	doc := &document.Document{
 		ID:         docID,
 		PersonID:   personID,
 		ProjectID:  projectID,
@@ -167,12 +185,21 @@ func (uc *DocumentUseCase) Upload(ctx context.Context, projectID, personID, uplo
 		MimeType:   mimeType,
 		Size:       size,
 	}
-	if err := uc.repo.Create(ctx, d); err != nil {
+	if err := uc.repo.Create(ctx, doc); err != nil {
 		_ = uc.fs.Delete(ctx, fpath)
 		return nil, fmt.Errorf("create document: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "document.upload", "document", &d.ID, fmt.Sprintf("Uploaded document %s", d.Name))
-	dto := documentToDTO(d)
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"document.upload",
+		"document",
+		&doc.ID,
+		fmt.Sprintf("Uploaded document %s", doc.Name),
+	)
+
+	dto := documentToDTO(doc)
 	return &dto, nil
 }
 
@@ -182,34 +209,61 @@ func (uc *DocumentUseCase) Download(ctx context.Context, projectID, id string) (
 	if err != nil {
 		return nil, nil, fmt.Errorf("get document: %w", err)
 	}
+
 	if d.ProjectID != projectID {
 		return nil, nil, document.ErrDocumentNotFound
 	}
+
 	rc, err := uc.fs.Open(ctx, d.Path)
 	if err != nil {
 		return nil, nil, fmt.Errorf("open file: %w", err)
 	}
-	uc.auditUC.Record(ctx, &d.ProjectID, "document.download", "document", &d.ID, fmt.Sprintf("Downloaded document %s", d.Name))
+
+	uc.auditUC.Record(
+		ctx,
+		&d.ProjectID,
+		"document.download",
+		"document",
+		&d.ID,
+		fmt.Sprintf("Downloaded document %s", d.Name),
+	)
+
 	dto := documentToDTO(d)
 	return &dto, rc, nil
 }
 
 // Update updates document metadata.
-func (uc *DocumentUseCase) Update(ctx context.Context, projectID, id string, input UpdateDocumentInput) (*DocumentDTO, error) {
+func (uc *DocumentUseCase) Update(
+	ctx context.Context,
+	projectID, id string,
+	input UpdateDocumentInput,
+) (*DocumentDTO, error) {
 	d, err := uc.repo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get document for update: %w", err)
 	}
+
 	if d.ProjectID != projectID {
 		return nil, document.ErrDocumentNotFound
 	}
+
 	if input.Name != nil {
 		d.Name = *input.Name
 	}
+
 	if err := uc.repo.Update(ctx, d); err != nil {
 		return nil, fmt.Errorf("update document: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "document.update", "document", &id, fmt.Sprintf("Updated document %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"document.update",
+		"document",
+		&id,
+		fmt.Sprintf("Updated document %s", id),
+	)
+
 	dto := documentToDTO(d)
 	return &dto, nil
 }
@@ -220,16 +274,28 @@ func (uc *DocumentUseCase) Delete(ctx context.Context, projectID, id string) err
 	if err != nil {
 		return fmt.Errorf("get document for delete: %w", err)
 	}
+
 	if d.ProjectID != projectID {
 		return document.ErrDocumentNotFound
 	}
+
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete document: %w", err)
 	}
+
 	_ = uc.fs.Delete(ctx, d.Path)
 	if isImage(d.MimeType) {
 		_ = uc.fs.Delete(ctx, thumbnailPath(d.Path))
 	}
-	uc.auditUC.Record(ctx, &d.ProjectID, "document.delete", "document", &d.ID, fmt.Sprintf("Deleted document %s", d.Name))
+
+	uc.auditUC.Record(
+		ctx,
+		&d.ProjectID,
+		"document.delete",
+		"document",
+		&d.ID,
+		fmt.Sprintf("Deleted document %s", d.Name),
+	)
+
 	return nil
 }

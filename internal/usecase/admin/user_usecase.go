@@ -55,9 +55,11 @@ func (uc *UserUseCase) UnlockAccount(ctx context.Context, id ulid.ULID) error {
 	if err != nil {
 		return fmt.Errorf("get user: %w", err)
 	}
+
 	if err := uc.loginAttempts.ClearAttempts(ctx, u.Email); err != nil {
 		return fmt.Errorf("clear login attempts: %w", err)
 	}
+
 	return nil
 }
 
@@ -97,6 +99,7 @@ func (uc *UserUseCase) Get(ctx context.Context, id ulid.ULID) (*UserDTO, error) 
 	if err != nil {
 		return nil, fmt.Errorf("get user: %w", err)
 	}
+
 	dto := userToDTO(u)
 	return &dto, nil
 }
@@ -151,7 +154,15 @@ func (uc *UserUseCase) Create(ctx context.Context, input CreateUserInput) (*User
 	}
 
 	uid := userID.String()
-	uc.auditUC.Record(ctx, nil, "admin.user.create", "user", &uid, fmt.Sprintf("Created user %s with role %s", newUser.Email, newUser.Role))
+
+	uc.auditUC.Record(
+		ctx,
+		nil,
+		"admin.user.create",
+		"user",
+		&uid,
+		fmt.Sprintf("Created user %s with role %s", newUser.Email, newUser.Role),
+	)
 
 	dto := userToDTO(newUser)
 	return &dto, nil
@@ -205,7 +216,15 @@ func (uc *UserUseCase) Update(ctx context.Context, id ulid.ULID, input UpdateUse
 
 	if u.Role != oldRole {
 		uid := id.String()
-		uc.auditUC.Record(ctx, nil, "user.role_change", "user", &uid, fmt.Sprintf("Changed role from %s to %s for user %s", oldRole, u.Role, uid))
+
+		uc.auditUC.Record(
+			ctx,
+			nil,
+			"user.role_change",
+			"user",
+			&uid,
+			fmt.Sprintf("Changed role from %s to %s for user %s", oldRole, u.Role, uid),
+		)
 	}
 
 	dto := userToDTO(u)
@@ -226,6 +245,7 @@ func (uc *UserUseCase) ResetPassword(ctx context.Context, userID ulid.ULID, inpu
 
 	cred.PasswordHash = hash
 	cred.Salt = salt
+
 	if err := uc.credRepo.Update(ctx, cred); err != nil {
 		return fmt.Errorf("update credentials: %w", err)
 	}
@@ -235,7 +255,15 @@ func (uc *UserUseCase) ResetPassword(ctx context.Context, userID ulid.ULID, inpu
 	}
 
 	uid := userID.String()
-	uc.auditUC.Record(ctx, nil, "admin.user.reset_password", "user", &uid, fmt.Sprintf("Password reset for user %s", uid))
+
+	uc.auditUC.Record(
+		ctx,
+		nil,
+		"admin.user.reset_password",
+		"user",
+		&uid,
+		fmt.Sprintf("Password reset for user %s", uid),
+	)
 
 	return nil
 }
@@ -245,12 +273,23 @@ func (uc *UserUseCase) DeactivateUser(ctx context.Context, id ulid.ULID) (*UserD
 	if err := uc.userRepo.Deactivate(ctx, id); err != nil {
 		return nil, fmt.Errorf("deactivate user: %w", err)
 	}
+
 	uid := id.String()
-	uc.auditUC.Record(ctx, nil, "user.deactivate", "user", &uid, "User account deactivated")
+
+	uc.auditUC.Record(
+		ctx,
+		nil,
+		"user.deactivate",
+		"user",
+		&uid,
+		"User account deactivated",
+	)
+
 	u, err := uc.userRepo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
+
 	dto := userToDTO(u)
 	return &dto, nil
 }
@@ -260,12 +299,23 @@ func (uc *UserUseCase) ReactivateUser(ctx context.Context, id ulid.ULID) (*UserD
 	if err := uc.userRepo.Reactivate(ctx, id); err != nil {
 		return nil, fmt.Errorf("reactivate user: %w", err)
 	}
+
 	uid := id.String()
-	uc.auditUC.Record(ctx, nil, "user.reactivate", "user", &uid, "User account reactivated")
+
+	uc.auditUC.Record(
+		ctx,
+		nil,
+		"user.reactivate",
+		"user",
+		&uid,
+		"User account reactivated",
+	)
+
 	u, err := uc.userRepo.GetByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
+
 	dto := userToDTO(u)
 	return &dto, nil
 }

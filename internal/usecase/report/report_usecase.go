@@ -32,34 +32,43 @@ func (uc *ReportUseCase) Generate(ctx context.Context, projectID string, input R
 		}
 		f.DateFrom = &t
 	}
+
 	if input.DateTo != "" {
 		t, err := time.Parse("2006-01-02", input.DateTo)
 		if err != nil {
 			return nil, fmt.Errorf("parse date_to: %w", err)
 		}
+
 		f.DateTo = &t
 	}
+
 	if input.OfficeID != "" {
 		f.OfficeID = &input.OfficeID
 	}
+
 	if input.CategoryID != "" {
 		f.CategoryID = &input.CategoryID
 	}
+
 	if input.ConsultantID != "" {
 		f.ConsultantID = &input.ConsultantID
 	}
+
 	if input.CaseStatus != "" {
 		cs := person.CaseStatus(input.CaseStatus)
 		f.CaseStatus = &cs
 	}
+
 	if input.Sex != "" {
 		sx := person.Sex(input.Sex)
 		f.Sex = &sx
 	}
+
 	if input.AgeGroup != "" {
 		ag := person.AgeGroup(input.AgeGroup)
 		f.AgeGroup = &ag
 	}
+
 	if input.SupportType != "" {
 		st := support.SupportType(input.SupportType)
 		f.SupportType = &st
@@ -71,84 +80,98 @@ func (uc *ReportUseCase) Generate(ctx context.Context, projectID string, input R
 	if err != nil {
 		return nil, fmt.Errorf("consultations report: %w", err)
 	}
+
 	out.Consultations = toOutput("consultations", consultations)
 
 	bySex, err := uc.repo.CountBySex(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("sex report: %w", err)
 	}
+
 	out.BySex = toOutput("by_sex", bySex)
 
 	byIDP, err := uc.repo.CountByIDPStatus(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("idp report: %w", err)
 	}
+
 	out.ByIDPStatus = toOutput("by_idp_status", byIDP)
 
 	byCat, err := uc.repo.CountByCategory(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("category report: %w", err)
 	}
+
 	out.ByCategory = toOutput("by_category", byCat)
 
 	byRegion, err := uc.repo.CountByCurrentRegion(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("region report: %w", err)
 	}
+
 	out.ByRegion = toOutput("by_region", byRegion)
 
 	bySphere, err := uc.repo.CountBySphere(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("sphere report: %w", err)
 	}
+
 	out.BySphere = toOutput("by_sphere", bySphere)
 
 	peopleBySphere, err := uc.repo.CountPeopleBySphere(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("people by sphere report: %w", err)
 	}
+
 	out.PeopleBySphere = toOutput("people_by_sphere", peopleBySphere)
 
 	byOffice, err := uc.repo.CountByOffice(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("office report: %w", err)
 	}
+
 	out.ByOffice = toOutput("by_office", byOffice)
 
 	byAge, err := uc.repo.CountByAgeGroup(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("age report: %w", err)
 	}
+
 	out.ByAgeGroup = toOutput("by_age_group", byAge)
 
 	consultsByAge, err := uc.repo.CountConsultationsByAgeGroup(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("consultations by age report: %w", err)
 	}
+
 	out.ConsultationsByAgeGroup = toOutput("consultations_by_age_group", consultsByAge)
 
 	byTag, err := uc.repo.CountByTag(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("tag report: %w", err)
 	}
+
 	out.ByTag = toOutput("by_tag", byTag)
 
 	families, err := uc.repo.CountFamilyUnits(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("family report: %w", err)
 	}
+
 	out.FamilyUnits = toOutput("family_units", families)
 
 	byCaseStatus, err := uc.repo.CountByCaseStatus(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("case status report: %w", err)
 	}
+
 	out.ByCaseStatus = toOutput("by_case_status", byCaseStatus)
 
 	flows, err := uc.repo.StatusFlowReport(ctx, f)
 	if err != nil {
 		return nil, fmt.Errorf("status flow report: %w", err)
 	}
+
 	dtos := make([]StatusFlowDTO, len(flows))
 	for i, fl := range flows {
 		dtos[i] = StatusFlowDTO{
@@ -158,6 +181,7 @@ func (uc *ReportUseCase) Generate(ctx context.Context, projectID string, input R
 			AvgDays:    fl.AvgDays,
 		}
 	}
+
 	out.StatusFlow = dtos
 
 	return out, nil
@@ -182,9 +206,11 @@ func (uc *ReportUseCase) GenerateCustom(ctx context.Context, projectID string, i
 	if len(input.GroupBy) == 0 {
 		return nil, fmt.Errorf("at least one dimension required in group_by")
 	}
+
 	if len(input.GroupBy) > 2 {
 		return nil, fmt.Errorf("at most 2 dimensions allowed in group_by")
 	}
+
 	for _, dim := range input.GroupBy {
 		if !validDimensions[dim] {
 			return nil, fmt.Errorf("unknown dimension: %s", dim)
@@ -198,29 +224,37 @@ func (uc *ReportUseCase) GenerateCustom(ctx context.Context, projectID string, i
 		if err != nil {
 			return nil, fmt.Errorf("parse date_from: %w", err)
 		}
+
 		f.DateFrom = &t
 	}
+
 	if input.DateTo != "" {
 		t, err := time.Parse("2006-01-02", input.DateTo)
 		if err != nil {
 			return nil, fmt.Errorf("parse date_to: %w", err)
 		}
+
 		f.DateTo = &t
 	}
+
 	if input.SupportType != "" {
 		st := support.SupportType(input.SupportType)
 		f.SupportType = &st
 	}
+
 	if input.OfficeID != "" {
 		f.OfficeID = &input.OfficeID
 	}
+
 	if input.CategoryID != "" {
 		f.CategoryID = &input.CategoryID
 	}
+
 	if input.CaseStatus != "" {
 		cs := person.CaseStatus(input.CaseStatus)
 		f.CaseStatus = &cs
 	}
+
 	if input.Sex != "" {
 		sx := person.Sex(input.Sex)
 		f.Sex = &sx
@@ -251,5 +285,6 @@ func toOutput(group string, rows []domainreport.CountResult) ReportOutput {
 		dtos[i] = CountResultDTO{Label: r.Label, Count: r.Count}
 		total += r.Count
 	}
+
 	return ReportOutput{Group: group, Rows: dtos, Total: total}
 }

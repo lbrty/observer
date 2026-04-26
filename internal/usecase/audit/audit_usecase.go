@@ -99,14 +99,22 @@ func (uc *AuditUseCase) List(ctx context.Context, input ListInput) (*ListOutput,
 }
 
 // Record logs an audit event using metadata from context. Failures are logged but not returned.
-func (uc *AuditUseCase) Record(ctx context.Context, projectID *string, action, entityType string, entityID *string, summary string) {
+func (uc *AuditUseCase) Record(
+	ctx context.Context,
+	projectID *string,
+	action, entityType string,
+	entityID *string,
+	summary string,
+) {
 	if uc == nil {
 		return
 	}
+
 	var userID *string
 	if uid := middleware.AuditUserID(ctx); uid != "" {
 		userID = &uid
 	}
+
 	entry := domainaudit.Entry{
 		ProjectID:  projectID,
 		UserID:     userID,
@@ -117,6 +125,7 @@ func (uc *AuditUseCase) Record(ctx context.Context, projectID *string, action, e
 		IP:         strPtrOrNil(middleware.AuditIP(ctx)),
 		UserAgent:  strPtrOrNil(middleware.AuditUserAgent(ctx)),
 	}
+
 	if err := uc.repo.Log(ctx, entry); err != nil {
 		slog.Error("audit log failed", slog.String("action", action), slog.Any("err", err))
 	}

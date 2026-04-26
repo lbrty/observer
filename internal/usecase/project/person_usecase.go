@@ -21,7 +21,11 @@ type PersonUseCase struct {
 }
 
 // NewPersonUseCase creates a PersonUseCase.
-func NewPersonUseCase(repo repository.PersonRepository, tagRepo repository.PersonTagRepository, auditUC *ucaudit.AuditUseCase) *PersonUseCase {
+func NewPersonUseCase(
+	repo repository.PersonRepository,
+	tagRepo repository.PersonTagRepository,
+	auditUC *ucaudit.AuditUseCase,
+) *PersonUseCase {
 	return &PersonUseCase{repo: repo, tagRepo: tagRepo, auditUC: auditUC}
 }
 
@@ -45,10 +49,12 @@ func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListP
 		s := person.CaseStatus(*input.CaseStatus)
 		filter.CaseStatus = &s
 	}
+
 	if input.Sex != nil {
 		s := person.Sex(*input.Sex)
 		filter.Sex = &s
 	}
+
 	if input.AgeGroup != nil {
 		ag := person.AgeGroup(*input.AgeGroup)
 		filter.AgeGroup = &ag
@@ -70,6 +76,7 @@ func (uc *PersonUseCase) List(ctx context.Context, projectID string, input ListP
 	if err != nil {
 		return nil, fmt.Errorf("list person tags: %w", err)
 	}
+
 	for i := range dtos {
 		if tags, ok := tagMap[dtos[i].ID]; ok {
 			dtos[i].TagIDs = tags
@@ -92,9 +99,11 @@ func (uc *PersonUseCase) Get(ctx context.Context, projectID, id string, canViewC
 	if err != nil {
 		return nil, fmt.Errorf("get person: %w", err)
 	}
+
 	if p.ProjectID != projectID {
 		return nil, person.ErrPersonNotFound
 	}
+
 	dto := personToDTO(p, canViewContact, canViewPersonal)
 	return &dto, nil
 }
@@ -121,15 +130,19 @@ func (uc *PersonUseCase) Create(ctx context.Context, projectID string, input Cre
 	if input.Sex != nil {
 		p.Sex = person.Sex(*input.Sex)
 	}
+
 	if input.CaseStatus != nil {
 		p.CaseStatus = person.CaseStatus(*input.CaseStatus)
 	}
+
 	if input.AgeGroup != nil {
 		ag := person.AgeGroup(*input.AgeGroup)
 		p.AgeGroup = &ag
 	}
+
 	setPtr(&p.PrimaryPhone, input.PrimaryPhone)
 	applyOpt(&p.ConsentGiven, input.ConsentGiven)
+
 	if input.PhoneNumbers != nil {
 		b, _ := json.Marshal(input.PhoneNumbers)
 		p.PhoneNumbers = b
@@ -138,9 +151,11 @@ func (uc *PersonUseCase) Create(ctx context.Context, projectID string, input Cre
 	if err := parseDateField(input.BirthDate, &p.BirthDate); err != nil {
 		return nil, fmt.Errorf("invalid birth_date: %w", err)
 	}
+
 	if err := parseDateField(input.ConsentDate, &p.ConsentDate); err != nil {
 		return nil, fmt.Errorf("invalid consent_date: %w", err)
 	}
+
 	if err := parseDateField(input.RegisteredAt, &p.RegisteredAt); err != nil {
 		return nil, fmt.Errorf("invalid registered_at: %w", err)
 	}
@@ -152,7 +167,16 @@ func (uc *PersonUseCase) Create(ctx context.Context, projectID string, input Cre
 	if err := uc.repo.Create(ctx, p); err != nil {
 		return nil, fmt.Errorf("create person: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "person.create", "person", &p.ID, fmt.Sprintf("Created person %s", p.ID))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"person.create",
+		"person",
+		&p.ID,
+		fmt.Sprintf("Created person %s", p.ID),
+	)
+
 	dto := personToDTO(p, true, true)
 	return &dto, nil
 }
@@ -163,6 +187,7 @@ func (uc *PersonUseCase) Update(ctx context.Context, projectID, id string, input
 	if err != nil {
 		return nil, fmt.Errorf("get person for update: %w", err)
 	}
+
 	if p.ProjectID != projectID {
 		return nil, person.ErrPersonNotFound
 	}
@@ -178,16 +203,20 @@ func (uc *PersonUseCase) Update(ctx context.Context, projectID, id string, input
 	setPtr(&p.PrimaryPhone, input.PrimaryPhone)
 	applyOpt(&p.FirstName, input.FirstName)
 	applyOpt(&p.ConsentGiven, input.ConsentGiven)
+
 	if input.Sex != nil {
 		p.Sex = person.Sex(*input.Sex)
 	}
+
 	if input.CaseStatus != nil {
 		p.CaseStatus = person.CaseStatus(*input.CaseStatus)
 	}
+
 	if input.AgeGroup != nil {
 		ag := person.AgeGroup(*input.AgeGroup)
 		p.AgeGroup = &ag
 	}
+
 	if input.PhoneNumbers != nil {
 		b, _ := json.Marshal(input.PhoneNumbers)
 		p.PhoneNumbers = b
@@ -196,9 +225,11 @@ func (uc *PersonUseCase) Update(ctx context.Context, projectID, id string, input
 	if err := parseDateField(input.BirthDate, &p.BirthDate); err != nil {
 		return nil, fmt.Errorf("invalid birth_date: %w", err)
 	}
+
 	if err := parseDateField(input.ConsentDate, &p.ConsentDate); err != nil {
 		return nil, fmt.Errorf("invalid consent_date: %w", err)
 	}
+
 	if err := parseDateField(input.RegisteredAt, &p.RegisteredAt); err != nil {
 		return nil, fmt.Errorf("invalid registered_at: %w", err)
 	}
@@ -210,7 +241,16 @@ func (uc *PersonUseCase) Update(ctx context.Context, projectID, id string, input
 	if err := uc.repo.Update(ctx, p); err != nil {
 		return nil, fmt.Errorf("update person: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "person.update", "person", &id, fmt.Sprintf("Updated person %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"person.update",
+		"person",
+		&id,
+		fmt.Sprintf("Updated person %s", id),
+	)
+
 	dto := personToDTO(p, true, true)
 	return &dto, nil
 }
@@ -221,13 +261,24 @@ func (uc *PersonUseCase) Delete(ctx context.Context, projectID, id string) error
 	if err != nil {
 		return fmt.Errorf("get person for delete: %w", err)
 	}
+
 	if p.ProjectID != projectID {
 		return person.ErrPersonNotFound
 	}
+
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete person: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "person.delete", "person", &id, fmt.Sprintf("Deleted person %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"person.delete",
+		"person",
+		&id,
+		fmt.Sprintf("Deleted person %s", id),
+	)
+
 	return nil
 }
 

@@ -20,7 +20,11 @@ type ProjectUseCase struct {
 }
 
 // NewProjectUseCase creates a ProjectUseCase.
-func NewProjectUseCase(repo repository.ProjectRepository, permRepo repository.PermissionRepository, auditUC *ucaudit.AuditUseCase) *ProjectUseCase {
+func NewProjectUseCase(
+	repo repository.ProjectRepository,
+	permRepo repository.PermissionRepository,
+	auditUC *ucaudit.AuditUseCase,
+) *ProjectUseCase {
 	return &ProjectUseCase{repo: repo, permRepo: permRepo, auditUC: auditUC}
 }
 
@@ -114,6 +118,7 @@ func (uc *ProjectUseCase) Get(ctx context.Context, id string, callerID string, c
 	if err != nil {
 		return nil, fmt.Errorf("get project: %w", err)
 	}
+
 	dto := projectToDTO(p)
 	return &dto, nil
 }
@@ -127,10 +132,20 @@ func (uc *ProjectUseCase) Create(ctx context.Context, ownerID string, input Crea
 		OwnerID:     ownerID,
 		Status:      project.ProjectStatusActive,
 	}
+
 	if err := uc.repo.Create(ctx, p); err != nil {
 		return nil, fmt.Errorf("create project: %w", err)
 	}
-	uc.auditUC.Record(ctx, &p.ID, "project.create", "project", &p.ID, fmt.Sprintf("Created project %s", p.Name))
+
+	uc.auditUC.Record(
+		ctx,
+		&p.ID,
+		"project.create",
+		"project",
+		&p.ID,
+		fmt.Sprintf("Created project %s", p.Name),
+	)
+
 	dto := projectToDTO(p)
 	return &dto, nil
 }
@@ -141,6 +156,7 @@ func (uc *ProjectUseCase) Update(ctx context.Context, id string, input UpdatePro
 	if err != nil {
 		return nil, fmt.Errorf("get project for update: %w", err)
 	}
+
 	if input.Name != nil {
 		p.Name = *input.Name
 	}
@@ -150,10 +166,20 @@ func (uc *ProjectUseCase) Update(ctx context.Context, id string, input UpdatePro
 	if input.Status != nil {
 		p.Status = project.ProjectStatus(*input.Status)
 	}
+
 	if err := uc.repo.Update(ctx, p); err != nil {
 		return nil, fmt.Errorf("update project: %w", err)
 	}
-	uc.auditUC.Record(ctx, &id, "project.update", "project", &id, fmt.Sprintf("Updated project %s", p.Name))
+
+	uc.auditUC.Record(
+		ctx,
+		&id,
+		"project.update",
+		"project",
+		&id,
+		fmt.Sprintf("Updated project %s", p.Name),
+	)
+
 	dto := projectToDTO(p)
 	return &dto, nil
 }

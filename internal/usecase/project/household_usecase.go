@@ -20,12 +20,18 @@ type HouseholdUseCase struct {
 }
 
 // NewHouseholdUseCase creates a HouseholdUseCase.
-func NewHouseholdUseCase(repo repository.HouseholdRepository, memberRepo repository.HouseholdMemberRepository, auditUC *ucaudit.AuditUseCase) *HouseholdUseCase {
+func NewHouseholdUseCase(
+	repo repository.HouseholdRepository,
+	memberRepo repository.HouseholdMemberRepository,
+	auditUC *ucaudit.AuditUseCase,
+) *HouseholdUseCase {
 	return &HouseholdUseCase{repo: repo, memberRepo: memberRepo, auditUC: auditUC}
 }
 
 // List returns paginated households with members.
-func (uc *HouseholdUseCase) List(ctx context.Context, projectID string, input ListHouseholdsInput) (*ListHouseholdsOutput, error) {
+func (uc *HouseholdUseCase) List(
+	ctx context.Context, projectID string, input ListHouseholdsInput,
+) (*ListHouseholdsOutput, error) {
 	page, perPage := usecase.ClampPagination(input.Page, input.PerPage)
 
 	filter := household.HouseholdListFilter{
@@ -33,14 +39,17 @@ func (uc *HouseholdUseCase) List(ctx context.Context, projectID string, input Li
 		Page:      page,
 		PerPage:   perPage,
 	}
+
 	if input.Search != "" {
 		filter.Search = &input.Search
 	}
+
 	if input.CreatedFrom != "" {
 		if err := parseDateField(&input.CreatedFrom, &filter.CreatedFrom); err != nil {
 			return nil, fmt.Errorf("invalid created_from: %w", err)
 		}
 	}
+
 	if input.CreatedTo != "" {
 		var t *time.Time
 		if err := parseDateField(&input.CreatedTo, &t); err != nil {
@@ -74,15 +83,18 @@ func (uc *HouseholdUseCase) Get(ctx context.Context, projectID, id string) (*Hou
 	if err != nil {
 		return nil, fmt.Errorf("get household: %w", err)
 	}
+
 	if h.ProjectID != projectID {
 		return nil, household.ErrHouseholdNotFound
 	}
+
 	dto := householdToDTO(h)
 
 	members, err := uc.memberRepo.List(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("list household members: %w", err)
 	}
+
 	dto.Members = make([]HouseholdMemberDTO, len(members))
 	for i, m := range members {
 		dto.Members[i] = memberToDTO(m)
@@ -99,10 +111,20 @@ func (uc *HouseholdUseCase) Create(ctx context.Context, projectID string, input 
 		ReferenceNumber: input.ReferenceNumber,
 		HeadPersonID:    input.HeadPersonID,
 	}
+
 	if err := uc.repo.Create(ctx, h); err != nil {
 		return nil, fmt.Errorf("create household: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "household.create", "household", &h.ID, fmt.Sprintf("Created household %s", h.ID))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"household.create",
+		"household",
+		&h.ID,
+		fmt.Sprintf("Created household %s", h.ID),
+	)
+
 	dto := householdToDTO(h)
 	dto.Members = []HouseholdMemberDTO{}
 	return &dto, nil
@@ -114,19 +136,32 @@ func (uc *HouseholdUseCase) Update(ctx context.Context, projectID, id string, in
 	if err != nil {
 		return nil, fmt.Errorf("get household for update: %w", err)
 	}
+
 	if h.ProjectID != projectID {
 		return nil, household.ErrHouseholdNotFound
 	}
+
 	if input.ReferenceNumber != nil {
 		h.ReferenceNumber = input.ReferenceNumber
 	}
+
 	if input.HeadPersonID != nil {
 		h.HeadPersonID = input.HeadPersonID
 	}
+
 	if err := uc.repo.Update(ctx, h); err != nil {
 		return nil, fmt.Errorf("update household: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "household.update", "household", &id, fmt.Sprintf("Updated household %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"household.update",
+		"household",
+		&id,
+		fmt.Sprintf("Updated household %s", id),
+	)
+
 	dto := householdToDTO(h)
 	return &dto, nil
 }
@@ -137,33 +172,50 @@ func (uc *HouseholdUseCase) Delete(ctx context.Context, projectID, id string) er
 	if err != nil {
 		return fmt.Errorf("get household for delete: %w", err)
 	}
+
 	if h.ProjectID != projectID {
 		return household.ErrHouseholdNotFound
 	}
+
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete household: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "household.delete", "household", &id, fmt.Sprintf("Deleted household %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"household.delete",
+		"household",
+		&id,
+		fmt.Sprintf("Deleted household %s", id),
+	)
+
 	return nil
 }
 
 // AddMember adds a member to a household.
-func (uc *HouseholdUseCase) AddMember(ctx context.Context, projectID, householdID string, input AddMemberInput) (*HouseholdMemberDTO, error) {
+func (uc *HouseholdUseCase) AddMember(
+	ctx context.Context, projectID, householdID string, input AddMemberInput,
+) (*HouseholdMemberDTO, error) {
 	h, err := uc.repo.GetByID(ctx, householdID)
 	if err != nil {
 		return nil, fmt.Errorf("get household for add member: %w", err)
 	}
+
 	if h.ProjectID != projectID {
 		return nil, household.ErrHouseholdNotFound
 	}
+
 	m := &household.Member{
 		HouseholdID:  householdID,
 		PersonID:     input.PersonID,
 		Relationship: household.Relationship(input.Relationship),
 	}
+
 	if err := uc.memberRepo.Add(ctx, m); err != nil {
 		return nil, fmt.Errorf("add household member: %w", err)
 	}
+
 	dto := memberToDTO(m)
 	return &dto, nil
 }
@@ -174,11 +226,14 @@ func (uc *HouseholdUseCase) RemoveMember(ctx context.Context, projectID, househo
 	if err != nil {
 		return fmt.Errorf("get household for remove member: %w", err)
 	}
+
 	if h.ProjectID != projectID {
 		return household.ErrHouseholdNotFound
 	}
+
 	if err := uc.memberRepo.Remove(ctx, householdID, personID); err != nil {
 		return fmt.Errorf("remove household member: %w", err)
 	}
+
 	return nil
 }

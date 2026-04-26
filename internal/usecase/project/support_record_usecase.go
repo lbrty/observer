@@ -20,7 +20,11 @@ type SupportRecordUseCase struct {
 }
 
 // NewSupportRecordUseCase creates a SupportRecordUseCase.
-func NewSupportRecordUseCase(repo repository.SupportRecordRepository, personRepo repository.PersonRepository, auditUC *ucaudit.AuditUseCase) *SupportRecordUseCase {
+func NewSupportRecordUseCase(
+	repo repository.SupportRecordRepository,
+	personRepo repository.PersonRepository,
+	auditUC *ucaudit.AuditUseCase,
+) *SupportRecordUseCase {
 	return &SupportRecordUseCase{repo: repo, personRepo: personRepo, auditUC: auditUC}
 }
 
@@ -40,17 +44,21 @@ func (uc *SupportRecordUseCase) List(ctx context.Context, projectID string, inpu
 		t := support.SupportType(*input.Type)
 		filter.Type = &t
 	}
+
 	if input.Sphere != nil {
 		s := support.SupportSphere(*input.Sphere)
 		filter.Sphere = &s
 	}
+
 	if input.ReferralStatus != nil {
 		rs := support.ReferralStatus(*input.ReferralStatus)
 		filter.ReferralStatus = &rs
 	}
+
 	if err := parseDateField(input.DateFrom, &filter.DateFrom); err != nil {
 		return nil, fmt.Errorf("invalid date_from: %w", err)
 	}
+
 	if err := parseDateField(input.DateTo, &filter.DateTo); err != nil {
 		return nil, fmt.Errorf("invalid date_to: %w", err)
 	}
@@ -79,9 +87,11 @@ func (uc *SupportRecordUseCase) Get(ctx context.Context, projectID, id string) (
 	if err != nil {
 		return nil, fmt.Errorf("get support record: %w", err)
 	}
+
 	if r.ProjectID != projectID {
 		return nil, support.ErrRecordNotFound
 	}
+
 	dto := supportRecordToDTO(r)
 	return &dto, nil
 }
@@ -92,6 +102,7 @@ func (uc *SupportRecordUseCase) Create(ctx context.Context, projectID string, re
 	if err != nil {
 		return nil, fmt.Errorf("verify person for support record: %w", err)
 	}
+
 	if p.ProjectID != projectID {
 		return nil, fmt.Errorf("verify person for support record: %w", person.ErrPersonNotFound)
 	}
@@ -112,10 +123,12 @@ func (uc *SupportRecordUseCase) Create(ctx context.Context, projectID string, re
 		s := support.SupportSphere(*input.Sphere)
 		r.Sphere = &s
 	}
+
 	if input.ReferralStatus != nil {
 		s := support.ReferralStatus(*input.ReferralStatus)
 		r.ReferralStatus = &s
 	}
+
 	if err := parseDateField(input.ProvidedAt, &r.ProvidedAt); err != nil {
 		return nil, fmt.Errorf("invalid provided_at: %w", err)
 	}
@@ -123,7 +136,16 @@ func (uc *SupportRecordUseCase) Create(ctx context.Context, projectID string, re
 	if err := uc.repo.Create(ctx, r); err != nil {
 		return nil, fmt.Errorf("create support record: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "support_record.create", "support_record", &r.ID, fmt.Sprintf("Created support record %s", r.ID))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"support_record.create",
+		"support_record",
+		&r.ID,
+		fmt.Sprintf("Created support record %s", r.ID),
+	)
+
 	dto := supportRecordToDTO(r)
 	return &dto, nil
 }
@@ -134,6 +156,7 @@ func (uc *SupportRecordUseCase) Update(ctx context.Context, projectID, id string
 	if err != nil {
 		return nil, fmt.Errorf("get support record for update: %w", err)
 	}
+
 	if r.ProjectID != projectID {
 		return nil, support.ErrRecordNotFound
 	}
@@ -161,6 +184,7 @@ func (uc *SupportRecordUseCase) Update(ctx context.Context, projectID, id string
 	if input.Notes != nil {
 		r.Notes = input.Notes
 	}
+
 	if err := parseDateField(input.ProvidedAt, &r.ProvidedAt); err != nil {
 		return nil, fmt.Errorf("invalid provided_at: %w", err)
 	}
@@ -168,7 +192,16 @@ func (uc *SupportRecordUseCase) Update(ctx context.Context, projectID, id string
 	if err := uc.repo.Update(ctx, r); err != nil {
 		return nil, fmt.Errorf("update support record: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "support_record.update", "support_record", &id, fmt.Sprintf("Updated support record %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"support_record.update",
+		"support_record",
+		&id,
+		fmt.Sprintf("Updated support record %s", id),
+	)
+
 	dto := supportRecordToDTO(r)
 	return &dto, nil
 }
@@ -179,12 +212,23 @@ func (uc *SupportRecordUseCase) Delete(ctx context.Context, projectID, id string
 	if err != nil {
 		return fmt.Errorf("get support record for delete: %w", err)
 	}
+
 	if r.ProjectID != projectID {
 		return support.ErrRecordNotFound
 	}
+
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete support record: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "support_record.delete", "support_record", &id, fmt.Sprintf("Deleted support record %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"support_record.delete",
+		"support_record",
+		&id,
+		fmt.Sprintf("Deleted support record %s", id),
+	)
+
 	return nil
 }

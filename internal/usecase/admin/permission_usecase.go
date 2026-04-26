@@ -21,7 +21,11 @@ type PermissionUseCase struct {
 }
 
 // NewPermissionUseCase creates a PermissionUseCase.
-func NewPermissionUseCase(permRepo repository.PermissionRepository, userRepo repository.UserRepository, auditUC *ucaudit.AuditUseCase) *PermissionUseCase {
+func NewPermissionUseCase(
+	permRepo repository.PermissionRepository,
+	userRepo repository.UserRepository,
+	auditUC *ucaudit.AuditUseCase,
+) *PermissionUseCase {
 	return &PermissionUseCase{permRepo: permRepo, userRepo: userRepo, auditUC: auditUC}
 }
 
@@ -82,6 +86,7 @@ func (uc *PermissionUseCase) List(ctx context.Context, projectID string, callerI
 	for i, p := range perms {
 		dtos[i] = permToMemberDTO(p, userMap[p.UserID])
 	}
+
 	return dtos, nil
 }
 
@@ -96,6 +101,7 @@ func (uc *PermissionUseCase) Assign(ctx context.Context, projectID string, input
 	if err != nil {
 		return nil, user.ErrUserNotFound
 	}
+
 	if _, err := uc.userRepo.GetByID(ctx, uid); err != nil {
 		return nil, fmt.Errorf("verify user for assign: %w", err)
 	}
@@ -114,7 +120,15 @@ func (uc *PermissionUseCase) Assign(ctx context.Context, projectID string, input
 	if err := uc.permRepo.Create(ctx, perm); err != nil {
 		return nil, fmt.Errorf("assign permission: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "permission.grant", "permission", &perm.ID, fmt.Sprintf("Granted %s to user %s", input.Role, input.UserID))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"permission.grant",
+		"permission",
+		&perm.ID,
+		fmt.Sprintf("Granted %s to user %s", input.Role, input.UserID),
+	)
 
 	dto := permToDTO(perm)
 	return &dto, nil
@@ -126,6 +140,7 @@ func (uc *PermissionUseCase) Update(ctx context.Context, projectID, id string, i
 	if err != nil {
 		return nil, fmt.Errorf("get permission for update: %w", err)
 	}
+
 	if perm.ProjectID != projectID {
 		return nil, project.ErrPermissionNotFound
 	}
@@ -154,7 +169,14 @@ func (uc *PermissionUseCase) Update(ctx context.Context, projectID, id string, i
 		return nil, fmt.Errorf("update permission: %w", err)
 	}
 
-	uc.auditUC.Record(ctx, &projectID, "admin.permission.update", "permission", &id, fmt.Sprintf("Updated permission %s", id))
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"admin.permission.update",
+		"permission",
+		&id,
+		fmt.Sprintf("Updated permission %s", id),
+	)
 
 	dto := permToDTO(perm)
 	return &dto, nil
@@ -166,13 +188,24 @@ func (uc *PermissionUseCase) Revoke(ctx context.Context, projectID, id string) e
 	if err != nil {
 		return fmt.Errorf("get permission for revoke: %w", err)
 	}
+
 	if perm.ProjectID != projectID {
 		return project.ErrPermissionNotFound
 	}
+
 	if err := uc.permRepo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("revoke permission: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "permission.revoke", "permission", &id, fmt.Sprintf("Revoked permission %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"permission.revoke",
+		"permission",
+		&id,
+		fmt.Sprintf("Revoked permission %s", id),
+	)
+
 	return nil
 }
 

@@ -28,6 +28,7 @@ func SetupPostgres(t *testing.T) (string, func()) {
 				WithStartupTimeout(60*time.Second),
 		),
 	)
+
 	if err != nil {
 		t.Skipf("could not start postgres container: %v", err)
 		return "", func() {}

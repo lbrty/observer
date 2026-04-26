@@ -36,6 +36,7 @@ func (uc *SearchUseCase) Execute(ctx context.Context, userID string, role user.R
 	} else {
 		projectIDs, err = uc.repo.ListProjectIDsByUser(ctx, userID)
 	}
+
 	if err != nil {
 		return nil, fmt.Errorf("resolve project ids: %w", err)
 	}
@@ -54,9 +55,11 @@ func (uc *SearchUseCase) Execute(ctx context.Context, userID string, role user.R
 	for _, h := range hits.Projects {
 		seen[h.ID] = struct{}{}
 	}
+
 	for _, h := range hits.People {
 		seen[h.ProjectID] = struct{}{}
 	}
+
 	for _, h := range hits.Pets {
 		seen[h.ProjectID] = struct{}{}
 	}
@@ -70,6 +73,7 @@ func (uc *SearchUseCase) Execute(ctx context.Context, userID string, role user.R
 	for id := range seen {
 		allIDs = append(allIDs, id)
 	}
+
 	nameMap, err := uc.repo.ListProjectsByIDs(ctx, allIDs)
 	if err != nil {
 		return nil, fmt.Errorf("fetch project names: %w", err)
@@ -96,10 +100,12 @@ func (uc *SearchUseCase) Execute(ctx context.Context, userID string, role user.R
 		g := getGroup(h.ID)
 		g.Projects = append(g.Projects, ProjectResult{ID: h.ID, Name: h.Name})
 	}
+
 	for _, h := range hits.People {
 		g := getGroup(h.ProjectID)
 		g.People = append(g.People, PersonResult{ID: h.ID, FirstName: h.FirstName, LastName: h.LastName})
 	}
+
 	for _, h := range hits.Pets {
 		g := getGroup(h.ProjectID)
 		g.Pets = append(g.Pets, PetResult{ID: h.ID, Name: h.Name})

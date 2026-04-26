@@ -17,7 +17,10 @@ type TagUseCase struct {
 }
 
 // NewTagUseCase creates a TagUseCase.
-func NewTagUseCase(repo repository.TagRepository, auditUC *ucaudit.AuditUseCase) *TagUseCase {
+func NewTagUseCase(
+	repo repository.TagRepository,
+	auditUC *ucaudit.AuditUseCase,
+) *TagUseCase {
 	return &TagUseCase{repo: repo, auditUC: auditUC}
 }
 
@@ -27,10 +30,12 @@ func (uc *TagUseCase) List(ctx context.Context, projectID string) ([]TagDTO, err
 	if err != nil {
 		return nil, fmt.Errorf("list tags: %w", err)
 	}
+
 	dtos := make([]TagDTO, len(tags))
 	for i, t := range tags {
 		dtos[i] = tagToDTO(t)
 	}
+
 	return dtos, nil
 }
 
@@ -42,10 +47,20 @@ func (uc *TagUseCase) Create(ctx context.Context, projectID string, input Create
 		Name:      input.Name,
 		Color:     input.Color,
 	}
+
 	if err := uc.repo.Create(ctx, t); err != nil {
 		return nil, fmt.Errorf("create tag: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "tag.create", "tag", &t.ID, fmt.Sprintf("Created tag %s", t.Name))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"tag.create",
+		"tag",
+		&t.ID,
+		fmt.Sprintf("Created tag %s", t.Name),
+	)
+
 	dto := tagToDTO(t)
 	return &dto, nil
 }
@@ -56,19 +71,31 @@ func (uc *TagUseCase) Update(ctx context.Context, projectID, id string, input Up
 	if err != nil {
 		return nil, fmt.Errorf("get tag for update: %w", err)
 	}
+
 	if t.ProjectID != projectID {
 		return nil, tag.ErrTagNotFound
 	}
+
 	if input.Name != nil {
 		t.Name = *input.Name
 	}
 	if input.Color != nil {
 		t.Color = *input.Color
 	}
+
 	if err := uc.repo.Update(ctx, t); err != nil {
 		return nil, fmt.Errorf("update tag: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "tag.update", "tag", &id, fmt.Sprintf("Updated tag %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"tag.update",
+		"tag",
+		&id,
+		fmt.Sprintf("Updated tag %s", id),
+	)
+
 	dto := tagToDTO(t)
 	return &dto, nil
 }
@@ -79,12 +106,23 @@ func (uc *TagUseCase) Delete(ctx context.Context, projectID, id string) error {
 	if err != nil {
 		return fmt.Errorf("get tag for delete: %w", err)
 	}
+
 	if t.ProjectID != projectID {
 		return tag.ErrTagNotFound
 	}
+
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete tag: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "tag.delete", "tag", &id, fmt.Sprintf("Deleted tag %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"tag.delete",
+		"tag",
+		&id,
+		fmt.Sprintf("Deleted tag %s", id),
+	)
+
 	return nil
 }

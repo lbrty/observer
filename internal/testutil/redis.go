@@ -24,6 +24,7 @@ func SetupRedis(t *testing.T) (string, func()) {
 				WithStartupTimeout(60*time.Second),
 		),
 	)
+
 	if err != nil {
 		t.Skipf("could not start redis container: %v", err)
 		return "", func() {}

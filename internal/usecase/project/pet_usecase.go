@@ -19,7 +19,11 @@ type PetUseCase struct {
 }
 
 // NewPetUseCase creates a PetUseCase.
-func NewPetUseCase(repo repository.PetRepository, tagRepo repository.PetTagRepository, auditUC *ucaudit.AuditUseCase) *PetUseCase {
+func NewPetUseCase(
+	repo repository.PetRepository,
+	tagRepo repository.PetTagRepository,
+	auditUC *ucaudit.AuditUseCase,
+) *PetUseCase {
 	return &PetUseCase{repo: repo, tagRepo: tagRepo, auditUC: auditUC}
 }
 
@@ -54,6 +58,7 @@ func (uc *PetUseCase) List(ctx context.Context, projectID string, input ListPets
 	if err != nil {
 		return nil, fmt.Errorf("list pet tags: %w", err)
 	}
+
 	for i := range dtos {
 		if tags, ok := tagMap[dtos[i].ID]; ok {
 			dtos[i].TagIDs = tags
@@ -76,19 +81,23 @@ func (uc *PetUseCase) Get(ctx context.Context, projectID, id string) (*PetDTO, e
 	if err != nil {
 		return nil, fmt.Errorf("get pet: %w", err)
 	}
+
 	if p.ProjectID != projectID {
 		return nil, pet.ErrPetNotFound
 	}
+
 	dto := petToDTO(p)
 	tagMap, err := uc.tagRepo.ListBulk(ctx, []string{id})
 	if err != nil {
 		return nil, fmt.Errorf("list pet tags: %w", err)
 	}
+
 	if tags, ok := tagMap[id]; ok {
 		dto.TagIDs = tags
 	} else {
 		dto.TagIDs = []string{}
 	}
+
 	return &dto, nil
 }
 
@@ -103,13 +112,24 @@ func (uc *PetUseCase) Create(ctx context.Context, projectID string, input Create
 		RegistrationID: input.RegistrationID,
 		Notes:          input.Notes,
 	}
+
 	if input.Status != nil {
 		p.Status = pet.PetStatus(*input.Status)
 	}
+
 	if err := uc.repo.Create(ctx, p); err != nil {
 		return nil, fmt.Errorf("create pet: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "pet.create", "pet", &p.ID, fmt.Sprintf("Created pet %s", p.ID))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"pet.create",
+		"pet",
+		&p.ID,
+		fmt.Sprintf("Created pet %s", p.ID),
+	)
+
 	dto := petToDTO(p)
 	return &dto, nil
 }
@@ -120,9 +140,11 @@ func (uc *PetUseCase) Update(ctx context.Context, projectID, id string, input Up
 	if err != nil {
 		return nil, fmt.Errorf("get pet for update: %w", err)
 	}
+
 	if p.ProjectID != projectID {
 		return nil, pet.ErrPetNotFound
 	}
+
 	if input.OwnerID != nil {
 		p.OwnerID = input.OwnerID
 	}
@@ -138,10 +160,20 @@ func (uc *PetUseCase) Update(ctx context.Context, projectID, id string, input Up
 	if input.Notes != nil {
 		p.Notes = input.Notes
 	}
+
 	if err := uc.repo.Update(ctx, p); err != nil {
 		return nil, fmt.Errorf("update pet: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "pet.update", "pet", &id, fmt.Sprintf("Updated pet %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"pet.update",
+		"pet",
+		&id,
+		fmt.Sprintf("Updated pet %s", id),
+	)
+
 	dto := petToDTO(p)
 	return &dto, nil
 }
@@ -152,12 +184,23 @@ func (uc *PetUseCase) Delete(ctx context.Context, projectID, id string) error {
 	if err != nil {
 		return fmt.Errorf("get pet for delete: %w", err)
 	}
+
 	if p.ProjectID != projectID {
 		return pet.ErrPetNotFound
 	}
+
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete pet: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "pet.delete", "pet", &id, fmt.Sprintf("Deleted pet %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"pet.delete",
+		"pet",
+		&id,
+		fmt.Sprintf("Deleted pet %s", id),
+	)
+
 	return nil
 }

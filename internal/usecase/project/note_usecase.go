@@ -17,7 +17,10 @@ type NoteUseCase struct {
 }
 
 // NewNoteUseCase creates a NoteUseCase.
-func NewNoteUseCase(repo repository.PersonNoteRepository, auditUC *ucaudit.AuditUseCase) *NoteUseCase {
+func NewNoteUseCase(
+	repo repository.PersonNoteRepository,
+	auditUC *ucaudit.AuditUseCase,
+) *NoteUseCase {
 	return &NoteUseCase{repo: repo, auditUC: auditUC}
 }
 
@@ -27,10 +30,12 @@ func (uc *NoteUseCase) List(ctx context.Context, personID string) ([]NoteDTO, er
 	if err != nil {
 		return nil, fmt.Errorf("list notes: %w", err)
 	}
+
 	dtos := make([]NoteDTO, len(notes))
 	for i, n := range notes {
 		dtos[i] = noteToDTO(n)
 	}
+
 	return dtos, nil
 }
 
@@ -42,10 +47,20 @@ func (uc *NoteUseCase) Create(ctx context.Context, projectID, personID, authorID
 		AuthorID: &authorID,
 		Body:     input.Body,
 	}
+
 	if err := uc.repo.Create(ctx, n); err != nil {
 		return nil, fmt.Errorf("create note: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "note.create", "note", &n.ID, fmt.Sprintf("Created note %s", n.ID))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"note.create",
+		"note",
+		&n.ID,
+		fmt.Sprintf("Created note %s", n.ID),
+	)
+
 	dto := noteToDTO(n)
 	return &dto, nil
 }
@@ -56,14 +71,26 @@ func (uc *NoteUseCase) Update(ctx context.Context, projectID, personID, id strin
 	if err != nil {
 		return nil, fmt.Errorf("get note for update: %w", err)
 	}
+
 	if n.PersonID != personID {
 		return nil, note.ErrNoteNotFound
 	}
+
 	n.Body = input.Body
+
 	if err := uc.repo.Update(ctx, n); err != nil {
 		return nil, fmt.Errorf("update note: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "note.update", "note", &id, fmt.Sprintf("Updated note %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"note.update",
+		"note",
+		&id,
+		fmt.Sprintf("Updated note %s", id),
+	)
+
 	dto := noteToDTO(n)
 	return &dto, nil
 }
@@ -74,12 +101,23 @@ func (uc *NoteUseCase) Delete(ctx context.Context, projectID, personID, id strin
 	if err != nil {
 		return fmt.Errorf("get note for delete: %w", err)
 	}
+
 	if n.PersonID != personID {
 		return note.ErrNoteNotFound
 	}
+
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete note: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "note.delete", "note", &id, fmt.Sprintf("Deleted note %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"note.delete",
+		"note",
+		&id,
+		fmt.Sprintf("Deleted note %s", id),
+	)
+
 	return nil
 }

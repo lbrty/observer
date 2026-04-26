@@ -156,19 +156,17 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
 	loginAttemptStore := repoauth.NewLoginAttemptStore(redisClient, userRepo)
-
-	authUC := ucauth.NewAuthUseCase(userRepo, credRepo, sessionRepo, mfaRepo, mfaRecoveryRepo, hasher, tokenGen, loginAttemptStore)
+	authUC := ucauth.NewAuthUseCase(
+		userRepo, credRepo, sessionRepo, mfaRepo, mfaRecoveryRepo, hasher, tokenGen, loginAttemptStore,
+	)
 	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher, sessionRepo, loginAttemptStore, auditUC)
 	permUC := ucadmin.NewPermissionUseCase(permCRUDRepo, userRepo, auditUC)
-
 	countryUC := ucadmin.NewCountryUseCase(countryRepo)
 	stateUC := ucadmin.NewStateUseCase(stateRepo)
 	placeUC := ucadmin.NewPlaceUseCase(placeRepo)
 	officeUC := ucadmin.NewOfficeUseCase(officeRepo)
 	categoryUC := ucadmin.NewCategoryUseCase(categoryRepo)
-
 	myProjectsUC := ucmy.NewMyProjectsUseCase(permCRUDRepo, projectRepo)
-
 	projectUC := ucadmin.NewProjectUseCase(projectRepo, permCRUDRepo, auditUC)
 	tagUC := ucproject.NewTagUseCase(tagRepo, auditUC)
 	personUC := ucproject.NewPersonUseCase(personRepo, personTagRepo, auditUC)

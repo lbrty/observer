@@ -23,6 +23,7 @@ func MigrateUp(t *testing.T, dsn string) {
 	if err != nil {
 		t.Fatalf("resolve migrations dir: %v", err)
 	}
+
 	if _, err := os.Stat(absDir); err != nil {
 		t.Fatalf("migrations dir not found: %v", err)
 	}

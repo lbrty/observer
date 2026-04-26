@@ -17,7 +17,10 @@ type MigrationRecordUseCase struct {
 }
 
 // NewMigrationRecordUseCase creates a MigrationRecordUseCase.
-func NewMigrationRecordUseCase(repo repository.MigrationRecordRepository, auditUC *ucaudit.AuditUseCase) *MigrationRecordUseCase {
+func NewMigrationRecordUseCase(
+	repo repository.MigrationRecordRepository,
+	auditUC *ucaudit.AuditUseCase,
+) *MigrationRecordUseCase {
 	return &MigrationRecordUseCase{repo: repo, auditUC: auditUC}
 }
 
@@ -27,10 +30,12 @@ func (uc *MigrationRecordUseCase) ListByPerson(ctx context.Context, personID str
 	if err != nil {
 		return nil, fmt.Errorf("list migration records: %w", err)
 	}
+
 	dtos := make([]MigrationRecordDTO, len(records))
 	for i, r := range records {
 		dtos[i] = migrationRecordToDTO(r)
 	}
+
 	return dtos, nil
 }
 
@@ -40,9 +45,11 @@ func (uc *MigrationRecordUseCase) Get(ctx context.Context, personID, id string) 
 	if err != nil {
 		return nil, fmt.Errorf("get migration record: %w", err)
 	}
+
 	if r.PersonID != personID {
 		return nil, migration.ErrRecordNotFound
 	}
+
 	dto := migrationRecordToDTO(r)
 	return &dto, nil
 }
@@ -61,10 +68,12 @@ func (uc *MigrationRecordUseCase) Create(ctx context.Context, projectID, personI
 		mr := migration.MovementReason(*input.MovementReason)
 		r.MovementReason = &mr
 	}
+
 	if input.HousingAtDestination != nil {
 		h := migration.HousingAtDestination(*input.HousingAtDestination)
 		r.HousingAtDestination = &h
 	}
+
 	if err := parseDateField(input.MigrationDate, &r.MigrationDate); err != nil {
 		return nil, fmt.Errorf("invalid migration_date: %w", err)
 	}
@@ -72,7 +81,16 @@ func (uc *MigrationRecordUseCase) Create(ctx context.Context, projectID, personI
 	if err := uc.repo.Create(ctx, r); err != nil {
 		return nil, fmt.Errorf("create migration record: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "migration_record.create", "migration_record", &r.ID, fmt.Sprintf("Created migration record %s", r.ID))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"migration_record.create",
+		"migration_record",
+		&r.ID,
+		fmt.Sprintf("Created migration record %s", r.ID),
+	)
+
 	dto := migrationRecordToDTO(r)
 	return &dto, nil
 }
@@ -83,14 +101,24 @@ func (uc *MigrationRecordUseCase) Delete(ctx context.Context, projectID, personI
 	if err != nil {
 		return fmt.Errorf("get migration record for delete: %w", err)
 	}
+
 	if rec.PersonID != personID {
 		return migration.ErrRecordNotFound
 	}
+
 	if err := uc.repo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("delete migration record: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "migration_record.delete", "migration_record", &id,
-		fmt.Sprintf("Deleted migration record %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"migration_record.delete",
+		"migration_record",
+		&id,
+		fmt.Sprintf("Deleted migration record %s", id),
+	)
+
 	return nil
 }
 
@@ -100,6 +128,7 @@ func (uc *MigrationRecordUseCase) Update(ctx context.Context, projectID, personI
 	if err != nil {
 		return nil, fmt.Errorf("get migration record for update: %w", err)
 	}
+
 	if r.PersonID != personID {
 		return nil, migration.ErrRecordNotFound
 	}
@@ -121,6 +150,7 @@ func (uc *MigrationRecordUseCase) Update(ctx context.Context, projectID, personI
 	if input.Notes != nil {
 		r.Notes = input.Notes
 	}
+
 	if err := parseDateField(input.MigrationDate, &r.MigrationDate); err != nil {
 		return nil, fmt.Errorf("invalid migration_date: %w", err)
 	}
@@ -128,7 +158,16 @@ func (uc *MigrationRecordUseCase) Update(ctx context.Context, projectID, personI
 	if err := uc.repo.Update(ctx, r); err != nil {
 		return nil, fmt.Errorf("update migration record: %w", err)
 	}
-	uc.auditUC.Record(ctx, &projectID, "migration_record.update", "migration_record", &id, fmt.Sprintf("Updated migration record %s", id))
+
+	uc.auditUC.Record(
+		ctx,
+		&projectID,
+		"migration_record.update",
+		"migration_record",
+		&id,
+		fmt.Sprintf("Updated migration record %s", id),
+	)
+
 	dto := migrationRecordToDTO(r)
 	return &dto, nil
 }
