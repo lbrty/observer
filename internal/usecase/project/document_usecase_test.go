@@ -14,6 +14,7 @@ import (
 
 	"github.com/lbrty/observer/internal/domain/document"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
+	"github.com/lbrty/observer/internal/storage"
 	mock_storage "github.com/lbrty/observer/internal/storage/mock"
 	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
@@ -243,7 +244,7 @@ func TestDocumentUseCase_Thumbnail_CorruptImageReturnsError(t *testing.T) {
 		Path:      "proj1/p1/d1_photo.jpg",
 		MimeType:  "image/jpeg",
 	}, nil)
-	mockFS.EXPECT().Open(gomock.Any(), "proj1/p1/d1_photo_thumb.jpg").Return(nil, errors.New("not found"))
+	mockFS.EXPECT().Open(gomock.Any(), "proj1/p1/d1_photo_thumb.jpg").Return(nil, storage.ErrNotFound)
 	mockFS.EXPECT().Open(gomock.Any(), "proj1/p1/d1_photo.jpg").Return(io.NopCloser(strings.NewReader("not-an-image")), nil)
 
 	_, _, err := uc.Thumbnail(context.Background(), "proj1", "d1")

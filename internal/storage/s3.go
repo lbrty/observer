@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 
@@ -9,6 +10,7 @@ import (
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 
 	"github.com/lbrty/observer/internal/config"
 )
@@ -55,11 +57,12 @@ func NewS3Storage(cfg config.StorageConfig) (*S3Storage, error) {
 	}, nil
 }
 
-func (s *S3Storage) Save(ctx context.Context, path string, r io.Reader) error {
+func (s *S3Storage) Save(ctx context.Context, path string, r io.Reader, contentType string) error {
 	_, err := s.client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(s.bucket),
-		Key:    aws.String(path),
-		Body:   r,
+		Bucket:      aws.String(s.bucket),
+		Key:         aws.String(path),
+		Body:        r,
+		ContentType: aws.String(contentType),
 	})
 	if err != nil {
 		return fmt.Errorf("s3 put object: %w", err)
@@ -73,6 +76,10 @@ func (s *S3Storage) Open(ctx context.Context, path string) (io.ReadCloser, error
 		Key:    aws.String(path),
 	})
 	if err != nil {
+		var nsk *types.NoSuchKey
+		if errors.As(err, &nsk) {
+			return nil, ErrNotFound
+		}
 		return nil, fmt.Errorf("s3 get object: %w", err)
 	}
 	return out.Body, nil

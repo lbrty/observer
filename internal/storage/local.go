@@ -26,7 +26,7 @@ func (s *LocalStorage) resolve(path string) string {
 	return filepath.Join(s.root, filepath.Clean("/"+path))
 }
 
-func (s *LocalStorage) Save(_ context.Context, path string, r io.Reader) error {
+func (s *LocalStorage) Save(_ context.Context, path string, r io.Reader, _ string) error {
 	full := s.resolve(path)
 	if err := os.MkdirAll(filepath.Dir(full), 0o750); err != nil {
 		return fmt.Errorf("create parent dirs: %w", err)
@@ -48,6 +48,9 @@ func (s *LocalStorage) Save(_ context.Context, path string, r io.Reader) error {
 func (s *LocalStorage) Open(_ context.Context, path string) (io.ReadCloser, error) {
 	f, err := os.Open(s.resolve(path))
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, ErrNotFound
+		}
 		return nil, fmt.Errorf("open file: %w", err)
 	}
 	return f, nil

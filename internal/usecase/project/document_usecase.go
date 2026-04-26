@@ -3,6 +3,7 @@ package project
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"image"
 	_ "image/gif"
@@ -106,7 +107,7 @@ func (uc *DocumentUseCase) generateThumbnail(ctx context.Context, originalPath, 
 		return fmt.Errorf("encode thumbnail: %w", err)
 	}
 
-	if err := uc.fs.Save(ctx, thumbPath, &buf); err != nil {
+	if err := uc.fs.Save(ctx, thumbPath, &buf, "image/jpeg"); err != nil {
 		return fmt.Errorf("save thumbnail: %w", err)
 	}
 	return nil
@@ -131,6 +132,9 @@ func (uc *DocumentUseCase) Thumbnail(ctx context.Context, projectID, id string) 
 		dto := documentToDTO(d)
 		return &dto, rc, nil
 	}
+	if !errors.Is(err, storage.ErrNotFound) {
+		return nil, nil, fmt.Errorf("open thumbnail: %w", err)
+	}
 
 	if err := uc.generateThumbnail(ctx, d.Path, thumbPath); err != nil {
 		return nil, nil, fmt.Errorf("generate thumbnail: %w", err)
@@ -149,7 +153,7 @@ func (uc *DocumentUseCase) Upload(ctx context.Context, projectID, personID, uplo
 	docID := ulid.NewString()
 	fpath := storagePath(projectID, personID, docID, filename)
 
-	if err := uc.fs.Save(ctx, fpath, body); err != nil {
+	if err := uc.fs.Save(ctx, fpath, body, mimeType); err != nil {
 		return nil, fmt.Errorf("save file: %w", err)
 	}
 

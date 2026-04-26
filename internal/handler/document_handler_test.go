@@ -291,7 +291,7 @@ func TestDocumentHandler_Upload_SanitizesFilename(t *testing.T) {
 
 	// The use case should receive "passwd", not "../../etc/passwd"
 	docRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
-	fs.EXPECT().Save(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
+	fs.EXPECT().Save(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 
 	pngHeader := []byte("\x89PNG\r\n\x1a\n" + string(make([]byte, 504)))
 	c, w := newMultipartUploadContext("../../etc/passwd", pngHeader, projectID, personID)

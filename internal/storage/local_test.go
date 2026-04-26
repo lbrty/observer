@@ -17,7 +17,7 @@ func TestLocalStorage_Save_WritesContent(t *testing.T) {
 	ls, err := storage.NewLocalStorage(dir)
 	require.NoError(t, err)
 
-	err = ls.Save(context.Background(), "sub/file.txt", strings.NewReader("hello world"))
+	err = ls.Save(context.Background(), "sub/file.txt", strings.NewReader("hello world"), "text/plain")
 	require.NoError(t, err)
 
 	rc, err := ls.Open(context.Background(), "sub/file.txt")
@@ -44,5 +44,5 @@ func TestLocalStorage_Open_MissingFileReturnsError(t *testing.T) {
 	require.NoError(t, err)
 
 	_, err = ls.Open(context.Background(), "nonexistent.txt")
-	assert.Error(t, err)
+	assert.ErrorIs(t, err, storage.ErrNotFound)
 }

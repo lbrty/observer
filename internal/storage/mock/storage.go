@@ -33,17 +33,17 @@ func (m *MockFileStorage) EXPECT() *MockFileStorageMockRecorder {
 }
 
 // Save mocks base method.
-func (m *MockFileStorage) Save(ctx context.Context, path string, r io.Reader) error {
+func (m *MockFileStorage) Save(ctx context.Context, path string, r io.Reader, contentType string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Save", ctx, path, r)
+	ret := m.ctrl.Call(m, "Save", ctx, path, r, contentType)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Save indicates an expected call of Save.
-func (mr *MockFileStorageMockRecorder) Save(ctx, path, r any) *gomock.Call {
+func (mr *MockFileStorageMockRecorder) Save(ctx, path, r, contentType any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockFileStorage)(nil).Save), ctx, path, r)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockFileStorage)(nil).Save), ctx, path, r, contentType)
 }
 
 // Open mocks base method.

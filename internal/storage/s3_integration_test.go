@@ -98,7 +98,7 @@ func TestS3Storage_SaveOpenDelete(t *testing.T) {
 	const path = "projects/abc/documents/file.txt"
 	const content = "hello observer"
 
-	require.NoError(t, s.Save(ctx, path, strings.NewReader(content)))
+	require.NoError(t, s.Save(ctx, path, strings.NewReader(content), "text/plain"))
 
 	rc, err := s.Open(ctx, path)
 	require.NoError(t, err)
