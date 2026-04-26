@@ -28,13 +28,16 @@ func setupRSAKeys(t *testing.T) *crypto.RSAKeys {
 	privPath := filepath.Join(dir, "private.pem")
 	pubPath := filepath.Join(dir, "public.pem")
 
-	privFile, _ := os.Create(privPath)
-	pem.Encode(privFile, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(key)})
+	privFile, err := os.Create(privPath)
+	require.NoError(t, err)
+	require.NoError(t, pem.Encode(privFile, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(key)}))
 	privFile.Close()
 
-	pubBytes, _ := x509.MarshalPKIXPublicKey(&key.PublicKey)
-	pubFile, _ := os.Create(pubPath)
-	pem.Encode(pubFile, &pem.Block{Type: "PUBLIC KEY", Bytes: pubBytes})
+	pubBytes, err := x509.MarshalPKIXPublicKey(&key.PublicKey)
+	require.NoError(t, err)
+	pubFile, err := os.Create(pubPath)
+	require.NoError(t, err)
+	require.NoError(t, pem.Encode(pubFile, &pem.Block{Type: "PUBLIC KEY", Bytes: pubBytes}))
 	pubFile.Close()
 
 	keys, err := crypto.LoadRSAKeys(privPath, pubPath)
@@ -44,7 +47,7 @@ func setupRSAKeys(t *testing.T) *crypto.RSAKeys {
 
 func TestRSATokenGenerator_AccessToken(t *testing.T) {
 	keys := setupRSAKeys(t)
-	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
+	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 5*time.Minute, "observer")
 
 	uid := ulid.New()
 	token, expiresAt, err := gen.GenerateAccessToken(uid, "consultant")
@@ -54,14 +57,14 @@ func TestRSATokenGenerator_AccessToken(t *testing.T) {
 
 	claims, err := gen.ValidateAccessToken(token)
 	require.NoError(t, err)
-	assert.Equal(t, uid.String(), claims.UserID)
+	assert.Equal(t, uid.String(), claims.Subject)
 	assert.Equal(t, "consultant", claims.Role)
 	assert.Equal(t, "access", claims.Type)
 }
 
 func TestRSATokenGenerator_MFAToken(t *testing.T) {
 	keys := setupRSAKeys(t)
-	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
+	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 5*time.Minute, "observer")
 
 	uid := ulid.New()
 	token, err := gen.GenerateMFAToken(uid)
@@ -70,13 +73,13 @@ func TestRSATokenGenerator_MFAToken(t *testing.T) {
 
 	claims, err := gen.ValidateMFAToken(token)
 	require.NoError(t, err)
-	assert.Equal(t, uid.String(), claims.UserID)
+	assert.Equal(t, uid.String(), claims.Subject)
 	assert.Equal(t, "mfa_pending", claims.Type)
 }
 
 func TestRSATokenGenerator_TypeMismatch(t *testing.T) {
 	keys := setupRSAKeys(t)
-	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
+	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 5*time.Minute, "observer")
 
 	uid := ulid.New()
 	accessToken, _, err := gen.GenerateAccessToken(uid, "consultant")
@@ -89,7 +92,7 @@ func TestRSATokenGenerator_TypeMismatch(t *testing.T) {
 
 func TestRSATokenGenerator_RefreshToken(t *testing.T) {
 	keys := setupRSAKeys(t)
-	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 168*time.Hour, 5*time.Minute, "observer")
+	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 5*time.Minute, "observer")
 
 	token1, err := gen.GenerateRefreshToken()
 	require.NoError(t, err)
@@ -104,7 +107,7 @@ func TestRSATokenGenerator_RefreshToken(t *testing.T) {
 
 func TestGenerateRefreshToken_Entropy(t *testing.T) {
 	keys := setupRSAKeys(t)
-	gen := crypto.NewRSATokenGenerator(keys, time.Hour, 7*24*time.Hour, 5*time.Minute, "test")
+	gen := crypto.NewRSATokenGenerator(keys, time.Hour, 5*time.Minute, "test")
 
 	tok1, err := gen.GenerateRefreshToken()
 	require.NoError(t, err)

@@ -14,9 +14,8 @@ import (
 // Claims are the JWT claims used in this application.
 type Claims struct {
 	jwt.RegisteredClaims
-	UserID string `json:"uid"`
-	Role   string `json:"role"`
-	Type   string `json:"type"`
+	Role string `json:"role"`
+	Type string `json:"type"`
 }
 
 // TokenGenerator defines the token operations interface.
@@ -33,18 +32,16 @@ type RSATokenGenerator struct {
 	privateKey *rsa.PrivateKey
 	publicKey  *rsa.PublicKey
 	accessTTL  time.Duration
-	refreshTTL time.Duration
 	mfaTTL     time.Duration
 	issuer     string
 }
 
 // NewRSATokenGenerator creates a new RSATokenGenerator.
-func NewRSATokenGenerator(keys *RSAKeys, accessTTL, refreshTTL, mfaTTL time.Duration, issuer string) *RSATokenGenerator {
+func NewRSATokenGenerator(keys *RSAKeys, accessTTL, mfaTTL time.Duration, issuer string) *RSATokenGenerator {
 	return &RSATokenGenerator{
 		privateKey: keys.PrivateKey,
 		publicKey:  keys.PublicKey,
 		accessTTL:  accessTTL,
-		refreshTTL: refreshTTL,
 		mfaTTL:     mfaTTL,
 		issuer:     issuer,
 	}
@@ -63,9 +60,8 @@ func (g *RSATokenGenerator) GenerateAccessToken(userID ulid.ULID, role string) (
 			IssuedAt:  jwt.NewNumericDate(now),
 			NotBefore: jwt.NewNumericDate(now),
 		},
-		UserID: userID.String(),
-		Role:   role,
-		Type:   "access",
+		Role: role,
+		Type: "access",
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
@@ -83,6 +79,7 @@ func (g *RSATokenGenerator) GenerateRefreshToken() (string, error) {
 	if _, err := rand.Read(b); err != nil {
 		return "", fmt.Errorf("generate refresh token: %w", err)
 	}
+
 	return hex.EncodeToString(b), nil
 }
 
@@ -97,8 +94,7 @@ func (g *RSATokenGenerator) GenerateMFAToken(userID ulid.ULID) (string, error) {
 			ExpiresAt: jwt.NewNumericDate(now.Add(g.mfaTTL)),
 			IssuedAt:  jwt.NewNumericDate(now),
 		},
-		UserID: userID.String(),
-		Type:   "mfa_pending",
+		Type: "mfa_pending",
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
@@ -122,6 +118,7 @@ func (g *RSATokenGenerator) validateToken(tokenString, expectedType string) (*Cl
 		}
 		return g.publicKey, nil
 	})
+
 	if err != nil {
 		return nil, fmt.Errorf("parse token: %w", err)
 	}

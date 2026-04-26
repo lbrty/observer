@@ -21,6 +21,7 @@ type ArgonHasher struct {
 	memory  uint32
 	threads uint8
 	keyLen  uint32
+	saltLen uint32
 }
 
 // NewArgonHasher creates an ArgonHasher with sensible defaults.
@@ -30,12 +31,13 @@ func NewArgonHasher() *ArgonHasher {
 		memory:  64 * 1024, // 64 MB
 		threads: 4,
 		keyLen:  32,
+		saltLen: 16,
 	}
 }
 
 // Hash derives a base64-encoded hash and salt from the given password.
 func (h *ArgonHasher) Hash(password string) (string, string, error) {
-	salt := make([]byte, 16)
+	salt := make([]byte, h.saltLen)
 	if _, err := rand.Read(salt); err != nil {
 		return "", "", fmt.Errorf("generate salt: %w", err)
 	}
@@ -49,21 +51,35 @@ func (h *ArgonHasher) Hash(password string) (string, string, error) {
 
 // Verify checks that password matches the stored hash+salt.
 func (h *ArgonHasher) Verify(password, hashStr, saltStr string) error {
-	salt, err := base64.RawStdEncoding.DecodeString(saltStr)
-	if err != nil {
-		return fmt.Errorf("decode salt: %w", err)
+	salt, saltErr := base64.RawStdEncoding.DecodeString(saltStr)
+	expected, hashErr := base64.RawStdEncoding.DecodeString(hashStr)
+
+	// Always run argon2 before returning any error. Decode failures are
+	// programmer errors (corrupted DB values), not user-supplied inputs, so
+	// this isn't a real timing oracle today — but keeping the slow path
+	// unconditional ensures that stays true even if the call site changes.
+	if saltErr != nil {
+		salt = make([]byte, h.saltLen)
 	}
 
-	expected, err := base64.RawStdEncoding.DecodeString(hashStr)
-	if err != nil {
-		return fmt.Errorf("decode hash: %w", err)
+	if hashErr != nil {
+		expected = make([]byte, h.keyLen)
 	}
 
 	computed := argon2.IDKey([]byte(password), salt, h.time, h.memory, h.threads, h.keyLen)
+	match := subtle.ConstantTimeCompare(computed, expected) == 1
 
-	if subtle.ConstantTimeCompare(computed, expected) == 1 {
-		return nil
+	if saltErr != nil {
+		return fmt.Errorf("decode salt: %w", saltErr)
 	}
 
-	return fmt.Errorf("invalid password")
+	if hashErr != nil {
+		return fmt.Errorf("decode hash: %w", hashErr)
+	}
+
+	if !match {
+		return fmt.Errorf("invalid password")
+	}
+
+	return nil
 }

@@ -34,7 +34,7 @@ func (uc *AuthUseCase) VerifyMFA(ctx context.Context, input VerifyMFAInput, user
 		return nil, domainauth.ErrInvalidMFACode
 	}
 
-	userID, err := iulid.Parse(claims.UserID)
+	userID, err := iulid.Parse(claims.Subject)
 	if err != nil {
 		return nil, domainauth.ErrInvalidMFACode
 	}

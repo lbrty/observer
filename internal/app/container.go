@@ -150,7 +150,6 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	tokenGen := crypto.NewRSATokenGenerator(
 		rsaKeys,
 		cfg.JWT.AccessTTL,
-		cfg.JWT.RefreshTTL,
 		cfg.JWT.MFATempTTL,
 		cfg.JWT.Issuer,
 	)

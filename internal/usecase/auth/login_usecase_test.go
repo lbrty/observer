@@ -82,7 +82,7 @@ func newTestTokenGen(t *testing.T) crypto.TokenGenerator {
 	privPath, pubPath := generateTestKeys(t, tmpDir)
 	keys, err := crypto.LoadRSAKeys(privPath, pubPath)
 	require.NoError(t, err)
-	return crypto.NewRSATokenGenerator(keys, 0, 0, 5*time.Minute, "test")
+	return crypto.NewRSATokenGenerator(keys, 0, 5*time.Minute, "test")
 }
 
 func TestLogin_Success(t *testing.T) {

@@ -54,7 +54,7 @@ func (m *AuthMiddleware) Authenticate() gin.HandlerFunc {
 			return
 		}
 
-		userID, err := ulid.Parse(claims.UserID)
+		userID, err := ulid.Parse(claims.Subject)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid user ID in token", "code": "errors.auth.invalidToken"})
 			c.Abort()
@@ -73,7 +73,7 @@ func (m *AuthMiddleware) Authenticate() gin.HandlerFunc {
 		c.Set(string(CtxUserRole), claims.Role)
 
 		// Enrich request context with audit metadata for use cases.
-		ctx := WithAuditContext(c.Request.Context(), claims.UserID, c.ClientIP(), c.Request.UserAgent())
+		ctx := WithAuditContext(c.Request.Context(), claims.Subject, c.ClientIP(), c.Request.UserAgent())
 		c.Request = c.Request.WithContext(ctx)
 
 		c.Next()
