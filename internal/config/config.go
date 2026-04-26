@@ -2,10 +2,10 @@ package config
 
 import (
 	"net/http"
-	"os"
-	"strconv"
 	"strings"
 	"time"
+
+	"github.com/sultaniman/env"
 )
 
 const (
@@ -113,108 +113,103 @@ type JWTConfig struct {
 
 func Load() (*Config, error) {
 	return &Config{
-		DevMode: getEnvBool("DEV_MODE", false),
+		DevMode: env.GetBool("DEV_MODE"),
 		Server: ServerConfig{
-			Host:         getEnv("SERVER_HOST", DefaultServerHost),
-			Port:         getEnvInt("SERVER_PORT", DefaultServerPort),
-			ReadTimeout:  getEnvDuration("SERVER_READ_TIMEOUT", DefaultServerReadTimeout),
-			WriteTimeout: getEnvDuration("SERVER_WRITE_TIMEOUT", DefaultServerWriteTimeout),
+			Host:         strOr("SERVER_HOST", DefaultServerHost),
+			Port:         intOr("SERVER_PORT", DefaultServerPort),
+			ReadTimeout:  durOr("SERVER_READ_TIMEOUT", DefaultServerReadTimeout),
+			WriteTimeout: durOr("SERVER_WRITE_TIMEOUT", DefaultServerWriteTimeout),
 		},
 		Database: DatabaseConfig{
-			DSN: getEnv("DATABASE_DSN", ""),
+			DSN: env.GetString("DATABASE_DSN"),
 		},
 		Redis: RedisConfig{
-			URL: getEnv("REDIS_URL", "redis://localhost:6379/0"),
+			URL: strOr("REDIS_URL", "redis://localhost:6379/0"),
 		},
 		Log: LogConfig{
-			Level: getEnv("LOG_LEVEL", DefaultLogLevel),
+			Level: strOr("LOG_LEVEL", DefaultLogLevel),
 		},
 		JWT: JWTConfig{
-			PrivateKeyPath: getEnv("JWT_PRIVATE_KEY_PATH", "keys/jwt_rsa"),
-			PublicKeyPath:  getEnv("JWT_PUBLIC_KEY_PATH", "keys/jwt_rsa.pub"),
-			AccessTTL:      getEnvDuration("JWT_ACCESS_TTL", 15*time.Minute),
-			RefreshTTL:     getEnvDuration("JWT_REFRESH_TTL", 168*time.Hour),
-			MFATempTTL:     getEnvDuration("JWT_MFA_TEMP_TTL", 5*time.Minute),
-			Issuer:         getEnv("JWT_ISSUER", "observer"),
+			PrivateKeyPath: strOr("JWT_PRIVATE_KEY_PATH", "keys/jwt_rsa"),
+			PublicKeyPath:  strOr("JWT_PUBLIC_KEY_PATH", "keys/jwt_rsa.pub"),
+			AccessTTL:      durOr("JWT_ACCESS_TTL", 15*time.Minute),
+			RefreshTTL:     durOr("JWT_REFRESH_TTL", 168*time.Hour),
+			MFATempTTL:     durOr("JWT_MFA_TEMP_TTL", 5*time.Minute),
+			Issuer:         strOr("JWT_ISSUER", "observer"),
 		},
 		Swagger: SwaggerConfig{
-			Enabled: getEnvBool("SWAGGER_ENABLED", false),
+			Enabled: env.GetBool("SWAGGER_ENABLED"),
 		},
 		CORS: CORSConfig{
-			Origins: getEnvList("CORS_ORIGINS", []string{"http://localhost:5173"}),
+			Origins: listOr("CORS_ORIGINS", []string{"http://localhost:5173"}),
 		},
 		Cookie: CookieConfig{
-			Domain:   getEnv("COOKIE_DOMAIN", ""),
-			Secure:   getEnvBool("COOKIE_SECURE", true),
-			SameSite: getEnv("COOKIE_SAME_SITE", "lax"),
-			MaxAge:   getEnvDuration("COOKIE_MAX_AGE", DefaultCookieMaxAge),
+			Domain:   env.GetString("COOKIE_DOMAIN"),
+			Secure:   boolOr("COOKIE_SECURE", true),
+			SameSite: strOr("COOKIE_SAME_SITE", "lax"),
+			MaxAge:   durOr("COOKIE_MAX_AGE", DefaultCookieMaxAge),
 		},
 		RateLimit: RateLimitConfig{
-			LoginRate:    getEnvInt("RATE_LIMIT_LOGIN", 10),
-			RegisterRate: getEnvInt("RATE_LIMIT_REGISTER", 5),
+			LoginRate:    intOr("RATE_LIMIT_LOGIN", 10),
+			RegisterRate: intOr("RATE_LIMIT_REGISTER", 5),
 		},
 		Storage: StorageConfig{
-			Path:        getEnv("STORAGE_PATH", "data/uploads"),
-			Backend:     getEnv("STORAGE_BACKEND", "local"),
-			S3Endpoint:  getEnv("S3_ENDPOINT", ""),
-			S3Bucket:    getEnv("S3_BUCKET", ""),
-			S3Region:    getEnv("S3_REGION", "us-east-1"),
-			S3AccessKey: getEnv("S3_ACCESS_KEY", ""),
-			S3SecretKey: getEnv("S3_SECRET_KEY", ""),
+			Path:        strOr("STORAGE_PATH", "data/uploads"),
+			Backend:     strOr("STORAGE_BACKEND", "local"),
+			S3Endpoint:  env.GetString("S3_ENDPOINT"),
+			S3Bucket:    env.GetString("S3_BUCKET"),
+			S3Region:    strOr("S3_REGION", "us-east-1"),
+			S3AccessKey: env.GetString("S3_ACCESS_KEY"),
+			S3SecretKey: env.GetString("S3_SECRET_KEY"),
 		},
 		Sentry: SentryConfig{
-			DSN:              getEnv("SENTRY_DSN", ""),
-			TracesSampleRate: getEnvFloat("SENTRY_TRACES_SAMPLE_RATE", 0.1),
+			DSN:              env.GetString("SENTRY_DSN"),
+			TracesSampleRate: float64Or("SENTRY_TRACES_SAMPLE_RATE", 0.1),
 		},
 	}, nil
 }
 
-func getEnv(key, def string) string {
-	if v := os.Getenv(key); v != "" {
+func strOr(key, def string) string {
+	if v := env.GetString(key); v != "" {
 		return v
 	}
 	return def
 }
 
-func getEnvInt(key string, def int) int {
-	if v := os.Getenv(key); v != "" {
-		if n, err := strconv.Atoi(v); err == nil {
-			return n
-		}
+func intOr(key string, def int) int {
+	if v := env.GetInt(key); v != 0 {
+		return v
 	}
 	return def
 }
 
-func getEnvBool(key string, def bool) bool {
-	if v := os.Getenv(key); v != "" {
-		if b, err := strconv.ParseBool(v); err == nil {
-			return b
-		}
+// boolOr is needed only when the default is true (env.GetBool returns false on missing).
+func boolOr(key string, def bool) bool {
+	if v, err := env.GetBoolE(key); err == nil {
+		return v
 	}
 	return def
 }
 
-func getEnvList(key string, def []string) []string {
-	if v := os.Getenv(key); v != "" {
-		return strings.Split(v, ",")
+func float64Or(key string, def float64) float64 {
+	if v := env.GetFloat64(key); v != 0 {
+		return v
 	}
 	return def
 }
 
-func getEnvFloat(key string, def float64) float64 {
-	if v := os.Getenv(key); v != "" {
-		if f, err := strconv.ParseFloat(v, 64); err == nil {
-			return f
-		}
-	}
-	return def
-}
-
-func getEnvDuration(key string, def time.Duration) time.Duration {
-	if v := os.Getenv(key); v != "" {
+func durOr(key string, def time.Duration) time.Duration {
+	if v := env.GetString(key); v != "" {
 		if d, err := time.ParseDuration(v); err == nil {
 			return d
 		}
+	}
+	return def
+}
+
+func listOr(key string, def []string) []string {
+	if v := env.GetString(key); v != "" {
+		return strings.Split(v, ",")
 	}
 	return def
 }
