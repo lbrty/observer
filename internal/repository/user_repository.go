@@ -234,19 +234,14 @@ func (r *userRepo) LockPermanently(ctx context.Context, email string) error {
 	return CheckRowsAffected(res, user.ErrUserNotFound)
 }
 
-func (r *userRepo) scanUser(row *sql.Row) (*user.User, error) {
+func scanUserRow(row interface{ Scan(dest ...any) error }) (*user.User, error) {
 	var u user.User
-	var idStr string
-	var role string
+	var idStr, role string
 	var createdAt, updatedAt time.Time
 
-	err := row.Scan(&idStr, &u.FirstName, &u.LastName, &u.Email, &u.Phone, &u.OfficeID,
-		&role, &u.IsVerified, &u.IsActive, &u.DeactivatedAt, &createdAt, &updatedAt)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, user.ErrUserNotFound
-		}
-		return nil, fmt.Errorf("scan user: %w", err)
+	if err := row.Scan(&idStr, &u.FirstName, &u.LastName, &u.Email, &u.Phone, &u.OfficeID,
+		&role, &u.IsVerified, &u.IsActive, &u.DeactivatedAt, &createdAt, &updatedAt); err != nil {
+		return nil, err
 	}
 
 	id, err := ulid.Parse(idStr)
@@ -263,36 +258,26 @@ func (r *userRepo) scanUser(row *sql.Row) (*user.User, error) {
 	return &u, nil
 }
 
+func (r *userRepo) scanUser(row *sql.Row) (*user.User, error) {
+	u, err := scanUserRow(row)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, user.ErrUserNotFound
+		}
+		return nil, fmt.Errorf("scan user: %w", err)
+	}
+
+	return u, nil
+}
+
 func (r *userRepo) scanUsers(rows *sql.Rows) ([]*user.User, error) {
 	var users []*user.User
 	for rows.Next() {
-		var u user.User
-		var idStr string
-		var role string
-		var createdAt, updatedAt time.Time
-
-		err := rows.Scan(&idStr, &u.FirstName, &u.LastName, &u.Email, &u.Phone, &u.OfficeID,
-			&role, &u.IsVerified, &u.IsActive, &u.DeactivatedAt, &createdAt, &updatedAt)
+		u, err := scanUserRow(rows)
 		if err != nil {
-			return nil, fmt.Errorf("scan user row: %w", err)
+			return nil, fmt.Errorf("scan user: %w", err)
 		}
-
-		id, err := ulid.Parse(idStr)
-		if err != nil {
-			return nil, fmt.Errorf("parse user id: %w", err)
-		}
-
-		u.ID = id
-		u.Role = user.Role(role)
-		TimesToUTC(&createdAt, &updatedAt)
-		u.CreatedAt = createdAt
-		u.UpdatedAt = updatedAt
-		users = append(users, &u)
+		users = append(users, u)
 	}
-
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterate user rows: %w", err)
-	}
-
-	return users, nil
+	return users, rows.Err()
 }
