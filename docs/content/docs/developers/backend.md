@@ -11,10 +11,10 @@ Follow this sequence when adding a new entity (e.g. `document`):
 
 1. **Domain** — `internal/domain/<name>/entity.go`: entity struct, enums, errors
 2. **Repository interface** — add to `internal/repository/interfaces.go`
-3. **Repository implementation** — `internal/repository/<name>_repository.go`
+3. **Repository implementation** — `internal/repository/<group>/<name>.go`
 4. **Use case** — `internal/usecase/<group>/<name>_usecase.go` + types file
-5. **Handler** — `internal/handler/<name>_handler.go`
-6. **Routes** — wire into `internal/server/server.go`
+5. **Handler** — `internal/handler/<group>/<name>.go`
+6. **Routes** — wire into `internal/server/routes.go`
 7. **DI** — wire repository + use case in `internal/app/container.go`
 8. **Migration** — `migrations/<seq>_create_<name>s_table.up.sql`
 9. **Mocks** — add interface to `go:generate` in `internal/repository/interfaces.go`, run `just generate-mocks`
@@ -23,10 +23,12 @@ Follow this sequence when adding a new entity (e.g. `document`):
 ## Naming Conventions
 
 - Package names: short, lowercase, singular — `user`, `project`, `support`
-- File names: `<entity>_entity.go`, `<entity>_repository.go`, `<entity>_usecase.go`, `<entity>_handler.go`
+- Repository files: `internal/repository/<group>/<entity>.go` (e.g. `repository/person/person.go`)
+- Handler files: `internal/handler/<group>/<entity>.go` (e.g. `handler/project/person.go`)
+- Use case files: `internal/usecase/<group>/<entity>_usecase.go`
 - Entity IDs: `ulid.ULID` in structs, `string` in DTOs (via `.String()`)
 - Unexported repo structs: `type userRepository struct { db *sqlx.DB }`
-- Constructor: `func NewUserRepository(db *sqlx.DB) repository.UserRepository`
+- Constructor: `func New(db *sqlx.DB) repository.UserRepository`
 
 ## Handler Pattern
 
@@ -34,7 +36,7 @@ Handlers are thin. They bind, call, respond — nothing else.
 
 ```go
 func (h *PersonHandler) Create(c *gin.Context) {
-    req, ok := bindJSON[CreatePersonRequest](c)
+    req, ok := handler.BindJSON[CreatePersonRequest](c)
     if !ok {
         return
     }
@@ -48,7 +50,7 @@ func (h *PersonHandler) Create(c *gin.Context) {
         // ... fields from req
     })
     if err != nil {
-        HandleError(c, err)
+        handler.HandleError(c, err)
         return
     }
 
@@ -56,7 +58,7 @@ func (h *PersonHandler) Create(c *gin.Context) {
 }
 ```
 
-`bindJSON[T]` is defined in `internal/handler/errors.go`. It decodes the request body and writes a `400` response on failure, returning `false` so the handler can return immediately.
+`handler.BindJSON[T]` and `handler.HandleError` are defined in `internal/handler/errors.go` and imported by all handler subdirectory packages. `BindJSON` decodes the request body and writes a `400` response on failure, returning `false` so the handler can return immediately.
 
 ## Use Case Pattern
 
@@ -128,20 +130,20 @@ Never modify an applied migration. Create a new one instead.
 All wiring happens in `internal/app/container.go`. The pattern:
 
 ```go
-// 1. Create repo
-personRepo := repository.NewPersonRepository(c.db.GetDB())
+// 1. Create repo (each domain group has its own package)
+personRepo := repoperson.New(sqlxDB)
 
 // 2. Create use case
-personUC := projectUC.NewPersonUseCase(personRepo, ...)
+personUC := ucproject.NewPersonUseCase(personRepo, ...)
 
 // 3. Store in container
 c.PersonUC = personUC
 ```
 
-Then in `internal/server/server.go`, inject into the handler:
+Then in `internal/server/routes.go`, inject into the handler:
 
 ```go
-personHandler := handler.NewPersonHandler(container.PersonUC)
+personHandler := projecthandler.NewPersonHandler(container.PersonUC, ...)
 ```
 
 ## Code Style

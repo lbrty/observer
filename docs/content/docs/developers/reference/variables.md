@@ -7,7 +7,7 @@ weight: 1
 
 - project name: `observer`
 - package name: `github.com/lbrty/observer`
-- go version: 1.25.\*
+- go version: 1.26.\*
 - default UI language: Kyrgyz Latin (`ky`)
 
 ## Backend environment variables
@@ -43,7 +43,7 @@ weight: 1
 | Variable           | Default             | Description                      |
 | ------------------ | ------------------- | -------------------------------- |
 | `COOKIE_DOMAIN`    | `""` (current host) | Cookie domain                    |
-| `COOKIE_SECURE`    | `false`             | Set `true` in production (HTTPS) |
+| `COOKIE_SECURE`    | `true`              | Set `false` in local development (HTTP) |
 | `COOKIE_SAME_SITE` | `lax`               | `lax`, `strict`, or `none`       |
 | `COOKIE_MAX_AGE`   | `2h`                | Cookie lifetime                  |
 
