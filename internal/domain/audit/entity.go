@@ -3,21 +3,21 @@ package audit
 import "time"
 
 type Entry struct {
-	ID         string    `db:"id"`
-	ProjectID  *string   `db:"project_id"`
-	UserID     *string   `db:"user_id"` // nil when the user has been deleted
-	Action     string    `db:"action"`
-	EntityType string    `db:"entity_type"`
-	EntityID   *string   `db:"entity_id"`
-	Summary    string    `db:"summary"`
-	IP         *string   `db:"ip"`
-	UserAgent  *string   `db:"user_agent"`
-	CreatedAt  time.Time `db:"created_at"`
+	ID         string
+	ProjectID  *string
+	UserID     *string // nil when the user has been deleted
+	Action     string
+	EntityType string
+	EntityID   *string
+	Summary    string
+	IP         *string
+	UserAgent  *string
+	CreatedAt  time.Time
 
 	// Populated by repository reads via LEFT JOIN with users; zero-valued on Log.
-	UserFirstName string `db:"user_first_name"`
-	UserLastName  string `db:"user_last_name"`
-	UserEmail     string `db:"user_email"`
+	UserFirstName string
+	UserLastName  string
+	UserEmail     string
 }
 
 type Filter struct {

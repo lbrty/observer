@@ -3,12 +3,47 @@ package repository
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 
 	"github.com/lbrty/observer/internal/domain/audit"
 	"github.com/lbrty/observer/internal/ulid"
 )
+
+type auditRow struct {
+	ID            string    `db:"id"`
+	ProjectID     *string   `db:"project_id"`
+	UserID        *string   `db:"user_id"`
+	Action        string    `db:"action"`
+	EntityType    string    `db:"entity_type"`
+	EntityID      *string   `db:"entity_id"`
+	Summary       string    `db:"summary"`
+	IP            *string   `db:"ip"`
+	UserAgent     *string   `db:"user_agent"`
+	CreatedAt     time.Time `db:"created_at"`
+	UserFirstName string    `db:"user_first_name"`
+	UserLastName  string    `db:"user_last_name"`
+	UserEmail     string    `db:"user_email"`
+}
+
+func scanAuditRow(r auditRow) audit.Entry {
+	return audit.Entry{
+		ID:            r.ID,
+		ProjectID:     r.ProjectID,
+		UserID:        r.UserID,
+		Action:        r.Action,
+		EntityType:    r.EntityType,
+		EntityID:      r.EntityID,
+		Summary:       r.Summary,
+		IP:            r.IP,
+		UserAgent:     r.UserAgent,
+		CreatedAt:     r.CreatedAt,
+		UserFirstName: r.UserFirstName,
+		UserLastName:  r.UserLastName,
+		UserEmail:     r.UserEmail,
+	}
+}
 
 type auditLogRepo struct {
 	db *sqlx.DB
@@ -60,9 +95,13 @@ func (r *auditLogRepo) List(ctx context.Context, filter audit.Filter) ([]audit.E
 	      FROM audit_logs a LEFT JOIN users u ON u.id = a.user_id WHERE 1=1` +
 		filters + fmt.Sprintf(" ORDER BY a.created_at DESC LIMIT $%d OFFSET $%d", ix, ix+1)
 
-	var entries []audit.Entry
-	if err := r.db.SelectContext(ctx, &entries, q, args...); err != nil {
+	var rows []auditRow
+	if err := r.db.SelectContext(ctx, &rows, q, args...); err != nil {
 		return nil, 0, fmt.Errorf("list audit logs: %w", err)
+	}
+	entries := make([]audit.Entry, len(rows))
+	for i, row := range rows {
+		entries[i] = scanAuditRow(row)
 	}
 	return entries, total, nil
 }
