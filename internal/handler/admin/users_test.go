@@ -9,10 +9,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 
+	cryptomock "github.com/lbrty/observer/internal/crypto/mock"
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/handler/admin"
 	"github.com/lbrty/observer/internal/handler/handlertest"
-	cryptomock "github.com/lbrty/observer/internal/crypto/mock"
 	repomock "github.com/lbrty/observer/internal/repository/mock"
 	ucadmin "github.com/lbrty/observer/internal/usecase/admin"
 )

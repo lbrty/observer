@@ -182,7 +182,6 @@ func (uc *AuthUseCase) recordFailureOrLock(ctx context.Context, email string) er
 	return user.ErrInvalidCredentials
 }
 
-
 func (uc *AuthUseCase) createSession(ctx context.Context, u *user.User, userAgent, ip string) (*TokenPair, error) {
 	accessToken, expiresAt, err := uc.tokenGen.GenerateAccessToken(u.ID, string(u.Role))
 	if err != nil {

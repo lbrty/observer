@@ -10,11 +10,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
+	cryptomock "github.com/lbrty/observer/internal/crypto/mock"
 	domainauth "github.com/lbrty/observer/internal/domain/auth"
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/handler/auth"
 	"github.com/lbrty/observer/internal/handler/handlertest"
-	cryptomock "github.com/lbrty/observer/internal/crypto/mock"
 	repomock "github.com/lbrty/observer/internal/repository/mock"
 	ucauth "github.com/lbrty/observer/internal/usecase/auth"
 )
