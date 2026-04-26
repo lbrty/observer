@@ -10,21 +10,23 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 
+	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/domain/support"
 	"github.com/lbrty/observer/internal/handler"
 	repomock "github.com/lbrty/observer/internal/repository/mock"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
 
-func newSupportRecordHandler(ctrl *gomock.Controller) (*handler.SupportRecordHandler, *repomock.MockSupportRecordRepository) {
+func newSupportRecordHandler(ctrl *gomock.Controller) (*handler.SupportRecordHandler, *repomock.MockSupportRecordRepository, *repomock.MockPersonRepository) {
 	repo := repomock.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(repo, nil)
-	return handler.NewSupportRecordHandler(uc), repo
+	personRepo := repomock.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewSupportRecordUseCase(repo, personRepo, nil)
+	return handler.NewSupportRecordHandler(uc), repo, personRepo
 }
 
 func TestSupportRecordHandler_List_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, repo := newSupportRecordHandler(ctrl)
+	h, repo, _ := newSupportRecordHandler(ctrl)
 
 	projectID := testID().String()
 	now := time.Now().UTC()
@@ -47,7 +49,7 @@ func TestSupportRecordHandler_List_Success(t *testing.T) {
 
 func TestSupportRecordHandler_List_InternalError(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, repo := newSupportRecordHandler(ctrl)
+	h, repo, _ := newSupportRecordHandler(ctrl)
 
 	projectID := testID().String()
 	repo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
@@ -62,7 +64,7 @@ func TestSupportRecordHandler_List_InternalError(t *testing.T) {
 
 func TestSupportRecordHandler_Get_NotFound(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, repo := newSupportRecordHandler(ctrl)
+	h, repo, _ := newSupportRecordHandler(ctrl)
 
 	id := testID().String()
 	repo.EXPECT().GetByID(gomock.Any(), id).Return(nil, support.ErrRecordNotFound)
@@ -77,7 +79,7 @@ func TestSupportRecordHandler_Get_NotFound(t *testing.T) {
 
 func TestSupportRecordHandler_Get_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, repo := newSupportRecordHandler(ctrl)
+	h, repo, _ := newSupportRecordHandler(ctrl)
 
 	now := time.Now().UTC()
 	id := testID().String()
@@ -105,7 +107,7 @@ func TestSupportRecordHandler_Get_Success(t *testing.T) {
 
 func TestSupportRecordHandler_Create_ValidationError(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, _ := newSupportRecordHandler(ctrl)
+	h, _, _ := newSupportRecordHandler(ctrl)
 
 	projectID := testID().String()
 	c, w := newTestContextWithParams(http.MethodPost, "/projects/"+projectID+"/support-records", map[string]any{}, gin.Params{
@@ -119,12 +121,13 @@ func TestSupportRecordHandler_Create_ValidationError(t *testing.T) {
 
 func TestSupportRecordHandler_Create_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, repo := newSupportRecordHandler(ctrl)
+	h, repo, personRepo := newSupportRecordHandler(ctrl)
 
 	projectID := testID().String()
 	personID := testID().String()
 	userID := testID()
 
+	personRepo.EXPECT().GetByID(gomock.Any(), personID).Return(&person.Person{ID: personID, ProjectID: projectID}, nil)
 	repo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
 
 	c, w := newTestContextWithParams(http.MethodPost, "/projects/"+projectID+"/support-records", map[string]any{
@@ -147,7 +150,7 @@ func TestSupportRecordHandler_Create_Success(t *testing.T) {
 
 func TestSupportRecordHandler_Update_NotFound(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, repo := newSupportRecordHandler(ctrl)
+	h, repo, _ := newSupportRecordHandler(ctrl)
 
 	id := testID().String()
 	repo.EXPECT().GetByID(gomock.Any(), id).Return(nil, support.ErrRecordNotFound)
@@ -164,7 +167,7 @@ func TestSupportRecordHandler_Update_NotFound(t *testing.T) {
 
 func TestSupportRecordHandler_Update_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, repo := newSupportRecordHandler(ctrl)
+	h, repo, _ := newSupportRecordHandler(ctrl)
 
 	now := time.Now().UTC()
 	id := testID().String()
@@ -198,7 +201,7 @@ func TestSupportRecordHandler_Update_Success(t *testing.T) {
 
 func TestSupportRecordHandler_Delete_NotFound(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, repo := newSupportRecordHandler(ctrl)
+	h, repo, _ := newSupportRecordHandler(ctrl)
 
 	id := testID().String()
 	projectID := testID().String()
@@ -215,7 +218,7 @@ func TestSupportRecordHandler_Delete_NotFound(t *testing.T) {
 
 func TestSupportRecordHandler_Delete_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, repo := newSupportRecordHandler(ctrl)
+	h, repo, _ := newSupportRecordHandler(ctrl)
 
 	id := testID().String()
 	projectID := testID().String()

@@ -155,8 +155,8 @@ func (h *PetHandler) ReplaceTags(c *gin.Context) {
 	if !ok {
 		return
 	}
-	if err := h.tagUC.Replace(c.Request.Context(), c.Param("id"), input.IDs); err != nil {
-		internalError(c, "replace pet tags", err)
+	if err := h.tagUC.Replace(c.Request.Context(), c.Param("project_id"), c.Param("id"), input.IDs); err != nil {
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"tag_ids": input.IDs})

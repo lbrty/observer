@@ -151,6 +151,7 @@ func TestPermissionHandler_AssignPermission_AlreadyExists(t *testing.T) {
 	h := newPermissionHandler(d)
 
 	projectID := testID().String()
+	d.userRepo.EXPECT().GetByID(gomock.Any(), gomock.Any()).Return(&user.User{}, nil)
 	d.permRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(project.ErrPermissionExists)
 
 	c, w := newTestContextWithParams(http.MethodPost, "/admin/projects/"+projectID+"/permissions", map[string]any{
@@ -168,6 +169,7 @@ func TestPermissionHandler_AssignPermission_Success(t *testing.T) {
 	h := newPermissionHandler(d)
 
 	projectID := testID().String()
+	d.userRepo.EXPECT().GetByID(gomock.Any(), gomock.Any()).Return(&user.User{}, nil)
 	d.permRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)
 
 	c, w := newTestContextWithParams(http.MethodPost, "/admin/projects/"+projectID+"/permissions", map[string]any{
@@ -251,7 +253,7 @@ func TestPermissionHandler_RevokePermission_NotFound(t *testing.T) {
 	h := newPermissionHandler(d)
 
 	permID := testID().String()
-	d.permRepo.EXPECT().Delete(gomock.Any(), permID).Return(project.ErrPermissionNotFound)
+	d.permRepo.EXPECT().GetByID(gomock.Any(), permID).Return(nil, project.ErrPermissionNotFound)
 
 	c, w := newTestContextWithParams(http.MethodDelete, "/admin/projects/x/permissions/"+permID, nil, gin.Params{
 		{Key: "project_id", Value: testID().String()},
@@ -267,11 +269,13 @@ func TestPermissionHandler_RevokePermission_Success(t *testing.T) {
 	d := newPermissionTestDeps(ctrl)
 	h := newPermissionHandler(d)
 
+	projectID := testID().String()
 	permID := testID().String()
+	d.permRepo.EXPECT().GetByID(gomock.Any(), permID).Return(&project.ProjectPermission{ID: permID, ProjectID: projectID}, nil)
 	d.permRepo.EXPECT().Delete(gomock.Any(), permID).Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodDelete, "/admin/projects/x/permissions/"+permID, nil, gin.Params{
-		{Key: "project_id", Value: testID().String()},
+	c, w := newTestContextWithParams(http.MethodDelete, "/admin/projects/"+projectID+"/permissions/"+permID, nil, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: permID},
 	})
 	h.RevokePermission(c)

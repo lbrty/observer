@@ -177,6 +177,7 @@ func TestPermissionUseCase_Revoke_Success(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
 
+	mockPermRepo.EXPECT().GetByID(gomock.Any(), "perm-1").Return(&project.ProjectPermission{ID: "perm-1", ProjectID: "proj-1"}, nil)
 	mockPermRepo.EXPECT().Delete(gomock.Any(), "perm-1").Return(nil)
 
 	err := uc.Revoke(context.Background(), "proj-1", "perm-1")
@@ -191,8 +192,22 @@ func TestPermissionUseCase_Revoke_NotFound(t *testing.T) {
 	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
 	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
 
-	mockPermRepo.EXPECT().Delete(gomock.Any(), "nonexistent").Return(project.ErrPermissionNotFound)
+	mockPermRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, project.ErrPermissionNotFound)
 
 	err := uc.Revoke(context.Background(), "proj-1", "nonexistent")
+	assert.ErrorIs(t, err, project.ErrPermissionNotFound)
+}
+
+func TestPermissionUseCase_Revoke_WrongProject(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
+
+	mockPermRepo.EXPECT().GetByID(gomock.Any(), "perm-1").Return(&project.ProjectPermission{ID: "perm-1", ProjectID: "other-proj"}, nil)
+
+	err := uc.Revoke(context.Background(), "proj-1", "perm-1")
 	assert.ErrorIs(t, err, project.ErrPermissionNotFound)
 }

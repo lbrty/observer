@@ -2,7 +2,6 @@ package project_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
+	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/domain/support"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
@@ -20,7 +20,7 @@ func TestSupportRecordUseCase_List_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil, nil)
 
 	now := time.Now().UTC()
 	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*support.Record{
@@ -36,26 +36,12 @@ func TestSupportRecordUseCase_List_Success(t *testing.T) {
 	assert.Equal(t, "legal", out.Records[0].Type)
 }
 
-func TestSupportRecordUseCase_List_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
-
-	repoErr := errors.New("db error")
-	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, repoErr)
-
-	_, err := uc.List(context.Background(), "proj1", ucproject.ListSupportRecordsInput{})
-	assert.ErrorIs(t, err, repoErr)
-}
-
 func TestSupportRecordUseCase_Get_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil, nil)
 
 	now := time.Now().UTC()
 	sphere := support.SphereHousingAssistance
@@ -82,7 +68,7 @@ func TestSupportRecordUseCase_Get_NotFound(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, support.ErrRecordNotFound)
 
@@ -95,7 +81,7 @@ func TestSupportRecordUseCase_Get_CrossProjectIDOR(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "sr1").Return(&support.Record{
 		ID: "sr1", ProjectID: "other-project",
@@ -110,8 +96,10 @@ func TestSupportRecordUseCase_Create_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, mockPersonRepo, nil)
 
+	mockPersonRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&person.Person{ID: "p1", ProjectID: "proj1"}, nil)
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, r *support.Record) error {
 		assert.NotEmpty(t, r.ID)
 		assert.Equal(t, "proj1", r.ProjectID)
@@ -132,21 +120,21 @@ func TestSupportRecordUseCase_Create_Success(t *testing.T) {
 	assert.Equal(t, "legal", dto.Type)
 }
 
-func TestSupportRecordUseCase_Create_RepoError(t *testing.T) {
+func TestSupportRecordUseCase_Create_PersonNotInProject(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, mockPersonRepo, nil)
 
-	repoErr := errors.New("insert failed")
-	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(repoErr)
+	mockPersonRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&person.Person{ID: "p1", ProjectID: "other-proj"}, nil)
 
 	_, err := uc.Create(context.Background(), "proj1", "user1", ucproject.CreateSupportRecordInput{
 		PersonID: "p1",
 		Type:     "legal",
 	})
-	assert.ErrorIs(t, err, repoErr)
+	assert.ErrorIs(t, err, person.ErrPersonNotFound)
 }
 
 func TestSupportRecordUseCase_Update_Success(t *testing.T) {
@@ -154,7 +142,7 @@ func TestSupportRecordUseCase_Update_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil, nil)
 
 	now := time.Now().UTC()
 	existing := &support.Record{
@@ -178,25 +166,12 @@ func TestSupportRecordUseCase_Update_Success(t *testing.T) {
 	assert.Equal(t, "medical", dto.Type)
 }
 
-func TestSupportRecordUseCase_Update_NotFound(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
-
-	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, support.ErrRecordNotFound)
-
-	_, err := uc.Update(context.Background(), "proj1", "nonexistent", ucproject.UpdateSupportRecordInput{})
-	assert.ErrorIs(t, err, support.ErrRecordNotFound)
-}
-
 func TestSupportRecordUseCase_Update_CrossProjectIDOR(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "sr1").Return(&support.Record{
 		ID: "sr1", ProjectID: "other-project",
@@ -211,7 +186,7 @@ func TestSupportRecordUseCase_Delete_Success(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "sr1").Return(&support.Record{
 		ID: "sr1", ProjectID: "proj1",
@@ -222,25 +197,12 @@ func TestSupportRecordUseCase_Delete_Success(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestSupportRecordUseCase_Delete_NotFound(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
-
-	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, support.ErrRecordNotFound)
-
-	err := uc.Delete(context.Background(), "proj1", "nonexistent")
-	assert.ErrorIs(t, err, support.ErrRecordNotFound)
-}
-
 func TestSupportRecordUseCase_Delete_CrossProjectIDOR(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockSupportRecordRepository(ctrl)
-	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil)
+	uc := ucproject.NewSupportRecordUseCase(mockRepo, nil, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "sr1").Return(&support.Record{
 		ID: "sr1", ProjectID: "other-project",

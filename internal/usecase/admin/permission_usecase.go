@@ -92,6 +92,14 @@ func (uc *PermissionUseCase) Assign(ctx context.Context, projectID string, input
 		return nil, err
 	}
 
+	uid, err := ulid.Parse(input.UserID)
+	if err != nil {
+		return nil, user.ErrUserNotFound
+	}
+	if _, err := uc.userRepo.GetByID(ctx, uid); err != nil {
+		return nil, fmt.Errorf("verify user for assign: %w", err)
+	}
+
 	perm := &project.ProjectPermission{
 		ID:               iulid.NewString(),
 		ProjectID:        projectID,
@@ -154,6 +162,13 @@ func (uc *PermissionUseCase) Update(ctx context.Context, projectID, id string, i
 
 // Revoke deletes a project permission by ID.
 func (uc *PermissionUseCase) Revoke(ctx context.Context, projectID, id string) error {
+	perm, err := uc.permRepo.GetByID(ctx, id)
+	if err != nil {
+		return fmt.Errorf("get permission for revoke: %w", err)
+	}
+	if perm.ProjectID != projectID {
+		return project.ErrPermissionNotFound
+	}
 	if err := uc.permRepo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("revoke permission: %w", err)
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/domain/support"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
@@ -13,13 +14,14 @@ import (
 
 // SupportRecordUseCase handles support record operations within a project.
 type SupportRecordUseCase struct {
-	repo    repository.SupportRecordRepository
-	auditUC *ucaudit.AuditUseCase
+	repo       repository.SupportRecordRepository
+	personRepo repository.PersonRepository
+	auditUC    *ucaudit.AuditUseCase
 }
 
 // NewSupportRecordUseCase creates a SupportRecordUseCase.
-func NewSupportRecordUseCase(repo repository.SupportRecordRepository, auditUC *ucaudit.AuditUseCase) *SupportRecordUseCase {
-	return &SupportRecordUseCase{repo: repo, auditUC: auditUC}
+func NewSupportRecordUseCase(repo repository.SupportRecordRepository, personRepo repository.PersonRepository, auditUC *ucaudit.AuditUseCase) *SupportRecordUseCase {
+	return &SupportRecordUseCase{repo: repo, personRepo: personRepo, auditUC: auditUC}
 }
 
 // List returns paginated support records.
@@ -86,6 +88,14 @@ func (uc *SupportRecordUseCase) Get(ctx context.Context, projectID, id string) (
 
 // Create creates a new support record. recordedBy is auto-set from auth context.
 func (uc *SupportRecordUseCase) Create(ctx context.Context, projectID string, recordedBy string, input CreateSupportRecordInput) (*SupportRecordDTO, error) {
+	p, err := uc.personRepo.GetByID(ctx, input.PersonID)
+	if err != nil {
+		return nil, fmt.Errorf("verify person for support record: %w", err)
+	}
+	if p.ProjectID != projectID {
+		return nil, fmt.Errorf("verify person for support record: %w", person.ErrPersonNotFound)
+	}
+
 	r := &support.Record{
 		ID:               ulid.NewString(),
 		PersonID:         input.PersonID,

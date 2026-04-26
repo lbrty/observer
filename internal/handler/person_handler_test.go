@@ -32,8 +32,8 @@ func newPersonTestDeps(ctrl *gomock.Controller) *personTestDeps {
 
 	h := handler.NewPersonHandler(
 		ucproject.NewPersonUseCase(personRepo, tagRepo, nil),
-		ucproject.NewPersonCategoryUseCase(catRepo),
-		ucproject.NewPersonTagUseCase(tagRepo),
+		ucproject.NewPersonCategoryUseCase(catRepo, personRepo),
+		ucproject.NewPersonTagUseCase(tagRepo, personRepo),
 	)
 
 	return &personTestDeps{
@@ -288,11 +288,13 @@ func TestPersonHandler_ReplaceCategories_Success(t *testing.T) {
 	personID := testID().String()
 	catIDs := []string{testID().String(), testID().String()}
 
+	deps.personRepo.EXPECT().GetByID(gomock.Any(), personID).Return(&person.Person{ID: personID, ProjectID: "x"}, nil)
 	deps.personCatRepo.EXPECT().ReplaceAll(gomock.Any(), personID, catIDs).Return(nil)
 
 	c, w := newTestContextWithParams(http.MethodPut, "/projects/x/people/"+personID+"/categories", map[string]any{
 		"ids": catIDs,
 	}, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "person_id", Value: personID},
 	})
 	deps.handler.ReplaceCategories(c)
@@ -330,11 +332,13 @@ func TestPersonHandler_ReplaceTags_Success(t *testing.T) {
 	personID := testID().String()
 	tagIDs := []string{testID().String(), testID().String()}
 
+	deps.personRepo.EXPECT().GetByID(gomock.Any(), personID).Return(&person.Person{ID: personID, ProjectID: "x"}, nil)
 	deps.personTagRepo.EXPECT().ReplaceAll(gomock.Any(), personID, tagIDs).Return(nil)
 
 	c, w := newTestContextWithParams(http.MethodPut, "/projects/x/people/"+personID+"/tags", map[string]any{
 		"ids": tagIDs,
 	}, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "person_id", Value: personID},
 	})
 	deps.handler.ReplaceTags(c)

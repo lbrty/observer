@@ -20,7 +20,7 @@ func newPetHandler(ctrl *gomock.Controller) (*handler.PetHandler, *repomock.Mock
 	petRepo := repomock.NewMockPetRepository(ctrl)
 	petTagRepo := repomock.NewMockPetTagRepository(ctrl)
 	uc := ucproject.NewPetUseCase(petRepo, petTagRepo, nil)
-	tagUC := ucproject.NewPetTagUseCase(petTagRepo)
+	tagUC := ucproject.NewPetTagUseCase(petTagRepo, petRepo)
 	return handler.NewPetHandler(uc, tagUC), petRepo, petTagRepo
 }
 
@@ -267,15 +267,18 @@ func TestPetHandler_ReplaceTags_ValidationError(t *testing.T) {
 
 func TestPetHandler_ReplaceTags_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	h, _, petTagRepo := newPetHandler(ctrl)
+	h, petRepo, petTagRepo := newPetHandler(ctrl)
 
+	projectID := testID().String()
 	id := testID().String()
 	tagIDs := []string{"tag1", "tag2"}
+	petRepo.EXPECT().GetByID(gomock.Any(), id).Return(&pet.Pet{ID: id, ProjectID: projectID}, nil)
 	petTagRepo.EXPECT().ReplaceAll(gomock.Any(), id, tagIDs).Return(nil)
 
-	c, w := newTestContextWithParams(http.MethodPut, "/projects/x/pets/"+id+"/tags", map[string]any{
+	c, w := newTestContextWithParams(http.MethodPut, "/projects/"+projectID+"/pets/"+id+"/tags", map[string]any{
 		"ids": tagIDs,
 	}, gin.Params{
+		{Key: "project_id", Value: projectID},
 		{Key: "id", Value: id},
 	})
 	h.ReplaceTags(c)

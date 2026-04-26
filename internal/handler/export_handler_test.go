@@ -49,7 +49,7 @@ func newExportTestDeps(ctrl *gomock.Controller) *exportTestDeps {
 
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
 	personUC := ucproject.NewPersonUseCase(personRepo, personTagRepo, auditUC)
-	supportUC := ucproject.NewSupportRecordUseCase(supportRepo, auditUC)
+	supportUC := ucproject.NewSupportRecordUseCase(supportRepo, personRepo, auditUC)
 	petUC := ucproject.NewPetUseCase(petRepo, petTagRepo, auditUC)
 	householdUC := ucproject.NewHouseholdUseCase(householdRepo, memberRepo, auditUC)
 

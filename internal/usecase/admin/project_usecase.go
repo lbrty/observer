@@ -153,6 +153,7 @@ func (uc *ProjectUseCase) Update(ctx context.Context, id string, input UpdatePro
 	if err := uc.repo.Update(ctx, p); err != nil {
 		return nil, fmt.Errorf("update project: %w", err)
 	}
+	uc.auditUC.Record(ctx, &id, "project.update", "project", &id, fmt.Sprintf("Updated project %s", p.Name))
 	dto := projectToDTO(p)
 	return &dto, nil
 }

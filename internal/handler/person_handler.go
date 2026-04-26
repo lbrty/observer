@@ -190,8 +190,8 @@ func (h *PersonHandler) ReplaceCategories(c *gin.Context) {
 	if !ok {
 		return
 	}
-	if err := h.categoryUC.Replace(c.Request.Context(), c.Param("person_id"), input.IDs); err != nil {
-		internalError(c, "replace person categories", err)
+	if err := h.categoryUC.Replace(c.Request.Context(), c.Param("project_id"), c.Param("person_id"), input.IDs); err != nil {
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"category_ids": input.IDs})
@@ -234,8 +234,8 @@ func (h *PersonHandler) ReplaceTags(c *gin.Context) {
 	if !ok {
 		return
 	}
-	if err := h.tagUC.Replace(c.Request.Context(), c.Param("person_id"), input.IDs); err != nil {
-		internalError(c, "replace person tags", err)
+	if err := h.tagUC.Replace(c.Request.Context(), c.Param("project_id"), c.Param("person_id"), input.IDs); err != nil {
+		HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"tag_ids": input.IDs})
