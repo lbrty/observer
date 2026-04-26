@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 
 	"github.com/lbrty/observer/internal/domain/pet"
@@ -42,57 +42,74 @@ func (r *petRepo) List(ctx context.Context, filter pet.PetListFilter) ([]*pet.Pe
 		perPage = 20
 	}
 
-	where := []string{"project_id = $1"}
-	args := []any{filter.ProjectID}
-	ix := 1
+	cond := sq.And{sq.Eq{"project_id": filter.ProjectID}}
 
 	if filter.Status != nil {
-		ix++
-		where = append(where, "status = $"+strconv.Itoa(ix))
-		args = append(args, *filter.Status)
+		cond = append(cond, sq.Eq{"status": *filter.Status})
 	}
 
-	var tagJoin, groupBy string
-	if len(filter.TagIDs) > 0 {
-		placeholders := make([]string, len(filter.TagIDs))
-		for i, tagID := range filter.TagIDs {
-			ix++
-			placeholders[i] = "$" + strconv.Itoa(ix)
-			args = append(args, tagID)
-		}
-		tagJoin = " JOIN pet_tags pt ON pt.pet_id = pets.id AND pt.tag_id IN (" + strings.Join(placeholders, ",") + ")"
-		groupBy = " GROUP BY pets.id HAVING COUNT(DISTINCT pt.tag_id) = " + strconv.Itoa(len(filter.TagIDs))
-	}
+	hasTags := len(filter.TagIDs) > 0
+	havingClause := fmt.Sprintf("COUNT(DISTINCT pt.tag_id) = %d", len(filter.TagIDs))
 
-	whereClause := "WHERE " + strings.Join(where, " AND ")
-
-	var countQ string
-	if tagJoin != "" {
-		countQ = "SELECT COUNT(*) FROM (SELECT pets.id FROM pets" + tagJoin + " " + whereClause + groupBy + ") sub"
+	var countSQL string
+	var countArgs []any
+	var err error
+	if hasTags {
+		sub := psql.Select("pets.id").
+			From("pets").
+			Join("pet_tags pt ON pt.pet_id = pets.id").
+			Where(cond).
+			Where(sq.Eq{"pt.tag_id": filter.TagIDs}).
+			GroupBy("pets.id").
+			Having(havingClause)
+		countSQL, countArgs, err = psql.Select("COUNT(*)").FromSelect(sub, "sub").ToSql()
 	} else {
-		countQ = "SELECT COUNT(*) FROM pets " + whereClause
+		countSQL, countArgs, err = psql.Select("COUNT(*)").From("pets").Where(cond).ToSql()
 	}
+
+	if err != nil {
+		return nil, 0, fmt.Errorf("build count query: %w", err)
+	}
+
 	var total int
-	if err := r.db.QueryRowContext(ctx, countQ, args...).Scan(&total); err != nil {
+	if err := r.db.QueryRowContext(ctx, countSQL, countArgs...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count pets: %w", err)
 	}
 
 	offset := (page - 1) * perPage
-	ix++
-	limitParam := "$" + strconv.Itoa(ix)
-	ix++
-	offsetParam := "$" + strconv.Itoa(ix)
-	args = append(args, perPage, offset)
 
-	var q string
-	if tagJoin != "" {
-		q = fmt.Sprintf(`SELECT pets.id, pets.project_id, pets.owner_id, pets.name, pets.status, pets.registration_id, pets.notes, pets.created_at, pets.updated_at
-			FROM pets%s %s%s ORDER BY pets.created_at DESC LIMIT %s OFFSET %s`, tagJoin, whereClause, groupBy, limitParam, offsetParam)
+	const petColumns = `id, project_id, owner_id, name, status, registration_id, notes, created_at, updated_at`
+	const petColumnsTagged = `pets.id, pets.project_id, pets.owner_id, pets.name, pets.status, pets.registration_id, pets.notes, pets.created_at, pets.updated_at`
+
+	var listSQL string
+	var listArgs []any
+	if hasTags {
+		listSQL, listArgs, err = psql.Select(petColumnsTagged).
+			From("pets").
+			Join("pet_tags pt ON pt.pet_id = pets.id").
+			Where(cond).
+			Where(sq.Eq{"pt.tag_id": filter.TagIDs}).
+			GroupBy("pets.id").
+			Having(havingClause).
+			OrderBy("pets.created_at DESC").
+			Limit(uint64(perPage)).
+			Offset(uint64(offset)).
+			ToSql()
 	} else {
-		q = fmt.Sprintf(`SELECT id, project_id, owner_id, name, status, registration_id, notes, created_at, updated_at
-			FROM pets %s ORDER BY created_at DESC LIMIT %s OFFSET %s`, whereClause, limitParam, offsetParam)
+		listSQL, listArgs, err = psql.Select(petColumns).
+			From("pets").
+			Where(cond).
+			OrderBy("created_at DESC").
+			Limit(uint64(perPage)).
+			Offset(uint64(offset)).
+			ToSql()
 	}
-	rows, err := r.db.QueryContext(ctx, q, args...)
+
+	if err != nil {
+		return nil, 0, fmt.Errorf("build list query: %w", err)
+	}
+
+	rows, err := r.db.QueryContext(ctx, listSQL, listArgs...)
 	if err != nil {
 		return nil, 0, fmt.Errorf("list pets: %w", err)
 	}
@@ -106,6 +123,7 @@ func (r *petRepo) List(ctx context.Context, filter pet.PetListFilter) ([]*pet.Pe
 		}
 		out = append(out, p)
 	}
+
 	return out, total, rows.Err()
 }
 
@@ -118,6 +136,7 @@ func (r *petRepo) GetByID(ctx context.Context, id string) (*pet.Pet, error) {
 		}
 		return nil, fmt.Errorf("get pet: %w", err)
 	}
+
 	return p, nil
 }
 
@@ -134,6 +153,7 @@ func (r *petRepo) Create(ctx context.Context, p *pet.Pet) error {
 	if err != nil {
 		return fmt.Errorf("create pet: %w", err)
 	}
+
 	return nil
 }
 
@@ -144,6 +164,7 @@ func (r *petRepo) Update(ctx context.Context, p *pet.Pet) error {
 	if err != nil {
 		return fmt.Errorf("update pet: %w", err)
 	}
+
 	return CheckRowsAffected(res, pet.ErrPetNotFound)
 }
 
@@ -153,6 +174,7 @@ func (r *petRepo) Delete(ctx context.Context, id string) error {
 	if err != nil {
 		return fmt.Errorf("delete pet: %w", err)
 	}
+
 	return CheckRowsAffected(res, pet.ErrPetNotFound)
 }
 
@@ -181,6 +203,7 @@ func (r *petTagRepo) List(ctx context.Context, petID string) ([]string, error) {
 		}
 		ids = append(ids, id)
 	}
+
 	return ids, rows.Err()
 }
 
@@ -188,6 +211,7 @@ func (r *petTagRepo) ListBulk(ctx context.Context, entityIDs []string) (map[stri
 	if len(entityIDs) == 0 {
 		return map[string][]string{}, nil
 	}
+
 	q, args := buildBulkTagQuery("pet_tags", "pet_id", entityIDs)
 	return queryBulkTags(ctx, r.db, q, args)
 }

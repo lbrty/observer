@@ -7,9 +7,13 @@ import (
 	"fmt"
 	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 )
+
+// psql is a PostgreSQL squirrel builder (uses $N placeholders).
+var psql = sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 
 // TimesToUTC converts one or more time pointers to UTC in-place.
 func TimesToUTC(times ...*time.Time) {
@@ -65,6 +69,7 @@ func queryBulkTags(ctx context.Context, db *sqlx.DB, q string, args []any) (map[
 		}
 		result[entityID] = append(result[entityID], tagID)
 	}
+
 	return result, rows.Err()
 }
 
@@ -72,18 +77,11 @@ func joinStrings(ss []string, sep string) string {
 	if len(ss) == 0 {
 		return ""
 	}
+
 	out := ss[0]
 	for _, s := range ss[1:] {
 		out += sep + s
 	}
-	return out
-}
 
-// appendIf appends a SQL clause with a positional arg if v is non-nil.
-// clause must contain a single %d verb for the parameter index, e.g. " AND p.sex = $%d".
-func appendIf[T any](q string, args []any, ix int, clause string, v *T) (string, []any, int) {
-	if v == nil {
-		return q, args, ix
-	}
-	return q + fmt.Sprintf(clause, ix), append(args, *v), ix + 1
+	return out
 }

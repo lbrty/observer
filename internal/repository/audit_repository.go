@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 
 	"github.com/lbrty/observer/internal/domain/audit"
@@ -62,46 +63,80 @@ func (r *auditLogRepo) Log(ctx context.Context, entry audit.Entry) error {
 		entry.ID, entry.ProjectID, entry.UserID, entry.Action, entry.EntityType, entry.EntityID,
 		entry.Summary, entry.IP, entry.UserAgent,
 	)
+
 	if err != nil {
 		return fmt.Errorf("insert audit log: %w", err)
 	}
+
 	return nil
 }
 
 func (r *auditLogRepo) List(ctx context.Context, filter audit.Filter) ([]audit.Entry, int, error) {
-	var (
-		args    []any
-		filters string
-		ix      = 1
-	)
+	cond := sq.And{}
 
-	filters, args, ix = appendIf(filters, args, ix, " AND a.project_id = $%d", filter.ProjectID)
-	filters, args, ix = appendIf(filters, args, ix, " AND a.user_id = $%d", filter.UserID)
-	filters, args, ix = appendIf(filters, args, ix, " AND a.action = $%d", filter.Action)
-	filters, args, ix = appendIf(filters, args, ix, " AND a.entity_type = $%d", filter.EntityType)
-	filters, args, ix = appendIf(filters, args, ix, " AND a.created_at >= $%d", filter.DateFrom)
-	filters, args, ix = appendIf(filters, args, ix, " AND a.created_at <= $%d", filter.DateTo)
+	if filter.ProjectID != nil {
+		cond = append(cond, sq.Eq{"a.project_id": *filter.ProjectID})
+	}
+
+	if filter.UserID != nil {
+		cond = append(cond, sq.Eq{"a.user_id": *filter.UserID})
+	}
+
+	if filter.Action != nil {
+		cond = append(cond, sq.Eq{"a.action": *filter.Action})
+	}
+
+	if filter.EntityType != nil {
+		cond = append(cond, sq.Eq{"a.entity_type": *filter.EntityType})
+	}
+
+	if filter.DateFrom != nil {
+		cond = append(cond, sq.GtOrEq{"a.created_at": *filter.DateFrom})
+	}
+
+	if filter.DateTo != nil {
+		cond = append(cond, sq.LtOrEq{"a.created_at": *filter.DateTo})
+	}
+
+	countSQL, countArgs, err := psql.Select("COUNT(*)").From("audit_logs a").Where(cond).ToSql()
+	if err != nil {
+		return nil, 0, fmt.Errorf("build count query: %w", err)
+	}
 
 	var total int
-	if err := r.db.GetContext(ctx, &total, `SELECT COUNT(*) FROM audit_logs a WHERE 1=1`+filters, args...); err != nil {
+	if err := r.db.GetContext(ctx, &total, countSQL, countArgs...); err != nil {
 		return nil, 0, fmt.Errorf("count audit logs: %w", err)
 	}
 
 	offset := (filter.Page - 1) * filter.PerPage
-	args = append(args, filter.PerPage, offset)
 
-	q := `SELECT a.id, a.project_id, a.user_id, a.action, a.entity_type, a.entity_id, a.summary, a.ip, a.user_agent, a.created_at,
-	             u.first_name AS user_first_name, u.last_name AS user_last_name, u.email AS user_email
-	      FROM audit_logs a LEFT JOIN users u ON u.id = a.user_id WHERE 1=1` +
-		filters + fmt.Sprintf(" ORDER BY a.created_at DESC LIMIT $%d OFFSET $%d", ix, ix+1)
+	listSQL, listArgs, err := psql.
+		Select(
+			"a.id", "a.project_id", "a.user_id", "a.action", "a.entity_type", "a.entity_id",
+			"a.summary", "a.ip", "a.user_agent", "a.created_at",
+			"u.first_name AS user_first_name", "u.last_name AS user_last_name", "u.email AS user_email",
+		).
+		From("audit_logs a").
+		LeftJoin("users u ON u.id = a.user_id").
+		Where(cond).
+		OrderBy("a.created_at DESC").
+		Limit(uint64(filter.PerPage)).
+		Offset(uint64(offset)).
+		ToSql()
+
+	if err != nil {
+		return nil, 0, fmt.Errorf("build list query: %w", err)
+	}
 
 	var rows []auditRow
-	if err := r.db.SelectContext(ctx, &rows, q, args...); err != nil {
+	if err := r.db.SelectContext(ctx, &rows, listSQL, listArgs...); err != nil {
 		return nil, 0, fmt.Errorf("list audit logs: %w", err)
 	}
+
 	entries := make([]audit.Entry, len(rows))
 	for i, row := range rows {
 		entries[i] = scanAuditRow(row)
 	}
+
 	return entries, total, nil
 }

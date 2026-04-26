@@ -5,10 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strconv"
-	"strings"
 	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 
 	"github.com/lbrty/observer/internal/domain/household"
@@ -37,6 +36,7 @@ func scanHouseholdWithCount(row interface{ Scan(dest ...any) error }) (*househol
 	if err := row.Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &h.HeadPersonName, &h.MemberCount, &h.CreatedAt, &h.UpdatedAt); err != nil {
 		return nil, err
 	}
+
 	TimesToUTC(&h.CreatedAt, &h.UpdatedAt)
 	return &h, nil
 }
@@ -54,61 +54,58 @@ func (r *householdRepo) List(ctx context.Context, filter household.HouseholdList
 	if page < 1 {
 		page = 1
 	}
+
 	perPage := filter.PerPage
 	if perPage < 1 {
 		perPage = 20
 	}
 
-	var (
-		where []string
-		args  []any
-		ix    int
-	)
-
-	ix++
-	where = append(where, "h.project_id = $"+strconv.Itoa(ix))
-	args = append(args, filter.ProjectID)
-
+	cond := sq.And{sq.Eq{"h.project_id": filter.ProjectID}}
 	if filter.Search != nil && *filter.Search != "" {
-		ix++
-		where = append(where, "h.reference_number ILIKE '%' || $"+strconv.Itoa(ix)+" || '%'")
-		args = append(args, *filter.Search)
-	}
-	if filter.CreatedFrom != nil {
-		ix++
-		where = append(where, "h.created_at >= $"+strconv.Itoa(ix))
-		args = append(args, *filter.CreatedFrom)
-	}
-	if filter.CreatedTo != nil {
-		ix++
-		where = append(where, "h.created_at <= $"+strconv.Itoa(ix))
-		args = append(args, *filter.CreatedTo)
+		cond = append(cond, sq.ILike{"h.reference_number": "%" + *filter.Search + "%"})
 	}
 
-	whereClause := "WHERE " + strings.Join(where, " AND ")
+	if filter.CreatedFrom != nil {
+		cond = append(cond, sq.GtOrEq{"h.created_at": *filter.CreatedFrom})
+	}
+
+	if filter.CreatedTo != nil {
+		cond = append(cond, sq.LtOrEq{"h.created_at": *filter.CreatedTo})
+	}
+
+	countSQL, countArgs, err := psql.Select("COUNT(*)").From("households h").Where(cond).ToSql()
+	if err != nil {
+		return nil, 0, fmt.Errorf("build count households query: %w", err)
+	}
 
 	var total int
-	if err := r.db.QueryRowContext(ctx, "SELECT COUNT(*) FROM households h "+whereClause, args...).Scan(&total); err != nil {
+	if err := r.db.QueryRowContext(ctx, countSQL, countArgs...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count households: %w", err)
 	}
 
-	offset := (page - 1) * perPage
-	ix++
-	args = append(args, perPage)
-	limitParam := "$" + strconv.Itoa(ix)
-	ix++
-	args = append(args, offset)
-	offsetParam := "$" + strconv.Itoa(ix)
+	offset := uint64((page - 1) * perPage)
+	listSQL, listArgs, err := psql.
+		Select(
+			"h.id", "h.project_id", "h.reference_number", "h.head_person_id",
+			"NULLIF(TRIM(COALESCE(p.first_name, '') || ' ' || COALESCE(p.last_name, '')), '') AS head_person_name",
+			"COUNT(hm.person_id) AS member_count",
+			"h.created_at", "h.updated_at",
+		).
+		From("households h").
+		LeftJoin("people p ON p.id = h.head_person_id").
+		LeftJoin("household_members hm ON hm.household_id = h.id").
+		Where(cond).
+		GroupBy("h.id", "p.first_name", "p.last_name").
+		OrderBy("h.created_at DESC").
+		Limit(uint64(perPage)).
+		Offset(offset).
+		ToSql()
 
-	q := `SELECT h.id, h.project_id, h.reference_number, h.head_person_id,
-			NULLIF(TRIM(COALESCE(p.first_name, '') || ' ' || COALESCE(p.last_name, '')), '') AS head_person_name,
-			COUNT(hm.person_id) AS member_count,
-			h.created_at, h.updated_at
-		FROM households h
-		LEFT JOIN people p ON p.id = h.head_person_id
-		LEFT JOIN household_members hm ON hm.household_id = h.id
-		` + whereClause + ` GROUP BY h.id, p.first_name, p.last_name ORDER BY h.created_at DESC LIMIT ` + limitParam + ` OFFSET ` + offsetParam
-	rows, err := r.db.QueryContext(ctx, q, args...)
+	if err != nil {
+		return nil, 0, fmt.Errorf("build list households query: %w", err)
+	}
+
+	rows, err := r.db.QueryContext(ctx, listSQL, listArgs...)
 	if err != nil {
 		return nil, 0, fmt.Errorf("list households: %w", err)
 	}
@@ -122,6 +119,7 @@ func (r *householdRepo) List(ctx context.Context, filter household.HouseholdList
 		}
 		out = append(out, h)
 	}
+
 	return out, total, rows.Err()
 }
 

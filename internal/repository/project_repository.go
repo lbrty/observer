@@ -5,10 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strconv"
-	"strings"
 	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 
 	"github.com/lbrty/observer/internal/domain/project"
@@ -24,31 +23,23 @@ func NewProjectRepository(db *sqlx.DB) ProjectRepository {
 }
 
 func (r *projectRepo) List(ctx context.Context, filter project.ProjectListFilter) ([]*project.Project, int, error) {
-	var (
-		where []string
-		args  []any
-		ix    int
-	)
+	cond := sq.And{}
 
 	if filter.OwnerID != nil {
-		ix++
-		where = append(where, "owner_id = $"+strconv.Itoa(ix))
-		args = append(args, *filter.OwnerID)
+		cond = append(cond, sq.Eq{"owner_id": *filter.OwnerID})
 	}
+
 	if filter.Status != nil {
-		ix++
-		where = append(where, "status = $"+strconv.Itoa(ix))
-		args = append(args, string(*filter.Status))
+		cond = append(cond, sq.Eq{"status": string(*filter.Status)})
 	}
 
-	whereClause := ""
-	if len(where) > 0 {
-		whereClause = "WHERE " + strings.Join(where, " AND ")
+	countSQL, countArgs, err := psql.Select("COUNT(*)").From("projects").Where(cond).ToSql()
+	if err != nil {
+		return nil, 0, fmt.Errorf("build count query: %w", err)
 	}
 
-	countQ := "SELECT COUNT(*) FROM projects " + whereClause
 	var total int
-	if err := r.db.QueryRowContext(ctx, countQ, args...).Scan(&total); err != nil {
+	if err := r.db.QueryRowContext(ctx, countSQL, countArgs...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count projects: %w", err)
 	}
 
@@ -56,23 +47,26 @@ func (r *projectRepo) List(ctx context.Context, filter project.ProjectListFilter
 	if page < 1 {
 		page = 1
 	}
+
 	perPage := filter.PerPage
 	if perPage < 1 {
 		perPage = 20
 	}
+
 	offset := (page - 1) * perPage
 
-	ix++
-	args = append(args, perPage)
-	limitParam := "$" + strconv.Itoa(ix)
-	ix++
-	args = append(args, offset)
-	offsetParam := "$" + strconv.Itoa(ix)
+	listSQL, listArgs, err := psql.Select("id, name, description, owner_id, status, created_at, updated_at").
+		From("projects").Where(cond).
+		OrderBy("created_at DESC").
+		Limit(uint64(perPage)).
+		Offset(uint64(offset)).
+		ToSql()
 
-	q := "SELECT id, name, description, owner_id, status, created_at, updated_at FROM projects " +
-		whereClause + " ORDER BY created_at DESC LIMIT " + limitParam + " OFFSET " + offsetParam
+	if err != nil {
+		return nil, 0, fmt.Errorf("build list query: %w", err)
+	}
 
-	rows, err := r.db.QueryContext(ctx, q, args...)
+	rows, err := r.db.QueryContext(ctx, listSQL, listArgs...)
 	if err != nil {
 		return nil, 0, fmt.Errorf("list projects: %w", err)
 	}
@@ -87,6 +81,7 @@ func (r *projectRepo) List(ctx context.Context, filter project.ProjectListFilter
 		TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 		out = append(out, &p)
 	}
+
 	return out, total, rows.Err()
 }
 
@@ -100,6 +95,7 @@ func (r *projectRepo) GetByID(ctx context.Context, id string) (*project.Project,
 		}
 		return nil, fmt.Errorf("get project: %w", err)
 	}
+
 	TimesToUTC(&p.CreatedAt, &p.UpdatedAt)
 	return &p, nil
 }
@@ -116,6 +112,7 @@ func (r *projectRepo) Create(ctx context.Context, p *project.Project) error {
 		}
 		return fmt.Errorf("create project: %w", err)
 	}
+
 	return nil
 }
 
@@ -129,5 +126,6 @@ func (r *projectRepo) Update(ctx context.Context, p *project.Project) error {
 		}
 		return fmt.Errorf("update project: %w", err)
 	}
+
 	return CheckRowsAffected(res, project.ErrProjectNotFound)
 }

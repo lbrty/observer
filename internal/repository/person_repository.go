@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 
 	"github.com/lbrty/observer/internal/database"
@@ -29,6 +29,13 @@ const personColumns = `id, project_id, consultant_id, office_id, current_place_i
 	primary_phone, phone_numbers, case_status, consent_given, consent_date, registered_at,
 	created_at, updated_at`
 
+// personColumnsTagged is the same column list with explicit "people." table qualifier,
+// used when the query joins other tables (e.g. person_tags) to avoid ambiguity.
+const personColumnsTagged = `people.id, people.project_id, people.consultant_id, people.office_id, people.current_place_id, people.origin_place_id,
+	people.external_id, people.first_name, people.last_name, people.patronymic, people.email, people.birth_date, people.sex, people.age_group,
+	people.primary_phone, people.phone_numbers, people.case_status, people.consent_given, people.consent_date, people.registered_at,
+	people.created_at, people.updated_at`
+
 func scanPerson(row interface{ Scan(dest ...any) error }) (*person.Person, error) {
 	var p person.Person
 	err := row.Scan(
@@ -45,87 +52,67 @@ func scanPerson(row interface{ Scan(dest ...any) error }) (*person.Person, error
 }
 
 func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) ([]*person.Person, int, error) {
-	var (
-		where []string
-		args  []any
-		ix    int
-	)
-
-	ix++
-	where = append(where, "project_id = $"+strconv.Itoa(ix))
-	args = append(args, filter.ProjectID)
+	cond := sq.And{sq.Eq{"project_id": filter.ProjectID}}
 
 	if filter.ConsultantID != nil {
-		ix++
-		where = append(where, "consultant_id = $"+strconv.Itoa(ix))
-		args = append(args, *filter.ConsultantID)
+		cond = append(cond, sq.Eq{"consultant_id": *filter.ConsultantID})
 	}
 	if filter.OfficeID != nil {
-		ix++
-		where = append(where, "office_id = $"+strconv.Itoa(ix))
-		args = append(args, *filter.OfficeID)
+		cond = append(cond, sq.Eq{"office_id": *filter.OfficeID})
 	}
 	if filter.CaseStatus != nil {
-		ix++
-		where = append(where, "case_status = $"+strconv.Itoa(ix))
-		args = append(args, string(*filter.CaseStatus))
+		cond = append(cond, sq.Eq{"case_status": string(*filter.CaseStatus)})
 	}
 	if filter.Sex != nil {
-		ix++
-		where = append(where, "sex = $"+strconv.Itoa(ix))
-		args = append(args, string(*filter.Sex))
+		cond = append(cond, sq.Eq{"sex": string(*filter.Sex)})
 	}
 	if filter.AgeGroup != nil {
-		ix++
-		where = append(where, "(age_group::text = $"+strconv.Itoa(ix)+
-			" OR (age_group IS NULL AND birth_date IS NOT NULL AND infer_age_group(birth_date) = $"+strconv.Itoa(ix)+"))")
-		args = append(args, string(*filter.AgeGroup))
+		cond = append(cond, sq.Expr(
+			"(age_group::text = ? OR (age_group IS NULL AND birth_date IS NOT NULL AND infer_age_group(birth_date) = ?))",
+			string(*filter.AgeGroup), string(*filter.AgeGroup),
+		))
 	}
 	if filter.CategoryID != nil {
-		ix++
-		where = append(where, "id IN (SELECT person_id FROM person_categories WHERE category_id = $"+strconv.Itoa(ix)+")")
-		args = append(args, *filter.CategoryID)
+		cond = append(cond, sq.Expr("id IN (SELECT person_id FROM person_categories WHERE category_id = ?)", *filter.CategoryID))
 	}
 	if filter.RegionID != nil {
-		ix++
-		where = append(where, "current_place_id IN (SELECT id FROM places WHERE state_id = $"+strconv.Itoa(ix)+")")
-		args = append(args, *filter.RegionID)
+		cond = append(cond, sq.Expr("current_place_id IN (SELECT id FROM places WHERE state_id = ?)", *filter.RegionID))
 	}
 	if filter.HasPets != nil {
 		if *filter.HasPets {
-			where = append(where, "EXISTS (SELECT 1 FROM pets WHERE pets.owner_id = people.id)")
+			cond = append(cond, sq.Expr("EXISTS (SELECT 1 FROM pets WHERE pets.owner_id = people.id)"))
 		} else {
-			where = append(where, "NOT EXISTS (SELECT 1 FROM pets WHERE pets.owner_id = people.id)")
+			cond = append(cond, sq.Expr("NOT EXISTS (SELECT 1 FROM pets WHERE pets.owner_id = people.id)"))
 		}
 	}
 	if filter.Search != nil && *filter.Search != "" {
-		ix++
-		where = append(where, "(first_name % $"+strconv.Itoa(ix)+" OR last_name % $"+strconv.Itoa(ix)+")")
-		args = append(args, *filter.Search)
+		cond = append(cond, sq.Expr("(first_name % ? OR last_name % ?)", *filter.Search, *filter.Search))
 	}
 
-	var tagJoin, groupBy string
-	if len(filter.TagIDs) > 0 {
-		placeholders := make([]string, len(filter.TagIDs))
-		for i, tagID := range filter.TagIDs {
-			ix++
-			placeholders[i] = "$" + strconv.Itoa(ix)
-			args = append(args, tagID)
-		}
-		tagJoin = " JOIN person_tags pt ON pt.person_id = people.id AND pt.tag_id IN (" + strings.Join(placeholders, ",") + ")"
-		groupBy = " GROUP BY people.id HAVING COUNT(DISTINCT pt.tag_id) = " + strconv.Itoa(len(filter.TagIDs))
-	}
+	hasTags := len(filter.TagIDs) > 0
+	havingClause := fmt.Sprintf("COUNT(DISTINCT pt.tag_id) = %d", len(filter.TagIDs))
 
-	whereClause := "WHERE " + strings.Join(where, " AND ")
-
-	var countQ string
-	if tagJoin != "" {
-		countQ = "SELECT COUNT(*) FROM (SELECT people.id FROM people" + tagJoin + " " + whereClause + groupBy + ") sub"
+	var countSQL string
+	var countArgs []any
+	var err error
+	if hasTags {
+		sub := psql.Select("people.id").
+			From("people").
+			Join("person_tags pt ON pt.person_id = people.id").
+			Where(cond).
+			Where(sq.Eq{"pt.tag_id": filter.TagIDs}).
+			GroupBy("people.id").
+			Having(havingClause)
+		countSQL, countArgs, err = psql.Select("COUNT(*)").FromSelect(sub, "sub").ToSql()
 	} else {
-		countQ = "SELECT COUNT(*) FROM people " + whereClause
+		countSQL, countArgs, err = psql.Select("COUNT(*)").From("people").Where(cond).ToSql()
 	}
+	if err != nil {
+		return nil, 0, fmt.Errorf("build count query: %w", err)
+	}
+
 	var total int
-	if err := r.db.QueryRowContext(ctx, countQ, args...).Scan(&total); err != nil {
+	if err := r.db.QueryRowContext(ctx, countSQL, countArgs...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count people: %w", err)
 	}
 
@@ -139,23 +126,34 @@ func (r *personRepo) List(ctx context.Context, filter person.PersonListFilter) (
 	}
 	offset := (page - 1) * perPage
 
-	ix++
-	args = append(args, perPage)
-	limitParam := "$" + strconv.Itoa(ix)
-	ix++
-	args = append(args, offset)
-	offsetParam := "$" + strconv.Itoa(ix)
-
-	var q string
-	if tagJoin != "" {
-		q = "SELECT " + personColumns + " FROM people" + tagJoin + " " +
-			whereClause + groupBy + " ORDER BY people.created_at DESC LIMIT " + limitParam + " OFFSET " + offsetParam
+	var listSQL string
+	var listArgs []any
+	if hasTags {
+		listSQL, listArgs, err = psql.Select(personColumnsTagged).
+			From("people").
+			Join("person_tags pt ON pt.person_id = people.id").
+			Where(cond).
+			Where(sq.Eq{"pt.tag_id": filter.TagIDs}).
+			GroupBy("people.id").
+			Having(havingClause).
+			OrderBy("people.created_at DESC").
+			Limit(uint64(perPage)).
+			Offset(uint64(offset)).
+			ToSql()
 	} else {
-		q = "SELECT " + personColumns + " FROM people " +
-			whereClause + " ORDER BY created_at DESC LIMIT " + limitParam + " OFFSET " + offsetParam
+		listSQL, listArgs, err = psql.Select(personColumns).
+			From("people").
+			Where(cond).
+			OrderBy("created_at DESC").
+			Limit(uint64(perPage)).
+			Offset(uint64(offset)).
+			ToSql()
+	}
+	if err != nil {
+		return nil, 0, fmt.Errorf("build list query: %w", err)
 	}
 
-	rows, err := r.db.QueryContext(ctx, q, args...)
+	rows, err := r.db.QueryContext(ctx, listSQL, listArgs...)
 	if err != nil {
 		return nil, 0, fmt.Errorf("list people: %w", err)
 	}
@@ -288,10 +286,12 @@ func (r *personCategoryRepo) ListBulk(ctx context.Context, personIDs []string) (
 		args[i] = id
 		params[i] = fmt.Sprintf("$%d", i+1)
 	}
+
 	q := fmt.Sprintf(
 		"SELECT person_id, category_id FROM person_categories WHERE person_id IN (%s) ORDER BY person_id, category_id",
 		joinStrings(params, ", "),
 	)
+
 	return queryBulkTags(ctx, r.db, q, args)
 }
 
@@ -317,6 +317,7 @@ func (r *personCategoryRepo) ReplaceAll(ctx context.Context, personID string, ca
 			sb.WriteString(fmt.Sprintf("($%d, $%d)", i*2+1, i*2+2))
 			args = append(args, personID, catID)
 		}
+
 		if _, err := tx.ExecContext(ctx, sb.String(), args...); err != nil {
 			return fmt.Errorf("insert person categories: %w", err)
 		}
@@ -352,6 +353,7 @@ func (r *personTagRepo) List(ctx context.Context, personID string) ([]string, er
 		}
 		ids = append(ids, id)
 	}
+
 	return ids, rows.Err()
 }
 
@@ -359,6 +361,7 @@ func (r *personTagRepo) ListBulk(ctx context.Context, entityIDs []string) (map[s
 	if len(entityIDs) == 0 {
 		return map[string][]string{}, nil
 	}
+
 	q, args := buildBulkTagQuery("person_tags", "person_id", entityIDs)
 	return queryBulkTags(ctx, r.db, q, args)
 }
@@ -385,6 +388,7 @@ func (r *personTagRepo) ReplaceAll(ctx context.Context, personID string, tagIDs 
 			sb.WriteString(fmt.Sprintf("($%d, $%d)", i*2+1, i*2+2))
 			args = append(args, personID, tagID)
 		}
+
 		if _, err := tx.ExecContext(ctx, sb.String(), args...); err != nil {
 			return fmt.Errorf("insert person tags: %w", err)
 		}

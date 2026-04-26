@@ -5,9 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"github.com/oklog/ulid/v2"
@@ -70,6 +70,7 @@ func (r *userRepo) Create(ctx context.Context, u *user.User) error {
 	if err != nil {
 		return fmt.Errorf("create user: %w", err)
 	}
+
 	return nil
 }
 
@@ -119,9 +120,11 @@ func (r *userRepo) Update(ctx context.Context, u *user.User) error {
 		u.ID.String(), u.FirstName, u.LastName, u.Email, u.Phone, u.OfficeID,
 		string(u.Role), u.IsVerified, u.IsActive, time.Now().UTC(),
 	)
+
 	if err != nil {
 		return fmt.Errorf("update user: %w", err)
 	}
+
 	return CheckRowsAffected(res, user.ErrUserNotFound)
 }
 
@@ -131,56 +134,60 @@ func (r *userRepo) UpdateVerified(ctx context.Context, id ulid.ULID, verified bo
 	if err != nil {
 		return fmt.Errorf("update verified: %w", err)
 	}
+
 	return CheckRowsAffected(res, user.ErrUserNotFound)
 }
 
 func (r *userRepo) List(ctx context.Context, filter user.UserListFilter) ([]*user.User, int, error) {
-	var where []string
-	var args []any
-	argN := 0
-
-	nextArg := func(v any) string {
-		argN++
-		args = append(args, v)
-		return fmt.Sprintf("$%d", argN)
-	}
+	cond := sq.And{}
 
 	if filter.Search != "" {
-		p := nextArg("%" + filter.Search + "%")
-		where = append(where, fmt.Sprintf(
-			"(first_name ILIKE %s OR last_name ILIKE %s OR email ILIKE %s)", p, p, p,
-		))
+		pat := "%" + filter.Search + "%"
+		cond = append(cond, sq.Or{
+			sq.ILike{"first_name": pat},
+			sq.ILike{"last_name": pat},
+			sq.ILike{"email": pat},
+		})
 	}
+
 	if filter.Role != "" {
-		where = append(where, fmt.Sprintf("role = %s", nextArg(filter.Role)))
+		cond = append(cond, sq.Eq{"role": filter.Role})
 	}
+
 	if filter.IsActive != nil {
-		where = append(where, fmt.Sprintf("is_active = %s", nextArg(*filter.IsActive)))
+		cond = append(cond, sq.Eq{"is_active": *filter.IsActive})
 	}
 
-	whereClause := ""
-	if len(where) > 0 {
-		whereClause = "WHERE " + strings.Join(where, " AND ")
+	countSQL, countArgs, err := psql.Select("COUNT(*)").From("users").Where(cond).ToSql()
+	if err != nil {
+		return nil, 0, fmt.Errorf("build count query: %w", err)
 	}
 
-	countQ := "SELECT COUNT(*) FROM users " + whereClause
 	var total int
-	if err := r.db.QueryRowContext(ctx, countQ, args...).Scan(&total); err != nil {
+	if err := r.db.QueryRowContext(ctx, countSQL, countArgs...).Scan(&total); err != nil {
 		return nil, 0, fmt.Errorf("count users: %w", err)
 	}
 
 	if filter.Page < 1 {
 		filter.Page = 1
 	}
+
 	if filter.PerPage < 1 {
 		filter.PerPage = 20
 	}
 	offset := (filter.Page - 1) * filter.PerPage
 
-	listQ := fmt.Sprintf("SELECT %s FROM users %s ORDER BY created_at DESC LIMIT %s OFFSET %s",
-		userColumns, whereClause, nextArg(filter.PerPage), nextArg(offset))
+	listSQL, listArgs, err := psql.Select(userColumns).From("users").Where(cond).
+		OrderBy("created_at DESC").
+		Limit(uint64(filter.PerPage)).
+		Offset(uint64(offset)).
+		ToSql()
 
-	rows, err := r.db.QueryContext(ctx, listQ, args...)
+	if err != nil {
+		return nil, 0, fmt.Errorf("build list query: %w", err)
+	}
+
+	rows, err := r.db.QueryContext(ctx, listSQL, listArgs...)
 	if err != nil {
 		return nil, 0, fmt.Errorf("list users: %w", err)
 	}
@@ -190,34 +197,45 @@ func (r *userRepo) List(ctx context.Context, filter user.UserListFilter) ([]*use
 	if err != nil {
 		return nil, 0, err
 	}
+
 	return users, total, nil
 }
 
 func (r *userRepo) Deactivate(ctx context.Context, id ulid.ULID) error {
-	res, err := r.db.ExecContext(ctx,
+	res, err := r.db.ExecContext(
+		ctx,
 		`UPDATE users SET deactivated_at = NOW(), updated_at = NOW() WHERE id = $1`,
-		id.String())
+		id.String(),
+	)
+
 	if err != nil {
 		return fmt.Errorf("deactivate user: %w", err)
 	}
+
 	return CheckRowsAffected(res, user.ErrUserNotFound)
 }
 
 func (r *userRepo) Reactivate(ctx context.Context, id ulid.ULID) error {
-	res, err := r.db.ExecContext(ctx,
+	res, err := r.db.ExecContext(
+		ctx,
 		`UPDATE users SET deactivated_at = NULL, updated_at = NOW() WHERE id = $1`,
-		id.String())
+		id.String(),
+	)
+
 	if err != nil {
 		return fmt.Errorf("reactivate user: %w", err)
 	}
+
 	return CheckRowsAffected(res, user.ErrUserNotFound)
 }
 
 func (r *userRepo) LockPermanently(ctx context.Context, email string) error {
-	_, err := r.db.ExecContext(ctx,
+	_, err := r.db.ExecContext(
+		ctx,
 		`UPDATE users SET locked_permanently_at = NOW() WHERE email = $1`,
 		email,
 	)
+
 	return err
 }
 
@@ -276,8 +294,10 @@ func (r *userRepo) scanUsers(rows *sql.Rows) ([]*user.User, error) {
 		u.UpdatedAt = updatedAt
 		users = append(users, &u)
 	}
+
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("iterate user rows: %w", err)
 	}
+
 	return users, nil
 }
