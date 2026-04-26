@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -212,7 +211,10 @@ func (r *petTagRepo) ListBulk(ctx context.Context, entityIDs []string) (map[stri
 		return map[string][]string{}, nil
 	}
 
-	q, args := buildBulkTagQuery("pet_tags", "pet_id", entityIDs)
+	q, args, err := buildBulkTagQuery("pet_tags", "pet_id", entityIDs)
+	if err != nil {
+		return nil, fmt.Errorf("build list bulk: %w", err)
+	}
 	return queryBulkTags(ctx, r.db, q, args)
 }
 
@@ -228,17 +230,15 @@ func (r *petTagRepo) ReplaceAll(ctx context.Context, petID string, tagIDs []stri
 	}
 
 	if len(tagIDs) > 0 {
-		var sb strings.Builder
-		sb.WriteString("INSERT INTO pet_tags (pet_id, tag_id) VALUES ")
-		args := make([]any, 0, len(tagIDs)*2)
-		for i, tagID := range tagIDs {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString(fmt.Sprintf("($%d, $%d)", i*2+1, i*2+2))
-			args = append(args, petID, tagID)
+		iq := psql.Insert("pet_tags").Columns("pet_id", "tag_id")
+		for _, tagID := range tagIDs {
+			iq = iq.Values(petID, tagID)
 		}
-		if _, err := tx.ExecContext(ctx, sb.String(), args...); err != nil {
+		sqlStr, args, err := iq.ToSql()
+		if err != nil {
+			return fmt.Errorf("build insert tags: %w", err)
+		}
+		if _, err := tx.ExecContext(ctx, sqlStr, args...); err != nil {
 			return fmt.Errorf("insert pet tags: %w", err)
 		}
 	}

@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -280,19 +279,18 @@ func (r *personCategoryRepo) ListBulk(ctx context.Context, personIDs []string) (
 	if len(personIDs) == 0 {
 		return map[string][]string{}, nil
 	}
-	params := make([]string, len(personIDs))
-	args := make([]any, len(personIDs))
-	for i, id := range personIDs {
-		args[i] = id
-		params[i] = fmt.Sprintf("$%d", i+1)
+
+	sqlStr, args, err := psql.
+		Select("person_id, category_id").
+		From("person_categories").
+		Where(sq.Eq{"person_id": personIDs}).
+		OrderBy("person_id, category_id").
+		ToSql()
+	if err != nil {
+		return nil, fmt.Errorf("build list bulk: %w", err)
 	}
 
-	q := fmt.Sprintf(
-		"SELECT person_id, category_id FROM person_categories WHERE person_id IN (%s) ORDER BY person_id, category_id",
-		joinStrings(params, ", "),
-	)
-
-	return queryBulkTags(ctx, r.db, q, args)
+	return queryBulkTags(ctx, r.db, sqlStr, args)
 }
 
 func (r *personCategoryRepo) ReplaceAll(ctx context.Context, personID string, categoryIDs []string) error {
@@ -307,18 +305,15 @@ func (r *personCategoryRepo) ReplaceAll(ctx context.Context, personID string, ca
 	}
 
 	if len(categoryIDs) > 0 {
-		var sb strings.Builder
-		sb.WriteString("INSERT INTO person_categories (person_id, category_id) VALUES ")
-		args := make([]any, 0, len(categoryIDs)*2)
-		for i, catID := range categoryIDs {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString(fmt.Sprintf("($%d, $%d)", i*2+1, i*2+2))
-			args = append(args, personID, catID)
+		iq := psql.Insert("person_categories").Columns("person_id", "category_id")
+		for _, catID := range categoryIDs {
+			iq = iq.Values(personID, catID)
 		}
-
-		if _, err := tx.ExecContext(ctx, sb.String(), args...); err != nil {
+		sqlStr, args, err := iq.ToSql()
+		if err != nil {
+			return fmt.Errorf("build insert categories: %w", err)
+		}
+		if _, err := tx.ExecContext(ctx, sqlStr, args...); err != nil {
 			return fmt.Errorf("insert person categories: %w", err)
 		}
 	}
@@ -362,7 +357,10 @@ func (r *personTagRepo) ListBulk(ctx context.Context, entityIDs []string) (map[s
 		return map[string][]string{}, nil
 	}
 
-	q, args := buildBulkTagQuery("person_tags", "person_id", entityIDs)
+	q, args, err := buildBulkTagQuery("person_tags", "person_id", entityIDs)
+	if err != nil {
+		return nil, fmt.Errorf("build list bulk: %w", err)
+	}
 	return queryBulkTags(ctx, r.db, q, args)
 }
 
@@ -378,18 +376,15 @@ func (r *personTagRepo) ReplaceAll(ctx context.Context, personID string, tagIDs 
 	}
 
 	if len(tagIDs) > 0 {
-		var sb strings.Builder
-		sb.WriteString("INSERT INTO person_tags (person_id, tag_id) VALUES ")
-		args := make([]any, 0, len(tagIDs)*2)
-		for i, tagID := range tagIDs {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString(fmt.Sprintf("($%d, $%d)", i*2+1, i*2+2))
-			args = append(args, personID, tagID)
+		iq := psql.Insert("person_tags").Columns("person_id", "tag_id")
+		for _, tagID := range tagIDs {
+			iq = iq.Values(personID, tagID)
 		}
-
-		if _, err := tx.ExecContext(ctx, sb.String(), args...); err != nil {
+		sqlStr, args, err := iq.ToSql()
+		if err != nil {
+			return fmt.Errorf("build insert tags: %w", err)
+		}
+		if _, err := tx.ExecContext(ctx, sqlStr, args...); err != nil {
 			return fmt.Errorf("insert person tags: %w", err)
 		}
 	}

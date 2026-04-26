@@ -517,71 +517,47 @@ func (r *reportRepo) CustomQuery(ctx context.Context, projectID string, metric s
 		groupCols[i] = alias
 	}
 
-	q := fmt.Sprintf("SELECT %s, %s AS count FROM %s%s WHERE %s = $1",
-		strings.Join(selectCols, ", "),
-		countExpr,
-		from,
-		joins.String(),
-		projectCol,
-	)
+	qb := psql.
+		Select(strings.Join(selectCols, ", ")+", "+countExpr+" AS count").
+		From(from+joins.String()).
+		Where(sq.Eq{projectCol: projectID})
 
-	args := []any{projectID}
-	ix := 2
-
-	// Apply date filters
 	if filter.DateFrom != nil {
-		q += fmt.Sprintf(" AND %s >= $%d", dateCol, ix)
-		args = append(args, *filter.DateFrom)
-		ix++
+		qb = qb.Where(sq.GtOrEq{dateCol: *filter.DateFrom})
 	}
-
 	if filter.DateTo != nil {
-		q += fmt.Sprintf(" AND %s <= $%d", dateCol, ix)
-		args = append(args, *filter.DateTo)
-		ix++
+		qb = qb.Where(sq.LtOrEq{dateCol: *filter.DateTo})
 	}
-
 	if filter.SupportType != nil {
 		if metric == "events" {
-			q += fmt.Sprintf(" AND sr.type = $%d", ix)
+			qb = qb.Where(sq.Eq{"sr.type": *filter.SupportType})
 		} else {
-			q += fmt.Sprintf(" AND p.id IN (SELECT sr2.person_id FROM support_records sr2 WHERE sr2.project_id = $1 AND sr2.type = $%d)", ix)
+			qb = qb.Where(sq.Expr("p.id IN (SELECT sr2.person_id FROM support_records sr2 WHERE sr2.project_id = ? AND sr2.type = ?)", projectID, *filter.SupportType))
 		}
-		args = append(args, *filter.SupportType)
-		ix++
 	}
-
 	if filter.Sex != nil {
-		q += fmt.Sprintf(" AND p.sex = $%d", ix)
-		args = append(args, *filter.Sex)
-		ix++
+		qb = qb.Where(sq.Eq{"p.sex": *filter.Sex})
 	}
-
 	if filter.OfficeID != nil {
 		if metric == "events" {
-			q += fmt.Sprintf(" AND sr.office_id = $%d", ix)
+			qb = qb.Where(sq.Eq{"sr.office_id": *filter.OfficeID})
 		} else {
-			q += fmt.Sprintf(" AND p.office_id = $%d", ix)
+			qb = qb.Where(sq.Eq{"p.office_id": *filter.OfficeID})
 		}
-		args = append(args, *filter.OfficeID)
-		ix++
 	}
-
 	if filter.CategoryID != nil {
-		q += fmt.Sprintf(" AND p.id IN (SELECT person_id FROM person_categories WHERE category_id = $%d)", ix)
-		args = append(args, *filter.CategoryID)
-		ix++
+		qb = qb.Where(sq.Expr("p.id IN (SELECT person_id FROM person_categories WHERE category_id = ?)", *filter.CategoryID))
 	}
-
 	if filter.CaseStatus != nil {
-		q += fmt.Sprintf(" AND p.case_status = $%d", ix)
-		args = append(args, *filter.CaseStatus)
-		ix++
+		qb = qb.Where(sq.Eq{"p.case_status": *filter.CaseStatus})
 	}
-	_ = ix
 
-	q += " GROUP BY " + strings.Join(groupCols, ", ")
-	q += " ORDER BY count DESC"
+	qb = qb.GroupBy(strings.Join(groupCols, ", ")).OrderBy("count DESC")
+
+	sqlStr, args, err := qb.ToSql()
+	if err != nil {
+		return nil, 0, fmt.Errorf("build custom query: %w", err)
+	}
 
 	type row struct {
 		Dim0  *string `db:"dim_0"`
@@ -590,7 +566,7 @@ func (r *reportRepo) CustomQuery(ctx context.Context, projectID string, metric s
 	}
 
 	var rows []row
-	if err := r.db.SelectContext(ctx, &rows, q, args...); err != nil {
+	if err := r.db.SelectContext(ctx, &rows, sqlStr, args...); err != nil {
 		return nil, 0, fmt.Errorf("custom query: %w", err)
 	}
 

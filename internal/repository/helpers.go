@@ -41,16 +41,13 @@ func IsUniqueViolation(err error) bool {
 }
 
 // buildBulkTagQuery builds a SELECT for fetching tag IDs for multiple entities.
-func buildBulkTagQuery(table, fkCol string, entityIDs []string) (string, []any) {
-	args := make([]any, len(entityIDs))
-	params := make([]string, len(entityIDs))
-	for i, id := range entityIDs {
-		args[i] = id
-		params[i] = fmt.Sprintf("$%d", i+1)
-	}
-	q := fmt.Sprintf("SELECT %s, tag_id FROM %s WHERE %s IN (%s) ORDER BY %s, tag_id",
-		fkCol, table, fkCol, joinStrings(params, ", "), fkCol)
-	return q, args
+func buildBulkTagQuery(table, fkCol string, entityIDs []string) (string, []any, error) {
+	return psql.
+		Select(fkCol+", tag_id").
+		From(table).
+		Where(sq.Eq{fkCol: entityIDs}).
+		OrderBy(fkCol+", tag_id").
+		ToSql()
 }
 
 // queryBulkTags executes a bulk tag query and returns a map of entity ID → tag IDs.
@@ -73,15 +70,3 @@ func queryBulkTags(ctx context.Context, db *sqlx.DB, q string, args []any) (map[
 	return result, rows.Err()
 }
 
-func joinStrings(ss []string, sep string) string {
-	if len(ss) == 0 {
-		return ""
-	}
-
-	out := ss[0]
-	for _, s := range ss[1:] {
-		out += sep + s
-	}
-
-	return out
-}
