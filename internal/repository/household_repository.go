@@ -33,8 +33,16 @@ func scanHousehold(row interface{ Scan(dest ...any) error }) (*household.Househo
 
 func scanHouseholdWithCount(row interface{ Scan(dest ...any) error }) (*household.Household, error) {
 	var h household.Household
-	if err := row.Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &h.HeadPersonName, &h.MemberCount, &h.CreatedAt, &h.UpdatedAt); err != nil {
+	var firstName, lastName sql.NullString
+	if err := row.Scan(&h.ID, &h.ProjectID, &h.ReferenceNumber, &h.HeadPersonID, &firstName, &lastName, &h.MemberCount, &h.CreatedAt, &h.UpdatedAt); err != nil {
 		return nil, err
+	}
+	if firstName.Valid {
+		h.HeadFirstName = &firstName.String
+	}
+
+	if lastName.Valid {
+		h.HeadLastName = &lastName.String
 	}
 
 	TimesToUTC(&h.CreatedAt, &h.UpdatedAt)
@@ -79,7 +87,7 @@ func (r *householdRepo) List(ctx context.Context, filter household.HouseholdList
 	listSQL, listArgs, err := psql.
 		Select(
 			"h.id", "h.project_id", "h.reference_number", "h.head_person_id",
-			"NULLIF(TRIM(COALESCE(p.first_name, '') || ' ' || COALESCE(p.last_name, '')), '') AS head_person_name",
+			"p.first_name", "p.last_name",
 			"COUNT(hm.person_id) AS member_count",
 			"h.created_at", "h.updated_at",
 		).

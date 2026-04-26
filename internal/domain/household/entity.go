@@ -26,9 +26,10 @@ type Household struct {
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 
-	// Populated by repository reads via JOIN; zero-valued on Create/Update.
-	HeadPersonName *string
-	MemberCount    int
+	// Populated by repository reads via JOIN with people; zero-valued on Create/Update.
+	HeadFirstName *string
+	HeadLastName  *string
+	MemberCount   int
 }
 
 // Member represents a person's membership in a household.

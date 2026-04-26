@@ -1,6 +1,7 @@
 package project
 
 import (
+	"strings"
 	"time"
 
 	"github.com/lbrty/observer/internal/domain/household"
@@ -61,16 +62,31 @@ type ListHouseholdsOutput struct {
 }
 
 func householdToDTO(h *household.Household) HouseholdDTO {
+	var headPersonName *string
+	if h.HeadFirstName != nil || h.HeadLastName != nil {
+		parts := strings.TrimSpace(stringVal(h.HeadFirstName) + " " + stringVal(h.HeadLastName))
+		if parts != "" {
+			headPersonName = &parts
+		}
+	}
+
 	return HouseholdDTO{
 		ID:              h.ID,
 		ProjectID:       h.ProjectID,
 		ReferenceNumber: h.ReferenceNumber,
 		HeadPersonID:    h.HeadPersonID,
-		HeadPersonName:  h.HeadPersonName,
+		HeadPersonName:  headPersonName,
 		MemberCount:     h.MemberCount,
 		CreatedAt:       h.CreatedAt,
 		UpdatedAt:       h.UpdatedAt,
 	}
+}
+
+func stringVal(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }
 
 func memberToDTO(m *household.Member) HouseholdMemberDTO {
