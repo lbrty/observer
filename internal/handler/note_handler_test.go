@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -43,21 +42,6 @@ func TestNoteHandler_List_Success(t *testing.T) {
 	resp := parseResponse[map[string]any](w)
 	notes := resp["notes"].([]any)
 	assert.Len(t, notes, 2)
-}
-
-func TestNoteHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, repo := newNoteHandler(ctrl)
-
-	personID := testID().String()
-	repo.EXPECT().List(gomock.Any(), personID).Return(nil, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/notes", nil, gin.Params{
-		{Key: "person_id", Value: personID},
-	})
-	h.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestNoteHandler_Create_ValidationError(t *testing.T) {

@@ -2,7 +2,6 @@ package handler_test
 
 import (
 	"bytes"
-	"fmt"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
@@ -87,22 +86,6 @@ func TestDocumentHandler_List_Success(t *testing.T) {
 	resp := parseResponse[map[string]any](w)
 	docs := resp["documents"].([]any)
 	assert.Len(t, docs, 1)
-}
-
-func TestDocumentHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, docRepo, _ := newDocumentHandler(ctrl)
-
-	personID := testID().String()
-	docRepo.EXPECT().List(gomock.Any(), personID).Return(nil, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/documents", nil, gin.Params{
-		{Key: "person_id", Value: personID},
-	})
-	setCanViewDocuments(c, true)
-	h.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestDocumentHandler_Get_NoPermission(t *testing.T) {

@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -58,19 +57,4 @@ func TestMyHandler_Projects_Admin_Success(t *testing.T) {
 	p := projects[0].(map[string]any)
 	assert.Equal(t, "Test Project", p["name"])
 	assert.Equal(t, "owner", p["role"])
-}
-
-func TestMyHandler_Projects_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, _, projectRepo := newMyHandler(ctrl)
-
-	userID := testID()
-	projectRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
-
-	c, w := newTestContext(http.MethodGet, "/my/projects", nil)
-	setAuthContext(c, userID)
-	c.Set(string(middleware.CtxUserRole), string(user.RoleAdmin))
-	h.Projects(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }

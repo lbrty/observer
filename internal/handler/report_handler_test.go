@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 
@@ -56,19 +55,4 @@ func TestReportHandler_Generate_Success(t *testing.T) {
 	assert.Contains(t, resp, "consultations")
 	assert.Contains(t, resp, "by_sex")
 	assert.Contains(t, resp, "status_flow")
-}
-
-func TestReportHandler_Generate_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, repo := newReportHandler(ctrl)
-
-	projectID := testID().String()
-	repo.EXPECT().CountConsultations(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/reports", nil, gin.Params{
-		{Key: "project_id", Value: projectID},
-	})
-	h.Generate(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }

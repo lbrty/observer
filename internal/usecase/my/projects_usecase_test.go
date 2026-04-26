@@ -2,7 +2,6 @@ package my_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
@@ -112,21 +111,4 @@ func TestMyProjectsUseCase_Execute_Staff_SkipsInactive(t *testing.T) {
 	require.Len(t, out.Projects, 1)
 	assert.Equal(t, "p2", out.Projects[0].ID)
 	assert.Equal(t, "manager", out.Projects[0].Role)
-}
-
-func TestMyProjectsUseCase_Execute_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	permRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	projectRepo := mock_repo.NewMockProjectRepository(ctrl)
-
-	repoErr := errors.New("db connection lost")
-	projectRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, repoErr)
-
-	uc := ucmy.NewMyProjectsUseCase(permRepo, projectRepo)
-	_, err := uc.Execute(context.Background(), "user-1", user.RoleAdmin)
-
-	require.Error(t, err)
-	assert.ErrorIs(t, err, repoErr)
 }

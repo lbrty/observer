@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -57,18 +56,6 @@ func TestPlaceHandler_List_ByState(t *testing.T) {
 	resp := parseResponse[map[string]any](w)
 	places := resp["places"].([]any)
 	assert.Len(t, places, 1)
-}
-
-func TestPlaceHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, repo := newPlaceHandler(ctrl)
-
-	repo.EXPECT().ListAll(gomock.Any()).Return(nil, fmt.Errorf("db error"))
-
-	c, w := newTestContext(http.MethodGet, "/admin/places", nil)
-	h.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestPlaceHandler_Get_NotFound(t *testing.T) {

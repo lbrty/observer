@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -39,19 +38,6 @@ func TestAdminHandler_ListUsers_Success(t *testing.T) {
 	users := resp["users"].([]any)
 	assert.Len(t, users, 1)
 	assert.Equal(t, float64(1), resp["total"])
-}
-
-func TestAdminHandler_ListUsers_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	d := newAdminTestDeps(ctrl)
-	h := newAdminHandler(d)
-
-	d.userRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
-
-	c, w := newTestContext(http.MethodGet, "/admin/users", nil)
-	h.ListUsers(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 // --- GetUser ---

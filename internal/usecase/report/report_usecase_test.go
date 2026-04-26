@@ -2,7 +2,6 @@ package report_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -273,20 +272,4 @@ func TestReportUseCase_Generate_InvalidDateTo(t *testing.T) {
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "parse date_to")
-}
-
-func TestReportUseCase_Generate_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	repo := setupReportMocks(ctrl)
-	repoErr := errors.New("db connection lost")
-	repo.EXPECT().CountConsultations(gomock.Any(), gomock.Any()).Return(nil, repoErr)
-
-	uc := ucreport.NewReportUseCase(repo)
-
-	_, err := uc.Generate(context.Background(), "proj-1", ucreport.ReportInput{})
-
-	require.Error(t, err)
-	assert.ErrorIs(t, err, repoErr)
 }

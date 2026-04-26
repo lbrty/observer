@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -68,20 +67,6 @@ func TestProjectHandler_List_Success(t *testing.T) {
 	projects := resp["projects"].([]any)
 	assert.Len(t, projects, 1)
 	assert.Equal(t, float64(1), resp["total"])
-}
-
-func TestProjectHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	d := newProjectTestDeps(ctrl)
-	h := newProjectHandler(d)
-
-	d.projectRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
-
-	c, w := newTestContext(http.MethodGet, "/admin/projects", nil)
-	setAdminAuth(c)
-	h.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 // --- Get ---

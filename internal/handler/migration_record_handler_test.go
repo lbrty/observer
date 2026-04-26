@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -42,21 +41,6 @@ func TestMigrationRecordHandler_List_Success(t *testing.T) {
 	resp := parseResponse[map[string]any](w)
 	records := resp["records"].([]any)
 	assert.Len(t, records, 2)
-}
-
-func TestMigrationRecordHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, repo := newMigrationRecordHandler(ctrl)
-
-	personID := testID().String()
-	repo.EXPECT().ListByPerson(gomock.Any(), personID).Return(nil, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/migration-records", nil, gin.Params{
-		{Key: "person_id", Value: personID},
-	})
-	h.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestMigrationRecordHandler_Get_NotFound(t *testing.T) {

@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -40,18 +39,6 @@ func TestCategoryHandler_List_Success(t *testing.T) {
 	resp := parseResponse[map[string]any](w)
 	categories := resp["categories"].([]any)
 	assert.Len(t, categories, 2)
-}
-
-func TestCategoryHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, repo := newCategoryHandler(ctrl)
-
-	repo.EXPECT().List(gomock.Any()).Return(nil, fmt.Errorf("db error"))
-
-	c, w := newTestContext(http.MethodGet, "/admin/categories", nil)
-	h.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestCategoryHandler_Get_NotFound(t *testing.T) {

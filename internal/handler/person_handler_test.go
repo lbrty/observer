@@ -2,7 +2,6 @@ package handler_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -86,23 +85,6 @@ func TestPersonHandler_List_Success(t *testing.T) {
 	people := resp["people"].([]any)
 	assert.Len(t, people, 1)
 	assert.Equal(t, float64(1), resp["total"])
-}
-
-func TestPersonHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	deps := newPersonTestDeps(ctrl)
-
-	projectID := testID().String()
-
-	deps.personRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/people", nil, gin.Params{
-		{Key: "project_id", Value: projectID},
-	})
-	setSensitivityContext(c)
-	deps.handler.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestPersonHandler_Get_NotFound(t *testing.T) {

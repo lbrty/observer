@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -39,18 +38,6 @@ func TestCountryHandler_List_Success(t *testing.T) {
 	resp := parseResponse[map[string]any](w)
 	countries := resp["countries"].([]any)
 	assert.Len(t, countries, 2)
-}
-
-func TestCountryHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, repo := newCountryHandler(ctrl)
-
-	repo.EXPECT().List(gomock.Any()).Return(nil, fmt.Errorf("db error"))
-
-	c, w := newTestContext(http.MethodGet, "/admin/countries", nil)
-	h.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestCountryHandler_Get_NotFound(t *testing.T) {

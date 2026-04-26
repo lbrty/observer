@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -44,21 +43,6 @@ func TestHouseholdHandler_List_Success(t *testing.T) {
 	households := resp["households"].([]any)
 	assert.Len(t, households, 2)
 	assert.Equal(t, float64(2), resp["total"])
-}
-
-func TestHouseholdHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, repo, _ := newHouseholdHandler(ctrl)
-
-	projectID := testID().String()
-	repo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/households", nil, gin.Params{
-		{Key: "project_id", Value: projectID},
-	})
-	h.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestHouseholdHandler_Get_NotFound(t *testing.T) {

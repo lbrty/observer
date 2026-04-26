@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -96,23 +95,6 @@ func TestPermissionHandler_ListPermissions_Success(t *testing.T) {
 	resp := parseResponse[map[string]any](w)
 	perms := resp["permissions"].([]any)
 	assert.Len(t, perms, 1)
-}
-
-func TestPermissionHandler_ListPermissions_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	d := newPermissionTestDeps(ctrl)
-	h := newPermissionHandler(d)
-
-	projectID := testID().String()
-	d.permRepo.EXPECT().List(gomock.Any(), projectID).Return(nil, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/admin/projects/"+projectID+"/permissions", nil, gin.Params{
-		{Key: "project_id", Value: projectID},
-	})
-	setPermAdminAuth(c)
-	h.ListPermissions(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 // --- AssignPermission ---

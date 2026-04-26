@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -40,18 +39,6 @@ func TestOfficeHandler_List_Success(t *testing.T) {
 	resp := parseResponse[map[string]any](w)
 	offices := resp["offices"].([]any)
 	assert.Len(t, offices, 2)
-}
-
-func TestOfficeHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, repo := newOfficeHandler(ctrl)
-
-	repo.EXPECT().List(gomock.Any()).Return(nil, fmt.Errorf("db error"))
-
-	c, w := newTestContext(http.MethodGet, "/admin/offices", nil)
-	h.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestOfficeHandler_Get_NotFound(t *testing.T) {

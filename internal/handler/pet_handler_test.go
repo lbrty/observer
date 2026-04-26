@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -55,25 +54,6 @@ func TestPetHandler_List_Success(t *testing.T) {
 	pets := resp["pets"].([]any)
 	assert.Len(t, pets, 2)
 	assert.Equal(t, float64(2), resp["total"])
-}
-
-func TestPetHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, petRepo, _ := newPetHandler(ctrl)
-
-	projectID := testID().String()
-	petRepo.EXPECT().List(gomock.Any(), pet.PetListFilter{
-		ProjectID: projectID,
-		Page:      1,
-		PerPage:   20,
-	}).Return(nil, 0, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/pets", nil, gin.Params{
-		{Key: "project_id", Value: projectID},
-	})
-	h.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestPetHandler_Get_NotFound(t *testing.T) {

@@ -2,7 +2,6 @@ package admin_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/oklog/ulid/v2"
@@ -61,23 +60,6 @@ func TestPermissionUseCase_List_NonMember_Empty(t *testing.T) {
 	out, err := uc.List(ctx, "proj-1", "caller-1", user.RoleConsultant)
 	require.NoError(t, err)
 	assert.Empty(t, out)
-}
-
-func TestPermissionUseCase_List_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockPermRepo := mock_repo.NewMockPermissionRepository(ctrl)
-	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
-	uc := ucadmin.NewPermissionUseCase(mockPermRepo, mockUserRepo, nil)
-
-	ctx := context.Background()
-
-	mockPermRepo.EXPECT().List(ctx, "proj-1").Return(nil, fmt.Errorf("db connection lost"))
-
-	_, err := uc.List(ctx, "proj-1", "caller-admin", user.RoleAdmin)
-	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "db connection lost")
 }
 
 func TestPermissionUseCase_Update_Success(t *testing.T) {

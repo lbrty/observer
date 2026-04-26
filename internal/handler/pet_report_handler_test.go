@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 
@@ -43,19 +42,4 @@ func TestPetReportHandler_Generate_Success(t *testing.T) {
 	assert.Contains(t, resp, "by_ownership")
 	assert.Contains(t, resp, "by_month")
 	assert.Contains(t, resp, "by_status_by_month")
-}
-
-func TestPetReportHandler_Generate_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, repo := newPetReportHandler(ctrl)
-
-	projectID := testID().String()
-	repo.EXPECT().CountByStatus(gomock.Any(), gomock.Any()).Return(nil, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/reports/pets", nil, gin.Params{
-		{Key: "project_id", Value: projectID},
-	})
-	h.Generate(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }

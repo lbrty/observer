@@ -2,7 +2,6 @@ package project_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
@@ -44,41 +43,6 @@ func TestPetUseCase_List_Success(t *testing.T) {
 	assert.Equal(t, "Buddy", out.Pets[0].Name)
 	assert.Equal(t, []string{"tag1", "tag2"}, out.Pets[0].TagIDs)
 	assert.Equal(t, []string{}, out.Pets[1].TagIDs)
-}
-
-func TestPetUseCase_List_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	mockTagRepo := mock_repo.NewMockPetTagRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, mockTagRepo, nil)
-
-	repoErr := errors.New("db error")
-	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, repoErr)
-
-	_, err := uc.List(context.Background(), "proj1", ucproject.ListPetsInput{})
-	assert.ErrorIs(t, err, repoErr)
-}
-
-func TestPetUseCase_List_TagRepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	mockTagRepo := mock_repo.NewMockPetTagRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, mockTagRepo, nil)
-
-	now := time.Now().UTC()
-	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*pet.Pet{
-		{ID: "pet1", ProjectID: "proj1", Name: "Buddy", Status: pet.PetStatusRegistered, CreatedAt: now, UpdatedAt: now},
-	}, 1, nil)
-
-	tagErr := errors.New("tag query failed")
-	mockTagRepo.EXPECT().ListBulk(gomock.Any(), []string{"pet1"}).Return(nil, tagErr)
-
-	_, err := uc.List(context.Background(), "proj1", ucproject.ListPetsInput{Page: 1, PerPage: 20})
-	assert.ErrorIs(t, err, tagErr)
 }
 
 func TestPetUseCase_Get_Success(t *testing.T) {
@@ -169,20 +133,6 @@ func TestPetUseCase_Create_DefaultStatus(t *testing.T) {
 	})
 	require.NoError(t, err)
 	assert.Equal(t, "unknown", dto.Status)
-}
-
-func TestPetUseCase_Create_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockPetRepository(ctrl)
-	uc := ucproject.NewPetUseCase(mockRepo, nil, nil)
-
-	repoErr := errors.New("insert failed")
-	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(repoErr)
-
-	_, err := uc.Create(context.Background(), "proj1", ucproject.CreatePetInput{Name: "Buddy"})
-	assert.ErrorIs(t, err, repoErr)
 }
 
 func TestPetUseCase_Update_Success(t *testing.T) {

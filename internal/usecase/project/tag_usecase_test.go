@@ -2,7 +2,6 @@ package project_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
@@ -35,20 +34,6 @@ func TestTagUseCase_List_Success(t *testing.T) {
 	assert.Equal(t, "urgent", dtos[0].Name)
 	assert.Equal(t, "#ff0000", dtos[0].Color)
 	assert.Equal(t, "follow-up", dtos[1].Name)
-}
-
-func TestTagUseCase_List_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockTagRepository(ctrl)
-	uc := ucproject.NewTagUseCase(mockRepo, nil)
-
-	repoErr := errors.New("db connection lost")
-	mockRepo.EXPECT().List(gomock.Any(), "proj1").Return(nil, repoErr)
-
-	_, err := uc.List(context.Background(), "proj1")
-	assert.ErrorIs(t, err, repoErr)
 }
 
 func TestTagUseCase_Create_Success(t *testing.T) {

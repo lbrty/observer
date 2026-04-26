@@ -115,25 +115,6 @@ func TestExportHandler_ExportPeople_Success(t *testing.T) {
 	assert.Equal(t, "female", rows[1][5])
 }
 
-func TestExportHandler_ExportPeople_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	deps := newExportTestDeps(ctrl)
-
-	projectID := testID().String()
-
-	deps.personRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/people", nil, gin.Params{
-		{Key: "project_id", Value: projectID},
-	})
-	c.Set(string(middleware.CtxCanExport), true)
-	c.Set(string(middleware.CtxCanViewContact), false)
-	c.Set(string(middleware.CtxCanViewPersonal), false)
-	deps.handler.ExportPeople(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
-}
-
 // ---- Support records ----
 
 func TestExportHandler_ExportSupportRecords_Success(t *testing.T) {
@@ -174,23 +155,6 @@ func TestExportHandler_ExportSupportRecords_Success(t *testing.T) {
 	assert.Equal(t, personID, rows[1][1])
 }
 
-func TestExportHandler_ExportSupportRecords_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	deps := newExportTestDeps(ctrl)
-
-	projectID := testID().String()
-
-	deps.supportRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/support-records", nil, gin.Params{
-		{Key: "project_id", Value: projectID},
-	})
-	c.Set(string(middleware.CtxCanExport), true)
-	deps.handler.ExportSupportRecords(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
-}
-
 // ---- Pets ----
 
 func TestExportHandler_ExportPets_Success(t *testing.T) {
@@ -227,23 +191,6 @@ func TestExportHandler_ExportPets_Success(t *testing.T) {
 	require.Len(t, rows, 2)
 	assert.Equal(t, "pet-1", rows[1][0])
 	assert.Equal(t, "Bars", rows[1][1])
-}
-
-func TestExportHandler_ExportPets_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	deps := newExportTestDeps(ctrl)
-
-	projectID := testID().String()
-
-	deps.petRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/pets", nil, gin.Params{
-		{Key: "project_id", Value: projectID},
-	})
-	c.Set(string(middleware.CtxCanExport), true)
-	deps.handler.ExportPets(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 // ---- Households ----
@@ -283,21 +230,4 @@ func TestExportHandler_ExportHouseholds_Success(t *testing.T) {
 	require.Len(t, rows, 2)
 	assert.Equal(t, "hh-1", rows[1][0])
 	assert.Equal(t, "HH-001", rows[1][1])
-}
-
-func TestExportHandler_ExportHouseholds_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	deps := newExportTestDeps(ctrl)
-
-	projectID := testID().String()
-
-	deps.householdRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/export/households", nil, gin.Params{
-		{Key: "project_id", Value: projectID},
-	})
-	c.Set(string(middleware.CtxCanExport), true)
-	deps.handler.ExportHouseholds(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }

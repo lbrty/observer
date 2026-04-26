@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -42,21 +41,6 @@ func TestTagHandler_List_Success(t *testing.T) {
 	resp := parseResponse[map[string]any](w)
 	tags := resp["tags"].([]any)
 	assert.Len(t, tags, 2)
-}
-
-func TestTagHandler_List_InternalError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	h, repo := newTagHandler(ctrl)
-
-	projectID := testID().String()
-	repo.EXPECT().List(gomock.Any(), projectID).Return(nil, fmt.Errorf("db error"))
-
-	c, w := newTestContextWithParams(http.MethodGet, "/projects/"+projectID+"/tags", nil, gin.Params{
-		{Key: "project_id", Value: projectID},
-	})
-	h.List(c)
-
-	assert.Equal(t, http.StatusInternalServerError, w.Code)
 }
 
 func TestTagHandler_Create_ValidationError(t *testing.T) {

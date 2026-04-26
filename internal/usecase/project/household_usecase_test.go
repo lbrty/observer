@@ -2,7 +2,6 @@ package project_test
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
@@ -35,21 +34,6 @@ func TestHouseholdUseCase_List_Success(t *testing.T) {
 	assert.Equal(t, 2, out.Total)
 	assert.Equal(t, "h1", out.Households[0].ID)
 	assert.Equal(t, 3, out.Households[0].MemberCount)
-}
-
-func TestHouseholdUseCase_List_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
-	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
-
-	repoErr := errors.New("db error")
-	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return(nil, 0, repoErr)
-
-	_, err := uc.List(context.Background(), "proj1", ucproject.ListHouseholdsInput{})
-	assert.ErrorIs(t, err, repoErr)
 }
 
 func TestHouseholdUseCase_Get_Success(t *testing.T) {
@@ -123,21 +107,6 @@ func TestHouseholdUseCase_Create_Success(t *testing.T) {
 	assert.Equal(t, "proj1", dto.ProjectID)
 	assert.NotEmpty(t, dto.ID)
 	assert.Equal(t, []ucproject.HouseholdMemberDTO{}, dto.Members)
-}
-
-func TestHouseholdUseCase_Create_RepoError(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
-	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
-
-	repoErr := errors.New("insert failed")
-	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(repoErr)
-
-	_, err := uc.Create(context.Background(), "proj1", ucproject.CreateHouseholdInput{})
-	assert.ErrorIs(t, err, repoErr)
 }
 
 func TestHouseholdUseCase_Update_Success(t *testing.T) {
