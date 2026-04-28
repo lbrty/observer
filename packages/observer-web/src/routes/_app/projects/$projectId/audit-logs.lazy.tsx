@@ -9,6 +9,7 @@ import { DataTablePage } from "@/components/table/data-table-page";
 import type { FilterDef } from "@/components/forms/filter-bar";
 import { useProjectAuditLogs } from "@/hooks/use-audit-logs";
 import type { AuditEntry } from "@/types/audit";
+import { formatAuditDetails } from "@/lib/audit-details";
 
 export const Route = createLazyFileRoute("/_app/projects/$projectId/audit-logs")({
   component: ProjectAuditLogsPage,
@@ -105,7 +106,7 @@ function ProjectAuditLogsPage() {
     {
       key: "summary",
       header: t("audit.summary"),
-      render: (e) => <span className="max-w-xs truncate text-sm text-fg">{e.summary}</span>,
+      render: (e) => <span className="max-w-xs truncate text-sm text-fg">{formatAuditDetails(e)}</span>,
     },
     {
       key: "ip",
