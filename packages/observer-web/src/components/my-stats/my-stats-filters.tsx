@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 
 import { DatePicker } from "@/components/date-picker";
 import { CaretDownIcon, CaretUpIcon, DownloadSimpleIcon, FunnelIcon } from "@/components/ui/icons";
-import { FilterChip, FilterField, labelKeyMap } from "@/components/reports/shared";
+import { FilterChip, FilterField } from "@/components/reports/shared";
 import type { DatePreset } from "@/components/reports/shared";
 import { ReportDatePresets } from "@/components/reports/report-date-presets";
 import { UISelect } from "@/components/ui/ui-select";

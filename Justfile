@@ -6,10 +6,6 @@ default:
 dev:
     DEV_MODE=true SWAGGER_ENABLED=true COOKIE_SECURE=false go run ./cmd/observer serve & cd packages/observer-web && bun run dev
 
-# Run the server (backend only)
-run:
-    SWAGGER_ENABLED=true go run ./cmd/observer serve
-
 # Build the Go binary (dev)
 build:
     go build -o bin/observer ./cmd/observer
@@ -39,14 +35,6 @@ migrate-version:
 # Seed the database with realistic demo data
 seed *args='':
     go run ./cmd/observer seed {{args}}
-
-# Start docker compose
-docker-up:
-    docker-compose up -d
-
-# Stop docker compose
-docker-down:
-    docker-compose down
 
 # Generate RSA keys using the built-in keygen command
 keygen:
@@ -85,10 +73,6 @@ fmt:
 # Lint Go code
 lint:
     golangci-lint run
-
-# Tidy Go dependencies
-tidy:
-    go mod tidy
 
 # Generate mocks
 generate-mocks:

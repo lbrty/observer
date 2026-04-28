@@ -5,9 +5,9 @@ import { sankey, sankeyLinkHorizontal } from "d3-sankey";
 
 import type { StatusFlow } from "@/types/report";
 
-import { ChartTooltip } from "./chart-tooltip";
-import { CASE_STATUS_COLORS } from "./colors";
-import { useChartTooltip } from "./use-chart-tooltip";
+import { ChartTooltip } from "../chart-tooltip";
+import { CASE_STATUS_COLORS } from "../colors";
+import { useChartTooltip } from "../use-chart-tooltip";
 
 function nodeColor(name: string): string {
   return CASE_STATUS_COLORS[name] ?? "#8b5cf6";

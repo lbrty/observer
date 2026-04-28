@@ -31,7 +31,6 @@ interface MembersSectionProps {
 }
 
 export function MembersSection({
-  editingId,
   household,
   projectId,
   memberForm,
