@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -66,7 +67,12 @@ func (r *auditLogRepo) Log(ctx context.Context, entry domainaudit.Entry) error {
 	entry.ID = ulid.NewString()
 	var detailsJSON []byte
 	if entry.Details != nil {
-		detailsJSON, _ = json.Marshal(entry.Details)
+		b, err := json.Marshal(entry.Details)
+		if err != nil {
+			slog.Warn("audit: failed to marshal details", slog.Any("err", err))
+		} else {
+			detailsJSON = b
+		}
 	}
 	_, err := r.db.ExecContext(ctx,
 		`INSERT INTO audit_logs (id, project_id, user_id, action, entity_type, entity_id, summary, ip, user_agent, details)
