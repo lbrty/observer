@@ -261,8 +261,10 @@ func TestPermissionHandler_RevokePermission_Success(t *testing.T) {
 
 	projectID := handlertest.TestID().String()
 	permID := handlertest.TestID().String()
-	d.permRepo.EXPECT().GetByID(gomock.Any(), permID).Return(&domainproject.ProjectPermission{ID: permID, ProjectID: projectID}, nil)
+	memberID := handlertest.TestID()
+	d.permRepo.EXPECT().GetByID(gomock.Any(), permID).Return(&domainproject.ProjectPermission{ID: permID, ProjectID: projectID, UserID: memberID.String()}, nil)
 	d.permRepo.EXPECT().Delete(gomock.Any(), permID).Return(nil)
+	d.userRepo.EXPECT().GetByID(gomock.Any(), gomock.Any()).Return(&user.User{FirstName: "Bob", LastName: "Jones", Email: "bob@example.com"}, nil)
 
 	c, w := handlertest.NewTestContextWithParams(http.MethodDelete, "/admin/projects/"+projectID+"/permissions/"+permID, nil, gin.Params{
 		{Key: "project_id", Value: projectID},

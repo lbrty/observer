@@ -285,7 +285,7 @@ func (uc *UserUseCase) DeactivateUser(ctx context.Context, id ulid.ULID) (*UserD
 
 	u, err := uc.userRepo.GetByID(ctx, id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get user after deactivate: %w", err)
 	}
 
 	uc.auditUC.Record(
@@ -312,7 +312,7 @@ func (uc *UserUseCase) ReactivateUser(ctx context.Context, id ulid.ULID) (*UserD
 
 	u, err := uc.userRepo.GetByID(ctx, id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get user after reactivate: %w", err)
 	}
 
 	uc.auditUC.Record(
