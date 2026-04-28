@@ -29,8 +29,11 @@ export function formatAuditDetails(entry: AuditEntry): string {
 
   if (entity_type === "migration_record") {
     const personRef = (d.person_id as string | undefined) ?? ref;
-    if (action.endsWith(".create")) return `Created migration record for ${personRef}`;
-    if (action.endsWith(".update")) return `Updated migration record for ${personRef}`;
+    const origin = d.origin_place_id as string | undefined;
+    const dest = d.destination_place_id as string | undefined;
+    const route = origin && dest ? ` (${origin} → ${dest})` : "";
+    if (action.endsWith(".create")) return `Created migration record for ${personRef}${route}`;
+    if (action.endsWith(".update")) return `Updated migration record for ${personRef}${route}`;
     if (action.endsWith(".delete")) return `Deleted migration record for ${personRef}`;
   }
 
@@ -83,7 +86,7 @@ export function formatAuditDetails(entry: AuditEntry): string {
       const email = (d.email as string | undefined) ?? "";
       const oldRole = d.old_role as string | undefined;
       const newRole = d.new_role as string | undefined;
-      return `Changed role ${oldRole} → ${newRole} for ${email}`;
+      return `Changed role ${oldRole ?? ""} → ${newRole ?? ""} for ${email}`;
     }
     if (action === "user.deactivate") {
       return `Deactivated user ${(d.email as string | undefined) ?? (d.user_id as string | undefined) ?? ref}`;
@@ -101,7 +104,7 @@ export function formatAuditDetails(entry: AuditEntry): string {
       ref;
     const role = d.role as string | undefined;
     if (action === "permission.grant")
-      return `Granted ${role ?? ""} permission to ${subjectRef}`;
+      return `Granted${role ? ` ${role}` : ""} permission to ${subjectRef}`;
     if (action === "admin.permission.update")
       return `Updated permission for ${subjectRef}${role ? ` (role: ${role})` : ""}`;
     if (action === "permission.revoke") return `Revoked permission for ${subjectRef}`;
