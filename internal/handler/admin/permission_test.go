@@ -199,10 +199,11 @@ func TestPermissionHandler_UpdatePermission_Success(t *testing.T) {
 	now := time.Now().UTC()
 	permID := handlertest.TestID().String()
 	projectID := handlertest.TestID().String()
+	memberID := handlertest.TestID()
 	existing := &domainproject.ProjectPermission{
 		ID:               permID,
 		ProjectID:        projectID,
-		UserID:           handlertest.TestID().String(),
+		UserID:           memberID.String(),
 		Role:             domainproject.ProjectRoleConsultant,
 		CanViewContact:   false,
 		CanViewPersonal:  false,
@@ -213,6 +214,12 @@ func TestPermissionHandler_UpdatePermission_Success(t *testing.T) {
 
 	d.permRepo.EXPECT().GetByID(gomock.Any(), permID).Return(existing, nil)
 	d.permRepo.EXPECT().Update(gomock.Any(), gomock.Any()).Return(nil)
+	d.userRepo.EXPECT().GetByID(gomock.Any(), memberID).Return(&user.User{
+		ID:        memberID,
+		FirstName: "Alice",
+		LastName:  "Smith",
+		Email:     "alice@example.com",
+	}, nil)
 
 	c, w := handlertest.NewTestContextWithParams(http.MethodPatch, "/admin/projects/"+projectID+"/permissions/"+permID, map[string]any{
 		"role": "viewer",

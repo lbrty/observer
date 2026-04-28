@@ -162,7 +162,7 @@ func (uc *UserUseCase) Create(ctx context.Context, input CreateUserInput) (*User
 		"user",
 		&uid,
 		fmt.Sprintf("Created user %s with role %s", newUser.Email, newUser.Role),
-		nil,
+		map[string]any{"email": newUser.Email, "role": string(newUser.Role)},
 	)
 
 	dto := userToDTO(newUser)
@@ -225,7 +225,11 @@ func (uc *UserUseCase) Update(ctx context.Context, id ulid.ULID, input UpdateUse
 			"user",
 			&uid,
 			fmt.Sprintf("Changed role from %s to %s for user %s", oldRole, u.Role, uid),
-			nil,
+			map[string]any{
+				"email":    u.Email,
+				"old_role": string(oldRole),
+				"new_role": string(u.Role),
+			},
 		)
 	}
 
@@ -265,7 +269,7 @@ func (uc *UserUseCase) ResetPassword(ctx context.Context, userID ulid.ULID, inpu
 		"user",
 		&uid,
 		fmt.Sprintf("Password reset for user %s", uid),
-		nil,
+		map[string]any{"user_id": uid},
 	)
 
 	return nil
@@ -279,6 +283,11 @@ func (uc *UserUseCase) DeactivateUser(ctx context.Context, id ulid.ULID) (*UserD
 
 	uid := id.String()
 
+	u, err := uc.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
 	uc.auditUC.Record(
 		ctx,
 		nil,
@@ -286,13 +295,8 @@ func (uc *UserUseCase) DeactivateUser(ctx context.Context, id ulid.ULID) (*UserD
 		"user",
 		&uid,
 		"User account deactivated",
-		nil,
+		map[string]any{"email": u.Email, "user_id": uid},
 	)
-
-	u, err := uc.userRepo.GetByID(ctx, id)
-	if err != nil {
-		return nil, err
-	}
 
 	dto := userToDTO(u)
 	return &dto, nil
@@ -306,6 +310,11 @@ func (uc *UserUseCase) ReactivateUser(ctx context.Context, id ulid.ULID) (*UserD
 
 	uid := id.String()
 
+	u, err := uc.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
 	uc.auditUC.Record(
 		ctx,
 		nil,
@@ -313,13 +322,8 @@ func (uc *UserUseCase) ReactivateUser(ctx context.Context, id ulid.ULID) (*UserD
 		"user",
 		&uid,
 		"User account reactivated",
-		nil,
+		map[string]any{"email": u.Email, "user_id": uid},
 	)
-
-	u, err := uc.userRepo.GetByID(ctx, id)
-	if err != nil {
-		return nil, err
-	}
 
 	dto := userToDTO(u)
 	return &dto, nil

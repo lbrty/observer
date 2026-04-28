@@ -102,7 +102,8 @@ func (uc *PermissionUseCase) Assign(ctx context.Context, projectID string, input
 		return nil, user.ErrUserNotFound
 	}
 
-	if _, err := uc.userRepo.GetByID(ctx, uid); err != nil {
+	u, err := uc.userRepo.GetByID(ctx, uid)
+	if err != nil {
 		return nil, fmt.Errorf("verify user for assign: %w", err)
 	}
 
@@ -128,7 +129,12 @@ func (uc *PermissionUseCase) Assign(ctx context.Context, projectID string, input
 		"permission",
 		&perm.ID,
 		fmt.Sprintf("Granted %s to user %s", input.Role, input.UserID),
-		nil,
+		map[string]any{
+			"subject_name":  u.FirstName + " " + u.LastName,
+			"subject_email": u.Email,
+			"role":          string(role),
+			"project_id":    projectID,
+		},
 	)
 
 	dto := permToDTO(perm)
@@ -170,6 +176,14 @@ func (uc *PermissionUseCase) Update(ctx context.Context, projectID, id string, i
 		return nil, fmt.Errorf("update permission: %w", err)
 	}
 
+	details := map[string]any{"role": string(perm.Role), "project_id": projectID}
+	if uid, err := ulid.Parse(perm.UserID); err == nil {
+		if u, err := uc.userRepo.GetByID(ctx, uid); err == nil {
+			details["subject_name"] = u.FirstName + " " + u.LastName
+			details["subject_email"] = u.Email
+		}
+	}
+
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -177,7 +191,7 @@ func (uc *PermissionUseCase) Update(ctx context.Context, projectID, id string, i
 		"permission",
 		&id,
 		fmt.Sprintf("Updated permission %s", id),
-		nil,
+		details,
 	)
 
 	dto := permToDTO(perm)
@@ -199,6 +213,14 @@ func (uc *PermissionUseCase) Revoke(ctx context.Context, projectID, id string) e
 		return fmt.Errorf("revoke permission: %w", err)
 	}
 
+	details := map[string]any{"project_id": projectID}
+	if uid, err := ulid.Parse(perm.UserID); err == nil {
+		if u, err := uc.userRepo.GetByID(ctx, uid); err == nil {
+			details["subject_name"] = u.FirstName + " " + u.LastName
+			details["subject_email"] = u.Email
+		}
+	}
+
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -206,7 +228,7 @@ func (uc *PermissionUseCase) Revoke(ctx context.Context, projectID, id string) e
 		"permission",
 		&id,
 		fmt.Sprintf("Revoked permission %s", id),
-		nil,
+		details,
 	)
 
 	return nil
