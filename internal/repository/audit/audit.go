@@ -2,6 +2,7 @@ package audit
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -14,23 +15,24 @@ import (
 )
 
 type auditRow struct {
-	ID            string    `db:"id"`
-	ProjectID     *string   `db:"project_id"`
-	UserID        *string   `db:"user_id"`
-	Action        string    `db:"action"`
-	EntityType    string    `db:"entity_type"`
-	EntityID      *string   `db:"entity_id"`
-	Summary       string    `db:"summary"`
-	IP            *string   `db:"ip"`
-	UserAgent     *string   `db:"user_agent"`
-	CreatedAt     time.Time `db:"created_at"`
-	UserFirstName *string   `db:"user_first_name"`
-	UserLastName  *string   `db:"user_last_name"`
-	UserEmail     *string   `db:"user_email"`
+	ID            string          `db:"id"`
+	ProjectID     *string         `db:"project_id"`
+	UserID        *string         `db:"user_id"`
+	Action        string          `db:"action"`
+	EntityType    string          `db:"entity_type"`
+	EntityID      *string         `db:"entity_id"`
+	Summary       string          `db:"summary"`
+	Details       json.RawMessage `db:"details"`
+	IP            *string         `db:"ip"`
+	UserAgent     *string         `db:"user_agent"`
+	CreatedAt     time.Time       `db:"created_at"`
+	UserFirstName *string         `db:"user_first_name"`
+	UserLastName  *string         `db:"user_last_name"`
+	UserEmail     *string         `db:"user_email"`
 }
 
 func scanAuditRow(r auditRow) domainaudit.Entry {
-	return domainaudit.Entry{
+	entry := domainaudit.Entry{
 		ID:            r.ID,
 		ProjectID:     r.ProjectID,
 		UserID:        r.UserID,
@@ -45,6 +47,10 @@ func scanAuditRow(r auditRow) domainaudit.Entry {
 		UserLastName:  r.UserLastName,
 		UserEmail:     r.UserEmail,
 	}
+	if r.Details != nil {
+		_ = json.Unmarshal(r.Details, &entry.Details)
+	}
+	return entry
 }
 
 type auditLogRepo struct {
@@ -58,17 +64,19 @@ func New(db *sqlx.DB) repository.AuditLogRepository {
 
 func (r *auditLogRepo) Log(ctx context.Context, entry domainaudit.Entry) error {
 	entry.ID = ulid.NewString()
+	var detailsJSON []byte
+	if entry.Details != nil {
+		detailsJSON, _ = json.Marshal(entry.Details)
+	}
 	_, err := r.db.ExecContext(ctx,
-		`INSERT INTO audit_logs (id, project_id, user_id, action, entity_type, entity_id, summary, ip, user_agent)
-		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+		`INSERT INTO audit_logs (id, project_id, user_id, action, entity_type, entity_id, summary, ip, user_agent, details)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
 		entry.ID, entry.ProjectID, entry.UserID, entry.Action, entry.EntityType, entry.EntityID,
-		entry.Summary, entry.IP, entry.UserAgent,
+		entry.Summary, entry.IP, entry.UserAgent, detailsJSON,
 	)
-
 	if err != nil {
 		return fmt.Errorf("insert audit log: %w", err)
 	}
-
 	return nil
 }
 
@@ -114,7 +122,7 @@ func (r *auditLogRepo) List(ctx context.Context, filter domainaudit.Filter) ([]d
 	listSQL, listArgs, err := repository.PSQL.
 		Select(
 			"a.id", "a.project_id", "a.user_id", "a.action", "a.entity_type", "a.entity_id",
-			"a.summary", "a.ip", "a.user_agent", "a.created_at",
+			"a.summary", "a.details", "a.ip", "a.user_agent", "a.created_at",
 			"u.first_name AS user_first_name", "u.last_name AS user_last_name", "u.email AS user_email",
 		).
 		From("audit_logs a").

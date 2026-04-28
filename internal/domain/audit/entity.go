@@ -10,6 +10,7 @@ type Entry struct {
 	EntityType string
 	EntityID   *string
 	Summary    string
+	Details    map[string]any
 	IP         *string
 	UserAgent  *string
 	CreatedAt  time.Time
