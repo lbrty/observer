@@ -132,7 +132,7 @@ func Load() (*Config, error) {
 		JWT: JWTConfig{
 			PrivateKeyPath: strOr("JWT_PRIVATE_KEY_PATH", "keys/jwt_rsa"),
 			PublicKeyPath:  strOr("JWT_PUBLIC_KEY_PATH", "keys/jwt_rsa.pub"),
-			AccessTTL:      durOr("JWT_ACCESS_TTL", 15*time.Minute),
+			AccessTTL:      durOr("JWT_ACCESS_TTL", 30*time.Minute),
 			RefreshTTL:     durOr("JWT_REFRESH_TTL", 168*time.Hour),
 			MFATempTTL:     durOr("JWT_MFA_TEMP_TTL", 5*time.Minute),
 			Issuer:         strOr("JWT_ISSUER", "observer"),

@@ -1,4 +1,4 @@
-import { type SyntheticEvent, useState } from "react";
+import { type SyntheticEvent, useMemo, useState } from "react";
 
 import { Field } from "@base-ui/react/field";
 import { createLazyFileRoute } from "@tanstack/react-router";
@@ -9,6 +9,7 @@ import { ConfirmDialog } from "@/components/dialogs/confirm-dialog";
 import { type Column } from "@/components/table/data-table";
 import { DataTablePage } from "@/components/table/data-table-page";
 import { FormDialog } from "@/components/dialogs/form-dialog";
+import { PlaceCombobox } from "@/components/forms/place-combobox";
 import { BuildingsIcon } from "@/components/ui/icons";
 import { RowActions } from "@/components/table/row-actions";
 import {
@@ -18,6 +19,7 @@ import {
   useUpdateOffice,
 } from "@/hooks/reference/use-offices";
 import { usePlaces } from "@/hooks/reference/use-places";
+import { handleApiError } from "@/lib/form-error";
 import type { Office } from "@/types/reference";
 
 export const Route = createLazyFileRoute("/_app/admin/reference/offices")({
@@ -141,15 +143,28 @@ function OfficeFormDialog({
   loading: boolean;
 }) {
   const { t } = useTranslation();
+  const { data: placesData } = usePlaces();
+
   const [name, setName] = useState(initial?.name ?? "");
   const [placeId, setPlaceId] = useState(initial?.place_id ?? "");
+  const [error, setError] = useState("");
+
+  const selectedPlaceName = useMemo(
+    () => (placeId ? (placesData?.places.find((p) => p.id === placeId)?.name ?? null) : null),
+    [placeId, placesData],
+  );
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    await onSubmit(name, placeId);
-    if (!initial) {
-      setName("");
-      setPlaceId("");
+    setError("");
+    try {
+      await onSubmit(name, placeId);
+      if (!initial) {
+        setName("");
+        setPlaceId("");
+      }
+    } catch (err) {
+      setError(await handleApiError(err, t));
     }
   }
 
@@ -160,6 +175,7 @@ function OfficeFormDialog({
       title={title}
       loading={loading}
       onSubmit={handleSubmit}
+      error={error}
     >
       <Field.Root>
         <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -176,12 +192,13 @@ function OfficeFormDialog({
         <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
           {t("admin.reference.offices.place")}
         </Field.Label>
-        <Field.Control
-          value={placeId}
-          onChange={(e) => setPlaceId(e.target.value)}
+        <PlaceCombobox
+          onSelect={(place) => setPlaceId(place.id)}
           placeholder={t("admin.reference.offices.placeId")}
-          className="block w-full rounded-lg border border-border-secondary bg-bg h-9 px-3 text-sm text-fg outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-bg"
         />
+        {selectedPlaceName && (
+          <p className="mt-1 text-xs text-fg-secondary">{selectedPlaceName}</p>
+        )}
       </Field.Root>
     </FormDialog>
   );

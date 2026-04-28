@@ -25,7 +25,7 @@ func TestLoad_Defaults(t *testing.T) {
 	assert.Equal(t, config.DefaultServerReadTimeout, cfg.Server.ReadTimeout)
 	assert.Equal(t, config.DefaultLogLevel, cfg.Log.Level)
 	assert.Equal(t, "observer", cfg.JWT.Issuer)
-	assert.Equal(t, 15*time.Minute, cfg.JWT.AccessTTL)
+	assert.Equal(t, 30*time.Minute, cfg.JWT.AccessTTL)
 	assert.Equal(t, 168*time.Hour, cfg.JWT.RefreshTTL)
 }
 
