@@ -79,10 +79,9 @@ async function ensurePermissions(request: APIRequestContext) {
   }
 
   // Resolve a real person ID so person sub-page screenshots aren't blank.
-  const peopleRes = await request.get(
-    `${API}/projects/${PROJECT}/people?page=1&per_page=1`,
-    { headers },
-  );
+  const peopleRes = await request.get(`${API}/projects/${PROJECT}/people?page=1&per_page=1`, {
+    headers,
+  });
   const { people } = await peopleRes.json();
   if (people?.length) {
     PERSON = people[0].id;
@@ -129,27 +128,53 @@ function appPages(): PageEntry[] {
     ["dashboard", "/"],
     ["profile", "/profile"],
     ["project-people", `/projects/${PROJECT}/people`],
-    ["project-people-drawer", `/projects/${PROJECT}/people`, (pg) => openDrawer(pg, /register person/i)],
+    [
+      "project-people-drawer",
+      `/projects/${PROJECT}/people`,
+      (pg) => openDrawer(pg, /register person/i),
+    ],
     ["project-person-detail", `/projects/${PROJECT}/people/${p}`, waitForData],
     ["project-person-documents", `/projects/${PROJECT}/people/${p}/documents`, waitForData],
-    ["project-person-support-records", `/projects/${PROJECT}/people/${p}/support-records`, waitForData],
+    [
+      "project-person-support-records",
+      `/projects/${PROJECT}/people/${p}/support-records`,
+      waitForData,
+    ],
     [
       "project-person-support-records-drawer",
       `/projects/${PROJECT}/people/${p}/support-records`,
-      async (pg) => { await waitForData(pg); await openDrawer(pg, /new record/i); },
+      async (pg) => {
+        await waitForData(pg);
+        await openDrawer(pg, /new record/i);
+      },
     ],
-    ["project-person-migration-records", `/projects/${PROJECT}/people/${p}/migration-records`, waitForData],
+    [
+      "project-person-migration-records",
+      `/projects/${PROJECT}/people/${p}/migration-records`,
+      waitForData,
+    ],
     [
       "project-person-migration-records-drawer",
       `/projects/${PROJECT}/people/${p}/migration-records`,
-      async (pg) => { await waitForData(pg); await openDrawer(pg, /^add$/i); },
+      async (pg) => {
+        await waitForData(pg);
+        await openDrawer(pg, /^add$/i);
+      },
     ],
     ["project-person-notes", `/projects/${PROJECT}/people/${p}/notes`, waitForData],
     ["project-person-stats", `/projects/${PROJECT}/people/${p}/stats`, waitForData],
     ["project-support-records", `/projects/${PROJECT}/support-records`],
-    ["project-support-records-drawer", `/projects/${PROJECT}/support-records`, (pg) => openDrawer(pg, /new record/i)],
+    [
+      "project-support-records-drawer",
+      `/projects/${PROJECT}/support-records`,
+      (pg) => openDrawer(pg, /new record/i),
+    ],
     ["project-households", `/projects/${PROJECT}/households`],
-    ["project-households-drawer", `/projects/${PROJECT}/households`, (pg) => openDrawer(pg, /new household/i)],
+    [
+      "project-households-drawer",
+      `/projects/${PROJECT}/households`,
+      (pg) => openDrawer(pg, /new household/i),
+    ],
     ["project-tags", `/projects/${PROJECT}/tags`],
     ["project-tags-drawer", `/projects/${PROJECT}/tags`, (pg) => openDrawer(pg, /add tag/i)],
     ["project-pets", `/projects/${PROJECT}/pets`],

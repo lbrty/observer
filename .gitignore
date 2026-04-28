@@ -13,12 +13,13 @@ idp-archive/
 # Logs
 logs
 *.log
+*draft*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
+superpowers
 node_modules
 dist
 dist-ssr

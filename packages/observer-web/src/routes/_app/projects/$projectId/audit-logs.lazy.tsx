@@ -106,7 +106,9 @@ function ProjectAuditLogsPage() {
     {
       key: "summary",
       header: t("audit.summary"),
-      render: (e) => <span className="max-w-xs truncate text-sm text-fg">{formatAuditDetails(e)}</span>,
+      render: (e) => (
+        <span className="max-w-xs truncate text-sm text-fg">{formatAuditDetails(e)}</span>
+      ),
     },
     {
       key: "ip",
