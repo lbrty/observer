@@ -112,8 +112,9 @@ type JWTConfig struct {
 }
 
 func Load() (*Config, error) {
+	devMode := env.GetBool("DEV_MODE")
 	return &Config{
-		DevMode: env.GetBool("DEV_MODE"),
+		DevMode: devMode,
 		Server: ServerConfig{
 			Host:         strOr("SERVER_HOST", DefaultServerHost),
 			Port:         intOr("SERVER_PORT", DefaultServerPort),
@@ -145,7 +146,7 @@ func Load() (*Config, error) {
 		},
 		Cookie: CookieConfig{
 			Domain:   env.GetString("COOKIE_DOMAIN"),
-			Secure:   boolOr("COOKIE_SECURE", false),
+			Secure:   boolOr("COOKIE_SECURE", !devMode),
 			SameSite: strOr("COOKIE_SAME_SITE", "lax"),
 			MaxAge:   durOr("COOKIE_MAX_AGE", DefaultCookieMaxAge),
 		},
