@@ -49,7 +49,9 @@ func scanAuditRow(r auditRow) domainaudit.Entry {
 		UserEmail:     r.UserEmail,
 	}
 	if r.Details != nil {
-		_ = json.Unmarshal(r.Details, &entry.Details)
+		if err := json.Unmarshal(r.Details, &entry.Details); err != nil {
+			slog.Warn("audit: failed to unmarshal details", slog.String("id", r.ID), slog.Any("err", err))
+		}
 	}
 	return entry
 }

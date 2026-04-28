@@ -76,6 +76,13 @@ export function formatAuditDetails(entry: AuditEntry): string {
     if (action.endsWith(".delete")) return `Deleted tag "${name}"`;
   }
 
+  if (entity_type === "project") {
+    const name = (d.name as string | undefined) ?? ref;
+    const status = d.status as string | undefined;
+    if (action.endsWith(".create")) return `Created project ${name}${status ? ` (${status})` : ""}`;
+    if (action.endsWith(".update")) return `Updated project ${name}${status ? ` (${status})` : ""}`;
+  }
+
   if (entity_type === "user") {
     if (action === "admin.user.create") {
       const email = (d.email as string | undefined) ?? "";
@@ -93,6 +100,9 @@ export function formatAuditDetails(entry: AuditEntry): string {
     }
     if (action === "user.reactivate") {
       return `Reactivated user ${(d.email as string | undefined) ?? (d.user_id as string | undefined) ?? ref}`;
+    }
+    if (action === "admin.user.reset_password") {
+      return `Reset password for user ${(d.user_id as string | undefined) ?? ref}`;
     }
   }
 

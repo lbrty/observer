@@ -119,9 +119,9 @@ func (uc *HouseholdUseCase) Create(
 		return nil, fmt.Errorf("create household: %w", err)
 	}
 
-	details := map[string]any{}
+	var details map[string]any
 	if h.ReferenceNumber != nil {
-		details["reference_number"] = *h.ReferenceNumber
+		details = map[string]any{"reference_number": *h.ReferenceNumber}
 	}
 	uc.auditUC.Record(
 		ctx,
@@ -165,9 +165,9 @@ func (uc *HouseholdUseCase) Update(
 		return nil, fmt.Errorf("update household: %w", err)
 	}
 
-	details := map[string]any{}
+	var details map[string]any
 	if h.ReferenceNumber != nil {
-		details["reference_number"] = *h.ReferenceNumber
+		details = map[string]any{"reference_number": *h.ReferenceNumber}
 	}
 	uc.auditUC.Record(
 		ctx,
@@ -198,9 +198,9 @@ func (uc *HouseholdUseCase) Delete(ctx context.Context, projectID, id string) er
 		return fmt.Errorf("delete household: %w", err)
 	}
 
-	details := map[string]any{}
+	var details map[string]any
 	if h.ReferenceNumber != nil {
-		details["reference_number"] = *h.ReferenceNumber
+		details = map[string]any{"reference_number": *h.ReferenceNumber}
 	}
 	uc.auditUC.Record(
 		ctx,

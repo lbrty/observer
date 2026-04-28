@@ -7,12 +7,12 @@ export interface AuditEntry {
   entity_id: string | null;
   summary: string;
   details: Record<string, unknown> | null;
-  ip: string;
-  user_agent: string;
+  ip: string | null;
+  user_agent: string | null;
   created_at: string;
-  user_first_name: string;
-  user_last_name: string;
-  user_email: string;
+  user_first_name: string | null;
+  user_last_name: string | null;
+  user_email: string | null;
 }
 
 export interface AuditListParams {
