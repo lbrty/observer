@@ -196,9 +196,7 @@ function OfficeFormDialog({
           onSelect={(place) => setPlaceId(place.id)}
           placeholder={t("admin.reference.offices.placeId")}
         />
-        {selectedPlaceName && (
-          <p className="mt-1 text-xs text-fg-secondary">{selectedPlaceName}</p>
-        )}
+        {selectedPlaceName && <p className="mt-1 text-xs text-fg-secondary">{selectedPlaceName}</p>}
       </Field.Root>
     </FormDialog>
   );
