@@ -6,6 +6,7 @@ export interface AuditEntry {
   entity_type: string;
   entity_id: string | null;
   summary: string;
+  details: Record<string, unknown> | null;
   ip: string;
   user_agent: string;
   created_at: string;
