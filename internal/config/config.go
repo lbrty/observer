@@ -145,7 +145,7 @@ func Load() (*Config, error) {
 		},
 		Cookie: CookieConfig{
 			Domain:   env.GetString("COOKIE_DOMAIN"),
-			Secure:   boolOr("COOKIE_SECURE", true),
+			Secure:   boolOr("COOKIE_SECURE", false),
 			SameSite: strOr("COOKIE_SAME_SITE", "lax"),
 			MaxAge:   durOr("COOKIE_MAX_AGE", DefaultCookieMaxAge),
 		},
