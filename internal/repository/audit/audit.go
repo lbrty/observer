@@ -23,7 +23,7 @@ type auditRow struct {
 	EntityType    string          `db:"entity_type"`
 	EntityID      *string         `db:"entity_id"`
 	Summary       string          `db:"summary"`
-	Details       json.RawMessage `db:"details"`
+	Details       *json.RawMessage `db:"details"`
 	IP            *string         `db:"ip"`
 	UserAgent     *string         `db:"user_agent"`
 	CreatedAt     time.Time       `db:"created_at"`
@@ -49,7 +49,7 @@ func scanAuditRow(r auditRow) domainaudit.Entry {
 		UserEmail:     r.UserEmail,
 	}
 	if r.Details != nil {
-		if err := json.Unmarshal(r.Details, &entry.Details); err != nil {
+		if err := json.Unmarshal(*r.Details, &entry.Details); err != nil {
 			slog.Warn("audit: failed to unmarshal details", slog.String("id", r.ID), slog.Any("err", err))
 		}
 	}
