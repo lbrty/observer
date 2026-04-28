@@ -1,16 +1,19 @@
-import { test, type Page } from "@playwright/test";
+import { test, type Page, type APIRequestContext } from "@playwright/test";
 import { copyFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
 const OUT = join(import.meta.dirname!, "out");
+const API = process.env.VITE_API_URL ?? "http://localhost:9000/api";
 
 type PageEntry = [name: string, path: string, setup?: (page: Page) => Promise<void>];
 
-const PROJECT = "01KJZDSG53QYEJ5JHD7YRHERV7";
-const USER = "01KJZDSG33GM2VRF33K8Y5JZ0M";
-const PERSON = "01KJZDSG5GHNTQQ1TA1GF5S6FP";
-const COUNTRY = "01KJZDSG16FR09T487RBEYZ9V7";
-const STATE = "01KJZDSG26VNJKETRQ3TGKR8A1";
+const PROJECT = "01KK9YYEFQ3WXR4E6H1D1YH9MX";
+const USER = "01KK9YYD3ZD1XJ70WV8SXHERZX";
+const COUNTRY = "01KK9YYD0XY4XBH890XF5ZQE9Y";
+const STATE = "01KK9YYD0ZFV5QGE4SG4FE0NZV";
+
+// Resolved in beforeAll by fetching the first real person in the project.
+let PERSON = "";
 
 const ACCOUNTS = [
   { role: "admin", email: "admin@example.com", password: "password" },
@@ -18,6 +21,77 @@ const ACCOUNTS = [
   { role: "consultant", email: "consultant@example.com", password: "password" },
   { role: "guest", email: "guest@example.com", password: "password" },
 ] as const;
+
+// Project roles to assign per platform role so screenshots show full UI.
+// guest is always read-only at the platform level regardless of project role.
+const PROJECT_ROLE: Partial<Record<(typeof ACCOUNTS)[number]["role"], string>> = {
+  admin: "owner",
+  staff: "manager",
+  consultant: "consultant",
+};
+
+async function ensurePermissions(request: APIRequestContext) {
+  const loginRes = await request.post(`${API}/auth/login`, {
+    data: { email: "admin@example.com", password: "password" },
+  });
+  const { tokens } = await loginRes.json();
+  const headers = { Authorization: `Bearer ${tokens.access_token}` };
+
+  const [usersRes, permsRes] = await Promise.all([
+    request.get(`${API}/admin/users`, { headers }),
+    request.get(`${API}/admin/projects/${PROJECT}/permissions`, { headers }),
+  ]);
+
+  const { users } = await usersRes.json();
+  const { permissions } = await permsRes.json();
+
+  const existingByUserId = new Map<string, { id: string }>(
+    permissions.map((p: { user_id: string; id: string }) => [p.user_id, p]),
+  );
+
+  for (const account of ACCOUNTS) {
+    const projectRole = PROJECT_ROLE[account.role];
+    if (!projectRole) continue;
+
+    const user = users.find((u: { email: string }) => u.email === account.email);
+    if (!user) continue;
+
+    const body = {
+      role: projectRole,
+      can_view_contact: true,
+      can_view_personal: true,
+      can_view_documents: true,
+      can_export: true,
+    };
+
+    const existing = existingByUserId.get(user.id);
+    if (existing) {
+      await request.patch(`${API}/admin/projects/${PROJECT}/permissions/${existing.id}`, {
+        data: body,
+        headers,
+      });
+    } else {
+      await request.post(`${API}/admin/projects/${PROJECT}/permissions`, {
+        data: { user_id: user.id, ...body },
+        headers,
+      });
+    }
+  }
+
+  // Resolve a real person ID so person sub-page screenshots aren't blank.
+  const peopleRes = await request.get(
+    `${API}/projects/${PROJECT}/people?page=1&per_page=1`,
+    { headers },
+  );
+  const { people } = await peopleRes.json();
+  if (people?.length) {
+    PERSON = people[0].id;
+  }
+}
+
+test.beforeAll(async ({ request }) => {
+  await ensurePermissions(request);
+});
 
 const PUBLIC_PAGES: PageEntry[] = [
   ["login", "/login"],
@@ -36,56 +110,62 @@ const ADMIN_PAGES: PageEntry[] = [
   ["admin-reference-country-state", `/admin/reference/countries/${COUNTRY}/states/${STATE}`],
   ["admin-reference-offices", "/admin/reference/offices"],
   ["admin-reference-categories", "/admin/reference/categories"],
+  ["admin-audit-logs", "/admin/audit-logs"],
 ];
 
-const APP_PAGES: PageEntry[] = [
-  ["dashboard", "/"],
-  ["profile", "/profile"],
-  ["project-people", `/projects/${PROJECT}/people`],
-  [
-    "project-people-drawer",
-    `/projects/${PROJECT}/people`,
-    (p) => openDrawer(p, /register person/i),
-  ],
-  ["project-person-detail", `/projects/${PROJECT}/people/${PERSON}`],
-  ["project-person-documents", `/projects/${PROJECT}/people/${PERSON}/documents`],
-  ["project-person-support-records", `/projects/${PROJECT}/people/${PERSON}/support-records`],
-  [
-    "project-person-support-records-drawer",
-    `/projects/${PROJECT}/people/${PERSON}/support-records`,
-    (p) => openDrawer(p, /new record/i),
-  ],
-  ["project-person-migration-records", `/projects/${PROJECT}/people/${PERSON}/migration-records`],
-  [
-    "project-person-migration-records-drawer",
-    `/projects/${PROJECT}/people/${PERSON}/migration-records`,
-    (p) => openDrawer(p, /^add$/i),
-  ],
-  ["project-person-notes", `/projects/${PROJECT}/people/${PERSON}/notes`],
-  ["project-person-stats", `/projects/${PROJECT}/people/${PERSON}/stats`],
-  ["project-documents", `/projects/${PROJECT}/documents`],
-  ["project-support-records", `/projects/${PROJECT}/support-records`],
-  [
-    "project-support-records-drawer",
-    `/projects/${PROJECT}/support-records`,
-    (p) => openDrawer(p, /new record/i),
-  ],
-  ["project-households", `/projects/${PROJECT}/households`],
-  [
-    "project-households-drawer",
-    `/projects/${PROJECT}/households`,
-    (p) => openDrawer(p, /new household/i),
-  ],
-  ["project-tags", `/projects/${PROJECT}/tags`],
-  ["project-tags-drawer", `/projects/${PROJECT}/tags`, (p) => openDrawer(p, /add tag/i)],
-  ["project-pets", `/projects/${PROJECT}/pets`],
-  ["project-pets-drawer", `/projects/${PROJECT}/pets`, (p) => openDrawer(p, /register pet/i)],
-  ["project-reports", `/projects/${PROJECT}/reports`],
-  ["project-my-stats", `/projects/${PROJECT}/my-stats`],
-];
+// Wait for all loading skeletons to clear, catching slow API responses.
+const waitForData = async (page: Page) => {
+  await page.waitForLoadState("networkidle");
+  await page
+    .waitForFunction(() => document.querySelectorAll(".animate-pulse").length === 0, undefined, {
+      timeout: 10_000,
+    })
+    .catch(() => {});
+};
+
+function appPages(): PageEntry[] {
+  const p = PERSON;
+  return [
+    ["dashboard", "/"],
+    ["profile", "/profile"],
+    ["project-people", `/projects/${PROJECT}/people`],
+    ["project-people-drawer", `/projects/${PROJECT}/people`, (pg) => openDrawer(pg, /register person/i)],
+    ["project-person-detail", `/projects/${PROJECT}/people/${p}`, waitForData],
+    ["project-person-documents", `/projects/${PROJECT}/people/${p}/documents`, waitForData],
+    ["project-person-support-records", `/projects/${PROJECT}/people/${p}/support-records`, waitForData],
+    [
+      "project-person-support-records-drawer",
+      `/projects/${PROJECT}/people/${p}/support-records`,
+      async (pg) => { await waitForData(pg); await openDrawer(pg, /new record/i); },
+    ],
+    ["project-person-migration-records", `/projects/${PROJECT}/people/${p}/migration-records`, waitForData],
+    [
+      "project-person-migration-records-drawer",
+      `/projects/${PROJECT}/people/${p}/migration-records`,
+      async (pg) => { await waitForData(pg); await openDrawer(pg, /^add$/i); },
+    ],
+    ["project-person-notes", `/projects/${PROJECT}/people/${p}/notes`, waitForData],
+    ["project-person-stats", `/projects/${PROJECT}/people/${p}/stats`, waitForData],
+    ["project-support-records", `/projects/${PROJECT}/support-records`],
+    ["project-support-records-drawer", `/projects/${PROJECT}/support-records`, (pg) => openDrawer(pg, /new record/i)],
+    ["project-households", `/projects/${PROJECT}/households`],
+    ["project-households-drawer", `/projects/${PROJECT}/households`, (pg) => openDrawer(pg, /new household/i)],
+    ["project-tags", `/projects/${PROJECT}/tags`],
+    ["project-tags-drawer", `/projects/${PROJECT}/tags`, (pg) => openDrawer(pg, /add tag/i)],
+    ["project-pets", `/projects/${PROJECT}/pets`],
+    ["project-pets-drawer", `/projects/${PROJECT}/pets`, (pg) => openDrawer(pg, /register pet/i)],
+    ["project-reports-people", `/projects/${PROJECT}/reports/people`, waitForData],
+    ["project-reports-pets", `/projects/${PROJECT}/reports/pets`, waitForData],
+    ["project-reports-custom", `/projects/${PROJECT}/reports/custom`],
+    ["project-audit-logs", `/projects/${PROJECT}/audit-logs`],
+    ["project-my-stats", `/projects/${PROJECT}/my-stats`],
+  ];
+}
 
 async function openDrawer(page: Page, buttonText: RegExp) {
   const btn = page.getByRole("button", { name: buttonText });
+  const count = await btn.count();
+  if (count === 0) return;
   await btn.click();
   await page.waitForTimeout(500);
 }
@@ -139,7 +219,7 @@ for (const account of ACCOUNTS) {
     await setupPage(page);
     await login(page, account.email, account.password);
 
-    const pages = account.role === "admin" ? [...APP_PAGES, ...ADMIN_PAGES] : APP_PAGES;
+    const pages = account.role === "admin" ? [...appPages(), ...ADMIN_PAGES] : appPages();
 
     await capture(page, join(OUT, account.role), pages);
   });
@@ -164,7 +244,11 @@ const COPY_MAP: Record<string, string> = {
   "admin/project-households-drawer.png": "household-form.png",
   "admin/project-tags.png": "tags.png",
   "admin/project-pets.png": "pets.png",
-  "admin/project-reports.png": "reports.png",
+  "admin/project-reports-people.png": "reports.png",
+  "admin/project-reports-pets.png": "reports-pets.png",
+  "admin/project-reports-custom.png": "reports-custom.png",
+  "admin/project-audit-logs.png": "project-audit-logs.png",
+  "admin/admin-audit-logs.png": "admin-audit-logs.png",
   "admin/admin-users.png": "admin-users.png",
   "admin/admin-projects.png": "admin-projects.png",
   "admin/admin-project-permissions.png": "admin-permissions.png",
