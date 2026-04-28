@@ -141,6 +141,17 @@ func (uc *SupportRecordUseCase) Create(ctx context.Context, projectID string, re
 		return nil, fmt.Errorf("create support record: %w", err)
 	}
 
+	personName := p.FirstName
+	if p.LastName != nil {
+		personName += " " + *p.LastName
+	}
+	details := map[string]any{
+		"person_name": personName,
+		"type":        string(r.Type),
+	}
+	if r.Sphere != nil {
+		details["sphere"] = string(*r.Sphere)
+	}
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -148,7 +159,7 @@ func (uc *SupportRecordUseCase) Create(ctx context.Context, projectID string, re
 		"support_record",
 		&r.ID,
 		fmt.Sprintf("Created support record %s", r.ID),
-		nil,
+		details,
 	)
 
 	dto := supportRecordToDTO(r)
@@ -208,6 +219,13 @@ func (uc *SupportRecordUseCase) Update(
 		return nil, fmt.Errorf("update support record: %w", err)
 	}
 
+	details := map[string]any{
+		"person_id": r.PersonID,
+		"type":      string(r.Type),
+	}
+	if r.Sphere != nil {
+		details["sphere"] = string(*r.Sphere)
+	}
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -215,7 +233,7 @@ func (uc *SupportRecordUseCase) Update(
 		"support_record",
 		&id,
 		fmt.Sprintf("Updated support record %s", id),
-		nil,
+		details,
 	)
 
 	dto := supportRecordToDTO(r)
@@ -244,7 +262,7 @@ func (uc *SupportRecordUseCase) Delete(ctx context.Context, projectID, id string
 		"support_record",
 		&id,
 		fmt.Sprintf("Deleted support record %s", id),
-		nil,
+		map[string]any{"person_id": r.PersonID},
 	)
 
 	return nil

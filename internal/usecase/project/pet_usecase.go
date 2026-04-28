@@ -121,6 +121,10 @@ func (uc *PetUseCase) Create(ctx context.Context, projectID string, input Create
 		return nil, fmt.Errorf("create pet: %w", err)
 	}
 
+	details := map[string]any{"name": p.Name}
+	if p.OwnerID != nil {
+		details["owner_id"] = *p.OwnerID
+	}
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -128,7 +132,7 @@ func (uc *PetUseCase) Create(ctx context.Context, projectID string, input Create
 		"pet",
 		&p.ID,
 		fmt.Sprintf("Created pet %s", p.ID),
-		nil,
+		details,
 	)
 
 	dto := petToDTO(p)
@@ -170,6 +174,10 @@ func (uc *PetUseCase) Update(ctx context.Context, projectID, id string, input Up
 		return nil, fmt.Errorf("update pet: %w", err)
 	}
 
+	details := map[string]any{"name": p.Name}
+	if p.OwnerID != nil {
+		details["owner_id"] = *p.OwnerID
+	}
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -177,7 +185,7 @@ func (uc *PetUseCase) Update(ctx context.Context, projectID, id string, input Up
 		"pet",
 		&id,
 		fmt.Sprintf("Updated pet %s", id),
-		nil,
+		details,
 	)
 
 	dto := petToDTO(p)
@@ -199,6 +207,10 @@ func (uc *PetUseCase) Delete(ctx context.Context, projectID, id string) error {
 		return fmt.Errorf("delete pet: %w", err)
 	}
 
+	details := map[string]any{"name": p.Name}
+	if p.OwnerID != nil {
+		details["owner_id"] = *p.OwnerID
+	}
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -206,7 +218,7 @@ func (uc *PetUseCase) Delete(ctx context.Context, projectID, id string) error {
 		"pet",
 		&id,
 		fmt.Sprintf("Deleted pet %s", id),
-		nil,
+		details,
 	)
 
 	return nil

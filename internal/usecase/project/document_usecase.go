@@ -197,7 +197,7 @@ func (uc *DocumentUseCase) Upload(
 		"document",
 		&doc.ID,
 		fmt.Sprintf("Uploaded document %s", doc.Name),
-		nil,
+		map[string]any{"filename": filename, "person_id": personID},
 	)
 
 	dto := documentToDTO(doc)
@@ -227,7 +227,7 @@ func (uc *DocumentUseCase) Download(ctx context.Context, projectID, id string) (
 		"document",
 		&d.ID,
 		fmt.Sprintf("Downloaded document %s", d.Name),
-		nil,
+		map[string]any{"filename": d.Name, "person_id": d.PersonID},
 	)
 
 	dto := documentToDTO(d)
@@ -264,7 +264,7 @@ func (uc *DocumentUseCase) Update(
 		"document",
 		&id,
 		fmt.Sprintf("Updated document %s", id),
-		nil,
+		map[string]any{"filename": d.Name, "person_id": d.PersonID},
 	)
 
 	dto := documentToDTO(d)
@@ -298,7 +298,7 @@ func (uc *DocumentUseCase) Delete(ctx context.Context, projectID, id string) err
 		"document",
 		&d.ID,
 		fmt.Sprintf("Deleted document %s", d.Name),
-		nil,
+		map[string]any{"filename": d.Name, "person_id": d.PersonID},
 	)
 
 	return nil

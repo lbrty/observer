@@ -86,6 +86,13 @@ func (uc *MigrationRecordUseCase) Create(
 		return nil, fmt.Errorf("create migration record: %w", err)
 	}
 
+	details := map[string]any{"person_id": personID}
+	if input.FromPlaceID != nil {
+		details["origin_place_id"] = *input.FromPlaceID
+	}
+	if input.DestinationPlaceID != nil {
+		details["destination_place_id"] = *input.DestinationPlaceID
+	}
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -93,7 +100,7 @@ func (uc *MigrationRecordUseCase) Create(
 		"migration_record",
 		&r.ID,
 		fmt.Sprintf("Created migration record %s", r.ID),
-		nil,
+		details,
 	)
 
 	dto := migrationRecordToDTO(r)
@@ -122,7 +129,7 @@ func (uc *MigrationRecordUseCase) Delete(ctx context.Context, projectID, personI
 		"migration_record",
 		&id,
 		fmt.Sprintf("Deleted migration record %s", id),
-		nil,
+		map[string]any{"person_id": rec.PersonID},
 	)
 
 	return nil
@@ -169,6 +176,13 @@ func (uc *MigrationRecordUseCase) Update(ctx context.Context, projectID, personI
 		return nil, fmt.Errorf("update migration record: %w", err)
 	}
 
+	details := map[string]any{"person_id": personID}
+	if r.FromPlaceID != nil {
+		details["origin_place_id"] = *r.FromPlaceID
+	}
+	if r.DestinationPlaceID != nil {
+		details["destination_place_id"] = *r.DestinationPlaceID
+	}
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -176,7 +190,7 @@ func (uc *MigrationRecordUseCase) Update(ctx context.Context, projectID, personI
 		"migration_record",
 		&id,
 		fmt.Sprintf("Updated migration record %s", id),
-		nil,
+		details,
 	)
 
 	dto := migrationRecordToDTO(r)

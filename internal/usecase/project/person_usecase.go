@@ -177,6 +177,14 @@ func (uc *PersonUseCase) Create(ctx context.Context, projectID string, input Cre
 		return nil, fmt.Errorf("create person: %w", err)
 	}
 
+	name := p.FirstName
+	if p.LastName != nil {
+		name += " " + *p.LastName
+	}
+	details := map[string]any{"name": name}
+	if p.ExternalID != nil {
+		details["external_id"] = *p.ExternalID
+	}
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -184,7 +192,7 @@ func (uc *PersonUseCase) Create(ctx context.Context, projectID string, input Cre
 		"person",
 		&p.ID,
 		fmt.Sprintf("Created person %s", p.ID),
-		nil,
+		details,
 	)
 
 	dto := personToDTO(p, true, true)
@@ -256,6 +264,14 @@ func (uc *PersonUseCase) Update(
 		return nil, fmt.Errorf("update person: %w", err)
 	}
 
+	name := p.FirstName
+	if p.LastName != nil {
+		name += " " + *p.LastName
+	}
+	details := map[string]any{"name": name}
+	if p.ExternalID != nil {
+		details["external_id"] = *p.ExternalID
+	}
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -263,7 +279,7 @@ func (uc *PersonUseCase) Update(
 		"person",
 		&id,
 		fmt.Sprintf("Updated person %s", id),
-		nil,
+		details,
 	)
 
 	dto := personToDTO(p, true, true)
@@ -285,6 +301,10 @@ func (uc *PersonUseCase) Delete(ctx context.Context, projectID, id string) error
 		return fmt.Errorf("delete person: %w", err)
 	}
 
+	name := p.FirstName
+	if p.LastName != nil {
+		name += " " + *p.LastName
+	}
 	uc.auditUC.Record(
 		ctx,
 		&projectID,
@@ -292,7 +312,7 @@ func (uc *PersonUseCase) Delete(ctx context.Context, projectID, id string) error
 		"person",
 		&id,
 		fmt.Sprintf("Deleted person %s", id),
-		nil,
+		map[string]any{"name": name},
 	)
 
 	return nil

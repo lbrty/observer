@@ -59,7 +59,7 @@ func (uc *NoteUseCase) Create(ctx context.Context, projectID, personID, authorID
 		"note",
 		&n.ID,
 		fmt.Sprintf("Created note %s", n.ID),
-		nil,
+		map[string]any{"person_id": personID},
 	)
 
 	dto := noteToDTO(n)
@@ -90,7 +90,7 @@ func (uc *NoteUseCase) Update(ctx context.Context, projectID, personID, id strin
 		"note",
 		&id,
 		fmt.Sprintf("Updated note %s", id),
-		nil,
+		map[string]any{"person_id": n.PersonID},
 	)
 
 	dto := noteToDTO(n)
@@ -119,7 +119,7 @@ func (uc *NoteUseCase) Delete(ctx context.Context, projectID, personID, id strin
 		"note",
 		&id,
 		fmt.Sprintf("Deleted note %s", id),
-		nil,
+		map[string]any{"person_id": n.PersonID},
 	)
 
 	return nil
