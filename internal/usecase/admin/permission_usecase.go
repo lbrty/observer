@@ -128,6 +128,7 @@ func (uc *PermissionUseCase) Assign(ctx context.Context, projectID string, input
 		"permission",
 		&perm.ID,
 		fmt.Sprintf("Granted %s to user %s", input.Role, input.UserID),
+		nil,
 	)
 
 	dto := permToDTO(perm)
@@ -176,6 +177,7 @@ func (uc *PermissionUseCase) Update(ctx context.Context, projectID, id string, i
 		"permission",
 		&id,
 		fmt.Sprintf("Updated permission %s", id),
+		nil,
 	)
 
 	dto := permToDTO(perm)
@@ -204,6 +206,7 @@ func (uc *PermissionUseCase) Revoke(ctx context.Context, projectID, id string) e
 		"permission",
 		&id,
 		fmt.Sprintf("Revoked permission %s", id),
+		nil,
 	)
 
 	return nil

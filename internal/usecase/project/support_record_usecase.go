@@ -148,6 +148,7 @@ func (uc *SupportRecordUseCase) Create(ctx context.Context, projectID string, re
 		"support_record",
 		&r.ID,
 		fmt.Sprintf("Created support record %s", r.ID),
+		nil,
 	)
 
 	dto := supportRecordToDTO(r)
@@ -214,6 +215,7 @@ func (uc *SupportRecordUseCase) Update(
 		"support_record",
 		&id,
 		fmt.Sprintf("Updated support record %s", id),
+		nil,
 	)
 
 	dto := supportRecordToDTO(r)
@@ -242,6 +244,7 @@ func (uc *SupportRecordUseCase) Delete(ctx context.Context, projectID, id string
 		"support_record",
 		&id,
 		fmt.Sprintf("Deleted support record %s", id),
+		nil,
 	)
 
 	return nil

@@ -99,7 +99,7 @@ func (h *ExportHandler) ExportPeople(c *gin.Context) {
 	}
 	w.Flush()
 
-	h.auditUC.Record(c.Request.Context(), &projectID, "export", "person", nil, fmt.Sprintf("exported %d people", len(out.People)))
+	h.auditUC.Record(c.Request.Context(), &projectID, "export", "person", nil, fmt.Sprintf("exported %d people", len(out.People)), nil)
 }
 
 // ExportSupportRecords streams support records as a CSV download.
@@ -143,7 +143,7 @@ func (h *ExportHandler) ExportSupportRecords(c *gin.Context) {
 	}
 	w.Flush()
 
-	h.auditUC.Record(c.Request.Context(), &projectID, "export", "support_record", nil, fmt.Sprintf("exported %d support records", len(out.Records)))
+	h.auditUC.Record(c.Request.Context(), &projectID, "export", "support_record", nil, fmt.Sprintf("exported %d support records", len(out.Records)), nil)
 }
 
 // ExportPets streams pets as a CSV download.
@@ -184,7 +184,7 @@ func (h *ExportHandler) ExportPets(c *gin.Context) {
 	}
 	w.Flush()
 
-	h.auditUC.Record(c.Request.Context(), &projectID, "export", "pet", nil, fmt.Sprintf("exported %d pets", len(out.Pets)))
+	h.auditUC.Record(c.Request.Context(), &projectID, "export", "pet", nil, fmt.Sprintf("exported %d pets", len(out.Pets)), nil)
 }
 
 // ExportHouseholds streams households as a CSV download.
@@ -224,5 +224,5 @@ func (h *ExportHandler) ExportHouseholds(c *gin.Context) {
 	}
 	w.Flush()
 
-	h.auditUC.Record(c.Request.Context(), &projectID, "export", "household", nil, fmt.Sprintf("exported %d households", len(out.Households)))
+	h.auditUC.Record(c.Request.Context(), &projectID, "export", "household", nil, fmt.Sprintf("exported %d households", len(out.Households)), nil)
 }

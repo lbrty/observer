@@ -144,6 +144,7 @@ func (uc *ProjectUseCase) Create(ctx context.Context, ownerID string, input Crea
 		"project",
 		&p.ID,
 		fmt.Sprintf("Created project %s", p.Name),
+		nil,
 	)
 
 	dto := projectToDTO(p)
@@ -178,6 +179,7 @@ func (uc *ProjectUseCase) Update(ctx context.Context, id string, input UpdatePro
 		"project",
 		&id,
 		fmt.Sprintf("Updated project %s", p.Name),
+		nil,
 	)
 
 	dto := projectToDTO(p)

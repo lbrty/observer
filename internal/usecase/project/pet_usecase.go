@@ -128,6 +128,7 @@ func (uc *PetUseCase) Create(ctx context.Context, projectID string, input Create
 		"pet",
 		&p.ID,
 		fmt.Sprintf("Created pet %s", p.ID),
+		nil,
 	)
 
 	dto := petToDTO(p)
@@ -176,6 +177,7 @@ func (uc *PetUseCase) Update(ctx context.Context, projectID, id string, input Up
 		"pet",
 		&id,
 		fmt.Sprintf("Updated pet %s", id),
+		nil,
 	)
 
 	dto := petToDTO(p)
@@ -204,6 +206,7 @@ func (uc *PetUseCase) Delete(ctx context.Context, projectID, id string) error {
 		"pet",
 		&id,
 		fmt.Sprintf("Deleted pet %s", id),
+		nil,
 	)
 
 	return nil

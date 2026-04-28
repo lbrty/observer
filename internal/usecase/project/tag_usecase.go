@@ -59,6 +59,7 @@ func (uc *TagUseCase) Create(ctx context.Context, projectID string, input Create
 		"tag",
 		&t.ID,
 		fmt.Sprintf("Created tag %s", t.Name),
+		nil,
 	)
 
 	dto := tagToDTO(t)
@@ -95,6 +96,7 @@ func (uc *TagUseCase) Update(ctx context.Context, projectID, id string, input Up
 		"tag",
 		&id,
 		fmt.Sprintf("Updated tag %s", id),
+		nil,
 	)
 
 	dto := tagToDTO(t)
@@ -123,6 +125,7 @@ func (uc *TagUseCase) Delete(ctx context.Context, projectID, id string) error {
 		"tag",
 		&id,
 		fmt.Sprintf("Deleted tag %s", id),
+		nil,
 	)
 
 	return nil

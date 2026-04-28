@@ -162,6 +162,7 @@ func (uc *UserUseCase) Create(ctx context.Context, input CreateUserInput) (*User
 		"user",
 		&uid,
 		fmt.Sprintf("Created user %s with role %s", newUser.Email, newUser.Role),
+		nil,
 	)
 
 	dto := userToDTO(newUser)
@@ -224,6 +225,7 @@ func (uc *UserUseCase) Update(ctx context.Context, id ulid.ULID, input UpdateUse
 			"user",
 			&uid,
 			fmt.Sprintf("Changed role from %s to %s for user %s", oldRole, u.Role, uid),
+			nil,
 		)
 	}
 
@@ -263,6 +265,7 @@ func (uc *UserUseCase) ResetPassword(ctx context.Context, userID ulid.ULID, inpu
 		"user",
 		&uid,
 		fmt.Sprintf("Password reset for user %s", uid),
+		nil,
 	)
 
 	return nil
@@ -283,6 +286,7 @@ func (uc *UserUseCase) DeactivateUser(ctx context.Context, id ulid.ULID) (*UserD
 		"user",
 		&uid,
 		"User account deactivated",
+		nil,
 	)
 
 	u, err := uc.userRepo.GetByID(ctx, id)
@@ -309,6 +313,7 @@ func (uc *UserUseCase) ReactivateUser(ctx context.Context, id ulid.ULID) (*UserD
 		"user",
 		&uid,
 		"User account reactivated",
+		nil,
 	)
 
 	u, err := uc.userRepo.GetByID(ctx, id)

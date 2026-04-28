@@ -126,6 +126,7 @@ func (uc *HouseholdUseCase) Create(
 		"household",
 		&h.ID,
 		fmt.Sprintf("Created household %s", h.ID),
+		nil,
 	)
 
 	dto := householdToDTO(h)
@@ -167,6 +168,7 @@ func (uc *HouseholdUseCase) Update(
 		"household",
 		&id,
 		fmt.Sprintf("Updated household %s", id),
+		nil,
 	)
 
 	dto := householdToDTO(h)
@@ -195,6 +197,7 @@ func (uc *HouseholdUseCase) Delete(ctx context.Context, projectID, id string) er
 		"household",
 		&id,
 		fmt.Sprintf("Deleted household %s", id),
+		nil,
 	)
 
 	return nil

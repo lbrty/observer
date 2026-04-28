@@ -36,6 +36,7 @@ func (uc *AuditUseCase) Log(ctx context.Context, input LogInput) error {
 		EntityType: input.EntityType,
 		EntityID:   input.EntityID,
 		Summary:    input.Summary,
+		Details:    input.Details,
 		IP:         strPtrOrNil(input.IP),
 		UserAgent:  strPtrOrNil(input.UserAgent),
 	}
@@ -87,6 +88,7 @@ func (uc *AuditUseCase) List(ctx context.Context, input ListInput) (*ListOutput,
 			EntityType:    e.EntityType,
 			EntityID:      e.EntityID,
 			Summary:       e.Summary,
+			Details:       e.Details,
 			IP:            e.IP,
 			UserAgent:     e.UserAgent,
 			CreatedAt:     e.CreatedAt.Format(time.RFC3339),
@@ -105,6 +107,7 @@ func (uc *AuditUseCase) Record(
 	action, entityType string,
 	entityID *string,
 	summary string,
+	details map[string]any,
 ) {
 	if uc == nil {
 		return
@@ -122,6 +125,7 @@ func (uc *AuditUseCase) Record(
 		EntityType: entityType,
 		EntityID:   entityID,
 		Summary:    summary,
+		Details:    details,
 		IP:         strPtrOrNil(middleware.AuditIP(ctx)),
 		UserAgent:  strPtrOrNil(middleware.AuditUserAgent(ctx)),
 	}

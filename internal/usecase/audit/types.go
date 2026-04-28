@@ -7,6 +7,7 @@ type LogInput struct {
 	EntityType string
 	EntityID   *string
 	Summary    string
+	Details    map[string]any
 	IP         string
 	UserAgent  string
 }
@@ -23,19 +24,20 @@ type ListInput struct {
 }
 
 type EntryDTO struct {
-	ID            string  `json:"id"`
-	ProjectID     *string `json:"project_id"`
-	UserID        *string `json:"user_id"`
-	Action        string  `json:"action"`
-	EntityType    string  `json:"entity_type"`
-	EntityID      *string `json:"entity_id"`
-	Summary       string  `json:"summary"`
-	IP            *string `json:"ip,omitempty"`
-	UserAgent     *string `json:"user_agent,omitempty"`
-	CreatedAt     string  `json:"created_at"`
-	UserFirstName *string `json:"user_first_name"`
-	UserLastName  *string `json:"user_last_name"`
-	UserEmail     *string `json:"user_email"`
+	ID            string         `json:"id"`
+	ProjectID     *string        `json:"project_id"`
+	UserID        *string        `json:"user_id"`
+	Action        string         `json:"action"`
+	EntityType    string         `json:"entity_type"`
+	EntityID      *string        `json:"entity_id"`
+	Summary       string         `json:"summary"`
+	Details       map[string]any `json:"details,omitempty"`
+	IP            *string        `json:"ip,omitempty"`
+	UserAgent     *string        `json:"user_agent,omitempty"`
+	CreatedAt     string         `json:"created_at"`
+	UserFirstName *string        `json:"user_first_name"`
+	UserLastName  *string        `json:"user_last_name"`
+	UserEmail     *string        `json:"user_email"`
 }
 
 type ListOutput struct {

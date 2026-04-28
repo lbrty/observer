@@ -93,6 +93,7 @@ func (uc *MigrationRecordUseCase) Create(
 		"migration_record",
 		&r.ID,
 		fmt.Sprintf("Created migration record %s", r.ID),
+		nil,
 	)
 
 	dto := migrationRecordToDTO(r)
@@ -121,6 +122,7 @@ func (uc *MigrationRecordUseCase) Delete(ctx context.Context, projectID, personI
 		"migration_record",
 		&id,
 		fmt.Sprintf("Deleted migration record %s", id),
+		nil,
 	)
 
 	return nil
@@ -174,6 +176,7 @@ func (uc *MigrationRecordUseCase) Update(ctx context.Context, projectID, personI
 		"migration_record",
 		&id,
 		fmt.Sprintf("Updated migration record %s", id),
+		nil,
 	)
 
 	dto := migrationRecordToDTO(r)

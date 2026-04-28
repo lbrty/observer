@@ -184,6 +184,7 @@ func (uc *PersonUseCase) Create(ctx context.Context, projectID string, input Cre
 		"person",
 		&p.ID,
 		fmt.Sprintf("Created person %s", p.ID),
+		nil,
 	)
 
 	dto := personToDTO(p, true, true)
@@ -262,6 +263,7 @@ func (uc *PersonUseCase) Update(
 		"person",
 		&id,
 		fmt.Sprintf("Updated person %s", id),
+		nil,
 	)
 
 	dto := personToDTO(p, true, true)
@@ -290,6 +292,7 @@ func (uc *PersonUseCase) Delete(ctx context.Context, projectID, id string) error
 		"person",
 		&id,
 		fmt.Sprintf("Deleted person %s", id),
+		nil,
 	)
 
 	return nil
