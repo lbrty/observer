@@ -226,6 +226,7 @@ function TagsPage() {
         title={editTag ? t("project.tags.edit") : t("project.tags.add")}
         loading={createTag.isPending || updateTag.isPending}
         onSubmit={handleSubmit}
+        error={error}
       >
         <Field.Root>
           <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
@@ -268,7 +269,6 @@ function TagsPage() {
           </div>
         </Field.Root>
 
-        {error && <p className="text-sm text-rose">{error}</p>}
       </FormDialog>
 
       <ConfirmDialog

@@ -9,6 +9,7 @@ import { UISelect } from "@/components/ui/ui-select";
 import { UISwitch } from "@/components/ui/ui-switch";
 import { useOffices } from "@/hooks/reference/use-offices";
 import { useCreateUser } from "@/hooks/users/use-users";
+import { handleApiError } from "@/lib/form-error";
 import { toSelectOptions } from "@/lib/options";
 
 interface CreateUserDialogProps {
@@ -35,6 +36,7 @@ export function CreateUserDialog({ open, onOpenChange, onCreated }: CreateUserDi
   const { data: officesData } = useOffices();
 
   const [form, setForm] = useState(defaultForm);
+  const [error, setError] = useState("");
 
   const roleOptions = [
     { label: t("admin.users.roleAdmin"), value: "admin" },
@@ -47,20 +49,25 @@ export function CreateUserDialog({ open, onOpenChange, onCreated }: CreateUserDi
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    await createUser.mutateAsync({
-      first_name: form.first_name,
-      last_name: form.last_name || undefined,
-      email: form.email,
-      phone: form.phone || undefined,
-      password: form.password,
-      role: form.role,
-      office_id: form.office_id || null,
-      is_active: form.is_active,
-      is_verified: form.is_verified,
-    });
-    onOpenChange(false);
-    setForm(defaultForm);
-    onCreated?.();
+    setError("");
+    try {
+      await createUser.mutateAsync({
+        first_name: form.first_name,
+        last_name: form.last_name || undefined,
+        email: form.email,
+        phone: form.phone || undefined,
+        password: form.password,
+        role: form.role,
+        office_id: form.office_id || null,
+        is_active: form.is_active,
+        is_verified: form.is_verified,
+      });
+      onOpenChange(false);
+      setForm(defaultForm);
+      onCreated?.();
+    } catch (err) {
+      setError(await handleApiError(err, t));
+    }
   }
 
   return (
@@ -71,6 +78,7 @@ export function CreateUserDialog({ open, onOpenChange, onCreated }: CreateUserDi
       loading={createUser.isPending}
       onSubmit={handleSubmit}
       maxWidth="md"
+      error={error}
     >
       <div className="grid grid-cols-2 gap-3">
         <FormField

@@ -17,6 +17,7 @@ import {
   useDeleteCategory,
   useUpdateCategory,
 } from "@/hooks/reference/use-categories";
+import { handleApiError } from "@/lib/form-error";
 import type { Category } from "@/types/reference";
 
 export const Route = createLazyFileRoute("/_app/admin/reference/categories")({
@@ -137,13 +138,19 @@ function CategoryFormDialog({
   const { t } = useTranslation();
   const [name, setName] = useState(initial?.name ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    await onSubmit(name, description);
-    if (!initial) {
-      setName("");
-      setDescription("");
+    setError("");
+    try {
+      await onSubmit(name, description);
+      if (!initial) {
+        setName("");
+        setDescription("");
+      }
+    } catch (err) {
+      setError(await handleApiError(err, t));
     }
   }
 
@@ -154,6 +161,7 @@ function CategoryFormDialog({
       title={title}
       loading={loading}
       onSubmit={handleSubmit}
+      error={error}
     >
       <Field.Root>
         <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">

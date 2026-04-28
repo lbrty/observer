@@ -18,6 +18,7 @@ import {
   usePlaces,
   useUpdatePlace,
 } from "@/hooks/reference/use-places";
+import { handleApiError } from "@/lib/form-error";
 import type { Place } from "@/types/reference";
 
 export const Route = createLazyFileRoute(
@@ -165,14 +166,20 @@ function PlaceFormDialog({
   const [name, setName] = useState(initial?.name ?? "");
   const [lat, setLat] = useState(initial?.lat?.toString() ?? "");
   const [lon, setLon] = useState(initial?.lon?.toString() ?? "");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    await onSubmit(name, lat ? Number(lat) : undefined, lon ? Number(lon) : undefined);
-    if (!initial) {
-      setName("");
-      setLat("");
-      setLon("");
+    setError("");
+    try {
+      await onSubmit(name, lat ? Number(lat) : undefined, lon ? Number(lon) : undefined);
+      if (!initial) {
+        setName("");
+        setLat("");
+        setLon("");
+      }
+    } catch (err) {
+      setError(await handleApiError(err, t));
     }
   }
 
@@ -183,6 +190,7 @@ function PlaceFormDialog({
       title={title}
       loading={loading}
       onSubmit={handleSubmit}
+      error={error}
     >
       <Field.Root>
         <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">

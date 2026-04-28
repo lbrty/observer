@@ -20,6 +20,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Pagination } from "@/components/table/pagination";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useCreateProject, useProjects } from "@/hooks/projects/use-projects";
+import { handleApiError } from "@/lib/form-error";
 import type { Project } from "@/types/project";
 
 export const Route = createFileRoute("/_app/admin/projects/")({
@@ -228,16 +229,22 @@ function CreateProjectDialog({
   const createProject = useCreateProject();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    const project = await createProject.mutateAsync({
-      name,
-      description: description || undefined,
-    });
-    setName("");
-    setDescription("");
-    onCreated(project);
+    setError("");
+    try {
+      const project = await createProject.mutateAsync({
+        name,
+        description: description || undefined,
+      });
+      setName("");
+      setDescription("");
+      onCreated(project);
+    } catch (err) {
+      setError(await handleApiError(err, t));
+    }
   }
 
   return (
@@ -248,6 +255,7 @@ function CreateProjectDialog({
       loading={createProject.isPending}
       onSubmit={handleSubmit}
       maxWidth="md"
+      error={error}
     >
       <Field.Root>
         <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">

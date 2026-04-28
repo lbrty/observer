@@ -19,6 +19,7 @@ import {
   useStates,
   useUpdateState,
 } from "@/hooks/reference/use-states";
+import { handleApiError } from "@/lib/form-error";
 import type { State } from "@/types/reference";
 
 export const Route = createLazyFileRoute("/_app/admin/reference/countries/$countryId/")({
@@ -183,14 +184,20 @@ function StateFormDialog({
   const [name, setName] = useState(initial?.name ?? "");
   const [code, setCode] = useState(initial?.code ?? "");
   const [conflictZone, setConflictZone] = useState(initial?.conflict_zone ?? "");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    await onSubmit(name, code, conflictZone);
-    if (!initial) {
-      setName("");
-      setCode("");
-      setConflictZone("");
+    setError("");
+    try {
+      await onSubmit(name, code, conflictZone);
+      if (!initial) {
+        setName("");
+        setCode("");
+        setConflictZone("");
+      }
+    } catch (err) {
+      setError(await handleApiError(err, t));
     }
   }
 
@@ -201,6 +208,7 @@ function StateFormDialog({
       title={title}
       loading={loading}
       onSubmit={handleSubmit}
+      error={error}
     >
       <Field.Root>
         <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">

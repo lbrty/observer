@@ -4,7 +4,6 @@ import { Field } from "@base-ui/react/field";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-import { ErrorBanner } from "@/components/ui/alert-banner";
 import { Button } from "@/components/ui/button";
 import { FormDialog } from "@/components/dialogs/form-dialog";
 import { FormField } from "@/components/forms/form-field";
@@ -264,8 +263,8 @@ function ResetPasswordSection({ userId }: { userId: string }) {
         title={t("admin.users.resetPasswordTitle")}
         loading={saving}
         onSubmit={handleSubmit}
+        error={error}
       >
-        <ErrorBanner message={error} />
         <FormField
           label={t("admin.users.newPassword")}
           type="password"

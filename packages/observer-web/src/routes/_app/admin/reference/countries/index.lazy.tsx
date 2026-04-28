@@ -17,6 +17,7 @@ import {
   useDeleteCountry,
   useUpdateCountry,
 } from "@/hooks/reference/use-countries";
+import { handleApiError } from "@/lib/form-error";
 import type { Country } from "@/types/reference";
 
 export const Route = createLazyFileRoute("/_app/admin/reference/countries/")({
@@ -145,13 +146,19 @@ function CountryFormDialog({
   const { t } = useTranslation();
   const [name, setName] = useState(initial?.name ?? "");
   const [code, setCode] = useState(initial?.code ?? "");
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    await onSubmit(name, code);
-    if (!initial) {
-      setName("");
-      setCode("");
+    setError("");
+    try {
+      await onSubmit(name, code);
+      if (!initial) {
+        setName("");
+        setCode("");
+      }
+    } catch (err) {
+      setError(await handleApiError(err, t));
     }
   }
 
@@ -162,6 +169,7 @@ function CountryFormDialog({
       title={title}
       loading={loading}
       onSubmit={handleSubmit}
+      error={error}
     >
       <Field.Root>
         <Field.Label className="mb-1 block text-sm font-medium text-fg-secondary">
