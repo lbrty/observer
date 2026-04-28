@@ -110,7 +110,7 @@ export function formatAuditDetails(entry: AuditEntry): string {
   if (action === "export") {
     const count = d.count as number | undefined;
     const entityRef = (d.entity_type as string | undefined) ?? entity_type;
-    return `Exported ${count ?? ""} ${entityRef}`;
+    return count !== undefined ? `Exported ${count} ${entityRef}` : `Exported ${entityRef}`;
   }
 
   return entry.summary;
