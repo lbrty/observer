@@ -84,7 +84,7 @@ export function ReportResultTable({ data }: ReportResultTableProps) {
                     <td key={dim} className="px-4 py-2.5 text-fg">
                       {(() => {
                         const val = row.dimensions[dim];
-                        if (!val) return "\u2014";
+                        if (!val) return "—";
                         const key = labelKeyMap[val];
                         return key ? t(key) : val;
                       })()}

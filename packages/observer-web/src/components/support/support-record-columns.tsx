@@ -43,7 +43,7 @@ export function buildSupportRecordColumns({
       header: t("project.supportRecords.sphere"),
       render: (r) => (
         <span className="text-fg-secondary">
-          {r.sphere ? t(sphereKeys[r.sphere] ?? r.sphere) : "\u2014"}
+          {r.sphere ? t(sphereKeys[r.sphere] ?? r.sphere) : "—"}
         </span>
       ),
     },
@@ -52,7 +52,7 @@ export function buildSupportRecordColumns({
       header: t("project.supportRecords.providedAt"),
       render: (r) => (
         <span className="font-mono text-xs tabular-nums text-fg-tertiary">
-          {r.provided_at ? new Date(r.provided_at).toLocaleDateString("en-CA") : "\u2014"}
+          {r.provided_at ? new Date(r.provided_at).toLocaleDateString("en-CA") : "—"}
         </span>
       ),
     },
@@ -70,7 +70,7 @@ export function buildSupportRecordColumns({
             statusKey={r.referral_status}
           />
         ) : (
-          <span className="text-fg-tertiary">{"\u2014"}</span>
+          <span className="text-fg-tertiary">{"—"}</span>
         ),
     },
     ...(canWrite

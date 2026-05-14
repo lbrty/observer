@@ -55,7 +55,7 @@ function PersonSupportRecords() {
           <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-bg-tertiary text-fg-tertiary">
             <HandHeartIcon size={16} />
           </span>
-          <StatusBadge label={typeKeys[r.type] ? t(typeKeys[r.type]) : r.type} />
+          <StatusBadge label={typeKeys[r.type] ? t(typeKeys[r.type]) : r.type} statusKey={r.type} />
         </div>
       ),
     },
@@ -64,7 +64,7 @@ function PersonSupportRecords() {
       header: t("project.supportRecords.sphere"),
       render: (r) => (
         <span className="text-fg-secondary">
-          {r.sphere ? t(sphereKeys[r.sphere] ?? r.sphere) : "\u2014"}
+          {r.sphere ? t(sphereKeys[r.sphere] ?? r.sphere) : "—"}
         </span>
       ),
     },
@@ -73,7 +73,7 @@ function PersonSupportRecords() {
       header: t("project.supportRecords.providedAt"),
       render: (r) => (
         <span className="font-mono text-xs tabular-nums text-fg-tertiary">
-          {r.provided_at ? new Date(r.provided_at).toLocaleDateString("en-CA") : "\u2014"}
+          {r.provided_at ? new Date(r.provided_at).toLocaleDateString("en-CA") : "—"}
         </span>
       ),
     },
@@ -88,9 +88,10 @@ function PersonSupportRecords() {
                 ? t(referralKeys[r.referral_status])
                 : r.referral_status
             }
+            statusKey={r.referral_status}
           />
         ) : (
-          <span className="text-fg-tertiary">{"\u2014"}</span>
+          <span className="text-fg-tertiary">{"—"}</span>
         ),
     },
     ...(canWrite

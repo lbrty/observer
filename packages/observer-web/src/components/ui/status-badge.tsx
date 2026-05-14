@@ -40,7 +40,7 @@ const statusVariants: Record<string, Variant> = {
   false: "neutral",
   // support types
   humanitarian: "foam",
-  legal: "gold",
+  legal: "rose",
   social: "gold",
   psychological: "rose",
   medical: "foam",
