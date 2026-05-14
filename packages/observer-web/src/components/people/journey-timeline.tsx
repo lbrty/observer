@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { PathIcon } from "@/components/ui/icons";
+import { MapPinIcon } from "@/components/ui/icons";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { MigrationRecord } from "@/types/migration-record";
 import type { Place } from "@/types/reference";
@@ -11,13 +11,11 @@ interface JourneyTimelineProps {
   onEdit?: (id: string) => void;
 }
 
-function placeName(id: string | undefined, places: Place[]): string | null {
-  if (!id) return null;
-  return places.find((p) => p.id === id)?.name ?? null;
-}
-
 export function JourneyTimeline({ records, places, onEdit }: JourneyTimelineProps) {
   const { t } = useTranslation();
+
+  const placeNames = new Map(places.map((p) => [p.id, p.name]));
+  const lookupPlace = (id: string | undefined) => (id ? (placeNames.get(id) ?? null) : null);
 
   const sorted = [...records].sort((a, b) => {
     const da = a.migration_date ?? a.created_at;
@@ -29,13 +27,10 @@ export function JourneyTimeline({ records, places, onEdit }: JourneyTimelineProp
 
   return (
     <div className="relative">
-      {/* vertical line */}
-      <div className="absolute top-3 bottom-3 left-4 w-px bg-border-secondary" />
-
-      <ol className="space-y-0">
+      <ol className="space-y-2">
         {sorted.map((record, i) => {
-          const from = placeName(record.from_place_id, places);
-          const to = placeName(record.destination_place_id, places);
+          const from = lookupPlace(record.from_place_id);
+          const to = lookupPlace(record.destination_place_id);
           const date = record.migration_date
             ? new Date(record.migration_date).toLocaleDateString("en-CA")
             : null;
@@ -44,6 +39,9 @@ export function JourneyTimeline({ records, places, onEdit }: JourneyTimelineProp
 
           return (
             <li key={record.id} className="relative pl-11">
+              {!isLast && (
+                <div className="absolute left-4.25 top-8 -bottom-2 w-0.5 bg-border-secondary" />
+              )}
               {/* node */}
               <div
                 className={`absolute left-2 top-3 size-5 rounded-full border-2 ${
@@ -55,7 +53,7 @@ export function JourneyTimeline({ records, places, onEdit }: JourneyTimelineProp
                 }`}
               >
                 {isLast && (
-                  <PathIcon
+                  <MapPinIcon
                     size={11}
                     weight="bold"
                     className="absolute top-0.5 left-0.5 text-accent-fg"
