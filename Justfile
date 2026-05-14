@@ -84,8 +84,9 @@ openapi:
 
 # Tag, build, push Docker image, and push git tags
 release version:
-    git tag v{{version}}
-    docker build . --tag sultaniman/observer:v{{version}}
-    docker tag sultaniman/observer:v{{version}} sultaniman/observer:latest
-    docker push sultaniman/observer:v{{version}} sultaniman/observer:latest
+    git tag {{version}}
+    docker build . --tag sultaniman/observer:{{version}}
+    docker tag sultaniman/observer:{{version}} sultaniman/observer:latest
+    docker push sultaniman/observer:{{version}}
+    docker push sultaniman/observer:latest
     git push --tags
