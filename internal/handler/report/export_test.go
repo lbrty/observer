@@ -33,6 +33,7 @@ type exportTestDeps struct {
 	petTagRepo    *repomock.MockPetTagRepository
 	householdRepo *repomock.MockHouseholdRepository
 	memberRepo    *repomock.MockHouseholdMemberRepository
+	personRepo2   *repomock.MockPersonRepository
 	auditRepo     *repomock.MockAuditLogRepository
 	handler       *report.ExportHandler
 }
@@ -45,6 +46,7 @@ func newExportTestDeps(ctrl *gomock.Controller) *exportTestDeps {
 	petTagRepo := repomock.NewMockPetTagRepository(ctrl)
 	householdRepo := repomock.NewMockHouseholdRepository(ctrl)
 	memberRepo := repomock.NewMockHouseholdMemberRepository(ctrl)
+	personRepo2 := repomock.NewMockPersonRepository(ctrl)
 	auditRepo := repomock.NewMockAuditLogRepository(ctrl)
 	auditRepo.EXPECT().Log(gomock.Any(), gomock.Any()).Return(nil).AnyTimes()
 
@@ -52,7 +54,7 @@ func newExportTestDeps(ctrl *gomock.Controller) *exportTestDeps {
 	personUC := ucproject.NewPersonUseCase(personRepo, personTagRepo, auditUC)
 	supportUC := ucproject.NewSupportRecordUseCase(supportRepo, personRepo, auditUC)
 	petUC := ucproject.NewPetUseCase(petRepo, petTagRepo, auditUC)
-	householdUC := ucproject.NewHouseholdUseCase(householdRepo, memberRepo, auditUC)
+	householdUC := ucproject.NewHouseholdUseCase(householdRepo, memberRepo, personRepo2, auditUC)
 
 	h := report.NewExportHandler(personUC, supportUC, petUC, householdUC, auditUC)
 
@@ -64,6 +66,7 @@ func newExportTestDeps(ctrl *gomock.Controller) *exportTestDeps {
 		petTagRepo:    petTagRepo,
 		householdRepo: householdRepo,
 		memberRepo:    memberRepo,
+		personRepo2:   personRepo2,
 		auditRepo:     auditRepo,
 		handler:       h,
 	}
