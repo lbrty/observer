@@ -38,6 +38,7 @@ export {
   HandHeartIcon,
   HouseSimpleIcon,
   MagnifyingGlassIcon,
+  MapPinIcon,
   PathIcon,
   PawPrintIcon,
   PencilSimpleIcon,
