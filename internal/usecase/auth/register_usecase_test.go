@@ -3,6 +3,7 @@ package auth_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -26,7 +27,7 @@ func TestRegister_Success(t *testing.T) {
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mock_repo.NewMockLoginAttemptStore(ctrl))
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mock_repo.NewMockLoginAttemptStore(ctrl), 168*time.Hour)
 
 	ctx := context.Background()
 	input := ucauth.RegisterInput{
@@ -60,7 +61,7 @@ func TestRegister_AlwaysCreatesGuestRole(t *testing.T) {
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mock_repo.NewMockLoginAttemptStore(ctrl))
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mock_repo.NewMockLoginAttemptStore(ctrl), 168*time.Hour)
 
 	ctx := context.Background()
 
@@ -95,7 +96,7 @@ func TestRegister_DuplicateEmailReturnsSuccess(t *testing.T) {
 	hasher := crypto.NewArgonHasher()
 	tokenGen := newTestTokenGen(t)
 
-	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mock_repo.NewMockLoginAttemptStore(ctrl))
+	uc := ucauth.NewAuthUseCase(mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mock_repo.NewMockLoginAttemptStore(ctrl), 168*time.Hour)
 
 	// GetByEmail returns an existing user (no error) — simulates duplicate email.
 	mockUserRepo.EXPECT().

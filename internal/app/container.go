@@ -157,7 +157,7 @@ func NewContainer(cfg *config.Config, db database.DB, redisClient *redis.Client)
 	auditUC := ucaudit.NewAuditUseCase(auditRepo)
 	loginAttemptStore := repoauth.NewLoginAttemptStore(redisClient, userRepo)
 	authUC := ucauth.NewAuthUseCase(
-		userRepo, credRepo, sessionRepo, mfaRepo, mfaRecoveryRepo, hasher, tokenGen, loginAttemptStore,
+		userRepo, credRepo, sessionRepo, mfaRepo, mfaRecoveryRepo, hasher, tokenGen, loginAttemptStore, cfg.JWT.RefreshTTL,
 	)
 	userUC := ucadmin.NewUserUseCase(userRepo, credRepo, hasher, sessionRepo, loginAttemptStore, auditUC)
 	permUC := ucadmin.NewPermissionUseCase(permCRUDRepo, userRepo, auditUC)

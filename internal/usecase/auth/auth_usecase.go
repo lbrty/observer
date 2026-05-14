@@ -23,6 +23,7 @@ type AuthUseCase struct {
 	hasher        crypto.PasswordHasher
 	tokenGen      crypto.TokenGenerator
 	loginAttempts repository.LoginAttemptStore
+	refreshTTL    time.Duration
 }
 
 // NewAuthUseCase creates an AuthUseCase.
@@ -35,6 +36,7 @@ func NewAuthUseCase(
 	hasher crypto.PasswordHasher,
 	tokenGen crypto.TokenGenerator,
 	loginAttempts repository.LoginAttemptStore,
+	refreshTTL time.Duration,
 ) *AuthUseCase {
 	return &AuthUseCase{
 		userRepo:      userRepo,
@@ -45,6 +47,7 @@ func NewAuthUseCase(
 		hasher:        hasher,
 		tokenGen:      tokenGen,
 		loginAttempts: loginAttempts,
+		refreshTTL:    refreshTTL,
 	}
 }
 
@@ -199,7 +202,7 @@ func (uc *AuthUseCase) createSession(ctx context.Context, u *user.User, userAgen
 		RefreshToken: refreshToken,
 		UserAgent:    userAgent,
 		IP:           ip,
-		ExpiresAt:    time.Now().UTC().Add(7 * 24 * time.Hour),
+		ExpiresAt:    time.Now().UTC().Add(uc.refreshTTL),
 		CreatedAt:    time.Now().UTC(),
 	}
 
@@ -267,7 +270,7 @@ func (uc *AuthUseCase) RefreshToken(ctx context.Context, input RefreshTokenInput
 		RefreshToken: newRefreshToken,
 		UserAgent:    session.UserAgent,
 		IP:           session.IP,
-		ExpiresAt:    time.Now().UTC().Add(7 * 24 * time.Hour),
+		ExpiresAt:    time.Now().UTC().Add(uc.refreshTTL),
 		CreatedAt:    time.Now().UTC(),
 	}
 

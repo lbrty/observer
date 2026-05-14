@@ -46,7 +46,7 @@ func newAuthTestDeps(ctrl *gomock.Controller) *authTestDeps {
 }
 
 func (d *authTestDeps) authUseCase() *ucauth.AuthUseCase {
-	return ucauth.NewAuthUseCase(d.userRepo, d.credRepo, d.sessionRepo, d.mfaRepo, d.recoveryRepo, d.hasher, d.tokenGen, d.loginAttempts)
+	return ucauth.NewAuthUseCase(d.userRepo, d.credRepo, d.sessionRepo, d.mfaRepo, d.recoveryRepo, d.hasher, d.tokenGen, d.loginAttempts, 168*time.Hour)
 }
 
 func newAuthHandler(d *authTestDeps) *auth.AuthHandler {

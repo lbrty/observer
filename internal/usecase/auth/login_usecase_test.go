@@ -41,7 +41,7 @@ func setupAuthUseCase(t *testing.T) (
 	tokenGen := newTestTokenGen(t)
 
 	uc := ucauth.NewAuthUseCase(
-		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mockLoginAttempts,
+		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mockLoginAttempts, 168*time.Hour,
 	)
 	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockLoginAttempts, hasher
 }
@@ -71,7 +71,7 @@ func setupAuthUseCaseWithTokenGen(t *testing.T) (
 	tokenGen := newTestTokenGen(t)
 
 	uc := ucauth.NewAuthUseCase(
-		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mockLoginAttempts,
+		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mockLoginAttempts, 168*time.Hour,
 	)
 	return uc, mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockLoginAttempts, hasher, tokenGen
 }
@@ -208,4 +208,46 @@ func TestRefreshToken_BlocksDeactivatedUser(t *testing.T) {
 		RefreshToken: "test-refresh-token",
 	})
 	require.Error(t, err)
+}
+
+func TestLogin_UsesConfiguredRefreshTTL(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockUserRepo := mock_repo.NewMockUserRepository(ctrl)
+	mockCredRepo := mock_repo.NewMockCredentialsRepository(ctrl)
+	mockSessionRepo := mock_repo.NewMockSessionRepository(ctrl)
+	mockMFARepo := mock_repo.NewMockMFARepository(ctrl)
+	mockRecoveryRepo := mock_repo.NewMockMFARecoveryCodeRepository(ctrl)
+	mockLoginAttempts := mock_repo.NewMockLoginAttemptStore(ctrl)
+	hasher := crypto.NewArgonHasher()
+	tokenGen := newTestTokenGen(t)
+	refreshTTL := 2 * time.Hour
+
+	uc := ucauth.NewAuthUseCase(
+		mockUserRepo, mockCredRepo, mockSessionRepo, mockMFARepo, mockRecoveryRepo, hasher, tokenGen, mockLoginAttempts, refreshTTL,
+	)
+
+	ctx := context.Background()
+	password := "securepassword"
+	hash, salt, err := hasher.Hash(password)
+	require.NoError(t, err)
+
+	uid := ulid.New()
+	u := &user.User{ID: uid, Email: "ttl@example.com", Role: user.RoleConsultant, IsActive: true}
+	cred := &user.Credentials{UserID: uid, PasswordHash: hash, Salt: salt}
+
+	mockLoginAttempts.EXPECT().IsLocked(ctx, u.Email).Return(time.Duration(0), nil)
+	mockUserRepo.EXPECT().GetByEmail(ctx, u.Email).Return(u, nil)
+	mockCredRepo.EXPECT().GetByUserID(ctx, uid).Return(cred, nil)
+	mockMFARepo.EXPECT().GetByUserID(ctx, uid).Return(nil, errors.New("not found"))
+	mockSessionRepo.EXPECT().Create(ctx, gomock.Any()).DoAndReturn(func(_ context.Context, s *domainauth.Session) error {
+		delta := s.ExpiresAt.Sub(s.CreatedAt)
+		assert.InDelta(t, refreshTTL.Seconds(), delta.Seconds(), 1)
+		return nil
+	})
+	mockLoginAttempts.EXPECT().ClearAttempts(ctx, u.Email).Return(nil)
+
+	_, err = uc.Login(ctx, ucauth.LoginInput{Email: u.Email, Password: password}, "agent", "1.2.3.4")
+	require.NoError(t, err)
 }
