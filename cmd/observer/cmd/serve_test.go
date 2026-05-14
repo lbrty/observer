@@ -7,14 +7,16 @@ import (
 )
 
 func TestServeCmd_Initialized(t *testing.T) {
-	assert.NotNil(t, ServeCmd)
-	assert.Equal(t, "serve", ServeCmd.Use)
+	serveCmd := NewServeCmd()
+	assert.NotNil(t, serveCmd)
+	assert.Equal(t, "serve", serveCmd.Use)
 }
 
 func TestServeCmd_Flags(t *testing.T) {
-	hostFlag := ServeCmd.Flags().Lookup("host")
+	serveCmd := NewServeCmd()
+	hostFlag := serveCmd.Flags().Lookup("host")
 	assert.NotNil(t, hostFlag)
 
-	portFlag := ServeCmd.Flags().Lookup("port")
+	portFlag := serveCmd.Flags().Lookup("port")
 	assert.NotNil(t, portFlag)
 }

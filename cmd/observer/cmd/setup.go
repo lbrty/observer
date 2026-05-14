@@ -12,23 +12,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// SetupCmd runs first-time project setup.
-var SetupCmd = &cobra.Command{
-	Use:   "setup",
-	Short: "First-time project setup",
-	Long: `Run first-time setup for Observer.
+// NewSetupCmd runs first-time project setup.
+func NewSetupCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "setup",
+		Short: "First-time project setup",
+		Long: `Run first-time setup for Observer.
 
 Generates a .env file with sensible defaults, creates RSA keys for JWT
 signing, and creates required directories. After setup, start Postgres
 and Redis, run migrations, create an admin user, and start the server.`,
-	Example: `  # Run interactive setup
+		Example: `  # Run interactive setup
   observer setup
 
   # Then start the server
   observer migrate up
   observer create-admin --email admin@example.com --password "s3cure-p4ss"
   observer serve`,
-	RunE: runSetup,
+		RunE: runSetup,
+	}
 }
 
 const defaultEnvContent = `# Server

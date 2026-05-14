@@ -15,16 +15,17 @@ import (
 	"github.com/lbrty/observer/internal/ulid"
 )
 
-// CreateAdminCmd creates an admin user from the command line.
-var CreateAdminCmd = &cobra.Command{
-	Use:   "create-admin",
-	Short: "Create an admin user",
-	Long: `Create a platform administrator account.
+// NewCreateAdminCmd creates an admin user from the command line.
+func NewCreateAdminCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "create-admin",
+		Short: "Create an admin user",
+		Long: `Create a platform administrator account.
 
 Connects to the database, hashes the password with Argon2id, and inserts
 the user with admin role, verified and active. Requires DATABASE_DSN
 to be set. Rejects duplicate emails and phone numbers.`,
-	Example: `  # Create an admin with required fields
+		Example: `  # Create an admin with required fields
   observer create-admin --email admin@example.com --password "s3cure-p4ss"
 
   # With optional profile fields
@@ -34,18 +35,18 @@ to be set. Rejects duplicate emails and phone numbers.`,
     --first-name Admin \
     --last-name User \
     --phone "+1234567890"`,
-	RunE: runCreateAdmin,
-}
+		RunE: runCreateAdmin,
+	}
 
-func init() {
-	CreateAdminCmd.Flags().String("email", "", "Admin email (required)")
-	CreateAdminCmd.Flags().String("password", "", "Admin password (required, min 8 chars)")
-	CreateAdminCmd.Flags().String("first-name", "", "First name")
-	CreateAdminCmd.Flags().String("last-name", "", "Last name")
-	CreateAdminCmd.Flags().String("phone", "", "Phone number")
+	cmd.Flags().String("email", "", "Admin email (required)")
+	cmd.Flags().String("password", "", "Admin password (required, min 8 chars)")
+	cmd.Flags().String("first-name", "", "First name")
+	cmd.Flags().String("last-name", "", "Last name")
+	cmd.Flags().String("phone", "", "Phone number")
 
-	_ = CreateAdminCmd.MarkFlagRequired("email")
-	_ = CreateAdminCmd.MarkFlagRequired("password")
+	_ = cmd.MarkFlagRequired("email")
+	_ = cmd.MarkFlagRequired("password")
+	return cmd
 }
 
 func runCreateAdmin(cmd *cobra.Command, _ []string) error {
@@ -123,6 +124,6 @@ func runCreateAdmin(cmd *cobra.Command, _ []string) error {
 		return fmt.Errorf("create credentials: %w", err)
 	}
 
-	fmt.Printf("Admin user created: %s (%s %s)\n", email, firstName, lastName)
+	fmt.Fprintf(cmd.OutOrStdout(), "Admin user created: %s (%s %s)\n", email, firstName, lastName)
 	return nil
 }

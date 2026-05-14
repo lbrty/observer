@@ -29,17 +29,18 @@ import (
 	"github.com/lbrty/observer/migrations"
 )
 
-// ServeCmd starts the HTTP server.
-var ServeCmd = &cobra.Command{
-	Use:   "serve",
-	Short: "Start the HTTP server",
-	Long: `Start the Observer HTTP server.
+// NewServeCmd starts the HTTP server.
+func NewServeCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "serve",
+		Short: "Start the HTTP server",
+		Long: `Start the Observer HTTP server.
 
 Reads configuration from environment variables (DATABASE_DSN, REDIS_URL, etc.)
 or a .env file. In production builds, embedded migrations are applied
 automatically on startup. Graceful shutdown on SIGINT/SIGTERM with a
 30-second timeout.`,
-	Example: `  # Start with defaults (localhost:9000)
+		Example: `  # Start with defaults (localhost:9000)
   observer serve
 
   # Custom host and port
@@ -47,12 +48,12 @@ automatically on startup. Graceful shutdown on SIGINT/SIGTERM with a
 
   # With environment configuration
   DATABASE_DSN="postgres://..." REDIS_URL="redis://..." observer serve`,
-	RunE: runServe,
-}
+		RunE: runServe,
+	}
 
-func init() {
-	ServeCmd.Flags().String("host", "", "Server host (overrides SERVER_HOST env)")
-	ServeCmd.Flags().Int("port", 0, "Server port (overrides SERVER_PORT env)")
+	cmd.Flags().String("host", "", "Server host (overrides SERVER_HOST env)")
+	cmd.Flags().Int("port", 0, "Server port (overrides SERVER_PORT env)")
+	return cmd
 }
 
 func runServe(cmd *cobra.Command, _ []string) error {

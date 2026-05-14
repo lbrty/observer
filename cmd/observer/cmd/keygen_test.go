@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/pem"
+	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -11,27 +12,29 @@ import (
 )
 
 func TestKeygenCmd_Initialized(t *testing.T) {
-	assert.NotNil(t, KeygenCmd)
-	assert.Equal(t, "keygen", KeygenCmd.Use)
+	keygenCmd := NewKeygenCmd()
+	assert.NotNil(t, keygenCmd)
+	assert.Equal(t, "keygen", keygenCmd.Use)
 }
 
 func TestKeygenCmd_MinimumBits(t *testing.T) {
-	KeygenCmd.Flags().Set("bits", "2048")
-	KeygenCmd.Flags().Set("output", t.TempDir())
+	keygenCmd := NewKeygenCmd()
+	keygenCmd.SetOut(io.Discard)
+	keygenCmd.Flags().Set("bits", "2048")
+	keygenCmd.Flags().Set("output", t.TempDir())
 
-	err := KeygenCmd.RunE(KeygenCmd, nil)
+	err := keygenCmd.RunE(keygenCmd, nil)
 	assert.Error(t, err, "should fail with bits < 4096")
-
-	// restore default
-	KeygenCmd.Flags().Set("bits", "4096")
 }
 
 func TestKeygenCmd_GeneratesKeys(t *testing.T) {
+	keygenCmd := NewKeygenCmd()
 	tmpDir := t.TempDir()
-	KeygenCmd.Flags().Set("bits", "4096")
-	KeygenCmd.Flags().Set("output", tmpDir)
+	keygenCmd.SetOut(io.Discard)
+	keygenCmd.Flags().Set("bits", "4096")
+	keygenCmd.Flags().Set("output", tmpDir)
 
-	err := KeygenCmd.RunE(KeygenCmd, nil)
+	err := keygenCmd.RunE(keygenCmd, nil)
 	require.NoError(t, err)
 
 	privPath := filepath.Join(tmpDir, "private_key.pem")

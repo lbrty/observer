@@ -7,19 +7,19 @@ import (
 )
 
 func TestMigrateCmd_Initialized(t *testing.T) {
-	assert.NotNil(t, MigrateCmd)
-	assert.Equal(t, "migrate", MigrateCmd.Use)
+	migrateCmd := NewMigrateCmd()
+	assert.NotNil(t, migrateCmd)
+	assert.Equal(t, "migrate", migrateCmd.Use)
 }
 
 func TestMigrateCmd_SubcommandsRegistered(t *testing.T) {
+	migrateCmd := NewMigrateCmd()
 	names := make(map[string]bool)
-	for _, sub := range MigrateCmd.Commands() {
+	for _, sub := range migrateCmd.Commands() {
 		names[sub.Use] = true
 	}
 
 	assert.True(t, names["up"])
 	assert.True(t, names["version"])
-
-	// create requires exactly 1 argument
-	assert.NotNil(t, migrateCreateCmd.Args)
+	assert.True(t, names["create [name]"])
 }
