@@ -235,75 +235,58 @@ body {
   }
 }
 
-/* ── Decorative card backgrounds ── */
+/* ── Card gradient backgrounds ── */
 
-/* Topographic contours — stat cards, auth */
-.card-bg-topo {
+[class*="card-grad-"] {
   position: relative;
   overflow: hidden;
 }
-.card-bg-topo::after {
+
+[class*="card-grad-"]::after {
   content: "";
   position: absolute;
   inset: 0;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M260,170 C220,130 180,105 145,95 C110,85 70,92 40,115 C10,138 -10,165 -30,180' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cpath d='M270,140 C230,105 185,75 150,65 C115,55 75,63 45,85 C15,107 -10,135 -30,155' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M275,108 C240,78 200,50 165,40 C130,30 90,38 58,58 C26,78 0,108 -20,128' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M270,78 C245,58 215,35 180,25 C145,15 110,22 80,38 C50,54 25,78 5,98' fill='none' stroke='black' stroke-width='1'/%3E%3Ccircle cx='175' cy='52' r='3' fill='black'/%3E%3Ccircle cx='200' cy='85' r='2' fill='black'/%3E%3Ccircle cx='145' cy='78' r='2.5' fill='black'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M260,170 C220,130 180,105 145,95 C110,85 70,92 40,115 C10,138 -10,165 -30,180' fill='none' stroke='black' stroke-width='2.5'/%3E%3Cpath d='M270,140 C230,105 185,75 150,65 C115,55 75,63 45,85 C15,107 -10,135 -30,155' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M275,108 C240,78 200,50 165,40 C130,30 90,38 58,58 C26,78 0,108 -20,128' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M270,78 C245,58 215,35 180,25 C145,15 110,22 80,38 C50,54 25,78 5,98' fill='none' stroke='black' stroke-width='1'/%3E%3Ccircle cx='175' cy='52' r='3' fill='black'/%3E%3Ccircle cx='200' cy='85' r='2' fill='black'/%3E%3Ccircle cx='145' cy='78' r='2.5' fill='black'/%3E%3C/svg%3E");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: right bottom;
-  mask-position: right bottom;
-  -webkit-mask-size: 70% 100%;
-  mask-size: 70% 100%;
-  background-color: var(--fg);
-  opacity: 0.045;
   pointer-events: none;
   border-radius: inherit;
 }
 
-/* Scattered dots — quick-action and project cards */
-.card-bg-dots {
-  position: relative;
-  overflow: hidden;
-}
-.card-bg-dots::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='155' cy='22' r='18' fill='none' stroke='black' stroke-width='2'/%3E%3Ccircle cx='182' cy='55' r='7' fill='black'/%3E%3Ccircle cx='130' cy='48' r='13' fill='none' stroke='black' stroke-width='1.5'/%3E%3Ccircle cx='170' cy='88' r='4' fill='black'/%3E%3Ccircle cx='192' cy='105' r='10' fill='none' stroke='black' stroke-width='1.5'/%3E%3Ccircle cx='148' cy='115' r='5.5' fill='black'/%3E%3Ccircle cx='175' cy='140' r='15' fill='none' stroke='black' stroke-width='1'/%3E%3Ccircle cx='195' cy='160' r='3' fill='black'/%3E%3Ccircle cx='138' cy='155' r='2' fill='black'/%3E%3Ccircle cx='160' cy='170' r='8' fill='none' stroke='black' stroke-width='1'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='155' cy='22' r='18' fill='none' stroke='black' stroke-width='2'/%3E%3Ccircle cx='182' cy='55' r='7' fill='black'/%3E%3Ccircle cx='130' cy='48' r='13' fill='none' stroke='black' stroke-width='1.5'/%3E%3Ccircle cx='170' cy='88' r='4' fill='black'/%3E%3Ccircle cx='192' cy='105' r='10' fill='none' stroke='black' stroke-width='1.5'/%3E%3Ccircle cx='148' cy='115' r='5.5' fill='black'/%3E%3Ccircle cx='175' cy='140' r='15' fill='none' stroke='black' stroke-width='1'/%3E%3Ccircle cx='195' cy='160' r='3' fill='black'/%3E%3Ccircle cx='138' cy='155' r='2' fill='black'/%3E%3Ccircle cx='160' cy='170' r='8' fill='none' stroke='black' stroke-width='1'/%3E%3C/svg%3E");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: right center;
-  mask-position: right center;
-  -webkit-mask-size: 55% 90%;
-  mask-size: 55% 90%;
-  background-color: var(--fg);
-  opacity: 0.07;
-  pointer-events: none;
-  border-radius: inherit;
+[data-theme="dark"] [class*="card-grad-"]::after {
+  mix-blend-mode: screen;
 }
 
-/* Flowing waves — project / my-project cards */
-.card-bg-waves {
-  position: relative;
-  overflow: hidden;
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) [class*="card-grad-"]::after {
+    mix-blend-mode: screen;
+  }
 }
-.card-bg-waves::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-20,50 C25,30 65,70 110,50 C155,30 195,70 240,50' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M-20,85 C25,65 65,105 110,85 C155,65 195,105 240,85' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M-20,120 C25,100 65,140 110,120 C155,100 195,140 240,120' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M-20,155 C25,135 65,175 110,155 C155,135 195,175 240,155' fill='none' stroke='black' stroke-width='1'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-20,50 C25,30 65,70 110,50 C155,30 195,70 240,50' fill='none' stroke='black' stroke-width='2'/%3E%3Cpath d='M-20,85 C25,65 65,105 110,85 C155,65 195,105 240,85' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M-20,120 C25,100 65,140 110,120 C155,100 195,140 240,120' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M-20,155 C25,135 65,175 110,155 C155,135 195,175 240,155' fill='none' stroke='black' stroke-width='1'/%3E%3C/svg%3E");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: right center;
-  mask-position: right center;
-  -webkit-mask-size: 65% 100%;
-  mask-size: 65% 100%;
-  background-color: var(--fg);
-  opacity: 0.035;
-  pointer-events: none;
-  border-radius: inherit;
+
+.card-grad-indigo::after { background: radial-gradient(ellipse at 110% -10%, rgba(62,99,221,0.07) 0%, transparent 65%); }
+.card-grad-foam::after   { background: linear-gradient(135deg, transparent 40%, rgba(35,110,74,0.05) 100%); }
+.card-grad-gold::after   { background: radial-gradient(ellipse at 105% 110%, rgba(156,93,0,0.06) 0%, transparent 60%); }
+.card-grad-rose::after   { background: radial-gradient(ellipse at -10% -10%, rgba(192,43,47,0.05) 0%, transparent 60%); }
+.card-grad-sky::after    { background: linear-gradient(180deg, rgba(100,150,255,0.05) 0%, transparent 70%); }
+.card-grad-violet::after { background: radial-gradient(ellipse at 100% 0%, rgba(130,80,220,0.05) 0%, transparent 60%); }
+.card-grad-amber::after  { background: linear-gradient(120deg, transparent 50%, rgba(230,170,50,0.05) 100%); }
+.card-grad-teal::after   { background: radial-gradient(ellipse at -10% 110%, rgba(20,150,140,0.05) 0%, transparent 60%); }
+
+[data-theme="dark"] .card-grad-indigo::after { background: radial-gradient(ellipse at 110% -10%, rgba(130,160,255,0.04) 0%, transparent 65%); }
+[data-theme="dark"] .card-grad-foam::after   { background: linear-gradient(135deg, transparent 40%, rgba(70,200,130,0.035) 100%); }
+[data-theme="dark"] .card-grad-gold::after   { background: radial-gradient(ellipse at 105% 110%, rgba(255,190,70,0.035) 0%, transparent 60%); }
+[data-theme="dark"] .card-grad-rose::after   { background: radial-gradient(ellipse at -10% -10%, rgba(255,110,115,0.035) 0%, transparent 60%); }
+[data-theme="dark"] .card-grad-sky::after    { background: linear-gradient(180deg, rgba(150,195,255,0.04) 0%, transparent 70%); }
+[data-theme="dark"] .card-grad-violet::after { background: radial-gradient(ellipse at 100% 0%, rgba(185,140,255,0.04) 0%, transparent 60%); }
+[data-theme="dark"] .card-grad-amber::after  { background: linear-gradient(120deg, transparent 50%, rgba(255,205,80,0.035) 100%); }
+[data-theme="dark"] .card-grad-teal::after   { background: radial-gradient(ellipse at -10% 110%, rgba(50,210,190,0.035) 0%, transparent 60%); }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .card-grad-indigo::after { background: radial-gradient(ellipse at 110% -10%, rgba(130,160,255,0.04) 0%, transparent 65%); }
+  :root:not([data-theme]) .card-grad-foam::after   { background: linear-gradient(135deg, transparent 40%, rgba(70,200,130,0.035) 100%); }
+  :root:not([data-theme]) .card-grad-gold::after   { background: radial-gradient(ellipse at 105% 110%, rgba(255,190,70,0.035) 0%, transparent 60%); }
+  :root:not([data-theme]) .card-grad-rose::after   { background: radial-gradient(ellipse at -10% -10%, rgba(255,110,115,0.035) 0%, transparent 60%); }
+  :root:not([data-theme]) .card-grad-sky::after    { background: linear-gradient(180deg, rgba(150,195,255,0.04) 0%, transparent 70%); }
+  :root:not([data-theme]) .card-grad-violet::after { background: radial-gradient(ellipse at 100% 0%, rgba(185,140,255,0.04) 0%, transparent 60%); }
+  :root:not([data-theme]) .card-grad-amber::after  { background: linear-gradient(120deg, transparent 50%, rgba(255,205,80,0.035) 100%); }
+  :root:not([data-theme]) .card-grad-teal::after   { background: radial-gradient(ellipse at -10% 110%, rgba(50,210,190,0.035) 0%, transparent 60%); }
 }
 
 /* Large auth backdrop — topographic landscape */

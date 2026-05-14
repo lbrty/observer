@@ -23,12 +23,12 @@ export function PeopleKpiCards({
 
   return (
     <div className="grid grid-cols-3 gap-3">
-      <KpiCard label={t("project.reports.kpiPeople")} value={totalPeople} />
-      <KpiCard label={t("project.reports.kpiConsultations")} value={totalConsultations} />
-      <KpiCard label={t("project.reports.kpiActiveCases")} value={activeCases} />
-      <KpiCard label={t("project.reports.kpiIdp")} value={idpCount} />
-      <KpiCard label={t("project.reports.kpiHouseholds")} value={households} />
-      <KpiCard label={t("project.reports.kpiOffices")} value={offices} />
+      <KpiCard label={t("project.reports.kpiPeople")} value={totalPeople} index={0} />
+      <KpiCard label={t("project.reports.kpiConsultations")} value={totalConsultations} index={1} />
+      <KpiCard label={t("project.reports.kpiActiveCases")} value={activeCases} index={2} />
+      <KpiCard label={t("project.reports.kpiIdp")} value={idpCount} index={3} />
+      <KpiCard label={t("project.reports.kpiHouseholds")} value={households} index={4} />
+      <KpiCard label={t("project.reports.kpiOffices")} value={offices} index={5} />
     </div>
   );
 }

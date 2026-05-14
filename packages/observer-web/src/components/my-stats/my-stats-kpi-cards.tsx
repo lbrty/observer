@@ -19,10 +19,10 @@ export function MyStatsKpiCards({
 
   return (
     <div className="col-span-full grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <KpiCard label={t("project.myStats.kpiPeople")} value={totalPeople} />
-      <KpiCard label={t("project.myStats.kpiConsultations")} value={totalConsultations} />
-      <KpiCard label={t("project.myStats.kpiActiveCases")} value={totalActiveCases} />
-      <KpiCard label={t("project.myStats.kpiHouseholds")} value={totalHouseholds} />
+      <KpiCard label={t("project.myStats.kpiPeople")} value={totalPeople} index={0} />
+      <KpiCard label={t("project.myStats.kpiConsultations")} value={totalConsultations} index={1} />
+      <KpiCard label={t("project.myStats.kpiActiveCases")} value={totalActiveCases} index={2} />
+      <KpiCard label={t("project.myStats.kpiHouseholds")} value={totalHouseholds} index={3} />
     </div>
   );
 }

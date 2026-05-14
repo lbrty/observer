@@ -1,7 +1,9 @@
-import { BuildingsIcon, FolderSimpleIcon, GlobeIcon, UsersIcon } from "@/components/ui/icons";
-import type { Icon } from "@/components/ui/icons";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
+
+import { BuildingsIcon, FolderSimpleIcon, GlobeIcon, UsersIcon } from "@/components/ui/icons";
+import type { Icon } from "@/components/ui/icons";
+import { cardGradient } from "@/lib/card-gradient";
 
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useCountries } from "@/hooks/reference/use-countries";
@@ -93,11 +95,11 @@ function DashboardPage() {
 
       {isAdminOrStaff && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {statActions.map(({ key, to, icon: ActionIcon, color, labelKey, value }) => (
+          {statActions.map(({ key, to, icon: ActionIcon, color, labelKey, value }, i) => (
             <Link
               key={key}
               to={to}
-              className="card-bg-topo group rounded-xl border border-border-secondary bg-bg-secondary p-5 transition-shadow hover:shadow-elevated"
+              className={`${cardGradient(i)} group rounded-xl border border-border-secondary bg-bg-secondary p-5 transition-shadow hover:shadow-elevated`}
             >
               <span
                 className={`relative mb-3 inline-flex size-9 items-center justify-center rounded-xl ${colorClasses[color]}`}
@@ -125,12 +127,12 @@ function DashboardPage() {
         <p className="text-sm text-fg-tertiary">{t("dashboard.noProjects")}</p>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {myProjects.map((project) => (
+          {myProjects.map((project, i) => (
             <Link
               key={project.id}
               to="/projects/$projectId/people"
               params={{ projectId: project.id }}
-              className="card-bg-waves group rounded-xl border border-border-secondary bg-bg-secondary p-5 transition-shadow hover:shadow-elevated"
+              className={`${cardGradient(i)} group rounded-xl border border-border-secondary bg-bg-secondary p-5 transition-shadow hover:shadow-elevated`}
             >
               <span className="relative mb-4 inline-flex size-10 items-center justify-center rounded-xl bg-foam/10 text-foam">
                 <FolderSimpleIcon size={20} weight="duotone" />

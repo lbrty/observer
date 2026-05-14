@@ -12,9 +12,9 @@ export function PetsKpiCards({ total, needsShelter, adopted }: PetsKpiCardsProps
   const { t } = useTranslation();
   return (
     <div className="col-span-full grid grid-cols-3 gap-3">
-      <KpiCard label={t("project.petReports.kpiTotal")} value={total} />
-      <KpiCard label={t("project.petReports.kpiNeedsShelter")} value={needsShelter} />
-      <KpiCard label={t("project.petReports.kpiAdopted")} value={adopted} />
+      <KpiCard label={t("project.petReports.kpiTotal")} value={total} index={0} />
+      <KpiCard label={t("project.petReports.kpiNeedsShelter")} value={needsShelter} index={1} />
+      <KpiCard label={t("project.petReports.kpiAdopted")} value={adopted} index={2} />
     </div>
   );
 }
