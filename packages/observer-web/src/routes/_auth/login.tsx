@@ -4,6 +4,7 @@ import { Field } from "@base-ui/react/field";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { BrandIcon } from "@/components/ui/brand-icon";
 import { Button } from "@/components/ui/button";
 import { handleApiError } from "@/lib/form-error";
 import { useAuth } from "@/stores/auth";
@@ -63,9 +64,7 @@ function LoginPage() {
   return (
     <>
       <div className="mb-8 flex flex-col items-center">
-        <span className="brand-icon mb-4 inline-flex size-14 items-center justify-center rounded-2xl text-xl font-bold text-white">
-          O
-        </span>
+        <BrandIcon size="lg" />
         <h1 className="font-serif text-xl font-semibold text-fg">
           {step === "mfa" ? t("auth.mfaTitle") : t("auth.loginTitle")}
         </h1>

@@ -217,14 +217,22 @@ body {
   -webkit-backdrop-filter: saturate(180%) blur(20px);
 }
 
-/* Gradient brand icon */
+/* Brand icon — mirrors favicon: light bg + accent mark in light, dark bg + white mark in dark */
 .brand-icon {
-  background: linear-gradient(
-    135deg,
-    var(--accent),
-    color-mix(in srgb, var(--accent) 70%, #f0c870)
-  );
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 30%, transparent);
+  background: var(--bg-tertiary);
+  color: var(--accent);
+  box-shadow: 0 0 0 1px var(--border-secondary);
+}
+
+[data-theme="dark"] .brand-icon,
+[data-theme="dark-hc"] .brand-icon {
+  color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .brand-icon {
+    color: #ffffff;
+  }
 }
 
 /* ── Decorative card backgrounds ── */

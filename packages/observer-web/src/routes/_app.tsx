@@ -11,6 +11,7 @@ import {
   WarningIcon,
   XIcon,
 } from "@/components/ui/icons";
+import { BrandIcon } from "@/components/ui/brand-icon";
 import { SearchPalette } from "@/components/search-palette";
 import { useSchemaStatus } from "@/hooks/use-schema-status";
 import { useAuth } from "@/stores/auth";
@@ -53,9 +54,7 @@ function AppLayout() {
             to="/"
             className="flex items-center gap-2.5 text-sm font-semibold text-fg hover:text-fg"
           >
-            <span className="brand-icon inline-flex size-7 items-center justify-center rounded-lg text-xs font-bold text-white">
-              O
-            </span>
+            <BrandIcon />
             {t("common.appName")}
           </Link>
 

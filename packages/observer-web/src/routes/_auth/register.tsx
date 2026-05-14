@@ -4,6 +4,7 @@ import { Field } from "@base-ui/react/field";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
+import { BrandIcon } from "@/components/ui/brand-icon";
 import { Button } from "@/components/ui/button";
 import { handleApiError } from "@/lib/form-error";
 import { useAuth } from "@/stores/auth";
@@ -56,9 +57,7 @@ function RegisterPage() {
     return (
       <>
         <div className="mb-8 flex flex-col items-center">
-          <span className="brand-icon mb-4 inline-flex size-14 items-center justify-center rounded-2xl text-xl font-bold text-white">
-            O
-          </span>
+          <BrandIcon size="lg" />
           <h1 className="font-serif text-xl font-semibold text-fg">{t("auth.registerTitle")}</h1>
         </div>
         <div className="mb-4 rounded-lg bg-foam/10 px-3 py-2 text-sm text-foam">
@@ -74,9 +73,7 @@ function RegisterPage() {
   return (
     <>
       <div className="mb-8 flex flex-col items-center">
-        <span className="brand-icon mb-4 inline-flex size-14 items-center justify-center rounded-2xl text-xl font-bold text-white">
-          O
-        </span>
+        <BrandIcon size="lg" />
         <h1 className="font-serif text-xl font-semibold text-fg">{t("auth.registerTitle")}</h1>
       </div>
 
