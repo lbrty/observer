@@ -77,6 +77,7 @@ func (uc *TagUseCase) Update(ctx context.Context, projectID, id string, input Up
 		return nil, tag.ErrTagNotFound
 	}
 
+	oldName := t.Name
 	if input.Name != nil {
 		t.Name = *input.Name
 	}
@@ -89,15 +90,18 @@ func (uc *TagUseCase) Update(ctx context.Context, projectID, id string, input Up
 		return nil, fmt.Errorf("update tag: %w", err)
 	}
 
-	uc.auditUC.Record(
-		ctx,
-		&projectID,
-		"tag.update",
-		"tag",
-		&id,
-		fmt.Sprintf("Updated tag %s", id),
-		map[string]any{"name": t.Name},
-	)
+	// Skip audit for color-only changes — they're cosmetic and noisy.
+	if t.Name != oldName {
+		uc.auditUC.Record(
+			ctx,
+			&projectID,
+			"tag.update",
+			"tag",
+			&id,
+			fmt.Sprintf("Renamed tag %q to %q", oldName, t.Name),
+			map[string]any{"name": t.Name, "previous_name": oldName},
+		)
+	}
 
 	dto := tagToDTO(t)
 	return &dto, nil
