@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/lbrty/observer/internal/domain/household"
+	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
 	"github.com/lbrty/observer/internal/usecase"
@@ -16,6 +17,7 @@ import (
 type HouseholdUseCase struct {
 	repo       repository.HouseholdRepository
 	memberRepo repository.HouseholdMemberRepository
+	personRepo repository.PersonRepository
 	auditUC    *ucaudit.AuditUseCase
 }
 
@@ -23,9 +25,27 @@ type HouseholdUseCase struct {
 func NewHouseholdUseCase(
 	repo repository.HouseholdRepository,
 	memberRepo repository.HouseholdMemberRepository,
+	personRepo repository.PersonRepository,
 	auditUC *ucaudit.AuditUseCase,
 ) *HouseholdUseCase {
-	return &HouseholdUseCase{repo: repo, memberRepo: memberRepo, auditUC: auditUC}
+	return &HouseholdUseCase{repo: repo, memberRepo: memberRepo, personRepo: personRepo, auditUC: auditUC}
+}
+
+func (uc *HouseholdUseCase) verifyPersonInProject(ctx context.Context, projectID string, personID *string, op string) error {
+	if personID == nil || *personID == "" {
+		return nil
+	}
+
+	p, err := uc.personRepo.GetByID(ctx, *personID)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	if p.ProjectID != projectID {
+		return fmt.Errorf("%s: %w", op, person.ErrPersonNotFound)
+	}
+
+	return nil
 }
 
 // List returns paginated households with members.
@@ -108,6 +128,10 @@ func (uc *HouseholdUseCase) Create(
 	projectID string,
 	input CreateHouseholdInput,
 ) (*HouseholdDTO, error) {
+	if err := uc.verifyPersonInProject(ctx, projectID, input.HeadPersonID, "verify head person for household create"); err != nil {
+		return nil, err
+	}
+
 	h := &household.Household{
 		ID:              ulid.NewString(),
 		ProjectID:       projectID,
@@ -158,6 +182,9 @@ func (uc *HouseholdUseCase) Update(
 	}
 
 	if input.HeadPersonID != nil {
+		if err := uc.verifyPersonInProject(ctx, projectID, input.HeadPersonID, "verify head person for household update"); err != nil {
+			return nil, err
+		}
 		h.HeadPersonID = input.HeadPersonID
 	}
 
@@ -226,6 +253,10 @@ func (uc *HouseholdUseCase) AddMember(
 
 	if h.ProjectID != projectID {
 		return nil, household.ErrHouseholdNotFound
+	}
+
+	if err := uc.verifyPersonInProject(ctx, projectID, &input.PersonID, "verify household member person"); err != nil {
+		return nil, err
 	}
 
 	m := &household.Member{

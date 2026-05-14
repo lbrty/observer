@@ -10,6 +10,7 @@ import (
 	"go.uber.org/mock/gomock"
 
 	"github.com/lbrty/observer/internal/domain/household"
+	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/handler/handlertest"
 	"github.com/lbrty/observer/internal/handler/project"
 	repomock "github.com/lbrty/observer/internal/repository/mock"
@@ -19,7 +20,11 @@ import (
 func newHouseholdHandler(ctrl *gomock.Controller) (*project.HouseholdHandler, *repomock.MockHouseholdRepository, *repomock.MockHouseholdMemberRepository) {
 	repo := repomock.NewMockHouseholdRepository(ctrl)
 	memberRepo := repomock.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(repo, memberRepo, nil)
+	personRepo := repomock.NewMockPersonRepository(ctrl)
+	personRepo.EXPECT().GetByID(gomock.Any(), gomock.Any()).AnyTimes().DoAndReturn(func(_ any, id string) (*person.Person, error) {
+		return &person.Person{ID: id, ProjectID: "proj1"}, nil
+	})
+	uc := ucproject.NewHouseholdUseCase(repo, memberRepo, personRepo, nil)
 	return project.NewHouseholdHandler(uc), repo, memberRepo
 }
 

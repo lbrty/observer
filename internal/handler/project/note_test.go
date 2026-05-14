@@ -10,6 +10,7 @@ import (
 	"go.uber.org/mock/gomock"
 
 	"github.com/lbrty/observer/internal/domain/note"
+	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/handler/handlertest"
 	"github.com/lbrty/observer/internal/handler/project"
 	repomock "github.com/lbrty/observer/internal/repository/mock"
@@ -18,7 +19,11 @@ import (
 
 func newNoteHandler(ctrl *gomock.Controller) (*project.NoteHandler, *repomock.MockPersonNoteRepository) {
 	repo := repomock.NewMockPersonNoteRepository(ctrl)
-	uc := ucproject.NewNoteUseCase(repo, nil)
+	personRepo := repomock.NewMockPersonRepository(ctrl)
+	personRepo.EXPECT().GetByID(gomock.Any(), gomock.Any()).AnyTimes().DoAndReturn(func(_ any, id string) (*person.Person, error) {
+		return &person.Person{ID: id, ProjectID: "x"}, nil
+	})
+	uc := ucproject.NewNoteUseCase(repo, personRepo, nil)
 	return project.NewNoteHandler(uc), repo
 }
 
@@ -35,6 +40,7 @@ func TestNoteHandler_List_Success(t *testing.T) {
 	}, nil)
 
 	c, w := handlertest.NewTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/notes", nil, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "person_id", Value: personID},
 	})
 	h.List(c)
@@ -51,6 +57,7 @@ func TestNoteHandler_Create_ValidationError(t *testing.T) {
 
 	personID := handlertest.TestID().String()
 	c, w := handlertest.NewTestContextWithParams(http.MethodPost, "/projects/x/people/"+personID+"/notes", map[string]any{}, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "person_id", Value: personID},
 	})
 	handlertest.SetAuthContext(c, handlertest.TestID())
@@ -71,6 +78,7 @@ func TestNoteHandler_Create_Success(t *testing.T) {
 	c, w := handlertest.NewTestContextWithParams(http.MethodPost, "/projects/x/people/"+personID+"/notes", map[string]any{
 		"body": "important note",
 	}, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "person_id", Value: personID},
 	})
 	handlertest.SetAuthContext(c, userID)

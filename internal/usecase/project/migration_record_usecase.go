@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/lbrty/observer/internal/domain/migration"
+	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
 	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
@@ -12,20 +13,31 @@ import (
 
 // MigrationRecordUseCase handles migration record operations.
 type MigrationRecordUseCase struct {
-	repo    repository.MigrationRecordRepository
-	auditUC *ucaudit.AuditUseCase
+	repo       repository.MigrationRecordRepository
+	personRepo repository.PersonRepository
+	auditUC    *ucaudit.AuditUseCase
 }
 
 // NewMigrationRecordUseCase creates a MigrationRecordUseCase.
 func NewMigrationRecordUseCase(
 	repo repository.MigrationRecordRepository,
+	personRepo repository.PersonRepository,
 	auditUC *ucaudit.AuditUseCase,
 ) *MigrationRecordUseCase {
-	return &MigrationRecordUseCase{repo: repo, auditUC: auditUC}
+	return &MigrationRecordUseCase{repo: repo, personRepo: personRepo, auditUC: auditUC}
 }
 
 // ListByPerson returns all migration records for a person.
-func (uc *MigrationRecordUseCase) ListByPerson(ctx context.Context, personID string) ([]MigrationRecordDTO, error) {
+func (uc *MigrationRecordUseCase) ListByPerson(ctx context.Context, projectID, personID string) ([]MigrationRecordDTO, error) {
+	p, err := uc.personRepo.GetByID(ctx, personID)
+	if err != nil {
+		return nil, fmt.Errorf("verify person for migration record list: %w", err)
+	}
+
+	if p.ProjectID != projectID {
+		return nil, fmt.Errorf("verify person for migration record list: %w", person.ErrPersonNotFound)
+	}
+
 	records, err := uc.repo.ListByPerson(ctx, personID)
 	if err != nil {
 		return nil, fmt.Errorf("list migration records: %w", err)
@@ -60,6 +72,15 @@ func (uc *MigrationRecordUseCase) Create(
 	projectID, personID string,
 	input CreateMigrationRecordInput,
 ) (*MigrationRecordDTO, error) {
+	p, err := uc.personRepo.GetByID(ctx, personID)
+	if err != nil {
+		return nil, fmt.Errorf("verify person for migration record create: %w", err)
+	}
+
+	if p.ProjectID != projectID {
+		return nil, fmt.Errorf("verify person for migration record create: %w", person.ErrPersonNotFound)
+	}
+
 	r := &migration.Record{
 		ID:                 ulid.NewString(),
 		PersonID:           personID,

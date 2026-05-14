@@ -21,10 +21,11 @@ func NewMigrationRecordHandler(uc *ucproject.MigrationRecordUseCase) *MigrationR
 
 // List handles GET /projects/:project_id/people/:person_id/migration-records.
 func (h *MigrationRecordHandler) List(c *gin.Context) {
+	projectID := c.Param("project_id")
 	personID := c.Param("person_id")
-	out, err := h.uc.ListByPerson(c.Request.Context(), personID)
+	out, err := h.uc.ListByPerson(c.Request.Context(), projectID, personID)
 	if err != nil {
-		handler.InternalError(c, "list migration records", err)
+		handler.HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"records": out})

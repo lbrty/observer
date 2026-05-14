@@ -10,6 +10,7 @@ import (
 	"go.uber.org/mock/gomock"
 
 	"github.com/lbrty/observer/internal/domain/migration"
+	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/handler/handlertest"
 	"github.com/lbrty/observer/internal/handler/project"
 	repomock "github.com/lbrty/observer/internal/repository/mock"
@@ -18,7 +19,11 @@ import (
 
 func newMigrationRecordHandler(ctrl *gomock.Controller) (*project.MigrationRecordHandler, *repomock.MockMigrationRecordRepository) {
 	repo := repomock.NewMockMigrationRecordRepository(ctrl)
-	uc := ucproject.NewMigrationRecordUseCase(repo, nil)
+	personRepo := repomock.NewMockPersonRepository(ctrl)
+	personRepo.EXPECT().GetByID(gomock.Any(), gomock.Any()).AnyTimes().DoAndReturn(func(_ any, id string) (*person.Person, error) {
+		return &person.Person{ID: id, ProjectID: "x"}, nil
+	})
+	uc := ucproject.NewMigrationRecordUseCase(repo, personRepo, nil)
 	return project.NewMigrationRecordHandler(uc), repo
 }
 
@@ -34,6 +39,7 @@ func TestMigrationRecordHandler_List_Success(t *testing.T) {
 	}, nil)
 
 	c, w := handlertest.NewTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/migration-records", nil, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "person_id", Value: personID},
 	})
 	h.List(c)
@@ -96,6 +102,7 @@ func TestMigrationRecordHandler_Create_Success(t *testing.T) {
 	c, w := handlertest.NewTestContextWithParams(http.MethodPost, "/projects/x/people/"+personID+"/migration-records", map[string]any{
 		"movement_reason": reason,
 	}, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "person_id", Value: personID},
 	})
 	h.Create(c)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/lbrty/observer/internal/domain/note"
+	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/ulid"
 	ucaudit "github.com/lbrty/observer/internal/usecase/audit"
@@ -12,20 +13,31 @@ import (
 
 // NoteUseCase handles person note operations (append-only minus delete).
 type NoteUseCase struct {
-	repo    repository.PersonNoteRepository
-	auditUC *ucaudit.AuditUseCase
+	repo       repository.PersonNoteRepository
+	personRepo repository.PersonRepository
+	auditUC    *ucaudit.AuditUseCase
 }
 
 // NewNoteUseCase creates a NoteUseCase.
 func NewNoteUseCase(
 	repo repository.PersonNoteRepository,
+	personRepo repository.PersonRepository,
 	auditUC *ucaudit.AuditUseCase,
 ) *NoteUseCase {
-	return &NoteUseCase{repo: repo, auditUC: auditUC}
+	return &NoteUseCase{repo: repo, personRepo: personRepo, auditUC: auditUC}
 }
 
 // List returns all notes for a person.
-func (uc *NoteUseCase) List(ctx context.Context, personID string) ([]NoteDTO, error) {
+func (uc *NoteUseCase) List(ctx context.Context, projectID, personID string) ([]NoteDTO, error) {
+	p, err := uc.personRepo.GetByID(ctx, personID)
+	if err != nil {
+		return nil, fmt.Errorf("verify person for note list: %w", err)
+	}
+
+	if p.ProjectID != projectID {
+		return nil, fmt.Errorf("verify person for note list: %w", person.ErrPersonNotFound)
+	}
+
 	notes, err := uc.repo.List(ctx, personID)
 	if err != nil {
 		return nil, fmt.Errorf("list notes: %w", err)
@@ -41,6 +53,15 @@ func (uc *NoteUseCase) List(ctx context.Context, personID string) ([]NoteDTO, er
 
 // Create creates a new note. authorID is auto-set from auth context.
 func (uc *NoteUseCase) Create(ctx context.Context, projectID, personID, authorID string, input CreateNoteInput) (*NoteDTO, error) {
+	p, err := uc.personRepo.GetByID(ctx, personID)
+	if err != nil {
+		return nil, fmt.Errorf("verify person for note create: %w", err)
+	}
+
+	if p.ProjectID != projectID {
+		return nil, fmt.Errorf("verify person for note create: %w", person.ErrPersonNotFound)
+	}
+
 	n := &note.Note{
 		ID:       ulid.NewString(),
 		PersonID: personID,

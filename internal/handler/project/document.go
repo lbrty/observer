@@ -42,9 +42,10 @@ func (h *DocumentHandler) List(c *gin.Context) {
 		return
 	}
 	personID := c.Param("person_id")
-	out, err := h.uc.List(c.Request.Context(), personID)
+	projectID := c.Param("project_id")
+	out, err := h.uc.List(c.Request.Context(), projectID, personID)
 	if err != nil {
-		handler.InternalError(c, "list documents", err)
+		handler.HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"documents": out})

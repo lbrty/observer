@@ -22,10 +22,11 @@ func NewNoteHandler(uc *ucproject.NoteUseCase) *NoteHandler {
 
 // List handles GET /projects/:project_id/people/:person_id/notes.
 func (h *NoteHandler) List(c *gin.Context) {
+	projectID := c.Param("project_id")
 	personID := c.Param("person_id")
-	out, err := h.uc.List(c.Request.Context(), personID)
+	out, err := h.uc.List(c.Request.Context(), projectID, personID)
 	if err != nil {
-		handler.InternalError(c, "list notes", err)
+		handler.HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"notes": out})

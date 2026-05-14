@@ -16,6 +16,7 @@ import (
 	"golang.org/x/image/draw"
 
 	"github.com/lbrty/observer/internal/domain/document"
+	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/storage"
 	"github.com/lbrty/observer/internal/ulid"
@@ -24,22 +25,33 @@ import (
 
 // DocumentUseCase handles document metadata and file storage.
 type DocumentUseCase struct {
-	repo    repository.DocumentRepository
-	fs      storage.FileStorage
-	auditUC *ucaudit.AuditUseCase
+	repo       repository.DocumentRepository
+	personRepo repository.PersonRepository
+	fs         storage.FileStorage
+	auditUC    *ucaudit.AuditUseCase
 }
 
 // NewDocumentUseCase creates a DocumentUseCase.
 func NewDocumentUseCase(
 	repo repository.DocumentRepository,
+	personRepo repository.PersonRepository,
 	fs storage.FileStorage,
 	auditUC *ucaudit.AuditUseCase,
 ) *DocumentUseCase {
-	return &DocumentUseCase{repo: repo, fs: fs, auditUC: auditUC}
+	return &DocumentUseCase{repo: repo, personRepo: personRepo, fs: fs, auditUC: auditUC}
 }
 
 // List returns all documents for a person.
-func (uc *DocumentUseCase) List(ctx context.Context, personID string) ([]DocumentDTO, error) {
+func (uc *DocumentUseCase) List(ctx context.Context, projectID, personID string) ([]DocumentDTO, error) {
+	p, err := uc.personRepo.GetByID(ctx, personID)
+	if err != nil {
+		return nil, fmt.Errorf("verify person for document list: %w", err)
+	}
+
+	if p.ProjectID != projectID {
+		return nil, fmt.Errorf("verify person for document list: %w", person.ErrPersonNotFound)
+	}
+
 	docs, err := uc.repo.List(ctx, personID)
 	if err != nil {
 		return nil, fmt.Errorf("list documents: %w", err)
@@ -168,6 +180,15 @@ func (uc *DocumentUseCase) Upload(
 	projectID, personID, uploadedBy, filename, mimeType string,
 	size int64, body io.Reader,
 ) (*DocumentDTO, error) {
+	p, err := uc.personRepo.GetByID(ctx, personID)
+	if err != nil {
+		return nil, fmt.Errorf("verify person for document upload: %w", err)
+	}
+
+	if p.ProjectID != projectID {
+		return nil, fmt.Errorf("verify person for document upload: %w", person.ErrPersonNotFound)
+	}
+
 	docID := ulid.NewString()
 	fpath := storagePath(projectID, personID, docID, filename)
 

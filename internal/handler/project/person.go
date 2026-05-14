@@ -96,9 +96,9 @@ func (h *PersonHandler) Delete(c *gin.Context) {
 
 // ListCategories handles GET /projects/:project_id/people/:person_id/categories.
 func (h *PersonHandler) ListCategories(c *gin.Context) {
-	ids, err := h.categoryUC.List(c.Request.Context(), c.Param("person_id"))
+	ids, err := h.categoryUC.List(c.Request.Context(), c.Param("project_id"), c.Param("person_id"))
 	if err != nil {
-		handler.InternalError(c, "list person categories", err)
+		handler.HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"category_ids": ids})
@@ -119,9 +119,9 @@ func (h *PersonHandler) ReplaceCategories(c *gin.Context) {
 
 // ListTags handles GET /projects/:project_id/people/:person_id/tags.
 func (h *PersonHandler) ListTags(c *gin.Context) {
-	ids, err := h.tagUC.List(c.Request.Context(), c.Param("person_id"))
+	ids, err := h.tagUC.List(c.Request.Context(), c.Param("project_id"), c.Param("person_id"))
 	if err != nil {
-		handler.InternalError(c, "list person tags", err)
+		handler.HandleError(c, err)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"tag_ids": ids})

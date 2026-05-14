@@ -250,9 +250,11 @@ func TestPersonHandler_ListCategories_Success(t *testing.T) {
 	personID := handlertest.TestID().String()
 	catIDs := []string{handlertest.TestID().String(), handlertest.TestID().String()}
 
+	deps.personRepo.EXPECT().GetByID(gomock.Any(), personID).Return(&person.Person{ID: personID, ProjectID: "x"}, nil)
 	deps.personCatRepo.EXPECT().List(gomock.Any(), personID).Return(catIDs, nil)
 
 	c, w := handlertest.NewTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/categories", nil, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "person_id", Value: personID},
 	})
 	deps.handler.ListCategories(c)
@@ -294,9 +296,11 @@ func TestPersonHandler_ListTags_Success(t *testing.T) {
 	personID := handlertest.TestID().String()
 	tagIDs := []string{handlertest.TestID().String(), handlertest.TestID().String()}
 
+	deps.personRepo.EXPECT().GetByID(gomock.Any(), personID).Return(&person.Person{ID: personID, ProjectID: "x"}, nil)
 	deps.personTagRepo.EXPECT().List(gomock.Any(), personID).Return(tagIDs, nil)
 
 	c, w := handlertest.NewTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/tags", nil, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "person_id", Value: personID},
 	})
 	deps.handler.ListTags(c)

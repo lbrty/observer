@@ -13,6 +13,7 @@ import (
 	"go.uber.org/mock/gomock"
 
 	"github.com/lbrty/observer/internal/domain/document"
+	"github.com/lbrty/observer/internal/domain/person"
 	"github.com/lbrty/observer/internal/handler/handlertest"
 	"github.com/lbrty/observer/internal/handler/project"
 	"github.com/lbrty/observer/internal/middleware"
@@ -43,8 +44,12 @@ func newMultipartUploadContext(filename string, content []byte, projectID, perso
 
 func newDocumentHandler(ctrl *gomock.Controller) (*project.DocumentHandler, *repomock.MockDocumentRepository, *storagemock.MockFileStorage) {
 	docRepo := repomock.NewMockDocumentRepository(ctrl)
+	personRepo := repomock.NewMockPersonRepository(ctrl)
 	fs := storagemock.NewMockFileStorage(ctrl)
-	uc := ucproject.NewDocumentUseCase(docRepo, fs, nil)
+	personRepo.EXPECT().GetByID(gomock.Any(), gomock.Any()).AnyTimes().DoAndReturn(func(_ any, id string) (*person.Person, error) {
+		return &person.Person{ID: id, ProjectID: "x"}, nil
+	})
+	uc := ucproject.NewDocumentUseCase(docRepo, personRepo, fs, nil)
 	return project.NewDocumentHandler(uc), docRepo, fs
 }
 
@@ -58,6 +63,7 @@ func TestDocumentHandler_List_NoPermission(t *testing.T) {
 
 	personID := handlertest.TestID().String()
 	c, w := handlertest.NewTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/documents", nil, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "person_id", Value: personID},
 	})
 	setCanViewDocuments(c, false)
@@ -78,6 +84,7 @@ func TestDocumentHandler_List_Success(t *testing.T) {
 	}, nil)
 
 	c, w := handlertest.NewTestContextWithParams(http.MethodGet, "/projects/x/people/"+personID+"/documents", nil, gin.Params{
+		{Key: "project_id", Value: "x"},
 		{Key: "person_id", Value: personID},
 	})
 	setCanViewDocuments(c, true)
@@ -241,7 +248,7 @@ func TestDocumentHandler_Upload_RejectsForbiddenMIME(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	h, _, _ := newDocumentHandler(ctrl)
 
-	projectID := handlertest.TestID().String()
+	projectID := "x"
 	personID := handlertest.TestID().String()
 
 	htmlContent := []byte("<html><body><script>alert(1)</script></body></html>")
@@ -257,7 +264,7 @@ func TestDocumentHandler_Upload_RejectsXMLSVG(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	h, _, _ := newDocumentHandler(ctrl)
 
-	projectID := handlertest.TestID().String()
+	projectID := "x"
 	personID := handlertest.TestID().String()
 
 	svgContent := []byte(`<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>`)
@@ -273,7 +280,7 @@ func TestDocumentHandler_Upload_SanitizesFilename(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	h, docRepo, fs := newDocumentHandler(ctrl)
 
-	projectID := handlertest.TestID().String()
+	projectID := "x"
 	personID := handlertest.TestID().String()
 
 	docRepo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(nil)

@@ -10,6 +10,7 @@ import (
 	"go.uber.org/mock/gomock"
 
 	"github.com/lbrty/observer/internal/domain/household"
+	"github.com/lbrty/observer/internal/domain/person"
 	mock_repo "github.com/lbrty/observer/internal/repository/mock"
 	ucproject "github.com/lbrty/observer/internal/usecase/project"
 )
@@ -20,7 +21,8 @@ func TestHouseholdUseCase_List_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	now := time.Now().UTC()
 	mockRepo.EXPECT().List(gomock.Any(), gomock.Any()).Return([]*household.Household{
@@ -42,7 +44,8 @@ func TestHouseholdUseCase_Get_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	now := time.Now().UTC()
 	headID := "p1"
@@ -75,7 +78,8 @@ func TestHouseholdUseCase_Get_NotFound(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, household.ErrHouseholdNotFound)
 
@@ -89,7 +93,10 @@ func TestHouseholdUseCase_Create_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
+
+	mockPersonRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&person.Person{ID: "p1", ProjectID: "proj1"}, nil)
 
 	mockRepo.EXPECT().Create(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, h *household.Household) error {
 		assert.NotEmpty(t, h.ID)
@@ -109,13 +116,29 @@ func TestHouseholdUseCase_Create_Success(t *testing.T) {
 	assert.Equal(t, []ucproject.HouseholdMemberDTO{}, dto.Members)
 }
 
+func TestHouseholdUseCase_Create_HeadPersonWrongProject(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
+	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
+
+	mockPersonRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&person.Person{ID: "p1", ProjectID: "other-proj"}, nil)
+
+	_, err := uc.Create(context.Background(), "proj1", ucproject.CreateHouseholdInput{HeadPersonID: ptr("p1")})
+	assert.ErrorIs(t, err, person.ErrPersonNotFound)
+}
+
 func TestHouseholdUseCase_Update_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	now := time.Now().UTC()
 	existing := &household.Household{
@@ -144,7 +167,8 @@ func TestHouseholdUseCase_Update_NotFound(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, household.ErrHouseholdNotFound)
 
@@ -158,7 +182,8 @@ func TestHouseholdUseCase_Delete_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "proj1"}, nil)
 	mockRepo.EXPECT().Delete(gomock.Any(), "h1").Return(nil)
@@ -173,7 +198,8 @@ func TestHouseholdUseCase_Delete_NotFound(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "nonexistent").Return(nil, household.ErrHouseholdNotFound)
 
@@ -187,7 +213,8 @@ func TestHouseholdUseCase_Get_CrossProjectIDOR(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{
 		ID: "h1", ProjectID: "other-project",
@@ -203,7 +230,8 @@ func TestHouseholdUseCase_Update_CrossProjectIDOR(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{
 		ID: "h1", ProjectID: "other-project",
@@ -219,7 +247,8 @@ func TestHouseholdUseCase_Delete_CrossProjectIDOR(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{
 		ID: "h1", ProjectID: "other-project",
@@ -235,9 +264,11 @@ func TestHouseholdUseCase_AddMember_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "proj1"}, nil)
+	mockPersonRepo.EXPECT().GetByID(gomock.Any(), "p3").Return(&person.Person{ID: "p3", ProjectID: "proj1"}, nil)
 	mockMemberRepo.EXPECT().Add(gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, m *household.Member) error {
 		assert.Equal(t, "h1", m.HouseholdID)
 		assert.Equal(t, "p3", m.PersonID)
@@ -254,13 +285,33 @@ func TestHouseholdUseCase_AddMember_Success(t *testing.T) {
 	assert.Equal(t, "child", dto.Relationship)
 }
 
+func TestHouseholdUseCase_AddMember_WrongProjectPerson(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
+	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
+
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "proj1"}, nil)
+	mockPersonRepo.EXPECT().GetByID(gomock.Any(), "p3").Return(&person.Person{ID: "p3", ProjectID: "other-proj"}, nil)
+
+	_, err := uc.AddMember(context.Background(), "proj1", "h1", ucproject.AddMemberInput{
+		PersonID:     "p3",
+		Relationship: "child",
+	})
+	assert.ErrorIs(t, err, person.ErrPersonNotFound)
+}
+
 func TestHouseholdUseCase_AddMember_CrossProjectIDOR(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "other-project"}, nil)
 
@@ -274,9 +325,11 @@ func TestHouseholdUseCase_AddMember_AlreadyExists(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "proj1"}, nil)
+	mockPersonRepo.EXPECT().GetByID(gomock.Any(), "p1").Return(&person.Person{ID: "p1", ProjectID: "proj1"}, nil)
 	mockMemberRepo.EXPECT().Add(gomock.Any(), gomock.Any()).Return(household.ErrMemberExists)
 
 	_, err := uc.AddMember(context.Background(), "proj1", "h1", ucproject.AddMemberInput{
@@ -292,7 +345,8 @@ func TestHouseholdUseCase_RemoveMember_Success(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "proj1"}, nil)
 	mockMemberRepo.EXPECT().Remove(gomock.Any(), "h1", "p3").Return(nil)
@@ -307,7 +361,8 @@ func TestHouseholdUseCase_RemoveMember_CrossProjectIDOR(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "other-project"}, nil)
 
@@ -321,11 +376,37 @@ func TestHouseholdUseCase_RemoveMember_NotFound(t *testing.T) {
 
 	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
 	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
-	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, nil)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
 
 	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(&household.Household{ID: "h1", ProjectID: "proj1"}, nil)
 	mockMemberRepo.EXPECT().Remove(gomock.Any(), "h1", "nonexistent").Return(household.ErrMemberNotFound)
 
 	err := uc.RemoveMember(context.Background(), "proj1", "h1", "nonexistent")
 	assert.ErrorIs(t, err, household.ErrMemberNotFound)
+}
+
+func TestHouseholdUseCase_Update_HeadPersonWrongProject(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	mockRepo := mock_repo.NewMockHouseholdRepository(ctrl)
+	mockMemberRepo := mock_repo.NewMockHouseholdMemberRepository(ctrl)
+	mockPersonRepo := mock_repo.NewMockPersonRepository(ctrl)
+	uc := ucproject.NewHouseholdUseCase(mockRepo, mockMemberRepo, mockPersonRepo, nil)
+
+	now := time.Now().UTC()
+	existing := &household.Household{
+		ID:        "h1",
+		ProjectID: "proj1",
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+	mockRepo.EXPECT().GetByID(gomock.Any(), "h1").Return(existing, nil)
+	mockPersonRepo.EXPECT().GetByID(gomock.Any(), "p2").Return(&person.Person{ID: "p2", ProjectID: "other-proj"}, nil)
+
+	_, err := uc.Update(context.Background(), "proj1", "h1", ucproject.UpdateHouseholdInput{
+		HeadPersonID: ptr("p2"),
+	})
+	assert.ErrorIs(t, err, person.ErrPersonNotFound)
 }
