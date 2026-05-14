@@ -223,10 +223,12 @@ func TestAuthHandler_Login_Success(t *testing.T) {
 		if cookie.Name == "access_token" {
 			foundAccess = true
 			assert.Equal(t, "access-token", cookie.Value)
+			assert.Equal(t, "/", cookie.Path)
 		}
 		if cookie.Name == "refresh_token" {
 			foundRefresh = true
 			assert.Equal(t, "refresh-token", cookie.Value)
+			assert.Equal(t, "/api/auth", cookie.Path)
 		}
 	}
 	assert.True(t, foundAccess, "access_token cookie should be set")
