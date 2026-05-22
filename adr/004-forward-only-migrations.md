@@ -14,8 +14,8 @@ All migrations are **forward-only**. There are no `.down.sql` rollback files. Ev
 ## Rationale
 
 - **Production systems do not roll back** schema changes in practice. A failed migration is fixed by a new corrective migration, not by reverting.
-- `.down.sql` files create a false sense of safety. They are rarely tested, frequently wrong, and destructive — dropping columns and tables deletes data.
-- The forward-only discipline makes the migration history the authoritative record of schema evolution. Every intentional change is permanent and auditable.
+- `.down.sql` files are rarely tested, frequently wrong, and destructive — dropping columns and tables deletes data.
+- Forward-only migrations make the migration history the authoritative record of schema evolution. Every intentional change is permanent and auditable.
 - Rollback of a bad deploy is done at the **application level** (redeploy the previous binary) while keeping the schema at the new version. Application code is written to tolerate the new schema from day one.
 
 ## Convention

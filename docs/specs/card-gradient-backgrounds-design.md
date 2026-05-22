@@ -4,7 +4,7 @@
 
 ## Goal
 
-Replace the existing SVG-mask card background decorations (`card-bg-topo`, `card-bg-dots`, `card-bg-waves`) with a set of 8 subtle gradient variants that are randomly (but deterministically) assigned to cards. Gradients adapt between light and dark mode — dark mode uses `mix-blend-mode: screen` to keep colours from reading muddy on dark surfaces.
+Replace the existing SVG-mask card background decorations (`card-bg-topo`, `card-bg-dots`, `card-bg-waves`) with a set of 8 gradient variants (opacities 0.035–0.07; see Opacity Calibration) that are randomly (but deterministically) assigned to cards. Gradients adapt between light and dark mode — dark mode uses `mix-blend-mode: screen` to keep colours from reading muddy on dark surfaces.
 
 ## Gradient Variants
 
@@ -27,8 +27,6 @@ Replace the existing SVG-mask card background decorations (`card-bg-topo`, `card
 | ----- | ------------------------ | ------------- |
 | Light | normal                   | 0.05 – 0.07   |
 | Dark  | `mix-blend-mode: screen` | 0.035 – 0.04  |
-
-Dark mode uses `screen` blend mode so the gradient adds luminosity rather than painting colour over a dark surface.
 
 ## Implementation
 

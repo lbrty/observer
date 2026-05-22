@@ -3,11 +3,11 @@ title: Deployment
 weight: 5
 ---
 
-This guide walks you through putting Observer on a server where your team can use it. You don't need deep technical knowledge — if you can SSH into a server and run a few commands, you can do this.
+This guide walks you through putting Observer on a server where your team can use it.
 
 ## Docker (recommended)
 
-This is the simplest path. Observer ships as a single Docker image with the web interface already baked in — there's nothing extra to install or configure on the frontend side.
+Observer ships as a single Docker image with the web interface already baked in — the web interface is embedded in the binary.
 
 ### What you need
 
@@ -24,7 +24,7 @@ openssl genrsa -out keys/jwt_rsa 4096
 openssl rsa -in keys/jwt_rsa -pubout -out keys/jwt_rsa.pub
 ```
 
-Keep these keys safe. If you lose them, everyone will need to log in again.
+If the keys are lost, all sessions become invalid.
 
 ### Step 2: Configure your environment
 
@@ -43,7 +43,7 @@ The most important variables:
 | `JWT_PRIVATE_KEY_PATH` | Where you put the private key from Step 1         | `keys/jwt_rsa`             |
 | `JWT_PUBLIC_KEY_PATH`  | Where you put the public key from Step 1          | `keys/jwt_rsa.pub`         |
 | `CORS_ORIGINS`         | Your domain (e.g. `https://observer.yourorg.org`) | `http://localhost:5173`    |
-| `COOKIE_SECURE`        | Set to `true` when using HTTPS (you should)       | `true`                     |
+| `COOKIE_SECURE`        | Set to `true` when using HTTPS       | `true`                     |
 | `SERVER_HOST`          | Which address to listen on                        | `localhost`                |
 | `SERVER_PORT`          | Which port to listen on                           | `9000`                     |
 
@@ -55,7 +55,7 @@ See [Environment Variables](/docs/developers/reference/variables/) for the full 
 docker compose up -d
 ```
 
-This starts PostgreSQL, Redis, and Observer. The database schema is created automatically on first launch — no manual migration step needed.
+This starts PostgreSQL, Redis, and Observer. The database schema is created automatically on first launch.
 
 ### Step 4: Verify it's running
 
@@ -69,7 +69,7 @@ You should see:
 { "status": "healthy", "timestamp": "..." }
 ```
 
-If you see this, Observer is ready. Open your domain in a browser to access the web interface.
+Open your domain in a browser to access the web interface.
 
 ## Without Docker (VPS / bare metal)
 
@@ -79,7 +79,7 @@ If you prefer to run Observer directly, build the binary:
 CGO_ENABLED=0 go build -tags production -ldflags="-s -w" -o observer ./cmd/observer
 ```
 
-The `-tags production` flag embeds the web interface into the binary. You get a single file you can copy anywhere.
+The `-tags production` flag embeds the web interface into the binary.
 
 Run it:
 
@@ -91,9 +91,9 @@ You'll need PostgreSQL and Redis running separately. Point `DATABASE_DSN` and `R
 
 ## Setting up HTTPS
 
-You should always run Observer behind a reverse proxy that handles HTTPS. This keeps login credentials and personal data encrypted in transit.
+You should always run Observer behind a reverse proxy that handles HTTPS.
 
-[Caddy](https://caddyserver.com/) is the easiest option — it handles certificates automatically:
+[Caddy](https://caddyserver.com/) handles certificates automatically:
 
 ```
 observer.yourorg.org {

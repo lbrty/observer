@@ -3,9 +3,9 @@ title: Getting Started
 weight: 2
 ---
 
-## See it running in 5 minutes
+## Local quick start
 
-You don't need a server, a hosting provider, or an IT department. If you have a laptop with Docker installed, you can see Observer running right now.
+Prerequisites: Docker.
 
 ```bash
 git clone https://github.com/lbrty/observer.git
@@ -24,7 +24,7 @@ Then start the web interface:
 just web-dev
 ```
 
-Open `http://localhost:5173` — you're looking at Observer.
+Open `http://localhost:5173`.
 
 ## What you just started
 
@@ -33,19 +33,17 @@ Open `http://localhost:5173` — you're looking at Observer.
 - A **web interface** with project management, role-based access, and built-in reporting
 - **Automatic login security** — tokens rotate on every session refresh
 
-All of this runs on a single machine. In production, it compiles down to one file you can copy to any server.
+All of this runs on a single machine.
 
-## Ready to deploy for real?
+## Production deployment
 
-To move from "trying it out" to "my team uses this every day," you need:
+For production, you need:
 
 | What                         | Why                                                                  |
 | ---------------------------- | -------------------------------------------------------------------- |
 | A server (VPS or on-premise) | Observer is self-hosted — your data never leaves your infrastructure |
 | PostgreSQL                   | The only external service Observer needs                             |
 | About 30 minutes             | Run `docker compose up` on a server with your domain pointed at it   |
-
-No subscription. No per-user fees. No vendor lock-in. You own the data and the deployment.
 
 See [Deployment](/docs/guide/deployment/) for the step-by-step production setup.
 
@@ -75,7 +73,7 @@ bun install
 cp .env.example .env
 ```
 
-The defaults work out of the box with the provided `docker-compose.yml`. No editing needed.
+The defaults work out of the box with the provided `docker-compose.yml`.
 
 ### 3. Generate signing keys
 
@@ -83,7 +81,7 @@ The defaults work out of the box with the provided `docker-compose.yml`. No edit
 just generate-keys
 ```
 
-This creates a key pair that Observer uses to sign login tokens. The `keys/` directory is gitignored — each developer generates their own.
+This creates a key pair that Observer uses to sign login tokens.
 
 ### 4. Start everything
 

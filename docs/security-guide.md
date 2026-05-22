@@ -246,7 +246,7 @@ The `SecurityHeaders()` middleware (`internal/middleware/security_headers.go`) s
 1. Logs the real error with `slog.Error`
 2. Returns `"internal server error"` to the client (never the original error message)
 
-This prevents leaking database errors, stack traces, or internal paths to clients. Keep this behavior — never do `c.JSON(500, err.Error())` directly in handlers.
+This prevents leaking database errors, stack traces, or internal paths to clients. Never do `c.JSON(500, err.Error())` directly in handlers.
 
 ---
 

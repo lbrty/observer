@@ -3,7 +3,7 @@ title: Reports
 weight: 7
 ---
 
-Observer generates 39 structured report types designed to match actual Ukrainian NGO donor reporting obligations. All reports are scoped to a single project and filtered by a date range.
+Observer generates 39 structured report types that match Ukrainian NGO donor reporting obligations. All reports are scoped to a single project and filtered by a date range.
 
 ## Running a Report
 
@@ -146,7 +146,7 @@ When `birth_date` is set and `age_group` is null, the application computes the b
 | 35  | Support records for people with specific tags | Events |
 | 36  | People registered with specific tags          | People |
 
-Pass one or more tag IDs as parameters. Useful for ad-hoc donor queries.
+Pass one or more tag IDs as parameters.
 
 ### Group 10 — Family Units
 

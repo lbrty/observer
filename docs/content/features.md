@@ -13,7 +13,7 @@ A single view of all projects you have access to.
 
 ## Registration & People
 
-Register displaced persons, track demographics, and manage case status. The registration drawer captures name, contact, origin, and category in one step.
+Register displaced persons, track demographics, and manage case status. The registration drawer captures name, contact, origin, and category.
 
 {{< screenshot src="images/screenshots/people-list.png" alt="People list" class="rounded shadow mb-4" >}}
 
@@ -120,4 +120,4 @@ Each user can enable TOTP-based two-factor authentication on their account. Once
 
 ## Supported Languages
 
-The UI ships with six languages: English, Ukrainian, Russian, German, Turkish, and Kyrgyz (Latin script). Kyrgyz uses a custom Latin transliteration because the official Kyrgyz Latin alphabet was adopted in 2023 and is not yet supported by standard translation tools — we maintain our own transliteration rules to provide accurate, native-feeling text for Central Asian deployments.
+The UI ships with six languages: English, Ukrainian, Russian, German, Turkish, and Kyrgyz (Latin script). Kyrgyz uses a custom Latin transliteration because the official Kyrgyz Latin alphabet was adopted in 2023 and is not yet supported by standard translation tools — we maintain our own transliteration rules to provide accurate text for Central Asian deployments.

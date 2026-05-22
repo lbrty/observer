@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Add an optional "Search" button to `FilterBar` that complements instant onChange filtering with a manual trigger.
+**Goal:** Add an optional "Search" button to `FilterBar` that for manual fetch trigger.
 
 **Architecture:** Add `onSearch?: () => void` to `FilterBar`; render a secondary `Button` at the end of the flex row when the prop is present. Thread the prop through `DataTablePage`. Each table/report page destructures `refetch` from its query hook and passes it as `onSearch`.
 

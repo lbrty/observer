@@ -46,7 +46,7 @@ packages/         # frontend monorepo (observer-web)
 
 ## Configuration
 
-All config is read by `internal/config/config.Load()` from environment variables with hard-coded defaults so the binary starts with sane values for local development.
+All config is read by `internal/config/config.Load()` from environment variables with hard-coded defaults for local development.
 
 | Variable                    | Default                    | Purpose                               |
 | --------------------------- | -------------------------- | ------------------------------------- |

@@ -32,7 +32,7 @@ Follow this sequence when adding a new entity (e.g. `document`):
 
 ## Handler Pattern
 
-Handlers are thin. They bind, call, respond — nothing else.
+Bind, call, respond.
 
 ```go
 func (h *PersonHandler) Create(c *gin.Context) {
@@ -61,8 +61,6 @@ func (h *PersonHandler) Create(c *gin.Context) {
 `handler.BindJSON[T]` and `handler.HandleError` are defined in `internal/handler/errors.go` and imported by all handler subdirectory packages. `BindJSON` decodes the request body and writes a `400` response on failure, returning `false` so the handler can return immediately.
 
 ## Use Case Pattern
-
-Use cases coordinate repositories. They contain no HTTP or SQL code.
 
 ```go
 type CreatePersonInput struct {
@@ -122,8 +120,6 @@ observer migrate create <description>
 # or
 just migrate-create <description>
 ```
-
-Never modify an applied migration. Create a new one instead.
 
 ## Dependency Injection
 

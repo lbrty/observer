@@ -51,7 +51,7 @@ Each project permission has three independent boolean flags. These are set per-u
 | `can_view_documents` | Document file access and document metadata                       |
 | `can_export`         | Access to all CSV export endpoints for this project              |
 
-When a flag is off, the corresponding fields are omitted from API responses and CSV exports — the data stays in the database but is not sent to that user. A consultant with `can_view_personal: false` cannot recover national IDs or birth dates through an export even though they can create records.
+When a flag is off, the corresponding fields are omitted from API responses and CSV exports.
 
 `can_export` is an all-or-nothing gate: without it, the export endpoints return 403 regardless of project role. Platform admins and project owners always have export access. Staff platform role receives export access automatically without needing the flag set.
 

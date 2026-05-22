@@ -174,7 +174,7 @@ applyOpt(&p.FirstName, input.FirstName)
 applyOpt(&p.ConsentGiven, input.ConsentGiven)
 ```
 
-Keep the enum conversions and complex fields explicit (they cannot be generalized without losing type safety):
+Keep the enum conversions and complex fields explicit:
 
 ```go
 if input.Sex != nil {
@@ -262,7 +262,7 @@ function setParams(update: ReportParams | ((prev: ReportParams) => ReportParams)
 }
 ```
 
-Keep `filtersOpen` and `activePreset` as local `useState` — they are UI-only and should not be in the URL.
+Keep `filtersOpen` and `activePreset` as local `useState` (UI-only).
 
 **Step 3: Build and verify**
 

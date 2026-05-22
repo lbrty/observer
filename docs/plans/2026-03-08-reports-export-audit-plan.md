@@ -595,7 +595,7 @@ _ = uc.auditUC.Log(ctx, ucaudit.LogInput{
 })
 ```
 
-Audit log failures should not fail the primary operation — use fire-and-forget (log the error but don't return it).
+Audit log failures must not fail the primary operation; log error, do not return.
 
 **Step 2: Update DI wiring in `container.go`**
 
@@ -830,8 +830,6 @@ var dimensionSQL = map[string]string{
 	"pet_status":    "pets.status",
 }
 ```
-
-No string concatenation from user input — dimension names are validated against the whitelist.
 
 **Step 3: Implement use case method**
 

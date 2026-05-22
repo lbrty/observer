@@ -34,7 +34,7 @@ Three accent groups carry fixed meanings across the entire UI:
 | Sienna  | Danger, immediate attention  | Conflict zones, data sensitivity warnings, destructive actions, urgent alerts.          |
 | Neutral | Structural UI                | Surfaces, borders, text hierarchy. No semantic meaning.                                 |
 
-These assignments are non-negotiable. Sage is never decorative. Sienna is never a mild warning. Amber is never an error state.
+Sage is never decorative. Sienna is never a mild warning. Amber is never an error state.
 
 ### Token architecture
 
@@ -173,13 +173,13 @@ No backend persistence is needed — theme is a per-device preference, not a per
 
 Standard cool grays (slate, zinc) used by most design systems.
 
-**Rejected because**: feels clinical and impersonal. Humanitarian case work benefits from a warm, grounded aesthetic that signals care and permanence when handling sensitive beneficiary data.
+**Rejected because**: feels clinical and impersonal. Humanitarian case work benefits from a warm palette; cool neutrals feel clinical for case-work UI when handling sensitive beneficiary data.
 
 ### B. Single theme with system preference only
 
 Ship one light and one dark variant, no HC.
 
-**Rejected because**: field workers operate in extreme conditions (direct sunlight, degraded displays) where standard contrast ratios are insufficient. HC variants are a field requirement, not a nice-to-have.
+**Rejected because**: field workers operate in extreme conditions (direct sunlight, degraded displays) where standard contrast ratios are insufficient.
 
 ### C. Semantic colors derived from a single hue
 

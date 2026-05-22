@@ -33,8 +33,7 @@ Query the `project_permissions` table for the authenticated user and collect all
 Platform `admin` and `staff` roles implicitly have access to all projects and skip
 this step.
 
-This query is small, fast, and reusable — it can be extracted into a shared helper
-used by other endpoints that need the same list.
+Reusable — extract into a shared helper for endpoints that need the same list.
 
 **Stage 2 — search within authorized projects:**
 

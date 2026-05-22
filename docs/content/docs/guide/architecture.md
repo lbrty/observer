@@ -29,7 +29,7 @@ graph TD
 
 ## Dependency Flow (Clean Architecture)
 
-The codebase is organized in layers. Inner layers define the rules, outer layers provide the infrastructure. Dependencies always point inward — business logic never imports database or HTTP code directly. This makes it possible to test use cases without a running database.
+The codebase is organized in layers. Inner layers define the rules, outer layers provide the infrastructure. Dependencies always point inward — business logic never imports database or HTTP code directly.
 
 ```mermaid
 graph LR
@@ -70,7 +70,7 @@ graph LR
 
 ## Repository: Interface to Implementation
 
-Domain code defines _what_ data operations are needed (interfaces), while the PostgreSQL layer provides the _how_ (implementations). This separation means you could swap PostgreSQL for another database without touching any business logic. Each domain area — users, auth, projects, reference data — has its own repository interface.
+Domain code defines _what_ data operations are needed (interfaces), while the PostgreSQL layer provides the _how_ (implementations). Each domain area — users, auth, projects, reference data — has its own repository interface.
 
 ```mermaid
 classDiagram

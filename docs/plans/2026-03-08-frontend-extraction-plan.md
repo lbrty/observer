@@ -2,7 +2,7 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Break large frontend files into small, self-documenting pieces that a newcomer can understand at a glance.
+**Goal:** Break large frontend files into small pieces.
 
 **Architecture:** Extract shared layout compounds (FormSection, DataTablePage), domain constants, and report sub-components. Split 5 drawers into folder-based section components. Refactor report pages to share duplicated utilities. Extract permission dialogs into separate files.
 
@@ -14,7 +14,7 @@
 
 ### Task 1: Create FormSection compound component
 
-This is the shared layout used by all drawer sections. It replaces the repeated `SectionHeading + grid` pattern.
+It replaces the repeated `SectionHeading + grid` pattern.
 
 **Files:**
 
@@ -877,7 +877,7 @@ Apply the same `DataTablePage` refactoring to all other list pages that follow t
 
 Read the page, identify the PageHeader + filters + DataTable + Pagination block, and replace with `<DataTablePage>`. Keep page-specific dialogs, drawers, and tab logic as-is.
 
-Some pages may have additional layout (tabs, nested routes) that doesn't fit the compound — use `children` prop or keep those parts outside. Don't force pages into the compound if they have unusual layout.
+Some pages may have additional layout (tabs, nested routes) that doesn't fit the compound — use `children` prop or keep those parts outside.
 
 **Step 2: Verify build after each page**
 

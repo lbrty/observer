@@ -4,13 +4,11 @@ Date: 2026-03-08
 
 ## Goal
 
-Reduce cognitive load for newcomers by breaking large files into small, self-documenting pieces. No file should require scrolling to understand.
+Break large files into small pieces. No file should require scrolling to understand.
 
 ## Principles
 
-- Readability and discoverability over clever abstractions
-- Small files that are self-documenting
-- A newcomer reads the index to understand the flow, dives into a section for details
+- Readability over additional abstractions
 
 ## 1. FormSection Compound
 

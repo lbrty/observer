@@ -2,9 +2,9 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Comprehensive test coverage for backend handlers, missing use cases, repository integration tests, frontend hooks/components/routes, plus CLI documentation.
+**Goal:** Test coverage for backend handlers, missing use cases, repository integration tests, frontend hooks/components/routes, plus CLI documentation.
 
-**Architecture:** Backend tests use httptest + gomock for handlers, gomock + testify for use cases, testcontainers-go for repo integration. Frontend tests use bun:test + @testing-library/react + mock.module(). CLI docs combine improved cobra help text with a standalone markdown reference.
+**Architecture:** CLI docs combine improved cobra help text with a standalone markdown reference.
 
 **Tech Stack:** Go (testify, gomock, httptest, testcontainers-go), TypeScript (bun:test, @testing-library/react, Happy DOM), cobra (CLI)
 
@@ -20,7 +20,7 @@
 
 **Step 1: Write the test helper**
 
-Create a shared test helper for all handler tests. This sets up Gin in test mode with a mock context, common test fixtures, and helper functions.
+Create a shared test helper for all handler tests.
 
 ```go
 package handler_test
@@ -92,8 +92,6 @@ git commit -m "add handler test helpers for httptest + gin test mode"
 ---
 
 ## Phase 2: Backend Handler Tests
-
-Each handler follows the same pattern: mock the use case, call the handler method, assert status code + response body. Error paths first, then happy paths.
 
 ### Task 2: Auth handler tests
 
@@ -716,7 +714,7 @@ git commit -m "add repository integration tests with testcontainers"
 
 ### Task 34: Create hook test factory
 
-Many hooks follow the same pattern (CRUD via ky). Create a helper to reduce boilerplate.
+Many hooks follow the same pattern (CRUD via ky). Create a helper.
 
 **Files:**
 

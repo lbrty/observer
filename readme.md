@@ -35,7 +35,7 @@ just create-admin admin@example.com yourpassword
 
 ### Environment variables
 
-All config is read from environment variables with sensible defaults. Key ones:
+All config is read from environment variables with defaults. Key ones:
 
 | Variable               | Default                    | Description                     |
 | ---------------------- | -------------------------- | ------------------------------- |

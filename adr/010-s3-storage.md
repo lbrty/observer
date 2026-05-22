@@ -15,7 +15,7 @@ Add an `S3Storage` implementation of `FileStorage` backed by `aws-sdk-go-v2`, se
 
 ## Why aws-sdk-go-v2
 
-- De-facto standard S3 client in the Go ecosystem, actively maintained by AWS.
+- Standard S3 client in the Go ecosystem, maintained by AWS.
 - Works against any S3-compatible endpoint (AWS S3, MinIO, Wasabi, Backblaze B2) via a configurable endpoint override; leaving it empty uses the AWS default resolver.
 - Maps cleanly to the `FileStorage` interface (`Save`, `Open`, `Delete`).
 - Verbosity is contained inside `internal/storage/s3.go`; the interface and all consumers are unchanged.
@@ -79,8 +79,8 @@ if err != nil {
 
 ### A. minio-go
 
-S3-compatible client maintained by MinIO. Functional against AWS S3 and MinIO, but optimised for MinIO-specific features this project does not need. `aws-sdk-go-v2` is the more widely recognised standard for S3 in Go and has broader ecosystem support.
+S3-compatible client maintained by MinIO. Functional against AWS S3 and MinIO, but optimised for MinIO-specific features this project does not need. aws-sdk-go-v2 is the standard S3 client in Go with broader ecosystem support.
 
 ### B. gocloud.dev/blob
 
-Generic blob abstraction over S3, GCS, and Azure. Uses `aws-sdk-go-v2` under the hood, so it adds an abstraction layer with no benefit for an S3-only target. Rejected as unnecessary complexity.
+Generic blob abstraction over S3, GCS, and Azure. Uses `aws-sdk-go-v2` under the hood, so it adds an abstraction layer with no benefit for an S3-only target.

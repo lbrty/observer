@@ -6,7 +6,7 @@ Date range and other filter changes apply instantly via `onChange`. Users someti
 
 ## Solution
 
-Add an optional `onSearch` prop to `FilterBar`. When provided, a "Search" button renders at the end of the filter bar (right side). Existing `onChange` instant filtering is unchanged — the button complements it.
+Add an optional `onSearch` prop to `FilterBar`. When provided, a "Search" button renders at the end of the filter bar (right side).
 
 ## Component Changes
 

@@ -9,8 +9,6 @@ Observer is a self-hosted case management platform for NGOs working with interna
 
 Small and mid-size NGOs working with displaced persons in Ukraine face a gap: paper ledgers don't scale, but the systems that do — proGres, Primero, ActivityInfo — require UN partnerships, technical partners, or SaaS subscriptions these organizations can't access.
 
-Observer fills that gap.
-
 ## What it does
 
 Observer gives your organization a private, secure system to track the people you serve. It runs on your own server — no cloud service, no subscription, no third party ever sees your data.
@@ -22,8 +20,6 @@ With Observer, your team can:
 - **Follow movement** — where people came from, where they moved, and why
 - **Control access** — decide who on your team can see what, down to contact details and documents
 - **Generate reports** — built-in breakdowns by sex, age, region, support type, vulnerability category, and more — filterable to match EU, USAID, and bilateral donor requirements
-
-One person with basic server skills can set it up in under an hour.
 
 ## Who it's for
 
@@ -44,11 +40,11 @@ Organizations with:
 | **ActivityInfo** | SaaS with per-user pricing; designed for aggregate monitoring, not case management |
 | **KoBoToolbox**  | Data collection only — no persistent case records                                  |
 
-## What makes Observer different
+## How Observer differs
 
-**You don't need anyone's permission.** No partner onboarding, no SaaS agreement. Install it on your server and start working.
+**Self-hostable.** No partner onboarding or SaaS agreement required.
 
-**Your data stays yours.** Everything runs on infrastructure you control. No data leaves your server unless you export it.
+**Self-hosted.** All data stays on infrastructure you control.
 
 **Access control is built in.** Platform roles (admin, staff, consultant, guest) combine with project roles (owner, manager, consultant, viewer) and sensitivity flags that control who sees contact info, personal details, and documents.
 
@@ -62,7 +58,7 @@ Organizations with:
 
 ## Supported languages
 
-The UI ships with six languages: English, Ukrainian, Russian, German, Turkish, and Kyrgyz (Latin script). Kyrgyz uses a custom Latin transliteration because the official Kyrgyz Latin alphabet was adopted in 2023 and standard translation tools don't support it yet — we maintain our own transliteration rules to provide accurate, native-feeling text for Central Asian deployments.
+The UI ships with six languages: English, Ukrainian, Russian, German, Turkish, and Kyrgyz (Latin script). Kyrgyz uses a custom Latin transliteration because the official Kyrgyz Latin alphabet was adopted in 2023 and standard translation tools don't support it yet — we maintain our own transliteration rules to provide accurate text for Central Asian deployments.
 
 ## What Observer does not do
 

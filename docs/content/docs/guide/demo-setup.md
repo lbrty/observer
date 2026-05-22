@@ -3,7 +3,7 @@ title: Demo Setup
 weight: 3
 ---
 
-Try Observer with a fully populated database in under 5 minutes. The `seed` command fills the database with realistic test data — people, projects, support records, migration history, households, and more — so you can explore every feature without entering data by hand.
+Try Observer with a fully populated database. The `seed` command fills the database with realistic test data — people, projects, support records, migration history, households, and more — so you can explore every feature without entering data by hand.
 
 ## Quick start
 
@@ -105,7 +105,7 @@ Applies all database migrations.
 ./observer seed
 ```
 
-Fills the database with demo data. This is the step that makes the difference between a blank instance and a working demo you can show to stakeholders.
+Fills the database with demo data.
 
 ### 6. Run
 

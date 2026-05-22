@@ -60,7 +60,7 @@ packages/observer-web/src/
 - Manual DI wired in `internal/app/container.go`
 - Domain entities define repository interfaces; `internal/repository/<group>/` implements them
 - `ulid.ULID` for entity IDs, `string` in DTOs (via `.String()`)
-- Prefer well-maintained, widely-known libs (Gin, testify, gomock, testcontainers-go, sqlx)
+- Prefer libs in this set: Gin, testify, gomock, testcontainers-go, sqlx
 - Pragmatic MVP: core functionality first, defer advanced features (MEK/DEK, detailed audit logs) to Phase 2
 
 ## Testing

@@ -394,7 +394,7 @@ git commit -m "Invalidate all user sessions on password change and admin reset"
 
 **Findings fixed:** Pervasive IDOR — any project member can read/write records from other projects (HIGH)
 
-**Strategy:** After every `GetByID`, compare the returned entity's `ProjectID` (or `PersonID` for notes and migration records) against the URL param. Return the domain "not found" error on mismatch — avoids leaking the existence of foreign records. Work one entity at a time; commit after each.
+**Strategy:** After every `GetByID`, compare the returned entity's `ProjectID` (or `PersonID` for notes and migration records) against the URL param. Return the domain "not found" error on mismatch. Work one entity at a time; commit after each.
 
 ---
 
@@ -758,7 +758,6 @@ var csrfSafeMethods = map[string]bool{
 // CSRFProtection validates state-changing requests carry an X-CSRF-Token header
 // matching the csrf_token cookie (double-submit cookie pattern).
 // The csrf_token cookie is set at login (HttpOnly: false) so JS can read it.
-// A cross-site attacker can force cookie sending but cannot read cookies or set custom headers.
 func CSRFProtection() gin.HandlerFunc {
     return func(c *gin.Context) {
         if csrfSafeMethods[c.Request.Method] {
@@ -1058,7 +1057,7 @@ func HandleError(c *gin.Context, err error) {
 }
 ```
 
-Domain errors (not-found, conflict, validation) still return descriptive messages — those are intentionally user-facing. Only the unexpected 500 path changes.
+Domain errors (not-found, conflict, validation) still return descriptive messages — those are intentionally user-facing.
 
 **Step 2: Run tests and commit**
 
@@ -1092,7 +1091,7 @@ Replace with:
 canExport := perm.CanExport
 ```
 
-Staff users who need export access must have `can_export = true` set explicitly, like all other non-owner users.
+Staff users who need export access must have `can_export = true` set explicitly.
 
 **Step 2: Run tests and commit**
 
@@ -1296,8 +1295,6 @@ git commit -m "Remove lockout duration from login error response"
 
 - **Option A (clean):** Force all users to reset their password at next login (detect the old hash via a version field or re-hash on successful login with old params before updating).
 - **Option B (simple):** Accept the breakage in a controlled migration: inform admins, use `admin.ResetPassword` to issue new passwords for active users.
-
-Agree with the team on the approach before merging this task.
 
 **Step 1: Update the time parameter**
 

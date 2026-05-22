@@ -39,7 +39,7 @@ just generate-mocks    # regenerate mock files
 
 ## 1. Unit Tests with Testify
 
-Use `assert` for non-fatal checks (test continues) and `require` for fatal checks (test stops).
+Use `assert` for non-fatal checks and `require` for fatal checks.
 
 ```go
 package auth
