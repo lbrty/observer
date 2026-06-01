@@ -28,12 +28,7 @@ just web-dev
 
 ## Was Sie gerade gestartet haben
 
-- Ein **Backend**, das die API bereitstellt — übernimmt Authentifizierung, Datenspeicherung und Berichte
-- Eine **Datenbank** mit Tabellen für Personen, Haushalte, Unterstützungseinträge, Migrationshistorie, Dokumente und Haustiere
-- Eine **Weboberfläche** mit Projektverwaltung, rollenbasierter Zugriffskontrolle und integrierter Berichterstattung
-- **Automatische Anmeldesicherheit** — Tokens werden bei jeder Sitzungsaktualisierung rotiert
-
-All das läuft auf einem einzelnen Rechner. In der Produktion wird es zu einer einzelnen Datei kompiliert, die Sie auf jeden Server kopieren können.
+Sie haben jetzt ein Backend auf `:9000`, ein Frontend auf `:5173` und ein Postgres + Redis-Paar in Docker — alles auf einer einzigen Maschine.
 
 ## Bereit für den Produktiveinsatz?
 

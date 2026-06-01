@@ -3,11 +3,9 @@ title: Bereitstellung
 weight: 5
 ---
 
-Diese Anleitung führt Sie durch die Installation von Observer auf einem Server, den Ihr Team nutzen kann. Sie brauchen kein tiefes technisches Wissen — wenn Sie sich per SSH auf einem Server einloggen und ein paar Befehle ausführen können, schaffen Sie das.
-
 ## Docker (empfohlen)
 
-Dies ist der einfachste Weg. Observer wird als einzelnes Docker-Image mit bereits integrierter Weboberfläche ausgeliefert — es muss nichts zusätzlich installiert oder auf der Frontend-Seite konfiguriert werden.
+Observer wird als einzelnes Docker-Image mit integrierter Weboberfläche ausgeliefert.
 
 ### Was Sie brauchen
 

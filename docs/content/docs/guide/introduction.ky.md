@@ -46,9 +46,7 @@ Myndaj ujumdar üçün:
 
 ## Observerdi emne ajyrmalajt
 
-**Eç kimdin uruqsaty kerek emes.** Önöktöş kirgizüü coq, SaaS kelişim coq. Serveriñizge ornotup, iştej baştañyz.
-
-**Maalymatyñyz sizdiki bolup qalat.** Bardyğy siz başqarğan infrastukturada iştejt. Eksporttoğonuñuzğa çejin eç bir maalymat serveriñizden çyqpajt.
+**Eç kimdin uruqsaty kerek emes, maalymatyñyz sizdiki bolup qalat.** Önöktöş kirgizüü coq, SaaS kelişim coq. Bardyğy siz başqarğan infrastukturada iştejt.
 
 **Cetüü başqaruu kirgizilgen.** Platforma roldoru (admin, qyzmatker, konsultant, qonoq) proekt roldoru (eesi, başqaruuçu, konsultant, köröörçü) cana sezimtaldyq belgileri menen kim bajlanyş maalymatyn, ceke maalymattardy cana dokumentterdi körörün başqarat.
 

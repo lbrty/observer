@@ -42,9 +42,7 @@ Organizations with:
 
 ## How Observer differs
 
-**Self-hostable.** No partner onboarding or SaaS agreement required.
-
-**Self-hosted.** All data stays on infrastructure you control.
+**Self-hostable, self-hosted.** No partner onboarding or SaaS agreement. All data stays on infrastructure you control.
 
 **Access control is built in.** Platform roles (admin, staff, consultant, guest) combine with project roles (owner, manager, consultant, viewer) and sensitivity flags that control who sees contact info, personal details, and documents.
 

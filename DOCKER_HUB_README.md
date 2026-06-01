@@ -128,7 +128,7 @@ The container entrypoint is the `observer` binary. Available sub-commands:
 
 ## File storage
 
-By default uploads are written to `STORAGE_PATH` inside the container. Mount a volume there to persist files across restarts.
+Uploads go to `STORAGE_PATH` inside the container. Mount a volume there to persist files across restarts.
 
 For production, set `STORAGE_BACKEND=s3` and supply `S3_BUCKET`, `S3_REGION`, and AWS credentials via the standard `AWS_*` environment variables. Any S3-compatible store (MinIO, Tigris, Cloudflare R2) works by setting `S3_ENDPOINT`.
 
@@ -137,7 +137,7 @@ For production, set `STORAGE_BACKEND=s3` and supply `S3_BUCKET`, `S3_REGION`, an
 ## Upgrading
 
 1. Pull the new image.
-2. Run `migrate up` — migrations are forward-only and safe to run on each deploy.
+2. Run `migrate up` — migrations are forward-only.
 3. Restart the service.
 
 ---

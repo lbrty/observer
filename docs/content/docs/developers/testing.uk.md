@@ -3,7 +3,7 @@ title: Тестування
 weight: 4
 ---
 
-[package_name] використовує три рівні тестування: модульні тести, інтеграційні тести з testcontainers та E2E-тести через HTTP.
+Observer використовує три рівні тестування: модульні тести, інтеграційні тести з testcontainers та E2E-тести через HTTP.
 
 ```mermaid
 graph TD
@@ -121,7 +121,7 @@ func TestUser_CanLogin(t *testing.T) {
 Директива в `internal/user/repository.go`:
 
 ```go
-//go:generate mockgen -destination=mock/repository.go -package=mock [package_name]/internal/user UserRepository,CredentialsRepository,SessionRepository,MFARepository,VerificationTokenRepository
+//go:generate mockgen -destination=mock/repository.go -package=mock github.com/lbrty/observer/internal/user UserRepository,CredentialsRepository,SessionRepository,MFARepository,VerificationTokenRepository
 ```
 
 Виконайте `just generate-mocks` для перегенерації всіх моків після зміни інтерфейсів.
@@ -141,9 +141,9 @@ import (
     "github.com/stretchr/testify/require"
     "go.uber.org/mock/gomock"
 
-    "[package_name]/internal/auth"
-    "[package_name]/internal/user"
-    mock_user "[package_name]/internal/user/mock"
+    "github.com/lbrty/observer/internal/auth"
+    "github.com/lbrty/observer/internal/user"
+    mock_user "github.com/lbrty/observer/internal/user/mock"
 )
 
 func TestRegisterUseCase_Execute(t *testing.T) {
@@ -311,7 +311,7 @@ import (
     "github.com/stretchr/testify/assert"
     "go.uber.org/mock/gomock"
 
-    mock_database "[package_name]/internal/database/mock"
+    mock_database "github.com/lbrty/observer/internal/database/mock"
 )
 
 func TestHealthEndpoint(t *testing.T) {
@@ -375,7 +375,7 @@ func TestAuthFlow_E2E(t *testing.T) {
     router := s.Router()
 
     // Step 1: Register
-    regBody := `{"[package_name].kg","phone":"+49700111222","password":"MyStr0ngPass!","role":"user"}`
+    regBody := `{"email":"test@observer.kg","phone":"+49700111222","password":"MyStr0ngPass!","role":"user"}`
     w := httptest.NewRecorder()
     req := httptest.NewRequest(http.MethodPost, "/auth/register", strings.NewReader(regBody))
     req.Header.Set("Content-Type", "application/json")
@@ -383,7 +383,7 @@ func TestAuthFlow_E2E(t *testing.T) {
     assert.Equal(t, http.StatusCreated, w.Code)
 
     // Step 2: Login
-    loginBody := `{"[package_name].kg","password":"MyStr0ngPass!"}`
+    loginBody := `{"email":"test@observer.kg","password":"MyStr0ngPass!"}`
     w = httptest.NewRecorder()
     req = httptest.NewRequest(http.MethodPost, "/auth/login", strings.NewReader(loginBody))
     req.Header.Set("Content-Type", "application/json")

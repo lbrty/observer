@@ -3,11 +3,9 @@ title: Dağıtım
 weight: 5
 ---
 
-Bu rehber, Observer'ı ekibinizin kullanabileceği bir sunucuya kurma sürecinde size yol gösterir. Derin teknik bilgiye ihtiyacınız yok — bir sunucuya SSH ile bağlanıp birkaç komut çalıştırabiliyorsanız, bunu yapabilirsiniz.
-
 ## Docker (önerilen)
 
-Bu en basit yoldur. Observer, web arayüzü zaten dahil edilmiş tek bir Docker imajı olarak sunulur — ön yüz tarafında kurulacak veya yapılandırılacak ekstra bir şey yoktur.
+Observer, web arayüzü dahil tek bir Docker imajı olarak sunulur.
 
 ### Gerekenler
 

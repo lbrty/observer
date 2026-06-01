@@ -46,9 +46,7 @@ Temel sunucu bilgisine sahip bir kişi, bir saatten kısa sürede kurabilir.
 
 ## Observer'ı farklı kılan nedir
 
-**Kimsenin iznine ihtiyacınız yok.** Partner entegrasyonu yok, SaaS sözleşmesi yok. Sunucunuza kurun ve çalışmaya başlayın.
-
-**Verileriniz sizin kalır.** Her şey sizin kontrol ettiğiniz altyapıda çalışır. Siz dışa aktarmadıkça hiçbir veri sunucunuzdan çıkmaz.
+**Kimsenin iznine ihtiyacınız yok, verileriniz sizin kalır.** Partner entegrasyonu yok, SaaS sözleşmesi yok. Her şey sizin kontrol ettiğiniz altyapıda çalışır.
 
 **Erişim kontrolü yerleşiktir.** Platform rolleri (admin, staff, consultant, guest), proje rolleri (owner, manager, consultant, viewer) ve iletişim bilgileri, kişisel detaylar ve belgeleri kimin göreceğini kontrol eden hassasiyet bayraklarıyla birleşir.
 

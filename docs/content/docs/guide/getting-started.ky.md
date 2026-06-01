@@ -28,12 +28,7 @@ just web-dev
 
 ## Emne baştadyñyz
 
-- **Backend** API qyzmat körsötöt — autentifikasija, maalymat saqtoo cana esepdemeler
-- **Maalymat bazasy** adamdar, üj çarbalar, qoldoo cazuulary, migrasija taryhy, dokumentter cana üj cajandyqtar üçün tablitsalar menen
-- **Web interfejs** proekt başqaruu, rolğo tajanğan cetüü cana kirgizilgen esepdemeler menen
-- **Avtomattyq login qoopsuzduğu** — tokender ar bir sessija cañylanuuda ajlanat
-
-Munun bardyğy bir maşinada iştejt. Produksionda bir fajlğa kompilasijalanat, any qajsy bolbosun serverge köçürö alasyz.
+Emi sizde `:9000` portunda backend, `:5173` portunda frontend cana Docker'dağy Postgres + Redis bar — bardyğy bir maşinada.
 
 ## Çynığy ornottooğo dajynsyzby?
 

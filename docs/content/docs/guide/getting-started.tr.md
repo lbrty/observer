@@ -28,12 +28,7 @@ just web-dev
 
 ## Ne başlattınız
 
-- API'yi sunan bir **backend** — kimlik doğrulama, veri depolama ve raporları yönetir
-- Kişiler, hanehalkları, destek kayıtları, göç geçmişi, belgeler ve evcil hayvanlar için tabloları olan bir **veritabanı**
-- Proje yönetimi, rol tabanlı erişim ve yerleşik raporlama içeren bir **web arayüzü**
-- **Otomatik giriş güvenliği** — her oturum yenilemesinde token'lar döndürülür
-
-Tüm bunlar tek bir makinede çalışır. Üretim ortamında, herhangi bir sunucuya kopyalayabileceğiniz tek bir dosyaya derlenir.
+Artık `:9000` üzerinde bir backend, `:5173` üzerinde bir frontend ve Docker'da bir Postgres + Redis çifti var — hepsi tek bir makinede.
 
 ## Gerçek dağıtıma hazır mısınız?
 

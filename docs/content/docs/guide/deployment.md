@@ -3,11 +3,9 @@ title: Deployment
 weight: 5
 ---
 
-This guide walks you through putting Observer on a server where your team can use it.
-
 ## Docker (recommended)
 
-Observer ships as a single Docker image with the web interface already baked in — the web interface is embedded in the binary.
+Observer ships as a single Docker image with the web interface embedded in the binary.
 
 ### What you need
 
@@ -55,7 +53,7 @@ See [Environment Variables](/docs/developers/reference/variables/) for the full 
 docker compose up -d
 ```
 
-This starts PostgreSQL, Redis, and Observer. The database schema is created automatically on first launch.
+This starts PostgreSQL, Redis, and Observer. On first launch, Observer applies migrations automatically.
 
 ### Step 4: Verify it's running
 

@@ -46,9 +46,7 @@ Organisationen mit:
 
 ## Was Observer besonders macht
 
-**Sie brauchen niemandes Erlaubnis.** Kein Partner-Onboarding, keine SaaS-Vereinbarung. Installieren Sie es auf Ihrem Server und beginnen Sie zu arbeiten.
-
-**Ihre Daten bleiben bei Ihnen.** Alles läuft auf Infrastruktur, die Sie kontrollieren. Keine Daten verlassen Ihren Server, es sei denn, Sie exportieren sie.
+**Sie brauchen niemandes Erlaubnis, Ihre Daten bleiben bei Ihnen.** Kein Partner-Onboarding, keine SaaS-Vereinbarung. Alles läuft auf Infrastruktur, die Sie kontrollieren.
 
 **Zugriffskontrolle ist integriert.** Plattformrollen (Admin, Mitarbeiter, Berater, Gast) werden mit Projektrollen (Eigentümer, Manager, Berater, Betrachter) und Sensitivitätsstufen kombiniert, die steuern, wer Kontaktdaten, persönliche Details und Dokumente sehen darf.
 

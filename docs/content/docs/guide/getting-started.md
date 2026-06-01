@@ -28,12 +28,7 @@ Open `http://localhost:5173`.
 
 ## What you just started
 
-- A **backend** serving the API — handles authentication, data storage, and reports
-- A **database** with tables for people, households, support records, migration history, documents, and pets
-- A **web interface** with project management, role-based access, and built-in reporting
-- **Automatic login security** — tokens rotate on every session refresh
-
-All of this runs on a single machine.
+You now have a backend on `:9000`, a frontend on `:5173`, and a Postgres + Redis pair in Docker — all on a single machine.
 
 ## Production deployment
 

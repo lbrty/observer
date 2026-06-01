@@ -3,11 +3,9 @@ title: Ornotuu
 weight: 5
 ---
 
-Bul qoldonmo Observerdi komandañyz qoldono ala turğan serverge ornottoonu cetektejt. Tereñ tehnikalyq bilim kerek emes — eger serverge SSH qylyp, biraz komanda iştete alsañyz, munu qyla alasyz.
-
 ## Docker (sunuştalat)
 
-Bul eñ ceñil col. Observer web interfejs menen dajyn bir Docker image katary kelet - frontend cağynan qoşumça ornotuu ce konfigurasija kerek emes.
+Observer web interfejs menen kelgen bir Docker image katary cönötülöt.
 
 ### Emne kerek
 
