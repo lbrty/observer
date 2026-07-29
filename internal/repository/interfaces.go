@@ -58,10 +58,8 @@ type MFARepository interface {
 type MFARecoveryCodeRepository interface {
 	// CreateBatch stores a set of hashed recovery codes for a user.
 	CreateBatch(ctx context.Context, codes []*user.MFARecoveryCode) error
-	// FindUnused returns the first unused code matching the given hash.
-	FindUnused(ctx context.Context, userID ulid.ULID, codeHash string) (*user.MFARecoveryCode, error)
-	// MarkUsed marks a code as used (sets used_at = now).
-	MarkUsed(ctx context.Context, id ulid.ULID) error
+	// ConsumeUnused atomically marks a matching unused code as used.
+	ConsumeUnused(ctx context.Context, userID ulid.ULID, codeHash string) error
 	// DeleteByUserID removes all recovery codes for a user (called on MFA disable).
 	DeleteByUserID(ctx context.Context, userID ulid.ULID) error
 }

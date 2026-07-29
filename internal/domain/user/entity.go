@@ -59,7 +59,7 @@ func (u *User) CanLogin() error {
 	if !u.IsActive {
 		return ErrUserNotActive
 	}
-	if u.DeactivatedAt != nil {
+	if u.DeactivatedAt != nil || u.LockedPermanentlyAt != nil {
 		return ErrUserNotActive
 	}
 	return nil

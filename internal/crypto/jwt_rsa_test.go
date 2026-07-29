@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -88,6 +89,46 @@ func TestRSATokenGenerator_TypeMismatch(t *testing.T) {
 	// Access token should be rejected as MFA token
 	_, err = gen.ValidateMFAToken(accessToken)
 	assert.Error(t, err)
+}
+
+func TestRSATokenGenerator_RejectsWrongIssuer(t *testing.T) {
+	keys := setupRSAKeys(t)
+	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 5*time.Minute, "observer")
+	uid := ulid.New()
+	claims := crypto.Claims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    "other-service",
+			Subject:   uid.String(),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute)),
+		},
+		Role: "admin",
+		Type: "access",
+	}
+	token, err := jwt.NewWithClaims(jwt.SigningMethodRS256, claims).SignedString(keys.PrivateKey)
+	require.NoError(t, err)
+
+	_, err = gen.ValidateAccessToken(token)
+	require.Error(t, err)
+}
+
+func TestRSATokenGenerator_RejectsOtherRSAAlgorithm(t *testing.T) {
+	keys := setupRSAKeys(t)
+	gen := crypto.NewRSATokenGenerator(keys, 15*time.Minute, 5*time.Minute, "observer")
+	uid := ulid.New()
+	claims := crypto.Claims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    "observer",
+			Subject:   uid.String(),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute)),
+		},
+		Role: "admin",
+		Type: "access",
+	}
+	token, err := jwt.NewWithClaims(jwt.SigningMethodRS512, claims).SignedString(keys.PrivateKey)
+	require.NoError(t, err)
+
+	_, err = gen.ValidateAccessToken(token)
+	require.Error(t, err)
 }
 
 func TestRSATokenGenerator_RefreshToken(t *testing.T) {

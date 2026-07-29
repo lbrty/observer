@@ -2,10 +2,7 @@ package user
 
 import (
 	"context"
-	"database/sql"
-	"errors"
 	"fmt"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/oklog/ulid/v2"
@@ -36,48 +33,28 @@ func (r *mfaRecoveryCodeRepo) CreateBatch(ctx context.Context, codes []*domainus
 	return nil
 }
 
-func (r *mfaRecoveryCodeRepo) FindUnused(ctx context.Context, userID ulid.ULID, codeHash string) (*domainuser.MFARecoveryCode, error) {
+func (r *mfaRecoveryCodeRepo) ConsumeUnused(ctx context.Context, userID ulid.ULID, codeHash string) error {
 	const q = `
-		SELECT id, user_id, code_hash, used_at, created_at
-		FROM mfa_recovery_codes
-		WHERE user_id = $1 AND code_hash = $2 AND used_at IS NULL
-		LIMIT 1
+		UPDATE mfa_recovery_codes
+		SET used_at = NOW()
+		WHERE id = (
+			SELECT id
+			FROM mfa_recovery_codes
+			WHERE user_id = $1 AND code_hash = $2 AND used_at IS NULL
+			LIMIT 1
+			FOR UPDATE
+		)
 	`
-	var row struct {
-		ID        string     `db:"id"`
-		UserID    string     `db:"user_id"`
-		CodeHash  string     `db:"code_hash"`
-		UsedAt    *time.Time `db:"used_at"`
-		CreatedAt time.Time  `db:"created_at"`
-	}
-	if err := r.db.GetContext(ctx, &row, q, userID.String(), codeHash); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, domainuser.ErrMFARecoveryCodeNotFound
-		}
-		return nil, fmt.Errorf("find recovery code: %w", err)
-	}
-	uid, err := ulid.Parse(row.UserID)
+	result, err := r.db.ExecContext(ctx, q, userID.String(), codeHash)
 	if err != nil {
-		return nil, fmt.Errorf("parse user id: %w", err)
+		return fmt.Errorf("consume recovery code: %w", err)
 	}
-	parsedID, err := ulid.Parse(row.ID)
+	affected, err := result.RowsAffected()
 	if err != nil {
-		return nil, fmt.Errorf("parse code id: %w", err)
+		return fmt.Errorf("recovery code rows affected: %w", err)
 	}
-	return &domainuser.MFARecoveryCode{
-		ID:        parsedID,
-		UserID:    uid,
-		CodeHash:  row.CodeHash,
-		UsedAt:    row.UsedAt,
-		CreatedAt: row.CreatedAt,
-	}, nil
-}
-
-func (r *mfaRecoveryCodeRepo) MarkUsed(ctx context.Context, id ulid.ULID) error {
-	const q = `UPDATE mfa_recovery_codes SET used_at = NOW() WHERE id = $1`
-	_, err := r.db.ExecContext(ctx, q, id.String())
-	if err != nil {
-		return fmt.Errorf("mark recovery code used: %w", err)
+	if affected == 0 {
+		return domainuser.ErrMFARecoveryCodeNotFound
 	}
 	return nil
 }

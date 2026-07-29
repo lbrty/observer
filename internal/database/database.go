@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-//go:generate mockgen -destination=mock/database.go -package=mock github.com/lbrty/observer/internal/database DB
+//go:generate go tool mockgen -destination=mock/database.go -package=mock github.com/lbrty/observer/internal/database DB
 
 // DBTX is satisfied by both *sqlx.DB and *sqlx.Tx, allowing repositories to
 // work transparently inside or outside a transaction.

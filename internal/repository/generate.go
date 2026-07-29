@@ -1,3 +1,3 @@
 package repository
 
-//go:generate mockgen -source=interfaces.go -destination=mock/repository.go -package=mock
+//go:generate go tool mockgen -source=interfaces.go -exclude_interfaces=LoginAttemptStore -destination=mock/repository.go -package=mock

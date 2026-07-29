@@ -3,6 +3,8 @@ package storage_test
 import (
 	"context"
 	"io"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -27,6 +29,10 @@ func TestLocalStorage_Save_WritesContent(t *testing.T) {
 	got, err := io.ReadAll(rc)
 	require.NoError(t, err)
 	assert.Equal(t, "hello world", string(got))
+
+	info, err := os.Stat(filepath.Join(dir, "sub", "file.txt"))
+	require.NoError(t, err)
+	assert.Equal(t, os.FileMode(0o600), info.Mode().Perm())
 }
 
 func TestLocalStorage_Delete_MissingFileIsNoop(t *testing.T) {

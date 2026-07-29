@@ -20,3 +20,14 @@ func TestNewS3Storage_EmptyBucket(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "S3_BUCKET")
 }
+
+func TestNewS3Storage_RejectsPartialStaticCredentials(t *testing.T) {
+	_, err := storage.NewS3Storage(config.StorageConfig{
+		S3Bucket:    "documents",
+		S3Region:    "us-east-1",
+		S3AccessKey: "key",
+	})
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "configured together")
+}

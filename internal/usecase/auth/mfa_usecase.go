@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"time"
@@ -10,7 +11,6 @@ import (
 	"github.com/oklog/ulid/v2"
 	"github.com/pquerna/otp/totp"
 
-	"github.com/lbrty/observer/internal/crypto"
 	domainauth "github.com/lbrty/observer/internal/domain/auth"
 	"github.com/lbrty/observer/internal/domain/user"
 	iulid "github.com/lbrty/observer/internal/ulid"
@@ -46,15 +46,10 @@ func (uc *AuthUseCase) VerifyMFA(ctx context.Context, input VerifyMFAInput, user
 
 	if !totp.Validate(input.TOTPCode, mfaCfg.Secret) {
 		// Try as a single-use recovery code.
-		hash, _, hashErr := uc.hasher.Hash(input.TOTPCode)
-		if hashErr != nil {
+		codeHash := sha256.Sum256([]byte(input.TOTPCode))
+		if err := uc.recoveryRepo.ConsumeUnused(ctx, userID, hex.EncodeToString(codeHash[:])); err != nil {
 			return nil, domainauth.ErrInvalidMFACode
 		}
-		rc, rcErr := uc.recoveryRepo.FindUnused(ctx, userID, hash)
-		if rcErr != nil {
-			return nil, domainauth.ErrInvalidMFACode
-		}
-		_ = uc.recoveryRepo.MarkUsed(ctx, rc.ID)
 	}
 
 	u, err := uc.userRepo.GetByID(ctx, userID)
@@ -120,7 +115,7 @@ func (uc *AuthUseCase) EnableMFA(ctx context.Context, userID ulid.ULID, input En
 		return nil, err
 	}
 
-	plainCodes, records, err := generateRecoveryCodes(8, userID, uc.hasher)
+	plainCodes, records, err := generateRecoveryCodes(8, userID)
 	if err != nil {
 		return nil, fmt.Errorf("generate recovery codes: %w", err)
 	}
@@ -150,25 +145,22 @@ func (uc *AuthUseCase) DisableMFA(ctx context.Context, userID ulid.ULID, input D
 }
 
 // generateRecoveryCodes returns n plain-text codes and their hashed records.
-func generateRecoveryCodes(n int, userID ulid.ULID, hasher crypto.PasswordHasher) ([]string, []*user.MFARecoveryCode, error) {
+func generateRecoveryCodes(n int, userID ulid.ULID) ([]string, []*user.MFARecoveryCode, error) {
 	now := time.Now().UTC()
 	plainCodes := make([]string, n)
 	records := make([]*user.MFARecoveryCode, n)
 	for i := range plainCodes {
-		b := make([]byte, 8)
+		b := make([]byte, 16)
 		if _, err := rand.Read(b); err != nil {
 			return nil, nil, err
 		}
 		plain := hex.EncodeToString(b)
-		hash, _, err := hasher.Hash(plain)
-		if err != nil {
-			return nil, nil, err
-		}
+		hash := sha256.Sum256([]byte(plain))
 		plainCodes[i] = plain
 		records[i] = &user.MFARecoveryCode{
 			ID:        iulid.New(),
 			UserID:    userID,
-			CodeHash:  hash,
+			CodeHash:  hex.EncodeToString(hash[:]),
 			CreatedAt: now,
 		}
 	}

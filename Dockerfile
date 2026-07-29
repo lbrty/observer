@@ -11,7 +11,7 @@ COPY packages/observer-web/ packages/observer-web/
 RUN cd packages/observer-web && bun run build
 
 # Stage 2: build backend with embedded frontend
-FROM golang:1.26 AS backend
+FROM golang:1.26.5 AS backend
 
 WORKDIR /app
 COPY go.mod go.sum ./

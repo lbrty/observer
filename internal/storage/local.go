@@ -32,14 +32,18 @@ func (s *LocalStorage) Save(_ context.Context, path string, r io.Reader, _ strin
 		return fmt.Errorf("create parent dirs: %w", err)
 	}
 
-	f, err := os.Create(full)
+	f, err := os.OpenFile(full, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0o600)
 	if err != nil {
 		return fmt.Errorf("create file: %w", err)
 	}
+	if err := f.Chmod(0o600); err != nil {
+		_ = f.Close()
+		return fmt.Errorf("set file permissions: %w", err)
+	}
 
 	if _, err := io.Copy(f, r); err != nil {
-		f.Close()
-		os.Remove(full)
+		_ = f.Close()
+		_ = os.Remove(full)
 		return fmt.Errorf("write file: %w", err)
 	}
 	return f.Close()

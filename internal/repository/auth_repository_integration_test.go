@@ -92,7 +92,7 @@ func TestSessionRepo_CreateAndGet(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, sess.ID, got.ID)
 	assert.Equal(t, sess.UserID, got.UserID)
-	assert.Equal(t, "refresh_token_abc", got.RefreshToken)
+	assert.Empty(t, got.RefreshToken)
 	assert.Equal(t, "TestAgent/1.0", got.UserAgent)
 	assert.Equal(t, "127.0.0.1", got.IP)
 }

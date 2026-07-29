@@ -6,8 +6,8 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/lbrty/observer/internal/auditctx"
 	domainaudit "github.com/lbrty/observer/internal/domain/audit"
-	"github.com/lbrty/observer/internal/middleware"
 	"github.com/lbrty/observer/internal/repository"
 	"github.com/lbrty/observer/internal/usecase"
 )
@@ -114,7 +114,7 @@ func (uc *AuditUseCase) Record(
 	}
 
 	var userID *string
-	if uid := middleware.AuditUserID(ctx); uid != "" {
+	if uid := auditctx.UserID(ctx); uid != "" {
 		userID = &uid
 	}
 
@@ -126,8 +126,8 @@ func (uc *AuditUseCase) Record(
 		EntityID:   entityID,
 		Summary:    summary,
 		Details:    details,
-		IP:         strPtrOrNil(middleware.AuditIP(ctx)),
-		UserAgent:  strPtrOrNil(middleware.AuditUserAgent(ctx)),
+		IP:         strPtrOrNil(auditctx.IP(ctx)),
+		UserAgent:  strPtrOrNil(auditctx.UserAgent(ctx)),
 	}
 
 	if err := uc.repo.Log(ctx, entry); err != nil {

@@ -8,7 +8,7 @@ import (
 	"github.com/lbrty/observer/internal/database"
 )
 
-//go:generate mockgen -destination=mock/handler.go -package=mock github.com/lbrty/observer/internal/health Handler
+//go:generate go tool mockgen -destination=mock/handler.go -package=mock github.com/lbrty/observer/internal/health Handler
 
 // Handler defines the health check interface.
 type Handler interface {

@@ -28,6 +28,9 @@ func NewS3Storage(cfg config.StorageConfig) (*S3Storage, error) {
 	if cfg.S3Bucket == "" {
 		return nil, fmt.Errorf("S3_BUCKET is required")
 	}
+	if (cfg.S3AccessKey == "") != (cfg.S3SecretKey == "") {
+		return nil, fmt.Errorf("S3_ACCESS_KEY and S3_SECRET_KEY must be configured together")
+	}
 
 	opts := []func(*awsconfig.LoadOptions) error{
 		awsconfig.WithRegion(cfg.S3Region),

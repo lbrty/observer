@@ -113,11 +113,8 @@ func (g *RSATokenGenerator) ValidateMFAToken(tokenString string) (*Claims, error
 
 func (g *RSATokenGenerator) validateToken(tokenString, expectedType string) (*Claims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
 		return g.publicKey, nil
-	})
+	}, jwt.WithValidMethods([]string{jwt.SigningMethodRS256.Alg()}), jwt.WithIssuer(g.issuer))
 
 	if err != nil {
 		return nil, fmt.Errorf("parse token: %w", err)

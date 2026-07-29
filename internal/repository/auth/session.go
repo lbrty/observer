@@ -2,7 +2,9 @@ package auth
 
 import (
 	"context"
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"time"
@@ -30,7 +32,7 @@ func (r *sessionRepo) Create(ctx context.Context, s *auth.Session) error {
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`
 	_, err := r.db.ExecContext(ctx, q,
-		s.ID.String(), s.UserID.String(), s.RefreshToken,
+		s.ID.String(), s.UserID.String(), hashRefreshToken(s.RefreshToken),
 		s.UserAgent, s.IP, s.ExpiresAt.UTC(), s.CreatedAt.UTC(),
 	)
 	if err != nil {
@@ -41,11 +43,11 @@ func (r *sessionRepo) Create(ctx context.Context, s *auth.Session) error {
 
 func (r *sessionRepo) GetByRefreshToken(ctx context.Context, token string) (*auth.Session, error) {
 	const q = `
-		SELECT id, user_id, refresh_token, user_agent, ip, expires_at, created_at
+		SELECT id, user_id, user_agent, ip, expires_at, created_at
 		FROM sessions
 		WHERE refresh_token=$1
 	`
-	return r.scanSession(r.db.QueryRowContext(ctx, q, token))
+	return r.scanSession(r.db.QueryRowContext(ctx, q, hashRefreshToken(token)))
 }
 
 func (r *sessionRepo) Delete(ctx context.Context, id ulid.ULID) error {
@@ -59,7 +61,7 @@ func (r *sessionRepo) Delete(ctx context.Context, id ulid.ULID) error {
 
 func (r *sessionRepo) DeleteByRefreshToken(ctx context.Context, token string) error {
 	const q = `DELETE FROM sessions WHERE refresh_token=$1`
-	_, err := r.db.ExecContext(ctx, q, token)
+	_, err := r.db.ExecContext(ctx, q, hashRefreshToken(token))
 	if err != nil {
 		return fmt.Errorf("delete session by token: %w", err)
 	}
@@ -90,8 +92,7 @@ func (r *sessionRepo) scanSession(row *sql.Row) (*auth.Session, error) {
 	var expiresAt, createdAt time.Time
 
 	err := row.Scan(
-		&idStr, &userIDStr, &s.RefreshToken,
-		&s.UserAgent, &s.IP, &expiresAt, &createdAt,
+		&idStr, &userIDStr, &s.UserAgent, &s.IP, &expiresAt, &createdAt,
 	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -117,4 +118,9 @@ func (r *sessionRepo) scanSession(row *sql.Row) (*auth.Session, error) {
 	s.CreatedAt = createdAt
 
 	return &s, nil
+}
+
+func hashRefreshToken(token string) string {
+	hash := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(hash[:])
 }

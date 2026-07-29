@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/oklog/ulid/v2"
 
+	"github.com/lbrty/observer/internal/auditctx"
 	"github.com/lbrty/observer/internal/crypto"
 	"github.com/lbrty/observer/internal/domain/user"
 	"github.com/lbrty/observer/internal/repository"
@@ -61,19 +62,19 @@ func (m *AuthMiddleware) Authenticate() gin.HandlerFunc {
 			return
 		}
 
-		// Reject deactivated or permanently locked users.
+		// Resolve current account state and role on every request.
 		u, err := m.userRepo.GetByID(c.Request.Context(), userID)
-		if err != nil || u.DeactivatedAt != nil || u.LockedPermanentlyAt != nil {
+		if err != nil || u.CanLogin() != nil {
 			c.JSON(http.StatusForbidden, gin.H{"error": "account locked or deactivated", "code": "errors.auth.accountLocked"})
 			c.Abort()
 			return
 		}
 
 		c.Set(string(CtxUserID), userID)
-		c.Set(string(CtxUserRole), claims.Role)
+		c.Set(string(CtxUserRole), string(u.Role))
 
 		// Enrich request context with audit metadata for use cases.
-		ctx := WithAuditContext(c.Request.Context(), claims.Subject, c.ClientIP(), c.Request.UserAgent())
+		ctx := auditctx.WithMetadata(c.Request.Context(), claims.Subject, c.ClientIP(), c.Request.UserAgent())
 		c.Request = c.Request.WithContext(ctx)
 
 		c.Next()
